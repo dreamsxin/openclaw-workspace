@@ -452,12 +452,84 @@
             viewportImg.addEventListener('mousemove', handleViewportMouseMove);
           }
           updateViewportRect();
+          
+          // 在控制台日志中添加截图记录，可点击查看大图
+          addScreenshotLog(result.screenshot);
+          
           updateStatus('高清截图已捕获');
         }
       } catch (error) {
         console.error('截图失败:', error);
         alert('截图失败：' + error.message);
       }
+    }
+
+    // 添加截图日志记录
+    function addScreenshotLog(base64Data) {
+      const consolePanel = document.getElementById('consolePanel');
+      const emptyState = consolePanel.querySelector('.empty-state');
+      if (emptyState) emptyState.remove();
+      
+      const timestamp = new Date().toLocaleTimeString();
+      const sizeKB = (base64Data.length / 1024).toFixed(1);
+      
+      const logEntry = document.createElement('div');
+      logEntry.className = 'console-log log';
+      logEntry.style.cursor = 'pointer';
+      logEntry.innerHTML = `
+        <span style="display:flex;align-items:center;gap:8px;">
+          <span>📸</span>
+          <span><strong>截图成功</strong> - ${sizeKB} KB</span>
+          <span style="color:#888;font-size:11px;">${timestamp}</span>
+          <span style="margin-left:auto;color:#00d9ff;font-size:12px;">🔍 点击查看</span>
+        </span>
+      `;
+      
+      // 点击弹出大图
+      logEntry.onclick = () => showScreenshotModal(base64Data, timestamp);
+      
+      consolePanel.appendChild(logEntry);
+      consolePanel.scrollTop = consolePanel.scrollHeight;
+    }
+
+    // 显示截图弹窗
+    function showScreenshotModal(base64Data, timestamp) {
+      // 检查是否已存在弹窗
+      const existingModal = document.getElementById('screenshotModal');
+      if (existingModal) existingModal.remove();
+      
+      const modalHtml = `
+        <div id="screenshotModal" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:10000;display:flex;justify-content:center;align-items:center;cursor:zoom-out;" onclick="handleModalClick(event)">
+          <div style="position:relative;max-width:90%;max-height:90%;display:flex;flex-direction:column;align-items:center;">
+            <img src="data:image/png;base64,${base64Data}" style="max-width:100%;max-height:85vh;border-radius:8px;box-shadow:0 0 30px rgba(0,217,255,0.5);" onclick="event.stopPropagation()">
+            <div style="display:flex;gap:15px;margin-top:15px;">
+              <button class="btn-secondary" onclick="downloadScreenshot('${base64Data}', '${timestamp}')" style="padding:8px 20px;">💾 下载</button>
+              <button class="btn-secondary" onclick="document.getElementById('screenshotModal').remove()" style="padding:8px 20px;">❌ 关闭</button>
+            </div>
+            <div style="text-align:center;margin-top:10px;color:#888;font-size:13px;">
+              📸 截图时间：${timestamp} &nbsp;|&nbsp; 点击背景关闭
+            </div>
+          </div>
+        </div>
+      `;
+      
+      document.body.insertAdjacentHTML('beforeend', modalHtml);
+    }
+
+    // 处理弹窗点击（背景关闭，图片不关闭）
+    function handleModalClick(event) {
+      if (event.target.id === 'screenshotModal') {
+        event.target.remove();
+      }
+    }
+
+    // 下载截图
+    function downloadScreenshot(base64Data, timestamp) {
+      const link = document.createElement('a');
+      link.href = `data:image/png;base64,${base64Data}`;
+      const safeTimestamp = timestamp.replace(/[:/]/g, '-');
+      link.download = `screenshot-${safeTimestamp}.png`;
+      link.click();
     }
 
     async function handleViewportClick(event) {
@@ -512,6 +584,8 @@
         if (result.success) {
           updateFrame(result.screenshot);
           updateStatus(`已点击：(${browserX}, ${browserY})`);
+          // 添加点击截图日志
+          addClickLog(result.screenshot, browserX, browserY);
         } else {
           alert('点击失败：' + result.error);
         }
@@ -519,6 +593,32 @@
         console.error('点击失败:', error);
         alert('点击失败：' + error.message);
       }
+    }
+
+    // 添加点击日志记录
+    function addClickLog(base64Data, x, y) {
+      const consolePanel = document.getElementById('consolePanel');
+      const emptyState = consolePanel.querySelector('.empty-state');
+      if (emptyState) emptyState.remove();
+      
+      const timestamp = new Date().toLocaleTimeString();
+      const sizeKB = (base64Data.length / 1024).toFixed(1);
+      
+      const logEntry = document.createElement('div');
+      logEntry.className = 'console-log log';
+      logEntry.style.cursor = 'pointer';
+      logEntry.innerHTML = `
+        <span style="display:flex;align-items:center;gap:8px;">
+          <span>🖱️</span>
+          <span><strong>点击完成</strong> @ (${x}, ${y}) - ${sizeKB} KB</span>
+          <span style="color:#888;font-size:11px;">${timestamp}</span>
+          <span style="margin-left:auto;color:#00d9ff;font-size:12px;">🔍 点击查看</span>
+        </span>
+      `;
+      
+      logEntry.onclick = () => showScreenshotModal(base64Data, timestamp);
+      consolePanel.appendChild(logEntry);
+      consolePanel.scrollTop = consolePanel.scrollHeight;
     }
 
     function handleViewportMouseMove(event) {
@@ -632,6 +732,8 @@
         if (result.success) {
           updateFrame(result.screenshot);
           updateStatus(`已输入：${text}`);
+          // 添加输入截图日志
+          addTypeLog(result.screenshot, text);
         } else {
           alert('输入失败：' + result.error);
         }
@@ -639,6 +741,33 @@
         console.error('输入失败:', error);
         alert('输入失败：' + error.message);
       }
+    }
+
+    // 添加输入日志记录
+    function addTypeLog(base64Data, text) {
+      const consolePanel = document.getElementById('consolePanel');
+      const emptyState = consolePanel.querySelector('.empty-state');
+      if (emptyState) emptyState.remove();
+      
+      const timestamp = new Date().toLocaleTimeString();
+      const sizeKB = (base64Data.length / 1024).toFixed(1);
+      const displayText = text.length > 20 ? text.substring(0, 20) + '...' : text;
+      
+      const logEntry = document.createElement('div');
+      logEntry.className = 'console-log log';
+      logEntry.style.cursor = 'pointer';
+      logEntry.innerHTML = `
+        <span style="display:flex;align-items:center;gap:8px;">
+          <span>⌨️</span>
+          <span><strong>输入完成</strong> "${displayText}" - ${sizeKB} KB</span>
+          <span style="color:#888;font-size:11px;">${timestamp}</span>
+          <span style="margin-left:auto;color:#00d9ff;font-size:12px;">🔍 点击查看</span>
+        </span>
+      `;
+      
+      logEntry.onclick = () => showScreenshotModal(base64Data, timestamp);
+      consolePanel.appendChild(logEntry);
+      consolePanel.scrollTop = consolePanel.scrollHeight;
     }
 
     document.addEventListener('DOMContentLoaded', () => {
