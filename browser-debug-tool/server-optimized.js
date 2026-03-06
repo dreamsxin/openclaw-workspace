@@ -16,11 +16,8 @@ const PORT = process.env.PORT || 3000;
 const browsers = new Map();
 let browserCounter = 0;
 
-// 存储 CDP 会话
+// 存储 CDP 会话和帧流
 const cdpSessions = new Map();
-
-// 存储 screenshot 模式的定时器
-const screenshotIntervals = new Map();
 
 app.use(express.json());
 app.use(express.static('public'));
@@ -28,7 +25,7 @@ app.use(express.static('public'));
 // API: 启动新浏览器
 app.post('/api/browser/launch', async (req, res) => {
   try {
-    const { browserType = 'chromium', headless = true, screencast = true, args = [] } = req.body;
+    const { browserType = 'chromium', headless = true, args = [] } = req.body;
     
     const launchOptions = {
       headless,
@@ -74,9 +71,8 @@ app.post('/api/browser/launch', async (req, res) => {
     const browserData = { browser, context, type: browserType, page };
     browsers.set(browserId, browserData);
 
-    // Chromium 支持 CDP screencast
-    let useScreencast = false;
-    if (browserType === 'chromium' && screencast) {
+    // 仅 Chromium 支持 CDP screencast
+    if (browserType === 'chromium') {
       try {
         const client = await context.newCDPSession(page);
         
@@ -91,11 +87,11 @@ app.post('/api/browser/launch', async (req, res) => {
           maxHeight: 720
         });
 
-        console.log(`[${browserId}] ✅ CDP screencast 已启用 (10 FPS)`);
+        console.log(`[${browserId}] CDP screencast 已启用 (10 FPS)`);
 
         // 监听帧事件
         client.on('Page.screencastFrame', async (event) => {
-          // 立即确认收到帧
+          // 立即确认收到帧（重要！）
           await client.send('Page.screencastFrameAck', { 
             sessionId: event.sessionId 
           }).catch(() => {});
@@ -106,13 +102,16 @@ app.post('/api/browser/launch', async (req, res) => {
             frame: event.data,
             timestamp: Date.now(),
             deviceWidth: event.deviceWidth,
-            deviceHeight: event.deviceHeight,
-            mode: 'screencast'
+            deviceHeight: event.deviceHeight
           });
         });
 
         cdpSessions.set(browserId, { client, page });
-        useScreencast = true;
+
+        // 监听页面变化
+        page.on('framenavigated', () => {
+          console.log(`[${browserId}] 页面导航完成`);
+        });
 
       } catch (error) {
         console.error(`[${browserId}] 启用 CDP screencast 失败:`, error.message);
@@ -120,49 +119,27 @@ app.post('/api/browser/launch', async (req, res) => {
       }
     }
 
-    // 非 Chromium 或 screencast 禁用时，使用 screenshot 模式
-    if (!useScreencast) {
-      console.log(`[${browserId}] 📸 使用 screenshot 模式 (兼容模式)`);
-    }
-
     // 监听浏览器关闭
     browser.on('disconnected', () => {
-      cleanupBrowser(browserId);
+      // 清理 CDP 会话
+      const cdpData = cdpSessions.get(browserId);
+      if (cdpData) {
+        cdpData.client.send('Page.stopScreencast').catch(() => {});
+        cdpSessions.delete(browserId);
+      }
+      
+      browsers.delete(browserId);
+      io.emit('browser-closed', { browserId });
+      console.log(`[${browserId}] 浏览器已断开连接`);
     });
 
-    console.log(`[${browserId}] 浏览器已启动：${browserType} ${useScreencast ? '(CDP)' : '(Screenshot)'}`);
-    res.json({ 
-      success: true, 
-      browserId, 
-      browserType,
-      screencast: useScreencast 
-    });
+    console.log(`[${browserId}] 浏览器已启动：${browserType}`);
+    res.json({ success: true, browserId, browserType });
   } catch (error) {
     console.error('启动浏览器失败:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
-
-// 清理浏览器资源
-function cleanupBrowser(browserId) {
-  // 停止 CDP screencast
-  const cdpData = cdpSessions.get(browserId);
-  if (cdpData) {
-    cdpData.client.send('Page.stopScreencast').catch(() => {});
-    cdpSessions.delete(browserId);
-  }
-  
-  // 停止 screenshot 定时器
-  const intervalId = screenshotIntervals.get(browserId);
-  if (intervalId) {
-    clearInterval(intervalId);
-    screenshotIntervals.delete(browserId);
-  }
-  
-  browsers.delete(browserId);
-  io.emit('browser-closed', { browserId });
-  console.log(`[${browserId}] 浏览器已清理`);
-}
 
 // API: 关闭浏览器
 app.post('/api/browser/:browserId/close', async (req, res) => {
@@ -174,8 +151,16 @@ app.post('/api/browser/:browserId/close', async (req, res) => {
       return res.status(404).json({ success: false, error: '浏览器不存在' });
     }
 
-    cleanupBrowser(browserId);
+    // 停止 screencast
+    const cdpData = cdpSessions.get(browserId);
+    if (cdpData) {
+      await cdpData.client.send('Page.stopScreencast').catch(() => {});
+      cdpSessions.delete(browserId);
+    }
+
     await browserData.browser.close();
+    browsers.delete(browserId);
+    io.emit('browser-closed', { browserId });
     
     console.log(`[${browserId}] 浏览器已关闭`);
     res.json({ success: true });
@@ -207,7 +192,7 @@ app.post('/api/browser/:browserId/navigate', async (req, res) => {
       return res.status(404).json({ success: false, error: '浏览器不存在' });
     }
 
-    const page = browserData.page;
+    const page = browserData.page || browserData.context.pages()[0];
     await page.goto(url, { waitUntil: 'networkidle', timeout: 30000 });
     
     res.json({ 
@@ -231,7 +216,7 @@ app.post('/api/browser/:browserId/screenshot', async (req, res) => {
       return res.status(404).json({ success: false, error: '浏览器不存在' });
     }
 
-    const page = browserData.page;
+    const page = browserData.page || browserData.context.pages()[0];
     const screenshotBuffer = await page.screenshot({ type: 'png', fullPage: false });
     const screenshot = screenshotBuffer.toString('base64');
     
@@ -254,7 +239,7 @@ app.post('/api/browser/:browserId/evaluate', async (req, res) => {
       return res.status(404).json({ success: false, error: '浏览器不存在' });
     }
 
-    const page = browserData.page;
+    const page = browserData.page || browserData.context.pages()[0];
     const result = await page.evaluate(script);
     
     res.json({ success: true, result });
@@ -275,7 +260,7 @@ app.post('/api/browser/:browserId/click', async (req, res) => {
       return res.status(404).json({ success: false, error: '浏览器不存在' });
     }
 
-    const page = browserData.page;
+    const page = browserData.page || browserData.context.pages()[0];
     await page.mouse.click(x, y, { button, clickCount });
     
     await page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {});
@@ -302,7 +287,7 @@ app.post('/api/browser/:browserId/type', async (req, res) => {
       return res.status(404).json({ success: false, error: '浏览器不存在' });
     }
 
-    const page = browserData.page;
+    const page = browserData.page || browserData.context.pages()[0];
     await page.keyboard.type(text, { delay });
     
     await page.waitForLoadState('networkidle', { timeout: 3000 }).catch(() => {});
@@ -321,42 +306,15 @@ app.post('/api/browser/:browserId/type', async (req, res) => {
 io.on('connection', (socket) => {
   console.log('客户端已连接:', socket.id);
 
-  socket.on('join-browser', async (browserId) => {
+  socket.on('join-browser', (browserId) => {
     socket.join(browserId);
     console.log(`客户端 ${socket.id} 加入浏览器 ${browserId}`);
     
-    const browserData = browsers.get(browserId);
-    if (!browserData) return;
-    
-    // 检查是否已启用 screencast
     const cdpData = cdpSessions.get(browserId);
     if (cdpData) {
-      console.log(`[${browserId}] 🎬 使用 CDP screencast 模式 (高性能 10 FPS)`);
-      return;
-    }
-    
-    // 如果没有启用 screencast，启动 screenshot 定时器
-    if (!screenshotIntervals.has(browserId)) {
-      console.log(`[${browserId}] 📸 启动 screenshot 模式 (2 FPS)`);
-      
-      const intervalId = setInterval(async () => {
-        try {
-          const page = browserData.page;
-          const screenshotBuffer = await page.screenshot({ type: 'jpeg', quality: 80 });
-          const screenshot = screenshotBuffer.toString('base64');
-          
-          io.to(browserId).emit('frame', {
-            browserId,
-            frame: screenshot,
-            timestamp: Date.now(),
-            mode: 'screenshot'
-          });
-        } catch (error) {
-          console.error(`[${browserId}] 获取画面失败:`, error.message);
-        }
-      }, 500);
-      
-      screenshotIntervals.set(browserId, intervalId);
+      console.log(`[${browserId}] 使用 CDP screencast 模式 (高性能)`);
+    } else {
+      console.log(`[${browserId}] 使用 screenshot 模式 (兼容模式)`);
     }
   });
 
@@ -372,8 +330,8 @@ io.on('connection', (socket) => {
 
 // 启动服务器
 server.listen(PORT, () => {
-  console.log(`🚀 浏览器调试工具已启动`);
+  console.log(`🚀 浏览器调试工具已启动 (CDP Screencast 优化版)`);
   console.log(`📍 访问地址：http://localhost:${PORT}`);
-  console.log(`🔧 支持浏览器：Chromium (CDP+Screenshots), Firefox, WebKit`);
-  console.log(`⚡ Chromium 默认使用 CDP Screencast (10 FPS)`);
+  console.log(`🔧 支持浏览器：Chromium (CDP), Firefox, WebKit`);
+  console.log(`⚡ CDP Screencast: 10 FPS, 低延迟`);
 });

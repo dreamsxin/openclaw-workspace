@@ -172,10 +172,16 @@
       <button class="btn-primary" onclick="launchBrowser('firefox')">🦊 启动 Firefox</button>
       <button class="btn-primary" onclick="launchBrowser('webkit')">🌐 启动 WebKit</button>
       <button class="btn-secondary" onclick="refreshBrowsers()">🔄 刷新列表</button>
-      <label style="display:flex;align-items:center;gap:8px;background:#333;padding:10px 16px;border-radius:8px;cursor:pointer;">
-        <input type="checkbox" id="headlessToggle" style="width:18px;height:18px;cursor:pointer;">
-        <span style="color:#eee;font-size:14px;">🪟 有头模式</span>
-      </label>
+      <div style="display:flex;gap:10px;">
+        <label style="display:flex;align-items:center;gap:8px;background:#333;padding:10px 16px;border-radius:8px;cursor:pointer;">
+          <input type="checkbox" id="headlessToggle" style="width:18px;height:18px;cursor:pointer;">
+          <span style="color:#eee;font-size:14px;">🪟 有头</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#00d9ff,#0099cc);padding:10px 16px;border-radius:8px;cursor:pointer;" title="仅 Chromium 有效">
+          <input type="checkbox" id="screencastToggle" checked style="width:18px;height:18px;cursor:pointer;">
+          <span style="color:#fff;font-size:14px;font-weight:600;">⚡ CDP 加速</span>
+        </label>
+      </div>
     </div>
 
     <div class="main-grid">
@@ -269,8 +275,10 @@
         });
 
         socket.on('frame', (data) => {
-          console.log('收到帧:', data.browserId, '大小:', (data.frame?.length / 1024).toFixed(1), 'KB');
           if (data.browserId === currentBrowserId && data.frame) {
+            const mode = data.mode || 'unknown';
+            const size = (data.frame.length / 1024).toFixed(1);
+            console.log(`收到帧 [${mode}]:`, data.browserId, `${size} KB`);
             updateFrame(data.frame);
           }
         });
@@ -311,18 +319,25 @@
     async function launchBrowser(browserType) {
       try {
         const headless = !document.getElementById('headlessToggle').checked;
-        updateStatus(`正在启动浏览器... (${headless ? '无头' : '有头'}模式)`);
+        const screencast = document.getElementById('screencastToggle').checked;
+        
+        const modeText = browserType === 'chromium' 
+          ? (screencast ? 'CDP 加速' : '截图模式') 
+          : '兼容模式';
+        
+        updateStatus(`正在启动浏览器... (${headless ? '无头' : '有头'}, ${modeText})`);
+        
         const response = await fetch(`${API_BASE}/api/browser/launch`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ browserType, headless })
+          body: JSON.stringify({ browserType, headless, screencast })
         });
         const result = await response.json();
         if (result.success) {
           console.log(`浏览器已启动：${result.browserId}`);
           selectBrowser(result.browserId);
           refreshBrowsers();
-          updateStatus(`已启动 ${browserType} (${headless ? '无头' : '有头'}模式)`);
+          updateStatus(`已启动 ${browserType} (${result.screencast ? '⚡ CDP 10 FPS' : '📸 截图 2 FPS'})`);
         } else {
           alert('启动失败：' + result.error);
         }
@@ -344,7 +359,11 @@
           browserList.innerHTML = result.browsers.map(b => `
             <li class="browser-item ${b.id === currentBrowserId ? 'active' : ''}" onclick="selectBrowser('${b.id}')">
               <div class="browser-id">${b.id}</div>
-              <div class="browser-type">${b.type} ${b.connected ? '🟢' : '🔴'}</div>
+              <div class="browser-type">
+                ${b.type} 
+                ${b.connected ? '🟢' : '🔴'}
+                ${b.screencast ? '<span style="background:linear-gradient(135deg,#00d9ff,#0099cc);padding:2px 6px;border-radius:4px;font-size:11px;margin-left:6px;">⚡CDP</span>' : ''}
+              </div>
             </li>
           `).join('');
           if (currentBrowserId) document.getElementById('browserControls').style.display = 'block';
