@@ -74,6 +74,41 @@ app.post('/api/browser/launch', async (req, res) => {
     const browserData = { browser, context, type: browserType, page };
     browsers.set(browserId, browserData);
 
+    // 监听页面事件
+    context.on('page', (newPage) => {
+      console.log(`[${browserId}] 📑 新标签页打开：${newPage.url()}`);
+      
+      // 监听新页面的 load 事件
+      newPage.on('load', () => {
+        console.log(`[${browserId}] 📄 标签页加载完成：${newPage.url()}`);
+        io.to(browserId).emit('page-event', {
+          browserId,
+          type: 'load',
+          url: newPage.url(),
+          title: newPage.title().catch(() => 'Untitled'),
+          timestamp: Date.now()
+        });
+      });
+      
+      newPage.on('close', () => {
+        console.log(`[${browserId}] ❌ 标签页关闭：${newPage.url()}`);
+        io.to(browserId).emit('page-event', {
+          browserId,
+          type: 'close',
+          url: newPage.url(),
+          timestamp: Date.now()
+        });
+      });
+      
+      // 通知客户端更新标签页列表
+      io.to(browserId).emit('tabs-updated', { browserId });
+    });
+    
+    // 监听初始页面的 load 事件
+    page.on('load', () => {
+      console.log(`[${browserId}] 📄 初始页面加载完成：${page.url()}`);
+    });
+
     // Chromium 支持 CDP screencast
     let useScreencast = false;
     if (browserType === 'chromium' && screencast) {
@@ -127,10 +162,22 @@ app.post('/api/browser/launch', async (req, res) => {
 
     // 监听浏览器关闭
     browser.on('disconnected', () => {
+      console.log(`[${browserId}] 🛑 浏览器已停止`);
+      io.emit('browser-stopped', { browserId });
       cleanupBrowser(browserId);
     });
 
-    console.log(`[${browserId}] 浏览器已启动：${browserType} ${useScreencast ? '(CDP)' : '(Screenshot)'}`);
+    console.log(`[${browserId}] 🚀 浏览器已启动：${browserType} ${useScreencast ? '(CDP)' : '(Screenshot)'}`);
+    
+    // 发送启动事件到所有客户端（不只是浏览器房间）
+    io.emit('browser-event', {
+      browserId,
+      type: 'start',
+      browserType,
+      screencast: useScreencast,
+      timestamp: Date.now()
+    });
+    
     res.json({ 
       success: true, 
       browserId, 
@@ -159,9 +206,12 @@ function cleanupBrowser(browserId) {
     screenshotIntervals.delete(browserId);
   }
   
+  const browserData = browsers.get(browserId);
+  const pageCount = browserData ? browserData.context.pages().length : 0;
+  
   browsers.delete(browserId);
-  io.emit('browser-closed', { browserId });
-  console.log(`[${browserId}] 浏览器已清理`);
+  
+  console.log(`[${browserId}] 浏览器已清理 (关闭前共 ${pageCount} 个标签页)`);
 }
 
 // API: 关闭浏览器
@@ -174,10 +224,18 @@ app.post('/api/browser/:browserId/close', async (req, res) => {
       return res.status(404).json({ success: false, error: '浏览器不存在' });
     }
 
+    const pageCount = browserData.context.pages().length;
     cleanupBrowser(browserId);
     await browserData.browser.close();
     
-    console.log(`[${browserId}] 浏览器已关闭`);
+    console.log(`[${browserId}] 🛑 浏览器已关闭 (共关闭 ${pageCount} 个标签页)`);
+    io.emit('browser-event', {
+      browserId,
+      type: 'stop',
+      pageCount,
+      timestamp: Date.now()
+    });
+    
     res.json({ success: true });
   } catch (error) {
     console.error('关闭浏览器失败:', error);
@@ -196,6 +254,163 @@ app.get('/api/browsers', (req, res) => {
   res.json({ browsers: browserList });
 });
 
+// API: 获取标签页列表
+app.get('/api/browser/:browserId/tabs', async (req, res) => {
+  try {
+    const { browserId } = req.params;
+    const browserData = browsers.get(browserId);
+
+    if (!browserData) {
+      return res.status(404).json({ success: false, error: '浏览器不存在' });
+    }
+
+    const pages = browserData.context.pages();
+    const tabs = await Promise.all(pages.map(async (page, index) => ({
+      index,
+      url: page.url(),
+      title: await page.title().catch(() => 'Untitled'),
+      isActive: page === browserData.page
+    })));
+
+    res.json({ success: true, tabs, activeTabIndex: pages.indexOf(browserData.page) });
+  } catch (error) {
+    console.error('获取标签页失败:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// API: 切换标签页
+app.post('/api/browser/:browserId/tabs/:tabIndex/switch', async (req, res) => {
+  try {
+    const { browserId, tabIndex } = req.params;
+    const browserData = browsers.get(browserId);
+
+    if (!browserData) {
+      return res.status(404).json({ success: false, error: '浏览器不存在' });
+    }
+
+    const pages = browserData.context.pages();
+    const index = parseInt(tabIndex);
+    
+    if (index < 0 || index >= pages.length) {
+      return res.status(400).json({ success: false, error: '标签页索引无效' });
+    }
+
+    browserData.page = pages[index];
+    
+    // 获取当前标签页信息
+    const page = pages[index];
+    const screenshotBuffer = await page.screenshot({ type: 'jpeg', quality: 80 });
+    const screenshot = screenshotBuffer.toString('base64');
+
+    console.log(`[${browserId}] 切换到标签页 ${index}: ${page.url()}`);
+    
+    // 通知所有客户端更新画面
+    io.to(browserId).emit('tab-switched', {
+      browserId,
+      tabIndex: index,
+      url: page.url(),
+      title: await page.title().catch(() => 'Untitled')
+    });
+
+    res.json({ 
+      success: true, 
+      tabIndex: index,
+      url: page.url(),
+      title: await page.title().catch(() => 'Untitled'),
+      screenshot
+    });
+  } catch (error) {
+    console.error('切换标签页失败:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// API: 关闭标签页
+app.post('/api/browser/:browserId/tabs/:tabIndex/close', async (req, res) => {
+  try {
+    const { browserId, tabIndex } = req.params;
+    const browserData = browsers.get(browserId);
+
+    if (!browserData) {
+      return res.status(404).json({ success: false, error: '浏览器不存在' });
+    }
+
+    const pages = browserData.context.pages();
+    const index = parseInt(tabIndex);
+    
+    if (index < 0 || index >= pages.length) {
+      return res.status(400).json({ success: false, error: '标签页索引无效' });
+    }
+
+    const pageToClose = pages[index];
+    const url = pageToClose.url();
+    await pageToClose.close();
+    
+    // 如果关闭的是当前页面，切换到第一个可用页面
+    if (browserData.page === pageToClose && browserData.context.pages().length > 0) {
+      browserData.page = browserData.context.pages()[0];
+    }
+
+    console.log(`[${browserId}] ❌ 关闭标签页 ${index + 1}/${pages.length}: ${url}`);
+    io.to(browserId).emit('page-event', {
+      browserId,
+      type: 'manual-close',
+      url,
+      tabIndex: index,
+      timestamp: Date.now()
+    });
+    
+    res.json({ success: true });
+  } catch (error) {
+    console.error('关闭标签页失败:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// API: 新建标签页
+app.post('/api/browser/:browserId/tabs/new', async (req, res) => {
+  try {
+    const { browserId } = req.params;
+    const { url } = req.body;
+    const browserData = browsers.get(browserId);
+
+    if (!browserData) {
+      return res.status(404).json({ success: false, error: '浏览器不存在' });
+    }
+
+    const newPage = await browserData.context.newPage();
+    if (url) {
+      await newPage.goto(url, { waitUntil: 'networkidle', timeout: 30000 });
+    }
+    
+    browserData.page = newPage;
+    
+    const screenshotBuffer = await newPage.screenshot({ type: 'jpeg', quality: 80 });
+    const screenshot = screenshotBuffer.toString('base64');
+    const pageTitle = await newPage.title().catch(() => 'New Tab');
+
+    console.log(`[${browserId}] ➕ 新建标签页：${url || 'about:blank'} - ${pageTitle}`);
+    io.to(browserId).emit('page-event', {
+      browserId,
+      type: 'new-tab',
+      url: newPage.url(),
+      title: pageTitle,
+      timestamp: Date.now()
+    });
+    
+    res.json({ 
+      success: true,
+      url: newPage.url(),
+      title: pageTitle,
+      screenshot
+    });
+  } catch (error) {
+    console.error('新建标签页失败:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // API: 导航到 URL
 app.post('/api/browser/:browserId/navigate', async (req, res) => {
   try {
@@ -210,10 +425,26 @@ app.post('/api/browser/:browserId/navigate', async (req, res) => {
     const page = browserData.page;
     await page.goto(url, { waitUntil: 'networkidle', timeout: 30000 });
     
+    const title = await page.title();
+    
+    console.log(`[${browserId}] 🌐 导航到：${url} - ${title}`);
+    
+    // 发送页面事件
+    io.to(browserId).emit('page-event', {
+      browserId,
+      type: 'navigate',
+      url: page.url(),
+      title,
+      timestamp: Date.now()
+    });
+    
+    // 通知标签页更新
+    io.to(browserId).emit('tabs-updated', { browserId });
+    
     res.json({ 
       success: true,
       url: page.url(),
-      title: await page.title()
+      title
     });
   } catch (error) {
     console.error('导航失败:', error);
@@ -264,7 +495,94 @@ app.post('/api/browser/:browserId/evaluate', async (req, res) => {
   }
 });
 
-// API: 鼠标点击
+// API: 鼠标按下
+app.post('/api/browser/:browserId/mousedown', async (req, res) => {
+  try {
+    const { browserId } = req.params;
+    const { x, y, button = 'left' } = req.body;
+    const browserData = browsers.get(browserId);
+
+    if (!browserData) {
+      return res.status(404).json({ success: false, error: '浏览器不存在' });
+    }
+
+    const page = browserData.page;
+    await page.mouse.move(x, y);
+    await page.mouse.down({ button });
+    
+    res.json({ success: true });
+  } catch (error) {
+    console.error('鼠标按下失败:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// API: 鼠标移动
+app.post('/api/browser/:browserId/mousemove', async (req, res) => {
+  try {
+    const { browserId } = req.params;
+    const { x, y } = req.body;
+    const browserData = browsers.get(browserId);
+
+    if (!browserData) {
+      return res.status(404).json({ success: false, error: '浏览器不存在' });
+    }
+
+    const page = browserData.page;
+    await page.mouse.move(x, y);
+    
+    res.json({ success: true });
+  } catch (error) {
+    console.error('鼠标移动失败:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// API: 鼠标抬起
+app.post('/api/browser/:browserId/mouseup', async (req, res) => {
+  try {
+    const { browserId } = req.params;
+    const { x, y, button = 'left' } = req.body;
+    const browserData = browsers.get(browserId);
+
+    if (!browserData) {
+      return res.status(404).json({ success: false, error: '浏览器不存在' });
+    }
+
+    const page = browserData.page;
+    
+    // 先移动到终点位置
+    await page.mouse.move(x, y);
+    
+    // 释放鼠标左键
+    console.log(`[${browserId}] 执行 mouse.up(${button})`);
+    await page.mouse.up({ button });
+    
+    // 等待一下让选择生效
+    await page.waitForTimeout(100);
+    
+    // 获取选中的文本
+    const selectedText = await page.evaluate(() => {
+      const selection = window.getSelection();
+      const text = selection ? selection.toString() : '';
+      console.log('选中文本:', text);
+      return text;
+    });
+    
+    console.log(`[${browserId}] 鼠标抬起完成，选中 ${selectedText?.length || 0} 字符`);
+    
+    res.json({ 
+      success: true,
+      selectedText: selectedText || '',
+      selectedLength: selectedText ? selectedText.length : 0
+    });
+  } catch (error) {
+    console.error('鼠标抬起失败:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// API: 鼠标点击（单次点击）
 app.post('/api/browser/:browserId/click', async (req, res) => {
   try {
     const { browserId } = req.params;
@@ -313,6 +631,122 @@ app.post('/api/browser/:browserId/type', async (req, res) => {
     res.json({ success: true, screenshot });
   } catch (error) {
     console.error('键盘输入失败:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// API: 复制选中文本
+app.post('/api/browser/:browserId/copy', async (req, res) => {
+  try {
+    const { browserId } = req.params;
+    const browserData = browsers.get(browserId);
+
+    if (!browserData) {
+      return res.status(404).json({ success: false, error: '浏览器不存在' });
+    }
+
+    const page = browserData.page;
+    
+    // 执行复制操作（Ctrl+C）
+    await page.keyboard.press('Control+c');
+    await page.waitForTimeout(100);
+    
+    // 从浏览器上下文获取剪贴板内容
+    const clipboardText = await page.evaluate(() => {
+      return navigator.clipboard.readText();
+    }).catch(() => null);
+    
+    // 如果 evaluate 失败，尝试通过 selection 获取
+    const selectedText = clipboardText || await page.evaluate(() => {
+      const selection = window.getSelection();
+      return selection ? selection.toString() : '';
+    });
+    
+    console.log(`[${browserId}] 复制内容：${selectedText?.substring(0, 100)}${selectedText?.length > 100 ? '...' : ''}`);
+    res.json({ 
+      success: true, 
+      text: selectedText || '',
+      length: selectedText ? selectedText.length : 0
+    });
+  } catch (error) {
+    console.error('复制失败:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// API: 粘贴文本到浏览器
+app.post('/api/browser/:browserId/paste', async (req, res) => {
+  try {
+    const { browserId } = req.params;
+    const { text } = req.body;
+    const browserData = browsers.get(browserId);
+
+    if (!browserData) {
+      return res.status(404).json({ success: false, error: '浏览器不存在' });
+    }
+
+    if (!text) {
+      return res.status(400).json({ success: false, error: '粘贴内容为空' });
+    }
+
+    const page = browserData.page;
+    
+    // 将文本写入浏览器剪贴板
+    await page.evaluate((txt) => {
+      return navigator.clipboard.writeText(txt);
+    }, text);
+    
+    await page.waitForTimeout(100);
+    
+    // 执行粘贴操作（Ctrl+V）
+    await page.keyboard.press('Control+v');
+    
+    await page.waitForLoadState('networkidle', { timeout: 3000 }).catch(() => {});
+    
+    const screenshotBuffer = await page.screenshot({ type: 'png' });
+    const screenshot = screenshotBuffer.toString('base64');
+    
+    console.log(`[${browserId}] 粘贴内容：${text.substring(0, 100)}${text.length > 100 ? '...' : ''}`);
+    res.json({ 
+      success: true, 
+      screenshot,
+      length: text.length
+    });
+  } catch (error) {
+    console.error('粘贴失败:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// API: 全选文本
+app.post('/api/browser/:browserId/selectall', async (req, res) => {
+  try {
+    const { browserId } = req.params;
+    const browserData = browsers.get(browserId);
+
+    if (!browserData) {
+      return res.status(404).json({ success: false, error: '浏览器不存在' });
+    }
+
+    const page = browserData.page;
+    
+    // 执行全选操作（Ctrl+A）
+    await page.keyboard.press('Control+a');
+    await page.waitForTimeout(100);
+    
+    // 获取选中的文本
+    const selectedText = await page.evaluate(() => {
+      const selection = window.getSelection();
+      return selection ? selection.toString() : '';
+    });
+    
+    res.json({ 
+      success: true, 
+      text: selectedText || '',
+      length: selectedText ? selectedText.length : 0
+    });
+  } catch (error) {
+    console.error('全选失败:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
