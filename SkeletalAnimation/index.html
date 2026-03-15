@@ -411,6 +411,10 @@ let currentAnim = null;
 let currentCharIdx = -1;
 const loadedSet = new Set();
 
+// 拖拽偏移（相对于默认居中位置的增量）
+let dragOffsetX = 0;
+let dragOffsetY = 0;
+
 // ══════════════════════════════════════════════════════
 // Build character panel buttons
 // ══════════════════════════════════════════════════════
@@ -437,10 +441,111 @@ function repositionChar() {
   if (!currentArmatureDisplay || currentCharIdx < 0) return;
   const c = CHARS[currentCharIdx];
   const scaleBase = Math.min(window.innerWidth / 800, window.innerHeight / 800);
-  currentArmatureDisplay.x = window.innerWidth / 2;
-  currentArmatureDisplay.y = window.innerHeight / 2 + c.offsetY * scaleBase;
+  currentArmatureDisplay.x = window.innerWidth  / 2 + dragOffsetX;
+  currentArmatureDisplay.y = window.innerHeight / 2 + c.offsetY * scaleBase + dragOffsetY;
   currentArmatureDisplay.scale.set(c.scale * scaleBase);
 }
+
+// ══════════════════════════════════════════════════════
+// Drag to move character
+// ══════════════════════════════════════════════════════
+(function initDrag() {
+  const canvas = document.getElementById('mainCanvas');
+
+  let dragging  = false;
+  let startX    = 0;   // pointer down 时的页面坐标
+  let startY    = 0;
+  let baseOffX  = 0;   // pointer down 时 dragOffsetX 的快照
+  let baseOffY  = 0;
+
+  // 双击重置位置
+  canvas.addEventListener('dblclick', () => {
+    dragOffsetX = 0;
+    dragOffsetY = 0;
+    repositionChar();
+    resetHint();
+  });
+
+  // ── Mouse ──────────────────────────────────────────
+  canvas.addEventListener('mousedown', e => {
+    // 只响应左键，且排开 UI 遮挡区（面板区域）
+    if (e.button !== 0) return;
+    dragging = true;
+    startX = e.clientX;
+    startY = e.clientY;
+    baseOffX = dragOffsetX;
+    baseOffY = dragOffsetY;
+    canvas.style.cursor = 'grabbing';
+    e.preventDefault();
+  });
+  window.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    dragOffsetX = baseOffX + (e.clientX - startX);
+    dragOffsetY = baseOffY + (e.clientY - startY);
+    repositionChar();
+    if (window._dragHintFade) window._dragHintFade();
+  });
+  window.addEventListener('mouseup', () => {
+    if (!dragging) return;
+    dragging = false;
+    canvas.style.cursor = 'grab';
+  });
+
+  // ── Touch ──────────────────────────────────────────
+  canvas.addEventListener('touchstart', e => {
+    if (e.touches.length !== 1) return;
+    dragging = true;
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    baseOffX = dragOffsetX;
+    baseOffY = dragOffsetY;
+    e.preventDefault();
+  }, { passive: false });
+  canvas.addEventListener('touchmove', e => {
+    if (!dragging || e.touches.length !== 1) return;
+    dragOffsetX = baseOffX + (e.touches[0].clientX - startX);
+    dragOffsetY = baseOffY + (e.touches[0].clientY - startY);
+    repositionChar();
+    if (window._dragHintFade) window._dragHintFade();
+    e.preventDefault();
+  }, { passive: false });
+  canvas.addEventListener('touchend', () => { dragging = false; });
+
+  // 初始鼠标样式
+  canvas.style.cursor = 'grab';
+})();
+
+// 拖拽提示（首次显示，操作后淡出）
+(function showDragHint() {
+  const hint = document.createElement('div');
+  hint.id = 'drag-hint';
+  hint.textContent = '拖拽移动角色 · 双击复位';
+  hint.style.cssText = [
+    'position:absolute', 'bottom:70px', 'left:50%',
+    'transform:translateX(-50%)',
+    'background:rgba(0,0,0,0.45)', 'color:#c0c8ff',
+    'font-size:12px', 'letter-spacing:2px',
+    'padding:5px 18px', 'border-radius:20px',
+    'border:1px solid #5050a044',
+    'z-index:10', 'pointer-events:none',
+    'transition:opacity 1s ease',
+  ].join(';');
+  document.body.appendChild(hint);
+
+  // 3 秒后淡出，6 秒后移除
+  const fadeTimer = setTimeout(() => { hint.style.opacity = '0'; }, 3000);
+  const removeTimer = setTimeout(() => { hint.remove(); }, 6000);
+
+  // 一旦用户开始拖拽，立即淡出提示
+  window._dragHintFade = () => {
+    clearTimeout(fadeTimer);
+    clearTimeout(removeTimer);
+    hint.style.opacity = '0';
+    setTimeout(() => hint.remove(), 1000);
+    window._dragHintFade = null;
+  };
+})();
+function resetHint() { /* 双击复位后不需要额外操作 */ }
 
 // Load a single PNG as PIXI.BaseTexture, with cache & validation
 function loadBaseTexture(url) {
