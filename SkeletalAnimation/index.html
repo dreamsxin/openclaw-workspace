@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>骨骼动画演示 - 众神殿</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: radial-gradient(ellipse at center, #1a0a2e 0%, #0d0018 60%, #000005 100%);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 100vh; color: #fff; font-family: 'Microsoft YaHei', sans-serif; overflow: hidden;
+}
+canvas { display: block; }
+.particles-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+#mainCanvas { position: absolute; top: 0; left: 0; z-index: 2; }
+
+/* ── 顶部标题 ── */
+#title {
+  position: absolute; top: 14px; left: 50%; transform: translateX(-50%);
+  font-size: 22px; letter-spacing: 6px; color: #f0d080;
+  text-shadow: 0 0 18px #f0a020, 0 0 40px #ff8800aa;
+  z-index: 10; white-space: nowrap; pointer-events: none;
+}
+
+/* ── 左侧角色面板 ── */
+#char-panel {
+  position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+  z-index: 10; display: flex; flex-direction: column; gap: 5px;
+  max-height: 80vh; overflow-y: auto;
+  scrollbar-width: thin; scrollbar-color: #604090 transparent;
+}
+#char-panel::-webkit-scrollbar { width: 4px; }
+#char-panel::-webkit-scrollbar-thumb { background: #604090; border-radius: 4px; }
+
+.char-btn {
+  padding: 7px 14px; min-width: 96px;
+  border: 1px solid #6060c088; background: rgba(60,40,120,0.25);
+  color: #b0b8ff; border-radius: 8px; cursor: pointer; font-size: 12px;
+  transition: all .18s; user-select: none; letter-spacing: 1px; text-align: center;
+  white-space: nowrap;
+}
+.char-btn:hover { background: rgba(100,80,200,0.38); border-color: #9090ffaa; }
+.char-btn.active {
+  background: rgba(100,70,220,0.55); color: #dde8ff;
+  border-color: #a0a0ff; box-shadow: 0 0 12px #7060ffaa;
+}
+
+/* ── 底部动画按钮 ── */
+#anim-panel {
+  position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 8px; align-items: center; z-index: 10;
+  flex-wrap: wrap; justify-content: center; max-width: 80vw;
+}
+.anim-btn {
+  padding: 6px 16px; border: 1px solid #f0c04066; background: rgba(240,160,0,0.1);
+  color: #f0c040; border-radius: 16px; cursor: pointer; font-size: 12px;
+  letter-spacing: 1px; transition: all .18s; user-select: none;
+}
+.anim-btn:hover { background: rgba(240,160,0,0.25); box-shadow: 0 0 8px #f0a020aa; }
+.anim-btn.active { background: rgba(240,160,0,0.38); box-shadow: 0 0 14px #f0a020; color: #fffacc; }
+
+/* ── 状态栏 ── */
+#status {
+  position: absolute; bottom: 56px; left: 50%; transform: translateX(-50%);
+  font-size: 11px; color: #ffffff44; letter-spacing: 1px; z-index: 10; text-align: center;
+  max-width: 70vw; pointer-events: none;
+}
+
+/* ── 加载提示 ── */
+#loading {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  font-size: 16px; color: #f0d080; letter-spacing: 3px; z-index: 20;
+  text-shadow: 0 0 20px #f0a020; display: none;
+}
+
+/* ── 加载进度条 ── */
+#progress-bar {
+  position: absolute; bottom: 0; left: 0; height: 2px;
+  background: linear-gradient(90deg, #8060ff, #f0a020);
+  z-index: 30; transition: width .3s; width: 0;
+}
+</style>
+</head>
+<body>
+
+<canvas class="particles-canvas" id="particles"></canvas>
+<canvas id="mainCanvas"></canvas>
+
+<div id="title">✦ 众神殿 · 骨骼动画 ✦</div>
+<div id="loading">加载中...</div>
+<div id="progress-bar"></div>
+
+<div id="char-panel"></div>
+<div id="anim-panel"></div>
+<div id="status"></div>
+
+<!-- PIXI 5.x + pixi-dragonbones 5.7 -->
+<script src="npm_libs/node_modules/pixi.js/dist/pixi.min.js"></script>
+<script src="npm_libs/node_modules/pixi-dragonbones/dragonBones.min.js"></script>
+
+<script>
+// ══════════════════════════════════════════════════════
+// Helper: get or create a full-atlas PIXI.Texture from a BaseTexture.
+// Cached on bt._fullTex to avoid recreating every frame.
+// ══════════════════════════════════════════════════════
+function getFullTex(bt) {
+  if (!bt) return PIXI.Texture.WHITE;
+  if (!bt._fullTex) {
+    bt._fullTex = new PIXI.Texture(bt,
+      new PIXI.Rectangle(0, 0, bt.width  || 1, bt.height || 1),
+      new PIXI.Rectangle(0, 0, bt.width  || 1, bt.height || 1),
+      new PIXI.Rectangle(0, 0, bt.width  || 1, bt.height || 1),
+      0
+    );
+    bt._fullTex.valid = bt.valid;   // copy initial valid flag
+    // Keep in sync if bt loads later
+    bt.on('loaded', () => {
+      bt._fullTex.frame = new PIXI.Rectangle(0, 0, bt.width, bt.height);
+      bt._fullTex.orig  = new PIXI.Rectangle(0, 0, bt.width, bt.height);
+      bt._fullTex.trim  = null;
+      bt._fullTex.valid = true;
+      bt._fullTex.update();
+    });
+  }
+  return bt._fullTex;
+}
+
+// ══════════════════════════════════════════════════════
+// Patch 1 — Replace _buildSlot to use PIXI5 SimpleMesh correctly.
+//
+// DragonBones _buildSlot does:
+//   new PIXI.mesh.Mesh(null, null, null, null, DRAW_MODES.TRIANGLES)
+// In PIXI5 this creates a SimpleMesh with null/EMPTY texture whose
+// internal _uvs / baseTexture can be null, causing render crashes.
+// We replace the mesh with a properly initialized SimpleMesh.
+//
+// Also replaces _updateFrame to swap mesh.texture → full-atlas BaseTexture
+// wrapper so DragonBones' full-atlas UVs are not remapped a second time
+// by PIXI5 MeshMaterial._uvTransform.
+// ══════════════════════════════════════════════════════
+(function patchDragonBonesPixi5() {
+  const FactoryProto = dragonBones.PixiFactory.prototype;
+  const SlotProto    = dragonBones.PixiSlot.prototype;
+
+  // ── Patch _buildSlot ─────────────────────────────
+  FactoryProto._buildSlot = function(_dataPackage, slotData, armature) {
+    const slot = dragonBones.BaseObject.borrowObject(dragonBones.PixiSlot);
+    // Use PIXI.Texture.WHITE as placeholder so baseTexture is never null
+    const meshDisplay = new PIXI.SimpleMesh(PIXI.Texture.WHITE);
+    slot.init(slotData, armature, new PIXI.Sprite(PIXI.Texture.WHITE), meshDisplay);
+    return slot;
+  };
+
+  // ── Patch _updateFrame ────────────────────────────
+  // After the original runs the mesh has: texture = subTexture (region of atlas).
+  // PIXI5's BatchPlugin reads texture.baseTexture during render — if null → crash.
+  // Also PIXI5 would re-transform UVs through subTexture.frame, doubling the offset.
+  // Solution: replace mesh.texture with a full-size wrapper of the same BaseTexture.
+  const _origUpdateFrame = SlotProto._updateFrame;
+  SlotProto._updateFrame = function() {
+    _origUpdateFrame.call(this);
+
+    const d = this._renderDisplay;
+    if (!(d instanceof PIXI.SimpleMesh)) return;
+
+    const tex = d.texture;
+    if (!tex) {
+      // slot hidden — give it a safe placeholder so render doesn't crash
+      d.texture = PIXI.Texture.WHITE;
+      d.visible = false;
+      return;
+    }
+
+    // tex is the sub-Texture created by DragonBones' renderTexture setter.
+    // Its baseTexture must be valid for PIXI5 to render it.
+    const bt = tex.baseTexture;
+    if (!bt) {
+      d.texture = PIXI.Texture.WHITE;
+      return;
+    }
+
+    // Replace with full-atlas wrapper: UV coords stay as-is (full-atlas 0..1),
+    // and PIXI5 will not apply any sub-texture offset transform.
+    d.texture = getFullTex(bt);
+  };
+})();
+
+// ══════════════════════════════════════════════════════
+// Patch 2 — PIXI4 mesh property shim for PIXI5 SimpleMesh
+// DragonBones writes to .uvs / .indices / .dirty / .indexDirty
+// Wire each to update the underlying geometry buffers.
+// ══════════════════════════════════════════════════════
+(function patchSimpleMesh() {
+  const proto = PIXI.SimpleMesh.prototype;
+  function defProp(name, getBuf) {
+    const _store = '_db_' + name;
+    Object.defineProperty(proto, name, {
+      get() { return this[_store]; },
+      set(v) {
+        this[_store] = v;
+        if (!v || !this.geometry) return;
+        const buf = getBuf(this.geometry);
+        if (!buf) return;
+        if (v instanceof Float32Array || v instanceof Uint16Array) buf.data = v;
+        buf.update();
+      },
+      configurable: true, enumerable: false
+    });
+  }
+  defProp('uvs',        g => g.buffers[1]);
+  defProp('indices',    g => g.indexBuffer);
+  defProp('dirty',      g => g.buffers[0]);
+  defProp('indexDirty', g => g.indexBuffer);
+})();
+</script>
+
+<script>
+// ══════════════════════════════════════════════════════
+// Particle background
+// ══════════════════════════════════════════════════════
+const pCanvas = document.getElementById('particles');
+const pCtx    = pCanvas.getContext('2d');
+const stars   = [];
+function resizeAll() {
+  pCanvas.width  = window.innerWidth;
+  pCanvas.height = window.innerHeight;
+}
+resizeAll();
+window.addEventListener('resize', () => {
+  resizeAll();
+  if (app) app.renderer.resize(window.innerWidth, window.innerHeight);
+  repositionChar();
+});
+for (let i = 0; i < 160; i++) {
+  stars.push({
+    x: Math.random() * 2000, y: Math.random() * 1200,
+    r: Math.random() * 1.8 + 0.2,
+    a: Math.random(), da: (Math.random() - 0.5) * 0.007,
+    dx: (Math.random() - 0.5) * 0.15, dy: Math.random() * 0.08 + 0.02,
+    color: Math.random() > 0.5 ? [200,180,255] : [255,240,200]
+  });
+}
+(function animP() {
+  const W = pCanvas.width, H = pCanvas.height;
+  pCtx.clearRect(0, 0, W, H);
+  for (const s of stars) {
+    s.a += s.da;
+    if (s.a > 1) { s.da = -Math.abs(s.da); s.a = 1; }
+    if (s.a < 0) { s.da =  Math.abs(s.da); s.a = 0; }
+    s.x += s.dx; s.y += s.dy;
+    if (s.y > H) { s.y = 0; s.x = Math.random() * W; }
+    if (s.x < 0)  s.x = W;
+    if (s.x > W)  s.x = 0;
+    pCtx.beginPath();
+    pCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    const [r,g,b] = s.color;
+    pCtx.fillStyle = `rgba(${r},${g},${b},${s.a * 0.6})`;
+    pCtx.fill();
+  }
+  requestAnimationFrame(animP);
+})();
+
+// ══════════════════════════════════════════════════════
+// PIXI Application
+// ══════════════════════════════════════════════════════
+const app = new PIXI.Application({
+  view: document.getElementById('mainCanvas'),
+  width: window.innerWidth, height: window.innerHeight,
+  transparent: true, antialias: true
+});
+const factory = dragonBones.PixiFactory.factory;
+
+// ══════════════════════════════════════════════════════
+// Character definitions
+// Each entry with multiple texAtlas entries = multi-atlas character
+// ══════════════════════════════════════════════════════
+const CHARS = [
+  {
+    label: '光明神使',
+    ske: 'assets/guangmingnvsheng_1_ske_17694.dbbin',
+    texAtlas: [
+      { json: 'assets/guangmingnvsheng_1_tex_17694.txt', png: 'assets/guangmingnvsheng_1_tex_20952.png' }
+    ],
+    dbName: 'guangmingnvsheng_1', armName: 'Armature',
+    scale: 0.55, offsetY: 220
+  },
+  {
+    label: '光明女神',
+    ske: 'assets/guangmingnvsheng_ske_23117.dbbin',
+    texAtlas: [
+      { json: 'assets/guangmingnvsheng_tex_23117.txt', png: 'assets/guangmingnvsheng_tex_23119.png' }
+    ],
+    dbName: '光明女神_h', armName: 'Armature',
+    scale: 0.45, offsetY: 240
+  },
+  {
+    label: '疾风剑客',
+    ske: 'assets/jifengzhiying_ske_21234.dbbin',
+    texAtlas: [
+      { json: 'assets/jifengzhiying_tex_21234.txt', png: 'assets/jifengzhiying_tex_21235.png' }
+    ],
+    dbName: 'jifengzhiying_h', armName: 'Armature',
+    scale: 0.5, offsetY: 230
+  },
+  {
+    label: '守魂女神',
+    ske: 'assets/shouhunvshen_ske_0_21234.dbbin',
+    texAtlas: [
+      { json: 'assets/shouhunvshen_tex_0_21234.txt', png: 'assets/shouhunvshen_tex_0_21021.png' },
+      { json: 'assets/shouhunvshen_tex_1_21234.txt', png: 'assets/shouhunvshen_tex_1_21235.png' }
+    ],
+    dbName: 'shouhunvshen_h', armName: 'Armature',
+    scale: 0.5, offsetY: 230
+  },
+  {
+    label: '神秘女神',
+    ske: 'assets/shenminvshen_ske_21238.dbbin',
+    texAtlas: [
+      { json: 'assets/shenminvshen_tex_21238.txt', png: 'assets/shenminvshen_tex_20781.png' }
+    ],
+    dbName: 'shenminvshen_h', armName: 'Armature',
+    scale: 0.5, offsetY: 220
+  },
+  {
+    label: '小花仙',
+    ske: 'assets/xiaohuaxian_ske_21234.dbbin',
+    texAtlas: [
+      { json: 'assets/xiaohuaxian_tex_21234.txt', png: 'assets/xiaohuaxian_tex_21235.png' }
+    ],
+    dbName: 'xiaohuaxian_h', armName: 'Armature',
+    scale: 0.5, offsetY: 220
+  },
+  {
+    label: '银龙公主',
+    ske: 'assets/yinlonggongzhu_ske_21234.dbbin',
+    texAtlas: [
+      { json: 'assets/yinlonggongzhu_tex_21234.txt', png: 'assets/yinlonggongzhu_tex_21235.png' }
+    ],
+    dbName: 'yinlongnvshen', armName: 'Armature',
+    scale: 0.5, offsetY: 220
+  },
+  {
+    label: '月亮女神',
+    ske: 'assets/yueliangnvshen_ske_0_21249.dbbin',
+    texAtlas: [
+      { json: 'assets/yueliangnvshen_tex_0_21234.txt', png: 'assets/yueliangnvshen_tex_0_20975.png' },
+      { json: 'assets/yueliangnvshen_tex_1_21249.json', png: 'assets/yueliangnvshen_tex_1_20975.png' }
+    ],
+    dbName: 'yueliangnvshen_h', armName: 'Armature',
+    scale: 0.5, offsetY: 230
+  },
+  {
+    label: '战争女神',
+    ske: 'assets/zhanzhengnvshen_ske_0_23083.dbbin',
+    texAtlas: [
+      { json: 'assets/zhanzhengnvshen_tex_0_23083.txt', png: 'assets/zhanzhengnvshen_tex_0_23119.png' },
+      { json: 'assets/zhanzhengnvshen_tex_1_23083.txt', png: 'assets/zhanzhengnvshen_tex_1_23086.png' },
+      { json: 'assets/zhanzhengnvshen_tex_2_23083.txt', png: 'assets/zhanzhengnvshen_tex_2_23083.png' }
+    ],
+    dbName: '战争女神_h', armName: 'Armature',
+    scale: 0.48, offsetY: 235
+  },
+  {
+    label: '血腥之雨',
+    ske: 'assets/xuexingzhiyu_ske_0_24124.dbbin',
+    texAtlas: [
+      { json: 'assets/xuexingzhiyu_tex_0_24124.txt', png: 'assets/xuexingzhiyu_tex_0_24125.png' },
+      { json: 'assets/xuexingzhiyu_tex_1_24124.txt', png: 'assets/xuexingzhiyu_tex_1_24125.png' }
+    ],
+    dbName: '血腥之雨_h01', armName: 'Armature',
+    scale: 0.48, offsetY: 230
+  },
+  {
+    label: '青春女神',
+    ske: 'assets/qingchunnvshen_ske_0_24302.dbbin',
+    texAtlas: [
+      { json: 'assets/qingchunnvshen_tex_0_24302.txt', png: 'assets/qingchunnvshen_tex_0_24300.png' },
+      { json: 'assets/qingchunnvshen_tex_1_24302.txt', png: 'assets/qingchunnvshen_tex_1_24302.png' }
+    ],
+    dbName: '青春女神_h', armName: 'Armature',
+    scale: 0.48, offsetY: 230
+  },
+  {
+    label: '梅蒂亚',
+    ske: 'assets/meidiya_ske_0_21234.dbbin',
+    texAtlas: [
+      { json: 'assets/meidiya_tex_0_21234.txt', png: 'assets/meidiya_tex_0_20952.png' },
+      { json: 'assets/meidiya_tex_1_21234.txt', png: 'assets/meidiya_tex_1_20952.png' }
+    ],
+    dbName: 'meidiya_h', armName: 'Armature',
+    scale: 0.5, offsetY: 225
+  },
+  {
+    label: '暴走龙女',
+    ske: 'assets/baozoulongnv_ske_0_21234.dbbin',
+    texAtlas: [
+      { json: 'assets/baozoulongnv_tex_0_21234.txt', png: 'assets/baozoulongnv_tex_0_21235.png' },
+      { json: 'assets/baozoulongnv_tex_1_21234.txt', png: 'assets/baozoulongnv_tex_1_21235.png' }
+    ],
+    dbName: 'baozoulongnv_h', armName: 'Armature',
+    scale: 0.48, offsetY: 230
+  },
+];
+
+// ══════════════════════════════════════════════════════
+// State
+// ══════════════════════════════════════════════════════
+let currentArmatureDisplay = null;
+let currentAnim = null;
+let currentCharIdx = -1;
+const loadedSet = new Set();
+
+// ══════════════════════════════════════════════════════
+// Build character panel buttons
+// ══════════════════════════════════════════════════════
+const charPanel = document.getElementById('char-panel');
+CHARS.forEach((c, i) => {
+  const btn = document.createElement('button');
+  btn.className = 'char-btn';
+  btn.id = 'cbtn-' + i;
+  btn.textContent = c.label;
+  btn.onclick = () => switchChar(i);
+  charPanel.appendChild(btn);
+});
+
+// ══════════════════════════════════════════════════════
+// Helpers
+// ══════════════════════════════════════════════════════
+function setProgress(v) { // 0..1
+  document.getElementById('progress-bar').style.width = (v * 100) + '%';
+}
+function setStatus(msg) {
+  document.getElementById('status').textContent = msg;
+}
+function repositionChar() {
+  if (!currentArmatureDisplay || currentCharIdx < 0) return;
+  const c = CHARS[currentCharIdx];
+  const scaleBase = Math.min(window.innerWidth / 800, window.innerHeight / 800);
+  currentArmatureDisplay.x = window.innerWidth / 2;
+  currentArmatureDisplay.y = window.innerHeight / 2 + c.offsetY * scaleBase;
+  currentArmatureDisplay.scale.set(c.scale * scaleBase);
+}
+
+// Load a single PNG as PIXI.BaseTexture, with cache & validation
+function loadBaseTexture(url) {
+  return new Promise((resolve, reject) => {
+    // If already cached as a full Texture, grab its baseTexture
+    const cached = PIXI.utils.TextureCache[url];
+    if (cached) {
+      const bt = cached.baseTexture || cached;
+      if (bt && bt.valid) return resolve(bt);
+      // Cached but not yet valid — wait for it
+      if (bt) {
+        if (bt.valid) return resolve(bt);
+        bt.on('loaded', () => resolve(bt));
+        bt.on('error',  () => reject(new Error('BaseTexture error (cached): ' + url)));
+        return;
+      }
+    }
+
+    // Use PIXI.BaseTexture directly — avoids PIXI.Loader URL-conflict issues
+    const bt = PIXI.BaseTexture.from(url);
+    if (bt.valid) {
+      // store a wrapper so cache key exists for next time
+      if (!PIXI.utils.TextureCache[url]) PIXI.utils.TextureCache[url] = new PIXI.Texture(bt);
+      return resolve(bt);
+    }
+    bt.on('loaded', () => {
+      if (!PIXI.utils.TextureCache[url]) PIXI.utils.TextureCache[url] = new PIXI.Texture(bt);
+      resolve(bt);
+    });
+    bt.on('error',  () => reject(new Error('BaseTexture load failed: ' + url)));
+  });
+}
+
+// Load all resources for a character (supports multi-atlas)
+async function loadResources(c) {
+  const skeBuffer = await fetch(c.ske).then(r => {
+    if (!r.ok) throw new Error('骨骼文件加载失败: ' + c.ske + ' (' + r.status + ')');
+    return r.arrayBuffer();
+  });
+
+  const atlases = [];
+  for (let i = 0; i < c.texAtlas.length; i++) {
+    setProgress(0.2 + 0.6 * (i / c.texAtlas.length));
+    const ta = c.texAtlas[i];
+    const [jsonText, bt] = await Promise.all([
+      fetch(ta.json).then(r => {
+        if (!r.ok) throw new Error('纹理JSON加载失败: ' + ta.json + ' (' + r.status + ')');
+        return r.text();
+      }),
+      loadBaseTexture(ta.png)
+    ]);
+    atlases.push({ json: JSON.parse(jsonText), bt });
+  }
+  return { skeBuffer, atlases };
+}
+
+// ══════════════════════════════════════════════════════
+// Switch character
+// ══════════════════════════════════════════════════════
+let switching = false;
+async function switchChar(idx) {
+  if (idx === currentCharIdx || switching) return;
+  switching = true;
+
+  // Update button states
+  document.querySelectorAll('.char-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
+
+  const loadEl = document.getElementById('loading');
+  loadEl.style.display = 'block';
+  loadEl.textContent = '加载中…';
+  setProgress(0.05);
+
+  const c = CHARS[idx];
+
+  if (!loadedSet.has(idx)) {
+    try {
+      setProgress(0.1);
+      const { skeBuffer, atlases } = await loadResources(c);
+
+      // Parse skeleton (dbbin)
+      factory.parseDragonBonesData(skeBuffer, c.dbName);
+
+      // Parse each texture atlas — bt is already a BaseTexture
+      for (const { json, bt } of atlases) {
+        factory.parseTextureAtlasData(json, bt, c.dbName);
+      }
+
+      loadedSet.add(idx);
+      setProgress(0.95);
+    } catch(e) {
+      loadEl.textContent = '加载失败: ' + e.message;
+      console.error('[DragonBones] load error:', e);
+      // Clean up any partially-registered data so it doesn't poison future loads
+      try { factory.removeDragonBonesData(c.dbName); } catch(_) {}
+      try { factory.removeTextureAtlasData(c.dbName); } catch(_) {}
+      setProgress(0);
+      switching = false;
+      return;
+    }
+  }
+
+  showChar(idx);
+  setProgress(1);
+  setTimeout(() => setProgress(0), 600);
+  switching = false;
+}
+
+// ══════════════════════════════════════════════════════
+// Show character on stage
+// ══════════════════════════════════════════════════════
+function showChar(idx) {
+  // Remove previous
+  if (currentArmatureDisplay) {
+    app.stage.removeChild(currentArmatureDisplay);
+    currentArmatureDisplay.dispose();
+    currentArmatureDisplay = null;
+    currentAnim = null;
+  }
+
+  currentCharIdx = idx;
+  const c = CHARS[idx];
+
+  currentArmatureDisplay = factory.buildArmatureDisplay(c.armName, c.dbName);
+  if (!currentArmatureDisplay) {
+    document.getElementById('loading').textContent = '骨骼构建失败';
+    return;
+  }
+
+  currentAnim = currentArmatureDisplay.animation;
+  repositionChar();
+  app.stage.addChild(currentArmatureDisplay);
+
+  // Build animation buttons dynamically
+  buildAnimButtons(currentAnim.animationNames);
+
+  // Play first animation
+  const firstAnim = currentAnim.animationNames[0] || 'idle';
+  playAnim(firstAnim);
+
+  document.getElementById('loading').style.display = 'none';
+  setStatus(c.label + '  |  ' + currentAnim.animationNames.join('  ·  '));
+}
+
+// ══════════════════════════════════════════════════════
+// Animation controls
+// ══════════════════════════════════════════════════════
+function buildAnimButtons(names) {
+  const panel = document.getElementById('anim-panel');
+  panel.innerHTML = '';
+  names.forEach(name => {
+    const btn = document.createElement('button');
+    btn.className = 'anim-btn';
+    btn.dataset.anim = name;
+    btn.textContent = name;
+    btn.onclick = () => playAnim(name);
+    panel.appendChild(btn);
+  });
+}
+
+function playAnim(name) {
+  if (!currentAnim) return;
+  try {
+    currentAnim.play(name, 0);
+    document.querySelectorAll('.anim-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.anim === name);
+    });
+  } catch(e) { console.warn('Anim not found:', name, e); }
+}
+
+// ══════════════════════════════════════════════════════
+// Boot — load first character
+// ══════════════════════════════════════════════════════
+switchChar(0);
+</script>
+</body>
+</html>
