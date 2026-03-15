@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>太初演义 · 洪荒神话卡牌RPG</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="app">
+  <!-- 背景层 -->
+  <div class="bg-layer stars"></div>
+  <div class="bg-layer clouds"></div>
+
+  <!-- 顶部导航 -->
+  <div id="top-nav">
+    <div class="nav-logo">
+      太初演义
+      <span>TAICHU YANYI · 洪荒神话</span>
+    </div>
+
+    <div class="nav-tabs">
+      <button class="nav-tab active" data-page="home">主界面</button>
+      <button class="nav-tab" data-page="battle">出征</button>
+      <button class="nav-tab" data-page="team">编队</button>
+      <button class="nav-tab" data-page="cultivate">修炼</button>
+      <button class="nav-tab" data-page="gacha">神殿抽签</button>
+      <button class="nav-tab" data-page="codex">典籍</button>
+    </div>
+
+    <div class="nav-currency">
+      <div class="currency-item">
+        <span class="currency-icon">💎</span>
+        <span class="currency-value" id="currency-lingshi">3000</span>
+        <span style="font-size:10px;color:#555">灵石</span>
+      </div>
+      <div class="currency-item">
+        <span class="currency-icon">🔮</span>
+        <span class="currency-value" id="currency-bututian">30</span>
+        <span style="font-size:10px;color:#555">补天石</span>
+      </div>
+      <div class="currency-item">
+        <span class="currency-icon">✨</span>
+        <span class="currency-value" id="currency-cultivate-soul">500</span>
+        <span style="font-size:10px;color:#555">修炼魂</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 主内容 -->
+  <div id="main-content">
+
+    <!-- ====================================================
+         主界面
+         ==================================================== -->
+    <div class="page active" id="page-home">
+      <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;overflow-y:auto;padding:20px 0">
+        
+        <!-- 装饰光环 -->
+        <div style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:500px;height:500px;border-radius:50%;background:radial-gradient(ellipse, rgba(201,168,76,0.06) 0%, transparent 70%);pointer-events:none"></div>
+        <div style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:300px;height:300px;border-radius:50%;border:1px solid rgba(201,168,76,0.1);animation:titlePulse 4s ease-in-out infinite;pointer-events:none"></div>
+
+        <!-- 标题区 -->
+        <div class="home-title-area">
+          <div class="home-title">太初演义</div>
+          <div class="home-subtitle">天地初开 · 万神演义 · 执命者来归</div>
+        </div>
+
+        <!-- 玩家信息卡片 -->
+        <div id="player-info-card" style="background:rgba(0,0,0,0.55);border:1px solid rgba(201,168,76,0.3);border-radius:14px;padding:16px 28px;margin-bottom:20px;min-width:360px;max-width:500px;width:90%;position:relative;z-index:1">
+          <div style="display:flex;align-items:center;gap:16px">
+            <div id="player-avatar" style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,rgba(201,168,76,0.3),rgba(100,80,30,0.3));border:2px solid rgba(201,168,76,0.5);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0">⚔️</div>
+            <div style="flex:1">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px">
+                <span id="player-name-display" style="font-size:18px;font-weight:700;color:#f0c040;letter-spacing:2px">执命人</span>
+                <span id="player-title-display" style="font-size:11px;color:#888;background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.2);border-radius:4px;padding:1px 6px">无名执命人</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px">
+                <span style="font-size:12px;color:#888">执命等级</span>
+                <span id="player-level-display" style="font-size:16px;font-weight:700;color:#c9a84c">Lv.1</span>
+              </div>
+              <!-- 经验条 -->
+              <div style="margin-top:6px;background:#111;border-radius:3px;height:4px;overflow:hidden;width:100%">
+                <div id="player-exp-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#c9a84c,#f0c040);transition:width 0.5s"></div>
+              </div>
+              <div id="player-exp-text" style="font-size:9px;color:#444;margin-top:2px">0 / 100</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 主按钮 -->
+        <div class="home-buttons" style="margin-bottom:30px;position:relative;z-index:1">
+          <button class="btn-main primary" onclick="navigateTo('battle')">⚔️ 出征应战</button>
+          <button class="btn-main" onclick="navigateTo('gacha')">🎴 神殿抽签</button>
+          <button class="btn-main" onclick="navigateTo('cultivate')">✨ 修炼养成</button>
+          <button class="btn-main" onclick="navigateTo('team')">👥 编制阵容</button>
+          <button class="btn-main" onclick="showTaskPanel()" style="background:linear-gradient(135deg,rgba(46,204,113,0.2),rgba(39,174,96,0.3));border-color:rgba(46,204,113,0.4);color:#a8f0c0">📋 每日任务</button>
+        </div>
+
+        <!-- 属性体系说明 -->
+        <div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;max-width:900px;position:relative;z-index:1">
+          <div style="background:rgba(155,89,182,0.1);border:1px solid rgba(155,89,182,0.3);border-radius:10px;padding:14px 18px;min-width:140px;text-align:center">
+            <div style="font-size:24px">🌌</div>
+            <div style="color:#c39fe0;font-size:14px;font-weight:700;letter-spacing:2px;margin:4px 0">无 极</div>
+            <div style="font-size:10px;color:#8a70a0;line-height:1.5">大道本源<br>无视克制关系<br>伤害恒定必中</div>
+          </div>
+          <div style="background:linear-gradient(135deg,rgba(74,63,107,0.2),rgba(180,120,20,0.2));border:1px solid rgba(150,100,50,0.3);border-radius:10px;padding:14px 18px;min-width:140px;text-align:center">
+            <div style="font-size:24px">☯️</div>
+            <div style="color:#d4a830;font-size:14px;font-weight:700;letter-spacing:2px;margin:4px 0">阴 阳</div>
+            <div style="font-size:10px;color:#9a8060;line-height:1.5">两仪之力<br>互克+30%<br>压制五行+15%</div>
+          </div>
+          <div style="background:rgba(80,40,10,0.2);border:1px solid rgba(200,120,30,0.25);border-radius:10px;padding:14px 18px;min-width:200px;text-align:center">
+            <div style="display:flex;gap:6px;justify-content:center;font-size:20px">⚡🌿💧🔥🏔️</div>
+            <div style="color:#e8a060;font-size:14px;font-weight:700;letter-spacing:2px;margin:4px 0">五 行</div>
+            <div style="font-size:10px;color:#907050;line-height:1.5">金→木→土→水→火→金<br>循环克制+25%<br>克制触发驱散效果</div>
+          </div>
+        </div>
+
+        <!-- 克制关系图 -->
+        <div style="margin-top:20px;background:rgba(0,0,0,0.4);border:1px solid rgba(201,168,76,0.15);border-radius:12px;padding:16px 24px;max-width:860px;width:90%;position:relative;z-index:1">
+          <div style="font-size:13px;color:#c9a84c;letter-spacing:4px;margin-bottom:10px;text-align:center">克制关系总览</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;font-size:12px">
+            <span style="background:rgba(231,76,60,0.1);border:1px solid rgba(231,76,60,0.3);border-radius:6px;padding:4px 12px;color:#e74c3c">阴→阳 | +30%沉默</span>
+            <span style="background:rgba(243,156,18,0.1);border:1px solid rgba(243,156,18,0.3);border-radius:6px;padding:4px 12px;color:#f39c12">阳→阴 | +30%眩晕</span>
+            <span style="background:rgba(52,152,219,0.1);border:1px solid rgba(52,152,219,0.3);border-radius:6px;padding:4px 12px;color:#3498db">阴阳→五行 | +15%真实伤害</span>
+            <span style="background:rgba(46,204,113,0.1);border:1px solid rgba(46,204,113,0.3);border-radius:6px;padding:4px 12px;color:#2ecc71">五行循环克制 | +25%驱散</span>
+            <span style="background:rgba(155,89,182,0.1);border:1px solid rgba(155,89,182,0.3);border-radius:6px;padding:4px 12px;color:#9b59b6">无极→任意 | 稳定伤害必中</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ====================================================
+         战斗界面
+         ==================================================== -->
+    <div class="page" id="page-battle">
+      <div class="battle-bg"></div>
+      
+      <!-- 战场顶部信息 -->
+      <div style="position:relative;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:8px 20px;background:rgba(0,0,0,0.5);border-bottom:1px solid rgba(201,168,76,0.15)">
+        <div style="font-size:13px;color:#888">混沌遗迹 · 第三层</div>
+        <div id="round-display" style="font-size:14px;color:#c9a84c;letter-spacing:3px">第 1 回合</div>
+        <div style="font-size:12px;color:#555">行动顺序由速度决定</div>
+      </div>
+
+      <!-- 双方战力对比条 -->
+      <div id="battle-stats-bar" style="position:relative;z-index:10;display:flex;align-items:center;gap:8px;padding:5px 16px;background:rgba(0,0,0,0.4);border-bottom:1px solid rgba(255,255,255,0.04)">
+        <!-- 动态渲染 -->
+      </div>
+
+      <div class="battle-layout">
+        
+        <!-- 敌方 -->
+        <div style="position:relative;z-index:10">
+          <div style="text-align:center;font-size:11px;color:#663333;letter-spacing:4px;margin-bottom:6px">── 敌方阵营 ──</div>
+          <div class="enemy-zone" id="enemy-zone"></div>
+        </div>
+
+        <!-- 中间：战斗日志 + 操控按钮 -->
+        <div class="battle-mid">
+          <div class="battle-log-area" id="battle-log">
+            <div class="log-entry system">战鼓擂动，大战将至...</div>
+          </div>
+          <div class="battle-controls">
+            <button class="btn-battle" id="btn-skip" onclick="runEnemyTurn()">跳过我方</button>
+            <button class="btn-battle blue" onclick="restartBattle()">重新战斗</button>
+            <button class="btn-battle" style="background:linear-gradient(135deg,#1a4a1a,#2a7a2a);border-color:rgba(50,200,80,0.4);color:#a0ffa0" onclick="navigateTo('team')">换阵容</button>
+          </div>
+        </div>
+
+        <!-- 我方 -->
+        <div style="position:relative;z-index:10">
+          <div style="text-align:center;font-size:11px;color:#336633;letter-spacing:4px;margin-bottom:6px">── 我方阵营 ──</div>
+          <div class="player-zone" id="player-zone"></div>
+        </div>
+      </div>
+
+      <!-- 技能栏 -->
+      <div style="position:absolute;bottom:16px;left:50%;transform:translateX(-50%);z-index:20">
+        <div style="text-align:center;font-size:10px;color:#555;letter-spacing:3px;margin-bottom:6px">选中英雄后点击敌方攻击，或使用下方技能</div>
+        <div class="skills-bar" id="skills-bar">
+          <div style="color:#555;font-size:13px;letter-spacing:2px">选择英雄后可使用技能</div>
+        </div>
+      </div>
+
+      <!-- 战斗结果覆盖层 -->
+      <div id="battle-result-overlay" style="position:absolute;inset:0;z-index:100;background:rgba(0,0,0,0.88);display:none;align-items:center;justify-content:center"></div>
+
+    </div>
+
+    <!-- ====================================================
+         队伍编成界面
+         ==================================================== -->
+    <div class="page" id="page-team">
+      <div class="page-header" style="width:100%">
+        <div class="page-header-title">❖ 编制阵容</div>
+        <div id="team-page-hint" style="font-size:12px;color:#666;margin-left:auto">点击空槽或已有英雄旁的「换」按钮可更换阵容</div>
+      </div>
+
+      <div class="team-layout" style="flex:1;overflow:hidden">
+        <!-- 左侧：队伍编制 -->
+        <div style="width:320px;display:flex;flex-direction:column;gap:12px">
+          <div class="team-slots">
+            <div class="team-title">我方阵容</div>
+            <div id="team-slot-list" style="display:flex;flex-direction:column;gap:8px">
+              <!-- 动态生成 -->
+            </div>
+            <div id="team-combo-tips" class="combo-tips" style="display:none">
+              <!-- 连携提示 -->
+            </div>
+          </div>
+
+          <!-- 属性搭配建议（动态渲染） -->
+          <div id="team-synergy-tips" style="background:rgba(0,0,0,0.4);border:1px solid rgba(201,168,76,0.15);border-radius:8px;padding:12px;min-height:80px">
+            <div style="font-size:12px;color:#c9a84c;letter-spacing:2px;margin-bottom:8px">📋 阵容分析</div>
+            <div style="font-size:11px;color:#555;line-height:2.0">请先添加英雄到队伍...</div>
+          </div>
+
+          <button class="btn-main primary" onclick="navigateTo('battle')" style="margin-top:auto">⚔️ 出发应战</button>
+        </div>
+
+        <!-- 右侧：英雄选择 -->
+        <div style="flex:1;display:flex;flex-direction:column;gap:10px;overflow:hidden">
+          <div style="font-size:13px;color:#888;letter-spacing:3px">英雄图鉴（已拥有）</div>
+          <div class="hero-select-list" id="hero-select-list">
+            <!-- 动态生成 -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====================================================
+         抽卡界面
+         ==================================================== -->
+    <div class="page" id="page-gacha">
+      <div class="page-header">
+        <div class="page-header-title">❖ 神殿抽签</div>
+        <div style="font-size:11px;color:#666;margin-left:auto;letter-spacing:2px">灵石×160 或 补天石×1 单抽 · 十连1500灵石</div>
+      </div>
+
+      <div class="gacha-layout">
+        <!-- 卡池列表 -->
+        <div class="pool-list" id="pool-list">
+          <!-- 动态生成 -->
+        </div>
+
+        <!-- 主抽卡区 -->
+        <div class="gacha-main" id="gacha-main-area">
+          <!-- 动态生成 -->
+        </div>
+      </div>
+
+      <!-- 历史记录区 -->
+      <div style="background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.05);border-radius:8px;padding:12px;max-height:80px;overflow-y:auto" id="gacha-history">
+        <div style="font-size:11px;color:#555;letter-spacing:2px">近期抽取记录...</div>
+      </div>
+    </div>
+
+    <!-- ====================================================
+         典籍（图鉴）界面
+         ==================================================== -->
+    <div class="page" id="page-codex">
+      <div class="page-header">
+        <div class="page-header-title">❖ 洪荒典籍</div>
+        <div style="font-size:11px;color:#666;margin-left:auto">已解锁英雄亮显 · 未获取者显示为封印状态</div>
+      </div>
+
+      <!-- 筛选器 -->
+      <div class="codex-filter">
+        <button class="filter-btn active" data-filter="all" onclick="setCodexFilter('all', this)">全部</button>
+        <button class="filter-btn" data-filter="owned" onclick="setCodexFilter('owned', this)">已拥有</button>
+        <button class="filter-btn" data-filter="wuji" onclick="setCodexFilter('wuji', this)">🌌 无极</button>
+        <button class="filter-btn" data-filter="yin" onclick="setCodexFilter('yin', this)">🌑 阴</button>
+        <button class="filter-btn" data-filter="yang" onclick="setCodexFilter('yang', this)">☀️ 阳</button>
+        <button class="filter-btn" data-filter="fire" onclick="setCodexFilter('fire', this)">🔥 火</button>
+        <button class="filter-btn" data-filter="water" onclick="setCodexFilter('water', this)">💧 水</button>
+        <button class="filter-btn" data-filter="metal" onclick="setCodexFilter('metal', this)">⚡ 金</button>
+        <button class="filter-btn" data-filter="wood" onclick="setCodexFilter('wood', this)">🌿 木</button>
+        <button class="filter-btn" data-filter="earth" onclick="setCodexFilter('earth', this)">🏔️ 土</button>
+      </div>
+
+      <div class="codex-layout" style="overflow:hidden">
+        <div class="codex-grid" id="codex-grid">
+          <!-- 动态生成 -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ====================================================
+         修炼养成界面
+         ==================================================== -->
+    <div class="page" id="page-cultivate">
+      <div class="page-header">
+        <div class="page-header-title">❖ 修炼养成</div>
+        <div style="font-size:11px;color:#666;margin-left:auto;letter-spacing:2px">
+          ✨ 修炼魂 <span id="cultivate-soul-header" style="color:#c9a84c">500</span>
+        </div>
+      </div>
+      <div style="flex:1;overflow-y:auto;padding:4px 0">
+        <div style="font-size:12px;color:#555;letter-spacing:3px;margin-bottom:12px;padding:0 4px">
+          点击英雄进行升级・突破・技能修炼・洗练重塑
+        </div>
+        <div id="cultivate-hero-list" style="display:flex;flex-wrap:wrap;gap:12px;padding:4px">
+          <!-- 动态生成 -->
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main-content -->
+
+  <!-- ============================================================
+       首次创角色弹窗
+       ============================================================ -->
+  <div id="create-player-overlay" style="position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,0.95);display:flex;align-items:center;justify-content:center;display:none">
+    <div style="position:absolute;inset:0;background:radial-gradient(ellipse at center, rgba(201,168,76,0.08) 0%, transparent 65%);pointer-events:none"></div>
+    <div style="background:linear-gradient(160deg,rgba(15,10,5,0.98),rgba(8,6,20,0.98));border:1px solid rgba(201,168,76,0.4);border-radius:20px;padding:40px;max-width:480px;width:90%;position:relative;box-shadow:0 0 80px rgba(201,168,76,0.15)">
+      
+      <!-- 装饰顶部 -->
+      <div style="text-align:center;margin-bottom:28px">
+        <div style="font-size:40px;margin-bottom:8px;animation:titlePulse 3s ease-in-out infinite">⚔️</div>
+        <div style="font-size:22px;font-weight:900;color:#c9a84c;letter-spacing:6px;margin-bottom:6px">太初演义</div>
+        <div style="font-size:12px;color:#666;letter-spacing:3px">执命人，洪荒长河正等待着你</div>
+      </div>
+
+      <!-- 分割线 -->
+      <div style="border-top:1px solid rgba(201,168,76,0.2);margin-bottom:24px"></div>
+
+      <!-- 角色名 -->
+      <div style="margin-bottom:20px">
+        <label style="font-size:12px;color:#888;letter-spacing:3px;display:block;margin-bottom:8px">✦ 执命者之名</label>
+        <input id="input-player-name" type="text" maxlength="8" placeholder="请输入你的名字（最多8字）"
+          style="width:100%;box-sizing:border-box;background:rgba(0,0,0,0.6);border:1px solid rgba(201,168,76,0.3);border-radius:8px;padding:10px 14px;font-size:14px;color:#f0c040;outline:none;letter-spacing:2px;font-family:inherit"
+          oninput="validatePlayerName(this)">
+        <div id="name-hint" style="font-size:10px;color:#555;margin-top:4px">2~8个字符，中文英文均可</div>
+      </div>
+
+      <!-- 性别选择 -->
+      <div style="margin-bottom:20px">
+        <label style="font-size:12px;color:#888;letter-spacing:3px;display:block;margin-bottom:8px">✦ 执命者性别</label>
+        <div style="display:flex;gap:12px">
+          <div class="gender-option active" id="gender-male" onclick="selectGender('male')"
+            style="flex:1;border:1px solid rgba(201,168,76,0.4);border-radius:10px;padding:12px;text-align:center;cursor:pointer;background:rgba(201,168,76,0.1);transition:all 0.2s">
+            <div style="font-size:24px">⚔️</div>
+            <div style="font-size:13px;color:#c9a84c;margin-top:4px">乾（男）</div>
+          </div>
+          <div class="gender-option" id="gender-female" onclick="selectGender('female')"
+            style="flex:1;border:1px solid rgba(100,80,150,0.3);border-radius:10px;padding:12px;text-align:center;cursor:pointer;background:rgba(100,80,150,0.05);transition:all 0.2s">
+            <div style="font-size:24px">🌙</div>
+            <div style="font-size:13px;color:#9b59b6;margin-top:4px">坤（女）</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 称号选择 -->
+      <div style="margin-bottom:28px">
+        <label style="font-size:12px;color:#888;letter-spacing:3px;display:block;margin-bottom:8px">✦ 执命者称号</label>
+        <div id="title-select-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+          <!-- 动态生成 -->
+        </div>
+      </div>
+
+      <!-- 确认按钮 -->
+      <button id="btn-start-journey" onclick="confirmCreatePlayer()"
+        style="width:100%;padding:14px;background:linear-gradient(135deg,rgba(201,168,76,0.3),rgba(180,130,30,0.4));border:1px solid rgba(201,168,76,0.6);border-radius:10px;color:#f0c040;font-size:15px;font-weight:700;letter-spacing:4px;cursor:pointer;font-family:inherit;transition:all 0.2s"
+        onmouseover="this.style.background='linear-gradient(135deg,rgba(201,168,76,0.5),rgba(180,130,30,0.6))'"
+        onmouseout="this.style.background='linear-gradient(135deg,rgba(201,168,76,0.3),rgba(180,130,30,0.4))'">
+        踏入洪荒
+      </button>
+
+      <div style="text-align:center;font-size:10px;color:#333;margin-top:12px;letter-spacing:2px">
+        存档将保存在本地浏览器中
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       全局浮层
+       ============================================================ -->
+
+  <!-- 抽卡结果浮层 -->
+  <div class="gacha-result-overlay" id="gacha-result-overlay" onclick="closeGachaResult()">
+    <div class="result-title">✦ 签文揭晓 ✦</div>
+    <div class="result-cards" id="gacha-result-cards"></div>
+    <div style="margin-top:30px;font-size:13px;color:#555;letter-spacing:2px">点击任意处关闭</div>
+  </div>
+
+  <!-- 英雄详情浮层 -->
+  <div class="hero-detail-overlay" id="hero-detail-overlay" onclick="if(event.target===this)closeHeroDetail()">
+    <div class="hero-detail-panel" id="hero-detail-panel"></div>
+  </div>
+
+  <!-- 养成详情浮层 -->
+  <div class="hero-detail-overlay" id="cultivate-detail-overlay" onclick="if(event.target===this)closeCultivateDetail()">
+    <div class="hero-detail-panel" id="cultivate-detail-panel" style="max-width:580px;max-height:85vh;overflow-y:auto"></div>
+  </div>
+
+  <!-- 任务面板浮层 -->
+  <div id="task-panel-overlay" style="position:fixed;inset:0;z-index:5000;background:rgba(0,0,0,0.85);display:none;align-items:flex-start;justify-content:center;padding-top:40px;overflow-y:auto" onclick="if(event.target===this)closeTaskPanel()">
+    <div id="task-panel" style="background:linear-gradient(160deg,rgba(8,14,28,0.98),rgba(5,10,20,0.98));border:1px solid rgba(46,204,113,0.35);border-radius:16px;padding:28px;width:min(680px,94vw);position:relative;box-shadow:0 0 60px rgba(46,204,113,0.12);margin-bottom:40px">
+      <button onclick="closeTaskPanel()" style="position:absolute;top:16px;right:16px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:6px;color:#888;padding:4px 10px;cursor:pointer;font-family:inherit">✕</button>
+      <div style="font-size:18px;font-weight:900;color:#a8f0c0;letter-spacing:4px;margin-bottom:4px">📋 修炼任务</div>
+      <div style="font-size:11px;color:#555;letter-spacing:2px;margin-bottom:20px">完成任务可领取修炼魂、灵石等珍贵资源</div>
+      <div id="task-panel-content"><!-- 动态生成 --></div>
+    </div>
+  </div>
+
+  <!-- Toast通知 -->
+  <div class="toast" id="toast"></div>
+
+</div><!-- /app -->
+
+<!-- JavaScript -->
+<script src="js/battle-engine.js"></script>
+<script src="js/hero-data.js"></script>
+<script src="js/gacha-system.js"></script>
+<script src="js/save-system.js"></script>
+<script src="js/cultivate.js"></script>
+<script src="js/game.js"></script>
+
+<script>
+// ============================================================
+// 补充初始化后操作
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+  // 更新回合显示
+  setInterval(function() {
+    if (window.battle && document.getElementById('page-battle').classList.contains('active')) {
+      const rd = document.getElementById('round-display');
+      if (rd && battle) rd.textContent = '第 ' + battle.round + ' 回合';
+    }
+  }, 500);
+
+  // 筛选按钮点击处理（图鉴）
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const filter = this.dataset.filter;
+      if (filter) {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        setCodexFilter(filter);
+      }
+    });
+  });
+
+  // 出征按钮（主页）
+  document.querySelector('[onclick="navigateTo(\'battle\')"]')?.addEventListener('click', function() {
+    setTimeout(startBattle, 200);
+  });
+});
+</script>
+
+</body>
+</html>
