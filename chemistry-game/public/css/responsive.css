@@ -4,29 +4,22 @@
    不影响 cards 和 experiments 页面
    =================================== */
 
-/* === 超大屏幕 (>1600px) === */
-@media (min-width: 1600px) {
+/* === 超大屏幕 (>900px) === */
+@media (min-width: 901px) {
   .container.main-container {
-    max-width: 1600px;
-    margin: 0 auto;
+    display: flex;
+    gap: 30px;
   }
   
-  .container.main-container .periodic-table {
-    width: 100%;
+  .periodic-table-section {
+    flex: 1;
+    min-width: 0;
   }
   
-  .container.main-container .info-panel-container {
-    width: 480px;
-    min-width: 480px;
-    font-size: 1.1em;
-  }
-}
-
-/* === 中等屏幕 (900px-1600px) === */
-@media (min-width: 900px) and (max-width: 1600px) {
-  .container.main-container .info-panel-container {
+  .info-panel-container {
     width: 420px;
     min-width: 420px;
+    flex-shrink: 0;
   }
 }
 
@@ -51,7 +44,6 @@
   
   .container.main-container .periodic-table {
     margin: 0 auto 20px auto;
-    max-width: 100%;
   }
 }
 
@@ -126,7 +118,6 @@
   
   .container.main-container .periodic-table {
     margin: 0 auto 20px auto;
-    max-width: 100%;
   }
   
   /* 信息面板优化 */
