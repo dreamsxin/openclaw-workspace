@@ -219,6 +219,131 @@
   text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
 }
 
+/* 平板横屏优化 */
+@media (max-height: 500px) and (orientation: landscape) {
+  .container {
+    padding: 15px;
+    max-width: 100%;
+  }
+  
+  header {
+    margin-bottom: 15px;
+  }
+  
+  header h1 {
+    font-size: 1.5em;
+    margin-bottom: 5px;
+  }
+  
+  .subtitle {
+    font-size: 0.9em;
+  }
+  
+  .game-controls {
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 15px;
+  }
+  
+  .game-controls .btn {
+    padding: 8px 15px;
+    font-size: 0.9em;
+  }
+  
+  .game-info {
+    gap: 10px;
+  }
+  
+  .game-info span {
+    padding: 6px 12px;
+    font-size: 0.85em;
+  }
+  
+  /* 目标分子区域 */
+  .target-molecule {
+    padding: 15px;
+    margin: 15px 0;
+  }
+  
+  .target-molecule h3 {
+    font-size: 1.1em;
+    margin-bottom: 10px;
+  }
+  
+  .target-display {
+    font-size: 2em;
+    margin: 10px 0;
+  }
+  
+  .molecule-desc {
+    font-size: 0.9em;
+    margin-top: 8px;
+  }
+  
+  /* 元素卡片区域 */
+  .element-cards-area h3,
+  .selected-area h3 {
+    font-size: 1em;
+    margin-bottom: 10px;
+  }
+  
+  .element-cards {
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  
+  .element-card {
+    padding: 12px 10px;
+  }
+  
+  .element-symbol {
+    font-size: 2em;
+  }
+  
+  .element-valence {
+    font-size: 0.85em;
+    padding: 3px 8px;
+  }
+  
+  /* 已选元素区域 */
+  .selected-area {
+    padding: 15px;
+    margin: 15px 0;
+  }
+  
+  .selected-elements {
+    min-height: 60px;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .selected-element {
+    padding: 8px 15px;
+  }
+  
+  .selected-element .symbol {
+    font-size: 1.3em;
+  }
+  
+  .selected-element .count {
+    font-size: 1.1em;
+  }
+  
+  .selected-element .valence {
+    font-size: 0.85em;
+  }
+  
+  .action-buttons {
+    gap: 10px;
+  }
+  
+  .action-buttons .btn {
+    padding: 10px 20px;
+    font-size: 0.95em;
+  }
+}
+
 /* 响应式 */
 @media (max-width: 768px) {
   .target-display {

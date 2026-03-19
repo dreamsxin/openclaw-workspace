@@ -51,6 +51,7 @@
   
   .container.main-container .periodic-table {
     margin: 0 auto 20px auto;
+    max-width: 100%;
   }
 }
 
@@ -125,19 +126,7 @@
   
   .container.main-container .periodic-table {
     margin: 0 auto 20px auto;
-  }
-  
-  .container.main-container .element-cell {
-    width: 50px;
-    height: 50px;
-  }
-  
-  .container.main-container .element-symbol {
-    font-size: 16px;
-  }
-  
-  .container.main-container .element-name {
-    font-size: 8px;
+    max-width: 100%;
   }
   
   /* 信息面板优化 */
