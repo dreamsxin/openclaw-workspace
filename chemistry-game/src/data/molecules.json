@@ -5,8 +5,9 @@
       "name": "水",
       "formula": "H₂O",
       "elements": [
-        { "symbol": "H", "count": 2, "valence": "+1" },
-        { "symbol": "O", "count": 1, "valence": "-2" }
+        { "symbol": "H", "valence": "+1" },
+        { "symbol": "H", "valence": "+1" },
+        { "symbol": "O", "valence": "-2" }
       ],
       "description": "生命之源，最常见的溶剂"
     },
@@ -15,8 +16,9 @@
       "name": "二氧化碳",
       "formula": "CO₂",
       "elements": [
-        { "symbol": "C", "count": 1, "valence": "+4" },
-        { "symbol": "O", "count": 2, "valence": "-2" }
+        { "symbol": "C", "valence": "+4" },
+        { "symbol": "O", "valence": "-2" },
+        { "symbol": "O", "valence": "-2" }
       ],
       "description": "温室气体，植物光合作用原料"
     },
@@ -25,8 +27,8 @@
       "name": "氯化钠",
       "formula": "NaCl",
       "elements": [
-        { "symbol": "Na", "count": 1, "valence": "+1" },
-        { "symbol": "Cl", "count": 1, "valence": "-1" }
+        { "symbol": "Na", "valence": "+1" },
+        { "symbol": "Cl", "valence": "-1" }
       ],
       "description": "食盐的主要成分"
     },
@@ -35,8 +37,11 @@
       "name": "甲烷",
       "formula": "CH₄",
       "elements": [
-        { "symbol": "C", "count": 1, "valence": "-4" },
-        { "symbol": "H", "count": 4, "valence": "+1" }
+        { "symbol": "C", "valence": "-4" },
+        { "symbol": "H", "valence": "+1" },
+        { "symbol": "H", "valence": "+1" },
+        { "symbol": "H", "valence": "+1" },
+        { "symbol": "H", "valence": "+1" }
       ],
       "description": "天然气的主要成分"
     },
@@ -45,8 +50,10 @@
       "name": "氨气",
       "formula": "NH₃",
       "elements": [
-        { "symbol": "N", "count": 1, "valence": "-3" },
-        { "symbol": "H", "count": 3, "valence": "+1" }
+        { "symbol": "N", "valence": "-3" },
+        { "symbol": "H", "valence": "+1" },
+        { "symbol": "H", "valence": "+1" },
+        { "symbol": "H", "valence": "+1" }
       ],
       "description": "有刺激性气味的气体"
     },
@@ -55,8 +62,8 @@
       "name": "盐酸",
       "formula": "HCl",
       "elements": [
-        { "symbol": "H", "count": 1, "valence": "+1" },
-        { "symbol": "Cl", "count": 1, "valence": "-1" }
+        { "symbol": "H", "valence": "+1" },
+        { "symbol": "Cl", "valence": "-1" }
       ],
       "description": "胃酸的主要成分"
     },
@@ -65,8 +72,8 @@
       "name": "氧化镁",
       "formula": "MgO",
       "elements": [
-        { "symbol": "Mg", "count": 1, "valence": "+2" },
-        { "symbol": "O", "count": 1, "valence": "-2" }
+        { "symbol": "Mg", "valence": "+2" },
+        { "symbol": "O", "valence": "-2" }
       ],
       "description": "白色固体，用于耐火材料"
     },
@@ -75,8 +82,11 @@
       "name": "氧化铝",
       "formula": "Al₂O₃",
       "elements": [
-        { "symbol": "Al", "count": 2, "valence": "+3" },
-        { "symbol": "O", "count": 3, "valence": "-2" }
+        { "symbol": "Al", "valence": "+3" },
+        { "symbol": "Al", "valence": "+3" },
+        { "symbol": "O", "valence": "-2" },
+        { "symbol": "O", "valence": "-2" },
+        { "symbol": "O", "valence": "-2" }
       ],
       "description": "铝制品表面的保护膜"
     },
@@ -85,9 +95,13 @@
       "name": "硫酸",
       "formula": "H₂SO₄",
       "elements": [
-        { "symbol": "H", "count": 2, "valence": "+1" },
-        { "symbol": "S", "count": 1, "valence": "+6" },
-        { "symbol": "O", "count": 4, "valence": "-2" }
+        { "symbol": "H", "valence": "+1" },
+        { "symbol": "H", "valence": "+1" },
+        { "symbol": "S", "valence": "+6" },
+        { "symbol": "O", "valence": "-2" },
+        { "symbol": "O", "valence": "-2" },
+        { "symbol": "O", "valence": "-2" },
+        { "symbol": "O", "valence": "-2" }
       ],
       "description": "重要的工业原料"
     },
@@ -96,9 +110,9 @@
       "name": "氢氧化钠",
       "formula": "NaOH",
       "elements": [
-        { "symbol": "Na", "count": 1, "valence": "+1" },
-        { "symbol": "O", "count": 1, "valence": "-2" },
-        { "symbol": "H", "count": 1, "valence": "+1" }
+        { "symbol": "Na", "valence": "+1" },
+        { "symbol": "O", "valence": "-2" },
+        { "symbol": "H", "valence": "+1" }
       ],
       "description": "俗称烧碱，强碱性"
     },
@@ -107,9 +121,11 @@
       "name": "碳酸钙",
       "formula": "CaCO₃",
       "elements": [
-        { "symbol": "Ca", "count": 1, "valence": "+2" },
-        { "symbol": "C", "count": 1, "valence": "+4" },
-        { "symbol": "O", "count": 3, "valence": "-2" }
+        { "symbol": "Ca", "valence": "+2" },
+        { "symbol": "C", "valence": "+4" },
+        { "symbol": "O", "valence": "-2" },
+        { "symbol": "O", "valence": "-2" },
+        { "symbol": "O", "valence": "-2" }
       ],
       "description": "大理石、石灰石的主要成分"
     },
@@ -118,9 +134,30 @@
       "name": "葡萄糖",
       "formula": "C₆H₁₂O₆",
       "elements": [
-        { "symbol": "C", "count": 6, "valence": "0" },
-        { "symbol": "H", "count": 12, "valence": "+1" },
-        { "symbol": "O", "count": 6, "valence": "-2" }
+        { "symbol": "C", "valence": "0" },
+        { "symbol": "C", "valence": "0" },
+        { "symbol": "C", "valence": "0" },
+        { "symbol": "C", "valence": "0" },
+        { "symbol": "C", "valence": "0" },
+        { "symbol": "C", "valence": "0" },
+        { "symbol": "H", "valence": "+1" },
+        { "symbol": "H", "valence": "+1" },
+        { "symbol": "H", "valence": "+1" },
+        { "symbol": "H", "valence": "+1" },
+        { "symbol": "H", "valence": "+1" },
+        { "symbol": "H", "valence": "+1" },
+        { "symbol": "H", "valence": "+1" },
+        { "symbol": "H", "valence": "+1" },
+        { "symbol": "H", "valence": "+1" },
+        { "symbol": "H", "valence": "+1" },
+        { "symbol": "H", "valence": "+1" },
+        { "symbol": "H", "valence": "+1" },
+        { "symbol": "O", "valence": "-2" },
+        { "symbol": "O", "valence": "-2" },
+        { "symbol": "O", "valence": "-2" },
+        { "symbol": "O", "valence": "-2" },
+        { "symbol": "O", "valence": "-2" },
+        { "symbol": "O", "valence": "-2" }
       ],
       "description": "生物体主要能源物质"
     }

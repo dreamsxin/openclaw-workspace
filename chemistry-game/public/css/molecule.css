@@ -14,17 +14,25 @@
   font-size: 1.3em;
 }
 
-.target-display {
-  font-size: 3em;
+.target-name {
+  font-size: 2.5em;
   font-weight: bold;
   margin: 15px 0;
   text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
 }
 
 .molecule-desc {
-  font-size: 1em;
-  opacity: 0.9;
+  font-size: 1.1em;
+  opacity: 0.95;
   margin-top: 10px;
+  line-height: 1.6;
+}
+
+.hint-text {
+  font-size: 0.9em;
+  opacity: 0.8;
+  margin-top: 15px;
+  font-style: italic;
 }
 
 /* 元素卡片区域 */
@@ -50,7 +58,7 @@
   background: white;
   border: 3px solid #667eea;
   border-radius: 12px;
-  padding: 15px;
+  padding: 20px 15px;
   cursor: pointer;
   transition: all 0.3s;
   text-align: center;
@@ -70,26 +78,19 @@
 }
 
 .element-symbol {
-  font-size: 2.5em;
+  font-size: 3em;
   font-weight: bold;
   color: #667eea;
-  display: block;
-}
-
-.element-count {
-  font-size: 1.2em;
-  color: #333;
-  margin-top: 5px;
   display: block;
 }
 
 .element-valence {
   background: linear-gradient(135deg, #667eea, #764ba2);
   color: white;
-  padding: 3px 10px;
+  padding: 4px 12px;
   border-radius: 12px;
-  font-size: 0.9em;
-  margin-top: 8px;
+  font-size: 1em;
+  margin-top: 10px;
   display: inline-block;
 }
 
@@ -143,19 +144,20 @@
 }
 
 .selected-element .symbol {
-  font-size: 1.5em;
+  font-size: 1.8em;
   font-weight: bold;
 }
 
 .selected-element .count {
-  font-size: 1.2em;
+  font-size: 1.3em;
+  margin: 0 5px;
 }
 
 .selected-element .valence {
   background: rgba(255,255,255,0.3);
-  padding: 2px 8px;
+  padding: 3px 10px;
   border-radius: 10px;
-  font-size: 0.9em;
+  font-size: 1em;
 }
 
 .selected-element .remove {

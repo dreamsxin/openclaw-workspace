@@ -15,7 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
   let gameActive = false;
 
   // DOM 元素
-  const startGameBtn = document.getElementById('startGame');
   const gameModeSelect = document.getElementById('gameModeSelect');
   const gameBoard = document.getElementById('gameBoard');
   const scoreValue = document.getElementById('scoreValue');
@@ -37,13 +36,6 @@ document.addEventListener('DOMContentLoaded', () => {
       console.log(`加载了 ${elements.length} 个元素`);
     })
     .catch(err => console.error('加载元素数据失败:', err));
-
-  // 开始游戏按钮
-  startGameBtn.addEventListener('click', () => {
-    gameModeSelect.classList.remove('hidden');
-    gameBoard.classList.add('hidden');
-    gameOverModal.classList.add('hidden');
-  });
 
   // 模式选择
   document.querySelectorAll('.mode-btn').forEach(btn => {

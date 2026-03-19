@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let selectedElements = [];
 
   // DOM 元素
-  const targetMoleculeEl = document.getElementById('targetMolecule');
+  const targetMoleculeNameEl = document.getElementById('targetMoleculeName');
   const moleculeDescEl = document.getElementById('moleculeDescription');
   const elementCardsEl = document.getElementById('elementCards');
   const selectedElementsEl = document.getElementById('selectedElements');
@@ -45,8 +45,8 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     
-    // 更新显示
-    targetMoleculeEl.textContent = molecule.formula;
+    // 更新显示 - 只显示中文学名，不显示化学式
+    targetMoleculeNameEl.textContent = molecule.name;
     moleculeDescEl.textContent = molecule.description;
     levelValue.textContent = currentLevel + 1;
     
@@ -62,19 +62,24 @@ document.addEventListener('DOMContentLoaded', () => {
   function generateElementCards(molecule) {
     elementCardsEl.innerHTML = '';
     
-    // 为每个元素生成多个卡片（增加难度）
+    // 直接使用 molecule.elements 数组（已经是扁平化的原子列表）
     const cards = [];
     molecule.elements.forEach(elem => {
-      // 生成 2-3 张相同的卡片
-      const cardCount = 2 + Math.floor(Math.random() * 2);
-      for (let i = 0; i < cardCount; i++) {
-        cards.push({
-          symbol: elem.symbol,
-          count: elem.count,
-          valence: elem.valence
-        });
-      }
+      cards.push({
+        symbol: elem.symbol,
+        valence: elem.valence
+      });
     });
+    
+    // 额外添加一些干扰卡片（增加难度）- 添加 1-2 张额外卡片
+    const extraCards = 1 + Math.floor(Math.random() * 2);
+    for (let i = 0; i < extraCards; i++) {
+      const randomElem = molecule.elements[Math.floor(Math.random() * molecule.elements.length)];
+      cards.push({
+        symbol: randomElem.symbol,
+        valence: randomElem.valence
+      });
+    }
     
     // 打乱顺序
     cards.sort(() => Math.random() - 0.5);
@@ -86,7 +91,6 @@ document.addEventListener('DOMContentLoaded', () => {
       cardEl.dataset.index = index;
       cardEl.innerHTML = `
         <span class="element-symbol">${card.symbol}</span>
-        <span class="element-count">×${card.count}</span>
         <span class="element-valence">${card.valence}</span>
       `;
       
@@ -103,7 +107,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // 添加到已选列表
     selectedElements.push({
       symbol: card.symbol,
-      count: card.count,
       valence: card.valence,
       cardEl: cardEl
     });
@@ -122,34 +125,51 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     
+    // 统计每种元素的数量
+    const elementCount = {};
+    selectedElements.forEach(elem => {
+      if (!elementCount[elem.symbol]) {
+        elementCount[elem.symbol] = {
+          symbol: elem.symbol,
+          valence: elem.valence,
+          count: 0,
+          indices: []
+        };
+      }
+      elementCount[elem.symbol].count++;
+      elementCount[elem.symbol].indices.push(elem);
+    });
+    
     selectedElementsEl.innerHTML = '';
-    selectedElements.forEach((elem, index) => {
+    Object.values(elementCount).forEach(elem => {
       const elemEl = document.createElement('div');
       elemEl.className = 'selected-element';
       elemEl.innerHTML = `
         <span class="symbol">${elem.symbol}</span>
         <span class="count">×${elem.count}</span>
         <span class="valence">${elem.valence}</span>
-        <button class="remove" data-index="${index}">×</button>
+        <button class="remove" data-symbol="${elem.symbol}">×</button>
       `;
       
-      // 移除按钮事件
+      // 移除按钮事件 - 移除该元素的所有实例
       elemEl.querySelector('.remove').addEventListener('click', (e) => {
         e.stopPropagation();
-        removeElement(index);
+        const symbol = e.target.dataset.symbol;
+        removeElementsBySymbol(symbol);
       });
       
       selectedElementsEl.appendChild(elemEl);
     });
   }
 
-  // 移除元素
-  function removeElement(index) {
-    const elem = selectedElements[index];
-    if (elem && elem.cardEl) {
-      elem.cardEl.classList.remove('selected');
-    }
-    selectedElements.splice(index, 1);
+  // 移除指定元素的所有实例
+  function removeElementsBySymbol(symbol) {
+    selectedElements.forEach(elem => {
+      if (elem.symbol === symbol && elem.cardEl) {
+        elem.cardEl.classList.remove('selected');
+      }
+    });
+    selectedElements = selectedElements.filter(elem => elem.symbol !== symbol);
     renderSelectedElements();
   }
 
@@ -171,27 +191,35 @@ document.addEventListener('DOMContentLoaded', () => {
   function checkSolution() {
     const molecule = molecules[currentLevel];
     
-    // 检查元素数量是否匹配
-    if (selectedElements.length !== molecule.elements.length) {
-      showFail('元素数量不正确');
-      return;
-    }
+    // 统计选择的每种元素数量
+    const selectedCount = {};
+    selectedElements.forEach(elem => {
+      if (!selectedCount[elem.symbol]) {
+        selectedCount[elem.symbol] = 0;
+      }
+      selectedCount[elem.symbol]++;
+    });
+    
+    // 统计目标分子的每种元素数量
+    const targetCount = {};
+    molecule.elements.forEach(elem => {
+      if (!targetCount[elem.symbol]) {
+        targetCount[elem.symbol] = 0;
+      }
+      targetCount[elem.symbol]++;
+    });
     
     // 检查每个元素是否正确
-    const selectedMap = {};
-    selectedElements.forEach(elem => {
-      if (!selectedMap[elem.symbol]) {
-        selectedMap[elem.symbol] = elem;
-      }
-    });
-    
     let allCorrect = true;
-    molecule.elements.forEach(elem => {
-      const selected = selectedMap[elem.symbol];
-      if (!selected || selected.count !== elem.count || selected.valence !== elem.valence) {
+    
+    // 检查选择的元素种类和数量是否匹配
+    const symbols = new Set([...Object.keys(selectedCount), ...Object.keys(targetCount)]);
+    for (const symbol of symbols) {
+      if (selectedCount[symbol] !== targetCount[symbol]) {
         allCorrect = false;
+        break;
       }
-    });
+    }
     
     if (allCorrect) {
       showSuccess(molecule);
@@ -207,7 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
     storage.save('moleculeScore', score);
     
     successMessage.textContent = `你成功合成了${molecule.name}！`;
-    successMolecule.textContent = molecule.formula;
+    successMolecule.textContent = `${molecule.name} (${molecule.formula})`;
     successModal.classList.remove('hidden');
   }
 
