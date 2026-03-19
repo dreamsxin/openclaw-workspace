@@ -27,8 +27,8 @@ const AppState = {
  */
 const DOM = {
   elementCells: null,
-  elementDetailPanel: null,
-  defaultInfoPanel: null,
+  elementDetailModal: null,
+  closeDetailBtn: null,
   detailContent: null,
   quizBtn: null,
   quizModal: null,
@@ -58,8 +58,8 @@ function init() {
  */
 function cacheDOM() {
   DOM.elementCells = document.querySelectorAll('.element-cell');
-  DOM.elementDetailPanel = document.getElementById('elementDetailPanel');
-  DOM.defaultInfoPanel = document.getElementById('defaultInfoPanel');
+  DOM.elementDetailModal = document.getElementById('elementDetailModal');
+  DOM.closeDetailBtn = document.getElementById('closeDetailBtn');
   DOM.detailContent = document.getElementById('detailContent');
   DOM.quizBtn = document.getElementById('quizBtn');
   DOM.quizModal = document.getElementById('quizModal');
@@ -103,6 +103,14 @@ function bindEvents() {
     cell.addEventListener('click', handleElementClickDirect);
   });
   
+  // 关闭元素详情弹窗
+  DOM.closeDetailBtn.addEventListener('click', closeElementDetail);
+  DOM.elementDetailModal.addEventListener('click', (e) => {
+    if (e.target === DOM.elementDetailModal || e.target.classList.contains('modal-overlay')) {
+      closeElementDetail();
+    }
+  });
+  
   // 测验相关事件
   DOM.quizBtn.addEventListener('click', startQuiz);
   DOM.closeQuiz.addEventListener('click', () => DOM.quizModal.classList.add('hidden'));
@@ -133,6 +141,22 @@ function bindEvents() {
       }
     }
   });
+  
+  // ESC 键关闭弹窗
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      DOM.quizModal.classList.add('hidden');
+      closeElementDetail();
+    }
+  });
+}
+
+/**
+ * 关闭元素详情弹窗
+ */
+function closeElementDetail() {
+  DOM.elementDetailModal.classList.add('hidden');
+  document.body.style.overflow = '';
 }
 
 /**
@@ -204,9 +228,9 @@ function showElementDetail(element) {
   
   DOM.detailContent.innerHTML = buildElementDetailHTML(element, categoryColor, relatedExperiments);
   
-  // 切换面板显示
-  DOM.defaultInfoPanel.classList.add('hidden');
-  DOM.elementDetailPanel.classList.remove('hidden');
+  // 显示全屏弹窗
+  DOM.elementDetailModal.classList.remove('hidden');
+  document.body.style.overflow = 'hidden'; // 禁止背景滚动
 }
 
 /**
@@ -218,19 +242,42 @@ function showElementDetail(element) {
  */
 function buildElementDetailHTML(element, categoryColor, relatedExperiments) {
   return `
-    <div class="element-card" style="max-width: 100%; margin: 0; box-shadow: none;">
-      <div class="card-header" style="background: ${categoryColor}">
-        <h2 style="color: white; text-align: center; margin-bottom: 15px;">${element.symbol}</h2>
-        <h3 style="color: white; text-align: center; margin-bottom: 5px;">${element.name}</h3>
-        <p style="color: white; text-align: center; opacity: 0.9;">${element.nameEn} · 原子序数 ${element.atomicNumber}</p>
+    <div class="element-detail-wrapper">
+      <div class="detail-header-full" style="background: ${categoryColor}">
+        <h2 style="color: white; font-size: 4em; margin: 0; font-weight: bold;">${element.symbol}</h2>
+        <h3 style="color: white; font-size: 1.8em; margin: 8px 0 5px 0;">${element.name}</h3>
+        <p style="color: white; opacity: 0.95; margin: 0; font-size: 1.1em;">
+          ${element.nameEn} · 原子序数 ${element.atomicNumber}
+        </p>
       </div>
-      <div class="card-body">
-        ${buildElectronSection(element)}
-        ${buildValenceSection(element)}
-        ${buildCompoundsSection(element)}
-        ${buildBasicInfoSection(element)}
-        ${buildEquationsSection(element)}
-        ${buildRelatedExperimentsSection(relatedExperiments)}
+      
+      <div class="element-detail-tabs">
+        <div class="detail-tabs-header">
+          <button class="detail-tab active" data-tab="structure">⚛️ 结构</button>
+          <button class="detail-tab" data-tab="compounds">🧪 化合物</button>
+          <button class="detail-tab" data-tab="equations">⚗️ 方程式</button>
+          <button class="detail-tab" data-tab="experiments">🔬 实验</button>
+        </div>
+        
+        <div class="detail-tabs-content">
+          <div class="detail-tab-pane active" data-tab="structure">
+            ${buildElectronSection(element)}
+            ${buildValenceSection(element)}
+            ${buildBasicInfoSection(element)}
+          </div>
+          
+          <div class="detail-tab-pane" data-tab="compounds">
+            ${buildCompoundsSection(element)}
+          </div>
+          
+          <div class="detail-tab-pane" data-tab="equations">
+            ${buildEquationsSection(element)}
+          </div>
+          
+          <div class="detail-tab-pane" data-tab="experiments">
+            ${buildRelatedExperimentsSection(relatedExperiments)}
+          </div>
+        </div>
       </div>
     </div>
   `;
@@ -249,8 +296,8 @@ function buildElectronSection(element) {
       <div class="electron-config">
         ${element.electronConfig.map((e, i) => `
           <div class="shell-info">
-            <div class="shell-num">第${i+1}层</div>
-            <div class="shell-electrons">${e}e⁻</div>
+            <span class="shell-num">第${i+1}层</span>
+            <span class="shell-electrons">${e}e⁻</span>
           </div>
         `).join('')}
       </div>
@@ -311,10 +358,24 @@ function buildBasicInfoSection(element) {
   return `
     <div class="card-section">
       <h4>📊 基本信息</h4>
-      <p><strong>原子量：</strong>${element.atomicMass}</p>
-      <p><strong>类别：</strong>${element.category}</p>
-      <p><strong>周期：</strong>第${element.period}周期</p>
-      <p><strong>族：</strong>第${element.group}族</p>
+      <div class="basic-info-grid">
+        <div class="basic-info-item">
+          <span class="info-label">原子量：</span>
+          <span class="info-value">${element.atomicMass}</span>
+        </div>
+        <div class="basic-info-item">
+          <span class="info-label">类别：</span>
+          <span class="info-value">${element.category}</span>
+        </div>
+        <div class="basic-info-item">
+          <span class="info-label">周期：</span>
+          <span class="info-value">第${element.period}周期</span>
+        </div>
+        <div class="basic-info-item">
+          <span class="info-label">族：</span>
+          <span class="info-value">第${element.group}族</span>
+        </div>
+      </div>
     </div>
   `;
 }
@@ -407,9 +468,9 @@ function getCategoryColor(category) {
  */
 function renderElectronShells(config, symbol) {
   const maxShell = config.length;
-  const shellSizes = [60, 100, 140, 180, 220];
+  const shellSizes = [40, 70, 100, 130, 160];
   
-  let html = `<div class="electron-shells-viz" style="width: ${shellSizes[maxShell-1] || 220}px; height: ${shellSizes[maxShell-1] || 220}px;">`;
+  let html = `<div class="electron-shells-viz" style="width: ${shellSizes[maxShell-1] || 160}px; height: ${shellSizes[maxShell-1] || 160}px;">`;
   html += `<div class="nucleus">${symbol}</div>`;
   
   config.forEach((electrons, shellIndex) => {
@@ -541,81 +602,88 @@ function parseMaterial(material) {
 function showExperimentDetail(experiment) {
   const modal = document.createElement('div');
   modal.id = 'experimentDetailModal';
-  modal.className = 'modal';
   modal.innerHTML = `
+    <div class="modal-overlay"></div>
     <div class="modal-content experiment-modal-content">
       <button class="close-btn" id="closeExperimentModal">&times;</button>
-      <div class="modal-header">
-        <h2>${experiment.name}</h2>
-        <div class="experiment-meta">
-          <span class="category">${experiment.category}</span>
-          <span class="difficulty">${experiment.difficulty}</span>
-          <span>⏱️ ${experiment.time}</span>
+      <div class="detail-scroll-content">
+        <div class="modal-header">
+          <h2>${experiment.name}</h2>
+          <div class="experiment-meta">
+            <span class="category">${experiment.category}</span>
+            <span class="difficulty">${experiment.difficulty}</span>
+            <span>⏱️ ${experiment.time}</span>
+          </div>
         </div>
-      </div>
 
-      <div class="modal-section">
-        <h3>🎯 实验目的</h3>
-        <p>${experiment.objective}</p>
-      </div>
-
-      <div class="modal-section">
-        <h3>🧪 实验用品</h3>
-        <ul class="materials-list">
-          ${experiment.materials.map(m => {
-            const parsed = parseMaterial(m);
-            if (parsed.hasFormula) {
-              return `<li>
-                <span class="material-name">${parsed.name}</span>
-                <span class="material-formula">${parsed.formula}</span>
-              </li>`;
-            } else {
-              return `<li>${parsed.name}</li>`;
-            }
-          }).join('')}
-        </ul>
-      </div>
-
-      <div class="modal-section">
-        <h3>📋 实验步骤</h3>
-        <ol class="steps-list">
-          ${experiment.steps.map((s, i) => `<li data-step="${i+1}">${s}</li>`).join('')}
-        </ol>
-      </div>
-
-      <div class="modal-section">
-        <h3>⚗️ 化学方程式</h3>
-        <div class="experiment-equation">${experiment.equation}</div>
-      </div>
-
-      <div class="modal-section">
-        <h3>👀 实验现象</h3>
-        <div class="phenomenon-box">
-          <p>${experiment.phenomenon}</p>
+        <div class="modal-section">
+          <h3>🎯 实验目的</h3>
+          <p>${experiment.objective}</p>
         </div>
-      </div>
 
-      <div class="modal-section">
-        <h3>⚠️ 注意事项</h3>
-        <ul class="warnings-list">
-          ${experiment.warnings.map(w => `<li>${w}</li>`).join('')}
-        </ul>
+        <div class="modal-section">
+          <h3>🧪 实验用品</h3>
+          <ul class="materials-list">
+            ${experiment.materials.map(m => {
+              const parsed = parseMaterial(m);
+              if (parsed.hasFormula) {
+                return `<li>
+                  <span class="material-name">${parsed.name}</span>
+                  <span class="material-formula">${parsed.formula}</span>
+                </li>`;
+              } else {
+                return `<li>${parsed.name}</li>`;
+              }
+            }).join('')}
+          </ul>
+        </div>
+
+        <div class="modal-section">
+          <h3>📋 实验步骤</h3>
+          <ol class="steps-list">
+            ${experiment.steps.map((s, i) => `<li data-step="${i+1}">${s}</li>`).join('')}
+          </ol>
+        </div>
+
+        <div class="modal-section">
+          <h3>⚗️ 化学方程式</h3>
+          <div class="experiment-equation">${experiment.equation}</div>
+        </div>
+
+        <div class="modal-section">
+          <h3>👀 实验现象</h3>
+          <div class="phenomenon-box">
+            <p>${experiment.phenomenon}</p>
+          </div>
+        </div>
+
+        <div class="modal-section">
+          <h3>⚠️ 注意事项</h3>
+          <ul class="warnings-list">
+            ${experiment.warnings.map(w => `<li>${w}</li>`).join('')}
+          </ul>
+        </div>
       </div>
     </div>
   `;
 
   document.body.appendChild(modal);
+  document.body.style.overflow = 'hidden';
 
   // 关闭按钮事件
   const closeBtn = document.getElementById('closeExperimentModal');
   if (closeBtn) {
-    closeBtn.addEventListener('click', () => modal.remove());
+    closeBtn.addEventListener('click', () => {
+      modal.remove();
+      document.body.style.overflow = '';
+    });
   }
 
   // 点击背景关闭
   modal.addEventListener('click', (e) => {
-    if (e.target === modal) {
+    if (e.target === modal || e.target.classList.contains('modal-overlay')) {
       modal.remove();
+      document.body.style.overflow = '';
     }
   });
 
@@ -623,14 +691,59 @@ function showExperimentDetail(experiment) {
   const escHandler = (e) => {
     if (e.key === 'Escape') {
       modal.remove();
+      document.body.style.overflow = '';
       document.removeEventListener('keydown', escHandler);
     }
   };
   document.addEventListener('keydown', escHandler);
 }
 
+// Tab 切换功能
+function initMnemonicTabs() {
+  const tabs = document.querySelectorAll('.mnemonic-tab');
+  const contents = document.querySelectorAll('.mnemonic-tab-content');
+  
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const tabId = tab.dataset.tab;
+      
+      // 移除所有激活状态
+      tabs.forEach(t => t.classList.remove('active'));
+      contents.forEach(c => c.classList.remove('active'));
+      
+      // 激活当前 tab
+      tab.classList.add('active');
+      document.querySelector(`.mnemonic-tab-content[data-tab="${tabId}"]`).classList.add('active');
+    });
+  });
+}
+
+// 元素详情 Tab 切换
+function initDetailTabs() {
+  document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('detail-tab')) {
+      const tabId = e.target.dataset.tab;
+      const tabPane = e.target.closest('.element-detail-tabs');
+      
+      if (!tabPane) return;
+      
+      // 移除所有激活状态
+      tabPane.querySelectorAll('.detail-tab').forEach(t => t.classList.remove('active'));
+      tabPane.querySelectorAll('.detail-tab-pane').forEach(p => p.classList.remove('active'));
+      
+      // 激活当前 tab
+      e.target.classList.add('active');
+      tabPane.querySelector(`.detail-tab-pane[data-tab="${tabId}"]`).classList.add('active');
+    }
+  });
+}
+
 // 启动应用
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', () => {
+  init();
+  initMnemonicTabs();
+  initDetailTabs();
+});
 
 // 导出供其他模块使用
 export { AppState, DOM, init };

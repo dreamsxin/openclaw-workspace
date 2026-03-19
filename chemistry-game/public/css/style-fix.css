@@ -1,63 +1,615 @@
-/* 主容器 - 100% 宽度 */
-.container.main-container {
-  max-width: 100% !important;
-  width: 100% !important;
+/* 元素详情全屏弹窗 */
+.element-detail-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-/* 左侧周期表区域 - 自动缩放 */
-.periodic-table-section {
-  min-width: 0;
-  overflow-x: auto;
-  padding-bottom: 10px;
-  flex: 1;
-}
-
-.periodic-table {
-  display: grid;
-  grid-template-columns: repeat(18, 70px);
-  grid-auto-rows: 70px;
-  gap: 4px;
-  margin-bottom: 30px;
-  width: fit-content;
-}
-
-.element-cell {
-  width: 70px;
-  height: 70px;
-}
-
-/* 面板内容切换 */
-.info-panel-content.hidden {
+.element-detail-modal.hidden {
   display: none !important;
 }
 
-/* 右侧信息面板样式 */
-.info-panel-container {
-  padding: 10px !important;
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
 }
 
-/* 关联实验样式 */
+.modal-content-wrapper {
+  position: relative;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border-radius: 25px;
+  max-width: 1000px;
+  width: 95%;
+  max-height: 85vh;
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
+  z-index: 1001;
+  overflow: hidden;
+  border: 1px solid rgba(102, 126, 234, 0.2);
+}
+
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 2.5em;
+  color: #999;
+  background: rgba(240, 240, 240, 0.8);
+  border: none;
+  cursor: pointer;
+  z-index: 1002;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+  font-weight: 300;
+}
+
+.close-btn:hover {
+  color: #333;
+  background: rgba(102, 126, 234, 0.2);
+  transform: rotate(90deg);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+/* 实验详情弹框 - 更高层级 */
+#experimentDetailModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#experimentDetailModal.hidden {
+  display: none !important;
+}
+
+#experimentDetailModal .modal-overlay {
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+}
+
+#experimentDetailModal .modal-content {
+  position: relative;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border-radius: 25px;
+  max-width: 800px;
+  width: 95%;
+  max-height: 85vh;
+  box-shadow: 0 30px 100px rgba(0, 0, 0, 0.5);
+  z-index: 2001;
+  overflow: hidden;
+  border: 1px solid rgba(102, 126, 234, 0.3);
+}
+
+/* 实验详情关闭按钮 - 更高层级 */
+#experimentDetailModal .close-btn {
+  z-index: 2002;
+}
+
+.detail-scroll-content {
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 0;
+}
+
+/* 自定义滚动条 */
+.detail-scroll-content::-webkit-scrollbar,
+#experimentDetailModal .modal-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.detail-scroll-content::-webkit-scrollbar-track,
+#experimentDetailModal .modal-content::-webkit-scrollbar-track {
+  background: rgba(240, 240, 240, 0.5);
+  border-radius: 4px;
+}
+
+.detail-scroll-content::-webkit-scrollbar-thumb,
+#experimentDetailModal .modal-content::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 4px;
+}
+
+.detail-scroll-content::-webkit-scrollbar-thumb:hover,
+#experimentDetailModal .modal-content::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #4a5fd4, #5a6fd4);
+}
+
+/* 元素详情整体布局 */
+.element-detail-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.detail-header-full {
+  padding: 35px 30px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* 元素详情 Tab 布局 */
+.element-detail-tabs {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+.detail-tabs-header {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid #e9ecef;
+  background: #f8f9fa;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.detail-tab {
+  flex: 1;
+  padding: 18px 25px;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  font-size: 1.05em;
+  font-weight: 500;
+  color: #666;
+  transition: all 0.3s;
+}
+
+.detail-tab:hover {
+  background: rgba(102, 126, 234, 0.1);
+  color: #667eea;
+}
+
+.detail-tab.active {
+  color: #667eea;
+  border-bottom-color: #667eea;
+  background: white;
+}
+
+.detail-tabs-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 25px 30px 30px 30px;
+}
+
+.detail-tab-pane {
+  display: none;
+}
+
+.detail-tab-pane.active {
+  display: block;
+}
+
+/* 增加各部分 padding */
+.card-section {
+  margin-bottom: 25px;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 12px;
+}
+
+.card-section:last-child {
+  margin-bottom: 0;
+}
+
+.card-section h4 {
+  font-size: 1.15em;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 基本信息对齐优化 */
+.card-section p {
+  margin: 10px 0;
+  font-size: 0.95em;
+  display: flex;
+  align-items: baseline;
+}
+
+.card-section strong {
+  color: #667eea;
+  font-weight: 600;
+  min-width: 90px;
+  display: inline-block;
+}
+
+/* 周期表口诀区域 */
+.mnemonic-section-container {
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  border-top: 3px solid #667eea;
+  padding: 0;
+  margin-top: 30px;
+}
+
+.mnemonic-tabs {
+  display: flex;
+  gap: 0;
+  background: white;
+  padding: 0;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.mnemonic-tab {
+  flex: 1;
+  padding: 15px 20px;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  font-size: 0.95em;
+  font-weight: 500;
+  color: #666;
+  transition: all 0.3s;
+  white-space: nowrap;
+}
+
+.mnemonic-tab:hover {
+  background: rgba(102, 126, 234, 0.1);
+  color: #667eea;
+}
+
+.mnemonic-tab.active {
+  color: #667eea;
+  border-bottom-color: #667eea;
+  background: white;
+}
+
+.mnemonic-content-wrapper {
+  padding: 20px 30px;
+  background: white;
+  min-height: 120px;
+}
+
+.mnemonic-tab-content {
+  display: none;
+}
+
+.mnemonic-tab-content.active {
+  display: block;
+}
+
+.mnemonic-text p {
+  margin: 8px 0;
+  line-height: 1.7;
+  color: #555;
+}
+
+.mnemonic-text strong {
+  color: #667eea;
+  font-weight: 600;
+}
+
+.mnemonic-note {
+  font-style: italic;
+  color: #888;
+  margin-top: 10px;
+}
+
+/* 响应式口诀区域 */
+@media (max-width: 768px) {
+  .mnemonic-tabs {
+    flex-wrap: wrap;
+  }
+  
+  .mnemonic-tab {
+    flex: 1 1 auto;
+    min-width: 30%;
+    font-size: 0.85em;
+    padding: 12px 15px;
+  }
+  
+  .mnemonic-content-wrapper {
+    padding: 15px;
+  }
+}
+
+.element-card .card-section {
+  margin-bottom: 0;
+}
+
+.element-card .card-section h4 {
+  font-size: 1.1em;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 电子壳层可视化 - 缩小尺寸 */
+.electron-shells-viz {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  margin: 10px auto;
+}
+
+.electron-shells-viz .shell {
+  position: absolute;
+  border: 2px solid #667eea;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: transparent;
+}
+
+.electron-shells-viz .shell-1 { width: 40px; height: 40px; }
+.electron-shells-viz .shell-2 { width: 70px; height: 70px; }
+.electron-shells-viz .shell-3 { width: 100px; height: 100px; }
+.electron-shells-viz .shell-4 { width: 130px; height: 130px; }
+.electron-shells-viz .shell-5 { width: 160px; height: 160px; }
+
+.electron-shells-viz .nucleus {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border: 2px solid #4a5fd4;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 0.75em;
+  font-weight: bold;
+  z-index: 10;
+}
+
+.electron-shells-viz .electron {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  background: linear-gradient(135deg, #4d96ff, #2c3e50);
+  border: 1px solid #1a252f;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+}
+
+/* 电子层信息 */
+.electron-config {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 15px;
+}
+
+.shell-info {
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  padding: 10px 18px;
+  border-radius: 10px;
+  text-align: center;
+  border: 1px solid #e0e0e0;
+  min-width: 70px;
+}
+
+.shell-info .shell-num {
+  font-size: 0.75em;
+  color: #666;
+  display: block;
+  margin-bottom: 3px;
+}
+
+.shell-info .shell-electrons {
+  font-size: 1.3em;
+  font-weight: bold;
+  color: #667eea;
+  display: block;
+}
+
+/* 化合价 */
+.valence-list {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.valence-item {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  padding: 8px 20px;
+  border-radius: 18px;
+  font-size: 1em;
+  font-weight: bold;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+/* 化合物 */
+.compounds-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.compound-item {
+  background: white;
+  padding: 12px 15px;
+  border-radius: 10px;
+  border-left: 4px solid #667eea;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.compound-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.compound-formula {
+  font-weight: bold;
+  color: #333;
+  font-size: 1em;
+}
+
+.compound-name {
+  color: #666;
+  font-size: 0.9em;
+}
+
+.element-valence-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.valence-tag {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 10px;
+  font-size: 0.75em;
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.valence-tag .element-symbol {
+  background: rgba(255,255,255,0.2);
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-size: 1.1em;
+}
+
+/* 基本信息网格布局 */
+.basic-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.basic-info-item {
+  display: flex;
+  align-items: baseline;
+  padding: 8px 0;
+}
+
+.info-label {
+  color: #667eea;
+  font-weight: 600;
+  min-width: 70px;
+  font-size: 0.95em;
+}
+
+.info-value {
+  color: #333;
+  font-size: 0.95em;
+}
+
+@media (max-width: 600px) {
+  .basic-info-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .info-label {
+    min-width: 60px;
+  }
+}
+
+/* 化学方程式 */
+.equations-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.equation-item {
+  background: white;
+  padding: 12px 15px;
+  border-radius: 10px;
+  border-left: 4px solid #667eea;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.equation-main {
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  color: #333;
+  font-size: 0.95em;
+  margin-bottom: 6px;
+  line-height: 1.5;
+}
+
+.equation-name {
+  background: #667eea;
+  color: white;
+  padding: 3px 10px;
+  border-radius: 10px;
+  font-size: 0.8em;
+  margin-right: 6px;
+  display: inline-block;
+}
+
+.equation-condition {
+  background: #f39c12;
+  color: white;
+  padding: 3px 10px;
+  border-radius: 10px;
+  font-size: 0.8em;
+  display: inline-block;
+}
+
+/* 关联实验 */
+.related-experiments {
+  grid-column: 1 / -1;
+}
+
 .experiment-link {
   display: block;
   background: white;
-  padding: 12px;
+  padding: 14px 16px;
   border-radius: 10px;
   margin-bottom: 10px;
   border-left: 4px solid #667eea;
   cursor: pointer;
   transition: all 0.3s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
 .experiment-link:hover {
-  transform: translateX(5px);
+  transform: translateX(8px);
   box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
-  background: #f0f0f0;
+  background: #f8f9fa;
 }
 
 .experiment-link h4 {
   color: #333;
   margin-bottom: 8px;
-  font-size: 0.95em;
+  font-size: 1em;
+  font-weight: 600;
 }
 
 .experiment-link .exp-meta {
@@ -70,165 +622,216 @@
 
 .experiment-link .exp-meta span {
   background: #f0f0f0;
-  padding: 2px 8px;
+  padding: 3px 10px;
   border-radius: 10px;
 }
 
-.experiment-link .match-reason {
-  margin-top: 8px;
-  font-size: 0.8em;
-  color: #667eea;
-  font-weight: bold;
+/* 实验详情弹窗样式 */
+#experimentDetailModal .modal-header {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  padding: 25px;
+  text-align: center;
 }
 
-/* 实验用品化学式样式 */
-.materials-list li {
+#experimentDetailModal .modal-header h2 {
+  margin: 0 0 12px 0;
+  font-size: 1.8em;
+}
+
+#experimentDetailModal .experiment-meta {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+#experimentDetailModal .experiment-meta span {
+  background: rgba(255,255,255,0.2);
+  padding: 5px 12px;
+  border-radius: 15px;
+  font-size: 0.9em;
+  font-weight: 500;
+}
+
+#experimentDetailModal .modal-section {
+  padding: 18px 25px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+#experimentDetailModal .modal-section:last-child {
+  border-bottom: none;
+}
+
+#experimentDetailModal .modal-section h3 {
+  color: #667eea;
+  margin: 0 0 12px 0;
+  font-size: 1.1em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#experimentDetailModal .modal-section p {
+  color: #555;
+  line-height: 1.7;
+  margin: 0;
+}
+
+#experimentDetailModal .materials-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 8px;
+}
+
+#experimentDetailModal .materials-list li {
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  padding: 10px 15px;
+  border-radius: 10px;
+  border-left: 3px solid #667eea;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 15px !important;
-  margin-bottom: 8px !important;
+  font-size: 0.9em;
 }
 
-.material-name {
-  flex: 1;
+#experimentDetailModal .material-name {
   color: #333;
+  font-weight: 500;
 }
 
-.material-formula {
+#experimentDetailModal .material-formula {
   background: linear-gradient(135deg, #667eea, #764ba2);
   color: white;
-  padding: 4px 12px;
-  border-radius: 15px;
+  padding: 3px 10px;
+  border-radius: 12px;
   font-family: 'Courier New', monospace;
-  font-size: 0.9em;
-  font-weight: bold;
-  white-space: nowrap;
-  margin-left: 10px;
-}
-
-/* 实验详情弹窗 */
-.experiment-modal-content {
-  max-width: 800px;
-  width: 90%;
-  max-height: 90vh;
-  overflow-y: auto;
-  padding: 30px;
-  position: relative;
-}
-
-.experiment-modal-content .close-btn {
-  position: absolute;
-  top: 15px;
-  right: 20px;
-  font-size: 2em;
-  cursor: pointer;
-  color: #999;
-  background: none;
-  border: none;
-  z-index: 10;
-}
-
-.experiment-modal-content .close-btn:hover {
-  color: #333;
-}
-
-.experiment-modal-content .modal-header {
-  text-align: center;
-  margin-bottom: 25px;
-  padding-bottom: 20px;
-  border-bottom: 2px solid #f0f0f0;
-}
-
-.experiment-modal-content .modal-header h2 {
-  color: #667eea;
-  margin-bottom: 15px;
-}
-
-.experiment-modal-content .modal-section {
-  margin-bottom: 25px;
-}
-
-.experiment-modal-content .modal-section h3 {
-  color: #667eea;
-  margin-bottom: 15px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.experiment-modal-content .materials-list,
-.experiment-modal-content .steps-list,
-.experiment-modal-content .warnings-list {
-  list-style: none;
-  padding: 0;
-}
-
-.experiment-modal-content .materials-list li {
-  padding: 8px 15px;
-  background: #f8f9fa;
-  margin-bottom: 8px;
-  border-radius: 8px;
-  border-left: 3px solid #667eea;
-}
-
-.experiment-modal-content .steps-list li {
-  padding: 12px 15px;
-  background: #f8f9fa;
-  margin-bottom: 10px;
-  border-radius: 8px;
-  position: relative;
-  padding-left: 40px;
-}
-
-.experiment-modal-content .steps-list li::before {
-  content: attr(data-step);
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: #667eea;
-  color: white;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   font-size: 0.85em;
   font-weight: bold;
 }
 
-.experiment-modal-content .warnings-list li {
-  padding: 12px 15px;
-  background: #fff3cd;
-  margin-bottom: 10px;
-  border-radius: 8px;
-  border-left: 4px solid #ffc107;
-  color: #856404;
+#experimentDetailModal .steps-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  counter-reset: step-counter;
 }
 
-.experiment-modal-content .experiment-equation {
-  background: #f8f9fa;
-  padding: 15px;
-  border-radius: 8px;
-  font-family: 'Courier New', monospace;
-  color: #333;
-  font-weight: bold;
-  text-align: center;
-  font-size: 1.1em;
+#experimentDetailModal .steps-list li {
+  background: white;
+  padding: 12px 15px 12px 45px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  border: 1px solid #e9ecef;
+  position: relative;
+  color: #555;
+  line-height: 1.6;
 }
 
-.experiment-modal-content .phenomenon-box {
+#experimentDetailModal .steps-list li::before {
+  counter-increment: step-counter;
+  content: counter(step-counter);
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
   background: linear-gradient(135deg, #667eea, #764ba2);
   color: white;
-  padding: 20px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85em;
+  font-weight: bold;
+}
+
+#experimentDetailModal .experiment-equation {
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  padding: 15px;
+  border-radius: 12px;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+  font-size: 1.05em;
+  border: 2px solid #e9ecef;
+}
+
+#experimentDetailModal .phenomenon-box {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  padding: 18px;
   border-radius: 12px;
   text-align: center;
 }
 
-.experiment-modal-content .phenomenon-box p {
-  font-size: 1.1em;
-  line-height: 1.6;
+#experimentDetailModal .phenomenon-box p {
+  color: white;
   margin: 0;
+  line-height: 1.6;
+}
+
+#experimentDetailModal .warnings-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#experimentDetailModal .warnings-list li {
+  background: linear-gradient(135deg, #fff3cd, #ffe69c);
+  padding: 10px 15px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  border-left: 4px solid #ffc107;
+  color: #856404;
+  font-size: 0.9em;
+}
+
+/* 响应式 */
+@media (max-width: 900px) {
+  .element-card .card-body {
+    grid-template-columns: 1fr;
+  }
+  
+  .electron-shells-viz {
+    width: 140px;
+    height: 140px;
+  }
+}
+
+@media (max-width: 600px) {
+  .modal-content-wrapper {
+    width: 98%;
+    max-height: 90vh;
+  }
+  
+  .element-card .card-header {
+    padding: 20px;
+  }
+  
+  .element-card .card-body {
+    padding: 15px;
+  }
+  
+  .electron-shells-viz {
+    width: 120px;
+    height: 120px;
+  }
+  
+  #experimentDetailModal .modal-header h2 {
+    font-size: 1.5em;
+  }
+  
+  #experimentDetailModal .modal-section {
+    padding: 15px;
+  }
+  
+  #experimentDetailModal .materials-list {
+    grid-template-columns: 1fr;
+  }
 }

@@ -12,8 +12,7 @@
   }
   
   .container.main-container .periodic-table {
-    transform: scale(1.1);
-    transform-origin: top left;
+    width: 100%;
   }
   
   .container.main-container .info-panel-container {
@@ -34,33 +33,45 @@
 /* === 小屏幕/平板 (768px-900px) === */
 @media (max-width: 900px) {
   .container.main-container {
-    flex-direction: column;
     padding: 15px;
     gap: 20px;
   }
   
   .container.main-container .periodic-table-section {
-    order: 1;
     width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
   
   .container.main-container .info-panel-container {
-    order: 2;
     width: 100%;
     max-width: 100%;
     max-height: none;
   }
   
-  /* 周期表可横向滚动 */
-  .container.main-container .periodic-table-section {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+  .container.main-container .periodic-table {
+    margin: 0 auto 20px auto;
+  }
+}
+
+/* 大屏布局 - 周期表和信息面板并排 */
+@media (min-width: 901px) {
+  .container.main-container {
+    display: flex;
+    gap: 30px;
   }
   
-  .container.main-container .periodic-table {
-    min-width: 1260px;
-    margin-bottom: 20px;
+  .periodic-table-section {
+    flex: 1;
+    min-width: 0;
   }
+  
+  .info-panel-container {
+    width: 420px;
+    min-width: 420px;
+    flex-shrink: 0;
+  }
+}
   
   /* 控制按钮优化 */
   .container.main-container .game-controls {
@@ -86,6 +97,11 @@
     border-radius: 12px;
   }
   
+  .container.main-container .periodic-table-section {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
   .container.main-container .periodic-table-section header h1 {
     font-size: 1.6em;
   }
@@ -107,19 +123,21 @@
     margin-bottom: 10px !important;
   }
   
-  /* 元素卡片优化 */
+  .container.main-container .periodic-table {
+    margin: 0 auto 20px auto;
+  }
+  
   .container.main-container .element-cell {
-    width: 60px;
-    height: 60px;
-    padding: 3px;
+    width: 50px;
+    height: 50px;
   }
   
   .container.main-container .element-symbol {
-    font-size: 1.2em;
+    font-size: 16px;
   }
   
   .container.main-container .element-name {
-    display: none;
+    font-size: 8px;
   }
   
   /* 信息面板优化 */

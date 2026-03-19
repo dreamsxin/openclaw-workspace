@@ -19,8 +19,6 @@ body {
   border-radius: 20px;
   padding: 30px;
   box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-  display: flex;
-  gap: 30px;
 }
 
 
@@ -219,14 +217,17 @@ header h1 {
 
 .periodic-table {
   display: grid;
-  grid-template-columns: repeat(18, 1fr);
+  grid-template-columns: repeat(18, 60px);
+  grid-auto-rows: 60px;
   gap: 5px;
-  margin-bottom: 30px;
+  margin: 0 auto 30px auto;
+  width: fit-content;
+  justify-content: center;
 }
 
 .element-cell {
-  width: 70px;
-  height: 70px;
+  width: 60px;
+  height: 60px;
   border-radius: 8px;
   padding: 5px;
   cursor: pointer;
@@ -247,20 +248,23 @@ header h1 {
 }
 
 .atomic-number {
-  font-size: 0.7em;
+  font-size: 10px;
   position: absolute;
-  top: 3px;
+  top: 4px;
   left: 5px;
 }
 
 .element-symbol {
-  font-size: 1.4em;
+  font-size: 20px;
   font-weight: bold;
+  line-height: 1.1;
 }
 
 .element-name {
-  font-size: 0.65em;
-  margin-top: 2px;
+  font-size: 9px;
+  margin-top: 3px;
+  text-align: center;
+  line-height: 1.2;
 }
 
 /* 周期表布局 - 按族排列 */
