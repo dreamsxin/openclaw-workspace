@@ -157,6 +157,59 @@ export const elementUtils = {
  */
 export const experimentUtils = {
   /**
+   * 实验器材列表（用于过滤，避免错误匹配）
+   */
+  labEquipment: [
+    '试管', '烧杯', '锥形瓶', '集气瓶', '量筒', '漏斗', '铁架台', '蒸发皿',
+    '酒精灯', '石棉网', '玻璃棒', '药匙', '镊子', '滴管', '导管', '水槽',
+    '天平', '砝码', '滤纸', '铁圈', '铁夹', '试管夹', '坩埚钳', '燃烧匙',
+    '胶头滴管', '长颈漏斗', '分液漏斗', '容量瓶', '表面皿', '干燥管',
+    'U 型管', '导管', '橡皮塞', '止水夹', '托盘', '火柴'
+  ],
+
+  /**
+   * 常见溶剂/辅助试剂（不作为元素关联的主要依据）
+   */
+  commonSolvents: [
+    '蒸馏水', '水', '自来水', '去离子水',
+    '稀盐酸', '浓盐酸', '稀硫酸', '浓硫酸', '稀硝酸',
+    '氢氧化钠溶液', '氢氧化钾溶液', '石灰水',
+    '酒精', '乙醇', '丙酮', '汽油', '苯'
+  ],
+
+  /**
+   * 判断是否为化学药品（排除实验器材）
+   * @param {string} material - 材料名称
+   * @returns {boolean} 是否为化学药品
+   */
+  isChemical(material) {
+    // 检查是否包含器材关键词
+    const isEquipment = this.labEquipment.some(equip => material.includes(equip));
+    if (isEquipment) return false;
+    
+    // 检查是否为化学药品（包含化学式、酸、碱、盐等）
+    const chemicalPatterns = [
+      /\([A-Z][a-z]?\)/,  // 化学式括号，如 (NaCl)
+      /[A-Z][a-z]?\d*/,   // 元素符号，如 H2O
+      /酸$/, /碱$/, /盐$/, /溶液$/, /粉末$/, /晶体$/,
+      /氢$/, /氧$/, /氮$/, /碳$/, /硫$/, /磷$/, /氯$/,
+      /钠$/, /钾$/, /钙$/, /镁$/, /铝$/, /锌$/, /铁$/, /铜$/, /银$/, /钡$/,
+      /石蕊$/, /酚酞$/, /石灰水$/, /双氧水$/, /盐酸$/, /硫酸$/, /硝酸$/
+    ];
+    
+    return chemicalPatterns.some(pattern => pattern.test(material));
+  },
+
+  /**
+   * 判断是否为常见溶剂/辅助试剂
+   * @param {string} material - 材料名称
+   * @returns {boolean} 是否为溶剂
+   */
+  isSolvent(material) {
+    return this.commonSolvents.some(solvent => material.includes(solvent));
+  },
+
+  /**
    * 查找与元素相关的实验
    * @param {Array} experiments - 实验数组
    * @param {Object} element - 元素对象
@@ -168,18 +221,27 @@ export const experimentUtils = {
     const nameEn = element.nameEn;
     
     return experiments.filter(exp => {
-      // 检查实验用品
-      const inMaterials = exp.materials.some(m => 
-        m.includes(symbol) || m.includes(name) || m.includes(nameEn)
-      );
-      
-      // 检查方程式
-      const inEquation = exp.equation.includes(symbol);
-      
-      // 检查实验名称
+      // 检查实验名称（优先级最高）
       const inName = exp.name.includes(name);
+      if (inName) return true;
       
-      return inMaterials || inEquation || inName;
+      // 检查方程式（优先级最高）
+      const inEquation = exp.equation.includes(symbol);
+      if (inEquation) return true;
+      
+      // 检查实验用品（排除器材和溶剂）
+      const inMaterials = exp.materials.some(m => {
+        // 排除实验器材
+        if (!this.isChemical(m)) return false;
+        
+        // 排除常见溶剂/辅助试剂（如水、稀酸、稀碱）
+        if (this.isSolvent(m)) return false;
+        
+        // 检查是否包含元素符号或名称
+        return m.includes(symbol) || m.includes(name) || m.includes(nameEn);
+      });
+      
+      return inMaterials;
     });
   },
 

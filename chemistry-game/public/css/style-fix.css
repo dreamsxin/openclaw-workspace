@@ -81,6 +81,32 @@
   font-weight: bold;
 }
 
+/* 实验用品化学式样式 */
+.materials-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px !important;
+  margin-bottom: 8px !important;
+}
+
+.material-name {
+  flex: 1;
+  color: #333;
+}
+
+.material-formula {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 15px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9em;
+  font-weight: bold;
+  white-space: nowrap;
+  margin-left: 10px;
+}
+
 /* 实验详情弹窗 */
 .experiment-modal-content {
   max-width: 800px;

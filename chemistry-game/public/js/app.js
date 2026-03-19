@@ -514,6 +514,27 @@ function handleReset() {
 }
 
 /**
+ * 解析实验用品，分离名称和化学式
+ * @param {string} material - 实验用品字符串
+ * @returns {Object} 包含 name 和 formula 的对象
+ */
+function parseMaterial(material) {
+  const match = material.match(/^(.+?)\(([^)]+)\)$/);
+  if (match) {
+    return {
+      name: match[1].trim(),
+      formula: match[2].trim(),
+      hasFormula: true
+    };
+  }
+  return {
+    name: material,
+    formula: '',
+    hasFormula: false
+  };
+}
+
+/**
  * 显示实验详情弹窗
  * @param {Object} experiment - 实验对象
  */
@@ -541,7 +562,17 @@ function showExperimentDetail(experiment) {
       <div class="modal-section">
         <h3>🧪 实验用品</h3>
         <ul class="materials-list">
-          ${experiment.materials.map(m => `<li>${m}</li>`).join('')}
+          ${experiment.materials.map(m => {
+            const parsed = parseMaterial(m);
+            if (parsed.hasFormula) {
+              return `<li>
+                <span class="material-name">${parsed.name}</span>
+                <span class="material-formula">${parsed.formula}</span>
+              </li>`;
+            } else {
+              return `<li>${parsed.name}</li>`;
+            }
+          }).join('')}
         </ul>
       </div>
 
