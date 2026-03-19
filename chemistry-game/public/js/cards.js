@@ -1,5 +1,5 @@
 // 元素卡片记忆游戏
-import { storage, elementUtils } from './utils.js';
+import { storage } from './utils.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   let elements = [];
@@ -11,16 +11,13 @@ document.addEventListener('DOMContentLoaded', () => {
   let timer = 0;
   let timerInterval = null;
   let currentMode = '';
-  let studyIndex = 0;
+  let currentGridSize = 4; // 默认 4x4
   let gameActive = false;
 
   // DOM 元素
   const startGameBtn = document.getElementById('startGame');
-  const studyModeBtn = document.getElementById('studyMode');
   const gameModeSelect = document.getElementById('gameModeSelect');
   const gameBoard = document.getElementById('gameBoard');
-  const studyView = document.getElementById('studyView');
-  const elementCard = document.getElementById('elementCard');
   const scoreValue = document.getElementById('scoreValue');
   const movesValue = document.getElementById('movesValue');
   const timerValue = document.getElementById('timerValue');
@@ -31,12 +28,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const starsDisplay = document.getElementById('starsDisplay');
   const playAgainBtn = document.getElementById('playAgain');
   const backToMenuBtn = document.getElementById('backToMenu');
-  const prevElementBtn = document.getElementById('prevElement');
-  const nextElementBtn = document.getElementById('nextElement');
-  const studyCounter = document.getElementById('studyCounter');
-  const cardDetail = document.getElementById('cardDetail');
-  const detailContent = document.getElementById('detailContent');
-  const closeDetailBtn = document.getElementById('closeDetail');
 
   // 加载元素数据
   fetch('/api/elements')
@@ -50,17 +41,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // 开始游戏按钮
   startGameBtn.addEventListener('click', () => {
     gameModeSelect.classList.remove('hidden');
-    studyView.classList.add('hidden');
-    gameBoard.classList.add('hidden');
-  });
-
-  // 学习模式按钮
-  studyModeBtn.addEventListener('click', () => {
-    gameModeSelect.classList.add('hidden');
-    studyView.classList.remove('hidden');
     gameBoard.classList.add('hidden');
     gameOverModal.classList.add('hidden');
-    showStudyCard(0);
   });
 
   // 模式选择
@@ -72,16 +54,41 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.classList.add('selected');
       
       currentMode = btn.dataset.mode;
-      if (currentMode === 'full-card') {
-        // 学习模式 - 隐藏游戏面板
-        studyView.classList.remove('hidden');
-        gameBoard.classList.add('hidden');
-        gameOverModal.classList.add('hidden');
-        showStudyCard(0);
-      } else {
-        // 游戏模式 - 隐藏学习面板
-        studyView.classList.add('hidden');
-        startGame(currentMode);
+      // 开始游戏
+      startGame(currentMode);
+    });
+  });
+
+  // 卡片数量选择
+  document.querySelectorAll('.grid-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const newGridSize = parseInt(btn.dataset.grid);
+      
+      // 如果难度没有变化，不处理
+      if (newGridSize === currentGridSize) return;
+      
+      // 移除其他按钮的选中状态
+      document.querySelectorAll('.grid-btn').forEach(b => b.classList.remove('selected'));
+      // 添加当前按钮选中状态
+      btn.classList.add('selected');
+      
+      currentGridSize = newGridSize;
+      console.log(`选择难度：${currentGridSize}x${currentGridSize}`);
+      
+      // 如果游戏正在进行中，自动重新开始
+      if (gameActive && !gameBoard.classList.contains('hidden')) {
+        // 显示提示信息
+        const toast = document.createElement('div');
+        toast.className = 'difficulty-change-toast';
+        toast.textContent = `🔄 难度已更改为 ${currentGridSize}×${currentGridSize}，游戏重新开始`;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => toast.remove(), 3000);
+        
+        // 重新开始游戏
+        setTimeout(() => {
+          startGame(currentMode);
+        }, 500);
       }
     });
   });
@@ -90,7 +97,9 @@ document.addEventListener('DOMContentLoaded', () => {
   function startGame(mode) {
     gameModeSelect.classList.add('hidden');
     gameBoard.classList.remove('hidden');
-    studyView.classList.add('hidden');
+    
+    // 设置网格大小属性
+    gameBoard.dataset.grid = currentGridSize;
     
     resetGame();
     generateCards(mode);
@@ -115,17 +124,23 @@ document.addEventListener('DOMContentLoaded', () => {
   // 生成卡片
   function generateCards(mode) {
     gameBoard.innerHTML = '';
-    const gameElements = elements.slice(0, 12); // 使用 12 个元素生成 24 张卡片
+    
+    // 根据网格大小计算卡片数量
+    const totalCards = currentGridSize * currentGridSize;
+    const elementCount = totalCards / 2; // 每个元素 2 张卡片
+    
+    // 随机选择元素
+    const shuffledElements = [...elements].sort(() => Math.random() - 0.5);
+    const gameElements = shuffledElements.slice(0, elementCount);
     
     let cardPairs = [];
     
     gameElements.forEach((element, index) => {
-      // 卡片 A - 元素符号 + 中文名称
+      // 卡片 A - 元素符号
       cardPairs.push({
         id: index,
         type: 'symbol',
         symbol: element.symbol,
-        name: element.name,
         element: element
       });
       
@@ -137,8 +152,8 @@ document.addEventListener('DOMContentLoaded', () => {
           label = '元素名称';
           break;
         case 'symbol-config':
-          content = renderMiniElectronShells(element.electronConfig, element.atomicNumber);
-          label = '电子壳层';
+          content = renderMiniElectronShells(element.electronConfig, element.symbol);
+          label = '电子排布';
           break;
         case 'symbol-valence':
           content = element.valence.map(v => v > 0 ? `+${v}` : v).join(', ');
@@ -324,8 +339,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // 计算星级
     let stars = 1;
-    if (moves <= 15) stars = 3;
-    else if (moves <= 25) stars = 2;
+    if (moves <= currentGridSize * 2) stars = 3;
+    else if (moves <= currentGridSize * 3) stars = 2;
     
     finalScore.textContent = score;
     finalMoves.textContent = moves;
@@ -346,158 +361,5 @@ document.addEventListener('DOMContentLoaded', () => {
     gameOverModal.classList.add('hidden');
     gameModeSelect.classList.remove('hidden');
     gameBoard.classList.add('hidden');
-  });
-
-  // 学习模式
-  function showStudyCard(index) {
-    studyIndex = index;
-    const element = elements[index];
-    const bgColor = getCategoryColor(element.category);
-    
-    elementCard.innerHTML = `
-      <div class="card-header" style="background: ${bgColor}">
-        <h2>${element.symbol}</h2>
-        <h3>${element.name}</h3>
-        <p>${element.nameEn} · 原子序数 ${element.atomicNumber}</p>
-      </div>
-      <div class="card-body">
-        <div class="card-section">
-          <h4>⚛️ 电子壳层结构</h4>
-          <div class="electron-shells-viz">
-            ${renderElectronShells(element.electronConfig, element.symbol)}
-          </div>
-          <div class="electron-config">
-            ${element.electronConfig.map((e, i) => `
-              <div class="shell-info">
-                <div class="shell-num">第${i+1}层</div>
-                <div class="shell-electrons">${e}e⁻</div>
-              </div>
-            `).join('')}
-          </div>
-        </div>
-        
-        <div class="card-section">
-          <h4>💫 化合价</h4>
-          <div class="valence-list">
-            ${element.valence.map(v => `
-              <div class="valence-item">${v > 0 ? '+' : ''}${v}</div>
-            `).join('')}
-          </div>
-        </div>
-        
-        <div class="card-section">
-          <h4>🧪 常见化合物</h4>
-          <div class="compounds-list">
-            ${element.compounds.map(c => {
-              const formula = c.formula;
-              const name = c.name;
-              const elementValence = c.elementValence;
-              
-              // 生成化合价标签
-              const valenceTags = Object.entries(elementValence).map(([elemSymbol, valence]) => {
-                const valenceStr = valence > 0 ? `+${valence}` : valence.toString();
-                return `<span class="valence-tag"><span class="element-symbol">${elemSymbol}</span>${valenceStr}</span>`;
-              }).join('');
-              
-              return `
-                <div class="compound-item">
-                  <div class="compound-header">
-                    <span class="compound-formula">${formula}</span>
-                    <span class="compound-name">${name}</span>
-                  </div>
-                  <div class="element-valence-tags">${valenceTags}</div>
-                </div>
-              `;
-            }).join('')}
-          </div>
-        </div>
-        
-        <div class="card-section">
-          <h4>📊 基本信息</h4>
-          <p><strong>原子量：</strong>${element.atomicMass}</p>
-          <p><strong>类别：</strong>${element.category}</p>
-          <p><strong>周期：</strong>第${element.period}周期</p>
-          <p><strong>族：</strong>第${element.group}族</p>
-        </div>
-        
-        ${element.equations && element.equations.length > 0 ? `
-        <div class="card-section">
-          <h4>⚗️ 常见化学方程式</h4>
-          <div class="equations-list">
-            ${element.equations.map(eq => `
-              <div class="equation-item">
-                <div class="equation-main">${eq.equation}</div>
-                <div>
-                  <span class="equation-name">${eq.name}</span>
-                  ${eq.condition ? `<span class="equation-condition">${eq.condition}</span>` : ''}
-                </div>
-              </div>
-            `).join('')}
-          </div>
-        </div>
-        ` : ''}
-      </div>
-    `;
-    
-    studyCounter.textContent = `${index + 1} / ${elements.length}`;
-  }
-
-  // 渲染电子壳层可视化（学习模式用）- 课本风格
-  function renderElectronShells(config, symbol) {
-    const maxShell = config.length;
-    const shellSizes = [60, 100, 140, 180, 220];
-    
-    let html = `<div class="electron-shells-viz" style="width: ${shellSizes[maxShell-1] || 220}px; height: ${shellSizes[maxShell-1] || 220}px;">`;
-    html += `<div class="nucleus">${symbol}</div>`;
-    
-    config.forEach((electrons, shellIndex) => {
-      const radius = shellSizes[shellIndex] / 2;
-      const angleStep = (2 * Math.PI) / electrons;
-      
-      html += `<div class="shell shell-${shellIndex + 1}" style="width: ${shellSizes[shellIndex]}px; height: ${shellSizes[shellIndex]}px;"></div>`;
-      
-      for (let i = 0; i < electrons; i++) {
-        const angle = angleStep * i - Math.PI / 2;
-        const x = Math.cos(angle) * radius;
-        const y = Math.sin(angle) * radius;
-        html += `<div class="electron" style="left: calc(50% + ${x}px); top: calc(50% + ${y}px);"></div>`;
-      }
-    });
-    
-    html += '</div>';
-    return html;
-  }
-
-  // 获取类别颜色
-  function getCategoryColor(category) {
-    const colors = {
-      '碱金属': '#ff6b6b',
-      '碱土金属': '#ffd93d',
-      '过渡金属': '#6bcb77',
-      '贫金属': '#4d96ff',
-      '类金属': '#9b59b6',
-      '非金属': '#95a5a6',
-      '卤素': '#e67e22',
-      '稀有气体': '#00d2d3'
-    };
-    return colors[category] || '#667eea';
-  }
-
-  // 学习模式导航
-  prevElementBtn.addEventListener('click', () => {
-    if (studyIndex > 0) {
-      showStudyCard(studyIndex - 1);
-    }
-  });
-
-  nextElementBtn.addEventListener('click', () => {
-    if (studyIndex < elements.length - 1) {
-      showStudyCard(studyIndex + 1);
-    }
-  });
-
-  // 关闭详情
-  closeDetailBtn.addEventListener('click', () => {
-    cardDetail.classList.add('hidden');
   });
 });

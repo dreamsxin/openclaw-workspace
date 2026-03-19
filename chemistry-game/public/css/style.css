@@ -145,12 +145,11 @@ header h1 {
 
 .game-controls {
   display: flex !important;
-  flex-wrap: nowrap !important;
+  flex-wrap: wrap !important;
   justify-content: center !important;
   gap: 10px !important;
   margin-bottom: 20px !important;
   align-items: center !important;
-  overflow-x: auto !important;
   padding: 5px 0 !important;
 }
 
@@ -158,13 +157,18 @@ header h1 {
   white-space: nowrap !important;
   flex-shrink: 0 !important;
   flex-grow: 0 !important;
+  min-width: fit-content !important;
 }
 
 .game-info {
   display: flex !important;
   gap: 15px !important;
   align-items: center !important;
-  flex-wrap: nowrap !important;
+  flex-wrap: wrap !important;
+  width: 100% !important;
+  justify-content: center !important;
+  order: -1 !important;
+  margin-bottom: 10px !important;
 }
 
 .game-info span {

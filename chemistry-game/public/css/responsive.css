@@ -61,6 +61,22 @@
     min-width: 1260px;
     margin-bottom: 20px;
   }
+  
+  /* 控制按钮优化 */
+  .container.main-container .game-controls {
+    flex-wrap: wrap !important;
+  }
+  
+  .container.main-container .game-info {
+    width: 100% !important;
+    order: -1 !important;
+    margin-bottom: 10px !important;
+  }
+  
+  .container.main-container .game-controls .btn {
+    flex: 1 1 auto !important;
+    min-width: 140px !important;
+  }
 }
 
 /* === 手机横屏/大手机 (500px-768px) === */
@@ -78,10 +94,17 @@
     justify-content: center;
   }
   
+  .container.main-container .game-info {
+    width: 100% !important;
+    order: -1 !important;
+    margin-bottom: 10px !important;
+  }
+  
   .container.main-container .score {
-    order: -1;
-    width: 100%;
-    text-align: center;
+    order: -2 !important;
+    width: 100% !important;
+    text-align: center !important;
+    margin-bottom: 10px !important;
   }
   
   /* 元素卡片优化 */
@@ -114,22 +137,40 @@
   
   .container.main-container .periodic-table-section header h1 {
     font-size: 1.4em;
+    margin-bottom: 8px;
   }
   
-  /* 控制按钮堆叠 */
+  .container.main-container .periodic-table-section header .subtitle {
+    font-size: 0.85em;
+    margin-bottom: 15px;
+  }
+  
+  /* 控制按钮优化 */
   .container.main-container .game-controls {
-    flex-direction: column;
-    gap: 8px;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
   }
   
-  .container.main-container .game-controls .btn {
-    width: 100%;
-    padding: 12px 20px;
+  .container.main-container .game-info {
+    width: 100% !important;
+    order: -1 !important;
+    margin-bottom: 10px !important;
+    justify-content: center !important;
   }
   
   .container.main-container .score {
-    width: 100%;
-    padding: 8px;
+    width: 100% !important;
+    order: -2 !important;
+    text-align: center !important;
+    margin-bottom: 10px !important;
+    padding: 8px !important;
+  }
+  
+  .container.main-container .game-controls .btn {
+    flex: 1 1 auto !important;
+    min-width: calc(50% - 10px) !important;
+    padding: 12px 15px !important;
+    font-size: 0.9em !important;
   }
   
   /* 周期表优化 */
@@ -142,10 +183,12 @@
     width: 55px;
     height: 55px;
     padding: 2px;
+    border-radius: 6px;
   }
   
   .container.main-container .element-symbol {
     font-size: 1.1em;
+    font-weight: bold;
   }
   
   /* 图例优化 */
@@ -154,9 +197,64 @@
     gap: 8px;
   }
   
+  .container.main-container .legend-item {
+    font-size: 0.85em;
+  }
+  
+  .container.main-container .legend-color {
+    width: 20px;
+    height: 20px;
+  }
+  
   /* 信息面板优化 */
   .container.main-container .info-panel-container {
     padding: 12px;
+    margin-top: 15px;
+  }
+  
+  .container.main-container .info-panel-container h2 {
+    font-size: 1.2em;
+    margin-bottom: 15px;
+  }
+  
+  .container.main-container .mnemonic-section {
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+  }
+  
+  .container.main-container .mnemonic-section h3 {
+    font-size: 1em;
+    margin-bottom: 10px;
+  }
+  
+  .container.main-container .mnemonic-text p {
+    font-size: 0.85em;
+    line-height: 1.5;
+  }
+  
+  .container.main-container .mnemonic-hint {
+    padding: 12px;
+    font-size: 0.85em;
+  }
+  
+  .container.main-container .experiment-link {
+    padding: 10px;
+    margin-bottom: 8px;
+  }
+  
+  .container.main-container .experiment-link h4 {
+    font-size: 0.85em;
+    margin-bottom: 6px;
+  }
+  
+  .container.main-container .experiment-link .exp-meta {
+    font-size: 0.7em;
+    gap: 5px;
+  }
+  
+  .container.main-container .match-reason {
+    font-size: 0.75em;
+    margin-top: 6px;
   }
 }
 
@@ -173,6 +271,10 @@
   
   .container.main-container .element-symbol {
     font-size: 1em;
+  }
+  
+  .container.main-container .game-controls .btn {
+    min-width: 100% !important;
   }
 }
 
@@ -191,6 +293,7 @@
     width: 350px;
     min-width: 350px;
     overflow-y: auto;
+    max-height: none;
   }
   
   .container.main-container .periodic-table {
@@ -241,6 +344,7 @@
   .container.main-container {
     box-shadow: none;
     padding: 0;
+    max-width: 100%;
   }
   
   .container.main-container .game-controls,
@@ -282,5 +386,9 @@
   .container.main-container *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+  }
+  
+  .container.main-container .element-cell:hover {
+    transform: none;
   }
 }
