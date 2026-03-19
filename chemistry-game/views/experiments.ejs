@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🧪 初中化学实验</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/experiments.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🧪 初中化学实验</h1>
+      <p class="subtitle">常见实验操作 · 注意事项 · 安全规范</p>
+    </header>
+
+    <div class="game-controls">
+      <a href="/" class="btn btn-secondary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">◀ 周期表探索</a>
+      <a href="/cards" class="btn btn-secondary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">🃏 卡片游戏</a>
+    </div>
+
+    <!-- 实验列表 -->
+    <div id="experimentList" class="experiment-list">
+      <!-- 由 JS 动态生成 -->
+    </div>
+
+    <!-- 实验详情弹窗 -->
+    <div id="experimentModal" class="experiment-modal hidden">
+      <div class="modal-content">
+        <button class="close-btn" id="closeModal">&times;</button>
+        <div id="modalBody">
+          <!-- 详情内容由 JS 填充 -->
+        </div>
+      </div>
+    </div>
+
+    <!-- 安全规范 -->
+    <div class="safety-section">
+      <h2>⚠️ 实验室安全规范</h2>
+      <div id="safetyRules" class="safety-rules">
+        <!-- 由 JS 动态生成 -->
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/experiments.js"></script>
+</body>
+</html>

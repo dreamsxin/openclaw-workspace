@@ -1,0 +1,41 @@
+{
+  "env": {
+    "browser": true,
+    "es2022": true,
+    "node": true
+  },
+  "extends": "eslint:recommended",
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+  "rules": {
+    "indent": ["error", 2],
+    "linebreak-style": ["error", "unix"],
+    "quotes": ["error", "single"],
+    "semi": ["error", "always"],
+    "no-unused-vars": "warn",
+    "no-console": "off",
+    "eqeqeq": "error",
+    "curly": "error",
+    "dot-notation": "error",
+    "no-eq-null": "error",
+    "no-throw-literal": "error",
+    "no-shadow": "warn",
+    "no-use-before-define": "warn",
+    "array-callback-return": "error",
+    "no-loop-func": "error",
+    "no-implied-eval": "error",
+    "no-new-func": "error",
+    "no-return-assign": "error",
+    "no-self-compare": "error",
+    "no-sequences": "error",
+    "no-unmodified-loop-condition": "warn",
+    "no-useless-call": "error",
+    "no-useless-concat": "error",
+    "prefer-arrow-callback": "warn",
+    "prefer-const": "warn",
+    "prefer-spread": "warn"
+  },
+  "ignorePatterns": ["node_modules/", "public/js/vendor/"]
+}

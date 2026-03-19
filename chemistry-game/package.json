@@ -1,0 +1,17 @@
+{
+  "name": "chemistry-game",
+  "version": "1.0.0",
+  "description": "初中生化学元素周期表学习游戏",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "ejs": "^3.1.9"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

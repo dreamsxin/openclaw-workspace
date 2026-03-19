@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#667eea">
+  <meta name="description" content="元素卡片记忆游戏 - 通过游戏学习化学元素">
+  <title>🃏 元素卡片记忆游戏</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/cards.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🃏 元素卡片记忆游戏</h1>
+      <p class="subtitle">翻牌匹配 · 学习电子结构 · 记忆化合价</p>
+    </header>
+
+    <div class="game-controls">
+      <a href="/" class="btn btn-secondary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">◀ 周期表探索</a>
+      <button id="startGame" class="btn btn-primary">🎮 开始游戏</button>
+      <button id="studyMode" class="btn btn-secondary">📖 学习模式</button>
+      <div class="game-info">
+        <span class="score">得分：<span id="scoreValue">0</span></span>
+        <span class="moves">步数：<span id="movesValue">0</span></span>
+        <span class="timer">时间：<span id="timerValue">00:00</span></span>
+      </div>
+    </div>
+
+    <!-- 游戏模式选择 -->
+    <div id="gameModeSelect" class="mode-select">
+      <h3>选择游戏模式</h3>
+      <div class="mode-options">
+        <button class="mode-btn" data-mode="symbol-name">
+          <span class="mode-icon">🔤</span>
+          <span class="mode-title">符号 ↔ 名称</span>
+          <span class="mode-desc">匹配元素符号和中文名</span>
+        </button>
+        <button class="mode-btn" data-mode="symbol-config">
+          <span class="mode-icon">⚛️</span>
+          <span class="mode-title">符号 ↔ 电子排布</span>
+          <span class="mode-desc">匹配符号和电子壳层结构</span>
+        </button>
+        <button class="mode-btn" data-mode="symbol-valence">
+          <span class="mode-icon">💫</span>
+          <span class="mode-title">符号 ↔ 化合价</span>
+          <span class="mode-desc">匹配符号和常见化合价</span>
+        </button>
+        <button class="mode-btn" data-mode="full-card">
+          <span class="mode-icon">📋</span>
+          <span class="mode-title">完整卡片</span>
+          <span class="mode-desc">查看所有元素详细信息</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 游戏卡片区域 -->
+    <div id="gameBoard" class="game-board hidden">
+      <!-- 卡片由 JS 动态生成 -->
+    </div>
+
+    <!-- 学习模式 - 元素卡片展示 -->
+    <div id="studyView" class="study-view hidden">
+      <div class="study-controls">
+        <button id="prevElement" class="btn btn-secondary">◀ 上一个</button>
+        <span id="studyCounter">1 / 26</span>
+        <button id="nextElement" class="btn btn-secondary">下一个 ▶</button>
+      </div>
+      <div id="elementCard" class="element-card">
+        <!-- 卡片内容由 JS 动态生成 -->
+      </div>
+    </div>
+
+    <!-- 元素详情弹窗 -->
+    <div id="cardDetail" class="card-detail hidden">
+      <button class="close-btn" id="closeDetail">&times;</button>
+      <div class="detail-content" id="detailContent">
+        <!-- 详情内容由 JS 填充 -->
+      </div>
+    </div>
+
+    <!-- 游戏结束弹窗 -->
+    <div id="gameOver" class="modal hidden">
+      <div class="modal-content">
+        <h2>🎉 游戏结束！</h2>
+        <div class="final-stats">
+          <p>得分：<span id="finalScore" class="stat-value">0</span></p>
+          <p>步数：<span id="finalMoves" class="stat-value">0</span></p>
+          <p>用时：<span id="finalTime" class="stat-value">00:00</span></p>
+        </div>
+        <div class="stars" id="starsDisplay">
+          <span>⭐</span><span>⭐</span><span>⭐</span>
+        </div>
+        <button id="playAgain" class="btn btn-primary">再玩一次</button>
+        <button id="backToMenu" class="btn btn-secondary">返回菜单</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/js/cards.js"></script>
+</body>
+</html>

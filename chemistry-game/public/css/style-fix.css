@@ -1,0 +1,208 @@
+/* 主容器 - 100% 宽度 */
+.container.main-container {
+  max-width: 100% !important;
+  width: 100% !important;
+}
+
+/* 左侧周期表区域 - 自动缩放 */
+.periodic-table-section {
+  min-width: 0;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  flex: 1;
+}
+
+.periodic-table {
+  display: grid;
+  grid-template-columns: repeat(18, 70px);
+  grid-auto-rows: 70px;
+  gap: 4px;
+  margin-bottom: 30px;
+  width: fit-content;
+}
+
+.element-cell {
+  width: 70px;
+  height: 70px;
+}
+
+/* 面板内容切换 */
+.info-panel-content.hidden {
+  display: none !important;
+}
+
+/* 右侧信息面板样式 */
+.info-panel-container {
+  padding: 10px !important;
+}
+
+/* 关联实验样式 */
+.experiment-link {
+  display: block;
+  background: white;
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  border-left: 4px solid #667eea;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.experiment-link:hover {
+  transform: translateX(5px);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+  background: #f0f0f0;
+}
+
+.experiment-link h4 {
+  color: #333;
+  margin-bottom: 8px;
+  font-size: 0.95em;
+}
+
+.experiment-link .exp-meta {
+  display: flex;
+  gap: 8px;
+  font-size: 0.8em;
+  color: #666;
+  flex-wrap: wrap;
+}
+
+.experiment-link .exp-meta span {
+  background: #f0f0f0;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.experiment-link .match-reason {
+  margin-top: 8px;
+  font-size: 0.8em;
+  color: #667eea;
+  font-weight: bold;
+}
+
+/* 实验详情弹窗 */
+.experiment-modal-content {
+  max-width: 800px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 30px;
+  position: relative;
+}
+
+.experiment-modal-content .close-btn {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 2em;
+  cursor: pointer;
+  color: #999;
+  background: none;
+  border: none;
+  z-index: 10;
+}
+
+.experiment-modal-content .close-btn:hover {
+  color: #333;
+}
+
+.experiment-modal-content .modal-header {
+  text-align: center;
+  margin-bottom: 25px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.experiment-modal-content .modal-header h2 {
+  color: #667eea;
+  margin-bottom: 15px;
+}
+
+.experiment-modal-content .modal-section {
+  margin-bottom: 25px;
+}
+
+.experiment-modal-content .modal-section h3 {
+  color: #667eea;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.experiment-modal-content .materials-list,
+.experiment-modal-content .steps-list,
+.experiment-modal-content .warnings-list {
+  list-style: none;
+  padding: 0;
+}
+
+.experiment-modal-content .materials-list li {
+  padding: 8px 15px;
+  background: #f8f9fa;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  border-left: 3px solid #667eea;
+}
+
+.experiment-modal-content .steps-list li {
+  padding: 12px 15px;
+  background: #f8f9fa;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  position: relative;
+  padding-left: 40px;
+}
+
+.experiment-modal-content .steps-list li::before {
+  content: attr(data-step);
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #667eea;
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.85em;
+  font-weight: bold;
+}
+
+.experiment-modal-content .warnings-list li {
+  padding: 12px 15px;
+  background: #fff3cd;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  border-left: 4px solid #ffc107;
+  color: #856404;
+}
+
+.experiment-modal-content .experiment-equation {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  font-family: 'Courier New', monospace;
+  color: #333;
+  font-weight: bold;
+  text-align: center;
+  font-size: 1.1em;
+}
+
+.experiment-modal-content .phenomenon-box {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.experiment-modal-content .phenomenon-box p {
+  font-size: 1.1em;
+  line-height: 1.6;
+  margin: 0;
+}

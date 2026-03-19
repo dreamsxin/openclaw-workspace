@@ -1,0 +1,286 @@
+/* ===================================
+   响应式布局优化
+   只影响主页 (.main-container)
+   不影响 cards 和 experiments 页面
+   =================================== */
+
+/* === 超大屏幕 (>1600px) === */
+@media (min-width: 1600px) {
+  .container.main-container {
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+  
+  .container.main-container .periodic-table {
+    transform: scale(1.1);
+    transform-origin: top left;
+  }
+  
+  .container.main-container .info-panel-container {
+    width: 480px;
+    min-width: 480px;
+    font-size: 1.1em;
+  }
+}
+
+/* === 中等屏幕 (900px-1600px) === */
+@media (min-width: 900px) and (max-width: 1600px) {
+  .container.main-container .info-panel-container {
+    width: 420px;
+    min-width: 420px;
+  }
+}
+
+/* === 小屏幕/平板 (768px-900px) === */
+@media (max-width: 900px) {
+  .container.main-container {
+    flex-direction: column;
+    padding: 15px;
+    gap: 20px;
+  }
+  
+  .container.main-container .periodic-table-section {
+    order: 1;
+    width: 100%;
+  }
+  
+  .container.main-container .info-panel-container {
+    order: 2;
+    width: 100%;
+    max-width: 100%;
+    max-height: none;
+  }
+  
+  /* 周期表可横向滚动 */
+  .container.main-container .periodic-table-section {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .container.main-container .periodic-table {
+    min-width: 1260px;
+    margin-bottom: 20px;
+  }
+}
+
+/* === 手机横屏/大手机 (500px-768px) === */
+@media (max-width: 768px) {
+  .container.main-container {
+    padding: 15px;
+    border-radius: 12px;
+  }
+  
+  .container.main-container .periodic-table-section header h1 {
+    font-size: 1.6em;
+  }
+  
+  .container.main-container .game-controls {
+    justify-content: center;
+  }
+  
+  .container.main-container .score {
+    order: -1;
+    width: 100%;
+    text-align: center;
+  }
+  
+  /* 元素卡片优化 */
+  .container.main-container .element-cell {
+    width: 60px;
+    height: 60px;
+    padding: 3px;
+  }
+  
+  .container.main-container .element-symbol {
+    font-size: 1.2em;
+  }
+  
+  .container.main-container .element-name {
+    display: none;
+  }
+  
+  /* 信息面板优化 */
+  .container.main-container .info-panel-container {
+    padding: 15px;
+  }
+}
+
+/* === 手机竖屏 (<500px) === */
+@media (max-width: 500px) {
+  .container.main-container {
+    padding: 10px;
+    border-radius: 10px;
+  }
+  
+  .container.main-container .periodic-table-section header h1 {
+    font-size: 1.4em;
+  }
+  
+  /* 控制按钮堆叠 */
+  .container.main-container .game-controls {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .container.main-container .game-controls .btn {
+    width: 100%;
+    padding: 12px 20px;
+  }
+  
+  .container.main-container .score {
+    width: 100%;
+    padding: 8px;
+  }
+  
+  /* 周期表优化 */
+  .container.main-container .periodic-table {
+    min-width: 1100px;
+    gap: 2px;
+  }
+  
+  .container.main-container .element-cell {
+    width: 55px;
+    height: 55px;
+    padding: 2px;
+  }
+  
+  .container.main-container .element-symbol {
+    font-size: 1.1em;
+  }
+  
+  /* 图例优化 */
+  .container.main-container .legend-items {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  
+  /* 信息面板优化 */
+  .container.main-container .info-panel-container {
+    padding: 12px;
+  }
+}
+
+/* === 超小屏幕 (<360px) === */
+@media (max-width: 360px) {
+  .container.main-container .periodic-table-section header h1 {
+    font-size: 1.2em;
+  }
+  
+  .container.main-container .element-cell {
+    width: 48px;
+    height: 48px;
+  }
+  
+  .container.main-container .element-symbol {
+    font-size: 1em;
+  }
+}
+
+/* === 横屏优化 === */
+@media (max-height: 500px) and (orientation: landscape) {
+  .container.main-container {
+    flex-direction: row;
+  }
+  
+  .container.main-container .periodic-table-section {
+    flex: 1;
+    overflow-y: auto;
+  }
+  
+  .container.main-container .info-panel-container {
+    width: 350px;
+    min-width: 350px;
+    overflow-y: auto;
+  }
+  
+  .container.main-container .periodic-table {
+    min-width: auto;
+    grid-template-columns: repeat(18, 50px);
+    grid-auto-rows: 50px;
+  }
+  
+  .container.main-container .element-cell {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .container.main-container .element-name {
+    display: none;
+  }
+}
+
+/* === 触摸设备优化 === */
+@media (hover: none) and (pointer: coarse) {
+  .container.main-container .element-cell {
+    min-width: 60px;
+    min-height: 60px;
+  }
+  
+  .container.main-container .btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* 移除 hover 效果 */
+  .container.main-container .element-cell:hover {
+    transform: none;
+  }
+  
+  .container.main-container .element-cell:active {
+    transform: scale(0.95);
+  }
+}
+
+/* === 打印样式 === */
+@media print {
+  body {
+    background: white;
+    padding: 0;
+  }
+  
+  .container.main-container {
+    box-shadow: none;
+    padding: 0;
+  }
+  
+  .container.main-container .game-controls,
+  .container.main-container .legend,
+  .container.main-container .score {
+    display: none;
+  }
+  
+  .container.main-container .periodic-table-section {
+    width: 100%;
+  }
+  
+  .container.main-container .info-panel-container {
+    break-inside: avoid;
+  }
+}
+
+/* === 深色模式支持 === */
+@media (prefers-color-scheme: dark) {
+  .container.main-container {
+    background: #16213e;
+    color: #eee;
+  }
+  
+  .container.main-container .info-panel-container {
+    background: #1a1a2e;
+    color: #eee;
+  }
+  
+  .container.main-container .mnemonic-text p {
+    color: #bbb;
+  }
+}
+
+/* === 减少动画偏好 === */
+@media (prefers-reduced-motion: reduce) {
+  .container.main-container *,
+  .container.main-container *::before,
+  .container.main-container *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

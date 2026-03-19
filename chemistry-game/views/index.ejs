@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#667eea">
+  <meta name="description" content="交互式化学元素周期表 - 学习元素性质、电子结构、化学实验">
+  <title>🧪 元素周期表探索</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/cards.css">
+  <link rel="stylesheet" href="/css/style-fix.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+</head>
+<body>
+  <div class="container main-container">
+    <div class="periodic-table-section">
+      <header>
+        <h1>🧪 元素周期表探索</h1>
+        <p class="subtitle">点击元素查看详情 · 按空格键开始测验</p>
+      </header>
+
+      <div class="game-controls">
+        <a href="/cards" class="btn btn-primary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">🃏 卡片记忆游戏 ▶</a>
+        <a href="/experiments" class="btn btn-primary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">🧪 化学实验 ▶</a>
+        <button id="quizBtn" class="btn btn-primary">🎯 开始测验</button>
+        <button id="resetBtn" class="btn btn-secondary">🔄 重置</button>
+        <div id="score" class="score">得分：0</div>
+      </div>
+
+      <div class="periodic-table" id="periodicTable">
+        <% elements.forEach(element => { %>
+          <div class="element-cell" 
+               data-symbol="<%= element.symbol %>"
+               data-name="<%= element.name %>"
+               data-atomic="<%= element.atomicNumber %>"
+               data-category="<%= element.category %>"
+               data-mass="<%= element.atomicMass %>"
+               data-group="<%= element.group %>"
+               data-period="<%= element.period %>"
+               style="background-color: <%= categories[element.category] %>">
+            <div class="atomic-number"><%= element.atomicNumber %></div>
+            <div class="element-symbol"><%= element.symbol %></div>
+            <div class="element-name"><%= element.name %></div>
+          </div>
+        <% }) %>
+      </div>
+
+      <div class="legend">
+        <h3>图例</h3>
+        <div class="legend-items">
+          <% Object.entries(categories).forEach(([cat, color]) => { %>
+            <div class="legend-item">
+              <span class="legend-color" style="background-color: <%= color %>"></span>
+              <span><%= cat %></span>
+            </div>
+          <% }) %>
+        </div>
+      </div>
+    </div>
+
+    <!-- 右侧信息面板 -->
+    <div class="info-panel-container">
+      <!-- 默认面板 - 周期表口诀 -->
+      <div id="defaultInfoPanel" class="info-panel-content">
+        <h2>📖 元素周期表口诀</h2>
+        <div class="mnemonic-content">
+          <div class="mnemonic-section">
+            <h3>🎵 周期表顺口溜</h3>
+            <div class="mnemonic-text">
+              <p><strong>第一周期：</strong>氢氦</p>
+              <p><strong>第二周期：</strong>锂铍硼碳氮氧氟氖</p>
+              <p><strong>第三周期：</strong>钠镁铝硅磷硫氯氩</p>
+              <p><strong>第四周期：</strong>钾钙钪钛钒铬锰，铁钴镍铜锌镓锗砷硒溴氪</p>
+              <p><strong>第五周期：</strong>铷锶钇锆铌钼锝，钌铑钯银镉铟锡锑碲碘氙</p>
+              <p><strong>第六周期：</strong>铯钡镧系铪钽钨，铼锇铱铂金汞铊铅铋钋砹氡</p>
+              <p><strong>第七周期：</strong>钫镭锕系𬬻𬭊𬭳，𬭛𬭶鿏𫟼𬬭𫓧镆𫟷石田气奥</p>
+            </div>
+          </div>
+
+          <div class="mnemonic-section">
+            <h3>🎵 金属活动性顺序</h3>
+            <div class="mnemonic-text">
+              <p><strong>口诀：</strong>钾钙钠镁铝，锌铁锡铅氢，铜汞银铂金</p>
+              <p class="mnemonic-note">（嫁给那美女，身体细纤轻，统共一百斤）</p>
+            </div>
+          </div>
+
+          <div class="mnemonic-section">
+            <h3>🎵 常见元素化合价</h3>
+            <div class="mnemonic-text">
+              <p><strong>一价：</strong>钾钠银氢氟氯溴碘</p>
+              <p><strong>二价：</strong>氧钙镁钡锌</p>
+              <p><strong>三价：</strong>铝</p>
+              <p><strong>可变价：</strong>铜一二，铁二三，锰二四六七</p>
+            </div>
+          </div>
+
+          <div class="mnemonic-section">
+            <h3>🎵 常见原子团</h3>
+            <div class="mnemonic-text">
+              <p><strong>硝酸根 NO₃⁻：</strong>负一价</p>
+              <p><strong>硫酸根 SO₄²⁻：</strong>负二价</p>
+              <p><strong>碳酸根 CO₃²⁻：</strong>负二价</p>
+              <p><strong>氢氧根 OH⁻：</strong>负一价</p>
+              <p><strong>铵根 NH₄⁺：</strong>正一价</p>
+            </div>
+          </div>
+
+          <div class="mnemonic-section">
+            <h3>🎵 盐的溶解性</h3>
+            <div class="mnemonic-text">
+              <p><strong>钾钠铵盐硝酸盐：</strong>全都溶于水中间</p>
+              <p><strong>盐酸盐：</strong>不溶银亚汞</p>
+              <p><strong>硫酸盐：</strong>不溶钡和铅</p>
+              <p><strong>碳酸盐：</strong>只溶钾钠铵</p>
+            </div>
+          </div>
+
+          <div class="mnemonic-hint">
+            <p>💡 <strong>提示：</strong>点击周期表中的任意元素，查看详细信息和关联实验</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 元素详情面板 -->
+      <div id="elementDetailPanel" class="info-panel-content hidden">
+        <div id="detailContent">
+          <!-- 内容由 JS 动态生成 -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 测验弹窗 -->
+  <div id="quizModal" class="modal hidden">
+    <div class="modal-content">
+      <h2>🎯 小测验</h2>
+      <p id="quizQuestion"></p>
+      <input type="text" id="quizAnswer" placeholder="输入你的答案" autocomplete="off">
+      <button id="submitAnswer" class="btn btn-primary">提交</button>
+      <p id="quizResult"></p>
+      <button id="closeQuiz" class="btn btn-secondary">关闭</button>
+    </div>
+  </div>
+
+  <!-- 移动端底部导航 -->
+  <nav class="mobile-nav" id="mobileNav" style="display: none;">
+    <a href="/" class="mobile-nav-item active">
+      <span class="icon">🧪</span>
+      <span>周期表</span>
+    </a>
+    <a href="/cards" class="mobile-nav-item">
+      <span class="icon">🃏</span>
+      <span>卡片</span>
+    </a>
+    <a href="/experiments" class="mobile-nav-item">
+      <span class="icon">🧪</span>
+      <span>实验</span>
+    </a>
+  </nav>
+
+  <script type="module" src="/js/app.js"></script>
+  <script>
+    // 检测移动设备显示底部导航
+    if (window.innerWidth <= 768) {
+      document.getElementById('mobileNav').style.display = 'flex';
+    }
+    window.addEventListener('resize', () => {
+      document.getElementById('mobileNav').style.display = 
+        window.innerWidth <= 768 ? 'flex' : 'none';
+    });
+  </script>
+</body>
+</html>
