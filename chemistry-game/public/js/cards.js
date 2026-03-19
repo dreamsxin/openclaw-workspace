@@ -153,7 +153,8 @@ document.addEventListener('DOMContentLoaded', () => {
           break;
         case 'symbol-config':
           content = renderMiniElectronShells(element.electronConfig, element.symbol);
-          label = '电子排布';
+          // 电子排布数字显示在 label 中
+          label = element.electronConfig.join(',');
           break;
         case 'symbol-valence':
           content = element.valence.map(v => v > 0 ? `+${v}` : v).join(', ');
@@ -201,26 +202,37 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 渲染迷你电子壳层（卡片内）- 课本风格原子结构示意图
+  // 渲染迷你电子壳层（卡片内）- 原子结构示意图（电子点，最外层颜色区分）
   function renderMiniElectronShells(config, symbol) {
     const maxShell = config.length;
-    const shellSizes = [50, 76, 102, 128];
-    const size = shellSizes[maxShell - 1] || 128;
+    // 轨道间隔 20px
+    const shellSizes = [40, 60, 80, 100];
+    const size = shellSizes[maxShell - 1] || 100;
+    
+    // 判断最外层电子是否容易丢失
+    const outerElectrons = config[config.length - 1];
+    const isUnstable = outerElectrons <= 3; // 1-3 个电子容易失去（金属）
+    const outerShellClass = isUnstable ? 'electron-lose' : 'electron-stable';
     
     let html = `<div class="card-electron-shells" style="width: ${size}px; height: ${size}px;">`;
-    html += `<div class="nucleus">${symbol}</div>`;
+    // 中间不显示元素符号，只显示原子核圆点
+    html += `<div class="nucleus"></div>`;
     
     config.forEach((electrons, shellIndex) => {
       const radius = shellSizes[shellIndex] / 2;
       const angleStep = (2 * Math.PI) / electrons;
+      const isOuterShell = shellIndex === config.length - 1;
       
+      // 绘制轨道（圆形）
       html += `<div class="shell shell-${shellIndex + 1}" style="width: ${shellSizes[shellIndex]}px; height: ${shellSizes[shellIndex]}px;"></div>`;
       
+      // 绘制电子小圆点
       for (let i = 0; i < electrons; i++) {
         const angle = angleStep * i - Math.PI / 2;
         const x = Math.cos(angle) * radius;
         const y = Math.sin(angle) * radius;
-        html += `<div class="electron" style="left: calc(50% + ${x}px); top: calc(50% + ${y}px);"></div>`;
+        const electronClass = isOuterShell ? outerShellClass : 'electron';
+        html += `<div class="electron ${electronClass}" style="left: calc(50% + ${x}px); top: calc(50% + ${y}px);"></div>`;
       }
     });
     
@@ -228,21 +240,24 @@ document.addEventListener('DOMContentLoaded', () => {
     return html;
   }
 
-  // 渲染完整电子壳层（匹配成功后）- 课本风格
+  // 渲染完整电子壳层（匹配成功后）- 课本风格（无原子核符号）
   function renderFullElectronShells(config, symbol) {
     const maxShell = config.length;
     const shellSizes = [50, 76, 102, 128];
     const size = shellSizes[maxShell - 1] || 128;
     
     let html = `<div class="card-electron-shells" style="width: ${size}px; height: ${size}px;">`;
-    html += `<div class="nucleus">${symbol}</div>`;
+    // 不显示原子核符号，只显示小圆点
+    html += `<div class="nucleus"></div>`;
     
     config.forEach((electrons, shellIndex) => {
       const radius = shellSizes[shellIndex] / 2;
       const angleStep = (2 * Math.PI) / electrons;
       
+      // 绘制轨道（圆形）
       html += `<div class="shell shell-${shellIndex + 1}" style="width: ${shellSizes[shellIndex]}px; height: ${shellSizes[shellIndex]}px;"></div>`;
       
+      // 绘制电子小圆点
       for (let i = 0; i < electrons; i++) {
         const angle = angleStep * i - Math.PI / 2;
         const x = Math.cos(angle) * radius;

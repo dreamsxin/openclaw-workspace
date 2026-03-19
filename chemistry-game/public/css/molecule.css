@@ -1,0 +1,268 @@
+/* 分子消消乐样式 */
+
+.target-molecule {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  padding: 25px;
+  border-radius: 15px;
+  margin: 20px 0;
+  text-align: center;
+}
+
+.target-molecule h3 {
+  margin-bottom: 15px;
+  font-size: 1.3em;
+}
+
+.target-display {
+  font-size: 3em;
+  font-weight: bold;
+  margin: 15px 0;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.molecule-desc {
+  font-size: 1em;
+  opacity: 0.9;
+  margin-top: 10px;
+}
+
+/* 元素卡片区域 */
+.element-cards-area {
+  margin: 20px 0;
+}
+
+.element-cards-area h3,
+.selected-area h3 {
+  color: #333;
+  margin-bottom: 15px;
+  font-size: 1.2em;
+}
+
+.element-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.element-card {
+  background: white;
+  border: 3px solid #667eea;
+  border-radius: 12px;
+  padding: 15px;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-align: center;
+  position: relative;
+}
+
+.element-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+  border-color: #4a5fd4;
+}
+
+.element-card.selected {
+  opacity: 0.5;
+  pointer-events: none;
+  background: #e0e0e0;
+}
+
+.element-symbol {
+  font-size: 2.5em;
+  font-weight: bold;
+  color: #667eea;
+  display: block;
+}
+
+.element-count {
+  font-size: 1.2em;
+  color: #333;
+  margin-top: 5px;
+  display: block;
+}
+
+.element-valence {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 0.9em;
+  margin-top: 8px;
+  display: inline-block;
+}
+
+/* 已选元素区域 */
+.selected-area {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 15px;
+  margin: 20px 0;
+}
+
+.selected-elements {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  min-height: 80px;
+  padding: 15px;
+  background: white;
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+
+.empty-hint {
+  color: #999;
+  font-style: italic;
+  width: 100%;
+  text-align: center;
+  padding: 30px 0;
+}
+
+.selected-element {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 25px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: popIn 0.3s ease;
+}
+
+@keyframes popIn {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.selected-element .symbol {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.selected-element .count {
+  font-size: 1.2em;
+}
+
+.selected-element .valence {
+  background: rgba(255,255,255,0.3);
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.9em;
+}
+
+.selected-element .remove {
+  background: rgba(255,255,255,0.3);
+  border: none;
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.2em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+}
+
+.selected-element .remove:hover {
+  background: rgba(255,255,255,0.5);
+  transform: scale(1.1);
+}
+
+/* 操作按钮 */
+.action-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.action-buttons .btn {
+  padding: 12px 30px;
+  font-size: 1.1em;
+}
+
+/* 成功/失败弹窗 */
+.success-content,
+.fail-content {
+  text-align: center;
+  padding: 40px;
+}
+
+.success-content h2 {
+  color: #27ae60;
+  font-size: 2.5em;
+  margin-bottom: 15px;
+}
+
+.fail-content h2 {
+  color: #e74c3c;
+  font-size: 2.5em;
+  margin-bottom: 15px;
+}
+
+.success-molecule {
+  font-size: 4em;
+  font-weight: bold;
+  color: #667eea;
+  margin: 20px 0;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .target-display {
+    font-size: 2em;
+  }
+  
+  .element-cards {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 10px;
+  }
+  
+  .element-card {
+    padding: 10px;
+  }
+  
+  .element-symbol {
+    font-size: 2em;
+  }
+  
+  .selected-elements {
+    justify-content: center;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+  }
+  
+  .action-buttons .btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 500px) {
+  .element-cards {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .element-symbol {
+    font-size: 1.5em;
+  }
+  
+  .element-count {
+    font-size: 1em;
+  }
+  
+  .target-display {
+    font-size: 1.5em;
+  }
+}

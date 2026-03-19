@@ -287,8 +287,9 @@
 }
 
 .card-label {
-  font-size: 0.75em;
-  color: #999;
+  font-size: 0.8em;
+  color: #667eea;
+  font-weight: bold;
   margin-top: 3px;
 }
 
@@ -338,13 +339,12 @@
   margin-top: 3px;
 }
 
-/* 电子壳层可视化 - 卡片内（课本风格原子结构示意图） */
+/* 电子壳层可视化 - 卡片内（原子结构示意图：电子点） */
 .card-electron-shells {
   position: relative;
   width: 100px;
   height: 100px;
   margin: 8px auto;
-  overflow: visible;
 }
 
 .card-electron-shells .shell {
@@ -358,46 +358,53 @@
   box-sizing: border-box;
 }
 
-.card-electron-shells .shell-1 { width: 36px; height: 36px; }
-.card-electron-shells .shell-2 { width: 56px; height: 56px; }
-.card-electron-shells .shell-3 { width: 76px; height: 76px; }
-.card-electron-shells .shell-4 { width: 96px; height: 96px; }
+/* 轨道尺寸，间隔 20px */
+.card-electron-shells .shell-1 { width: 40px; height: 40px; }
+.card-electron-shells .shell-2 { width: 60px; height: 60px; }
+.card-electron-shells .shell-3 { width: 80px; height: 80px; }
+.card-electron-shells .shell-4 { width: 100px; height: 100px; }
 
 .card-electron-shells .nucleus {
   position: absolute;
-  width: 18px;
-  height: 18px;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  border: 2px solid #4a5fd4;
+  width: 12px;
+  height: 12px;
+  background: #ff6b6b;
+  border: 2px solid #c0392b;
   border-radius: 50%;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  font-size: 0.55em;
-  font-weight: bold;
   z-index: 10;
-  box-shadow: 0 2px 6px rgba(102, 126, 234, 0.4);
 }
 
 .card-electron-shells .electron {
   position: absolute;
-  width: 7px;
-  height: 7px;
-  background: linear-gradient(135deg, #4d96ff, #2c3e50);
-  border: 1px solid #1a252f;
+  width: 6px;
+  height: 6px;
+  background: #4d96ff;
+  border: 1px solid #2c3e50;
   border-radius: 50%;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 5;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 
-/* 小屏幕适配 - 缩小电子模型 */
+/* 最外层电子 - 容易失去（红色） */
+.card-electron-shells .electron-lose {
+  background: #ff6b6b;
+  border: 1px solid #c0392b;
+  box-shadow: 0 0 6px rgba(255, 107, 107, 0.6);
+}
+
+/* 最外层电子 - 稳定（绿色） */
+.card-electron-shells .electron-stable {
+  background: #2ecc71;
+  border: 1px solid #27ae60;
+  box-shadow: 0 0 6px rgba(46, 204, 113, 0.6);
+}
+
+/* 小屏幕适配 */
 @media (max-width: 768px) {
   .card-electron-shells {
     width: 80px;
@@ -405,20 +412,22 @@
     margin: 5px auto;
   }
   
-  .card-electron-shells .shell-1 { width: 28px; height: 28px; }
-  .card-electron-shells .shell-2 { width: 44px; height: 44px; }
-  .card-electron-shells .shell-3 { width: 60px; height: 60px; }
-  .card-electron-shells .shell-4 { width: 76px; height: 76px; }
+  /* 轨道尺寸，间隔 16px */
+  .card-electron-shells .shell-1 { width: 32px; height: 32px; }
+  .card-electron-shells .shell-2 { width: 48px; height: 48px; }
+  .card-electron-shells .shell-3 { width: 64px; height: 64px; }
+  .card-electron-shells .shell-4 { width: 80px; height: 80px; }
   
   .card-electron-shells .nucleus {
-    width: 16px;
-    height: 16px;
-    font-size: 0.5em;
+    width: 10px;
+    height: 10px;
   }
   
-  .card-electron-shells .electron {
-    width: 6px;
-    height: 6px;
+  .card-electron-shells .electron,
+  .card-electron-shells .electron-lose,
+  .card-electron-shells .electron-stable {
+    width: 5px;
+    height: 5px;
   }
 }
 
@@ -429,20 +438,22 @@
     margin: 3px auto;
   }
   
-  .card-electron-shells .shell-1 { width: 20px; height: 20px; }
-  .card-electron-shells .shell-2 { width: 32px; height: 32px; }
-  .card-electron-shells .shell-3 { width: 44px; height: 44px; }
-  .card-electron-shells .shell-4 { width: 56px; height: 56px; }
+  /* 轨道尺寸，间隔 12px */
+  .card-electron-shells .shell-1 { width: 24px; height: 24px; }
+  .card-electron-shells .shell-2 { width: 36px; height: 36px; }
+  .card-electron-shells .shell-3 { width: 48px; height: 48px; }
+  .card-electron-shells .shell-4 { width: 60px; height: 60px; }
   
   .card-electron-shells .nucleus {
-    width: 14px;
-    height: 14px;
-    font-size: 0.45em;
+    width: 8px;
+    height: 8px;
   }
   
-  .card-electron-shells .electron {
-    width: 5px;
-    height: 5px;
+  .card-electron-shells .electron,
+  .card-electron-shells .electron-lose,
+  .card-electron-shells .electron-stable {
+    width: 4px;
+    height: 4px;
   }
 }
 

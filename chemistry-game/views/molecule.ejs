@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🧪 分子消消乐</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/molecule.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🧪 分子消消乐</h1>
+      <p class="subtitle">选择元素卡片，组合成正确的分子</p>
+    </header>
+
+    <div class="game-controls">
+      <a href="/" class="btn btn-secondary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">◀ 周期表探索</a>
+      <a href="/cards" class="btn btn-secondary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">🃏 卡片游戏</a>
+      <div class="game-info">
+        <span class="score">得分：<span id="scoreValue">0</span></span>
+        <span class="level">关卡：<span id="levelValue">1</span></span>
+      </div>
+    </div>
+
+    <!-- 目标分子显示 -->
+    <div class="target-molecule">
+      <h3>🎯 目标分子</h3>
+      <div id="targetMolecule" class="target-display">
+        <!-- 动态生成 -->
+      </div>
+      <p id="moleculeDescription" class="molecule-desc"></p>
+    </div>
+
+    <!-- 元素卡片区域 -->
+    <div class="element-cards-area">
+      <h3>🔬 元素卡片</h3>
+      <div id="elementCards" class="element-cards">
+        <!-- 动态生成 -->
+      </div>
+    </div>
+
+    <!-- 已选元素区域 -->
+    <div class="selected-area">
+      <h3>📦 已选元素</h3>
+      <div id="selectedElements" class="selected-elements">
+        <p class="empty-hint">点击元素卡片添加到此处</p>
+      </div>
+      <div class="action-buttons">
+        <button id="clearBtn" class="btn btn-secondary">🗑️ 清空</button>
+        <button id="submitBtn" class="btn btn-primary">✅ 提交</button>
+      </div>
+    </div>
+
+    <!-- 成功弹窗 -->
+    <div id="successModal" class="modal hidden">
+      <div class="modal-content success-content">
+        <h2>🎉 成功！</h2>
+        <p id="successMessage">你成功合成了目标分子！</p>
+        <div id="successMolecule" class="success-molecule"></div>
+        <button id="nextLevelBtn" class="btn btn-primary">下一关 ▶</button>
+      </div>
+    </div>
+
+    <!-- 失败弹窗 -->
+    <div id="failModal" class="modal hidden">
+      <div class="modal-content fail-content">
+        <h2>❌ 再试一次</h2>
+        <p id="failMessage">元素组合不正确</p>
+        <button id="tryAgainBtn" class="btn btn-primary">重试</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/js/molecule.js"></script>
+</body>
+</html>

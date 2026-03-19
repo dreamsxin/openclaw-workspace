@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const elementsData = require('./data/elements.json');
 const experimentsData = require('./data/experiments.json');
+const moleculesData = require('./data/molecules.json');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -36,9 +37,19 @@ app.get('/experiments', (req, res) => {
   res.render('experiments', {});
 });
 
+// 分子消消乐
+app.get('/molecule', (req, res) => {
+  res.render('molecule', {});
+});
+
 // API: 获取实验数据
 app.get('/api/experiments', (req, res) => {
   res.json(experimentsData);
+});
+
+// API: 获取分子数据
+app.get('/api/molecules', (req, res) => {
+  res.json(moleculesData);
 });
 
 // API: 获取所有元素
