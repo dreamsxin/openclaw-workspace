@@ -42,6 +42,11 @@ app.get('/molecule', (req, res) => {
   res.render('molecule', {});
 });
 
+// 元素消消乐（配对消除）
+app.get('/match', (req, res) => {
+  res.render('match', {});
+});
+
 // API: 获取实验数据
 app.get('/api/experiments', (req, res) => {
   res.json(experimentsData);

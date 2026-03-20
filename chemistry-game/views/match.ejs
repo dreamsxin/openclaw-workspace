@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>🧪 元素消消乐</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/match.css">
+</head>
+<body>
+  <div class="game-container">
+    <!-- 顶部 UI -->
+    <div class="game-ui-top">
+      <div class="nav-links">
+        <a href="/" class="nav-btn">◀ 返回</a>
+      </div>
+      <div class="game-stats">
+        <div class="stat-item">
+          <span class="stat-label">得分</span>
+          <span class="stat-value" id="scoreValue">0</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">步数</span>
+          <span class="stat-value" id="movesValue">0</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">连击</span>
+          <span class="stat-value" id="comboValue">x1</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 游戏消息 -->
+    <div class="game-message" id="gameMessage">
+      <p>点击两个相同的元素进行配对消除</p>
+    </div>
+
+    <!-- Canvas 游戏区域 -->
+    <div class="canvas-wrapper">
+      <canvas id="gameCanvas"></canvas>
+    </div>
+
+    <!-- 底部控制 -->
+    <div class="game-controls-bottom">
+      <button id="restartBtn" class="btn btn-primary">🔄 重新开始</button>
+      <button id="hintBtn" class="btn btn-secondary">💡 提示</button>
+    </div>
+
+    <!-- 游戏结束弹窗 -->
+    <div id="gameOverModal" class="modal hidden">
+      <div class="modal-content gameover-content">
+        <h2 id="gameOverTitle">🎉 恭喜完成！</h2>
+        <div id="finalScore" class="final-score"></div>
+        <button id="playAgainBtn" class="btn btn-primary btn-large">🔄 再玩一次</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/js/match.js"></script>
+</body>
+</html>
