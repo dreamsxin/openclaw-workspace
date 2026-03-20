@@ -1,0 +1,361 @@
+/* 方程式大爆炸游戏 */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  min-height: 100vh;
+  overflow: hidden;
+  color: #ffffff;
+}
+
+.game-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 10px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* 顶部信息 */
+.game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  margin-bottom: 10px;
+}
+
+.nav-links .nav-btn {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 14px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.nav-links .nav-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.game-stats {
+  display: flex;
+  gap: 20px;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-label {
+  display: block;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.stat-value {
+  display: block;
+  font-size: 20px;
+  font-weight: bold;
+  color: #fbbf24;
+}
+
+/* 炸弹和倒计时区域 */
+.bomb-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 15px;
+  margin-bottom: 10px;
+}
+
+.bomb-container {
+  position: relative;
+  width: 100px;
+  height: 100px;
+}
+
+#bombCanvas {
+  width: 100%;
+  height: 100%;
+}
+
+.timer-display {
+  text-align: center;
+}
+
+.timer-value {
+  display: block;
+  font-size: 48px;
+  font-weight: bold;
+  color: #ef4444;
+  text-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+  font-family: 'Courier New', monospace;
+}
+
+.timer-value.warning {
+  color: #fbbf24;
+  animation: pulse 0.5s ease-in-out infinite;
+}
+
+.timer-value.critical {
+  color: #ef4444;
+  animation: pulse 0.3s ease-in-out infinite;
+}
+
+.timer-label {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* 题目区域 */
+.question-section {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 15px;
+  padding: 15px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.question-type {
+  font-size: 14px;
+  color: #34d399;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.equation-display {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 10px;
+}
+
+#equationCanvas {
+  max-width: 100%;
+}
+
+.question-hint {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* 选项区域 */
+.options-section {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 15px;
+  padding: 15px;
+  overflow: hidden;
+}
+
+.options-grid {
+  height: 100%;
+  position: relative;
+}
+
+#optionsCanvas {
+  width: 100%;
+  height: 100%;
+}
+
+/* 游戏结束弹窗 */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: linear-gradient(145deg, #1a1a2e, #16213e);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 40px;
+  text-align: center;
+  max-width: 450px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.gameover-content h2 {
+  font-size: 32px;
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, #ef4444, #f59e0b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.final-score {
+  margin: 30px 0;
+}
+
+.final-score .score-number {
+  font-size: 64px;
+  font-weight: bold;
+  color: #fbbf24;
+  text-shadow: 0 0 30px rgba(251, 191, 36, 0.5);
+  display: block;
+}
+
+.final-score .score-detail {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 10px;
+  display: block;
+}
+
+.final-score .high-score-badge {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 8px 20px;
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: #1a1a2e;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.btn {
+  padding: 14px 28px;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 20px rgba(102, 126, 234, 0.5);
+}
+
+.btn-large {
+  padding: 18px 36px;
+  font-size: 18px;
+  width: 100%;
+}
+
+/* 开始界面 */
+.start-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.start-screen.hidden {
+  display: none;
+}
+
+.start-content {
+  text-align: center;
+  max-width: 500px;
+  padding: 40px;
+}
+
+.start-content h1 {
+  font-size: 48px;
+  margin-bottom: 10px;
+  background: linear-gradient(135deg, #ef4444, #f59e0b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.start-subtitle {
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 30px;
+}
+
+.start-rules {
+  text-align: left;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 30px;
+}
+
+.rule-item {
+  font-size: 16px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.rule-item:last-child {
+  border-bottom: none;
+}
+
+/* 响应式 */
+@media (max-width: 600px) {
+  .game-header {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .game-stats {
+    gap: 15px;
+  }
+  
+  .bomb-section {
+    flex-direction: column;
+  }
+  
+  .bomb-container {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .timer-value {
+    font-size: 36px;
+  }
+  
+  .start-content h1 {
+    font-size: 36px;
+  }
+}

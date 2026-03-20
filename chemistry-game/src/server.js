@@ -47,6 +47,11 @@ app.get('/match', (req, res) => {
   res.render('match', {});
 });
 
+// 方程式大爆炸
+app.get('/equation', (req, res) => {
+  res.render('equation', {});
+});
+
 // API: 获取实验数据
 app.get('/api/experiments', (req, res) => {
   res.json(experimentsData);
