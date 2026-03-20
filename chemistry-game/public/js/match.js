@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // 随机选择一个化合物
       const compound = compounds[Math.floor(Math.random() * compounds.length)];
       if (compound.elements.length >= 2) {
-        // 从化合物中选择两种元素
+        // 从化合物中选择两种元素，带上数量
         const elem1 = compound.elements[0];
         const elem2 = compound.elements[1];
         
@@ -120,8 +120,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const baseElem2 = elements.find(e => e.symbol === elem2.symbol);
         
         if (baseElem1 && baseElem2) {
-          tileList.push(createTileData(baseElem1));
-          tileList.push(createTileData(baseElem2));
+          tileList.push(createTileData(baseElem1, elem1.count));
+          tileList.push(createTileData(baseElem2, elem2.count));
         }
       }
     }
@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 如果数量不够，用单质填充
     while (tileList.length < TILE_COUNT) {
       const randomElem = elements[Math.floor(Math.random() * elements.length)];
-      tileList.push(createTileData(randomElem));
+      tileList.push(createTileData(randomElem, 1));
     }
     
     shuffleArray(tileList);
@@ -153,13 +153,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
   
-  function createTileData(element) {
+  function createTileData(element, count = 1) {
     return {
       symbol: element.symbol,
       name: element.name,
       valence: element.valence,
       category: element.category,
       color: element.color,
+      count: count,  // 元素在化合物中的个数
       id: Math.random().toString(36).substr(2, 9)
     };
   }
@@ -254,12 +255,22 @@ document.addEventListener('DOMContentLoaded', () => {
       ctx.fillText(valenceText, symbolX + tileWidth * 0.3, symbolY - tileHeight * 0.35);
     }
     
-    // 个数（右下角）
-    ctx.font = `bold ${tileWidth * 0.22}px Arial`;
-    ctx.fillStyle = '#34d399';
-    ctx.textAlign = 'left';
+    // 个数背景 - 直角三角形
+    const triangleSize = tileWidth * 0.35;
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+    ctx.beginPath();
+    ctx.moveTo(x + offX + w, y + offY + h);
+    ctx.lineTo(x + offX + w - triangleSize, y + offY + h);
+    ctx.lineTo(x + offX + w, y + offY + h - triangleSize);
+    ctx.closePath();
+    ctx.fill();
+    
+    // 个数（右下角角标）
+    ctx.font = `bold ${tileWidth * 0.16}px Arial`;
+    ctx.fillStyle = '#ffffff';
+    ctx.textAlign = 'right';
     ctx.textBaseline = 'bottom';
-    ctx.fillText('×1', symbolX + tileWidth * 0.3, symbolY + tileHeight * 0.35);
+    ctx.fillText(`${tile.count}`, x + offX + w - 3, y + offY + h - 3);
     
     ctx.restore();
   }
@@ -475,8 +486,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const baseElem1 = elements.find(e => e.symbol === elem1.symbol);
         const baseElem2 = elements.find(e => e.symbol === elem2.symbol);
         if (baseElem1 && baseElem2) {
-          newTiles.push(createTileData(baseElem1));
-          newTiles.push(createTileData(baseElem2));
+          newTiles.push(createTileData(baseElem1, elem1.count));
+          newTiles.push(createTileData(baseElem2, elem2.count));
         }
       }
     }
