@@ -1,0 +1,16 @@
+{
+  "name": "chrome-mcp-client-demo",
+  "version": "1.0.0",
+  "description": "Demo client for chrome-devtools-mcp server",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "test": "node test.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  },
+  "keywords": ["mcp", "chrome", "devtools"],
+  "license": "MIT"
+}
