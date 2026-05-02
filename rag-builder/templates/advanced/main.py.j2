@@ -1,0 +1,145 @@
+#!/usr/bin/env python3
+"""{{ project_name }} — RAG-powered Q&A system."""
+
+import os
+from pathlib import Path
+
+from dotenv import load_dotenv
+
+load_dotenv()
+
+
+def main():
+    """Run the RAG pipeline: index documents, then chat."""
+    print("🚀 Starting {{ project_name }}...")
+
+    # Build the agent
+    agent = build_agent()
+
+    # Interactive loop
+    print("\n💬 Ready! Type your questions (or 'quit' to exit):\n")
+    while True:
+        try:
+            user_input = input("You: ").strip()
+        except (EOFError, KeyboardInterrupt):
+            break
+        if user_input.lower() in ("quit", "exit", "q"):
+            break
+        if not user_input:
+            continue
+
+        response = agent.chat(user_input)
+        print(f"\nAssistant: {response}\n")
+
+
+def build_agent():
+    """Build and return the RAG agent."""
+    from rag_builder.agent.builder import RAGAgent
+    from rag_builder.config import (
+        EmbedderConfig,
+        EmbedderType,
+        LLMConfig,
+        LLMProvider,
+        RetrieverConfig,
+        VectorStoreConfig,
+        VectorStoreType,
+    )
+    from rag_builder.retriever import Retriever
+
+    # Load config from env
+    llm_config = LLMConfig(
+        provider=LLMProvider(os.getenv("LLM_PROVIDER", "{{ llm_provider }}")),
+        model=os.getenv("LLM_MODEL", "{{ llm_model }}"),
+        base_url=os.getenv("LLM_BASE_URL") or None,
+        api_key=os.getenv("LLM_API_KEY"),
+    )
+
+    embedder_config = EmbedderConfig(
+        provider=EmbedderType(os.getenv("EMBEDDER_PROVIDER", "{{ embedder_provider }}")),
+        model=os.getenv("EMBEDDER_MODEL", "{{ embedder_model }}"),
+        api_key=os.getenv("EMBEDDER_API_KEY") or os.getenv("LLM_API_KEY"),
+    )
+
+    vs_config = VectorStoreConfig(
+        store_type=VectorStoreType(os.getenv("VECTORSTORE_TYPE", "{{ vectorstore_type }}")),
+        persist_dir=os.getenv("VECTORSTORE_DIR", "./vectorstore"),
+    )
+
+    retriever_config = RetrieverConfig(
+        top_k=int(os.getenv("TOP_K", "5")),
+        use_reranker=os.getenv("USE_RERANKER", "false").lower() == "true",
+    )
+
+    # Create retriever
+    from rag_builder.embedder import create_embedder
+    from rag_builder.vectorstore.chroma_store import ChromaVectorStore
+    from rag_builder.vectorstore.faiss_store import FaissVectorStore
+
+    embedder = create_embedder(embedder_config)
+
+    if vs_config.store_type == VectorStoreType.CHROMA:
+        vs = ChromaVectorStore(vs_config, embedder.dimensions)
+    else:
+        vs = FaissVectorStore(vs_config, embedder.dimensions)
+
+    retriever = Retriever(vectorstore=vs, embedder=embedder, config=retriever_config)
+
+    # Create agent
+{% if with_agent %}
+    agent = RAGAgent(retriever=retriever, llm_config=llm_config)
+{% else %}
+    # Simple RAG without agent (direct retrieval)
+    agent = SimpleRAG(retriever=retriever, llm_config=llm_config)
+{% endif %}
+
+    return agent
+
+
+{% if not with_agent %}
+class SimpleRAG:
+    """Simple RAG without tool-calling — direct retrieval + generation."""
+
+    def __init__(self, retriever, llm_config):
+        self.retriever = retriever
+        self.llm_config = llm_config
+        self._client = None
+
+    def chat(self, query: str) -> str:
+        from openai import OpenAI
+
+        if self._client is None:
+            self._client = OpenAI(
+                api_key=self.llm_config.api_key,
+                base_url=self.llm_config.base_url,
+            )
+
+        # Retrieve context
+        results = self.retriever.retrieve(query)
+        context = "\n\n".join(
+            f"[Source: {r.chunk.source}]\n{r.chunk.content}" for r in results
+        )
+
+        response = self._client.chat.completions.create(
+            model=self.llm_config.model,
+            messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        "Answer based on the provided context. "
+                        "If the context doesn't contain the answer, say so.\n\n"
+                        f"Context:\n{context}"
+                    ),
+                },
+                {"role": "user", "content": query},
+            ],
+            temperature=self.llm_config.temperature,
+        )
+        return response.choices[0].message.content or ""
+
+    def reset(self):
+        pass
+{% endif %}
+
+
+if __name__ == "__main__":
+    main()
