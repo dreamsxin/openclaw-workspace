@@ -1,0 +1,1 @@
+window._CCSettings={platform:"android",groupList:["default","map","ui","worldMap","video"],collisionMatrix:[[true],[false,false],[false,false,false],[false,false,false,false],[false,false,false,false,false]],hasResourcesBundle:true,hasStartSceneBundle:false,remoteBundles:[],subpackages:[],launchScene:"db://assets/Scene/updataScene.fire",orientation:"",server:"",jsList:[]};

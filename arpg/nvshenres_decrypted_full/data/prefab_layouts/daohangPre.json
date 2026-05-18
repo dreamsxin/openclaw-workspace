@@ -1,0 +1,3090 @@
+{
+  "prefab": "Prefab/mainpanel/daohangPre",
+  "import": "assets/resources/import/0f/0fc983b1-cd2b-4115-aa37-5b71c0e1ad5f.json",
+  "nodes": [
+    {
+      "index": 1,
+      "name": "daohang",
+      "active": true,
+      "parent_index": null,
+      "size": [
+        1280.0,
+        720.0
+      ],
+      "position": [
+        0.0,
+        0.0
+      ],
+      "global_position": [
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 0.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 2,
+      "name": "heroHead",
+      "active": true,
+      "parent_index": 1,
+      "size": [
+        80.0,
+        36.0
+      ],
+      "position": [
+        -589.0,
+        307.0
+      ],
+      "global_position": [
+        -589.0,
+        307.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 3,
+      "name": "qqvip",
+      "active": false,
+      "parent_index": 2,
+      "size": [
+        57.0,
+        50.0
+      ],
+      "position": [
+        274.221,
+        14.0
+      ],
+      "global_position": [
+        -314.779,
+        321.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 4,
+      "name": "qqgame",
+      "active": false,
+      "parent_index": 2,
+      "size": [
+        57.0,
+        50.0
+      ],
+      "position": [
+        355.221,
+        14.0
+      ],
+      "global_position": [
+        -233.779,
+        321.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 5,
+      "name": "Icons",
+      "active": true,
+      "parent_index": 1,
+      "size": [
+        80.0,
+        36.0
+      ],
+      "position": [
+        0.0,
+        0.0
+      ],
+      "global_position": [
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        0.7
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 7,
+      "name": "cm_icon_ChuJi",
+      "active": true,
+      "parent_index": 1,
+      "size": [
+        150.0,
+        40.0
+      ],
+      "position": [
+        88.338,
+        -311.472
+      ],
+      "global_position": [
+        88.338,
+        -311.472
+      ],
+      "scale": [
+        1.0,
+        0.7
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 8,
+      "name": "zsvipBtn",
+      "active": false,
+      "parent_index": 2,
+      "size": [
+        112.0,
+        28.0
+      ],
+      "position": [
+        296.179,
+        29.522
+      ],
+      "global_position": [
+        -292.821,
+        336.522
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 9,
+      "name": "cm_tab_FuBen",
+      "active": true,
+      "parent_index": 6,
+      "size": [
+        134.0,
+        133.0
+      ],
+      "position": [
+        269.368,
+        -295.829
+      ],
+      "global_position": [
+        269.368,
+        -295.829
+      ],
+      "scale": [
+        1.0,
+        0.7
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 10,
+      "name": "cm_tab_GongHui1",
+      "active": true,
+      "parent_index": 6,
+      "size": [
+        119.0,
+        126.0
+      ],
+      "position": [
+        447.148,
+        -295.829
+      ],
+      "global_position": [
+        447.148,
+        -295.829
+      ],
+      "scale": [
+        1.0,
+        0.7
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 11,
+      "name": "New Node",
+      "active": true,
+      "parent_index": null,
+      "size": [
+        300.0,
+        28.0
+      ],
+      "position": [
+        -26.72,
+        0.0
+      ],
+      "global_position": [
+        -26.72,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 12,
+      "name": "Background",
+      "active": true,
+      "parent_index": 8,
+      "size": [
+        112.0,
+        28.0
+      ],
+      "position": [
+        0.0,
+        0.0
+      ],
+      "global_position": [
+        -292.821,
+        336.522
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 0.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 13,
+      "name": "Background",
+      "active": true,
+      "parent_index": 3,
+      "size": [
+        57.0,
+        50.0
+      ],
+      "position": [
+        0.0,
+        0.0
+      ],
+      "global_position": [
+        -314.779,
+        321.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 0.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 14,
+      "name": "Background",
+      "active": true,
+      "parent_index": 4,
+      "size": [
+        57.0,
+        50.0
+      ],
+      "position": [
+        0.0,
+        0.0
+      ],
+      "global_position": [
+        -233.779,
+        321.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 0.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 16,
+      "name": "cm_tab_ChengZhen1",
+      "active": true,
+      "parent_index": 6,
+      "size": [
+        152.0,
+        141.0
+      ],
+      "position": [
+        -448.355,
+        -295.829
+      ],
+      "global_position": [
+        -448.355,
+        -295.829
+      ],
+      "scale": [
+        1.0,
+        0.7
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 17,
+      "name": "cm_tab_YingXiong1",
+      "active": true,
+      "parent_index": 6,
+      "size": [
+        150.0,
+        142.0
+      ],
+      "position": [
+        -280.898,
+        -294.476
+      ],
+      "global_position": [
+        -280.898,
+        -294.476
+      ],
+      "scale": [
+        1.0,
+        0.7
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 18,
+      "name": "cm_tab_ZhaoHuan",
+      "active": true,
+      "parent_index": 6,
+      "size": [
+        125.0,
+        123.0
+      ],
+      "position": [
+        -95.901,
+        -292.829
+      ],
+      "global_position": [
+        -95.901,
+        -292.829
+      ],
+      "scale": [
+        1.0,
+        0.7
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 19,
+      "name": "cm_tab_XueYuan",
+      "active": false,
+      "parent_index": 6,
+      "size": [
+        84.0,
+        34.0
+      ],
+      "position": [
+        351.696,
+        -228.598
+      ],
+      "global_position": [
+        351.696,
+        -228.598
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 20,
+      "name": "btn4",
+      "active": true,
+      "parent_index": 1,
+      "size": [
+        120.0,
+        120.0
+      ],
+      "position": [
+        83.78,
+        -295.192
+      ],
+      "global_position": [
+        83.78,
+        -295.192
+      ],
+      "scale": [
+        1.0,
+        0.7
+      ],
+      "rotation_z": 0.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 21,
+      "name": "WordLv",
+      "active": true,
+      "parent_index": 1,
+      "size": [
+        52.0,
+        38.0
+      ],
+      "position": [
+        -335.117,
+        286.847
+      ],
+      "global_position": [
+        -335.117,
+        286.847
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 22,
+      "name": "btnJWSYBuff",
+      "active": false,
+      "parent_index": 1,
+      "size": [
+        400.0,
+        98.0
+      ],
+      "position": [
+        202.733,
+        -261.884
+      ],
+      "global_position": [
+        202.733,
+        -261.884
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 23,
+      "name": "cm_TX_VIPDi",
+      "active": true,
+      "parent_index": 2,
+      "size": [
+        73.0,
+        29.0
+      ],
+      "position": [
+        0.181,
+        -29.055
+      ],
+      "global_position": [
+        -588.819,
+        277.945
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 24,
+      "name": "cm_frame9_zhanli",
+      "active": true,
+      "parent_index": 2,
+      "size": [
+        176.0,
+        28.0
+      ],
+      "position": [
+        28.402,
+        -17.717
+      ],
+      "global_position": [
+        -560.598,
+        289.283
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 25,
+      "name": "label_zdl",
+      "active": true,
+      "parent_index": 24,
+      "size": [
+        76.82,
+        29.72
+      ],
+      "position": [
+        48.284,
+        0.0
+      ],
+      "global_position": [
+        -512.314,
+        289.283
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 26,
+      "name": "cm_TX_TouXiangKuangi",
+      "active": true,
+      "parent_index": 2,
+      "size": [
+        210.0,
+        210.0
+      ],
+      "position": [
+        0.0,
+        0.0
+      ],
+      "global_position": [
+        -589.0,
+        307.0
+      ],
+      "scale": [
+        1.0,
+        0.65
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 27,
+      "name": "title",
+      "active": false,
+      "parent_index": 2,
+      "size": [
+        127.0,
+        28.0
+      ],
+      "position": [
+        46.289,
+        -49.816
+      ],
+      "global_position": [
+        -542.711,
+        257.18399999999997
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 28,
+      "name": "t1",
+      "active": true,
+      "parent_index": 27,
+      "size": [
+        84.0,
+        29.2
+      ],
+      "position": [
+        37.0,
+        0.0
+      ],
+      "global_position": [
+        -505.711,
+        257.18399999999997
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 29,
+      "name": "cm_menu_TaiYangGuang",
+      "active": true,
+      "parent_index": 15,
+      "size": [
+        340.0,
+        97.0
+      ],
+      "position": [
+        -18.746,
+        -289.701
+      ],
+      "global_position": [
+        -18.746,
+        -289.701
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 30,
+      "name": "cm_menu_BeiJing",
+      "active": true,
+      "parent_index": 1,
+      "size": [
+        2266.0,
+        181.0
+      ],
+      "position": [
+        0.0,
+        -271.052
+      ],
+      "global_position": [
+        0.0,
+        -271.052
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "45rkrwBCtM6ahh+ra+Wuf2",
+      "texture_path": "assets/resources/native/1f/1f6b547b4.png",
+      "sprite_name": "cm_menu_TaiYangGuang",
+      "sprite_rect": [
+        675,
+        127,
+        340,
+        97
+      ],
+      "sprite_original_size": [
+        358,
+        97
+      ],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 31,
+      "name": "cm_icon_ChengZhen",
+      "active": true,
+      "parent_index": 5,
+      "size": [
+        152.0,
+        141.0
+      ],
+      "position": [
+        -638.238,
+        -434.512
+      ],
+      "global_position": [
+        -638.238,
+        -434.512
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "7fBJRyn/ZKQ6TFt80K8LZj",
+      "texture_path": "assets/resources/native/87/8715b80b-6cbc-4b88-bf7d-8c2ab401db4e.png",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 32,
+      "name": "cm_icon_YingXiong",
+      "active": true,
+      "parent_index": 5,
+      "size": [
+        150.0,
+        142.0
+      ],
+      "position": [
+        -385.482,
+        -432.546
+      ],
+      "global_position": [
+        -385.482,
+        -432.546
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "65oPKkyFtHDaRPeg4ZlDXz",
+      "texture_path": "assets/resources/native/9a/9a9cb544-24ba-41c7-8cab-41a43a9e9c33.png",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 33,
+      "name": "cm_icon_CangKu",
+      "active": true,
+      "parent_index": 5,
+      "size": [
+        125.0,
+        123.0
+      ],
+      "position": [
+        -129.772,
+        -429.407
+      ],
+      "global_position": [
+        -129.772,
+        -429.407
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "2ba259behNtqi0M1tR0nN8",
+      "texture_path": "assets/resources/native/83/83903e83-5933-42e2-b569-f4c51ebdea94.png",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 34,
+      "name": "cm_icon_MaoXian",
+      "active": true,
+      "parent_index": 5,
+      "size": [
+        150.0,
+        145.0
+      ],
+      "position": [
+        128.632,
+        -437.4
+      ],
+      "global_position": [
+        128.632,
+        -437.4
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "4fGjxT1lxMLJk1iWOICgmL",
+      "texture_path": "assets/resources/native/e1/e116f353-6974-488e-86a7-19f294f47e7b.png",
+      "sprite_name": "cm_menu_ZhongJing",
+      "sprite_rect": [
+        0,
+        0,
+        1575,
+        99
+      ],
+      "sprite_original_size": [
+        1575,
+        99
+      ],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 35,
+      "name": "cm_icon_MoShou",
+      "active": true,
+      "parent_index": 5,
+      "size": [
+        134.0,
+        133.0
+      ],
+      "position": [
+        382.085,
+        -438.244
+      ],
+      "global_position": [
+        382.085,
+        -438.244
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "7bscgH7KFLpa3am54IpzfP",
+      "texture_path": "assets/resources/native/1f/1f6b547b4.png",
+      "sprite_name": "cm_image_daohangguang",
+      "sprite_rect": [
+        457,
+        443,
+        513,
+        102
+      ],
+      "sprite_original_size": [
+        513,
+        102
+      ],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 36,
+      "name": "cm_icon_GongHui",
+      "active": true,
+      "parent_index": 5,
+      "size": [
+        119.0,
+        126.0
+      ],
+      "position": [
+        642.059,
+        -438.676
+      ],
+      "global_position": [
+        642.059,
+        -438.676
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "feG1qQW19GSZnZwWfj7/Vc",
+      "texture_path": "assets/resources/native/19/19ec60a29.png",
+      "sprite_name": "cm_TX_Tiao",
+      "sprite_rect": [
+        541,
+        1009,
+        199,
+        11
+      ],
+      "sprite_original_size": [
+        201,
+        13
+      ],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 37,
+      "name": "dt1",
+      "active": true,
+      "parent_index": 16,
+      "size": [
+        44.0,
+        27.72
+      ],
+      "position": [
+        -5.0,
+        -33.0
+      ],
+      "global_position": [
+        -453.355,
+        -328.829
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 38,
+      "name": "dt1",
+      "active": true,
+      "parent_index": 17,
+      "size": [
+        44.0,
+        27.72
+      ],
+      "position": [
+        10.0,
+        -35.0
+      ],
+      "global_position": [
+        -270.898,
+        -329.476
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 39,
+      "name": "dt1",
+      "active": true,
+      "parent_index": 18,
+      "size": [
+        44.0,
+        27.72
+      ],
+      "position": [
+        0.0,
+        -37.0
+      ],
+      "global_position": [
+        -95.901,
+        -329.829
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 40,
+      "name": "dt1",
+      "active": true,
+      "parent_index": 9,
+      "size": [
+        44.0,
+        27.72
+      ],
+      "position": [
+        0.0,
+        -33.0
+      ],
+      "global_position": [
+        269.368,
+        -328.829
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 41,
+      "name": "MXOpenAnim",
+      "active": false,
+      "parent_index": 9,
+      "size": [
+        80.0,
+        36.0
+      ],
+      "position": [
+        -1.0,
+        -19.135
+      ],
+      "global_position": [
+        268.368,
+        -314.964
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 42,
+      "name": "maoXianBattle",
+      "active": false,
+      "parent_index": 9,
+      "size": [
+        79.0,
+        84.0
+      ],
+      "position": [
+        0.0,
+        20.0
+      ],
+      "global_position": [
+        269.368,
+        -275.829
+      ],
+      "scale": [
+        1.0,
+        0.7
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 43,
+      "name": "dt1",
+      "active": true,
+      "parent_index": 10,
+      "size": [
+        44.0,
+        27.72
+      ],
+      "position": [
+        0.0,
+        -33.0
+      ],
+      "global_position": [
+        447.148,
+        -328.829
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 44,
+      "name": "gongHuiBattle",
+      "active": false,
+      "parent_index": 10,
+      "size": [
+        79.0,
+        84.0
+      ],
+      "position": [
+        0.0,
+        20.0
+      ],
+      "global_position": [
+        447.148,
+        -275.829
+      ],
+      "scale": [
+        1.0,
+        0.7
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 45,
+      "name": "dt1",
+      "active": true,
+      "parent_index": 19,
+      "size": [
+        70.0,
+        50.4
+      ],
+      "position": [
+        0.0,
+        -9.0
+      ],
+      "global_position": [
+        351.696,
+        -237.598
+      ],
+      "scale": [
+        1.0,
+        0.5
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 46,
+      "name": "cm_tab_ChuJi1",
+      "active": true,
+      "parent_index": 7,
+      "size": [
+        150.0,
+        145.0
+      ],
+      "position": [
+        -8.127,
+        16.0
+      ],
+      "global_position": [
+        80.211,
+        -295.472
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 47,
+      "name": "dt1",
+      "active": true,
+      "parent_index": 46,
+      "size": [
+        44.0,
+        27.72
+      ],
+      "position": [
+        4.451,
+        -27.0
+      ],
+      "global_position": [
+        84.66199999999999,
+        -322.472
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 48,
+      "name": "chuJiBattle",
+      "active": false,
+      "parent_index": 7,
+      "size": [
+        79.0,
+        84.0
+      ],
+      "position": [
+        -18.0,
+        20.0
+      ],
+      "global_position": [
+        70.338,
+        -291.472
+      ],
+      "scale": [
+        1.0,
+        0.7
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 49,
+      "name": "cm_image_daohangguang",
+      "active": false,
+      "parent_index": 1,
+      "size": [
+        513.0,
+        102.0
+      ],
+      "position": [
+        -510.0,
+        -326.0
+      ],
+      "global_position": [
+        -510.0,
+        -326.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 50,
+      "name": "btn1",
+      "active": true,
+      "parent_index": 1,
+      "size": [
+        120.0,
+        120.0
+      ],
+      "position": [
+        -451.22,
+        -292.771
+      ],
+      "global_position": [
+        -451.22,
+        -292.771
+      ],
+      "scale": [
+        1.0,
+        0.7
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 51,
+      "name": "btn2",
+      "active": true,
+      "parent_index": 1,
+      "size": [
+        120.0,
+        120.0
+      ],
+      "position": [
+        -280.419,
+        -295.51
+      ],
+      "global_position": [
+        -280.419,
+        -295.51
+      ],
+      "scale": [
+        1.0,
+        0.7
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 52,
+      "name": "btn3",
+      "active": true,
+      "parent_index": 1,
+      "size": [
+        120.0,
+        120.0
+      ],
+      "position": [
+        -79.694,
+        -293.768
+      ],
+      "global_position": [
+        -79.694,
+        -293.768
+      ],
+      "scale": [
+        1.0,
+        0.7
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 53,
+      "name": "btn5",
+      "active": true,
+      "parent_index": 1,
+      "size": [
+        120.0,
+        120.0
+      ],
+      "position": [
+        269.342,
+        -297.51
+      ],
+      "global_position": [
+        269.342,
+        -297.51
+      ],
+      "scale": [
+        1.0,
+        0.7
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 54,
+      "name": "btn6",
+      "active": true,
+      "parent_index": 1,
+      "size": [
+        120.0,
+        120.0
+      ],
+      "position": [
+        448.54,
+        -299.026
+      ],
+      "global_position": [
+        448.54,
+        -299.026
+      ],
+      "scale": [
+        1.0,
+        0.7
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 55,
+      "name": "btn7",
+      "active": false,
+      "parent_index": 1,
+      "size": [
+        114.0,
+        53.0
+      ],
+      "position": [
+        354.033,
+        -227.462
+      ],
+      "global_position": [
+        354.033,
+        -227.462
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 56,
+      "name": "moneyBox",
+      "active": true,
+      "parent_index": 1,
+      "size": [
+        1280.0,
+        36.0
+      ],
+      "position": [
+        0.0,
+        328.0
+      ],
+      "global_position": [
+        0.0,
+        328.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 57,
+      "name": "mask",
+      "active": true,
+      "parent_index": 2,
+      "size": [
+        70.0,
+        70.0
+      ],
+      "position": [
+        0.0,
+        0.0
+      ],
+      "global_position": [
+        -589.0,
+        307.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 0.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 58,
+      "name": "cm_image_TouXiang1",
+      "active": true,
+      "parent_index": 57,
+      "size": [
+        70.0,
+        70.0
+      ],
+      "position": [
+        0.0,
+        0.0
+      ],
+      "global_position": [
+        -589.0,
+        307.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 0.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 59,
+      "name": "cm_TX_MingZiDi",
+      "active": true,
+      "parent_index": 2,
+      "size": [
+        176.0,
+        28.0
+      ],
+      "position": [
+        104.994,
+        24.83
+      ],
+      "global_position": [
+        -484.006,
+        331.83
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 60,
+      "name": "cm_icon_lanzuan0",
+      "active": true,
+      "parent_index": 11,
+      "size": [
+        19.0,
+        19.0
+      ],
+      "position": [
+        0.0,
+        0.0
+      ],
+      "global_position": [
+        -26.72,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 0.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 61,
+      "name": "cm_icon_nian",
+      "active": true,
+      "parent_index": 11,
+      "size": [
+        19.0,
+        19.0
+      ],
+      "position": [
+        19.0,
+        0.0
+      ],
+      "global_position": [
+        -7.719999999999999,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 62,
+      "name": "namestr",
+      "active": true,
+      "parent_index": 11,
+      "size": [
+        142.0,
+        27.2
+      ],
+      "position": [
+        38.0,
+        -12.746
+      ],
+      "global_position": [
+        11.280000000000001,
+        -12.746
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 63,
+      "name": "cm_TX_DengJi",
+      "active": true,
+      "parent_index": 2,
+      "size": [
+        30.0,
+        30.0
+      ],
+      "position": [
+        50.916,
+        24.26
+      ],
+      "global_position": [
+        -538.0840000000001,
+        331.26
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 64,
+      "name": "lvstr",
+      "active": true,
+      "parent_index": 63,
+      "size": [
+        24.25,
+        27.2
+      ],
+      "position": [
+        0.0,
+        0.0
+      ],
+      "global_position": [
+        -538.0840000000001,
+        331.26
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 0.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 65,
+      "name": "Label",
+      "active": true,
+      "parent_index": 13,
+      "size": [
+        100.0,
+        18.0
+      ],
+      "position": [
+        0.0,
+        -21.408
+      ],
+      "global_position": [
+        -314.779,
+        299.592
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 66,
+      "name": "Label",
+      "active": true,
+      "parent_index": 14,
+      "size": [
+        100.0,
+        18.0
+      ],
+      "position": [
+        0.0,
+        -21.408
+      ],
+      "global_position": [
+        -233.779,
+        299.592
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 67,
+      "name": "cm_menu_TaiYang",
+      "active": true,
+      "parent_index": 15,
+      "size": [
+        112.0,
+        114.0
+      ],
+      "position": [
+        -15.0,
+        -326.0
+      ],
+      "global_position": [
+        -15.0,
+        -326.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "21/QHtdL5BGrgiblSnCo9e",
+      "texture_path": "assets/resources/native/18/18b29ae48.png",
+      "sprite_name": "cm_icon_HongDian",
+      "sprite_rect": [
+        375,
+        295,
+        31,
+        31
+      ],
+      "sprite_original_size": [
+        31,
+        31
+      ],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 68,
+      "name": "cm_menu_Kuang",
+      "active": true,
+      "parent_index": 30,
+      "size": [
+        1155.0,
+        52.0
+      ],
+      "position": [
+        0.0,
+        -63.432
+      ],
+      "global_position": [
+        0.0,
+        -334.48400000000004
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "fcBGzuhtZMy6AbkLenmVEM",
+      "texture_path": "assets/resources/native/18/18b29ae48.png",
+      "sprite_name": "cm_TX_TouXiangDi2",
+      "sprite_rect": [
+        3,
+        119,
+        110,
+        110
+      ],
+      "sprite_original_size": [
+        110,
+        110
+      ],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 69,
+      "name": "cm_menu_ChengZhen",
+      "active": false,
+      "parent_index": 31,
+      "size": [
+        146.0,
+        144.0
+      ],
+      "position": [
+        0.0,
+        -67.66499999999999
+      ],
+      "global_position": [
+        -638.238,
+        -502.177
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 70,
+      "name": "cm_menu_YingXiong",
+      "active": false,
+      "parent_index": 32,
+      "size": [
+        125.0,
+        129.0
+      ],
+      "position": [
+        0.0,
+        -65.66499999999999
+      ],
+      "global_position": [
+        -385.482,
+        -498.211
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "8dyxkQzrxFsby8G1XCcE0q",
+      "skeleton_name": "cm_icon_YingXiong",
+      "skeleton_textures": [
+        "assets/resources/native/9d/9dd9102e-047d-49be-92d4-d2dd8cb63766.png"
+      ],
+      "skeleton_animations": [
+        "animation"
+      ]
+    },
+    {
+      "index": 71,
+      "name": "cm_menu_CangKu",
+      "active": false,
+      "parent_index": 33,
+      "size": [
+        122.92,
+        124.0
+      ],
+      "position": [
+        0.0,
+        -59.665
+      ],
+      "global_position": [
+        -129.772,
+        -489.072
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "f7nwAHYbVDGYJlPd1o8U9a",
+      "skeleton_name": "cm_icon_ChuJi",
+      "skeleton_textures": [
+        "assets/resources/native/c4/c401a437-55ac-4e6a-a7c2-b4af921ef79a.png"
+      ],
+      "skeleton_animations": [
+        "animation"
+      ]
+    },
+    {
+      "index": 72,
+      "name": "cm_menu_MaoXian",
+      "active": false,
+      "parent_index": 34,
+      "size": [
+        152.0,
+        147.0
+      ],
+      "position": [
+        0.0,
+        -71.66499999999999
+      ],
+      "global_position": [
+        128.632,
+        -509.06499999999994
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "beGoNH7JJCI5mW8dnTicd6",
+      "skeleton_name": "cm_icon_GongHui",
+      "skeleton_textures": [
+        "assets/resources/native/41/4144dbd3-adf3-4cd0-b2a2-3cfd49df6007.png"
+      ],
+      "skeleton_animations": [
+        "animation"
+      ]
+    },
+    {
+      "index": 73,
+      "name": "cm_menu_MoShen",
+      "active": false,
+      "parent_index": 35,
+      "size": [
+        136.0,
+        134.0
+      ],
+      "position": [
+        0.0,
+        -65.66499999999999
+      ],
+      "global_position": [
+        382.085,
+        -503.909
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 74,
+      "name": "cm_menu_GongHui",
+      "active": false,
+      "parent_index": 36,
+      "size": [
+        117.51,
+        128.0
+      ],
+      "position": [
+        0.0,
+        -59.665
+      ],
+      "global_position": [
+        642.059,
+        -498.341
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 75,
+      "name": "cm_menu_ZhongJing",
+      "active": true,
+      "parent_index": 1,
+      "size": [
+        1575.0,
+        99.0
+      ],
+      "position": [
+        0.0,
+        -326.0
+      ],
+      "global_position": [
+        0.0,
+        -326.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "7b+/lOVG1M26QCYpV0/JA7",
+      "texture_path": "assets/resources/native/15/15a1d9111.png",
+      "sprite_name": "cm_icon_ZhanLi",
+      "sprite_rect": [
+        439,
+        752,
+        23,
+        35
+      ],
+      "sprite_original_size": [
+        23,
+        35
+      ],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 76,
+      "name": "hongdian",
+      "active": false,
+      "parent_index": 16,
+      "size": [
+        31.0,
+        31.0
+      ],
+      "position": [
+        36.963,
+        18.0
+      ],
+      "global_position": [
+        -411.392,
+        -277.829
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "8exVGd+cxNbJH0eFnqNX4s",
+      "texture_path": "assets/resources/native/1f/1f6b547b4.png",
+      "sprite_name": "zjm_icon_kefu",
+      "sprite_rect": [
+        602,
+        993,
+        112,
+        28
+      ],
+      "sprite_original_size": [
+        112,
+        28
+      ],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 77,
+      "name": "hongdian",
+      "active": false,
+      "parent_index": 17,
+      "size": [
+        31.0,
+        31.0
+      ],
+      "position": [
+        36.963,
+        16.0
+      ],
+      "global_position": [
+        -243.93500000000003,
+        -278.476
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 78,
+      "name": "hongdian",
+      "active": false,
+      "parent_index": 18,
+      "size": [
+        31.0,
+        31.0
+      ],
+      "position": [
+        37.963,
+        14.0
+      ],
+      "global_position": [
+        -57.937999999999995,
+        -278.829
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 79,
+      "name": "hongdian",
+      "active": false,
+      "parent_index": 9,
+      "size": [
+        31.0,
+        31.0
+      ],
+      "position": [
+        37.963,
+        18.0
+      ],
+      "global_position": [
+        307.331,
+        -277.829
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 80,
+      "name": "hongdian",
+      "active": false,
+      "parent_index": 10,
+      "size": [
+        31.0,
+        31.0
+      ],
+      "position": [
+        37.963,
+        18.0
+      ],
+      "global_position": [
+        485.11100000000005,
+        -277.829
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 81,
+      "name": "hongdian",
+      "active": false,
+      "parent_index": 19,
+      "size": [
+        26.0,
+        26.0
+      ],
+      "position": [
+        30.041,
+        13.73
+      ],
+      "global_position": [
+        381.737,
+        -214.86800000000002
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 82,
+      "name": "chunjian",
+      "active": false,
+      "parent_index": 7,
+      "size": [
+        1575.0001220703125,
+        720.0
+      ],
+      "position": [
+        -18.0,
+        -39.0
+      ],
+      "global_position": [
+        70.338,
+        -350.472
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 83,
+      "name": "cm_menu_ChuJi",
+      "active": true,
+      "parent_index": 7,
+      "size": [
+        181.99981689453125,
+        75.00005340576172
+      ],
+      "position": [
+        -12.0,
+        -32.789
+      ],
+      "global_position": [
+        76.338,
+        -344.26099999999997
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 84,
+      "name": "hongdian",
+      "active": false,
+      "parent_index": 7,
+      "size": [
+        31.0,
+        31.0
+      ],
+      "position": [
+        19.963,
+        40.0
+      ],
+      "global_position": [
+        108.30099999999999,
+        -271.472
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 85,
+      "name": "New Label",
+      "active": true,
+      "parent_index": 22,
+      "size": [
+        281.28,
+        50.4
+      ],
+      "position": [
+        4.0,
+        23.737
+      ],
+      "global_position": [
+        206.733,
+        -238.14700000000002
+      ],
+      "scale": [
+        1.0,
+        0.6
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 86,
+      "name": "New Label",
+      "active": true,
+      "parent_index": 22,
+      "size": [
+        160.0,
+        50.4
+      ],
+      "position": [
+        0.0,
+        0.0
+      ],
+      "global_position": [
+        202.733,
+        -261.884
+      ],
+      "scale": [
+        1.0,
+        0.5
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 87,
+      "name": "cm_image_TouXiang1",
+      "active": true,
+      "parent_index": 2,
+      "size": [
+        70.0,
+        70.0
+      ],
+      "position": [
+        -1.513,
+        1.513
+      ],
+      "global_position": [
+        -590.513,
+        308.513
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 88,
+      "name": "cm_TX_Di",
+      "active": true,
+      "parent_index": 2,
+      "size": [
+        201.0,
+        13.0
+      ],
+      "position": [
+        130.988,
+        4.338
+      ],
+      "global_position": [
+        -458.012,
+        311.338
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 89,
+      "name": "cm_TX_Tiao",
+      "active": true,
+      "parent_index": 2,
+      "size": [
+        199.0,
+        11.0
+      ],
+      "position": [
+        32.523,
+        4.364
+      ],
+      "global_position": [
+        -556.477,
+        311.364
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 90,
+      "name": "VipNum",
+      "active": true,
+      "parent_index": 23,
+      "size": [
+        22.56,
+        25.2
+      ],
+      "position": [
+        7.551,
+        -2.744
+      ],
+      "global_position": [
+        -581.2679999999999,
+        275.20099999999996
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 93,
+      "name": "cm_icon_ZhanLi",
+      "active": true,
+      "parent_index": 24,
+      "size": [
+        23.0,
+        35.0
+      ],
+      "position": [
+        30.689,
+        -8.038
+      ],
+      "global_position": [
+        -529.909,
+        281.245
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 98,
+      "name": "userInfo",
+      "active": true,
+      "parent_index": 2,
+      "size": [
+        250.0,
+        100.0
+      ],
+      "position": [
+        83.978,
+        2.531
+      ],
+      "global_position": [
+        -505.022,
+        309.531
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 99,
+      "name": "hongdian",
+      "active": true,
+      "parent_index": 2,
+      "size": [
+        31.0,
+        31.0
+      ],
+      "position": [
+        -30.547,
+        22.596
+      ],
+      "global_position": [
+        -619.547,
+        329.596
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 100,
+      "name": "Label",
+      "active": true,
+      "parent_index": 12,
+      "size": [
+        160.0,
+        50.4
+      ],
+      "position": [
+        10.249,
+        1.0
+      ],
+      "global_position": [
+        -282.572,
+        337.522
+      ],
+      "scale": [
+        1.0,
+        0.5
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 101,
+      "name": "hd",
+      "active": true,
+      "parent_index": 3,
+      "size": [
+        26.0,
+        26.0
+      ],
+      "position": [
+        15.0,
+        12.0
+      ],
+      "global_position": [
+        -299.779,
+        333.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 102,
+      "name": "hd",
+      "active": true,
+      "parent_index": 4,
+      "size": [
+        26.0,
+        26.0
+      ],
+      "position": [
+        15.0,
+        12.0
+      ],
+      "global_position": [
+        -218.779,
+        333.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    }
+  ]
+}

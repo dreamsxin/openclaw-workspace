@@ -1,0 +1,191 @@
+# Prefab Restore Inventory
+
+Total prefabs: 1007
+
+## Categories
+
+- ActivityPanel: 119
+- HerolhPrefab: 91
+- HeroPrefab: 88
+- SkyCityPanel: 60
+- Guild: 53
+- JingjiPrefab: 43
+- Battle: 30
+- HeroPanel: 30
+- MaoxianPanel: 28
+- UserInfo: 23
+- mapprefabs: 23
+- comPrefab: 22
+- yjTreasure: 22
+- ForgePanel: 19
+- ShiLuoFanePanel: 18
+- guajiPanel: 16
+- pvpActivityPanel: 15
+- BagPanel: 14
+- longComing: 14
+- Welfare: 14
+- HeroActivityPanel: 14
+- HeroPalace: 13
+- TreasurePanel: 12
+- CombatPrefab: 11
+- DrawCard: 9
+- rank: 8
+- ZhiYeTower: 8
+- stssActivityPrefab: 8
+- TeachPlace: 8
+- HeroTeachPre: 8
+- TaskPanel: 8
+- RewordPanel: 7
+- HeroXZPrefab: 7
+- RechargePanel: 7
+- HeroListPanel: 7
+- Chat: 6
+- MozhuPanel: 6
+- WarReport: 6
+- guide: 6
+- binglongPanel: 6
+- WarPathPanel: 6
+- PassPrefab: 5
+- StarPlanPanel: 5
+- bigImage: 5
+- payPanel: 5
+- WarcraftPanel: 4
+- XQkaifu: 4
+- FindTreasurePanel: 4
+- SkinShopPanel: 4
+- loading: 4
+- Shop: 4
+- ElevatePanel: 3
+- FriendPanel: 3
+- mainpanel: 3
+- HeroLhPanel: 3
+- FuWen: 3
+- alert: 3
+- login: 3
+- zhanbu: 3
+- fangchenmi: 2
+- Gift: 2
+- OnlineRewordPanel: 2
+- GetGoldPanel: 2
+- WelfareDayPanel: 2
+- Help: 2
+- KuafuPvpPane: 2
+- EmailPanel: 2
+- ActivityForecastPanel: 2
+- TalkPanel: 1
+- RolePanel: 1
+- CreateRolePanel: 1
+- DailyGift: 1
+- NewHeroEffectPanel: 1
+- HeroDetailPanel: 1
+- FirstRechargePanel: 1
+- ResDebug: 1
+
+## Priority 1
+
+- Prefab/HeroPanel/HeroMainPre | nodes=170 textures=22 | assets/resources/import/37/37a0a496-56d5-4322-8429-99ca7eeca5fb.json
+- Prefab/DrawCard/drawCardPre | nodes=166 textures=15 | assets/resources/import/4a/4adda260-915f-4845-a57c-64d7201e7eb1.json
+- Prefab/BagPanel/BagPre | nodes=62 textures=8 | assets/resources/import/99/99dbedd1-111a-4a08-8ebc-cb26362081f5.json
+- Prefab/login/LoginPre | nodes=39 textures=6 | assets/resources/import/a3/a3a9989b-23b1-46a6-ad24-112682294a7c.json
+- Prefab/Battle/battle | nodes=43 textures=0 | assets/resources/import/f8/f82872af-8b6e-4c9a-8006-94d8819d50b8.json
+- Prefab/login/pfLoginPanelPre | nodes=101 textures=10 | assets/resources/import/fc/fc3b94c3-c07b-4eb2-826e-2ad5d962c9e7.json
+- Prefab/mainpanel/MainPre | nodes=227 textures=27 | assets/resources/import/fd/fd77b1d2-32ad-46c4-be16-ef14bc2423d0.json
+
+## Runtime Resource Prefabs
+
+- Prefab/HerolhPrefab/2050081 | assets/resources/import/00/003b7878-c9e6-48f1-90ce-8acaabc24c34.json
+- Prefab/HerolhPrefab/105004 | assets/resources/import/00/00482677-9b33-43a2-91b3-fd0d9c1259a6.json
+- Prefab/HerolhPrefab/104002 | assets/resources/import/00/0065892b-cbe2-487c-a8b5-e1b704540d5f.json
+- Prefab/HerolhPrefab/505011 | assets/resources/import/00/00f21071-d000-4af4-8250-5bba147b365b.json
+- Prefab/HerolhPrefab/505004 | assets/resources/import/01/0134d9ba-26d0-40e3-8c95-b3aa34eadba4.json
+- Prefab/HerolhPrefab/305006 | assets/resources/import/02/02355ed6-f08b-4d6d-b44d-2ca09ecfd70b.json
+- Prefab/HerolhPrefab/5050071 | assets/resources/import/02/0275b0b2-d61f-4459-a542-962ef5c1f1a1.json
+- Prefab/HerolhPrefab/1050061 | assets/resources/import/03/030c5741-8a90-4280-a088-ce2c3d0e2204.json
+- Prefab/HerolhPrefab/504002 | assets/resources/import/04/04b7269d-256f-4bd0-a13f-0fd7c1c00a8b.json
+- Prefab/HerolhPrefab/105007 | assets/resources/import/0a/0a5149c4-f64a-4cd0-a2c7-cdf3cbfca625.json
+- Prefab/HerolhPrefab/204003 | assets/resources/import/0e/0eeaa54e-8916-440e-a725-1777d5b10b60.json
+- Prefab/HerolhPrefab/205009 | assets/resources/import/19/191f3d91-35e4-4741-a759-ad03167fdb35.json
+- Prefab/bigImage/1030 | assets/resources/import/19/19562818-3a2f-4a51-ac01-5ae1a123cf70.json
+- Prefab/HerolhPrefab/1050112 | assets/resources/import/1b/1b94a396-5587-476f-8bf2-63907c635603.json
+- Prefab/bigImage/1050 | assets/resources/import/1c/1cea91c8-5419-4325-bf49-b5cd0752f33b.json
+- Prefab/HerolhPrefab/5050041 | assets/resources/import/1e/1efa63b4-8be6-4a0f-92be-10ba43fd7ffc.json
+- Prefab/HerolhPrefab/205004 | assets/resources/import/1f/1fcfd53f-9459-4147-beac-42b4cc04135b.json
+- Prefab/HerolhPrefab/105009 | assets/resources/import/21/2129b7dc-296c-4b46-b267-30648c3786cd.json
+- Prefab/HerolhPrefab/405007 | assets/resources/import/22/22e45588-0c24-4690-b7e7-ad5e73634244.json
+- Prefab/HerolhPrefab/202001 | assets/resources/import/24/24031f92-12d6-418f-ad7d-83c1bd736cf6.json
+- Prefab/HerolhPrefab/305004 | assets/resources/import/26/26e6f891-928a-44d6-ba38-f3ffdf9f4297.json
+- Prefab/HerolhPrefab/305014 | assets/resources/import/2e/2e88b8bc-298c-4311-be86-cca36b911b6f.json
+- Prefab/HerolhPrefab/505003 | assets/resources/import/32/326947b4-5f7f-42e9-832a-52520f59318b.json
+- Prefab/HerolhPrefab/405004 | assets/resources/import/34/340c815b-1363-4f78-8d71-2498ff4850cb.json
+- Prefab/HerolhPrefab/204001 | assets/resources/import/34/34313dcf-3bea-43f2-8931-65836593827c.json
+- Prefab/HerolhPrefab/305011 | assets/resources/import/37/373ada38-7edf-4ac9-9b66-f733624eceff.json
+- Prefab/HerolhPrefab/205011 | assets/resources/import/38/388d4884-a309-4c6b-bc97-2787483b1ae9.json
+- Prefab/HerolhPrefab/102001 | assets/resources/import/38/38b1252a-bd07-4615-962d-d21620ecce67.json
+- Prefab/HerolhPrefab/205005 | assets/resources/import/39/395ef3af-dff9-480c-bc7b-0dce2caa6c7e.json
+- Prefab/HerolhPrefab/405003 | assets/resources/import/3b/3bae9277-bba4-4b29-b02b-aa2c50dc7cde.json
+- Prefab/HerolhPrefab/305009 | assets/resources/import/3d/3de40fcd-1551-4b0a-8790-d06a4b1805a7.json
+- Prefab/HerolhPrefab/305007 | assets/resources/import/3e/3e6ddae7-51c7-436e-b2ca-1af62df2dbc5.json
+- Prefab/HerolhPrefab/5050121 | assets/resources/import/41/41069178-6640-4dc0-98f4-108ad606b2a9.json
+- Prefab/HerolhPrefab/104003 | assets/resources/import/42/42f985af-4a1e-49c7-842e-4459faffbec0.json
+- Prefab/HerolhPrefab/505010 | assets/resources/import/43/4380b79e-dc0c-40c9-8271-1d4f8e53b594.json
+- Prefab/HerolhPrefab/405012 | assets/resources/import/43/43fee0f1-fe23-47c5-a8e6-336469befe1b.json
+- Prefab/HerolhPrefab/405005 | assets/resources/import/44/442205ac-2b7f-42f3-b10f-3c1e38ea450f.json
+- Prefab/HerolhPrefab/405006 | assets/resources/import/44/44f73576-5099-4464-aa34-2a029cda7d61.json
+- Prefab/HerolhPrefab/505007 | assets/resources/import/46/469bc21c-2d49-4953-b556-023b23add41c.json
+- Prefab/HerolhPrefab/4050091 | assets/resources/import/4b/4b18f670-ab1c-430d-8f5b-8cb5fa686f33.json
+- Prefab/HerolhPrefab/505005 | assets/resources/import/4b/4b3ef1a0-c658-4e36-8d4a-3fb6792a7452.json
+- Prefab/HerolhPrefab/305005 | assets/resources/import/5a/5a8fd5b2-5bb6-4d86-8266-1699fb58984e.json
+- Prefab/HerolhPrefab/305012 | assets/resources/import/5a/5adb1087-84c1-416d-95aa-39c6d342ea5b.json
+- Prefab/HerolhPrefab/505008 | assets/resources/import/5e/5e648777-7f6f-4210-9487-5259e0218f80.json
+- Prefab/HerolhPrefab/405011 | assets/resources/import/61/619aa81d-dd1e-4631-a560-1bcc00da8f02.json
+- Prefab/HerolhPrefab/104001 | assets/resources/import/64/641cf719-193c-494e-904f-9e8b1535f3e7.json
+- Prefab/HerolhPrefab/1050111 | assets/resources/import/64/64b6b91d-fdc7-4e14-a334-75d2a3be52f9.json
+- Prefab/HerolhPrefab/2050111 | assets/resources/import/66/66414df0-eb96-42ea-a218-e340a6e33795.json
+- Prefab/HerolhPrefab/404001 | assets/resources/import/66/66bfbf0c-502f-4e8b-9c31-ccb02dcc6268.json
+- Prefab/HerolhPrefab/304003 | assets/resources/import/66/66d3c05a-9ef1-483c-99eb-a7ebf26accd2.json
+- Prefab/HerolhPrefab/205008 | assets/resources/import/66/66f4933f-d994-408d-9930-dd471454f6c2.json
+- Prefab/HerolhPrefab/205006 | assets/resources/import/6a/6a8101bf-9443-4afc-9128-96b70d504de7.json
+- Prefab/HerolhPrefab/105011 | assets/resources/import/74/74da4767-325c-4003-8457-c99733673168.json
+- Prefab/HerolhPrefab/105006 | assets/resources/import/77/77562ef7-e4ba-4924-b9ff-69d02fd0d985.json
+- Prefab/HerolhPrefab/103001 | assets/resources/import/77/77c7fc0d-25a5-446d-baec-2612a68eb86a.json
+- Prefab/HerolhPrefab/305013 | assets/resources/import/77/77f2886e-df00-453b-afac-7a5b214957bc.json
+- Prefab/HerolhPrefab/405008 | assets/resources/import/7c/7c4c81a7-0d6b-4b41-a7c3-531b0866cc27.json
+- Prefab/HerolhPrefab/405009 | assets/resources/import/7e/7e4676c5-b1c4-4649-a92f-8cb71d509cdf.json
+- Prefab/HerolhPrefab/201001 | assets/resources/import/82/82106d59-ffe3-43d0-bca3-e72f168e21a8.json
+- Prefab/HerolhPrefab/4050081 | assets/resources/import/85/85a6a311-5c50-42e6-8cae-df3751b4cb55.json
+- Prefab/HerolhPrefab/404002 | assets/resources/import/86/8653aae2-aafe-453b-89ef-1daa9c0af093.json
+- Prefab/HerolhPrefab/505009 | assets/resources/import/8e/8e05274e-2a35-4199-8e89-9d9362db4834.json
+- Prefab/HerolhPrefab/405010 | assets/resources/import/8e/8e197577-efe1-4ee2-9efc-0cbee2dfe467.json
+- Prefab/HerolhPrefab/302001 | assets/resources/import/93/937128d4-70bd-4646-b12e-06138f0d4e84.json
+- Prefab/HerolhPrefab/204002 | assets/resources/import/9b/9bc74c45-ac19-4a83-b17d-35b78cb66019.json
+- Prefab/HerolhPrefab/303001 | assets/resources/import/9d/9d56a53f-21d5-43ce-a8be-8443566fd7ed.json
+- Prefab/HerolhPrefab/305008 | assets/resources/import/9d/9d90501b-8d0f-42c1-8e98-29a48bdfdbdc.json
+- Prefab/HerolhPrefab/105010 | assets/resources/import/9e/9e422b0f-5e51-4496-8cba-553b04aa6f73.json
+- Prefab/HerolhPrefab/403001 | assets/resources/import/9e/9e67f33a-4152-4a65-9097-3b047eda04f3.json
+- Prefab/HerolhPrefab/3050071 | assets/resources/import/a2/a24c42c4-2da2-418a-affa-27db1889fbf5.json
+- Prefab/bigImage/1010 | assets/resources/import/a5/a57ac70f-4c0b-4a42-8065-7272d4fad1d0.json
+- Prefab/HerolhPrefab/205010 | assets/resources/import/a5/a5e8c54f-c13e-4dba-8c16-94a9f3a1096b.json
+- Prefab/HerolhPrefab/5050101 | assets/resources/import/a7/a73be8b4-4807-423a-b962-efd72d4c0f87.json
+- Prefab/bigImage/1020 | assets/resources/import/a8/a879be96-14ff-4a05-a915-916cb3bb8bdf.json
+- Prefab/HerolhPrefab/101001 | assets/resources/import/a9/a95cac2c-e1b2-4a05-8084-25287fac64d8.json
+- Prefab/HerolhPrefab/205012 | assets/resources/import/aa/aa56a3e2-8a31-4b0a-84bd-b2ccdb217074.json
+- Prefab/HerolhPrefab/3050111 | assets/resources/import/b1/b1defc1f-cd72-4145-ac8b-ea643b0f7b90.json
+- Prefab/HerolhPrefab/305010 | assets/resources/import/b5/b5ba9a4d-5dba-42b1-b4aa-396be11b5648.json
+- Prefab/HerolhPrefab/304001 | assets/resources/import/ba/ba68fe76-afc0-4882-bd70-2d2b75c8b6f8.json
+- Prefab/HerolhPrefab/505012 | assets/resources/import/bd/bd0460e4-4601-415a-af89-efe6a7ccd2da.json
+- Prefab/HerolhPrefab/205013 | assets/resources/import/c0/c048e115-3517-4802-8ee3-ab54254d1bd8.json
+- Prefab/HerolhPrefab/504001 | assets/resources/import/c3/c382d774-850e-4272-b3a2-11aca600f69c.json
+- Prefab/HerolhPrefab/4050071 | assets/resources/import/c4/c4490453-700b-4a5a-bcd7-2fc564eb044f.json
+- Prefab/HerolhPrefab/205007 | assets/resources/import/c6/c6012f06-9d7e-4282-8653-3db5865d0250.json
+- Prefab/HerolhPrefab/505006 | assets/resources/import/cc/cc2f33d1-97c3-419e-ae79-5b9049389d7b.json
+- Prefab/HerolhPrefab/301001 | assets/resources/import/cc/cc404f31-6bb2-4e66-82bc-daf5428283d9.json
+- Prefab/HerolhPrefab/3050101 | assets/resources/import/cd/cd32d5b2-955c-432e-824c-b0ce6a01fead.json
+- Prefab/bigImage/1040 | assets/resources/import/ce/ce06cedb-e4c8-4229-8682-5de4a7c10290.json
+- Prefab/HerolhPrefab/105008 | assets/resources/import/d2/d235f5b5-d9fd-43ee-aafc-10ebf4d5ce13.json
+- Prefab/HerolhPrefab/105012 | assets/resources/import/d3/d32e59aa-db8a-4690-9fca-db03bbfbd132.json
+- Prefab/HerolhPrefab/5050091 | assets/resources/import/d4/d46aef85-e9a3-426f-8fe4-bc0d3c743294.json
+- Prefab/HerolhPrefab/304002 | assets/resources/import/e9/e988d1e1-9897-4c42-bd76-f909b151ab4b.json
+- Prefab/HerolhPrefab/605001 | assets/resources/import/ed/ed0200bc-50c7-4b27-bcad-e977c5b1db28.json
+- Prefab/HerolhPrefab/105005 | assets/resources/import/ee/eea35888-9901-4acc-8cbf-dd2ecbd02414.json
+- Prefab/HerolhPrefab/503001 | assets/resources/import/f4/f4ce27c1-9385-4bea-98cf-80528463abe2.json
+- Prefab/HerolhPrefab/203001 | assets/resources/import/fe/fe64ee4f-ae2a-4a39-8034-ff6326053a76.json

@@ -1,0 +1,107 @@
+[
+  {
+    "label": "启动加载",
+    "prefab": "Prefab/loading/LoadingPre",
+    "layout": "data/prefab_layouts/LoadingPre.json",
+    "nodes": 16,
+    "texture_nodes": 3
+  },
+  {
+    "label": "加载进度",
+    "prefab": "Prefab/loading/loadingProgress",
+    "layout": "data/prefab_layouts/loadingProgress.json",
+    "nodes": 3,
+    "texture_nodes": 0
+  },
+  {
+    "label": "登录面板",
+    "prefab": "Prefab/login/LoginPre",
+    "layout": "data/prefab_layouts/LoginPre.json",
+    "nodes": 39,
+    "texture_nodes": 6
+  },
+  {
+    "label": "登录选服",
+    "prefab": "Prefab/login/pfLoginPanelPre",
+    "layout": "data/prefab_layouts/pfLoginPanelPre.json",
+    "nodes": 101,
+    "texture_nodes": 10
+  },
+  {
+    "label": "主城",
+    "prefab": "Prefab/mainpanel/MainPre",
+    "layout": "data/prefab_layouts/MainPre.json",
+    "nodes": 227,
+    "texture_nodes": 27
+  },
+  {
+    "label": "主城导航",
+    "prefab": "Prefab/mainpanel/daohangPre",
+    "layout": "data/prefab_layouts/daohangPre.json",
+    "nodes": 94,
+    "texture_nodes": 11
+  },
+  {
+    "label": "主城头像",
+    "prefab": "Prefab/mainpanel/heroHead",
+    "layout": "data/prefab_layouts/heroHead.json",
+    "nodes": 33,
+    "texture_nodes": 5
+  },
+  {
+    "label": "英雄",
+    "prefab": "Prefab/HeroPanel/HeroMainPre",
+    "layout": "data/prefab_layouts/HeroMainPre.json",
+    "nodes": 170,
+    "texture_nodes": 22
+  },
+  {
+    "label": "背包",
+    "prefab": "Prefab/BagPanel/BagPre",
+    "layout": "data/prefab_layouts/BagPre.json",
+    "nodes": 62,
+    "texture_nodes": 8
+  },
+  {
+    "label": "抽卡",
+    "prefab": "Prefab/DrawCard/drawCardPre",
+    "layout": "data/prefab_layouts/drawCardPre.json",
+    "nodes": 166,
+    "texture_nodes": 15
+  },
+  {
+    "label": "战斗",
+    "prefab": "Prefab/Battle/battle",
+    "layout": "data/prefab_layouts/battle.json",
+    "nodes": 43,
+    "texture_nodes": 0
+  },
+  {
+    "label": "活动抽卡",
+    "prefab": "Prefab/ActivityPanel/DrawCardActivity/DrawCardActivityPre",
+    "layout": "data/prefab_layouts/DrawCardActivityPre.json",
+    "nodes": 8,
+    "texture_nodes": 1
+  },
+  {
+    "label": "公会",
+    "prefab": "Prefab/Guild/GuildMainPre",
+    "layout": "data/prefab_layouts/GuildMainPre.json",
+    "nodes": 98,
+    "texture_nodes": 9
+  },
+  {
+    "label": "竞技",
+    "prefab": "Prefab/JingjiPrefab/JingjiPre",
+    "layout": "data/prefab_layouts/JingjiPre.json",
+    "nodes": 74,
+    "texture_nodes": 0
+  },
+  {
+    "label": "天空城",
+    "prefab": "Prefab/SkyCityPanel/SkyCityPre",
+    "layout": "data/prefab_layouts/SkyCityPre.json",
+    "nodes": 46,
+    "texture_nodes": 6
+  }
+]

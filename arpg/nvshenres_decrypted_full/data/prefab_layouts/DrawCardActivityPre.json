@@ -1,0 +1,270 @@
+{
+  "prefab": "Prefab/ActivityPanel/DrawCardActivity/DrawCardActivityPre",
+  "import": "assets/resources/import/10/10a6e173-6611-48ba-b723-5489225d0076.json",
+  "nodes": [
+    {
+      "index": 1,
+      "name": "DrawCardActivityPre",
+      "active": true,
+      "parent_index": null,
+      "size": [
+        1280.0,
+        720.0
+      ],
+      "position": [
+        0.0,
+        0.0
+      ],
+      "global_position": [
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 0.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 2,
+      "name": "scrollView",
+      "active": true,
+      "parent_index": 1,
+      "size": [
+        80.0,
+        600.0
+      ],
+      "position": [
+        -296.389,
+        0.0
+      ],
+      "global_position": [
+        -296.389,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 3,
+      "name": "scrollBar",
+      "active": false,
+      "parent_index": 2,
+      "size": [
+        12.0,
+        600.0
+      ],
+      "position": [
+        120.0,
+        0.0
+      ],
+      "global_position": [
+        -176.389,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 4,
+      "name": "content",
+      "active": true,
+      "parent_index": null,
+      "size": [
+        80.0,
+        169.0
+      ],
+      "position": [
+        0.0,
+        300.0
+      ],
+      "global_position": [
+        0.0,
+        300.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 5,
+      "name": "view",
+      "active": true,
+      "parent_index": 2,
+      "size": [
+        80.0,
+        600.0
+      ],
+      "position": [
+        0.0,
+        0.0
+      ],
+      "global_position": [
+        -296.389,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 0.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 6,
+      "name": "qtl_bj",
+      "active": true,
+      "parent_index": 1,
+      "size": [
+        1575.0,
+        720.0
+      ],
+      "position": [
+        0.0,
+        0.0
+      ],
+      "global_position": [
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 0.0,
+      "sprite_uuid": "91Uph6IzdF/770f1+lk0RK",
+      "texture_path": "assets/resources/native/f8/f86301ec-43cd-48e5-a09c-4f7e6683e6d8.png",
+      "sprite_name": "qtl_bj",
+      "sprite_rect": [
+        0,
+        0,
+        1575,
+        720
+      ],
+      "sprite_original_size": [
+        1575,
+        720
+      ],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 8,
+      "name": "bar",
+      "active": true,
+      "parent_index": 3,
+      "size": [
+        10.0,
+        30.0
+      ],
+      "position": [
+        -1.0,
+        0.0
+      ],
+      "global_position": [
+        -177.389,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 12,
+      "name": "time",
+      "active": true,
+      "parent_index": 1,
+      "size": [
+        0.0,
+        37.8
+      ],
+      "position": [
+        -601.569,
+        -265.957
+      ],
+      "global_position": [
+        -601.569,
+        -265.957
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    }
+  ]
+}

@@ -1,0 +1,1382 @@
+{
+  "prefab": "Prefab/Battle/battle",
+  "import": "assets/resources/import/f8/f82872af-8b6e-4c9a-8006-94d8819d50b8.json",
+  "nodes": [
+    {
+      "index": 1,
+      "name": "battle",
+      "active": true,
+      "parent_index": null,
+      "size": [
+        1280.0,
+        720.0
+      ],
+      "position": [
+        0.0,
+        0.0
+      ],
+      "global_position": [
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 0.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 2,
+      "name": "lsk2",
+      "active": true,
+      "parent_index": 1,
+      "size": [
+        217.62,
+        233.24
+      ],
+      "position": [
+        -970.0,
+        -137.0
+      ],
+      "global_position": [
+        -970.0,
+        -137.0
+      ],
+      "scale": [
+        1.0,
+        -1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 3,
+      "name": "lsk4",
+      "active": true,
+      "parent_index": 1,
+      "size": [
+        191.5,
+        260.63
+      ],
+      "position": [
+        -1166.0,
+        -137.0
+      ],
+      "global_position": [
+        -1166.0,
+        -137.0
+      ],
+      "scale": [
+        1.0,
+        -1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 4,
+      "name": "lsk1",
+      "active": true,
+      "parent_index": 1,
+      "size": [
+        255.58,
+        297.41
+      ],
+      "position": [
+        -891.0,
+        -37.0
+      ],
+      "global_position": [
+        -891.0,
+        -37.0
+      ],
+      "scale": [
+        1.0,
+        -1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 5,
+      "name": "rsk1",
+      "active": true,
+      "parent_index": 1,
+      "size": [
+        255.58,
+        297.41
+      ],
+      "position": [
+        788.456,
+        -25.214
+      ],
+      "global_position": [
+        788.456,
+        -25.214
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 6,
+      "name": "rsk2",
+      "active": true,
+      "parent_index": 1,
+      "size": [
+        217.62,
+        233.24
+      ],
+      "position": [
+        868.456,
+        -125.214
+      ],
+      "global_position": [
+        868.456,
+        -125.214
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 7,
+      "name": "lsk5",
+      "active": true,
+      "parent_index": 1,
+      "size": [
+        120.06,
+        230.14
+      ],
+      "position": [
+        -1362.0,
+        -137.0
+      ],
+      "global_position": [
+        -1362.0,
+        -137.0
+      ],
+      "scale": [
+        1.0,
+        -1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 8,
+      "name": "rsk5",
+      "active": true,
+      "parent_index": 1,
+      "size": [
+        120.06,
+        230.14
+      ],
+      "position": [
+        1260.456,
+        -125.214
+      ],
+      "global_position": [
+        1260.456,
+        -125.214
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 9,
+      "name": "rsk4",
+      "active": true,
+      "parent_index": 1,
+      "size": [
+        191.5,
+        260.63
+      ],
+      "position": [
+        1064.4560000000001,
+        -125.214
+      ],
+      "global_position": [
+        1064.4560000000001,
+        -125.214
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 10,
+      "name": "lsk3",
+      "active": true,
+      "parent_index": 1,
+      "size": [
+        146.55,
+        262.75
+      ],
+      "position": [
+        -1050.0,
+        -237.0
+      ],
+      "global_position": [
+        -1050.0,
+        -237.0
+      ],
+      "scale": [
+        1.0,
+        -1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 11,
+      "name": "rsk3",
+      "active": true,
+      "parent_index": 1,
+      "size": [
+        146.55,
+        262.75
+      ],
+      "position": [
+        948.456,
+        -225.214
+      ],
+      "global_position": [
+        948.456,
+        -225.214
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 13,
+      "name": "hit",
+      "active": true,
+      "parent_index": 4,
+      "size": [
+        191.5,
+        260.63
+      ],
+      "position": [
+        0.0,
+        115.0
+      ],
+      "global_position": [
+        -891.0,
+        78.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 14,
+      "name": "zidan",
+      "active": true,
+      "parent_index": 4,
+      "size": [
+        191.5,
+        260.63
+      ],
+      "position": [
+        0.0,
+        0.0
+      ],
+      "global_position": [
+        -891.0,
+        -37.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 0.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 15,
+      "name": "hp",
+      "active": true,
+      "parent_index": 4,
+      "size": [
+        104.0,
+        44.0
+      ],
+      "position": [
+        15.852,
+        253.0
+      ],
+      "global_position": [
+        -875.148,
+        216.0
+      ],
+      "scale": [
+        1.0,
+        -1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 17,
+      "name": "hit",
+      "active": true,
+      "parent_index": 5,
+      "size": [
+        191.5,
+        260.63
+      ],
+      "position": [
+        0.0,
+        115.0
+      ],
+      "global_position": [
+        788.456,
+        89.786
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 18,
+      "name": "zidan",
+      "active": true,
+      "parent_index": 5,
+      "size": [
+        191.5,
+        260.63
+      ],
+      "position": [
+        0.0,
+        0.0
+      ],
+      "global_position": [
+        788.456,
+        -25.214
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 0.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 19,
+      "name": "hp",
+      "active": true,
+      "parent_index": 5,
+      "size": [
+        104.0,
+        44.0
+      ],
+      "position": [
+        9.058,
+        253.0
+      ],
+      "global_position": [
+        797.514,
+        227.786
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 20,
+      "name": "hp",
+      "active": true,
+      "parent_index": 6,
+      "size": [
+        104.0,
+        44.0
+      ],
+      "position": [
+        0.0,
+        253.0
+      ],
+      "global_position": [
+        868.456,
+        127.786
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 22,
+      "name": "hit",
+      "active": true,
+      "parent_index": 6,
+      "size": [
+        191.5,
+        260.63
+      ],
+      "position": [
+        0.0,
+        115.0
+      ],
+      "global_position": [
+        868.456,
+        -10.213999999999999
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 23,
+      "name": "zidan",
+      "active": true,
+      "parent_index": 6,
+      "size": [
+        191.5,
+        260.63
+      ],
+      "position": [
+        0.0,
+        0.0
+      ],
+      "global_position": [
+        868.456,
+        -125.214
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 0.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 25,
+      "name": "hp",
+      "active": true,
+      "parent_index": 2,
+      "size": [
+        104.0,
+        44.0
+      ],
+      "position": [
+        0.0,
+        253.0
+      ],
+      "global_position": [
+        -970.0,
+        116.0
+      ],
+      "scale": [
+        1.0,
+        -1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 27,
+      "name": "hit",
+      "active": true,
+      "parent_index": 2,
+      "size": [
+        191.5,
+        260.63
+      ],
+      "position": [
+        0.0,
+        115.0
+      ],
+      "global_position": [
+        -970.0,
+        -22.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 28,
+      "name": "zidan",
+      "active": true,
+      "parent_index": 2,
+      "size": [
+        191.5,
+        260.63
+      ],
+      "position": [
+        0.0,
+        0.0
+      ],
+      "global_position": [
+        -970.0,
+        -137.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 0.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 29,
+      "name": "hp",
+      "active": true,
+      "parent_index": 7,
+      "size": [
+        104.0,
+        44.0
+      ],
+      "position": [
+        0.0,
+        253.0
+      ],
+      "global_position": [
+        -1362.0,
+        116.0
+      ],
+      "scale": [
+        1.0,
+        -1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 31,
+      "name": "hit",
+      "active": true,
+      "parent_index": 7,
+      "size": [
+        191.5,
+        260.63
+      ],
+      "position": [
+        0.0,
+        115.0
+      ],
+      "global_position": [
+        -1362.0,
+        -22.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 32,
+      "name": "zidan",
+      "active": true,
+      "parent_index": 7,
+      "size": [
+        191.5,
+        260.63
+      ],
+      "position": [
+        0.0,
+        0.0
+      ],
+      "global_position": [
+        -1362.0,
+        -137.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 0.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 33,
+      "name": "hp",
+      "active": true,
+      "parent_index": 8,
+      "size": [
+        104.0,
+        44.0
+      ],
+      "position": [
+        0.0,
+        253.0
+      ],
+      "global_position": [
+        1260.456,
+        127.786
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 35,
+      "name": "hit",
+      "active": true,
+      "parent_index": 8,
+      "size": [
+        191.5,
+        260.63
+      ],
+      "position": [
+        0.0,
+        115.0
+      ],
+      "global_position": [
+        1260.456,
+        -10.213999999999999
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 36,
+      "name": "zidan",
+      "active": true,
+      "parent_index": 8,
+      "size": [
+        191.5,
+        260.63
+      ],
+      "position": [
+        0.0,
+        0.0
+      ],
+      "global_position": [
+        1260.456,
+        -125.214
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 0.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 37,
+      "name": "hp",
+      "active": true,
+      "parent_index": 3,
+      "size": [
+        104.0,
+        44.0
+      ],
+      "position": [
+        -2.265,
+        270.0
+      ],
+      "global_position": [
+        -1168.265,
+        133.0
+      ],
+      "scale": [
+        1.0,
+        -1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 39,
+      "name": "hit",
+      "active": true,
+      "parent_index": 3,
+      "size": [
+        191.5,
+        260.63
+      ],
+      "position": [
+        0.0,
+        115.0
+      ],
+      "global_position": [
+        -1166.0,
+        -22.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 40,
+      "name": "zidan",
+      "active": true,
+      "parent_index": 3,
+      "size": [
+        191.5,
+        260.63
+      ],
+      "position": [
+        0.0,
+        0.0
+      ],
+      "global_position": [
+        -1166.0,
+        -137.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 0.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 41,
+      "name": "hp",
+      "active": true,
+      "parent_index": 9,
+      "size": [
+        104.0,
+        44.0
+      ],
+      "position": [
+        0.0,
+        270.0
+      ],
+      "global_position": [
+        1064.4560000000001,
+        144.786
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 43,
+      "name": "hit",
+      "active": true,
+      "parent_index": 9,
+      "size": [
+        191.5,
+        260.63
+      ],
+      "position": [
+        0.0,
+        115.0
+      ],
+      "global_position": [
+        1064.4560000000001,
+        -10.213999999999999
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 44,
+      "name": "zidan",
+      "active": true,
+      "parent_index": 9,
+      "size": [
+        191.5,
+        260.63
+      ],
+      "position": [
+        0.0,
+        0.0
+      ],
+      "global_position": [
+        1064.4560000000001,
+        -125.214
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 0.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 45,
+      "name": "hp",
+      "active": true,
+      "parent_index": 10,
+      "size": [
+        104.0,
+        44.0
+      ],
+      "position": [
+        0.0,
+        253.0
+      ],
+      "global_position": [
+        -1050.0,
+        16.0
+      ],
+      "scale": [
+        1.0,
+        -1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 47,
+      "name": "hit",
+      "active": true,
+      "parent_index": 10,
+      "size": [
+        191.5,
+        260.63
+      ],
+      "position": [
+        0.0,
+        115.0
+      ],
+      "global_position": [
+        -1050.0,
+        -122.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 48,
+      "name": "zidan",
+      "active": true,
+      "parent_index": 10,
+      "size": [
+        191.5,
+        260.63
+      ],
+      "position": [
+        0.0,
+        0.0
+      ],
+      "global_position": [
+        -1050.0,
+        -237.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 0.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 49,
+      "name": "hp",
+      "active": true,
+      "parent_index": 11,
+      "size": [
+        104.0,
+        44.0
+      ],
+      "position": [
+        0.0,
+        253.0
+      ],
+      "global_position": [
+        948.456,
+        27.786
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 51,
+      "name": "hit",
+      "active": true,
+      "parent_index": 11,
+      "size": [
+        191.5,
+        260.63
+      ],
+      "position": [
+        0.0,
+        115.0
+      ],
+      "global_position": [
+        948.456,
+        -110.214
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 52,
+      "name": "zidan",
+      "active": true,
+      "parent_index": 11,
+      "size": [
+        191.5,
+        260.63
+      ],
+      "position": [
+        0.0,
+        0.0
+      ],
+      "global_position": [
+        948.456,
+        -225.214
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 0.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 53,
+      "name": "baoji",
+      "active": true,
+      "parent_index": 1,
+      "size": [
+        132.0,
+        45.0
+      ],
+      "position": [
+        247.39,
+        186.0
+      ],
+      "global_position": [
+        247.39,
+        186.0
+      ],
+      "scale": [
+        1.0,
+        0.99999
+      ],
+      "rotation_z": 0.99999,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    },
+    {
+      "index": 54,
+      "name": "bgk",
+      "active": true,
+      "parent_index": 1,
+      "size": [
+        1575.0,
+        713.0
+      ],
+      "position": [
+        0.0,
+        0.0
+      ],
+      "global_position": [
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 0.0,
+      "sprite_uuid": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_original_size": [],
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": []
+    }
+  ]
+}
