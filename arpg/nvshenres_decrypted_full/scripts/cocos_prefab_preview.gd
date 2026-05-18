@@ -1058,10 +1058,28 @@ func _should_skip_node(node: Dictionary) -> bool:
 		return true
 	var name := str(node.get("name", ""))
 	var texture_path := str(node.get("texture_path", ""))
+	var label_text := _node_label_text(node)
 	var parent_index: Variant = node.get("parent_index")
 	if parent_index == null and texture_path == "" and name.to_lower().ends_with("pre"):
 		return true
+	if _should_skip_placeholder_node(name, texture_path, label_text):
+		return true
 	return false
+
+func _should_skip_placeholder_node(name: String, texture_path: String, label_text: String) -> bool:
+	if texture_path != "" or label_text != "":
+		return false
+	if not _uses_runtime_mock_overlay():
+		return false
+	if name in ["loginBtn", "btn_start", "btnStart"]:
+		return false
+	var lowered := name.to_lower()
+	if lowered.begins_with("btn") or lowered.begins_with("button"):
+		return false
+	return true
+
+func _uses_runtime_mock_overlay() -> bool:
+	return current_layout in ["英雄", "背包", "抽卡", "公会", "天空城", "竞技", "战斗", "活动抽卡"]
 
 func _canvas_center() -> Vector2:
 	if canvas.size.x > 0.0 and canvas.size.y > 0.0:

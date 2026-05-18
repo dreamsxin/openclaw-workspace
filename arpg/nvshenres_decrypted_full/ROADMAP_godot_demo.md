@@ -251,6 +251,8 @@ RESTORE_LOGIN_TO_HOME.md
 - `data/named_resource_index.json` 当前包含 1516 条命名资源。
 - 当前 `HeroMainPre` 的右侧信息仍会和原 prefab 静态文本有重叠，后续需要继续完善 ScrollView/层级裁剪和动态节点替换规则。
 - 当前 `BagPre` 的详情区仍受原 prefab 暗层/遮罩影响，后续需要统一处理 ScrollView、Mask 和 mock 层级。
+- `cocos_prefab_preview.gd` 已对带运行时 mock 的页面过滤无贴图、无文本的 Cocos 容器占位节点，减少 `content`、`mask`、`box` 等半透明灰块对背包/英雄页的遮挡。
+- 过滤后仍保留真实贴图、真实 Label 和 Button 节点；登录/选服等未使用 mock overlay 的页面不受该规则影响。
 
 下一步优先级：
 

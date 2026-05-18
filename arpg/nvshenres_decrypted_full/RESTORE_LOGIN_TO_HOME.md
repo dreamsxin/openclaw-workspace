@@ -563,6 +563,7 @@ Spine 查看器：
 
 - `背包`：使用 `GridBoxItemPre` + `image/equipment` mock 数据。
 - `背包` 当前还额外补了分类按钮、详情面板和操作按钮；详情区仍受原 prefab 暗层影响，后续需统一处理 Mask/ScrollView 层级。
+- 带运行时 mock 的 prefab 预览页会跳过无贴图、无文本的 Cocos 容器占位节点，避免 `content`、`mask`、`box` 这类半透明灰块遮住动态内容。
 - `抽卡`：使用 `image/com/DrawCard` mock 数据。
 - `公会`：使用 `image/com/Guild`、`image/guildFlag` mock 数据。
 - `天空城`：使用 `image/com/skyCity` mock 建筑、矿物、空岛和副本入口。
