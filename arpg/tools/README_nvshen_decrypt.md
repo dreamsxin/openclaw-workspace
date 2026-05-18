@@ -410,3 +410,65 @@ extension_mismatch: 17
 18441 个 JSON 全部可解析
 输出目录中 remaining_sign = 0
 ```
+
+## Cocos UUID / Spine 反查工具
+
+脚本：
+
+```text
+tools/cocos_spine_trace_tool.py
+```
+
+用途：
+
+- 压缩 / 解压 Cocos Creator UUID。
+- 根据 `assets/resources/native/**/<uuid>.png` 反查引用它的 `sp.SkeletonData` import JSON。
+- 直接从 native PNG 追踪并导出项目内轻量 Spine runtime JSON。
+
+### UUID 压缩 / 解压
+
+```powershell
+python tools\cocos_spine_trace_tool.py uuid 1baef3d2-6771-487a-84f3-f3222ae92456
+```
+
+输出示例：
+
+```json
+{
+  "input": "1baef3d2-6771-487a-84f3-f3222ae92456",
+  "decompressed": "1baef3d2-6771-487a-84f3-f3222ae92456",
+  "compressed": "1brvPSZ3FIeoTz8yIq6SRW"
+}
+```
+
+### 通过 native PNG 反查 Spine
+
+```powershell
+python tools\cocos_spine_trace_tool.py trace-native "D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\assets\resources\native\1b\1baef3d2-6771-487a-84f3-f3222ae92456.png"
+```
+
+本次确认结果：
+
+```text
+1baef3d2-6771-487a-84f3-f3222ae92456.png
+  -> compressed uuid: 1brvPSZ3FIeoTz8yIq6SRW
+  -> SkeletonData: assets/resources/import/2b/2bb12a28-eeb0-4dbc-b5f3-c90d869cbc14.json
+  -> name: YouDuoLa_LH
+  -> animations: idle, show
+```
+
+另一个已确认角色：
+
+```text
+0f3c9b3a-e75f-4064-9c82-00a4c0c086f8.png
+  -> compressed uuid: 0fPJs6519AZJyCAKTAwIb4
+  -> SkeletonData: assets/resources/import/98/9870531b-304b-45da-a68a-a34db248fad7.json
+  -> name: SuLa_LH
+  -> animations: idle, show
+```
+
+### 通过 native PNG 导出 runtime
+
+```powershell
+python tools\cocos_spine_trace_tool.py export-native "D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\assets\resources\native\1b\1baef3d2-6771-487a-84f3-f3222ae92456.png" --out-dir "D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\data\spine_runtime"
+```

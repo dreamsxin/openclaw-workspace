@@ -21,6 +21,8 @@ const NAV_MAOXIAN := "res://assets/resources/native/e1/e116f353-6974-488e-86a7-1
 const PLAYER_HEAD := "res://assets/resources/native/d7/d7bf0f4d-1dc9-4fda-80c0-65dfeee3316a.png"
 const AD_BANNER := "res://assets/resources/native/00/002545b0-69b1-4515-ac70-e545a4c8b5d2.png"
 const HERO_105004_SPINE := "res://data/spine_runtime/105004.json"
+const HERO_SULA_SPINE := "res://data/spine_runtime/SuLa_LH.json"
+const HERO_YOUDUOLA_SPINE := "res://data/spine_runtime/YouDuoLa_LH.json"
 
 const BACKGROUNDS := [
 	{
@@ -59,8 +61,19 @@ const HEROES := [
 		"size": Vector2(410, 640),
 		"spine": HERO_105004_SPINE,
 		"animation": "idle",
-		"spine_position": Vector2(620, 670),
-		"spine_scale": Vector2(0.58, 0.58),
+		"spine_target": Rect2(Vector2(420, 96), Vector2(430, 590)),
+	},
+	{
+		"name": "SuLa_LH",
+		"spine": HERO_SULA_SPINE,
+		"animation": "idle",
+		"spine_target": Rect2(Vector2(420, 82), Vector2(430, 604)),
+	},
+	{
+		"name": "YouDuoLa_LH",
+		"spine": HERO_YOUDUOLA_SPINE,
+		"animation": "idle",
+		"spine_target": Rect2(Vector2(420, 82), Vector2(430, 604)),
 	},
 	{
 		"name": "Herolh/104002",
@@ -87,13 +100,16 @@ var prefab_layer: Control
 var background_image: TextureRect
 var hero_image: TextureRect
 var hero_spine: Node2D
+var hero_hit_area: Button
 var title_label: Label
 var bg_index := 0
 var hero_index := 0
 var hero_tween: Tween
+var hero_animation_index := 0
 
 func _ready() -> void:
 	_build_ui()
+	_apply_cmdline_overrides()
 	_capture_if_requested()
 
 func _notification(what: int) -> void:
@@ -137,6 +153,16 @@ func _build_ui() -> void:
 	prefab_layer = Control.new()
 	prefab_layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	design_root.add_child(prefab_layer)
+
+	hero_hit_area = Button.new()
+	hero_hit_area.flat = true
+	hero_hit_area.text = ""
+	hero_hit_area.position = Vector2(500, 92)
+	hero_hit_area.size = Vector2(360, 520)
+	hero_hit_area.focus_mode = Control.FOCUS_NONE
+	hero_hit_area.mouse_filter = Control.MOUSE_FILTER_STOP
+	hero_hit_area.pressed.connect(_cycle_hero_animation)
+	design_root.add_child(hero_hit_area)
 
 	_layout_design_root()
 	_apply_background()
@@ -520,7 +546,48 @@ func _cycle_background() -> void:
 
 func _cycle_hero() -> void:
 	hero_index = wrapi(hero_index + 1, 0, HEROES.size())
+	hero_animation_index = 0
 	_apply_hero()
+
+func _apply_cmdline_overrides() -> void:
+	var args := OS.get_cmdline_args()
+	args.append_array(OS.get_cmdline_user_args())
+	var hero_arg := _cmd_arg_value(args, "--home-hero")
+	if hero_arg != "":
+		var found_hero := _find_named_entry(HEROES, hero_arg)
+		if found_hero >= 0:
+			hero_index = found_hero
+			hero_animation_index = 0
+			_apply_hero()
+	var animation_arg := _cmd_arg_value(args, "--home-animation")
+	if animation_arg != "":
+		_select_hero_animation(animation_arg)
+	if "--home-click-hero-once" in args:
+		_cycle_hero_animation()
+	var bg_arg := _cmd_arg_value(args, "--home-bg")
+	if bg_arg != "":
+		var found_bg := _find_named_entry(BACKGROUNDS, bg_arg)
+		if found_bg >= 0:
+			bg_index = found_bg
+			_apply_background()
+
+func _cmd_arg_value(args: Array, key: String) -> String:
+	var index := args.find(key)
+	if index >= 0 and index + 1 < args.size():
+		return str(args[index + 1])
+	return ""
+
+func _find_named_entry(entries: Array, query: String) -> int:
+	if query.is_valid_int():
+		var numeric_index := int(query)
+		if numeric_index >= 0 and numeric_index < entries.size():
+			return numeric_index
+	var lower_query := query.to_lower()
+	for i in entries.size():
+		var item: Dictionary = entries[i]
+		if str(item.get("name", "")).to_lower() == lower_query:
+			return i
+	return -1
 
 func _apply_background() -> void:
 	var item: Dictionary = BACKGROUNDS[bg_index]
@@ -534,14 +601,16 @@ func _apply_hero() -> void:
 	if item.has("spine"):
 		hero_image.visible = false
 		hero_spine.visible = true
-		hero_spine.position = item.get("spine_position", Vector2(620, 670))
-		hero_spine.scale = item.get("spine_scale", Vector2(0.58, 0.58))
-		hero_spine.load_spine(str(item.spine), str(item.get("animation", "idle")))
+		var animation := _selected_hero_animation(item)
+		if hero_spine.load_spine(str(item.spine), animation):
+			_fit_spine_hero(item)
 		if hero_tween:
 			hero_tween.kill()
+		hero_hit_area.visible = true
 	else:
 		hero_spine.visible = false
 		hero_image.visible = true
+		hero_hit_area.visible = false
 		var texture := _load_texture(str(item.path))
 		if texture:
 			hero_image.texture = texture
@@ -554,7 +623,77 @@ func _apply_hero() -> void:
 func _update_title() -> void:
 	if title_label == null:
 		return
-	title_label.text = "MainPre | BG: %s | Hero: %s" % [BACKGROUNDS[bg_index].name, HEROES[hero_index].name]
+	var item: Dictionary = HEROES[hero_index]
+	var suffix := ""
+	if item.has("spine"):
+		suffix = " | Anim: %s" % _selected_hero_animation(item)
+	title_label.text = "MainPre | BG: %s | Hero: %s%s" % [BACKGROUNDS[bg_index].name, item.name, suffix]
+
+func _cycle_hero_animation() -> void:
+	var item: Dictionary = HEROES[hero_index]
+	if not item.has("spine"):
+		return
+	var animations := _hero_animation_names(item)
+	if animations.size() <= 1:
+		return
+	hero_animation_index = wrapi(hero_animation_index + 1, 0, animations.size())
+	var animation := str(animations[hero_animation_index])
+	hero_spine.play(animation)
+	_fit_spine_hero(item)
+	_update_title()
+
+func _select_hero_animation(animation: String) -> void:
+	var item: Dictionary = HEROES[hero_index]
+	if not item.has("spine"):
+		return
+	var animations := _hero_animation_names(item)
+	var index := animations.find(animation)
+	if index < 0:
+		return
+	hero_animation_index = index
+	hero_spine.play(animation)
+	_fit_spine_hero(item)
+	_update_title()
+
+func _selected_hero_animation(item: Dictionary) -> String:
+	var animations := _hero_animation_names(item)
+	if animations.is_empty():
+		return str(item.get("animation", "idle"))
+	hero_animation_index = clampi(hero_animation_index, 0, animations.size() - 1)
+	return str(animations[hero_animation_index])
+
+func _hero_animation_names(item: Dictionary) -> Array:
+	if item.has("animations"):
+		return item.animations
+	var path := str(item.get("spine", ""))
+	if path == "":
+		return [str(item.get("animation", "idle"))]
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
+	if typeof(parsed) != TYPE_DICTIONARY:
+		return [str(item.get("animation", "idle"))]
+	var skeleton: Dictionary = parsed.get("skeleton", {})
+	var animation_dict: Dictionary = skeleton.get("animations", {})
+	var names := animation_dict.keys()
+	names.sort()
+	if names.has("idle"):
+		names.erase("idle")
+		names.push_front("idle")
+	return names
+
+func _fit_spine_hero(item: Dictionary) -> void:
+	hero_spine.update_preview_pose(0.0)
+	var bounds: Rect2 = hero_spine.get_draw_bounds()
+	if bounds.size.x <= 0.0 or bounds.size.y <= 0.0:
+		hero_spine.position = item.get("spine_position", Vector2(620, 670))
+		hero_spine.scale = item.get("spine_scale", Vector2(0.58, 0.58))
+		return
+	var target: Rect2 = item.get("spine_target", Rect2(Vector2(420, 96), Vector2(430, 590)))
+	var scale_value: float = min(target.size.x / bounds.size.x, target.size.y / bounds.size.y)
+	scale_value *= float(item.get("spine_scale_bias", 1.0))
+	hero_spine.scale = Vector2(scale_value, scale_value)
+	var bounds_center := bounds.position + bounds.size * 0.5
+	var target_center := target.position + target.size * 0.5
+	hero_spine.position = target_center - bounds_center * scale_value + item.get("spine_offset", Vector2.ZERO)
 
 func _start_hero_motion(base_position: Vector2) -> void:
 	if hero_tween:

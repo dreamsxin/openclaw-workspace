@@ -186,9 +186,29 @@ func _load_node_texture(path: String, node: Dictionary, crop_sprite: bool = true
 			int(sprite_rect[2]),
 			int(sprite_rect[3])
 		)
-		if crop.size.x > 0 and crop.size.y > 0 and Rect2i(Vector2i.ZERO, image.get_size()).encloses(crop):
-			image = image.get_region(crop)
+		var original_size := _arr_to_vec2i(node.get("sprite_original_size", []))
+		var offset := _arr_to_vec2(node.get("sprite_offset", []))
+		return _make_sprite_frame_texture(image, crop, bool(node.get("sprite_rotated", false)), original_size, offset)
 	return ImageTexture.create_from_image(image)
+
+func _make_sprite_frame_texture(atlas: Image, region: Rect2i, rotated := false, original_size := Vector2i.ZERO, offset := Vector2.ZERO) -> Texture2D:
+	var crop := region
+	if rotated:
+		crop = Rect2i(region.position, Vector2i(region.size.y, region.size.x))
+	if crop.size.x <= 0 or crop.size.y <= 0 or not Rect2i(Vector2i.ZERO, atlas.get_size()).encloses(crop):
+		return ImageTexture.create_from_image(atlas)
+	var frame := atlas.get_region(crop)
+	if rotated:
+		frame.rotate_90(COUNTERCLOCKWISE)
+	if original_size.x <= 0 or original_size.y <= 0 or original_size == frame.get_size():
+		return ImageTexture.create_from_image(frame)
+	frame.convert(Image.FORMAT_RGBA8)
+	var canvas := Image.create_empty(original_size.x, original_size.y, false, Image.FORMAT_RGBA8)
+	canvas.fill(Color(0, 0, 0, 0))
+	var paste_x := int(round((float(original_size.x - frame.get_width()) * 0.5) + offset.x))
+	var paste_y := int(round((float(original_size.y - frame.get_height()) * 0.5) - offset.y))
+	canvas.blit_rect(frame, Rect2i(Vector2i.ZERO, frame.get_size()), Vector2i(paste_x, paste_y))
+	return ImageTexture.create_from_image(canvas)
 
 func _is_login_layout() -> bool:
 	return current_layout == "登录面板" or current_layout == "登录选服"
@@ -206,6 +226,16 @@ func _sorted_nodes(nodes: Array) -> Array:
 		return pa < pb
 	)
 	return sorted
+
+func _arr_to_vec2(value: Variant) -> Vector2:
+	if typeof(value) == TYPE_ARRAY and value.size() >= 2:
+		return Vector2(float(value[0]), float(value[1]))
+	return Vector2.ZERO
+
+func _arr_to_vec2i(value: Variant) -> Vector2i:
+	if typeof(value) == TYPE_ARRAY and value.size() >= 2:
+		return Vector2i(int(value[0]), int(value[1]))
+	return Vector2i.ZERO
 
 func _draw_priority(name: String, node: Dictionary) -> int:
 	var lowered := name.to_lower()

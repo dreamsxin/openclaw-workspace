@@ -45,6 +45,27 @@ func play(anim: String) -> void:
 	elapsed = 0.0
 	_set_animation_duration()
 
+func update_preview_pose(anim_time := 0.0) -> void:
+	if skeleton.is_empty():
+		return
+	_update_pose(anim_time)
+
+func get_draw_bounds() -> Rect2:
+	var has_bounds := false
+	var bounds := Rect2()
+	for node in draw_nodes:
+		if node is Polygon2D and node.visible:
+			var polygon := node as Polygon2D
+			for point in polygon.polygon:
+				if not has_bounds:
+					bounds = Rect2(point, Vector2.ZERO)
+					has_bounds = true
+				else:
+					bounds = bounds.expand(point)
+	if has_bounds:
+		return bounds
+	return Rect2(Vector2(-100, -300), Vector2(200, 300))
+
 func _process(delta: float) -> void:
 	if skeleton.is_empty():
 		return

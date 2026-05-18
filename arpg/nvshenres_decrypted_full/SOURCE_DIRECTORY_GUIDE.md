@@ -101,7 +101,7 @@
 | `D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\data\prefab_restore_inventory.csv` | Prefab 还原清单 CSV。适合排序、过滤和批处理。 |
 | `D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\data\prefab_restore_inventory.md` | Prefab 还原清单 Markdown。适合人工阅读。 |
 | `D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\data\spine_preview_index.json` | Spine 索引，当前用于资源浏览器查看 skeleton 名、动画名、atlas/png。 |
-| `D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\data\spine_runtime\*.json` | 从 Cocos `sp.SkeletonData` 导出的轻量 runtime 数据。当前已验证 `YiKaLuoSi.json`、`105004.json`。 |
+| `D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\data\spine_runtime\*.json` | 从 Cocos `sp.SkeletonData` 导出的轻量 runtime 数据。当前已验证 `105004.json`、`YiKaLuoSi.json`、`SuLa_LH.json`、`YouDuoLa_LH.json`。 |
 
 `data/prefab_layouts/*.json` 的字段含义：
 
@@ -135,6 +135,19 @@
 | `scenes/spine_character_viewer.tscn` / `scripts/spine_character_viewer.gd` | Spine 角色查看器。支持 `--spine-path`、`--spine-animation`、`--debug-slots`、`--capture-spine-viewer`。 |
 | `scripts/simple_spine_player.gd` | 项目内轻量 Spine runtime。支持 region/mesh/weighted mesh、drawOrder、deform、Bezier、基础 blend、setup-only 单骨/二骨 IK、rotated mesh UV。 |
 
+## Spine 反查记录
+
+| native 图片 | Cocos 压缩 uuid | SkeletonData import | 导出 runtime | 动画 |
+| --- | --- | --- | --- | --- |
+| `assets/resources/native/0f/0f3c9b3a-e75f-4064-9c82-00a4c0c086f8.png` | `0fPJs6519AZJyCAKTAwIb4` | `assets/resources/import/98/9870531b-304b-45da-a68a-a34db248fad7.json` | `data/spine_runtime/SuLa_LH.json` | `idle`, `show` |
+| `assets/resources/native/1b/1baef3d2-6771-487a-84f3-f3222ae92456.png` | `1brvPSZ3FIeoTz8yIq6SRW` | `assets/resources/import/2b/2bb12a28-eeb0-4dbc-b5f3-c90d869cbc14.json` | `data/spine_runtime/YouDuoLa_LH.json` | `idle`, `show` |
+
+导出命令模板：
+
+```powershell
+python D:\work\openclaw-workspace\arpg\tools\export_spine_runtime_data.py --uuid 2bb12a28-eeb0-4dbc-b5f3-c90d869cbc14 --out D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\data\spine_runtime\YouDuoLa_LH.json
+```
+
 当前本地运行命令：
 
 ```powershell
@@ -151,6 +164,7 @@ D:\work\openclaw-workspace\arpg\tools\Godot_v4.6.2-stable_win64_console.exe --pa
 | `D:\work\openclaw-workspace\arpg\tools\export_cocos_prefab_layout.py` | 把 Cocos prefab import JSON 导出为简化布局 JSON。 |
 | `D:\work\openclaw-workspace\arpg\tools\export_spine_preview_index.py` | 导出 Spine 预览索引。 |
 | `D:\work\openclaw-workspace\arpg\tools\export_spine_runtime_data.py` | 把 Cocos Spine 数据导出为 Godot 轻量 runtime 使用的 JSON。 |
+| `D:\work\openclaw-workspace\arpg\tools\cocos_spine_trace_tool.py` | Cocos UUID 压缩/解压、native PNG 反查 SkeletonData、native PNG 导出 Spine runtime。 |
 | `D:\work\openclaw-workspace\arpg\tools\README_nvshen_decrypt.md` | 资源解密定位过程和脚本说明。 |
 | `D:\work\openclaw-workspace\arpg\tools\Godot_v4.6.2-stable_win64_console.exe` | 当前用于运行/测试 Godot 工程的控制台版 Godot。 |
 

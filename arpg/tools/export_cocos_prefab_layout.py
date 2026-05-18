@@ -110,7 +110,9 @@ def export_layout(prefab_path: str) -> dict:
             "texture_path": sprite_info.get("texture_path", ""),
             "sprite_name": sprite_info.get("sprite_name", ""),
             "sprite_rect": sprite_info.get("sprite_rect", []),
+            "sprite_offset": sprite_info.get("sprite_offset", []),
             "sprite_original_size": sprite_info.get("sprite_original_size", []),
+            "sprite_rotated": bool(sprite_info.get("sprite_rotated", False)),
             "skeleton_uuid": skeleton_uuid,
             "skeleton_name": skeleton_info.get("name", ""),
             "skeleton_textures": skeleton_info.get("textures", []),
@@ -166,7 +168,9 @@ def resolve_sprite_frame(sprite_uuid: str) -> dict:
         "texture_path": rel(texture_path) if texture_path else "",
         "sprite_name": frame.get("name", ""),
         "sprite_rect": frame.get("rect", []),
+        "sprite_offset": frame.get("offset", []),
         "sprite_original_size": frame.get("originalSize", []),
+        "sprite_rotated": bool(frame.get("rotated", False)),
     }
 
 

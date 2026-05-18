@@ -122,6 +122,7 @@
   - 动画名列表
   - atlas 贴图预览
 - 新增 `tools/export_spine_runtime_data.py`，可把 Cocos `sp.SkeletonData` 导出为 `data/spine_runtime/*.json`。
+- 新增 `tools/cocos_spine_trace_tool.py`，可做 Cocos UUID 压缩/解压、native PNG -> SkeletonData 反查、native PNG -> runtime 导出。
 - 新增 `scripts/simple_spine_player.gd`：
   - 支持 Spine 3.8 JSON 的 bones / slots / skins。
   - 支持 region attachment。
@@ -142,7 +143,15 @@
 - 已导出并验证：
   - `data/spine_runtime/YiKaLuoSi.json`
   - `data/spine_runtime/105004.json`
+- 已根据 native 图片继续反查并导出角色 Spine runtime：
+  - `assets/resources/native/0f/0f3c9b3a-e75f-4064-9c82-00a4c0c086f8.png` -> `data/spine_runtime/SuLa_LH.json`
+  - `assets/resources/native/1b/1baef3d2-6771-487a-84f3-f3222ae92456.png` -> `data/spine_runtime/YouDuoLa_LH.json`
+- `spine_character_viewer.tscn` 已增加左侧 Spine 列表，自动扫描 `data/spine_runtime/*.json`，当前可直接切换 `LaRuiOu_LH`、`SuLa_LH`、`YiKaLuoSi`、`YouDuoLa_LH`。
+- `spine_character_viewer.tscn` 已按骨骼绘制包围盒自动缩放/居中，动画按钮根据 skeleton 内 `animations` 动态生成。
 - 主城 `Herolh/105004` 已由静态 PNG 切换为 `SimpleSpinePlayer` 播放。
+- 主城页的 Hero 轮换已接入 `105004`、`SuLa_LH`、`YouDuoLa_LH` 三个动态 Spine，并用包围盒自动适配主城角色展示区域。
+- 主城角色区域可点击切换当前 Spine 的动作。`105004` 当前可在 `idle` / `show` 之间切换，标题栏会显示 `Anim: <name>`。
+- 主城截图回归支持 `--home-animation <name>` 和 `--home-click-hero-once`，用于验证点击切换动作。
 - YiKaLuoSi 调试结论：
   - `YiKaLuoSi_toushi03` 挂在独立的 `bone21`，不是头部 `bone5`，当前保留最小角色级位置补偿。
   - 屏幕左侧脚部对应 rotated atlas mesh，问题来源是 mesh UV 旋转方向，不是 deform timeline。
@@ -159,9 +168,10 @@
 下一步优先级：
 
 1. 继续用 `spine_character_viewer.tscn` 对比 `idle/run/attack/skill1/skill2`。
-2. 修正剩余 mesh 细节：少量 weighted mesh 形变误差、slot blend mode 精度。
-3. 把 `Prefab/HeroPrefab/*` 和 `Prefab/HerolhPrefab/*` 批量导出为 runtime JSON，并在资源浏览器中直接播放。
+2. 继续把主城角色候选从 `Prefab/HerolhPrefab/*` 批量导出，并接入主城 Hero 轮换。
+3. 修正剩余 mesh 细节：少量 weighted mesh 形变误差、slot blend mode 精度。
 4. 继续扩展 Spine 约束：IK timeline、transform constraint、clipping/path。
+5. 根据角色面板/原主城逻辑确认每个角色在主城应播放 `idle` 还是 `show`，并为横向或超宽角色加场景级展示偏移。
 
 ## 阶段 5：核心界面批量还原
 
