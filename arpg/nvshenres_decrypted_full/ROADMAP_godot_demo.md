@@ -208,11 +208,11 @@ RESTORE_LOGIN_TO_HOME.md
 
 执行方式：
 
-1. 每次选一个界面 prefab。
-2. 先修复自动转换器缺失能力。
-3. 再做少量场景级补丁。
-4. 禁止用截图冒充资源还原。
-5. 对运行时动态内容使用 mock 数据，但资源必须来自 catalog/prefab/spine 索引。
+1. `cocos_prefab_preview.gd` 固定为分析/取证工具，用于查 prefab 坐标、SpriteFrame、Mask/ScrollView、脚本字段绑定和资源路径。
+2. 主要可玩界面不再继续堆在 `cocos_prefab_preview.gd` 里，而是逐个建立独立 `original_*` 场景。
+3. 独立场景以 prefab 坐标和源码组件逻辑为依据，手工组织 UI 层级、交互、状态切换和本地 mock 数据。
+4. 禁止用截图冒充资源还原；截图只作为视觉参考。
+5. 对运行时动态内容使用 mock 数据，但资源必须来自 catalog/prefab/spine/named_resource 索引。
 
 当前进度：
 
@@ -275,6 +275,12 @@ RESTORE_LOGIN_TO_HOME.md
 - Mask 子树挂载会保持原 Cocos 全局位置表现，同时转换为 Godot 裁剪容器局部坐标；已验证 `HeroMainPre`、`BagPre`、活动抽卡任务页可启动无脚本错误。
 - 对导出时丢失父链的 ScrollView，预览器会把孤立的 `content + cc.Layout` 近邻匹配到 `view + cc.Mask`，再把 content 子树挂入该 viewport；已验证 `HeroMainPre`、`BagPre`、`13003`。
 - `HeroMainPre` 当前过滤原始 `tabTxt` 静态 Label，避免窄 viewport 裁剪后显示成单字列；后续需要按 `HeroSidePrefab` 的运行时页签逻辑重建。
+- 已新增独立英雄界面：
+  - `scenes/original_hero_panel.tscn`
+  - `scripts/original_hero_panel.gd`
+- 主城底部“英雄”入口已改为进入独立英雄界面，不再默认打开 prefab 预览器。
+- 独立英雄界面当前支持左侧英雄头像列表、中心 Spine 展示、点击角色切换动作、右侧培养/装备/升星/战意/衣装页签和本地属性 mock。
+- 独立英雄界面的资源加载改为读取 `data/named_resource_index.json`，支持 `texture_path` 与 `sprite_rect` 两种索引字段，避免之前只认 `native_path/rect` 导致头像不显示。
 - prefab 预览器右侧详情栏新增 `mask/scroll` 统计。
 - `13003` 已提取 `DrawCardActivityCycleItemCom` 的字段绑定：`girdLayout/btn_buy/btn_qianwang/img_receive/JDT_label/JDT_progress/title/txt_xiangou`。
 - `13004` 已提取 `DrawCardActivityRenWuItemCom` 的字段绑定：`itemNode/descText/taskProgress/taskProgressLab/submitBtn/btnLabel/imgComplete`。
@@ -286,9 +292,11 @@ RESTORE_LOGIN_TO_HOME.md
 
 下一步优先级：
 
-1. 完善 `HeroMainPre` 的 ScrollView 裁剪、Layout 重排、右侧信息层级和动态节点替换。
-2. 继续完善 `BagPre` 的页签交互、ScrollView/Mask 裁剪、详情层级和运行时分类数据。
-3. 继续推广通用 prefab 裁剪：目前已支持 `cc.Mask` 祖先链挂载和部分 `cc.ScrollView` content/viewport 近邻推断，下一步补滚动偏移、`Widget` 对齐和 `Layout` 重排，再按 `GridLogic.create(...)` 补真实奖励 Grid 子项样式。
+1. 继续完善独立 `original_hero_panel`：追 `HeroSidePrefab` 页签真实资源、装备槽亮度/层级、升星/战意/衣装真实按钮资源。
+2. 新增独立 `original_bag_panel`，把背包从 prefab 预览器 mock 迁出。
+3. 新增独立 `original_draw_card_panel`，把抽卡主界面从 prefab 预览器 mock 迁出。
+4. `cocos_prefab_preview.gd` 后续只在发现坐标/字段/资源缺口时增强，不再作为最终界面承载层。
+5. 继续推广通用 prefab 裁剪作为分析能力：目前已支持 `cc.Mask` 祖先链挂载和部分 `cc.ScrollView` content/viewport 近邻推断，下一步补滚动偏移、`Widget` 对齐和 `Layout` 重排，再按 `GridLogic.create(...)` 补真实奖励 Grid 子项样式。
 4. 继续完善 `drawCardPre` 的抽卡 Spine、结果卡牌 `HeroShowPre`、页签切换动画和真实奖励状态。
 5. 将 `prefab_node_name_hints.json` 继续接入资源浏览器，显示节点名推断用途，减少手工查 JSON。
 6. 继续完善 `battle` 的真实 Spine 战斗角色、技能特效、站位坐标和战斗结束子 prefab。

@@ -226,6 +226,12 @@ scenes/cocos_prefab_preview.tscn
 scripts/cocos_prefab_preview.gd
 ```
 
+当前定位：
+
+- `cocos_prefab_preview.gd` 只作为 prefab 分析/取证工具，负责查看原始节点、坐标、贴图、Mask/ScrollView、脚本字段绑定和资源路径。
+- 最终可运行界面改为独立 `original_*` 场景手工实现，避免预览器里静态 prefab、运行时 mock、过滤规则混画导致布局越来越偏。
+- 主城、英雄、背包、抽卡等主要界面会逐步从 prefab 预览器 mock 迁移到独立场景。
+
 命令示例：
 
 ```powershell
@@ -282,6 +288,9 @@ DrawCardActivityRenWuItemCom
 - Mask 子树挂载时会把 Cocos 全局坐标转换为 Godot 裁剪容器内局部坐标；已覆盖 `HeroMainPre` 头像列表、右侧信息遮罩等存在明确父子链的节点。
 - `cocos_prefab_preview.gd` 已开始推断导出时丢失父链的 ScrollView：对孤立的 `content + cc.Layout` 查找最近的 `view + cc.Mask`，并把 content 及其子树挂入对应裁剪容器；已验证 `HeroMainPre`、`BagPre`、`13003`。
 - `HeroMainPre` 的原始 `tabTxt` 静态 Label 会被运行时 mock 过滤，避免在窄 ScrollView viewport 下被裁成单字列；后续应改为按 `HeroSidePrefab` 真实逻辑重建页签。
+- 已新增独立英雄界面 `scenes/original_hero_panel.tscn` / `scripts/original_hero_panel.gd`，主城底部“英雄”入口进入该场景，不再打开 prefab 预览器。
+- 独立英雄界面当前按 `HeroMainPre` 的视觉结构手工实现：左侧英雄头像列表、中心 Spine、右侧培养/装备/升星/战意/衣装页签、点击角色切换动作。
+- 独立英雄界面读取 `data/named_resource_index.json` 加载头像框、头像、SSR 标、装备框等资源，兼容 `texture_path/sprite_rect` 和 `native_path/rect` 两种索引字段。
 - prefab 预览器右侧详情栏会显示 `mask/scroll` 统计，便于判断哪些界面需要优先补裁剪关系。
 - `13003.json` 现在可看到 `DrawCardActivityCycleItemCom` 的关键字段绑定：`girdLayout -> gridLayout`、`btn_buy -> btn_buy`、`JDT_progress -> progressBar`、`title -> label_name`。
 - `13004.json` 现在可看到 `DrawCardActivityRenWuItemCom` 的关键字段绑定：`itemNode -> itemNode`、`descText -> title`、`taskProgress -> progressBar`、`taskProgressLab -> count`、`submitBtn -> getBtn`、`imgComplete -> isOver`。
@@ -296,10 +305,11 @@ DrawCardActivityRenWuItemCom
 
 1. 子页列表已开始按 Cocos 原组件字段坐标绘制，但数据写入仍是本地 mock，不是完整 Cocos 组件实例化。
 2. `Mask` 已开始自动裁剪存在明确 `parent_index` 祖先链的静态节点，并能对部分孤立 ScrollView content 做近邻推断；`Widget`、Layout 重排和滚动偏移尚未完整自动还原，动态列表仍需要结合源码组件逻辑和本地 mock 数据。
-3. Cocos 运行时真实奖励图标、礼包价格、任务进度来自服务端配置，本地 demo 当前使用固定 mock 数据。
-4. 当前行底板继续使用原始资源，贴图自带亮线装饰，视觉上会穿过任务行背景；不是额外静态节点遮挡。
-5. `component_bindings` 目前采用字段名/别名和 owner 子树推断，已验证活动抽卡关键字段，复杂跨树引用仍需结合源码确认。
-6. 活动抽卡奖励图标目前复用装备图标索引作为本地 mock；后续应根据真实 `t.item` 配置和 `GridLogic.create(...)` 类型补完整 GridBox 样式。
+3. `cocos_prefab_preview.gd` 不再作为最终界面承载层；它的 mock 重叠问题后续不作为主线修复目标，只在影响取证时修。
+4. Cocos 运行时真实奖励图标、礼包价格、任务进度来自服务端配置，本地 demo 当前使用固定 mock 数据。
+5. 当前行底板继续使用原始资源，贴图自带亮线装饰，视觉上会穿过任务行背景；不是额外静态节点遮挡。
+6. `component_bindings` 目前采用字段名/别名和 owner 子树推断，已验证活动抽卡关键字段，复杂跨树引用仍需结合源码确认。
+7. 活动抽卡奖励图标目前复用装备图标索引作为本地 mock；后续应根据真实 `t.item` 配置和 `GridLogic.create(...)` 类型补完整 GridBox 样式。
 
 关键结论：
 
