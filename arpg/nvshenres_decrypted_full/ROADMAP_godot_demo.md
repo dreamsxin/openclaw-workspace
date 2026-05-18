@@ -241,14 +241,17 @@ RESTORE_LOGIN_TO_HOME.md
 - `battle` 静态 prefab 是战斗站位容器，包含左右 5 个角色位、hp/hit/zidan 和背景节点，但不直接带贴图；预览器已叠加本地战斗 mock。
 - `battle` 预览已补地图背景、双方 5 个站位、头像、血条、伤害/治疗反馈和战斗胜利奖励面板。
 - `export_named_resource_index.py` 已扩展 `image/com/Battle*`、`image/com/FuBen/*`、`image/com/map/*`、`image/head/*`、`map/worldMap/*`。
-- `data/named_resource_index.json` 当前包含 766 条命名资源。
+- `DrawCardActivityPre` 静态 prefab 只有背景、ScrollView 和时间节点，具体活动内容需要结合 `Prefab/ActivityPanel/DrawCardActivity/13002..13005` 子 prefab 与运行时数据。
+- `DrawCardActivityPre` 预览已叠加本地活动抽卡 mock，补活动标题、倒计时、限定英雄概率提升、抽数奖励进度、活动兑换和前往召唤/领取奖励按钮。
+- `export_named_resource_index.py` 已扩展 `image/com/ActivityPanel/ZhaoHuan/*`、`image/com/ActivityPanel/NewHeroComing/*`、`image/com/ActivityPanel/thousandDrawCardActivity/*`。
+- `data/named_resource_index.json` 当前包含 868 条命名资源。
 
 下一步优先级：
 
 1. 完善 `HeroMainPre` 的 ScrollView 裁剪、Layout 重排和角色展示 mock 数据。
 2. 继续完善 `BagPre` 的页签交互、ScrollView 裁剪和运行时分类数据。
-3. 继续完善 `battle` 的真实 Spine 战斗角色、技能特效、站位坐标和战斗结束子 prefab。
-4. 继续完善 `drawCardPre` / `DrawCardActivityPre` 的卡牌动画、抽卡结果和展示 Spine。
+3. 继续完善 `DrawCardActivityPre` 的 `13002..13005` 子 prefab、页签切换和抽卡活动 Spine。
+4. 继续完善 `battle` 的真实 Spine 战斗角色、技能特效、站位坐标和战斗结束子 prefab。
 
 ## 当前风险
 

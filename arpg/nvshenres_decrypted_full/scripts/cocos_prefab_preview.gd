@@ -190,6 +190,8 @@ func _add_layout_mock() -> void:
 		_add_jingji_mock()
 	elif current_layout == "战斗":
 		_add_battle_mock()
+	elif current_layout == "活动抽卡":
+		_add_draw_card_activity_mock()
 
 func _add_hero_panel_mock() -> void:
 	var player: Node2D = SimpleSpinePlayerScript.new()
@@ -727,6 +729,109 @@ func _add_battle_result_panel(position: Vector2) -> void:
 	reward.add_theme_font_size_override("font_size", 17)
 	reward.add_theme_color_override("font_color", Color(0.86, 0.94, 1.0))
 	panel.add_child(reward)
+
+func _add_draw_card_activity_mock() -> void:
+	var center := _canvas_center()
+	_add_named_image("image/com/ActivityPanel/ZhaoHuan/jfzh_image_bg", center + Vector2(-428, -248), Vector2(820, 420), TextureRect.STRETCH_KEEP_ASPECT_COVERED).modulate = Color(1, 1, 1, 0.62)
+	_add_named_image("image/com/ActivityPanel/ZhaoHuan/Title", center + Vector2(-430, -265), Vector2(360, 90), TextureRect.STRETCH_KEEP_ASPECT_CENTERED)
+	_add_draw_activity_time(center + Vector2(-600, 238))
+	_add_draw_activity_featured_hero(center + Vector2(-428, -110))
+	_add_draw_activity_reward_track(center + Vector2(-360, 176))
+	_add_draw_activity_shop_panel(center + Vector2(186, -190))
+	_add_draw_activity_button(center + Vector2(-108, 232), "前往召唤")
+	_add_draw_activity_button(center + Vector2(146, 232), "领取奖励")
+
+func _add_draw_activity_time(position: Vector2) -> void:
+	var label := Label.new()
+	label.text = "活动剩余 2天23时"
+	label.position = position
+	label.size = Vector2(260, 30)
+	label.add_theme_font_size_override("font_size", 20)
+	label.add_theme_color_override("font_color", Color(1.0, 0.9, 0.58))
+	canvas.add_child(label)
+
+func _add_draw_activity_featured_hero(position: Vector2) -> void:
+	var panel := PanelContainer.new()
+	panel.position = position
+	panel.size = Vector2(420, 260)
+	panel.modulate = Color(0.08, 0.08, 0.14, 0.54)
+	canvas.add_child(panel)
+	_add_named_image_to(panel, "image/com/ActivityPanel/NewHeroComing/JiangLin/yxjl_frame_di", Vector2(18, 24), Vector2(384, 210), TextureRect.STRETCH_SCALE)
+	_add_named_image_to(panel, "image/head/105004", Vector2(34, 46), Vector2(132, 132), TextureRect.STRETCH_KEEP_ASPECT_CENTERED)
+	_add_named_image_to(panel, "image/com/ActivityPanel/NewHeroComing/JiangLin/yxjl_btn_bofang", Vector2(126, 154), Vector2(44, 44), TextureRect.STRETCH_KEEP_ASPECT_CENTERED)
+	var title_label := Label.new()
+	title_label.text = "限定英雄概率提升"
+	title_label.position = Vector2(180, 50)
+	title_label.size = Vector2(205, 34)
+	title_label.add_theme_font_size_override("font_size", 23)
+	title_label.add_theme_color_override("font_color", Color(1.0, 0.86, 0.45))
+	panel.add_child(title_label)
+	var desc := Label.new()
+	desc.text = "首次十连必得 SR 或 SSR\n活动积分可兑换专属奖励"
+	desc.position = Vector2(180, 96)
+	desc.size = Vector2(210, 72)
+	desc.add_theme_font_size_override("font_size", 17)
+	desc.add_theme_color_override("font_color", Color(0.86, 0.94, 1.0))
+	panel.add_child(desc)
+
+func _add_draw_activity_reward_track(position: Vector2) -> void:
+	_add_named_image("image/com/ActivityPanel/thousandDrawCardActivity/Chouka_img_tiaobg", position, Vector2(480, 44), TextureRect.STRETCH_SCALE)
+	for i in 4:
+		var icon_pos := position + Vector2(34 + i * 118, -38)
+		_add_named_image("image/com/ActivityPanel/thousandDrawCardActivity/1_icon_juanzhou0%d" % (2 + i % 2), icon_pos, Vector2(58, 58), TextureRect.STRETCH_KEEP_ASPECT_CENTERED)
+		var label := Label.new()
+		label.text = "%d抽" % ((i + 1) * 30)
+		label.position = icon_pos + Vector2(-8, 58)
+		label.size = Vector2(74, 22)
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		label.add_theme_font_size_override("font_size", 15)
+		label.add_theme_color_override("font_color", Color(0.95, 0.9, 0.72))
+		canvas.add_child(label)
+
+func _add_draw_activity_shop_panel(position: Vector2) -> void:
+	var panel := PanelContainer.new()
+	panel.position = position
+	panel.size = Vector2(245, 326)
+	panel.modulate = Color(0.08, 0.08, 0.12, 0.72)
+	canvas.add_child(panel)
+	var title_label := Label.new()
+	title_label.text = "活动兑换"
+	title_label.position = Vector2(0, 18)
+	title_label.size = Vector2(245, 30)
+	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title_label.add_theme_font_size_override("font_size", 22)
+	title_label.add_theme_color_override("font_color", Color(1.0, 0.88, 0.52))
+	panel.add_child(title_label)
+	var goods := [
+		{"name": "限定碎片 x20", "cost": "积分 600"},
+		{"name": "高级召唤券 x5", "cost": "积分 300"},
+		{"name": "星辉宝箱 x1", "cost": "积分 180"},
+	]
+	for i in goods.size():
+		var y := 66 + i * 74
+		_add_named_image_to(panel, "image/com/ActivityPanel/ZhaoHuan/wxzh_item_bg", Vector2(18, y), Vector2(210, 58), TextureRect.STRETCH_SCALE)
+		var name_label := Label.new()
+		name_label.text = str(goods[i].name)
+		name_label.position = Vector2(32, y + 7)
+		name_label.size = Vector2(180, 22)
+		name_label.add_theme_font_size_override("font_size", 16)
+		name_label.add_theme_color_override("font_color", Color(0.92, 0.96, 1.0))
+		panel.add_child(name_label)
+		var cost := Label.new()
+		cost.text = str(goods[i].cost)
+		cost.position = Vector2(32, y + 31)
+		cost.size = Vector2(180, 20)
+		cost.add_theme_font_size_override("font_size", 14)
+		cost.add_theme_color_override("font_color", Color(1.0, 0.82, 0.46))
+		panel.add_child(cost)
+
+func _add_draw_activity_button(position: Vector2, text: String) -> void:
+	var button := Button.new()
+	button.position = position
+	button.size = Vector2(210, 54)
+	button.text = text
+	button.add_theme_font_size_override("font_size", 21)
+	canvas.add_child(button)
 
 func _node_label_text(node: Dictionary) -> String:
 	return str(node.get("label_text", ""))
