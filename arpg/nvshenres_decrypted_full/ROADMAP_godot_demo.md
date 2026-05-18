@@ -259,14 +259,16 @@ RESTORE_LOGIN_TO_HOME.md
 - `drawCardPre` mock 布局已改为按 Cocos 全局坐标压缩映射，当前基准节点为 `tabBtn_5/tabBtn_1/tabBtn_3/tabBtn_2/tabBtn_4`、`btn_call1/btn_call10`、`progressBar`、`HeroUiBox`。
 - 当前 `drawCardPre` 主要剩余问题是抽卡 Spine、结果卡牌 `HeroShowPre` 和页签切换动画还没完整接入。
 - 已新增 `tools/analyze_prefab_node_names.py` 和 `data/prefab_node_name_hints.json`，用于根据 prefab 节点名里的拼音/缩写推断用途；当前覆盖 16 个导出的 prefab，可辅助判断 `zjm` 主界面、`zh` 召唤、`gh` 公会、`btn_dh` 兑换、`btn_call*` 召唤按钮、`tabBtn_*` 页签等节点。
+- `cocos_prefab_preview.gd` 已接入 `prefab_node_name_hints.json`，右侧详情栏会显示节点名用途统计和关键节点示例。
+- `DrawCardActivityPre` 已从源码确认父级只动态加载子 prefab；当前仅导出父级，缺 `Prefab/ActivityPanel/DrawCardActivity/13002..13005`。Godot 预览先按源码模块 `DrawCardActivity13002..13005` 补登录领取、循环礼包、抽数任务、许愿礼包入口和两块动态内容。
 
 下一步优先级：
 
 1. 完善 `HeroMainPre` 的 ScrollView 裁剪、Layout 重排、右侧信息层级和动态节点替换。
 2. 继续完善 `BagPre` 的页签交互、ScrollView/Mask 裁剪、详情层级和运行时分类数据。
-3. 继续完善 `DrawCardActivityPre` 的 `13002..13005` 子 prefab、页签切换和抽卡活动 Spine。
+3. 继续导出并接入 `DrawCardActivityPre` 的 `13002..13005` 子 prefab，替换当前源码模块 mock。
 4. 继续完善 `drawCardPre` 的抽卡 Spine、结果卡牌 `HeroShowPre`、页签切换动画和真实奖励状态。
-5. 将 `prefab_node_name_hints.json` 接入资源浏览器或 prefab 预览详情栏，显示节点名推断用途，减少手工查 JSON。
+5. 将 `prefab_node_name_hints.json` 继续接入资源浏览器，显示节点名推断用途，减少手工查 JSON。
 6. 继续完善 `battle` 的真实 Spine 战斗角色、技能特效、站位坐标和战斗结束子 prefab。
 
 ## 当前风险

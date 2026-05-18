@@ -571,7 +571,7 @@ Spine 查看器：
 - `天空城`：使用 `image/com/skyCity` mock 建筑、矿物、空岛和副本入口。
 - `竞技`：使用 `image/com/Jingji`、`image/com/pvpActivity` mock 玩法入口、排名、奖励和膜拜信息。
 - `战斗`：使用 `image/com/map`、`image/head`、`image/com/Battle*` mock 战场、站位、血条和胜利面板。
-- `活动抽卡`：使用 `image/com/ActivityPanel/ZhaoHuan`、`image/com/ActivityPanel/NewHeroComing`、`image/com/ActivityPanel/thousandDrawCardActivity` mock 活动奖池、抽数奖励和兑换区。
+- `活动抽卡`：使用 `image/com/ActivityPanel/ZhaoHuan`、`image/com/ActivityPanel/NewHeroComing`、`image/com/ActivityPanel/thousandDrawCardActivity` mock 活动奖池、抽数奖励和兑换区；当前已按源码模块补 `13002` 登录领取、`13003` 循环礼包、`13004` 抽数任务、`13005` 许愿礼包入口页签。
 - `英雄`：使用 `image/en/HeroPanel`、`image/comHeroGrid`、`image/skill`、`image/head` mock 英雄列表、属性、技能、装备和角色展示。
 
 抽卡源码定位：
@@ -583,6 +583,13 @@ Spine 查看器：
 - `assets/main/index.js:39997` 到 `40015`、`40813` 到 `40815`、`41120` 到 `41134`：抽卡和切换卡池时使用 `ZhaoHuan_ChouKa`、`ZhaoHuan_ChouKa_back`、`ZhaoHuan_ChouKa_front`，以及不同卡池的 enter 动画。
 - `assets/main/index.js:33756` 到 `33764`、`39232`：奖励宝箱图标按状态动态切换 `image/com/DrawCard/bx_icon_0*` 和 `bx_icon_0*a`。
 - `data/prefab_layouts/drawCardPre.json` 关键全局坐标：`tabBtn_5(501,252)`、`tabBtn_1(501,158)`、`tabBtn_3(501,53.774)`、`tabBtn_2(501,-44.813)`、`tabBtn_4(501,-150.879)`、`btn_call1(-466,-96)`、`btn_call10(-466,-192)`、`progressBar(-445.515,-34.509)`、`btn2_call1(-140.873,-229.353)`、`btn2_call10(188.935,-227.964)`、`HeroUiBox(0,0)`。
+
+活动抽卡源码定位：
+
+- `assets/main/index.js:39512`：`DrawCardActivityPanel.preUrl = "Prefab/ActivityPanel/DrawCardActivity/DrawCardActivityPre"`，父级 prefab 只提供背景、ScrollView/content 等容器。
+- `assets/main/index.js:39562`：`checkToogle` 按 `curPanelData.panelID` 动态加载 `Prefab/ActivityPanel/DrawCardActivity/<panelID>`，所以完整界面依赖 `13002..13005` 子 prefab。
+- `assets/main/index.js:38979`、`39107`、`39165`、`39264`：源码模块分别存在 `DrawCardActivity13002/13003/13004/13005`。
+- 当前 `data/prefab_layouts` 尚未导出 `13002.json..13005.json`，Godot 先按源码模块名 mock 登录领取、循环礼包、抽数任务、许愿礼包四块结构；后续需要从原资源继续导出这些子 prefab。
 
 Prefab 节点名用途推断：
 

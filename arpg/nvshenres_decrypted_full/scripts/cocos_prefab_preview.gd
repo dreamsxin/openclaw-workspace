@@ -7,6 +7,7 @@ const LAYOUT_MANIFEST_PATH := "res://data/prefab_layouts.json"
 const BAG_ITEM_LAYOUT_PATH := "res://data/prefab_layouts/GridBoxItemPre.json"
 const EQUIPMENT_ICON_INDEX_PATH := "res://data/equipment_icon_index.json"
 const NAMED_RESOURCE_INDEX_PATH := "res://data/named_resource_index.json"
+const PREFAB_NODE_HINTS_PATH := "res://data/prefab_node_name_hints.json"
 const HERO_105004_SPINE := "res://data/spine_runtime/105004.json"
 const SimpleSpinePlayerScript := preload("res://scripts/simple_spine_player.gd")
 
@@ -19,12 +20,14 @@ var layouts: Dictionary = {}
 var layout_stats: Dictionary = {}
 var equipment_icons: Array = []
 var named_resources: Dictionary = {}
+var prefab_node_hints: Dictionary = {}
 
 func _ready() -> void:
 	_load_texture_map()
 	_load_layout_manifest()
 	_load_equipment_icons()
 	_load_named_resources()
+	_load_prefab_node_hints()
 	_build_ui()
 	var requested_layout := _requested_layout()
 	if requested_layout != "":
@@ -105,7 +108,7 @@ func _load_layout(layout_name: String) -> void:
 	var nodes: Array = parsed.get("nodes", [])
 	var stats: Dictionary = layout_stats.get(layout_name, {})
 	title.text = "原始 Cocos Prefab 预览 - %s" % layout_name
-	detail.text = "%s\nnodes: %d\ntexture nodes: %d\n\n这是从原始 Cocos Prefab 提取的节点布局预览。当前已尽量关联 SpriteFrame/native 图片；无法自动确认贴图的节点继续显示半透明矩形。" % [parsed.get("prefab", ""), nodes.size(), int(stats.get("texture_nodes", 0))]
+	detail.text = _layout_detail_text(parsed, nodes, stats)
 	for node in _sorted_nodes(nodes):
 		_add_node_rect(node)
 	_add_layout_mock()
@@ -1009,11 +1012,63 @@ func _add_draw_card_activity_mock() -> void:
 	_add_named_image("image/com/ActivityPanel/ZhaoHuan/jfzh_image_bg", center + Vector2(-428, -248), Vector2(820, 420), TextureRect.STRETCH_KEEP_ASPECT_COVERED).modulate = Color(1, 1, 1, 0.62)
 	_add_named_image("image/com/ActivityPanel/ZhaoHuan/Title", center + Vector2(-430, -265), Vector2(360, 90), TextureRect.STRETCH_KEEP_ASPECT_CENTERED)
 	_add_draw_activity_time(center + Vector2(-600, 238))
+	_add_draw_activity_tabs(center + Vector2(420, -236))
+	_add_draw_activity_login_pick(center + Vector2(-600, -146))
 	_add_draw_activity_featured_hero(center + Vector2(-428, -110))
 	_add_draw_activity_reward_track(center + Vector2(-360, 176))
+	_add_draw_activity_task_panel(center + Vector2(-72, -168))
 	_add_draw_activity_shop_panel(center + Vector2(186, -190))
 	_add_draw_activity_button(center + Vector2(-108, 232), "前往召唤")
 	_add_draw_activity_button(center + Vector2(146, 232), "领取奖励")
+
+func _add_draw_activity_tabs(position: Vector2) -> void:
+	var tabs := [
+		{"id": "13002", "text": "登录领取"},
+		{"id": "13003", "text": "循环礼包"},
+		{"id": "13004", "text": "抽数任务"},
+		{"id": "13005", "text": "许愿礼包"},
+	]
+	for i in tabs.size():
+		var button := Button.new()
+		button.position = position + Vector2(0, i * 58)
+		button.size = Vector2(142, 48)
+		button.text = ""
+		button.tooltip_text = "DrawCardActivity%s" % tabs[i].id
+		canvas.add_child(button)
+		_add_named_image_to(button, "image/common/cm_btn2" if i == 0 else "image/common/cm_btn1", Vector2.ZERO, Vector2(142, 48), TextureRect.STRETCH_SCALE)
+		var label := Label.new()
+		label.text = str(tabs[i].text)
+		label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		label.add_theme_font_size_override("font_size", 17)
+		label.add_theme_color_override("font_color", Color(1.0, 0.9, 0.62))
+		button.add_child(label)
+
+func _add_draw_activity_login_pick(position: Vector2) -> void:
+	var panel := PanelContainer.new()
+	panel.position = position
+	panel.size = Vector2(200, 214)
+	panel.self_modulate = Color(0.08, 0.08, 0.14, 0.68)
+	canvas.add_child(panel)
+	var title_label := Label.new()
+	title_label.text = "13002 登录领取"
+	title_label.position = Vector2(0, 14)
+	title_label.size = Vector2(200, 28)
+	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title_label.add_theme_font_size_override("font_size", 18)
+	title_label.add_theme_color_override("font_color", Color(1.0, 0.88, 0.52))
+	panel.add_child(title_label)
+	for i in 3:
+		var y := 58 + i * 48
+		_add_named_image_to(panel, "image/com/DrawCard/bx_icon_0%d" % (i + 1), Vector2(18, y), Vector2(38, 38), TextureRect.STRETCH_KEEP_ASPECT_CENTERED)
+		var label := Label.new()
+		label.text = ["第1天 召唤券 x1", "第2天 钻石 x300", "第3天 SSR碎片 x10"][i]
+		label.position = Vector2(62, y + 7)
+		label.size = Vector2(126, 24)
+		label.add_theme_font_size_override("font_size", 14)
+		label.add_theme_color_override("font_color", Color(0.88, 0.94, 1.0))
+		panel.add_child(label)
 
 func _add_draw_activity_time(position: Vector2) -> void:
 	var label := Label.new()
@@ -1098,6 +1153,44 @@ func _add_draw_activity_shop_panel(position: Vector2) -> void:
 		cost.add_theme_font_size_override("font_size", 14)
 		cost.add_theme_color_override("font_color", Color(1.0, 0.82, 0.46))
 		panel.add_child(cost)
+
+func _add_draw_activity_task_panel(position: Vector2) -> void:
+	var panel := PanelContainer.new()
+	panel.position = position
+	panel.size = Vector2(235, 256)
+	panel.self_modulate = Color(0.08, 0.08, 0.12, 0.68)
+	canvas.add_child(panel)
+	var title_label := Label.new()
+	title_label.text = "13004 抽数任务"
+	title_label.position = Vector2(0, 16)
+	title_label.size = Vector2(235, 28)
+	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title_label.add_theme_font_size_override("font_size", 20)
+	title_label.add_theme_color_override("font_color", Color(1.0, 0.88, 0.52))
+	panel.add_child(title_label)
+	var tasks := [
+		{"text": "累计召唤 30 次", "state": "可领取"},
+		{"text": "累计召唤 60 次", "state": "18/60"},
+		{"text": "累计召唤 100 次", "state": "18/100"},
+	]
+	for i in tasks.size():
+		var y := 58 + i * 58
+		_add_named_image_to(panel, "image/com/ActivityPanel/ZhaoHuan/wxzh_item_bg", Vector2(14, y), Vector2(207, 46), TextureRect.STRETCH_SCALE)
+		var task := Label.new()
+		task.text = str(tasks[i].text)
+		task.position = Vector2(26, y + 7)
+		task.size = Vector2(132, 20)
+		task.add_theme_font_size_override("font_size", 14)
+		task.add_theme_color_override("font_color", Color(0.88, 0.94, 1.0))
+		panel.add_child(task)
+		var state := Label.new()
+		state.text = str(tasks[i].state)
+		state.position = Vector2(154, y + 7)
+		state.size = Vector2(58, 22)
+		state.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		state.add_theme_font_size_override("font_size", 13)
+		state.add_theme_color_override("font_color", Color(1.0, 0.82, 0.46))
+		panel.add_child(state)
 
 func _add_draw_activity_button(position: Vector2, text: String) -> void:
 	var button := Button.new()
@@ -1246,6 +1339,76 @@ func _load_named_resources() -> void:
 	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(NAMED_RESOURCE_INDEX_PATH))
 	if typeof(parsed) == TYPE_DICTIONARY:
 		named_resources = parsed
+
+func _load_prefab_node_hints() -> void:
+	if not FileAccess.file_exists(PREFAB_NODE_HINTS_PATH):
+		return
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(PREFAB_NODE_HINTS_PATH))
+	if typeof(parsed) == TYPE_DICTIONARY:
+		prefab_node_hints = parsed
+
+func _layout_detail_text(parsed: Dictionary, nodes: Array, stats: Dictionary) -> String:
+	var prefab_name := str(parsed.get("prefab", ""))
+	var lines := [
+		prefab_name,
+		"nodes: %d" % nodes.size(),
+		"texture nodes: %d" % int(stats.get("texture_nodes", 0)),
+	]
+	var hint_info := _hint_info_for_prefab(prefab_name)
+	if not hint_info.is_empty():
+		lines.append("")
+		lines.append("节点名推断用途:")
+		lines.append(_format_hint_counts(hint_info.get("hint_counts", {}), 12))
+		var examples := _format_hint_examples(hint_info.get("nodes", []), 8)
+		if examples != "":
+			lines.append("")
+			lines.append("关键节点:")
+			lines.append(examples)
+	lines.append("")
+	lines.append("这是从原始 Cocos Prefab 提取的节点布局预览。当前已尽量关联 SpriteFrame/native 图片；无法自动确认贴图的节点继续显示半透明矩形。节点用途由拼音/缩写推断，仅作辅助，仍需结合源码和坐标确认。")
+	return "\n".join(lines)
+
+func _hint_info_for_prefab(prefab_name: String) -> Dictionary:
+	var key := prefab_name.get_file()
+	if prefab_node_hints.has(key):
+		return prefab_node_hints.get(key, {})
+	key = key.trim_suffix(".json")
+	if prefab_node_hints.has(key):
+		return prefab_node_hints.get(key, {})
+	return prefab_node_hints.get(current_layout, {})
+
+func _format_hint_counts(counts: Dictionary, limit: int) -> String:
+	var pairs: Array = []
+	for key in counts.keys():
+		pairs.append({"name": str(key), "count": int(counts[key])})
+	pairs.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		return int(a.count) > int(b.count)
+	)
+	var parts: Array[String] = []
+	for i in min(limit, pairs.size()):
+		parts.append("%s %d" % [pairs[i].name, int(pairs[i].count)])
+	return " / ".join(parts)
+
+func _format_hint_examples(nodes: Array, limit: int) -> String:
+	var wanted := ["按钮", "页签", "入口", "兑换", "召唤", "英雄", "Spine/特效", "红点", "内容容器"]
+	var lines: Array[String] = []
+	for node in nodes:
+		if typeof(node) != TYPE_DICTIONARY:
+			continue
+		var hints: Array = node.get("hints", [])
+		if hints.is_empty():
+			continue
+		var include := false
+		for hint in hints:
+			if str(hint) in wanted:
+				include = true
+				break
+		if not include:
+			continue
+		lines.append("%s => %s" % [str(node.get("name", "")), "/".join(hints)])
+		if lines.size() >= limit:
+			break
+	return "\n".join(lines)
 
 func _requested_layout() -> String:
 	var scene_args := Navigation.consume_scene_args()
