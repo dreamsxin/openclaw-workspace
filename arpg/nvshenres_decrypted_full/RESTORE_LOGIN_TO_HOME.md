@@ -382,6 +382,110 @@ bigImage 背景 + HerolhPrefab 角色 + MainPre UI
 
 ## 验证方式
 
+## Godot 使用说明
+
+本工程固定使用 Godot 4.6.2 控制台版：
+
+```powershell
+$godot = "D:\work\openclaw-workspace\arpg\tools\Godot_v4.6.2-stable_win64_console.exe"
+$proj = "D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full"
+```
+
+常用运行方式：
+
+```powershell
+& $godot --path $proj
+& $godot --path $proj --scene "res://scenes/original_home_screen.tscn"
+& $godot --path $proj --scene "res://scenes/cocos_prefab_preview.tscn" -- --prefab-layout "公会"
+```
+
+命令行参数规则：
+
+- `--path <dir>` 指向 Godot 工程目录，目录内必须有 `project.godot`。
+- `--scene <res://...>` 可直接启动指定场景，用于跳过前置流程调试某个页面。
+- `--quit-after <frames>` 适合截图回归，等待若干帧后自动退出。
+- `--log-file <file>` 写 Godot 引擎日志；PowerShell 的 `*> file.log` 同时收集 stdout/stderr。
+- `--` 后面的参数不再由 Godot 引擎解析，而是由脚本通过 `OS.get_cmdline_user_args()` 读取。
+- `--headless` 只能做语法/启动校验，不适合用 `get_viewport().get_texture()` 截图。
+- Windows 下常见 `WASAPI: init_output_device error` 是音频设备初始化警告，界面截图和脚本校验时可忽略；真正需要优先处理的是 `SCRIPT ERROR`、`Parse Error`。
+
+截图回归参数：
+
+```powershell
+& $godot --path $proj --scene "res://scenes/original_loading.tscn" --quit-after 100 -- --capture-loading "$proj\loading_check.png" *> "$proj\loading_check.log"
+& $godot --path $proj --scene "res://scenes/original_login.tscn" --quit-after 100 -- --capture-login "$proj\login_check.png" *> "$proj\login_check.log"
+& $godot --path $proj --scene "res://scenes/original_server_select.tscn" --quit-after 100 -- --capture-server-select "$proj\server_check.png" *> "$proj\server_check.log"
+& $godot --path $proj --scene "res://scenes/original_home_screen.tscn" --quit-after 100 -- --capture-home-screen "$proj\home_check.png" *> "$proj\home_check.log"
+```
+
+功能界面 prefab 预览：
+
+```powershell
+& $godot --path $proj --scene "res://scenes/cocos_prefab_preview.tscn" --quit-after 100 -- --prefab-layout "英雄" --capture-prefab-preview "$proj\prefab_hero.png" *> "$proj\prefab_hero.log"
+& $godot --path $proj --scene "res://scenes/cocos_prefab_preview.tscn" --quit-after 100 -- --prefab-layout "背包" --capture-prefab-preview "$proj\prefab_bag.png" *> "$proj\prefab_bag.log"
+& $godot --path $proj --scene "res://scenes/cocos_prefab_preview.tscn" --quit-after 100 -- --prefab-layout "抽卡" --capture-prefab-preview "$proj\prefab_draw.png" *> "$proj\prefab_draw.log"
+& $godot --path $proj --scene "res://scenes/cocos_prefab_preview.tscn" --quit-after 100 -- --prefab-layout "公会" --capture-prefab-preview "$proj\prefab_guild.png" *> "$proj\prefab_guild.log"
+```
+
+Spine 查看器：
+
+```powershell
+& $godot --path $proj --scene "res://scenes/spine_character_viewer.tscn"
+& $godot --path $proj --scene "res://scenes/spine_character_viewer.tscn" --quit-after 100 -- --spine-path "res://data/spine_runtime/105004.json" --spine-animation show --capture-spine-viewer "$proj\spine_105004_show.png" *> "$proj\spine_105004_show.log"
+```
+
+## 界面还原实现说明
+
+当前还原不是用截图贴图，而是按以下链路把 Cocos Creator 资源转为 Godot 可渲染结构：
+
+```text
+assets/resources/config.json
+  -> import/*.json / native/*.png / spine json+atlas
+  -> tools/*.py 导出索引与 prefab layout
+  -> data/*.json
+  -> scripts/*.gd 在 Godot 中渲染和补运行时 mock 数据
+```
+
+核心导出脚本：
+
+- `tools/export_cocos_prefab_layout.py`：把 Cocos prefab 导出为 `data/prefab_layouts/*.json`，包含节点树、全局坐标、尺寸、锚点、SpriteFrame、Label、Widget、NinePatch 信息。
+- `tools/export_named_resource_index.py`：把源码/运行时常见的字符串资源路径导出为 `data/named_resource_index.json`，用于 `setImgUrl("image/...")` 这类动态加载。
+- `tools/export_equipment_icon_index.py`：导出 `image/equipment/*`，用于背包等动态列表 mock。
+- `tools/export_spine_runtime_data.py`：把 Cocos `sp.SkeletonData` 转为项目内轻量 Spine runtime 可读的 `data/spine_runtime/*.json`。
+- `tools/cocos_spine_trace_tool.py`：用于 native PNG、SkeletonData、压缩 UUID 之间反查。
+
+Godot 渲染脚本分工：
+
+- `scripts/original_loading.gd`：启动初始化加载页，当前保留手工流程控制。
+- `scripts/original_login.gd`：登录页，本地点击进入选服页。
+- `scripts/original_server_select.gd`：选服页，本地 mock 服务器列表。
+- `scripts/original_home_screen.gd`：主城页，组合 `bigImage` 背景、`HerolhPrefab` Spine 角色、`MainPre` UI。
+- `scripts/cocos_prefab_preview.gd`：通用功能界面 prefab 预览器，负责英雄、背包、抽卡、公会等页面骨架和动态 mock 数据。
+- `scripts/simple_spine_player.gd`：项目内轻量 Spine 3.8 播放器，用于主城角色和 Spine 查看器。
+
+Prefab 静态节点按 Cocos 规则处理：
+
+- 坐标优先使用导出的 `global_position`，避免把子节点局部坐标误当根坐标。
+- `_active=false` 的节点默认不绘制。
+- SpriteFrame 使用 `rect`、`offset`、`originalSize`、`rotated` 复原到透明原始尺寸画布。
+- `cc.Sprite` 的 sliced 类型使用 `NinePatchRect`，读取 `capInsets`。
+- `cc.Label` 读取 `_string`、字号、行高和对齐。
+- `cc.Widget` 当前支持基础贴边、居中和四边拉伸。
+
+运行时动态内容的处理原则：
+
+- prefab 中没有实例化出来的列表项，不手工猜整张截图，而是查源码里的 `cc.instantiate`、`setImgUrl`、`loadRes` 规则。
+- 动态列表使用对应子 prefab 加本地 mock 数据补齐，例如 `BagPre` 使用 `GridBoxItemPre`，图标来自 `image/equipment/*`。
+- 按字符串路径加载的图片先扩展 `export_named_resource_index.py` 的前缀，再在 Godot 中通过 `_add_named_image()` 使用真实资源。
+- 角色展示优先使用 `Prefab/HerolhPrefab/*` 对应 Spine；只有未导出 runtime 时才临时使用静态贴图。
+
+当前已验证的功能界面补丁：
+
+- `HeroMainPre`：叠加 `105004` Spine 展示区。
+- `BagPre`：叠加本地背包条目，结构来自 `GridBoxItemPre`。
+- `drawCardPre`：叠加抽卡卡池、卡牌、宝箱进度和召唤按钮。
+- `GuildMainPre`：叠加公会大厅背景、旗帜、信息和入口。
+
 启动工程：
 
 ```powershell

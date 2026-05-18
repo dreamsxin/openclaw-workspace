@@ -217,6 +217,8 @@ RESTORE_LOGIN_TO_HOME.md
 当前进度：
 
 - `cocos_prefab_preview.gd` 支持 `--prefab-layout <label>` 和 `Navigation.go_with_args(..., {"layout": label})`。
+- Godot 使用方式和界面还原实现流程已集中补充到 `RESTORE_LOGIN_TO_HOME.md`，包括默认启动、直开场景、截图回归、日志重定向、prefab 预览和 Spine 查看器命令。
+- 当前界面还原流程固定为：`config.json` / `import` / `native` / Spine 资源 -> `tools/*.py` 导出 `data/*.json` -> Godot 脚本按 Cocos 坐标、SpriteFrame、Widget、NinePatch、Label 规则渲染 -> 对运行时动态列表使用子 prefab + 本地 mock 数据补齐。
 - 主城底部/侧边主要入口已接入 prefab 预览器，可从主城进入英雄、背包、抽卡、战斗、公会、竞技、天空城、活动抽卡等界面骨架。
 - Prefab 预览器已切换为 `global_position`，并跳过无贴图根节点，作为主要功能界面的恢复检查入口。
 - `export_cocos_prefab_layout.py` 已导出 `cc.Label` 的 `_string`、字号、行高和对齐信息。
