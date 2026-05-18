@@ -1236,7 +1236,7 @@ func _add_draw_activity_cycle_runtime_mock() -> void:
 		{"name": "累计召唤 100 次", "reward": "限定头像框", "progress": "18/100", "state": "已领取"},
 	]
 	for i in rows.size():
-		_add_activity_cycle_row(_mock_cocos_position(Vector2(-222, 96 - i * 104)), rows[i])
+		_add_activity_cycle_template_row(Vector2(0, 122 - i * 108), rows[i])
 
 func _add_draw_activity_task_runtime_mock() -> void:
 	_add_activity_runtime_title("DrawCardActivity13004 / 抽数任务", "setData(e,t,n): boxList 驱动宝箱红点，taskList 驱动任务列表")
@@ -1321,6 +1321,28 @@ func _add_activity_cycle_row(position: Vector2, data: Dictionary) -> void:
 	_add_activity_progress_bar(position + Vector2(386, 32), Vector2(170, 16), 1.0 if str(data.get("state", "")) == "领取" else 0.58)
 	_add_activity_small_label(str(data.get("progress", "")), position + Vector2(386, 50), Vector2(170, 20), Color(0.96, 0.9, 0.68), HORIZONTAL_ALIGNMENT_CENTER, 13)
 	_add_activity_button_like(position + Vector2(612, 20), str(data.get("state", "")), Vector2(104, 42))
+
+func _add_activity_cycle_template_row(cocos_center: Vector2, data: Dictionary) -> void:
+	var origin := _mock_cocos_position(cocos_center)
+	var panel := PanelContainer.new()
+	panel.position = origin + Vector2(-420, -63)
+	panel.size = Vector2(840, 108)
+	panel.z_index = 160
+	panel.self_modulate = Color(0.08, 0.08, 0.12, 0.7)
+	canvas.add_child(panel)
+	_add_named_image_to(panel, "image/com/ActivityPanel/ZhaoHuan/wxzh_item_bg", Vector2(0, 0), Vector2(840, 127), TextureRect.STRETCH_SCALE)
+	_add_named_image("image/Item/11001", origin + Vector2(-393 - 31, -17 - 31), Vector2(62, 62), TextureRect.STRETCH_KEEP_ASPECT_CENTERED)
+	_add_activity_small_label(str(data.get("name", "")), origin + Vector2(-396, -48), Vector2(328, 26), Color(1.0, 0.88, 0.5), HORIZONTAL_ALIGNMENT_LEFT, 18)
+	_add_activity_small_label(str(data.get("reward", "")), origin + Vector2(95, -48), Vector2(212, 26), Color(0.86, 0.94, 1.0), HORIZONTAL_ALIGNMENT_LEFT, 15)
+	var state := str(data.get("state", ""))
+	if state == "已领取":
+		_add_activity_badge(origin + Vector2(318.754 - 58, -22), "已领取", Color(0.12, 0.12, 0.12, 0.82), Vector2(116, 42), 17)
+	elif state == "领取":
+		_add_activity_button_like(origin + Vector2(318.388 - 52, -22), "领取", Vector2(104, 42))
+	else:
+		_add_activity_button_like(origin + Vector2(318.388 - 52, -22), "前往", Vector2(104, 42))
+	_add_activity_progress_bar(origin + Vector2(323.706 - 78, 19), Vector2(155, 16), 1.0 if state == "领取" else 0.58)
+	_add_activity_small_label(str(data.get("progress", "")), origin + Vector2(248, 37), Vector2(160, 20), Color(0.96, 0.9, 0.68), HORIZONTAL_ALIGNMENT_CENTER, 13)
 
 func _add_activity_task_row(position: Vector2, data: Dictionary) -> void:
 	var panel := PanelContainer.new()
