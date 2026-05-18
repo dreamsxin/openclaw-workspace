@@ -284,6 +284,7 @@ DrawCardActivityRenWuItemCom
 - `活动抽卡-抽数任务` 的任务列表 mock 已改为参考 `13004.item` 模板内部坐标绘制：图标、标题、奖励文本、进度条、进度文本、按钮位置分别对应 `itemNode/title/count/progressBar/getBtn/isOver` 一组字段。
 - `活动抽卡-循环礼包` 的礼包列表 mock 已改为参考 `13003.Item` 模板内部坐标绘制：奖励格、标题、奖励描述、进度条、进度文本、领取/前往/已领取状态分别对应 `girdLayout/title/txt_xiangou/JDT_progress/JDT_label/btn_buy/btn_qianwang/img_receive`。
 - `活动抽卡-循环礼包` 和 `活动抽卡-抽数任务` 增加了基础整行可视区域判断，模拟 ScrollView/Mask 首屏范围：完全落在保护窗口外的 mock 行不再绘制。
+- 活动抽卡列表奖励图标已从无效的 `image/Item/11001` 改为读取 `data/equipment_icon_index.json` 中真实 `image/equipment/*` SpriteFrame 裁剪图。
 - 已用 Godot 控制台验证四个子页都可运行，无脚本解析错误。
 
 遗留问题：
@@ -293,6 +294,7 @@ DrawCardActivityRenWuItemCom
 3. Cocos 运行时真实奖励图标、礼包价格、任务进度来自服务端配置，本地 demo 当前使用固定 mock 数据。
 4. 当前行底板继续使用原始资源，贴图自带亮线装饰，视觉上会穿过任务行背景；不是额外静态节点遮挡。
 5. `component_bindings` 目前采用字段名/别名和 owner 子树推断，已验证活动抽卡关键字段，复杂跨树引用仍需结合源码确认。
+6. 活动抽卡奖励图标目前复用装备图标索引作为本地 mock；后续应根据真实 `t.item` 配置和 `GridLogic.create(...)` 类型补完整 GridBox 样式。
 
 关键结论：
 

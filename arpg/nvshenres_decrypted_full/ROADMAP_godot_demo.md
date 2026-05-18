@@ -277,12 +277,13 @@ RESTORE_LOGIN_TO_HOME.md
 - `活动抽卡-抽数任务` 的任务列表 mock 已开始改为字段驱动模板坐标，当前按 `13004.item` 内部的 `itemNode/title/count/progressBar/getBtn/isOver` 位置绘制行内容。
 - `活动抽卡-循环礼包` 的列表 mock 已开始改为字段驱动模板坐标，当前按 `13003.Item` 内部的 `girdLayout/title/txt_xiangou/JDT_progress/JDT_label/btn_buy/btn_qianwang/img_receive` 位置绘制行内容。
 - 活动抽卡 `13003/13004` 列表已加基础整行可视区域判断，模拟 ScrollView/Mask 首屏范围；这只是避免越界显示的临时保护，不是最终裁剪容器。
+- 活动抽卡列表奖励图标已改为从 `data/equipment_icon_index.json` 加载真实 SpriteFrame 裁剪图，替代之前不存在的 `image/Item/11001` 路径。
 
 下一步优先级：
 
 1. 完善 `HeroMainPre` 的 ScrollView 裁剪、Layout 重排、右侧信息层级和动态节点替换。
 2. 继续完善 `BagPre` 的页签交互、ScrollView/Mask 裁剪、详情层级和运行时分类数据。
-3. 基于 `component_types` 给 prefab 预览器补真正的 `cc.Mask` / `cc.ScrollView` 裁剪容器，再继续补真实奖励 Grid 子项。
+3. 基于 `component_types` 给 prefab 预览器补真正的 `cc.Mask` / `cc.ScrollView` 裁剪容器，并按 `GridLogic.create(...)` 补真实奖励 Grid 子项样式。
 4. 继续完善 `drawCardPre` 的抽卡 Spine、结果卡牌 `HeroShowPre`、页签切换动画和真实奖励状态。
 5. 将 `prefab_node_name_hints.json` 继续接入资源浏览器，显示节点名推断用途，减少手工查 JSON。
 6. 继续完善 `battle` 的真实 Spine 战斗角色、技能特效、站位坐标和战斗结束子 prefab。
