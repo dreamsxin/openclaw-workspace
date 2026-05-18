@@ -584,6 +584,13 @@ Spine 查看器：
 - `assets/main/index.js:33756` 到 `33764`、`39232`：奖励宝箱图标按状态动态切换 `image/com/DrawCard/bx_icon_0*` 和 `bx_icon_0*a`。
 - `data/prefab_layouts/drawCardPre.json` 关键全局坐标：`tabBtn_5(501,252)`、`tabBtn_1(501,158)`、`tabBtn_3(501,53.774)`、`tabBtn_2(501,-44.813)`、`tabBtn_4(501,-150.879)`、`btn_call1(-466,-96)`、`btn_call10(-466,-192)`、`progressBar(-445.515,-34.509)`、`btn2_call1(-140.873,-229.353)`、`btn2_call10(188.935,-227.964)`、`HeroUiBox(0,0)`。
 
+Prefab 节点名用途推断：
+
+- Cocos prefab 里的节点名可以作为还原依据，很多是拼音或缩写：`zjm`=主界面，`zh/zhaohuan`=召唤，`gh/gonghui`=公会，`cm`=通用，`btn`=按钮，`icon`=图标，`rukou`=入口，`dh/duihuan`=兑换，`tj`=推荐，`zhh`=转换，`hongdian`=红点。
+- 已新增 `tools/analyze_prefab_node_names.py`，会读取 `data/prefab_layouts/*.json`，按节点名 token、驼峰拆分、数字后缀剥离等规则输出用途提示。
+- 输出文件为 `data/prefab_node_name_hints.json`，可用于快速检查每个 prefab 的功能区。例如 `drawCardPre` 中 `btn_call1/btn_call10` 会识别为召唤按钮，`btn_dh` 识别为兑换按钮，`HeroUiBox` 识别为英雄展示容器，`tabBtn_*` 识别为页签按钮。
+- 命名推断只作为辅助证据，最终仍需结合 `label_text`、`global_position`、`texture_path` 和 `assets/main/index.js` 运行时代码确认。
+
 局部 slot 调试：
 
 ```powershell
