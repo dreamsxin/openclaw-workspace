@@ -1235,8 +1235,9 @@ func _add_draw_activity_cycle_runtime_mock() -> void:
 		{"name": "累计召唤 60 次", "reward": "SSR碎片 x20", "progress": "18/60", "state": "前往", "icon_index": 18},
 		{"name": "累计召唤 100 次", "reward": "限定头像框", "progress": "18/100", "state": "已领取", "icon_index": 24},
 	]
+	var clip := _create_activity_clip_container("13003")
 	for i in rows.size():
-		_add_activity_cycle_template_row(Vector2(0, 122 - i * 108), rows[i], _activity_scroll_clip_rect("13003"))
+		_add_activity_cycle_template_row(Vector2(0, 122 - i * 108), rows[i], _activity_scroll_clip_rect("13003"), clip)
 
 func _add_draw_activity_task_runtime_mock() -> void:
 	_add_activity_runtime_title("DrawCardActivity13004 / 抽数任务", "setData(e,t,n): boxList 驱动宝箱红点，taskList 驱动任务列表")
@@ -1263,8 +1264,9 @@ func _add_draw_activity_task_runtime_mock() -> void:
 		{"text": "活动期间累计召唤 100 次", "reward": "积分 +100 / SSR碎片 x10", "progress": "42/100", "state": "前往", "icon_index": 18},
 		{"text": "活动期间累计召唤 150 次", "reward": "积分 +150 / 英雄宝箱 x1", "progress": "42/150", "state": "未完成", "icon_index": 24},
 	]
+	var clip := _create_activity_clip_container("13004")
 	for i in tasks.size():
-		_add_activity_task_template_row(Vector2(0, -102 - i * 96), tasks[i], _activity_scroll_clip_rect("13004"))
+		_add_activity_task_template_row(Vector2(0, -102 - i * 96), tasks[i], _activity_scroll_clip_rect("13004"), clip)
 
 func _add_draw_activity_wish_gift_runtime_mock() -> void:
 	_add_activity_runtime_title("DrawCardActivity13005 / 许愿礼包", "giftContent 动态实例化 giftItemPre，本地预览模拟购买状态")
@@ -1322,29 +1324,31 @@ func _add_activity_cycle_row(position: Vector2, data: Dictionary) -> void:
 	_add_activity_small_label(str(data.get("progress", "")), position + Vector2(386, 50), Vector2(170, 20), Color(0.96, 0.9, 0.68), HORIZONTAL_ALIGNMENT_CENTER, 13)
 	_add_activity_button_like(position + Vector2(612, 20), str(data.get("state", "")), Vector2(104, 42))
 
-func _add_activity_cycle_template_row(cocos_center: Vector2, data: Dictionary, clip_rect: Rect2 = Rect2()) -> void:
+func _add_activity_cycle_template_row(cocos_center: Vector2, data: Dictionary, clip_rect: Rect2 = Rect2(), parent: Control = null) -> void:
 	var origin := _mock_cocos_position(cocos_center)
 	if not _activity_rect_visible(Rect2(origin + Vector2(-420, -63), Vector2(840, 108)), clip_rect):
 		return
+	var target_parent := parent if parent != null else canvas
+	var parent_origin := target_parent.position
 	var panel := PanelContainer.new()
-	panel.position = origin + Vector2(-420, -63)
+	panel.position = origin + Vector2(-420, -63) - parent_origin
 	panel.size = Vector2(840, 108)
 	panel.z_index = 160
 	panel.self_modulate = Color(0.08, 0.08, 0.12, 0.7)
-	canvas.add_child(panel)
+	target_parent.add_child(panel)
 	_add_named_image_to(panel, "image/com/ActivityPanel/ZhaoHuan/wxzh_item_bg", Vector2(0, 0), Vector2(840, 127), TextureRect.STRETCH_SCALE)
-	_add_activity_reward_icon_to_canvas(origin + Vector2(-360 - 31, -17 - 31), Vector2(62, 62), int(data.get("icon_index", 0)))
-	_add_activity_small_label(str(data.get("name", "")), origin + Vector2(-396, -48), Vector2(328, 26), Color(1.0, 0.88, 0.5), HORIZONTAL_ALIGNMENT_LEFT, 18)
-	_add_activity_small_label(str(data.get("reward", "")), origin + Vector2(95, -48), Vector2(212, 26), Color(0.86, 0.94, 1.0), HORIZONTAL_ALIGNMENT_LEFT, 15)
+	_add_activity_reward_icon_to(target_parent, origin + Vector2(-360 - 31, -17 - 31) - parent_origin, Vector2(62, 62), int(data.get("icon_index", 0)))
+	_add_activity_small_label_to(target_parent, str(data.get("name", "")), origin + Vector2(-396, -48) - parent_origin, Vector2(328, 26), Color(1.0, 0.88, 0.5), HORIZONTAL_ALIGNMENT_LEFT, 18)
+	_add_activity_small_label_to(target_parent, str(data.get("reward", "")), origin + Vector2(95, -48) - parent_origin, Vector2(212, 26), Color(0.86, 0.94, 1.0), HORIZONTAL_ALIGNMENT_LEFT, 15)
 	var state := str(data.get("state", ""))
 	if state == "已领取":
-		_add_activity_badge(origin + Vector2(318.754 - 58, -22), "已领取", Color(0.12, 0.12, 0.12, 0.82), Vector2(116, 42), 17)
+		_add_activity_badge_to(target_parent, origin + Vector2(318.754 - 58, -22) - parent_origin, "已领取", Color(0.12, 0.12, 0.12, 0.82), Vector2(116, 42), 17)
 	elif state == "领取":
-		_add_activity_button_like(origin + Vector2(318.388 - 52, -22), "领取", Vector2(104, 42))
+		_add_activity_button_like_to(target_parent, origin + Vector2(318.388 - 52, -22) - parent_origin, "领取", Vector2(104, 42))
 	else:
-		_add_activity_button_like(origin + Vector2(318.388 - 52, -22), "前往", Vector2(104, 42))
-	_add_activity_progress_bar(origin + Vector2(323.706 - 78, 19), Vector2(155, 16), 1.0 if state == "领取" else 0.58)
-	_add_activity_small_label(str(data.get("progress", "")), origin + Vector2(248, 37), Vector2(160, 20), Color(0.96, 0.9, 0.68), HORIZONTAL_ALIGNMENT_CENTER, 13)
+		_add_activity_button_like_to(target_parent, origin + Vector2(318.388 - 52, -22) - parent_origin, "前往", Vector2(104, 42))
+	_add_activity_progress_bar_to(target_parent, origin + Vector2(323.706 - 78, 19) - parent_origin, Vector2(155, 16), 1.0 if state == "领取" else 0.58)
+	_add_activity_small_label_to(target_parent, str(data.get("progress", "")), origin + Vector2(248, 37) - parent_origin, Vector2(160, 20), Color(0.96, 0.9, 0.68), HORIZONTAL_ALIGNMENT_CENTER, 13)
 
 func _add_activity_task_row(position: Vector2, data: Dictionary) -> void:
 	var panel := PanelContainer.new()
@@ -1361,36 +1365,49 @@ func _add_activity_task_row(position: Vector2, data: Dictionary) -> void:
 	_add_activity_small_label(str(data.get("progress", "")), position + Vector2(410, 48), Vector2(112, 18), Color(0.96, 0.9, 0.68), HORIZONTAL_ALIGNMENT_CENTER, 12)
 	_add_activity_button_like(position + Vector2(548, 18), str(data.get("state", "")), Vector2(94, 40))
 
-func _add_activity_task_template_row(cocos_center: Vector2, data: Dictionary, clip_rect: Rect2 = Rect2()) -> void:
+func _add_activity_task_template_row(cocos_center: Vector2, data: Dictionary, clip_rect: Rect2 = Rect2(), parent: Control = null) -> void:
 	var origin := _mock_cocos_position(cocos_center)
 	var row_pos := origin + Vector2(-334, -47)
 	if not _activity_rect_visible(Rect2(row_pos, Vector2(668, 95)), clip_rect):
 		return
+	var target_parent := parent if parent != null else canvas
+	var parent_origin := target_parent.position
 	var panel := PanelContainer.new()
-	panel.position = row_pos
+	panel.position = row_pos - parent_origin
 	panel.size = Vector2(668, 95)
 	panel.z_index = 160
 	panel.self_modulate = Color(0.08, 0.08, 0.12, 0.7)
-	canvas.add_child(panel)
+	target_parent.add_child(panel)
 	_add_named_image_to(panel, "image/com/ActivityPanel/ZhaoHuan/wxzh_item_bg", Vector2(0, 0), Vector2(668, 95), TextureRect.STRETCH_SCALE)
 	var item_pos := origin + Vector2(-278.491 - 28, -0.098 - 28)
-	_add_activity_reward_icon_to_canvas(item_pos, Vector2(56, 56), int(data.get("icon_index", 0)))
-	_add_activity_small_label(str(data.get("text", "")), origin + Vector2(-221.491 - 6, -10), Vector2(292, 26), Color(1.0, 0.88, 0.5), HORIZONTAL_ALIGNMENT_LEFT, 17)
-	_add_activity_small_label(str(data.get("reward", "")), origin + Vector2(-221.491 - 6, 18), Vector2(292, 22), Color(0.86, 0.94, 1.0), HORIZONTAL_ALIGNMENT_LEFT, 14)
+	_add_activity_reward_icon_to(target_parent, item_pos - parent_origin, Vector2(56, 56), int(data.get("icon_index", 0)))
+	_add_activity_small_label_to(target_parent, str(data.get("text", "")), origin + Vector2(-221.491 - 6, -10) - parent_origin, Vector2(292, 26), Color(1.0, 0.88, 0.5), HORIZONTAL_ALIGNMENT_LEFT, 17)
+	_add_activity_small_label_to(target_parent, str(data.get("reward", "")), origin + Vector2(-221.491 - 6, 18) - parent_origin, Vector2(292, 22), Color(0.86, 0.94, 1.0), HORIZONTAL_ALIGNMENT_LEFT, 14)
 	var ready := str(data.get("state", "")) == "领取"
-	_add_activity_progress_bar(origin + Vector2(-77.491 - 147, 20), Vector2(294, 10), 1.0 if ready else 0.42)
-	_add_activity_small_label(str(data.get("progress", "")), origin + Vector2(-149, 30), Vector2(142, 20), Color(0.96, 0.9, 0.68), HORIZONTAL_ALIGNMENT_CENTER, 12)
+	_add_activity_progress_bar_to(target_parent, origin + Vector2(-77.491 - 147, 20) - parent_origin, Vector2(294, 10), 1.0 if ready else 0.42)
+	_add_activity_small_label_to(target_parent, str(data.get("progress", "")), origin + Vector2(-149, 30) - parent_origin, Vector2(142, 20), Color(0.96, 0.9, 0.68), HORIZONTAL_ALIGNMENT_CENTER, 12)
 	if str(data.get("state", "")) == "已完成":
-		_add_activity_badge(origin + Vector2(238.509 - 58, -20), "已完成", Color(0.12, 0.12, 0.12, 0.82), Vector2(116, 38), 17)
+		_add_activity_badge_to(target_parent, origin + Vector2(238.509 - 58, -20) - parent_origin, "已完成", Color(0.12, 0.12, 0.12, 0.82), Vector2(116, 38), 17)
 	else:
-		_add_activity_button_like(origin + Vector2(238.509 - 47, -22), str(data.get("state", "")), Vector2(94, 40))
+		_add_activity_button_like_to(target_parent, origin + Vector2(238.509 - 47, -22) - parent_origin, str(data.get("state", "")), Vector2(94, 40))
 
 func _activity_scroll_clip_rect(panel_id: String) -> Rect2:
 	if panel_id == "13003":
-		return Rect2(_mock_cocos_position(Vector2(192.848, 160.0)) - Vector2(427.0, 220.0), Vector2(854.0, 440.0))
+		return Rect2(_canvas_center() + Vector2(-408.0, -170.0), Vector2(848.0, 440.0))
 	if panel_id == "13004":
 		return Rect2(_canvas_center() + Vector2(-350.0, 60.0), Vector2(760.0, 392.0))
 	return Rect2()
+
+func _create_activity_clip_container(panel_id: String) -> Control:
+	var clip_rect := _activity_scroll_clip_rect(panel_id)
+	var clip := Control.new()
+	clip.position = clip_rect.position
+	clip.size = clip_rect.size
+	clip.clip_contents = true
+	clip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	clip.z_index = 150
+	canvas.add_child(clip)
+	return clip
 
 func _activity_rect_visible(rect: Rect2, clip_rect: Rect2) -> bool:
 	if clip_rect.size.x <= 0.0 or clip_rect.size.y <= 0.0:
@@ -1421,6 +1438,9 @@ func _add_activity_reward_icon(parent: Control, position: Vector2, size: Vector2
 	parent.add_child(image)
 
 func _add_activity_reward_icon_to_canvas(position: Vector2, size: Vector2, icon_index: int) -> void:
+	_add_activity_reward_icon_to(canvas, position, size, icon_index)
+
+func _add_activity_reward_icon_to(parent: Control, position: Vector2, size: Vector2, icon_index: int) -> void:
 	var image := TextureRect.new()
 	image.position = position
 	image.size = size
@@ -1429,30 +1449,36 @@ func _add_activity_reward_icon_to_canvas(position: Vector2, size: Vector2, icon_
 	image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	image.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	canvas.add_child(image)
+	parent.add_child(image)
 
 func _add_activity_button_like(position: Vector2, text: String, size: Vector2 = Vector2(118, 42)) -> void:
+	_add_activity_button_like_to(canvas, position, text, size)
+
+func _add_activity_button_like_to(parent: Control, position: Vector2, text: String, size: Vector2 = Vector2(118, 42)) -> void:
 	var button := Button.new()
 	button.position = position
 	button.size = size
 	button.z_index = 190
 	button.text = text
 	button.add_theme_font_size_override("font_size", 17)
-	canvas.add_child(button)
+	parent.add_child(button)
 
 func _add_activity_progress_bar(position: Vector2, size: Vector2, progress: float) -> void:
+	_add_activity_progress_bar_to(canvas, position, size, progress)
+
+func _add_activity_progress_bar_to(parent: Control, position: Vector2, size: Vector2, progress: float) -> void:
 	var bg := ColorRect.new()
 	bg.position = position
 	bg.size = size
 	bg.z_index = 180
 	bg.color = Color(0.06, 0.07, 0.09, 0.86)
-	canvas.add_child(bg)
+	parent.add_child(bg)
 	var fill := ColorRect.new()
 	fill.position = position + Vector2(2, 2)
 	fill.size = Vector2(max(0.0, size.x - 4.0) * clampf(progress, 0.0, 1.0), max(0.0, size.y - 4.0))
 	fill.z_index = 181
 	fill.color = Color(0.96, 0.66, 0.18, 0.92)
-	canvas.add_child(fill)
+	parent.add_child(fill)
 
 func _add_activity_red_dot(position: Vector2) -> void:
 	var dot := ColorRect.new()
@@ -1463,15 +1489,21 @@ func _add_activity_red_dot(position: Vector2) -> void:
 	canvas.add_child(dot)
 
 func _add_activity_badge(position: Vector2, text: String, color: Color, size: Vector2 = Vector2(86, 24), font_size: int = 14) -> void:
+	_add_activity_badge_to(canvas, position, text, color, size, font_size)
+
+func _add_activity_badge_to(parent: Control, position: Vector2, text: String, color: Color, size: Vector2 = Vector2(86, 24), font_size: int = 14) -> void:
 	var bg := ColorRect.new()
 	bg.position = position
 	bg.size = size
 	bg.z_index = 200
 	bg.color = color
-	canvas.add_child(bg)
-	_add_activity_small_label(text, position, size, Color.WHITE, HORIZONTAL_ALIGNMENT_CENTER, font_size)
+	parent.add_child(bg)
+	_add_activity_small_label_to(parent, text, position, size, Color.WHITE, HORIZONTAL_ALIGNMENT_CENTER, font_size)
 
 func _add_activity_small_label(text: String, position: Vector2, size: Vector2, color: Color, align: HorizontalAlignment = HORIZONTAL_ALIGNMENT_LEFT, font_size: int = 14) -> void:
+	_add_activity_small_label_to(canvas, text, position, size, color, align, font_size)
+
+func _add_activity_small_label_to(parent: Control, text: String, position: Vector2, size: Vector2, color: Color, align: HorizontalAlignment = HORIZONTAL_ALIGNMENT_LEFT, font_size: int = 14) -> void:
 	var label := Label.new()
 	label.text = text
 	label.position = position
@@ -1481,7 +1513,7 @@ func _add_activity_small_label(text: String, position: Vector2, size: Vector2, c
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	label.add_theme_font_size_override("font_size", font_size)
 	label.add_theme_color_override("font_color", color)
-	canvas.add_child(label)
+	parent.add_child(label)
 
 func _add_activity_multiline_label(text: String, position: Vector2, size: Vector2, color: Color, font_size: int = 14) -> void:
 	var label := Label.new()
