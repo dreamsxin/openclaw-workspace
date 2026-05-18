@@ -289,12 +289,23 @@ UI 层：Prefab/mainpanel/MainPre
 - 主城截图回归可用 `--home-hero <name>` 和 `--home-bg <name-or-index>` 指定角色/背景，例如 `--home-hero YouDuoLa_LH`。
 - 主城角色展示区域可点击切换动作。`105004` 已验证可从 `idle` 切到 `show`，也可用 `--home-click-hero-once` 模拟点击。
 - 主城动作可用 `--home-animation <name>` 指定，便于截图回归。
+- 主城主要入口已接到对应 prefab 预览：
+  - 底部 `英雄` -> `Prefab/HeroPanel/HeroMainPre`
+  - 底部 `仓库` -> `Prefab/BagPanel/BagPre`
+  - 底部 `冒险` -> `Prefab/Battle/battle`
+  - 底部 `副本` -> `Prefab/SkyCityPanel/SkyCityPre`
+  - 底部 `公会` -> `Prefab/Guild/GuildMainPre`
+  - 左侧/右侧 `竞技` -> `Prefab/JingjiPrefab/JingjiPre`
+  - `召唤` -> `Prefab/DrawCard/drawCardPre`
+  - 活动广告/广告入口 -> `Prefab/ActivityPanel/DrawCardActivity/DrawCardActivityPre`
+- `cocos_prefab_preview.gd` 支持从 `Navigation.go_with_args(..., {"layout": "英雄"})` 或命令行 `--prefab-layout 英雄` 打开指定界面。
+- Prefab 预览器已改为优先使用导出的 `global_position`，并跳过无贴图根节点，核心界面骨架比局部坐标版更接近原布局。
 
 当前不足：
 
 - 角色 Spine 已能播放，但仍是项目内轻量 runtime，和官方 Spine runtime 可能有细节差异。
 - `SuLa_LH` 的 `idle` 姿态偏横向，主城展示后续需要结合原角色面板确认是否应使用 `show` 或额外偏移。
-- `MainPre` 的 Label、Layout、ScrollView、Widget、九宫格仍未完整映射。
+- `MainPre` 和主要功能 prefab 的 Label、Layout、ScrollView、Widget、九宫格仍未完整映射；当前主要界面是可进入的 prefab 骨架预览，还不是最终可交互面板。
 - 顶部资源栏、底部入口、右侧入口还有大量运行时动态内容未补齐。
 
 下一步：
@@ -304,6 +315,7 @@ UI 层：Prefab/mainpanel/MainPre
 3. 在资源浏览器中继续完善 Spine atlas/动画索引查看。
 4. 继续补轻量 Spine runtime 的约束、clipping、path 等高级能力。
 5. 逐步把 `MainPre` 的按钮/入口区域补成可点击导航。
+6. 优先完善 `HeroMainPre`、`BagPre`、`drawCardPre` 的 Label、九宫格和滚动列表 mock 数据。
 
 ## 实施顺序
 

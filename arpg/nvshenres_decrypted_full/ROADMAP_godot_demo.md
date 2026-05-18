@@ -213,6 +213,18 @@ RESTORE_LOGIN_TO_HOME.md
 4. 禁止用截图冒充资源还原。
 5. 对运行时动态内容使用 mock 数据，但资源必须来自 catalog/prefab/spine 索引。
 
+当前进度：
+
+- `cocos_prefab_preview.gd` 支持 `--prefab-layout <label>` 和 `Navigation.go_with_args(..., {"layout": label})`。
+- 主城底部/侧边主要入口已接入 prefab 预览器，可从主城进入英雄、背包、抽卡、战斗、公会、竞技、天空城、活动抽卡等界面骨架。
+- Prefab 预览器已切换为 `global_position`，并跳过无贴图根节点，作为主要功能界面的恢复检查入口。
+
+下一步优先级：
+
+1. 完善 `HeroMainPre` 的 Label、九宫格和角色展示 mock 数据。
+2. 完善 `BagPre` 的道具格、页签、按钮文本和本地物品 mock 数据。
+3. 完善 `drawCardPre` / `DrawCardActivityPre` 的卡池背景、按钮和展示 Spine。
+
 ## 当前风险
 
 - 部分资源由 JS 运行时选择，单看 prefab 看不到完整引用。

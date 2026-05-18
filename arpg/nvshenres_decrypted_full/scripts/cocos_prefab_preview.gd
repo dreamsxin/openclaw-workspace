@@ -17,6 +17,9 @@ func _ready() -> void:
 	_load_texture_map()
 	_load_layout_manifest()
 	_build_ui()
+	var requested_layout := _requested_layout()
+	if requested_layout != "":
+		current_layout = requested_layout
 	_load_layout(current_layout)
 	_capture_if_requested()
 
@@ -81,6 +84,8 @@ func _build_ui() -> void:
 	body.add_child(detail)
 
 func _load_layout(layout_name: String) -> void:
+	if not layouts.has(layout_name):
+		return
 	current_layout = layout_name
 	for child in canvas.get_children():
 		child.queue_free()
@@ -96,8 +101,10 @@ func _load_layout(layout_name: String) -> void:
 		_add_node_rect(node)
 
 func _add_node_rect(node: Dictionary) -> void:
+	if _should_skip_node(node):
+		return
 	var size_arr: Array = node.get("size", [80, 36])
-	var pos_arr: Array = node.get("position", [0, 0])
+	var pos_arr: Array = node.get("global_position", node.get("position", [0, 0]))
 	var size := Vector2(float(size_arr[0]), float(size_arr[1]))
 	var pos := Vector2(float(pos_arr[0]), -float(pos_arr[1]))
 	var name := str(node.get("name", ""))
@@ -119,7 +126,7 @@ func _add_node_rect(node: Dictionary) -> void:
 		panel.modulate = _color_for_name(name)
 		panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		rect = panel
-	rect.position = Vector2(440, 310) + pos - size * 0.5
+	rect.position = _canvas_center() + pos - size * 0.5
 	rect.size = Vector2(max(size.x, 48.0), max(size.y, 28.0))
 	rect.tooltip_text = JSON.stringify(node, "\t")
 	canvas.add_child(rect)
@@ -139,6 +146,21 @@ func _add_node_rect(node: Dictionary) -> void:
 		label.clip_text = true
 		label.position = Vector2(4, 3)
 		rect.add_child(label)
+
+func _should_skip_node(node: Dictionary) -> bool:
+	if not bool(node.get("active", true)):
+		return true
+	var name := str(node.get("name", ""))
+	var texture_path := str(node.get("texture_path", ""))
+	var parent_index: Variant = node.get("parent_index")
+	if parent_index == null and texture_path == "" and name.to_lower().ends_with("pre"):
+		return true
+	return false
+
+func _canvas_center() -> Vector2:
+	if canvas.size.x > 0.0 and canvas.size.y > 0.0:
+		return canvas.size * 0.5
+	return Vector2(440, 310)
 
 func _texture_for_node(name: String) -> String:
 	if texture_map.has(name):
@@ -167,6 +189,18 @@ func _load_layout_manifest() -> void:
 			continue
 		layouts[label] = "res://" + layout_path
 		layout_stats[label] = item
+
+func _requested_layout() -> String:
+	var scene_args := Navigation.consume_scene_args()
+	var layout := str(scene_args.get("layout", ""))
+	if layout != "":
+		return layout
+	var args := OS.get_cmdline_args()
+	args.append_array(OS.get_cmdline_user_args())
+	var index := args.find("--prefab-layout")
+	if index >= 0 and index + 1 < args.size():
+		return str(args[index + 1])
+	return ""
 
 func _load_texture(path: String) -> Texture2D:
 	var image := Image.new()
@@ -268,6 +302,7 @@ func _color_for_name(name: String) -> Color:
 
 func _capture_if_requested() -> void:
 	var args := OS.get_cmdline_args()
+	args.append_array(OS.get_cmdline_user_args())
 	if not "--capture-prefab-preview" in args:
 		return
 	await get_tree().process_frame

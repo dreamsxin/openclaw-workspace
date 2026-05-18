@@ -359,6 +359,7 @@ func _add_ad_banner() -> void:
 	hit.flat = true
 	hit.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	hit.tooltip_text = "活动预览"
+	hit.pressed.connect(_open_prefab_layout.bind("活动抽卡"))
 	box.add_child(hit)
 
 func _add_right_ribbons() -> void:
@@ -414,16 +415,18 @@ func _add_ribbon_button(center: Vector2, item: Dictionary) -> void:
 	hit.text = ""
 	hit.flat = true
 	hit.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	hit.tooltip_text = "%s 预览" % str(item.label)
+	hit.pressed.connect(_open_home_entry.bind(str(item.label)))
 	box.add_child(hit)
 
 func _add_bottom_nav() -> void:
 	var entries := [
 		{"label": "城镇", "x": 190, "atlas": ATLAS_1F, "rect": Rect2i(787, 551, 152, 141), "size": Vector2(88, 82)},
-		{"label": "英雄", "x": 360, "atlas": ATLAS_1A, "rect": Rect2i(3, 334, 150, 142), "size": Vector2(88, 82)},
-		{"label": "仓库", "x": 560, "atlas": ATLAS_1A, "rect": Rect2i(477, 242, 125, 123), "size": Vector2(82, 78)},
-		{"label": "冒险", "x": 762, "atlas": ATLAS_14, "rect": Rect2i(3, 3, 181, 143), "size": Vector2(104, 82)},
-		{"label": "副本", "x": 910, "atlas": ATLAS_1A, "rect": Rect2i(879, 276, 134, 133), "size": Vector2(84, 80)},
-		{"label": "公会", "x": 1090, "atlas": ATLAS_1A, "rect": Rect2i(345, 232, 119, 126), "size": Vector2(82, 80)},
+		{"label": "英雄", "x": 360, "atlas": ATLAS_1A, "rect": Rect2i(3, 334, 150, 142), "size": Vector2(88, 82), "layout": "英雄"},
+		{"label": "仓库", "x": 560, "atlas": ATLAS_1A, "rect": Rect2i(477, 242, 125, 123), "size": Vector2(82, 78), "layout": "背包"},
+		{"label": "冒险", "x": 762, "atlas": ATLAS_14, "rect": Rect2i(3, 3, 181, 143), "size": Vector2(104, 82), "layout": "战斗"},
+		{"label": "副本", "x": 910, "atlas": ATLAS_1A, "rect": Rect2i(879, 276, 134, 133), "size": Vector2(84, 80), "layout": "天空城"},
+		{"label": "公会", "x": 1090, "atlas": ATLAS_1A, "rect": Rect2i(345, 232, 119, 126), "size": Vector2(82, 80), "layout": "公会"},
 	]
 	for item in entries:
 		var box := Control.new()
@@ -457,6 +460,10 @@ func _add_bottom_nav() -> void:
 		hit.text = ""
 		hit.flat = true
 		hit.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		var layout := str(item.get("layout", ""))
+		if layout != "":
+			hit.tooltip_text = "%s 预览" % layout
+			hit.pressed.connect(_open_prefab_layout.bind(layout))
 		box.add_child(hit)
 
 func _add_chat_panel() -> void:
@@ -496,6 +503,7 @@ func _add_icon_button(center: Vector2, size: Vector2, text: String, atlas_path: 
 	hit.flat = true
 	hit.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	hit.tooltip_text = text
+	hit.pressed.connect(_open_home_entry.bind(text))
 	box.add_child(hit)
 
 func _add_event_button(center: Vector2, text: String, atlas_path: String = "", rect: Rect2i = Rect2i(), rotated := false) -> void:
@@ -538,7 +546,25 @@ func _add_event_button(center: Vector2, text: String, atlas_path: String = "", r
 	hit.flat = true
 	hit.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	hit.tooltip_text = text
+	hit.pressed.connect(_open_home_entry.bind(text))
 	box.add_child(hit)
+
+func _open_home_entry(label: String) -> void:
+	var layout_map := {
+		"召唤": "抽卡",
+		"广告": "活动抽卡",
+		"竞技": "竞技",
+		"仓库": "背包",
+		"公会": "公会",
+		"英雄": "英雄",
+		"冒险": "战斗",
+		"副本": "天空城",
+	}
+	if layout_map.has(label):
+		_open_prefab_layout(str(layout_map[label]))
+
+func _open_prefab_layout(layout: String) -> void:
+	Navigation.go_with_args(PREFAB_PREVIEW, {"layout": layout})
 
 func _cycle_background() -> void:
 	bg_index = wrapi(bg_index + 1, 0, BACKGROUNDS.size())
