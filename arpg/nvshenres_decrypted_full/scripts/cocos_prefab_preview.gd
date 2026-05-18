@@ -1264,7 +1264,7 @@ func _add_draw_activity_task_runtime_mock() -> void:
 		{"text": "活动期间累计召唤 150 次", "reward": "积分 +150 / 英雄宝箱 x1", "progress": "42/150", "state": "未完成"},
 	]
 	for i in tasks.size():
-		_add_activity_task_row(_mock_cocos_position(Vector2(-246, 64 - i * 92)), tasks[i])
+		_add_activity_task_template_row(Vector2(0, -102 - i * 96), tasks[i])
 
 func _add_draw_activity_wish_gift_runtime_mock() -> void:
 	_add_activity_runtime_title("DrawCardActivity13005 / 许愿礼包", "giftContent 动态实例化 giftItemPre，本地预览模拟购买状态")
@@ -1336,6 +1336,28 @@ func _add_activity_task_row(position: Vector2, data: Dictionary) -> void:
 	_add_activity_progress_bar(position + Vector2(410, 30), Vector2(112, 14), 1.0 if str(data.get("state", "")) == "领取" else 0.42)
 	_add_activity_small_label(str(data.get("progress", "")), position + Vector2(410, 48), Vector2(112, 18), Color(0.96, 0.9, 0.68), HORIZONTAL_ALIGNMENT_CENTER, 12)
 	_add_activity_button_like(position + Vector2(548, 18), str(data.get("state", "")), Vector2(94, 40))
+
+func _add_activity_task_template_row(cocos_center: Vector2, data: Dictionary) -> void:
+	var origin := _mock_cocos_position(cocos_center)
+	var row_pos := origin + Vector2(-334, -47)
+	var panel := PanelContainer.new()
+	panel.position = row_pos
+	panel.size = Vector2(668, 95)
+	panel.z_index = 160
+	panel.self_modulate = Color(0.08, 0.08, 0.12, 0.7)
+	canvas.add_child(panel)
+	_add_named_image_to(panel, "image/com/ActivityPanel/ZhaoHuan/wxzh_item_bg", Vector2(0, 0), Vector2(668, 95), TextureRect.STRETCH_SCALE)
+	var item_pos := origin + Vector2(-278.491 - 28, -0.098 - 28)
+	_add_named_image("image/Item/11001", item_pos, Vector2(56, 56), TextureRect.STRETCH_KEEP_ASPECT_CENTERED)
+	_add_activity_small_label(str(data.get("text", "")), origin + Vector2(-221.491 - 6, -10), Vector2(292, 26), Color(1.0, 0.88, 0.5), HORIZONTAL_ALIGNMENT_LEFT, 17)
+	_add_activity_small_label(str(data.get("reward", "")), origin + Vector2(-221.491 - 6, 18), Vector2(292, 22), Color(0.86, 0.94, 1.0), HORIZONTAL_ALIGNMENT_LEFT, 14)
+	var ready := str(data.get("state", "")) == "领取"
+	_add_activity_progress_bar(origin + Vector2(-77.491 - 147, 20), Vector2(294, 10), 1.0 if ready else 0.42)
+	_add_activity_small_label(str(data.get("progress", "")), origin + Vector2(-149, 30), Vector2(142, 20), Color(0.96, 0.9, 0.68), HORIZONTAL_ALIGNMENT_CENTER, 12)
+	if str(data.get("state", "")) == "已完成":
+		_add_activity_badge(origin + Vector2(238.509 - 58, -20), "已完成", Color(0.12, 0.12, 0.12, 0.82), Vector2(116, 38), 17)
+	else:
+		_add_activity_button_like(origin + Vector2(238.509 - 47, -22), str(data.get("state", "")), Vector2(94, 40))
 
 func _add_activity_gift_card(position: Vector2, data: Dictionary) -> void:
 	var panel := PanelContainer.new()

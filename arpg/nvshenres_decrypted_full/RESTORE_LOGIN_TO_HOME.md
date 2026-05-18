@@ -280,6 +280,7 @@ DrawCardActivityRenWuItemCom
 - `13003.json` 现在可看到 `DrawCardActivityCycleItemCom` 的关键字段绑定：`girdLayout -> gridLayout`、`btn_buy -> btn_buy`、`JDT_progress -> progressBar`、`title -> label_name`。
 - `13004.json` 现在可看到 `DrawCardActivityRenWuItemCom` 的关键字段绑定：`itemNode -> itemNode`、`descText -> title`、`taskProgress -> progressBar`、`taskProgressLab -> count`、`submitBtn -> getBtn`、`imgComplete -> isOver`。
 - `cocos_prefab_preview.gd` 右侧详情栏已显示这些脚本字段绑定，用于后续按源码 `setData(...)` 精确替换手工 row。
+- `活动抽卡-抽数任务` 的任务列表 mock 已改为参考 `13004.item` 模板内部坐标绘制：图标、标题、奖励文本、进度条、进度文本、按钮位置分别对应 `itemNode/title/count/progressBar/getBtn/isOver` 一组字段。
 - 已用 Godot 控制台验证四个子页都可运行，无脚本解析错误。
 
 遗留问题：
