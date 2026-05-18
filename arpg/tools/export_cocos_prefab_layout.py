@@ -79,11 +79,13 @@ def export_layout(prefab_path: str) -> dict:
         skeleton_uuid = ""
         skeleton_info = {}
         label_info = {}
+        widget_info = {}
         for component in iter_components(item):
             class_name, values = decode_component(component, classes, templates)
             if class_name == "cc.Label":
                 label_info = resolve_label(values)
-                break
+            elif class_name == "cc.Widget":
+                widget_info = resolve_widget(values)
         if should_auto_texture(name):
             for component in iter_components(item):
                 class_name, values = decode_component(component, classes, templates)
@@ -136,7 +138,10 @@ def export_layout(prefab_path: str) -> dict:
             "label_line_height": label_info.get("line_height", 0),
             "label_horizontal_align": label_info.get("horizontal_align", 0),
             "label_vertical_align": label_info.get("vertical_align", 0),
+            "widget": widget_info,
         }
+
+    apply_widget_layout(node_records)
 
     global_cache = {}
     for index, node in node_records.items():
@@ -155,6 +160,65 @@ def anchor_from_cocos(value: object) -> list[float] | None:
     if isinstance(value, list) and len(value) == 3 and all(isinstance(x, (int, float)) for x in value[1:]):
         return [float(value[1]), float(value[2])]
     return None
+
+
+def apply_widget_layout(node_records: dict[int, dict]) -> None:
+    for _ in range(3):
+        for node in node_records.values():
+            widget = node.get("widget") or {}
+            if not widget:
+                continue
+            parent_index = node.get("parent_index")
+            if not isinstance(parent_index, int) or parent_index not in node_records:
+                continue
+            parent = node_records[parent_index]
+            apply_widget_to_node(node, parent, widget)
+
+
+def apply_widget_to_node(node: dict, parent: dict, widget: dict) -> None:
+    flags = int(widget.get("align_flags", 0) or 0)
+    if flags <= 0:
+        return
+    parent_size = parent.get("size", [0.0, 0.0])
+    size = [float(node.get("size", [0.0, 0.0])[0]), float(node.get("size", [0.0, 0.0])[1])]
+    pos = [float(node.get("position", [0.0, 0.0])[0]), float(node.get("position", [0.0, 0.0])[1])]
+    anchor = node.get("anchor", [0.5, 0.5])
+    parent_w = float(parent_size[0])
+    parent_h = float(parent_size[1])
+    anchor_x = float(anchor[0])
+    anchor_y = float(anchor[1])
+
+    top = float(widget.get("top", 0.0) or 0.0)
+    bottom = float(widget.get("bottom", 0.0) or 0.0)
+    left = float(widget.get("left", 0.0) or 0.0)
+    right = float(widget.get("right", 0.0) or 0.0)
+    hcenter = float(widget.get("horizontal_center", 0.0) or 0.0)
+    vcenter = float(widget.get("vertical_center", 0.0) or 0.0)
+
+    # Cocos Creator widget flags: TOP=1, MID=2, BOT=4, LEFT=8, CENTER=16, RIGHT=32.
+    if flags & 8 and flags & 32:
+        size[0] = max(0.0, parent_w - left - right)
+        pos[0] = -parent_w * 0.5 + left + size[0] * anchor_x
+    elif flags & 8:
+        pos[0] = -parent_w * 0.5 + left + size[0] * anchor_x
+    elif flags & 32:
+        pos[0] = parent_w * 0.5 - right - size[0] * (1.0 - anchor_x)
+    elif flags & 16:
+        pos[0] = hcenter
+
+    if flags & 1 and flags & 4:
+        size[1] = max(0.0, parent_h - top - bottom)
+        pos[1] = parent_h * 0.5 - top - size[1] * (1.0 - anchor_y)
+    elif flags & 1:
+        pos[1] = parent_h * 0.5 - top - size[1] * (1.0 - anchor_y)
+    elif flags & 4:
+        pos[1] = -parent_h * 0.5 + bottom + size[1] * anchor_y
+    elif flags & 2:
+        pos[1] = vcenter
+
+    node["size"] = size
+    node["position"] = pos
+    node["widget_applied"] = True
 
 
 def global_position(index: int, node_records: dict[int, dict], cache: dict[int, list[float]]) -> list[float]:
@@ -246,6 +310,20 @@ def resolve_label(values: dict) -> dict:
         "line_height": int(values.get("_lineHeight", values.get("_fontSize", 18)) or 18),
         "horizontal_align": int(values.get("_N$horizontalAlign", 0) or 0),
         "vertical_align": int(values.get("_N$verticalAlign", 0) or 0),
+    }
+
+
+def resolve_widget(values: dict) -> dict:
+    return {
+        "align_flags": int(values.get("_alignFlags", 0) or 0),
+        "left": float(values.get("_left", 0.0) or 0.0),
+        "right": float(values.get("_right", 0.0) or 0.0),
+        "top": float(values.get("_top", 0.0) or 0.0),
+        "bottom": float(values.get("_bottom", 0.0) or 0.0),
+        "horizontal_center": float(values.get("_horizontalCenter", 0.0) or 0.0),
+        "vertical_center": float(values.get("_verticalCenter", 0.0) or 0.0),
+        "original_width": float(values.get("_originalWidth", 0.0) or 0.0),
+        "original_height": float(values.get("_originalHeight", 0.0) or 0.0),
     }
 
 
