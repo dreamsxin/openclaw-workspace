@@ -1236,7 +1236,7 @@ func _add_draw_activity_cycle_runtime_mock() -> void:
 		{"name": "累计召唤 100 次", "reward": "限定头像框", "progress": "18/100", "state": "已领取"},
 	]
 	for i in rows.size():
-		_add_activity_cycle_template_row(Vector2(0, 122 - i * 108), rows[i])
+		_add_activity_cycle_template_row(Vector2(0, 122 - i * 108), rows[i], _activity_scroll_clip_rect("13003"))
 
 func _add_draw_activity_task_runtime_mock() -> void:
 	_add_activity_runtime_title("DrawCardActivity13004 / 抽数任务", "setData(e,t,n): boxList 驱动宝箱红点，taskList 驱动任务列表")
@@ -1264,7 +1264,7 @@ func _add_draw_activity_task_runtime_mock() -> void:
 		{"text": "活动期间累计召唤 150 次", "reward": "积分 +150 / 英雄宝箱 x1", "progress": "42/150", "state": "未完成"},
 	]
 	for i in tasks.size():
-		_add_activity_task_template_row(Vector2(0, -102 - i * 96), tasks[i])
+		_add_activity_task_template_row(Vector2(0, -102 - i * 96), tasks[i], _activity_scroll_clip_rect("13004"))
 
 func _add_draw_activity_wish_gift_runtime_mock() -> void:
 	_add_activity_runtime_title("DrawCardActivity13005 / 许愿礼包", "giftContent 动态实例化 giftItemPre，本地预览模拟购买状态")
@@ -1322,8 +1322,10 @@ func _add_activity_cycle_row(position: Vector2, data: Dictionary) -> void:
 	_add_activity_small_label(str(data.get("progress", "")), position + Vector2(386, 50), Vector2(170, 20), Color(0.96, 0.9, 0.68), HORIZONTAL_ALIGNMENT_CENTER, 13)
 	_add_activity_button_like(position + Vector2(612, 20), str(data.get("state", "")), Vector2(104, 42))
 
-func _add_activity_cycle_template_row(cocos_center: Vector2, data: Dictionary) -> void:
+func _add_activity_cycle_template_row(cocos_center: Vector2, data: Dictionary, clip_rect: Rect2 = Rect2()) -> void:
 	var origin := _mock_cocos_position(cocos_center)
+	if not _activity_rect_visible(Rect2(origin + Vector2(-420, -63), Vector2(840, 108)), clip_rect):
+		return
 	var panel := PanelContainer.new()
 	panel.position = origin + Vector2(-420, -63)
 	panel.size = Vector2(840, 108)
@@ -1359,9 +1361,11 @@ func _add_activity_task_row(position: Vector2, data: Dictionary) -> void:
 	_add_activity_small_label(str(data.get("progress", "")), position + Vector2(410, 48), Vector2(112, 18), Color(0.96, 0.9, 0.68), HORIZONTAL_ALIGNMENT_CENTER, 12)
 	_add_activity_button_like(position + Vector2(548, 18), str(data.get("state", "")), Vector2(94, 40))
 
-func _add_activity_task_template_row(cocos_center: Vector2, data: Dictionary) -> void:
+func _add_activity_task_template_row(cocos_center: Vector2, data: Dictionary, clip_rect: Rect2 = Rect2()) -> void:
 	var origin := _mock_cocos_position(cocos_center)
 	var row_pos := origin + Vector2(-334, -47)
+	if not _activity_rect_visible(Rect2(row_pos, Vector2(668, 95)), clip_rect):
+		return
 	var panel := PanelContainer.new()
 	panel.position = row_pos
 	panel.size = Vector2(668, 95)
@@ -1380,6 +1384,18 @@ func _add_activity_task_template_row(cocos_center: Vector2, data: Dictionary) ->
 		_add_activity_badge(origin + Vector2(238.509 - 58, -20), "已完成", Color(0.12, 0.12, 0.12, 0.82), Vector2(116, 38), 17)
 	else:
 		_add_activity_button_like(origin + Vector2(238.509 - 47, -22), str(data.get("state", "")), Vector2(94, 40))
+
+func _activity_scroll_clip_rect(panel_id: String) -> Rect2:
+	if panel_id == "13003":
+		return Rect2(_mock_cocos_position(Vector2(192.848, 160.0)) - Vector2(427.0, 220.0), Vector2(854.0, 440.0))
+	if panel_id == "13004":
+		return Rect2(_canvas_center() + Vector2(-350.0, 60.0), Vector2(760.0, 392.0))
+	return Rect2()
+
+func _activity_rect_visible(rect: Rect2, clip_rect: Rect2) -> bool:
+	if clip_rect.size.x <= 0.0 or clip_rect.size.y <= 0.0:
+		return true
+	return rect.intersects(clip_rect)
 
 func _add_activity_gift_card(position: Vector2, data: Dictionary) -> void:
 	var panel := PanelContainer.new()
