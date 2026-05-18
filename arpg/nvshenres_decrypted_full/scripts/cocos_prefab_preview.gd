@@ -22,6 +22,8 @@ var equipment_icons: Array = []
 var named_resources: Dictionary = {}
 var prefab_node_hints: Dictionary = {}
 var prefab_mask_clips: Dictionary = {}
+var prefab_nodes_by_index: Dictionary = {}
+var prefab_mask_parent_by_node: Dictionary = {}
 
 func _ready() -> void:
 	_load_texture_map()
@@ -110,7 +112,9 @@ func _load_layout(layout_name: String) -> void:
 	var stats: Dictionary = layout_stats.get(layout_name, {})
 	title.text = "原始 Cocos Prefab 预览 - %s" % layout_name
 	detail.text = _layout_detail_text(parsed, nodes, stats)
+	_index_prefab_nodes(nodes)
 	_build_prefab_mask_clips(nodes)
+	_build_prefab_mask_parent_map(nodes)
 	for node in _sorted_nodes(nodes):
 		_add_node_rect(node)
 	_add_layout_mock()
@@ -154,11 +158,15 @@ func _add_node_rect(node: Dictionary) -> void:
 			panel.modulate = _color_for_name(name)
 			panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			rect = panel
-	rect.position = rect_bounds.position
+	var target_parent := _prefab_parent_for_node(node)
+	var parent_origin := Vector2.ZERO
+	if target_parent != canvas:
+		parent_origin = target_parent.position
+	rect.position = rect_bounds.position - parent_origin
 	rect.size = Vector2(max(size.x, 48.0), max(size.y, 28.0))
 	rect.scale = _node_scale(node)
 	rect.tooltip_text = JSON.stringify(node, "\t")
-	canvas.add_child(rect)
+	target_parent.add_child(rect)
 
 	if _is_action_node(name):
 		var hit := Button.new()
@@ -1867,7 +1875,53 @@ func _build_prefab_mask_clips(nodes: Array) -> void:
 		clip.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		clip.z_index = 20
 		canvas.add_child(clip)
-		prefab_mask_clips[int(node.get("index", -1))] = clip
+		prefab_mask_clips[_dict_int(node, "index", -1)] = clip
+
+func _index_prefab_nodes(nodes: Array) -> void:
+	prefab_nodes_by_index.clear()
+	for node in nodes:
+		if typeof(node) != TYPE_DICTIONARY:
+			continue
+		var index := _dict_int(node, "index", -1)
+		if index >= 0:
+			prefab_nodes_by_index[index] = node
+
+func _build_prefab_mask_parent_map(nodes: Array) -> void:
+	prefab_mask_parent_by_node.clear()
+	for node in nodes:
+		if typeof(node) != TYPE_DICTIONARY:
+			continue
+		var node_index := _dict_int(node, "index", -1)
+		var mask_index := _nearest_mask_parent_index(node)
+		if node_index >= 0 and mask_index >= 0:
+			prefab_mask_parent_by_node[node_index] = mask_index
+
+func _nearest_mask_parent_index(node: Dictionary) -> int:
+	var parent_index := _dict_int(node, "parent_index", -1)
+	var guard := 0
+	while parent_index >= 0 and guard < 256:
+		if prefab_mask_clips.has(parent_index):
+			return parent_index
+		if not prefab_nodes_by_index.has(parent_index):
+			return -1
+		var parent_node: Dictionary = prefab_nodes_by_index[parent_index]
+		parent_index = _dict_int(parent_node, "parent_index", -1)
+		guard += 1
+	return -1
+
+func _prefab_parent_for_node(node: Dictionary) -> Control:
+	var node_index := _dict_int(node, "index", -1)
+	if node_index >= 0 and prefab_mask_parent_by_node.has(node_index):
+		var mask_index: int = prefab_mask_parent_by_node[node_index]
+		if prefab_mask_clips.has(mask_index):
+			return prefab_mask_clips[mask_index]
+	return canvas
+
+func _dict_int(data: Dictionary, key: String, fallback: int) -> int:
+	var value: Variant = data.get(key, fallback)
+	if value == null:
+		return fallback
+	return int(value)
 
 func _prefab_node_rect(node: Dictionary) -> Rect2:
 	var size_arr: Array = node.get("size", [80, 36])
