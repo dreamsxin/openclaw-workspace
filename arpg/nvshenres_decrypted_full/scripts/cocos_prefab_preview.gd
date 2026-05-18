@@ -316,11 +316,15 @@ func _add_bag_panel_mock() -> void:
 	for i in 8:
 		var icon_data := _equipment_icon(i)
 		_add_bag_item_row(start + Vector2(0, i * 64), icon_data, names[i % names.size()], (i + 1) * 5, i == 0)
+	_add_bag_tabs_mock()
+	_add_bag_detail_mock()
+	_add_bag_actions_mock()
 
 func _add_bag_item_row(origin: Vector2, icon_data: Dictionary, item_name: String, item_count: int, checked: bool) -> void:
 	var row := Control.new()
 	row.position = origin
 	row.size = Vector2(251, 58)
+	row.z_index = 90
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	canvas.add_child(row)
 
@@ -374,6 +378,77 @@ func _add_bag_item_row(origin: Vector2, icon_data: Dictionary, item_name: String
 	else:
 		check_rect.modulate = Color(0.4, 0.52, 0.72, 0.85)
 	row.add_child(check_rect)
+
+func _add_bag_tabs_mock() -> void:
+	var center := _canvas_center()
+	var tabs := ["装备", "道具", "碎片", "符文", "神器"]
+	for i in tabs.size():
+		var button := Button.new()
+		button.position = center + Vector2(468, -224 + i * 70)
+		button.size = Vector2(150, 46)
+		button.z_index = 90
+		button.text = tabs[i]
+		button.add_theme_font_size_override("font_size", 20)
+		canvas.add_child(button)
+
+func _add_bag_detail_mock() -> void:
+	var center := _canvas_center()
+	var panel := PanelContainer.new()
+	panel.position = center + Vector2(-56, -170)
+	panel.size = Vector2(410, 265)
+	panel.z_index = 90
+	panel.modulate = Color(0.18, 0.16, 0.23, 0.92)
+	canvas.add_child(panel)
+	var icon_data := _equipment_icon(2)
+	var icon_box := PanelContainer.new()
+	icon_box.position = Vector2(24, 28)
+	icon_box.size = Vector2(88, 88)
+	icon_box.modulate = Color(0.22, 0.18, 0.32, 0.86)
+	panel.add_child(icon_box)
+	var icon := TextureRect.new()
+	icon.position = Vector2(10, 10)
+	icon.size = Vector2(68, 68)
+	icon.texture = _load_indexed_texture(icon_data)
+	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	icon_box.add_child(icon)
+	var title_label := Label.new()
+	title_label.text = "星辉宝箱"
+	title_label.position = Vector2(132, 30)
+	title_label.size = Vector2(240, 32)
+	title_label.add_theme_font_size_override("font_size", 24)
+	title_label.add_theme_color_override("font_color", Color(1.0, 0.86, 0.42))
+	panel.add_child(title_label)
+	var desc := Label.new()
+	desc.text = "可开出英雄培养材料、金币和稀有装备。\n拥有数量：15\n品质：SSR"
+	desc.position = Vector2(132, 74)
+	desc.size = Vector2(250, 104)
+	desc.add_theme_font_size_override("font_size", 17)
+	desc.add_theme_color_override("font_color", Color(0.86, 0.94, 1.0))
+	panel.add_child(desc)
+	var source := Label.new()
+	source.text = "获取途径：副本、活动、召唤奖励"
+	source.position = Vector2(28, 190)
+	source.size = Vector2(350, 28)
+	source.add_theme_font_size_override("font_size", 16)
+	source.add_theme_color_override("font_color", Color(0.72, 0.82, 0.96))
+	panel.add_child(source)
+
+func _add_bag_actions_mock() -> void:
+	var center := _canvas_center()
+	var actions := [
+		{"text": "使用", "pos": Vector2(0, 130)},
+		{"text": "出售", "pos": Vector2(142, 130)},
+		{"text": "一键出售", "pos": Vector2(284, 130)},
+	]
+	for action in actions:
+		var button := Button.new()
+		button.position = center + Vector2(-48, 120) + action.pos
+		button.size = Vector2(122, 40)
+		button.z_index = 90
+		button.text = str(action.text)
+		button.add_theme_font_size_override("font_size", 18)
+		canvas.add_child(button)
 
 func _node_from_layout(node_name: String) -> Dictionary:
 	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(BAG_ITEM_LAYOUT_PATH))

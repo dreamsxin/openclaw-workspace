@@ -22,6 +22,7 @@ PREFIXES = [
     "image/com/pvpActivity/",
     "image/com/skyCity/",
     "image/comHeroGrid/",
+    "image/common/cm_btn",
     "image/common/gh_",
     "image/en/HeroPanel/",
     "image/guildFlag/",

@@ -490,6 +490,7 @@ Prefab 静态节点按 Cocos 规则处理：
 - `battle`：叠加地图背景、左右 5 个战斗站位、头像、血条、伤害/治疗反馈和胜利奖励面板；资源来自 `image/com/map/*`、`image/head/*`、`image/com/Battle*`。
 - `DrawCardActivityPre`：叠加活动标题、倒计时、限定英雄概率提升、抽数奖励进度、活动兑换和操作按钮；资源来自 `image/com/ActivityPanel/ZhaoHuan/*`、`image/com/ActivityPanel/NewHeroComing/*`、`image/com/ActivityPanel/thousandDrawCardActivity/*`。
 - `HeroMainPre`：叠加英雄列表、属性面板、技能格、装备格和 `105004` Spine 展示；资源来自 `image/en/HeroPanel/*`、`image/comHeroGrid/*`、`image/skill/*`、`image/head/*`。
+- `BagPre`：叠加背包分类、道具列表、详情区和使用/出售/一键出售操作；装备/道具图标来自 `data/equipment_icon_index.json`，通用按钮来自 `image/common/cm_btn*`。
 
 启动工程：
 
@@ -561,6 +562,7 @@ Spine 查看器：
 ```
 
 - `背包`：使用 `GridBoxItemPre` + `image/equipment` mock 数据。
+- `背包` 当前还额外补了分类按钮、详情面板和操作按钮；详情区仍受原 prefab 暗层影响，后续需统一处理 Mask/ScrollView 层级。
 - `抽卡`：使用 `image/com/DrawCard` mock 数据。
 - `公会`：使用 `image/com/Guild`、`image/guildFlag` mock 数据。
 - `天空城`：使用 `image/com/skyCity` mock 建筑、矿物、空岛和副本入口。

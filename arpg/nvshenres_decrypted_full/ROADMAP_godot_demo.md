@@ -246,13 +246,16 @@ RESTORE_LOGIN_TO_HOME.md
 - `export_named_resource_index.py` 已扩展 `image/com/ActivityPanel/ZhaoHuan/*`、`image/com/ActivityPanel/NewHeroComing/*`、`image/com/ActivityPanel/thousandDrawCardActivity/*`。
 - `HeroMainPre` 预览已继续补本地英雄页动态内容：左侧英雄列表、右侧属性面板、技能格、装备格，中心继续使用 `105004` Spine 展示。
 - `export_named_resource_index.py` 已扩展 `image/en/HeroPanel/*`、`image/comHeroGrid/*`、`image/skill/*`、`image/heroBook/*`。
-- `data/named_resource_index.json` 当前包含 1477 条命名资源。
+- `BagPre` 预览已继续补本地背包页动态内容：右侧分类按钮、道具详情区、使用/出售/一键出售操作区。
+- `export_named_resource_index.py` 已扩展 `image/common/cm_btn*`；装备图标仍由专门的 `data/equipment_icon_index.json` 提供。
+- `data/named_resource_index.json` 当前包含 1516 条命名资源。
 - 当前 `HeroMainPre` 的右侧信息仍会和原 prefab 静态文本有重叠，后续需要继续完善 ScrollView/层级裁剪和动态节点替换规则。
+- 当前 `BagPre` 的详情区仍受原 prefab 暗层/遮罩影响，后续需要统一处理 ScrollView、Mask 和 mock 层级。
 
 下一步优先级：
 
 1. 完善 `HeroMainPre` 的 ScrollView 裁剪、Layout 重排、右侧信息层级和动态节点替换。
-2. 继续完善 `BagPre` 的页签交互、ScrollView 裁剪和运行时分类数据。
+2. 继续完善 `BagPre` 的页签交互、ScrollView/Mask 裁剪、详情层级和运行时分类数据。
 3. 继续完善 `DrawCardActivityPre` 的 `13002..13005` 子 prefab、页签切换和抽卡活动 Spine。
 4. 继续完善 `battle` 的真实 Spine 战斗角色、技能特效、站位坐标和战斗结束子 prefab。
 
