@@ -223,6 +223,8 @@ RESTORE_LOGIN_TO_HOME.md
 - `cocos_prefab_preview.gd` 已能显示真实 Label 文本，并应用节点 scale。英雄、背包、抽卡等主要 prefab 不再只显示节点名。
 - `export_cocos_prefab_layout.py` 已导出 `cc.Sprite._type/_sizeMode` 和 SpriteFrame `capInsets`。
 - `cocos_prefab_preview.gd` 对 sliced Sprite 使用 `NinePatchRect`，九宫格按钮/标题框开始按 Cocos inset 渲染。
+- `HeroMainPre` 预览已叠加本地 mock 的 `105004` Spine 角色展示，用于检查英雄面板的角色展示区域。
+- `export_cocos_prefab_layout.py` 已导出 `_anchorPoint`；`cocos_prefab_preview.gd` 已按 Cocos anchor 计算节点左上角。英雄面板属性、标题、按钮文字位置比中心点近似更接近原布局。
 
 下一步优先级：
 

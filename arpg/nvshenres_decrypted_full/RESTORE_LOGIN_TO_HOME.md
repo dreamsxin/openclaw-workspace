@@ -303,12 +303,14 @@ UI 层：Prefab/mainpanel/MainPre
 - Prefab 预览器已改为优先使用导出的 `global_position`，并跳过无贴图根节点，核心界面骨架比局部坐标版更接近原布局。
 - Prefab 导出器已补 `cc.Label` 文本字段；预览器可以显示真实 Label 文本并应用节点 scale。英雄、背包、抽卡等主要界面现在不再只显示节点名。
 - Prefab 导出器已补 `cc.Sprite._type/_sizeMode` 和 SpriteFrame `capInsets`；预览器对 sliced Sprite 使用 `NinePatchRect` 渲染。
+- `HeroMainPre` 预览已叠加本地 mock 的 `105004` Spine 角色展示，便于从主城进入英雄面板后检查角色展示效果。
+- Prefab 导出器已补 `_anchorPoint`；预览器已按 Cocos anchor 计算节点左上角，减少 Label 和按钮相对面板的错位。
 
 当前不足：
 
 - 角色 Spine 已能播放，但仍是项目内轻量 runtime，和官方 Spine runtime 可能有细节差异。
 - `SuLa_LH` 的 `idle` 姿态偏横向，主城展示后续需要结合原角色面板确认是否应使用 `show` 或额外偏移。
-- `MainPre` 和主要功能 prefab 的 Layout、ScrollView、Widget 仍未完整映射；当前主要界面是可进入且带文本/基础九宫格的 prefab 骨架预览，还不是最终可交互面板。
+- `MainPre` 和主要功能 prefab 的 Layout、ScrollView、Widget 仍未完整映射；当前主要界面是可进入且带文本/anchor/基础九宫格的 prefab 骨架预览，还不是最终可交互面板。
 - 顶部资源栏、底部入口、右侧入口还有大量运行时动态内容未补齐。
 
 下一步：

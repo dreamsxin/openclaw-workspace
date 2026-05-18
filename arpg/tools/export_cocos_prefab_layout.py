@@ -69,6 +69,7 @@ def export_layout(prefab_path: str) -> dict:
                 trs = value
         if size is None and trs is None:
             continue
+        anchor = anchor_from_cocos(node_values.get("_anchorPoint"))
         parent_index = node_values.get("_parent")
         if not isinstance(parent_index, int):
             parent_index = None
@@ -111,6 +112,7 @@ def export_layout(prefab_path: str) -> dict:
             "active": bool(active),
             "parent_index": parent_index,
             "size": size or [80.0, 36.0],
+            "anchor": anchor or [0.5, 0.5],
             "position": [float(trs[0]), float(trs[1])] if trs else [0.0, 0.0],
             "global_position": [0.0, 0.0],
             "scale": [float(trs[6]), float(trs[7])] if trs else [1.0, 1.0],
@@ -145,6 +147,12 @@ def export_layout(prefab_path: str) -> dict:
 
 def vec2_from_cocos(value: object) -> list[float] | None:
     if is_vec2(value):
+        return [float(value[1]), float(value[2])]
+    return None
+
+
+def anchor_from_cocos(value: object) -> list[float] | None:
+    if isinstance(value, list) and len(value) == 3 and all(isinstance(x, (int, float)) for x in value[1:]):
         return [float(value[1]), float(value[2])]
     return None
 

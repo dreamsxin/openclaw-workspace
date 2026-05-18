@@ -4,6 +4,8 @@ const MAIN_DEMO := "res://scenes/main_demo.tscn"
 const RESOURCE_BROWSER := "res://scenes/resource_browser.tscn"
 const TEXTURE_MAP_PATH := "res://data/login_texture_map.json"
 const LAYOUT_MANIFEST_PATH := "res://data/prefab_layouts.json"
+const HERO_105004_SPINE := "res://data/spine_runtime/105004.json"
+const SimpleSpinePlayerScript := preload("res://scripts/simple_spine_player.gd")
 
 var canvas: Control
 var detail: Label
@@ -99,14 +101,17 @@ func _load_layout(layout_name: String) -> void:
 	detail.text = "%s\nnodes: %d\ntexture nodes: %d\n\n这是从原始 Cocos Prefab 提取的节点布局预览。当前已尽量关联 SpriteFrame/native 图片；无法自动确认贴图的节点继续显示半透明矩形。" % [parsed.get("prefab", ""), nodes.size(), int(stats.get("texture_nodes", 0))]
 	for node in _sorted_nodes(nodes):
 		_add_node_rect(node)
+	_add_layout_mock()
 
 func _add_node_rect(node: Dictionary) -> void:
 	if _should_skip_node(node):
 		return
 	var size_arr: Array = node.get("size", [80, 36])
 	var pos_arr: Array = node.get("global_position", node.get("position", [0, 0]))
+	var anchor_arr: Array = node.get("anchor", [0.5, 0.5])
 	var size := Vector2(float(size_arr[0]), float(size_arr[1]))
 	var pos := Vector2(float(pos_arr[0]), -float(pos_arr[1]))
+	var anchor := Vector2(float(anchor_arr[0]), 1.0 - float(anchor_arr[1]))
 	var name := str(node.get("name", ""))
 	var rect: Control
 	var manual_texture_path := _texture_for_node(name) if _is_login_layout() else ""
@@ -138,7 +143,7 @@ func _add_node_rect(node: Dictionary) -> void:
 			panel.modulate = _color_for_name(name)
 			panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			rect = panel
-	rect.position = _canvas_center() + pos - size * 0.5
+	rect.position = _canvas_center() + pos - Vector2(size.x * anchor.x, size.y * anchor.y)
 	rect.size = Vector2(max(size.x, 48.0), max(size.y, 28.0))
 	rect.scale = _node_scale(node)
 	rect.tooltip_text = JSON.stringify(node, "\t")
@@ -162,6 +167,27 @@ func _add_node_rect(node: Dictionary) -> void:
 		label.clip_text = true
 		label.position = Vector2(4, 3)
 		rect.add_child(label)
+
+func _add_layout_mock() -> void:
+	if current_layout == "英雄":
+		_add_hero_panel_mock()
+
+func _add_hero_panel_mock() -> void:
+	var player: Node2D = SimpleSpinePlayerScript.new()
+	player.z_index = 30
+	canvas.add_child(player)
+	if not player.load_spine(HERO_105004_SPINE, "idle"):
+		return
+	player.update_preview_pose(0.0)
+	var bounds: Rect2 = player.get_draw_bounds()
+	if bounds.size.x <= 0.0 or bounds.size.y <= 0.0:
+		return
+	var target: Rect2 = Rect2(_canvas_center() + Vector2(-430, -205), Vector2(270, 470))
+	var scale_value: float = min(target.size.x / bounds.size.x, target.size.y / bounds.size.y)
+	player.scale = Vector2(scale_value, scale_value)
+	var bounds_center: Vector2 = bounds.position + bounds.size * 0.5
+	var target_center: Vector2 = target.position + target.size * 0.5
+	player.position = target_center - bounds_center * scale_value
 
 func _node_label_text(node: Dictionary) -> String:
 	return str(node.get("label_text", ""))
