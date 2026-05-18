@@ -291,6 +291,9 @@ DrawCardActivityRenWuItemCom
 - 已新增独立英雄界面 `scenes/original_hero_panel.tscn` / `scripts/original_hero_panel.gd`，主城底部“英雄”入口进入该场景，不再打开 prefab 预览器。
 - 独立英雄界面当前按 `HeroMainPre` 的视觉结构手工实现：左侧英雄头像列表、中心 Spine、右侧培养/装备/升星/战意/衣装页签、点击角色切换动作。
 - 独立英雄界面读取 `data/named_resource_index.json` 加载头像框、头像、SSR 标、装备框等资源，兼容 `texture_path/sprite_rect` 和 `native_path/rect` 两种索引字段。
+- 已新增独立背包/仓库界面 `scenes/original_bag_panel.tscn` / `scripts/original_bag_panel.gd`，主城底部“仓库”入口进入该场景，不再打开 prefab 预览器。
+- 独立背包界面参考 `BagPre.json` 手工实现左侧滚动网格、右侧分类按钮、详情区和底部操作按钮；本地 mock 图标来自 `data/equipment_icon_index.json` 的真实装备 SpriteFrame。
+- 独立背包界面支持页签切换和选中道具切换，并提供 `--bag-tab`、`--bag-item`、`--capture-bag-panel` 参数做截图回归。
 - prefab 预览器右侧详情栏会显示 `mask/scroll` 统计，便于判断哪些界面需要优先补裁剪关系。
 - `13003.json` 现在可看到 `DrawCardActivityCycleItemCom` 的关键字段绑定：`girdLayout -> gridLayout`、`btn_buy -> btn_buy`、`JDT_progress -> progressBar`、`title -> label_name`。
 - `13004.json` 现在可看到 `DrawCardActivityRenWuItemCom` 的关键字段绑定：`itemNode -> itemNode`、`descText -> title`、`taskProgress -> progressBar`、`taskProgressLab -> count`、`submitBtn -> getBtn`、`imgComplete -> isOver`。

@@ -6,6 +6,7 @@ const RESOURCE_BROWSER := "res://scenes/resource_browser.tscn"
 const PREFAB_PREVIEW := "res://scenes/cocos_prefab_preview.tscn"
 const SPINE_VIEWER := "res://scenes/spine_character_viewer.tscn"
 const HERO_PANEL_SCENE := "res://scenes/original_hero_panel.tscn"
+const BAG_PANEL_SCENE := "res://scenes/original_bag_panel.tscn"
 const DESIGN_SIZE := Vector2(1280, 720)
 const SimpleSpinePlayerScript := preload("res://scripts/simple_spine_player.gd")
 const ATLAS_1A := "res://assets/resources/native/1a/1a7921f32.png"
@@ -555,11 +556,13 @@ func _open_home_entry(label: String) -> void:
 	if label == "英雄":
 		Navigation.go(HERO_PANEL_SCENE)
 		return
+	if label == "仓库":
+		Navigation.go(BAG_PANEL_SCENE)
+		return
 	var layout_map := {
 		"召唤": "抽卡",
 		"广告": "活动抽卡",
 		"竞技": "竞技",
-		"仓库": "背包",
 		"公会": "公会",
 		"冒险": "战斗",
 		"副本": "天空城",

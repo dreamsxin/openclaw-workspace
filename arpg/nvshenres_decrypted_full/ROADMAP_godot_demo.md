@@ -281,6 +281,12 @@ RESTORE_LOGIN_TO_HOME.md
 - 主城底部“英雄”入口已改为进入独立英雄界面，不再默认打开 prefab 预览器。
 - 独立英雄界面当前支持左侧英雄头像列表、中心 Spine 展示、点击角色切换动作、右侧培养/装备/升星/战意/衣装页签和本地属性 mock。
 - 独立英雄界面的资源加载改为读取 `data/named_resource_index.json`，支持 `texture_path` 与 `sprite_rect` 两种索引字段，避免之前只认 `native_path/rect` 导致头像不显示。
+- 已新增独立背包/仓库界面：
+  - `scenes/original_bag_panel.tscn`
+  - `scripts/original_bag_panel.gd`
+- 主城底部“仓库”入口已改为进入独立背包界面，不再默认打开 prefab 预览器。
+- 独立背包界面按 `BagPre.json` 的大布局手工实现：左侧滚动道具网格、右侧装备/道具/碎片/符文/神器分类、底部详情区和使用/出售/一键出售操作区。
+- 独立背包界面从 `data/equipment_icon_index.json` 读取真实 `image/equipment/*` SpriteFrame 作为本地 mock 图标，支持页签和选中道具切换。
 - prefab 预览器右侧详情栏新增 `mask/scroll` 统计。
 - `13003` 已提取 `DrawCardActivityCycleItemCom` 的字段绑定：`girdLayout/btn_buy/btn_qianwang/img_receive/JDT_label/JDT_progress/title/txt_xiangou`。
 - `13004` 已提取 `DrawCardActivityRenWuItemCom` 的字段绑定：`itemNode/descText/taskProgress/taskProgressLab/submitBtn/btnLabel/imgComplete`。
@@ -293,7 +299,7 @@ RESTORE_LOGIN_TO_HOME.md
 下一步优先级：
 
 1. 继续完善独立 `original_hero_panel`：追 `HeroSidePrefab` 页签真实资源、装备槽亮度/层级、升星/战意/衣装真实按钮资源。
-2. 新增独立 `original_bag_panel`，把背包从 prefab 预览器 mock 迁出。
+2. 继续完善独立 `original_bag_panel`：追 `GridBoxItemPre` 真实选中框、品质框、背包分类按钮资源、图鉴/合成按钮资源。
 3. 新增独立 `original_draw_card_panel`，把抽卡主界面从 prefab 预览器 mock 迁出。
 4. `cocos_prefab_preview.gd` 后续只在发现坐标/字段/资源缺口时增强，不再作为最终界面承载层。
 5. 继续推广通用 prefab 裁剪作为分析能力：目前已支持 `cc.Mask` 祖先链挂载和部分 `cc.ScrollView` content/viewport 近邻推断，下一步补滚动偏移、`Widget` 对齐和 `Layout` 重排，再按 `GridLogic.create(...)` 补真实奖励 Grid 子项样式。
