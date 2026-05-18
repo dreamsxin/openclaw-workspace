@@ -489,6 +489,7 @@ Prefab 静态节点按 Cocos 规则处理：
 - `JingjiPre`：叠加 PVP 背景、五个竞技玩法入口、膜拜信息和赛季奖励；资源来自 `image/com/Jingji/*` 与 `image/com/pvpActivity/*`。
 - `battle`：叠加地图背景、左右 5 个战斗站位、头像、血条、伤害/治疗反馈和胜利奖励面板；资源来自 `image/com/map/*`、`image/head/*`、`image/com/Battle*`。
 - `DrawCardActivityPre`：叠加活动标题、倒计时、限定英雄概率提升、抽数奖励进度、活动兑换和操作按钮；资源来自 `image/com/ActivityPanel/ZhaoHuan/*`、`image/com/ActivityPanel/NewHeroComing/*`、`image/com/ActivityPanel/thousandDrawCardActivity/*`。
+- `HeroMainPre`：叠加英雄列表、属性面板、技能格、装备格和 `105004` Spine 展示；资源来自 `image/en/HeroPanel/*`、`image/comHeroGrid/*`、`image/skill/*`、`image/head/*`。
 
 启动工程：
 
@@ -552,6 +553,7 @@ Spine 查看器：
 
 ```powershell
 & $godot --path $proj --scene "res://scenes/cocos_prefab_preview.tscn" --quit-after 100 -- --prefab-layout "公会" --capture-prefab-preview "D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\prefab_guild.png" *> $log
+& $godot --path $proj --scene "res://scenes/cocos_prefab_preview.tscn" --quit-after 100 -- --prefab-layout "英雄" --capture-prefab-preview "D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\prefab_hero.png" *> $log
 & $godot --path $proj --scene "res://scenes/cocos_prefab_preview.tscn" --quit-after 100 -- --prefab-layout "天空城" --capture-prefab-preview "D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\prefab_skycity.png" *> $log
 & $godot --path $proj --scene "res://scenes/cocos_prefab_preview.tscn" --quit-after 100 -- --prefab-layout "竞技" --capture-prefab-preview "D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\prefab_jingji.png" *> $log
 & $godot --path $proj --scene "res://scenes/cocos_prefab_preview.tscn" --quit-after 100 -- --prefab-layout "战斗" --capture-prefab-preview "D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\prefab_battle.png" *> $log
@@ -565,6 +567,7 @@ Spine 查看器：
 - `竞技`：使用 `image/com/Jingji`、`image/com/pvpActivity` mock 玩法入口、排名、奖励和膜拜信息。
 - `战斗`：使用 `image/com/map`、`image/head`、`image/com/Battle*` mock 战场、站位、血条和胜利面板。
 - `活动抽卡`：使用 `image/com/ActivityPanel/ZhaoHuan`、`image/com/ActivityPanel/NewHeroComing`、`image/com/ActivityPanel/thousandDrawCardActivity` mock 活动奖池、抽数奖励和兑换区。
+- `英雄`：使用 `image/en/HeroPanel`、`image/comHeroGrid`、`image/skill`、`image/head` mock 英雄列表、属性、技能、装备和角色展示。
 
 局部 slot 调试：
 

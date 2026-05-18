@@ -244,11 +244,14 @@ RESTORE_LOGIN_TO_HOME.md
 - `DrawCardActivityPre` 静态 prefab 只有背景、ScrollView 和时间节点，具体活动内容需要结合 `Prefab/ActivityPanel/DrawCardActivity/13002..13005` 子 prefab 与运行时数据。
 - `DrawCardActivityPre` 预览已叠加本地活动抽卡 mock，补活动标题、倒计时、限定英雄概率提升、抽数奖励进度、活动兑换和前往召唤/领取奖励按钮。
 - `export_named_resource_index.py` 已扩展 `image/com/ActivityPanel/ZhaoHuan/*`、`image/com/ActivityPanel/NewHeroComing/*`、`image/com/ActivityPanel/thousandDrawCardActivity/*`。
-- `data/named_resource_index.json` 当前包含 868 条命名资源。
+- `HeroMainPre` 预览已继续补本地英雄页动态内容：左侧英雄列表、右侧属性面板、技能格、装备格，中心继续使用 `105004` Spine 展示。
+- `export_named_resource_index.py` 已扩展 `image/en/HeroPanel/*`、`image/comHeroGrid/*`、`image/skill/*`、`image/heroBook/*`。
+- `data/named_resource_index.json` 当前包含 1477 条命名资源。
+- 当前 `HeroMainPre` 的右侧信息仍会和原 prefab 静态文本有重叠，后续需要继续完善 ScrollView/层级裁剪和动态节点替换规则。
 
 下一步优先级：
 
-1. 完善 `HeroMainPre` 的 ScrollView 裁剪、Layout 重排和角色展示 mock 数据。
+1. 完善 `HeroMainPre` 的 ScrollView 裁剪、Layout 重排、右侧信息层级和动态节点替换。
 2. 继续完善 `BagPre` 的页签交互、ScrollView 裁剪和运行时分类数据。
 3. 继续完善 `DrawCardActivityPre` 的 `13002..13005` 子 prefab、页签切换和抽卡活动 Spine。
 4. 继续完善 `battle` 的真实 Spine 战斗角色、技能特效、站位坐标和战斗结束子 prefab。

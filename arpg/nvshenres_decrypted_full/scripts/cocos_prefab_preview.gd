@@ -209,6 +209,106 @@ func _add_hero_panel_mock() -> void:
 	var bounds_center: Vector2 = bounds.position + bounds.size * 0.5
 	var target_center: Vector2 = target.position + target.size * 0.5
 	player.position = target_center - bounds_center * scale_value
+	_add_hero_roster_mock()
+	_add_hero_detail_mock()
+	_add_hero_skill_mock()
+	_add_hero_equipment_mock()
+
+func _add_hero_roster_mock() -> void:
+	var center := _canvas_center()
+	var ids := ["105004", "205008", "305006", "405007", "505004", "204001"]
+	for i in ids.size():
+		var pos := center + Vector2(-430, -214 + i * 78)
+		_add_hero_grid_item(pos, ids[i], i == 0)
+
+func _add_hero_grid_item(position: Vector2, hero_id: String, selected: bool) -> void:
+	var button := Button.new()
+	button.position = position
+	button.size = Vector2(72, 72)
+	button.z_index = 70
+	button.text = ""
+	button.tooltip_text = hero_id
+	canvas.add_child(button)
+	_add_named_image_to(button, "image/comHeroGrid/cm_frame_TouXiangDi5", Vector2(0, 0), Vector2(72, 72), TextureRect.STRETCH_SCALE)
+	_add_named_image_to(button, "image/head/%s" % hero_id, Vector2(8, 8), Vector2(56, 56), TextureRect.STRETCH_KEEP_ASPECT_CENTERED)
+	_add_named_image_to(button, "image/comHeroGrid/cm_tag_SSR1", Vector2(0, 0), Vector2(34, 22), TextureRect.STRETCH_KEEP_ASPECT_CENTERED)
+	if selected:
+		var border := ColorRect.new()
+		border.position = Vector2(0, 0)
+		border.size = Vector2(72, 72)
+		border.color = Color(1.0, 0.86, 0.18, 0.25)
+		button.add_child(border)
+
+func _add_hero_detail_mock() -> void:
+	var center := _canvas_center()
+	var panel := PanelContainer.new()
+	panel.position = center + Vector2(164, -228)
+	panel.size = Vector2(286, 246)
+	panel.z_index = 70
+	panel.modulate = Color(0.08, 0.08, 0.13, 0.62)
+	canvas.add_child(panel)
+	var title_label := Label.new()
+	title_label.text = "伊卡洛斯  Lv.120"
+	title_label.position = Vector2(18, 14)
+	title_label.size = Vector2(244, 32)
+	title_label.add_theme_font_size_override("font_size", 23)
+	title_label.add_theme_color_override("font_color", Color(1.0, 0.88, 0.5))
+	panel.add_child(title_label)
+	var attrs := [
+		["战力", "3027113"],
+		["攻击", "120360"],
+		["生命", "568420"],
+		["防御", "42310"],
+		["速度", "1785"],
+	]
+	for i in attrs.size():
+		var label := Label.new()
+		label.text = "%s  %s" % [attrs[i][0], attrs[i][1]]
+		label.position = Vector2(24, 56 + i * 32)
+		label.size = Vector2(220, 28)
+		label.add_theme_font_size_override("font_size", 18)
+		label.add_theme_color_override("font_color", Color(0.88, 0.95, 1.0))
+		panel.add_child(label)
+	var button := Button.new()
+	button.text = "升2级"
+	button.position = Vector2(42, 204)
+	button.size = Vector2(202, 34)
+	panel.add_child(button)
+
+func _add_hero_skill_mock() -> void:
+	var center := _canvas_center()
+	var skills := ["10511", "10521", "10531", "10541"]
+	for i in skills.size():
+		var pos := center + Vector2(168, 54 + i * 64)
+		var slot := PanelContainer.new()
+		slot.position = pos
+		slot.size = Vector2(236, 54)
+		slot.z_index = 70
+		slot.modulate = Color(0.08, 0.08, 0.12, 0.62)
+		canvas.add_child(slot)
+		_add_named_image_to(slot, "image/en/HeroPanel/yx_frame_JiNeng", Vector2(8, 5), Vector2(44, 44), TextureRect.STRETCH_SCALE)
+		_add_named_image_to(slot, "image/skill/%s" % skills[i], Vector2(10, 7), Vector2(40, 40), TextureRect.STRETCH_KEEP_ASPECT_CENTERED)
+		var label := Label.new()
+		label.text = ["普攻", "必杀", "被动", "觉醒"][i] + "  Lv.%d" % (i + 1)
+		label.position = Vector2(60, 9)
+		label.size = Vector2(160, 32)
+		label.add_theme_font_size_override("font_size", 17)
+		label.add_theme_color_override("font_color", Color(0.94, 0.96, 1.0))
+		slot.add_child(label)
+
+func _add_hero_equipment_mock() -> void:
+	var center := _canvas_center()
+	var equips := ["yx_icon_zhuangbei0", "yx_icon_zhuangbei1", "yx_icon_zhuangbei2", "yx_icon_zhuangbei3", "yx_icon_zhuangbei4", "yx_icon_zhuangbei5"]
+	for i in equips.size():
+		var pos := center + Vector2(-238 + (i % 3) * 68, 196 + int(i / 3) * 62)
+		var slot := PanelContainer.new()
+		slot.position = pos
+		slot.size = Vector2(58, 58)
+		slot.z_index = 70
+		slot.modulate = Color(0.08, 0.08, 0.13, 0.68)
+		canvas.add_child(slot)
+		_add_named_image_to(slot, "image/en/HeroPanel/yx_frame_ZBCheng", Vector2(0, 0), Vector2(58, 58), TextureRect.STRETCH_SCALE)
+		_add_named_image_to(slot, "image/en/HeroPanel/%s" % equips[i], Vector2(9, 9), Vector2(40, 40), TextureRect.STRETCH_KEEP_ASPECT_CENTERED)
 
 func _add_bag_panel_mock() -> void:
 	var names := ["神铸核心", "星辉宝箱", "召唤券", "经验药剂", "升星石", "秘银"]
