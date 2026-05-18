@@ -285,6 +285,7 @@ UI 层：Prefab/mainpanel/MainPre
 - 已按 `MainPre.json` 将右侧入口条收缩到 `260x34` 的父节点尺寸，并把底部导航替换为 `cm_icon_ChengZhen/YingXiong/CangKu/FuBen/GongHui` 等真实 SpriteFrame。
 - 已用 `zjm_btn_rukou0..4` 的 `offset/originalSize/rotated` 元数据复原右侧入口条，`zjm_btn_rukou4` 不再依赖手工规避 rotated 裁剪。
 - 已接入主城动态 Spine 角色轮换：`105004`、`SuLa_LH`、`YouDuoLa_LH`。
+- 主城默认角色已改为原始逻辑对应的 `105004` Spine；静态 `Illustration` 仍保留在 Hero 轮换中，但不再作为默认主屏角色。
 - `YouDuoLa_LH` 来源为 `assets/resources/native/1b/1baef3d2-6771-487a-84f3-f3222ae92456.png`，反查到 SkeletonData `2bb12a28-eeb0-4dbc-b5f3-c90d869cbc14`。
 - 主城截图回归可用 `--home-hero <name>` 和 `--home-bg <name-or-index>` 指定角色/背景，例如 `--home-hero YouDuoLa_LH`。
 - 主城角色展示区域可点击切换动作。`105004` 已验证可从 `idle` 切到 `show`，也可用 `--home-click-hero-once` 模拟点击。

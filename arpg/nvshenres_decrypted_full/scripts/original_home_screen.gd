@@ -103,7 +103,7 @@ var hero_spine: Node2D
 var hero_hit_area: Button
 var title_label: Label
 var bg_index := 0
-var hero_index := 0
+var hero_index := 1
 var hero_tween: Tween
 var hero_animation_index := 0
 
@@ -169,6 +169,7 @@ func _build_ui() -> void:
 	_apply_hero()
 	_build_manual_main_city()
 	_add_debug_bar()
+	_update_title()
 
 func _add_debug_bar() -> void:
 	var top := HBoxContainer.new()
@@ -590,6 +591,9 @@ func _apply_cmdline_overrides() -> void:
 		_select_hero_animation(animation_arg)
 	if "--home-click-hero-once" in args:
 		_cycle_hero_animation()
+	var time_arg := _cmd_arg_value(args, "--home-animation-time")
+	if time_arg != "" and item_has_spine():
+		hero_spine.update_preview_pose(float(time_arg))
 	var bg_arg := _cmd_arg_value(args, "--home-bg")
 	if bg_arg != "":
 		var found_bg := _find_named_entry(BACKGROUNDS, bg_arg)
@@ -602,6 +606,9 @@ func _cmd_arg_value(args: Array, key: String) -> String:
 	if index >= 0 and index + 1 < args.size():
 		return str(args[index + 1])
 	return ""
+
+func item_has_spine() -> bool:
+	return HEROES[hero_index].has("spine")
 
 func _find_named_entry(entries: Array, query: String) -> int:
 	if query.is_valid_int():

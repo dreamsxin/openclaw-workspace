@@ -150,6 +150,7 @@
 - `spine_character_viewer.tscn` 已按骨骼绘制包围盒自动缩放/居中，动画按钮根据 skeleton 内 `animations` 动态生成。
 - 主城 `Herolh/105004` 已由静态 PNG 切换为 `SimpleSpinePlayer` 播放。
 - 主城页的 Hero 轮换已接入 `105004`、`SuLa_LH`、`YouDuoLa_LH` 三个动态 Spine，并用包围盒自动适配主城角色展示区域。
+- 主城默认角色已改为 `105004` Spine，符合 `assets/main/index.js` 中 `_roleLhbody = "105004"` 的运行时默认值；静态插画只作为轮换候选保留。
 - 主城角色区域可点击切换当前 Spine 的动作。`105004` 当前可在 `idle` / `show` 之间切换，标题栏会显示 `Anim: <name>`。
 - 主城截图回归支持 `--home-animation <name>` 和 `--home-click-hero-once`，用于验证点击切换动作。
 - YiKaLuoSi 调试结论：
