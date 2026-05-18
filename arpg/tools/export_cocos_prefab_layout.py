@@ -86,8 +86,11 @@ def export_layout(prefab_path: str) -> dict:
         skeleton_info = {}
         label_info = {}
         widget_info = {}
+        component_types = []
         for component in iter_components(item):
             class_name, values = decode_component(component, classes, templates)
+            if class_name:
+                component_types.append(class_name)
             if class_name == "cc.Label":
                 label_info = resolve_label(values)
             elif class_name == "cc.Widget":
@@ -145,6 +148,7 @@ def export_layout(prefab_path: str) -> dict:
             "label_horizontal_align": label_info.get("horizontal_align", 0),
             "label_vertical_align": label_info.get("vertical_align", 0),
             "widget": widget_info,
+            "component_types": component_types,
         }
 
     apply_widget_layout(node_records)

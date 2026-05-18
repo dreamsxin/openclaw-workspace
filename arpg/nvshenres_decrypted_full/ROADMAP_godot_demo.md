@@ -270,6 +270,7 @@ RESTORE_LOGIN_TO_HOME.md
 - 已确认 `DrawCardActivityCycleItemCom` / `DrawCardActivityRenWuItemCom` 的脚本组件嵌在 `13003/13004` prefab 内，不是独立命名 prefab 路径；后续应从导出的节点绑定字段中提炼列表项模板。
 - 活动抽卡子页已增加静态节点过滤，隐藏原始按钮、Label、进度和列表项占位，减少与运行时 mock 的重叠。
 - `export_cocos_prefab_layout.py` 已新增 `component_bindings` 导出，按自定义脚本组件字段名/别名和 owner 子树推断字段绑定。
+- `export_cocos_prefab_layout.py` 已新增节点级 `component_types` 导出，可在 layout JSON 里识别 `cc.Mask`、`cc.ScrollView`、`cc.ProgressBar` 和自定义脚本组件。
 - `13003` 已提取 `DrawCardActivityCycleItemCom` 的字段绑定：`girdLayout/btn_buy/btn_qianwang/img_receive/JDT_label/JDT_progress/title/txt_xiangou`。
 - `13004` 已提取 `DrawCardActivityRenWuItemCom` 的字段绑定：`itemNode/descText/taskProgress/taskProgressLab/submitBtn/btnLabel/imgComplete`。
 - `cocos_prefab_preview.gd` 右侧详情栏已显示脚本字段绑定，后续可直接按 `setData(...)` 把 mock 数据写入对应节点，而不是继续靠手工 row。
@@ -280,7 +281,7 @@ RESTORE_LOGIN_TO_HOME.md
 
 1. 完善 `HeroMainPre` 的 ScrollView 裁剪、Layout 重排、右侧信息层级和动态节点替换。
 2. 继续完善 `BagPre` 的页签交互、ScrollView/Mask 裁剪、详情层级和运行时分类数据。
-3. 继续基于 `component_bindings` 把活动抽卡子页 mock 改为字段驱动模板；下一步重点是 ScrollView 裁剪、Mask 裁切和真实奖励 Grid 子项。
+3. 基于 `component_types` 给 prefab 预览器补 `cc.Mask` / `cc.ScrollView` 裁剪容器，再继续补真实奖励 Grid 子项。
 4. 继续完善 `drawCardPre` 的抽卡 Spine、结果卡牌 `HeroShowPre`、页签切换动画和真实奖励状态。
 5. 将 `prefab_node_name_hints.json` 继续接入资源浏览器，显示节点名推断用途，减少手工查 JSON。
 6. 继续完善 `battle` 的真实 Spine 战斗角色、技能特效、站位坐标和战斗结束子 prefab。
