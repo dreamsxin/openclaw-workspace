@@ -10,13 +10,18 @@ ROOT = Path(r"D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full")
 CONFIG_PATH = ROOT / "assets" / "resources" / "config.json"
 OUT_PATH = ROOT / "data" / "named_resource_index.json"
 PREFIXES = [
+    "image/com/Battle",
     "image/com/DrawCard/",
+    "image/com/FuBen/",
     "image/com/Guild/",
     "image/com/Jingji/",
+    "image/com/map/",
     "image/com/pvpActivity/",
     "image/com/skyCity/",
     "image/common/gh_",
     "image/guildFlag/",
+    "image/head/",
+    "map/worldMap/",
 ]
 
 

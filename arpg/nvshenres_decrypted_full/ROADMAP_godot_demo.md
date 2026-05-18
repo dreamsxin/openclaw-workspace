@@ -238,13 +238,16 @@ RESTORE_LOGIN_TO_HOME.md
 - `export_named_resource_index.py` 已扩展 `image/com/skyCity/*`，`data/named_resource_index.json` 当前包含 325 条命名资源，可供天空城及其子界面继续复用。
 - `JingjiPre` 静态 prefab 只有文字和空节点，主要贴图由运行时路径加载；`export_named_resource_index.py` 已扩展 `image/com/Jingji/*` 和 `image/com/pvpActivity/*`。
 - `JingjiPre` 预览已叠加本地竞技 mock，补 PVP 背景、冠军联赛、战神殿、王者争霸、组队竞技、巅峰对决、膜拜信息和赛季奖励区域。
-- `data/named_resource_index.json` 当前包含 507 条命名资源。
+- `battle` 静态 prefab 是战斗站位容器，包含左右 5 个角色位、hp/hit/zidan 和背景节点，但不直接带贴图；预览器已叠加本地战斗 mock。
+- `battle` 预览已补地图背景、双方 5 个站位、头像、血条、伤害/治疗反馈和战斗胜利奖励面板。
+- `export_named_resource_index.py` 已扩展 `image/com/Battle*`、`image/com/FuBen/*`、`image/com/map/*`、`image/head/*`、`map/worldMap/*`。
+- `data/named_resource_index.json` 当前包含 766 条命名资源。
 
 下一步优先级：
 
 1. 完善 `HeroMainPre` 的 ScrollView 裁剪、Layout 重排和角色展示 mock 数据。
 2. 继续完善 `BagPre` 的页签交互、ScrollView 裁剪和运行时分类数据。
-3. 继续完善 `JingjiPre` / `SkyCityPre` 的子 prefab、UISpine 动画和按钮跳转。
+3. 继续完善 `battle` 的真实 Spine 战斗角色、技能特效、站位坐标和战斗结束子 prefab。
 4. 继续完善 `drawCardPre` / `DrawCardActivityPre` 的卡牌动画、抽卡结果和展示 Spine。
 
 ## 当前风险

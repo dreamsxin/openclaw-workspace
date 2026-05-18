@@ -487,6 +487,7 @@ Prefab 静态节点按 Cocos 规则处理：
 - `GuildMainPre`：叠加公会大厅背景、旗帜、信息和入口。
 - `SkyCityPre`：叠加天空城空岛、建筑、矿物、副本入口和底部操作按钮；资源来自 `image/com/skyCity/*`。
 - `JingjiPre`：叠加 PVP 背景、五个竞技玩法入口、膜拜信息和赛季奖励；资源来自 `image/com/Jingji/*` 与 `image/com/pvpActivity/*`。
+- `battle`：叠加地图背景、左右 5 个战斗站位、头像、血条、伤害/治疗反馈和胜利奖励面板；资源来自 `image/com/map/*`、`image/head/*`、`image/com/Battle*`。
 
 启动工程：
 
@@ -552,6 +553,7 @@ Spine 查看器：
 & $godot --path $proj --scene "res://scenes/cocos_prefab_preview.tscn" --quit-after 100 -- --prefab-layout "公会" --capture-prefab-preview "D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\prefab_guild.png" *> $log
 & $godot --path $proj --scene "res://scenes/cocos_prefab_preview.tscn" --quit-after 100 -- --prefab-layout "天空城" --capture-prefab-preview "D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\prefab_skycity.png" *> $log
 & $godot --path $proj --scene "res://scenes/cocos_prefab_preview.tscn" --quit-after 100 -- --prefab-layout "竞技" --capture-prefab-preview "D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\prefab_jingji.png" *> $log
+& $godot --path $proj --scene "res://scenes/cocos_prefab_preview.tscn" --quit-after 100 -- --prefab-layout "战斗" --capture-prefab-preview "D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\prefab_battle.png" *> $log
 ```
 
 - `背包`：使用 `GridBoxItemPre` + `image/equipment` mock 数据。
@@ -559,6 +561,7 @@ Spine 查看器：
 - `公会`：使用 `image/com/Guild`、`image/guildFlag` mock 数据。
 - `天空城`：使用 `image/com/skyCity` mock 建筑、矿物、空岛和副本入口。
 - `竞技`：使用 `image/com/Jingji`、`image/com/pvpActivity` mock 玩法入口、排名、奖励和膜拜信息。
+- `战斗`：使用 `image/com/map`、`image/head`、`image/com/Battle*` mock 战场、站位、血条和胜利面板。
 
 局部 slot 调试：
 

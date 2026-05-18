@@ -188,6 +188,8 @@ func _add_layout_mock() -> void:
 		_add_sky_city_mock()
 	elif current_layout == "竞技":
 		_add_jingji_mock()
+	elif current_layout == "战斗":
+		_add_battle_mock()
 
 func _add_hero_panel_mock() -> void:
 	var player: Node2D = SimpleSpinePlayerScript.new()
@@ -601,6 +603,130 @@ func _add_jingji_bottom_notice(position: Vector2) -> void:
 	label.add_theme_font_size_override("font_size", 17)
 	label.add_theme_color_override("font_color", Color(0.86, 0.92, 1.0))
 	canvas.add_child(label)
+
+func _add_battle_mock() -> void:
+	var center := _canvas_center()
+	_add_named_image("image/com/map/1001", center + Vector2(-508, -270), Vector2(930, 520), TextureRect.STRETCH_KEEP_ASPECT_COVERED).modulate = Color(1, 1, 1, 0.72)
+	_add_battle_top_bar(center + Vector2(-456, -256))
+	var left_positions := [
+		center + Vector2(-330, 44),
+		center + Vector2(-448, -38),
+		center + Vector2(-224, -58),
+		center + Vector2(-386, 156),
+		center + Vector2(-152, 132),
+	]
+	var right_positions := [
+		center + Vector2(314, 38),
+		center + Vector2(442, -48),
+		center + Vector2(194, -70),
+		center + Vector2(374, 156),
+		center + Vector2(126, 128),
+	]
+	var left_heads := ["image/head/105004", "image/head/205008", "image/head/305006", "image/head/204001", "image/head/504002"]
+	var right_heads := ["image/head/505004", "image/head/405007", "image/head/304001", "image/head/204002", "image/head/1000201"]
+	for i in 5:
+		_add_battle_unit(left_positions[i], left_heads[i], "我方%d" % (i + 1), 0.82 - i * 0.08, false)
+		_add_battle_unit(right_positions[i], right_heads[i], "敌方%d" % (i + 1), 0.76 - i * 0.07, true)
+	_add_battle_damage(center + Vector2(102, -146), "暴击 12876")
+	_add_battle_damage(center + Vector2(-226, -122), "治疗 +2480", Color(0.5, 1.0, 0.58))
+	_add_battle_result_panel(center + Vector2(-160, 196))
+
+func _add_battle_top_bar(position: Vector2) -> void:
+	var bar := PanelContainer.new()
+	bar.position = position
+	bar.size = Vector2(860, 52)
+	bar.modulate = Color(0.06, 0.07, 0.1, 0.72)
+	canvas.add_child(bar)
+	var left := Label.new()
+	left.text = "本地战斗预览"
+	left.position = Vector2(18, 10)
+	left.size = Vector2(260, 32)
+	left.add_theme_font_size_override("font_size", 22)
+	left.add_theme_color_override("font_color", Color(1.0, 0.92, 0.62))
+	bar.add_child(left)
+	var right := Label.new()
+	right.text = "1/3 回合    自动战斗"
+	right.position = Vector2(620, 12)
+	right.size = Vector2(220, 28)
+	right.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	right.add_theme_font_size_override("font_size", 18)
+	right.add_theme_color_override("font_color", Color(0.84, 0.92, 1.0))
+	bar.add_child(right)
+
+func _add_battle_unit(position: Vector2, head_path: String, title_text: String, hp_ratio: float, flip: bool) -> void:
+	var unit := Control.new()
+	unit.position = position
+	unit.size = Vector2(118, 158)
+	unit.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	canvas.add_child(unit)
+	var shadow := PanelContainer.new()
+	shadow.position = Vector2(14, 116)
+	shadow.size = Vector2(90, 24)
+	shadow.modulate = Color(0, 0, 0, 0.42)
+	unit.add_child(shadow)
+	var body := TextureRect.new()
+	body.position = Vector2(16, 8)
+	body.size = Vector2(86, 86)
+	body.texture = _texture_for_named_resource(head_path)
+	body.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	body.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	body.flip_h = flip
+	unit.add_child(body)
+	var name_label := Label.new()
+	name_label.text = title_text
+	name_label.position = Vector2(0, 94)
+	name_label.size = Vector2(118, 22)
+	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	name_label.add_theme_font_size_override("font_size", 15)
+	name_label.add_theme_color_override("font_color", Color(0.9, 0.95, 1.0))
+	unit.add_child(name_label)
+	_add_battle_hp_bar(unit, Vector2(10, 122), hp_ratio)
+
+func _add_battle_hp_bar(parent: Control, position: Vector2, ratio: float) -> void:
+	var bg := ColorRect.new()
+	bg.position = position
+	bg.size = Vector2(98, 10)
+	bg.color = Color(0.16, 0.04, 0.04, 0.9)
+	parent.add_child(bg)
+	var fill := ColorRect.new()
+	fill.position = position + Vector2(1, 1)
+	fill.size = Vector2(maxf(0.0, minf(1.0, ratio)) * 96.0, 8)
+	fill.color = Color(0.72, 0.1, 0.08, 0.95)
+	parent.add_child(fill)
+
+func _add_battle_damage(position: Vector2, text: String, color: Color = Color(1.0, 0.35, 0.22)) -> void:
+	var label := Label.new()
+	label.text = text
+	label.position = position
+	label.size = Vector2(180, 36)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.add_theme_font_size_override("font_size", 26)
+	label.add_theme_color_override("font_color", color)
+	canvas.add_child(label)
+
+func _add_battle_result_panel(position: Vector2) -> void:
+	var panel := PanelContainer.new()
+	panel.position = position
+	panel.size = Vector2(320, 104)
+	panel.modulate = Color(0.08, 0.07, 0.1, 0.74)
+	canvas.add_child(panel)
+	_add_named_image_to(panel, "image/com/BattleEnd/sl_frame9_shengli", Vector2(12, 10), Vector2(296, 42), TextureRect.STRETCH_SCALE)
+	var title_label := Label.new()
+	title_label.text = "战斗胜利"
+	title_label.position = Vector2(0, 16)
+	title_label.size = Vector2(320, 30)
+	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title_label.add_theme_font_size_override("font_size", 24)
+	title_label.add_theme_color_override("font_color", Color(1.0, 0.86, 0.45))
+	panel.add_child(title_label)
+	var reward := Label.new()
+	reward.text = "金币 x12000    经验 x460    装备宝箱 x1"
+	reward.position = Vector2(18, 62)
+	reward.size = Vector2(284, 28)
+	reward.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	reward.add_theme_font_size_override("font_size", 17)
+	reward.add_theme_color_override("font_color", Color(0.86, 0.94, 1.0))
+	panel.add_child(reward)
 
 func _node_label_text(node: Dictionary) -> String:
 	return str(node.get("label_text", ""))
