@@ -485,6 +485,7 @@ Prefab 静态节点按 Cocos 规则处理：
 - `BagPre`：叠加本地背包条目，结构来自 `GridBoxItemPre`。
 - `drawCardPre`：叠加抽卡卡池、卡牌、宝箱进度和召唤按钮。
 - `GuildMainPre`：叠加公会大厅背景、旗帜、信息和入口。
+- `SkyCityPre`：叠加天空城空岛、建筑、矿物、副本入口和底部操作按钮；资源来自 `image/com/skyCity/*`。
 
 启动工程：
 
@@ -548,11 +549,13 @@ Spine 查看器：
 
 ```powershell
 & $godot --path $proj --scene "res://scenes/cocos_prefab_preview.tscn" --quit-after 100 -- --prefab-layout "公会" --capture-prefab-preview "D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\prefab_guild.png" *> $log
+& $godot --path $proj --scene "res://scenes/cocos_prefab_preview.tscn" --quit-after 100 -- --prefab-layout "天空城" --capture-prefab-preview "D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\prefab_skycity.png" *> $log
 ```
 
 - `背包`：使用 `GridBoxItemPre` + `image/equipment` mock 数据。
 - `抽卡`：使用 `image/com/DrawCard` mock 数据。
 - `公会`：使用 `image/com/Guild`、`image/guildFlag` mock 数据。
+- `天空城`：使用 `image/com/skyCity` mock 建筑、矿物、空岛和副本入口。
 
 局部 slot 调试：
 

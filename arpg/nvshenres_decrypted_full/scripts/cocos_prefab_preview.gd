@@ -184,6 +184,8 @@ func _add_layout_mock() -> void:
 		_add_draw_card_mock()
 	elif current_layout == "公会":
 		_add_guild_mock()
+	elif current_layout == "天空城":
+		_add_sky_city_mock()
 
 func _add_hero_panel_mock() -> void:
 	var player: Node2D = SimpleSpinePlayerScript.new()
@@ -424,6 +426,81 @@ func _add_guild_entry(position: Vector2, text: String, resource_path: String) ->
 	label.add_theme_font_size_override("font_size", 18)
 	label.add_theme_color_override("font_color", Color(0.98, 0.91, 0.68))
 	button.add_child(label)
+
+func _add_sky_city_mock() -> void:
+	var center := _canvas_center()
+	_add_named_image("image/com/skyCity/huayuan/kongzhonghuayuan-dao.j", center + Vector2(-520, -258), Vector2(820, 430), TextureRect.STRETCH_KEEP_ASPECT_COVERED).modulate = Color(1, 1, 1, 0.72)
+	_add_named_image("image/com/skyCity/huayuan/kongzhonghuayuan-qianbiandeyun", center + Vector2(-520, 210), Vector2(820, 72), TextureRect.STRETCH_SCALE).modulate = Color(1, 1, 1, 0.88)
+	_add_sky_city_building(center + Vector2(-350, -66), "image/com/skyCity/buildBody/0001", "主城堡", "Lv.8")
+	_add_sky_city_building(center + Vector2(-145, 12), "image/com/skyCity/buildBody/11301", "工坊", "Lv.5")
+	_add_sky_city_building(center + Vector2(-500, 72), "image/com/skyCity/buildBody/5301", "空港", "Lv.4")
+	_add_sky_city_mine(center + Vector2(100, -118), "image/com/skyCity/kuangwu/kuangwu-lansekuang", "蓝晶矿", "12/h")
+	_add_sky_city_mine(center + Vector2(275, -28), "image/com/skyCity/kuangwu/kuangwu-huangsekuang", "金辉矿", "8/h")
+	_add_sky_city_bubble(center + Vector2(-12, 126), "image/com/skyCity/fuben/fuben-qipao-bossdao", "首领岛")
+	_add_sky_city_bubble(center + Vector2(178, 136), "image/com/skyCity/fuben/fuben-qipao-ziyuanxiaodao", "资源岛")
+	_add_sky_city_action_button(center + Vector2(142, 244), "一键领取")
+	_add_sky_city_action_button(center + Vector2(354, 244), "战意制作")
+
+func _add_sky_city_building(position: Vector2, resource_path: String, title_text: String, level_text: String) -> void:
+	var root := Control.new()
+	root.position = position
+	root.size = Vector2(160, 150)
+	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	canvas.add_child(root)
+	_add_named_image_to(root, resource_path, Vector2(10, 0), Vector2(140, 104), TextureRect.STRETCH_KEEP_ASPECT_CENTERED)
+	var plate := PanelContainer.new()
+	plate.position = Vector2(14, 103)
+	plate.size = Vector2(132, 40)
+	plate.modulate = Color(0.12, 0.12, 0.18, 0.72)
+	root.add_child(plate)
+	var label := Label.new()
+	label.text = "%s  %s" % [title_text, level_text]
+	label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.add_theme_font_size_override("font_size", 16)
+	label.add_theme_color_override("font_color", Color(1.0, 0.92, 0.68))
+	plate.add_child(label)
+
+func _add_sky_city_mine(position: Vector2, resource_path: String, title_text: String, rate_text: String) -> void:
+	var panel := PanelContainer.new()
+	panel.position = position
+	panel.size = Vector2(148, 94)
+	panel.modulate = Color(0.08, 0.12, 0.18, 0.66)
+	canvas.add_child(panel)
+	_add_named_image_to(panel, resource_path, Vector2(10, 8), Vector2(62, 62), TextureRect.STRETCH_KEEP_ASPECT_CENTERED)
+	var label := Label.new()
+	label.text = "%s\n%s" % [title_text, rate_text]
+	label.position = Vector2(76, 16)
+	label.size = Vector2(66, 60)
+	label.add_theme_font_size_override("font_size", 15)
+	label.add_theme_color_override("font_color", Color(0.84, 0.95, 1.0))
+	panel.add_child(label)
+
+func _add_sky_city_bubble(position: Vector2, resource_path: String, title_text: String) -> void:
+	var button := Button.new()
+	button.position = position
+	button.size = Vector2(128, 104)
+	button.text = ""
+	button.tooltip_text = title_text
+	canvas.add_child(button)
+	_add_named_image_to(button, resource_path, Vector2(16, 4), Vector2(96, 64), TextureRect.STRETCH_KEEP_ASPECT_CENTERED)
+	var label := Label.new()
+	label.text = title_text
+	label.position = Vector2(0, 70)
+	label.size = Vector2(128, 28)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.add_theme_font_size_override("font_size", 17)
+	label.add_theme_color_override("font_color", Color(1.0, 0.9, 0.6))
+	button.add_child(label)
+
+func _add_sky_city_action_button(position: Vector2, text: String) -> void:
+	var button := Button.new()
+	button.position = position
+	button.size = Vector2(178, 52)
+	button.text = text
+	button.add_theme_font_size_override("font_size", 21)
+	canvas.add_child(button)
 
 func _node_label_text(node: Dictionary) -> String:
 	return str(node.get("label_text", ""))
