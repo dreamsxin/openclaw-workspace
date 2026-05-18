@@ -253,13 +253,16 @@ RESTORE_LOGIN_TO_HOME.md
 - 当前 `BagPre` 的详情区仍受原 prefab 暗层/遮罩影响，后续需要统一处理 ScrollView、Mask 和 mock 层级。
 - `cocos_prefab_preview.gd` 已对带运行时 mock 的页面过滤无贴图、无文本的 Cocos 容器占位节点，减少 `content`、`mask`、`box` 等半透明灰块对背包/英雄页的遮挡。
 - 过滤后仍保留真实贴图、真实 Label 和 Button 节点；登录/选服等未使用 mock overlay 的页面不受该规则影响。
+- `drawCardPre` 预览已继续补本地抽卡动态内容：右侧卡池页签、召唤积分/消耗、十连结果预览、积分兑换信息。
+- 当前 `drawCardPre` 仍会与原 prefab 的真实静态贴图和文本重叠，后续需要按节点名做页面级静态层替换，而不是继续叠加 mock。
 
 下一步优先级：
 
 1. 完善 `HeroMainPre` 的 ScrollView 裁剪、Layout 重排、右侧信息层级和动态节点替换。
 2. 继续完善 `BagPre` 的页签交互、ScrollView/Mask 裁剪、详情层级和运行时分类数据。
 3. 继续完善 `DrawCardActivityPre` 的 `13002..13005` 子 prefab、页签切换和抽卡活动 Spine。
-4. 继续完善 `battle` 的真实 Spine 战斗角色、技能特效、站位坐标和战斗结束子 prefab。
+4. 继续完善 `drawCardPre` 的页面级静态层替换、抽卡动画、结果卡牌和展示 Spine。
+5. 继续完善 `battle` 的真实 Spine 战斗角色、技能特效、站位坐标和战斗结束子 prefab。
 
 ## 当前风险
 

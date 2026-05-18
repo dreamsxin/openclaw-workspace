@@ -485,6 +485,7 @@ func _add_draw_card_mock() -> void:
 		var card := PanelContainer.new()
 		card.position = center + Vector2(-310 + i * 180, -55)
 		card.size = Vector2(150, 205)
+		card.z_index = 70
 		card.modulate = Color(0.18, 0.14, 0.28, 0.62)
 		canvas.add_child(card)
 		_add_named_image_to(card, card_resources[i], Vector2(22, 18), Vector2(106, 112), TextureRect.STRETCH_KEEP_ASPECT_CENTERED)
@@ -501,13 +502,109 @@ func _add_draw_card_mock() -> void:
 		button.position = Vector2(28, 170)
 		button.size = Vector2(94, 28)
 		card.add_child(button)
-	_add_draw_card_reward_bar(center + Vector2(-335, 185))
+	_add_draw_card_reward_bar(center + Vector2(-335, 178))
+	_add_draw_card_tabs(center + Vector2(448, -216))
+	_add_draw_card_cost_panel(center + Vector2(-512, 94))
+	_add_draw_card_result_preview(center + Vector2(-156, 134))
+	_add_draw_card_exchange_panel(center + Vector2(236, 94))
 
 func _add_draw_card_reward_bar(origin: Vector2) -> void:
-	_add_named_image("image/com/DrawCard/zh_progressBG_jiangli", origin, Vector2(340, 22), TextureRect.STRETCH_SCALE)
-	_add_named_image("image/com/DrawCard/zh_progressbar_jiangli", origin + Vector2(6, 6), Vector2(220, 10), TextureRect.STRETCH_SCALE)
+	var bg := _add_named_image("image/com/DrawCard/zh_progressBG_jiangli", origin, Vector2(340, 22), TextureRect.STRETCH_SCALE)
+	bg.z_index = 70
+	var bar := _add_named_image("image/com/DrawCard/zh_progressbar_jiangli", origin + Vector2(6, 6), Vector2(220, 10), TextureRect.STRETCH_SCALE)
+	bar.z_index = 71
 	for i in 4:
-		_add_named_image("image/com/DrawCard/bx_icon_0%d" % (i + 1), origin + Vector2(52 + i * 82, -48), Vector2(58, 58), TextureRect.STRETCH_KEEP_ASPECT_CENTERED)
+		var box := _add_named_image("image/com/DrawCard/bx_icon_0%d" % (i + 1), origin + Vector2(52 + i * 82, -48), Vector2(58, 58), TextureRect.STRETCH_KEEP_ASPECT_CENTERED)
+		box.z_index = 72
+
+func _add_draw_card_tabs(origin: Vector2) -> void:
+	var tabs := [
+		{"text": "普通", "res": "image/com/DrawCard/zh_btn_putongon"},
+		{"text": "高级", "res": "image/com/DrawCard/zh_btn_gaojioff"},
+		{"text": "友情", "res": "image/com/DrawCard/zh_btn_youqingoff"},
+		{"text": "天命", "res": "image/com/DrawCard/zh_btn_xianzhioff"},
+	]
+	for i in tabs.size():
+		var button := Button.new()
+		button.position = origin + Vector2(0, i * 72)
+		button.size = Vector2(138, 52)
+		button.text = ""
+		button.z_index = 70
+		canvas.add_child(button)
+		_add_named_image_to(button, str(tabs[i].res), Vector2(0, 0), Vector2(138, 52), TextureRect.STRETCH_SCALE)
+		var label := Label.new()
+		label.text = str(tabs[i].text)
+		label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		label.add_theme_font_size_override("font_size", 19)
+		label.add_theme_color_override("font_color", Color(1.0, 0.92, 0.62))
+		button.add_child(label)
+
+func _add_draw_card_cost_panel(position: Vector2) -> void:
+	var panel := PanelContainer.new()
+	panel.position = position
+	panel.size = Vector2(238, 118)
+	panel.z_index = 70
+	panel.modulate = Color(0.08, 0.08, 0.12, 0.72)
+	canvas.add_child(panel)
+	var title_label := Label.new()
+	title_label.text = "召唤积分  11/120"
+	title_label.position = Vector2(14, 10)
+	title_label.size = Vector2(210, 26)
+	title_label.add_theme_font_size_override("font_size", 17)
+	title_label.add_theme_color_override("font_color", Color(1.0, 0.88, 0.52))
+	panel.add_child(title_label)
+	var calls := [
+		{"text": "召唤1次", "cost": "1000"},
+		{"text": "召唤10次", "cost": "9000"},
+	]
+	for i in calls.size():
+		var button := Button.new()
+		button.position = Vector2(16 + i * 108, 50)
+		button.size = Vector2(96, 52)
+		button.text = "%s\n%s" % [calls[i].text, calls[i].cost]
+		button.add_theme_font_size_override("font_size", 15)
+		panel.add_child(button)
+
+func _add_draw_card_result_preview(position: Vector2) -> void:
+	var panel := PanelContainer.new()
+	panel.position = position
+	panel.size = Vector2(360, 142)
+	panel.z_index = 70
+	panel.modulate = Color(0.08, 0.08, 0.12, 0.68)
+	canvas.add_child(panel)
+	var title_label := Label.new()
+	title_label.text = "十连结果预览"
+	title_label.position = Vector2(0, 10)
+	title_label.size = Vector2(360, 26)
+	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title_label.add_theme_font_size_override("font_size", 19)
+	title_label.add_theme_color_override("font_color", Color(1.0, 0.88, 0.52))
+	panel.add_child(title_label)
+	var heroes := ["105004", "205008", "305006", "405007", "505004"]
+	for i in heroes.size():
+		var x := 22 + i * 66
+		_add_named_image_to(panel, "image/comHeroGrid/cm_frame_TouXiangDi5", Vector2(x, 48), Vector2(56, 56), TextureRect.STRETCH_SCALE)
+		_add_named_image_to(panel, "image/head/%s" % heroes[i], Vector2(x + 6, 54), Vector2(44, 44), TextureRect.STRETCH_KEEP_ASPECT_CENTERED)
+		_add_named_image_to(panel, "image/comHeroGrid/cm_tag_SSR1", Vector2(x, 48), Vector2(30, 18), TextureRect.STRETCH_KEEP_ASPECT_CENTERED)
+
+func _add_draw_card_exchange_panel(position: Vector2) -> void:
+	var panel := PanelContainer.new()
+	panel.position = position
+	panel.size = Vector2(210, 142)
+	panel.z_index = 70
+	panel.modulate = Color(0.08, 0.08, 0.12, 0.72)
+	canvas.add_child(panel)
+	_add_named_image_to(panel, "image/com/DrawCard/zh_btn_duihuan", Vector2(34, 14), Vector2(142, 46), TextureRect.STRETCH_SCALE)
+	var info := Label.new()
+	info.text = "积分兑换\nSSR碎片、召唤券\n当前积分：360"
+	info.position = Vector2(16, 70)
+	info.size = Vector2(178, 62)
+	info.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	info.add_theme_font_size_override("font_size", 16)
+	info.add_theme_color_override("font_color", Color(0.86, 0.94, 1.0))
+	panel.add_child(info)
 
 func _add_named_image(resource_path: String, position: Vector2, size: Vector2, stretch_mode: TextureRect.StretchMode) -> TextureRect:
 	var image := TextureRect.new()
