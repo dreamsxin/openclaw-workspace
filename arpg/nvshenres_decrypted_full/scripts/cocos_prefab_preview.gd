@@ -195,6 +195,14 @@ func _add_layout_mock() -> void:
 		_add_battle_mock()
 	elif current_layout == "活动抽卡":
 		_add_draw_card_activity_mock()
+	elif current_layout == "活动抽卡-登录领取":
+		_add_draw_activity_login_reward_runtime_mock()
+	elif current_layout == "活动抽卡-循环礼包":
+		_add_draw_activity_cycle_runtime_mock()
+	elif current_layout == "活动抽卡-抽数任务":
+		_add_draw_activity_task_runtime_mock()
+	elif current_layout == "活动抽卡-许愿礼包":
+		_add_draw_activity_wish_gift_runtime_mock()
 
 func _add_hero_panel_mock() -> void:
 	var player: Node2D = SimpleSpinePlayerScript.new()
@@ -1201,6 +1209,201 @@ func _add_draw_activity_button(position: Vector2, text: String) -> void:
 	button.add_theme_font_size_override("font_size", 21)
 	canvas.add_child(button)
 
+func _add_draw_activity_login_reward_runtime_mock() -> void:
+	_add_activity_runtime_title("DrawCardActivity13002 / 登录领取", "rewardOne(): 领取当天奖励    rewardall(): 一键领取")
+	_add_named_image("image/com/ActivityPanel/ZhaoHuan/Title", _mock_cocos_position(Vector2(-302, 230)), Vector2(310, 78), TextureRect.STRETCH_KEEP_ASPECT_CENTERED)
+	_add_named_image("image/com/ActivityPanel/NewHeroComing/JiangLin/yxjl_frame_di", _mock_cocos_position(Vector2(150, -52)), Vector2(520, 260), TextureRect.STRETCH_SCALE)
+	_add_named_image("image/head/105004", _mock_cocos_position(Vector2(54, -14)), Vector2(152, 152), TextureRect.STRETCH_KEEP_ASPECT_CENTERED)
+	_add_activity_badge(_mock_cocos_position(Vector2(278, 219)), "今日可领取", Color(0.9, 0.16, 0.12))
+	_add_activity_button_like(_mock_cocos_position(Vector2(196, -186)), "领取")
+	_add_activity_button_like(_mock_cocos_position(Vector2(338, -186)), "一键领取")
+	var days := [
+		{"day": "第1天", "reward": "召唤券 x1", "state": "已领取"},
+		{"day": "第2天", "reward": "钻石 x300", "state": "可领取"},
+		{"day": "第3天", "reward": "SSR碎片 x10", "state": "未达成"},
+		{"day": "第4天", "reward": "英雄宝箱 x1", "state": "未达成"},
+	]
+	for i in days.size():
+		var pos := _mock_cocos_position(Vector2(-324 + i * 152, -176))
+		_add_activity_reward_card(pos, str(days[i].day), str(days[i].reward), str(days[i].state), i == 1)
+
+func _add_draw_activity_cycle_runtime_mock() -> void:
+	_add_activity_runtime_title("DrawCardActivity13003 / 循环礼包", "setData(e,t): content 子节点复用 DrawCardActivityCycleItemCom")
+	var rows := [
+		{"name": "累计召唤 10 次", "reward": "高级召唤券 x2", "progress": "10/10", "state": "领取"},
+		{"name": "累计召唤 30 次", "reward": "钻石 x500", "progress": "18/30", "state": "前往"},
+		{"name": "累计召唤 60 次", "reward": "SSR碎片 x20", "progress": "18/60", "state": "前往"},
+		{"name": "累计召唤 100 次", "reward": "限定头像框", "progress": "18/100", "state": "已领取"},
+	]
+	for i in rows.size():
+		_add_activity_cycle_row(_mock_cocos_position(Vector2(-222, 96 - i * 104)), rows[i])
+
+func _add_draw_activity_task_runtime_mock() -> void:
+	_add_activity_runtime_title("DrawCardActivity13004 / 抽数任务", "setData(e,t,n): boxList 驱动宝箱红点，taskList 驱动任务列表")
+	var box_positions := [Vector2(-258, 175), Vector2(-141, 175), Vector2(-27, 175), Vector2(87, 175), Vector2(201, 175), Vector2(315, 175)]
+	var boxes := [
+		{"need": 30, "state": 2}, {"need": 60, "state": 1}, {"need": 100, "state": 0},
+		{"need": 150, "state": 0}, {"need": 200, "state": 0}, {"need": 300, "state": 0},
+	]
+	_add_activity_progress_bar(_mock_cocos_position(Vector2(-256, 144)), Vector2(604, 18), 0.36)
+	for i in boxes.size():
+		var box: Dictionary = boxes[i]
+		var state := int(box.get("state", 0))
+		var icon := "image/com/DrawCard/bx_icon_0%d%s" % [2 + int(i / 2), "" if state == 2 else "a"]
+		var pos := _mock_cocos_position(box_positions[i])
+		_add_named_image(icon, pos + Vector2(-34, -40), Vector2(68, 68), TextureRect.STRETCH_KEEP_ASPECT_CENTERED)
+		_add_activity_small_label(str(box.get("need", 0)), pos + Vector2(-28, 24), Vector2(56, 20), Color(1.0, 0.88, 0.48), HORIZONTAL_ALIGNMENT_CENTER)
+		if state == 1:
+			_add_activity_red_dot(pos + Vector2(20, -34))
+		elif state == 2:
+			_add_activity_badge(pos + Vector2(-32, -48), "已领", Color(0.22, 0.22, 0.22, 0.82), Vector2(58, 22), 13)
+	var tasks := [
+		{"text": "活动期间累计召唤 30 次", "reward": "积分 +30 / 召唤券 x1", "progress": "30/30", "state": "领取"},
+		{"text": "活动期间累计召唤 60 次", "reward": "积分 +60 / 钻石 x300", "progress": "42/60", "state": "前往"},
+		{"text": "活动期间累计召唤 100 次", "reward": "积分 +100 / SSR碎片 x10", "progress": "42/100", "state": "前往"},
+		{"text": "活动期间累计召唤 150 次", "reward": "积分 +150 / 英雄宝箱 x1", "progress": "42/150", "state": "未完成"},
+	]
+	for i in tasks.size():
+		_add_activity_task_row(_mock_cocos_position(Vector2(-246, 64 - i * 92)), tasks[i])
+
+func _add_draw_activity_wish_gift_runtime_mock() -> void:
+	_add_activity_runtime_title("DrawCardActivity13005 / 许愿礼包", "giftContent 动态实例化 giftItemPre，本地预览模拟购买状态")
+	var gifts := [
+		{"name": "许愿礼包 I", "reward": "召唤券 x5\n钻石 x600", "price": "￥6", "state": "购买"},
+		{"name": "许愿礼包 II", "reward": "召唤券 x12\nSSR碎片 x20", "price": "￥30", "state": "购买"},
+		{"name": "许愿礼包 III", "reward": "限定英雄碎片 x50\n星辉宝箱 x2", "price": "￥68", "state": "已购"},
+	]
+	for i in gifts.size():
+		_add_activity_gift_card(_mock_cocos_position(Vector2(-286 + i * 276, 46)), gifts[i])
+
+func _add_activity_runtime_title(title: String, subtitle: String) -> void:
+	var label := Label.new()
+	label.text = title
+	label.position = _canvas_center() + Vector2(-402, -286)
+	label.size = Vector2(520, 30)
+	label.add_theme_font_size_override("font_size", 22)
+	label.add_theme_color_override("font_color", Color(1.0, 0.88, 0.52))
+	canvas.add_child(label)
+	var sub := Label.new()
+	sub.text = subtitle
+	sub.position = _canvas_center() + Vector2(-400, -256)
+	sub.size = Vector2(720, 24)
+	sub.add_theme_font_size_override("font_size", 14)
+	sub.add_theme_color_override("font_color", Color(0.78, 0.9, 1.0, 0.86))
+	canvas.add_child(sub)
+
+func _add_activity_reward_card(position: Vector2, title: String, reward: String, state: String, highlighted: bool) -> void:
+	var panel := PanelContainer.new()
+	panel.position = position
+	panel.size = Vector2(130, 126)
+	panel.self_modulate = Color(0.08, 0.08, 0.12, 0.78)
+	canvas.add_child(panel)
+	_add_named_image_to(panel, "image/com/ActivityPanel/ZhaoHuan/wxzh_item_bg", Vector2(10, 10), Vector2(110, 74), TextureRect.STRETCH_SCALE)
+	_add_named_image_to(panel, "image/com/DrawCard/bx_icon_02a", Vector2(39, 18), Vector2(52, 52), TextureRect.STRETCH_KEEP_ASPECT_CENTERED)
+	_add_activity_small_label(title, position + Vector2(0, 82), Vector2(130, 20), Color(1.0, 0.88, 0.5), HORIZONTAL_ALIGNMENT_CENTER)
+	_add_activity_small_label(reward, position + Vector2(0, 102), Vector2(130, 20), Color(0.88, 0.94, 1.0), HORIZONTAL_ALIGNMENT_CENTER)
+	if highlighted:
+		_add_activity_red_dot(position + Vector2(108, 6))
+	else:
+		_add_activity_badge(position + Vector2(8, 8), state, Color(0.08, 0.08, 0.08, 0.72), Vector2(58, 22), 12)
+
+func _add_activity_cycle_row(position: Vector2, data: Dictionary) -> void:
+	var panel := PanelContainer.new()
+	panel.position = position
+	panel.size = Vector2(760, 82)
+	panel.self_modulate = Color(0.08, 0.08, 0.12, 0.72)
+	canvas.add_child(panel)
+	_add_named_image_to(panel, "image/com/ActivityPanel/ZhaoHuan/wxzh_item_bg", Vector2(10, 9), Vector2(740, 64), TextureRect.STRETCH_SCALE)
+	_add_named_image_to(panel, "image/Item/11001", Vector2(28, 17), Vector2(48, 48), TextureRect.STRETCH_KEEP_ASPECT_CENTERED)
+	_add_activity_small_label(str(data.get("name", "")), position + Vector2(94, 14), Vector2(260, 24), Color(1.0, 0.88, 0.5), HORIZONTAL_ALIGNMENT_LEFT, 18)
+	_add_activity_small_label(str(data.get("reward", "")), position + Vector2(94, 42), Vector2(260, 22), Color(0.86, 0.94, 1.0), HORIZONTAL_ALIGNMENT_LEFT, 15)
+	_add_activity_progress_bar(position + Vector2(386, 32), Vector2(170, 16), 1.0 if str(data.get("state", "")) == "领取" else 0.58)
+	_add_activity_small_label(str(data.get("progress", "")), position + Vector2(386, 50), Vector2(170, 20), Color(0.96, 0.9, 0.68), HORIZONTAL_ALIGNMENT_CENTER, 13)
+	_add_activity_button_like(position + Vector2(612, 20), str(data.get("state", "")), Vector2(104, 42))
+
+func _add_activity_task_row(position: Vector2, data: Dictionary) -> void:
+	var panel := PanelContainer.new()
+	panel.position = position
+	panel.size = Vector2(668, 78)
+	panel.self_modulate = Color(0.08, 0.08, 0.12, 0.7)
+	canvas.add_child(panel)
+	_add_named_image_to(panel, "image/com/ActivityPanel/ZhaoHuan/wxzh_item_bg", Vector2(8, 8), Vector2(652, 60), TextureRect.STRETCH_SCALE)
+	_add_named_image_to(panel, "image/Item/11001", Vector2(24, 15), Vector2(46, 46), TextureRect.STRETCH_KEEP_ASPECT_CENTERED)
+	_add_activity_small_label(str(data.get("text", "")), position + Vector2(86, 14), Vector2(304, 22), Color(1.0, 0.88, 0.5), HORIZONTAL_ALIGNMENT_LEFT, 17)
+	_add_activity_small_label(str(data.get("reward", "")), position + Vector2(86, 40), Vector2(304, 22), Color(0.86, 0.94, 1.0), HORIZONTAL_ALIGNMENT_LEFT, 14)
+	_add_activity_progress_bar(position + Vector2(410, 30), Vector2(112, 14), 1.0 if str(data.get("state", "")) == "领取" else 0.42)
+	_add_activity_small_label(str(data.get("progress", "")), position + Vector2(410, 48), Vector2(112, 18), Color(0.96, 0.9, 0.68), HORIZONTAL_ALIGNMENT_CENTER, 12)
+	_add_activity_button_like(position + Vector2(548, 18), str(data.get("state", "")), Vector2(94, 40))
+
+func _add_activity_gift_card(position: Vector2, data: Dictionary) -> void:
+	var panel := PanelContainer.new()
+	panel.position = position
+	panel.size = Vector2(238, 330)
+	panel.self_modulate = Color(0.08, 0.08, 0.12, 0.76)
+	canvas.add_child(panel)
+	_add_named_image_to(panel, "image/com/ActivityPanel/ZhaoHuan/wxzh_item_bg", Vector2(18, 18), Vector2(202, 170), TextureRect.STRETCH_SCALE)
+	_add_named_image_to(panel, "image/head/105004", Vector2(54, 34), Vector2(130, 130), TextureRect.STRETCH_KEEP_ASPECT_CENTERED)
+	_add_activity_small_label(str(data.get("name", "")), position + Vector2(0, 196), Vector2(238, 28), Color(1.0, 0.88, 0.5), HORIZONTAL_ALIGNMENT_CENTER, 20)
+	_add_activity_multiline_label(str(data.get("reward", "")), position + Vector2(20, 228), Vector2(198, 46), Color(0.86, 0.94, 1.0), 15)
+	_add_activity_button_like(position + Vector2(57, 278), "%s %s" % [str(data.get("price", "")), str(data.get("state", ""))], Vector2(124, 40))
+
+func _add_activity_button_like(position: Vector2, text: String, size: Vector2 = Vector2(118, 42)) -> void:
+	var button := Button.new()
+	button.position = position
+	button.size = size
+	button.text = text
+	button.add_theme_font_size_override("font_size", 17)
+	canvas.add_child(button)
+
+func _add_activity_progress_bar(position: Vector2, size: Vector2, progress: float) -> void:
+	var bg := ColorRect.new()
+	bg.position = position
+	bg.size = size
+	bg.color = Color(0.06, 0.07, 0.09, 0.86)
+	canvas.add_child(bg)
+	var fill := ColorRect.new()
+	fill.position = position + Vector2(2, 2)
+	fill.size = Vector2(max(0.0, size.x - 4.0) * clampf(progress, 0.0, 1.0), max(0.0, size.y - 4.0))
+	fill.color = Color(0.96, 0.66, 0.18, 0.92)
+	canvas.add_child(fill)
+
+func _add_activity_red_dot(position: Vector2) -> void:
+	var dot := ColorRect.new()
+	dot.position = position
+	dot.size = Vector2(16, 16)
+	dot.color = Color(0.92, 0.04, 0.04, 0.95)
+	canvas.add_child(dot)
+
+func _add_activity_badge(position: Vector2, text: String, color: Color, size: Vector2 = Vector2(86, 24), font_size: int = 14) -> void:
+	var bg := ColorRect.new()
+	bg.position = position
+	bg.size = size
+	bg.color = color
+	canvas.add_child(bg)
+	_add_activity_small_label(text, position, size, Color.WHITE, HORIZONTAL_ALIGNMENT_CENTER, font_size)
+
+func _add_activity_small_label(text: String, position: Vector2, size: Vector2, color: Color, align: HorizontalAlignment = HORIZONTAL_ALIGNMENT_LEFT, font_size: int = 14) -> void:
+	var label := Label.new()
+	label.text = text
+	label.position = position
+	label.size = size
+	label.horizontal_alignment = align
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.add_theme_font_size_override("font_size", font_size)
+	label.add_theme_color_override("font_color", color)
+	canvas.add_child(label)
+
+func _add_activity_multiline_label(text: String, position: Vector2, size: Vector2, color: Color, font_size: int = 14) -> void:
+	var label := Label.new()
+	label.text = text
+	label.position = position
+	label.size = size
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.add_theme_font_size_override("font_size", font_size)
+	label.add_theme_color_override("font_color", color)
+	canvas.add_child(label)
+
 func _node_label_text(node: Dictionary) -> String:
 	return str(node.get("label_text", ""))
 
@@ -1282,7 +1485,10 @@ func _should_skip_placeholder_node(name: String, texture_path: String, label_tex
 	return true
 
 func _uses_runtime_mock_overlay() -> bool:
-	return current_layout in ["英雄", "背包", "抽卡", "公会", "天空城", "竞技", "战斗", "活动抽卡"]
+	return current_layout in [
+		"英雄", "背包", "抽卡", "公会", "天空城", "竞技", "战斗",
+		"活动抽卡", "活动抽卡-登录领取", "活动抽卡-循环礼包", "活动抽卡-抽数任务", "活动抽卡-许愿礼包",
+	]
 
 func _canvas_center() -> Vector2:
 	if canvas.size.x > 0.0 and canvas.size.y > 0.0:

@@ -261,12 +261,18 @@ RESTORE_LOGIN_TO_HOME.md
 - 已新增 `tools/analyze_prefab_node_names.py` 和 `data/prefab_node_name_hints.json`，用于根据 prefab 节点名里的拼音/缩写推断用途；当前覆盖 21 个导出的 prefab，可辅助判断 `zjm` 主界面、`zh` 召唤、`gh` 公会、`btn_dh` 兑换、`btn_call*` 召唤按钮、`tabBtn_*` 页签等节点。
 - `cocos_prefab_preview.gd` 已接入 `prefab_node_name_hints.json`，右侧详情栏会显示节点名用途统计和关键节点示例。
 - `DrawCardActivityPre` 已从源码确认父级只动态加载子 prefab；现已导出并接入 `Prefab/ActivityPanel/DrawCardActivity/13002..13005` 和 `DrawCardActivityToggle`，父级 mock 页签可跳转到真实子 prefab 预览。
+- 活动抽卡四个子 prefab 已补运行时 mock 层：
+  - `活动抽卡-登录领取`：模拟 `DrawCardActivity13002.rewardOne()` / `rewardall()` 的登录领取和一键领取状态。
+  - `活动抽卡-循环礼包`：模拟 `DrawCardActivity13003.setData(e,t)` 下的 `content` 循环礼包列表。
+  - `活动抽卡-抽数任务`：模拟 `DrawCardActivity13004.setData(e,t,n)` 的 `boxList` 宝箱进度、红点和 `taskList` 任务列表。
+  - `活动抽卡-许愿礼包`：模拟 `DrawCardActivity13005` 的 `giftContent` 礼包列表。
+- 已用 Godot 控制台截图回归 `13002/13003/13004/13005` 四页，确认无脚本解析错误；当前剩余问题是原 prefab 静态装饰和 mock 文本仍有局部重叠。
 
 下一步优先级：
 
 1. 完善 `HeroMainPre` 的 ScrollView 裁剪、Layout 重排、右侧信息层级和动态节点替换。
 2. 继续完善 `BagPre` 的页签交互、ScrollView/Mask 裁剪、详情层级和运行时分类数据。
-3. 继续完善 `DrawCardActivityPre` 的 `13002..13005` 运行时列表数据、奖励状态和按钮贴图。
+3. 把 `DrawCardActivityCycleItemCom` / `DrawCardActivityRenWuItemCom` 单独导出为列表项模板，替换活动抽卡子页当前的手工 row。
 4. 继续完善 `drawCardPre` 的抽卡 Spine、结果卡牌 `HeroShowPre`、页签切换动画和真实奖励状态。
 5. 将 `prefab_node_name_hints.json` 继续接入资源浏览器，显示节点名推断用途，减少手工查 JSON。
 6. 继续完善 `battle` 的真实 Spine 战斗角色、技能特效、站位坐标和战斗结束子 prefab。

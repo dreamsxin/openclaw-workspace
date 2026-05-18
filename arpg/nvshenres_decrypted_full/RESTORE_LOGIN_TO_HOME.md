@@ -217,6 +217,72 @@ data/mainpre_asset_trace.json
 
 该文件记录了主城相关 `image/com/mainpanel/*` 路径到真实 SpriteFrame/native atlas/rect 的映射，后续替换占位按钮优先查它。
 
+## Prefab 预览器与动态界面还原
+
+Godot 场景：
+
+```text
+scenes/cocos_prefab_preview.tscn
+scripts/cocos_prefab_preview.gd
+```
+
+命令示例：
+
+```powershell
+D:\work\openclaw-workspace\arpg\tools\Godot_v4.6.2-stable_win64_console.exe --path "D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full" --scene "res://scenes/cocos_prefab_preview.tscn" -- --prefab-layout "活动抽卡-抽数任务"
+```
+
+截图回归示例：
+
+```powershell
+$godot = "D:\work\openclaw-workspace\arpg\tools\Godot_v4.6.2-stable_win64_console.exe"
+$proj = "D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full"
+& $godot --path $proj --scene "res://scenes/cocos_prefab_preview.tscn" --quit-after 100 -- --prefab-layout "活动抽卡-抽数任务" --capture-prefab-preview "$proj\prefab_activity_13004_runtime_check.png" *> "$proj\prefab_activity_13004_runtime_check.log"
+```
+
+当前已接入的活动抽卡子页：
+
+```text
+活动抽卡-登录领取 -> Prefab/ActivityPanel/DrawCardActivity/13002
+活动抽卡-循环礼包 -> Prefab/ActivityPanel/DrawCardActivity/13003
+活动抽卡-抽数任务 -> Prefab/ActivityPanel/DrawCardActivity/13004
+活动抽卡-许愿礼包 -> Prefab/ActivityPanel/DrawCardActivity/13005
+```
+
+源码定位：
+
+```text
+assets/main/index.js
+DrawCardActivityPanel.checkToogle()
+DrawCardActivity13002
+DrawCardActivity13003
+DrawCardActivity13004
+DrawCardActivity13005
+DrawCardActivityCycleItemCom
+DrawCardActivityRenWuItemCom
+```
+
+关键结论：
+
+- `DrawCardActivityPanel.checkToogle()` 按 `curPanelData.panelID` 动态加载 `Prefab/ActivityPanel/DrawCardActivity/<panelID>`。
+- `13002` 是登录领取页，`rewardOne()` 领取当天奖励，`rewardall()` 一键领取。
+- `13003` 是循环礼包/循环任务列表，`content` 下动态实例化 `DrawCardActivityCycleItemCom`。
+- `13004` 是抽数任务页，`boxList` 驱动上方宝箱进度和红点，`taskList` 驱动下方任务列表。
+- `13005` 是许愿礼包页，`giftContent` 下动态实例化 `giftItemPre`。
+
+当前实现状态：
+
+- `cocos_prefab_preview.gd` 对四个子页增加了运行时 mock 层，避免只显示 prefab 坐标框。
+- mock 数据只替代服务端返回的 `setData(...)` 内容；按钮、宝箱、底板等仍尽量使用已解析出的原始 SpriteFrame。
+- 已用 Godot 控制台验证四个子页都可运行，无脚本解析错误。
+
+遗留问题：
+
+1. 子页仍混合显示部分原 prefab 静态节点，个别装饰会压到 mock 文本。
+2. `ScrollView`、`Mask`、`Widget` 尚未完整自动还原，目前列表位置靠手工参考导出的全局坐标。
+3. Cocos 运行时真实奖励图标、礼包价格、任务进度来自服务端配置，本地 demo 当前使用固定 mock 数据。
+4. 后续应把 `DrawCardActivityCycleItemCom` / `DrawCardActivityRenWuItemCom` 单独导出并映射到 Godot 列表项模板。
+
 关键结论：
 
 `MainPre` 不是完整静态主城图。它主要是 UI 层，背景和角色由 JS 运行时选择。
