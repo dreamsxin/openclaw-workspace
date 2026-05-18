@@ -122,12 +122,18 @@ func _add_node_rect(node: Dictionary) -> void:
 		img.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		rect = img
 	else:
-		var panel := PanelContainer.new()
-		panel.modulate = _color_for_name(name)
-		panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		rect = panel
+		if _node_label_text(node) != "":
+			var text_rect := Control.new()
+			text_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			rect = text_rect
+		else:
+			var panel := PanelContainer.new()
+			panel.modulate = _color_for_name(name)
+			panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			rect = panel
 	rect.position = _canvas_center() + pos - size * 0.5
 	rect.size = Vector2(max(size.x, 48.0), max(size.y, 28.0))
+	rect.scale = _node_scale(node)
 	rect.tooltip_text = JSON.stringify(node, "\t")
 	canvas.add_child(rect)
 
@@ -140,12 +146,43 @@ func _add_node_rect(node: Dictionary) -> void:
 		hit.pressed.connect(_load_layout.bind("主城"))
 		rect.add_child(hit)
 
-	if texture_path == "" or not _is_login_layout():
+	var label_text := _node_label_text(node)
+	if label_text != "":
+		_add_text_label(rect, node, label_text)
+	elif texture_path == "" or not _is_login_layout():
 		var label := Label.new()
 		label.text = name
 		label.clip_text = true
 		label.position = Vector2(4, 3)
 		rect.add_child(label)
+
+func _node_label_text(node: Dictionary) -> String:
+	return str(node.get("label_text", ""))
+
+func _add_text_label(parent: Control, node: Dictionary, text: String) -> void:
+	var label := Label.new()
+	label.text = text
+	label.clip_text = true
+	label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	label.add_theme_font_size_override("font_size", int(node.get("label_font_size", 18)))
+	label.add_theme_color_override("font_color", Color(0.9, 0.95, 1.0, 1.0))
+	label.horizontal_alignment = _to_horizontal_alignment(int(node.get("label_horizontal_align", 0)))
+	label.vertical_alignment = _to_vertical_alignment(int(node.get("label_vertical_align", 0)))
+	parent.add_child(label)
+
+func _to_horizontal_alignment(value: int) -> HorizontalAlignment:
+	if value == 1:
+		return HORIZONTAL_ALIGNMENT_CENTER
+	if value == 2:
+		return HORIZONTAL_ALIGNMENT_RIGHT
+	return HORIZONTAL_ALIGNMENT_LEFT
+
+func _to_vertical_alignment(value: int) -> VerticalAlignment:
+	if value == 1:
+		return VERTICAL_ALIGNMENT_CENTER
+	if value == 2:
+		return VERTICAL_ALIGNMENT_BOTTOM
+	return VERTICAL_ALIGNMENT_TOP
 
 func _should_skip_node(node: Dictionary) -> bool:
 	if not bool(node.get("active", true)):
@@ -161,6 +198,17 @@ func _canvas_center() -> Vector2:
 	if canvas.size.x > 0.0 and canvas.size.y > 0.0:
 		return canvas.size * 0.5
 	return Vector2(440, 310)
+
+func _node_scale(node: Dictionary) -> Vector2:
+	var scale_arr: Array = node.get("scale", [1.0, 1.0])
+	if scale_arr.size() < 2:
+		return Vector2.ONE
+	var scale := Vector2(float(scale_arr[0]), float(scale_arr[1]))
+	if is_zero_approx(scale.x):
+		scale.x = 1.0
+	if is_zero_approx(scale.y):
+		scale.y = 1.0
+	return scale
 
 func _texture_for_node(name: String) -> String:
 	if texture_map.has(name):

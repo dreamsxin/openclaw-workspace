@@ -301,12 +301,13 @@ UI 层：Prefab/mainpanel/MainPre
   - 活动广告/广告入口 -> `Prefab/ActivityPanel/DrawCardActivity/DrawCardActivityPre`
 - `cocos_prefab_preview.gd` 支持从 `Navigation.go_with_args(..., {"layout": "英雄"})` 或命令行 `--prefab-layout 英雄` 打开指定界面。
 - Prefab 预览器已改为优先使用导出的 `global_position`，并跳过无贴图根节点，核心界面骨架比局部坐标版更接近原布局。
+- Prefab 导出器已补 `cc.Label` 文本字段；预览器可以显示真实 Label 文本并应用节点 scale。英雄、背包、抽卡等主要界面现在不再只显示节点名。
 
 当前不足：
 
 - 角色 Spine 已能播放，但仍是项目内轻量 runtime，和官方 Spine runtime 可能有细节差异。
 - `SuLa_LH` 的 `idle` 姿态偏横向，主城展示后续需要结合原角色面板确认是否应使用 `show` 或额外偏移。
-- `MainPre` 和主要功能 prefab 的 Label、Layout、ScrollView、Widget、九宫格仍未完整映射；当前主要界面是可进入的 prefab 骨架预览，还不是最终可交互面板。
+- `MainPre` 和主要功能 prefab 的 Layout、ScrollView、Widget、九宫格仍未完整映射；当前主要界面是可进入且带文本的 prefab 骨架预览，还不是最终可交互面板。
 - 顶部资源栏、底部入口、右侧入口还有大量运行时动态内容未补齐。
 
 下一步：

@@ -77,6 +77,12 @@ def export_layout(prefab_path: str) -> dict:
         sprite_info = {}
         skeleton_uuid = ""
         skeleton_info = {}
+        label_info = {}
+        for component in iter_components(item):
+            class_name, values = decode_component(component, classes, templates)
+            if class_name == "cc.Label":
+                label_info = resolve_label(values)
+                break
         if should_auto_texture(name):
             for component in iter_components(item):
                 class_name, values = decode_component(component, classes, templates)
@@ -117,6 +123,11 @@ def export_layout(prefab_path: str) -> dict:
             "skeleton_name": skeleton_info.get("name", ""),
             "skeleton_textures": skeleton_info.get("textures", []),
             "skeleton_animations": skeleton_info.get("animations", []),
+            "label_text": label_info.get("text", ""),
+            "label_font_size": label_info.get("font_size", 0),
+            "label_line_height": label_info.get("line_height", 0),
+            "label_horizontal_align": label_info.get("horizontal_align", 0),
+            "label_vertical_align": label_info.get("vertical_align", 0),
         }
 
     global_cache = {}
@@ -208,6 +219,19 @@ def resolve_skeleton_data(skeleton_uuid: str) -> dict:
                 "animations": animations,
             }
     return {}
+
+
+def resolve_label(values: dict) -> dict:
+    text = values.get("_string", "")
+    if text is None:
+        text = ""
+    return {
+        "text": str(text),
+        "font_size": int(values.get("_fontSize", 18) or 18),
+        "line_height": int(values.get("_lineHeight", values.get("_fontSize", 18)) or 18),
+        "horizontal_align": int(values.get("_N$horizontalAlign", 0) or 0),
+        "vertical_align": int(values.get("_N$verticalAlign", 0) or 0),
+    }
 
 
 def find_import_path(uuid: str) -> Path | None:

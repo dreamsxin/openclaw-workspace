@@ -219,10 +219,12 @@ RESTORE_LOGIN_TO_HOME.md
 - `cocos_prefab_preview.gd` 支持 `--prefab-layout <label>` 和 `Navigation.go_with_args(..., {"layout": label})`。
 - 主城底部/侧边主要入口已接入 prefab 预览器，可从主城进入英雄、背包、抽卡、战斗、公会、竞技、天空城、活动抽卡等界面骨架。
 - Prefab 预览器已切换为 `global_position`，并跳过无贴图根节点，作为主要功能界面的恢复检查入口。
+- `export_cocos_prefab_layout.py` 已导出 `cc.Label` 的 `_string`、字号、行高和对齐信息。
+- `cocos_prefab_preview.gd` 已能显示真实 Label 文本，并应用节点 scale。英雄、背包、抽卡等主要 prefab 不再只显示节点名。
 
 下一步优先级：
 
-1. 完善 `HeroMainPre` 的 Label、九宫格和角色展示 mock 数据。
+1. 完善 `HeroMainPre` 的九宫格、Widget/anchor、ScrollView 裁剪和角色展示 mock 数据。
 2. 完善 `BagPre` 的道具格、页签、按钮文本和本地物品 mock 数据。
 3. 完善 `drawCardPre` / `DrawCardActivityPre` 的卡池背景、按钮和展示 Spine。
 
