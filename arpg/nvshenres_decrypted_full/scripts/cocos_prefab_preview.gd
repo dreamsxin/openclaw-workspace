@@ -6,6 +6,7 @@ const TEXTURE_MAP_PATH := "res://data/login_texture_map.json"
 const LAYOUT_MANIFEST_PATH := "res://data/prefab_layouts.json"
 const BAG_ITEM_LAYOUT_PATH := "res://data/prefab_layouts/GridBoxItemPre.json"
 const EQUIPMENT_ICON_INDEX_PATH := "res://data/equipment_icon_index.json"
+const NAMED_RESOURCE_INDEX_PATH := "res://data/named_resource_index.json"
 const HERO_105004_SPINE := "res://data/spine_runtime/105004.json"
 const SimpleSpinePlayerScript := preload("res://scripts/simple_spine_player.gd")
 
@@ -17,11 +18,13 @@ var texture_map: Dictionary = {}
 var layouts: Dictionary = {}
 var layout_stats: Dictionary = {}
 var equipment_icons: Array = []
+var named_resources: Dictionary = {}
 
 func _ready() -> void:
 	_load_texture_map()
 	_load_layout_manifest()
 	_load_equipment_icons()
+	_load_named_resources()
 	_build_ui()
 	var requested_layout := _requested_layout()
 	if requested_layout != "":
@@ -177,6 +180,8 @@ func _add_layout_mock() -> void:
 		_add_hero_panel_mock()
 	elif current_layout == "背包":
 		_add_bag_panel_mock()
+	elif current_layout == "抽卡":
+		_add_draw_card_mock()
 
 func _add_hero_panel_mock() -> void:
 	var player: Node2D = SimpleSpinePlayerScript.new()
@@ -285,6 +290,68 @@ func _load_indexed_texture(icon_data: Dictionary) -> Texture2D:
 		return null
 	return _load_node_texture("res://" + path, icon_data, true)
 
+func _add_draw_card_mock() -> void:
+	var center := _canvas_center()
+	var bg := _add_named_image("image/com/DrawCard/zh_bg", center + Vector2(-420, -230), Vector2(820, 360), TextureRect.STRETCH_KEEP_ASPECT_COVERED)
+	bg.modulate = Color(1, 1, 1, 0.72)
+	var card_names := ["普通召唤", "高级召唤", "友情召唤"]
+	var card_resources := ["image/com/DrawCard/zh_image_pan2", "image/com/DrawCard/bx_icon_03", "image/com/DrawCard/bx_icon_02"]
+	for i in 3:
+		var card := PanelContainer.new()
+		card.position = center + Vector2(-310 + i * 180, -55)
+		card.size = Vector2(150, 205)
+		card.modulate = Color(0.18, 0.14, 0.28, 0.62)
+		canvas.add_child(card)
+		_add_named_image_to(card, card_resources[i], Vector2(22, 18), Vector2(106, 112), TextureRect.STRETCH_KEEP_ASPECT_CENTERED)
+		var label := Label.new()
+		label.text = card_names[i]
+		label.position = Vector2(0, 140)
+		label.size = Vector2(150, 28)
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		label.add_theme_font_size_override("font_size", 18)
+		label.add_theme_color_override("font_color", Color(1.0, 0.9, 0.58))
+		card.add_child(label)
+		var button := Button.new()
+		button.text = "召唤"
+		button.position = Vector2(28, 170)
+		button.size = Vector2(94, 28)
+		card.add_child(button)
+	_add_draw_card_reward_bar(center + Vector2(-335, 185))
+
+func _add_draw_card_reward_bar(origin: Vector2) -> void:
+	_add_named_image("image/com/DrawCard/zh_progressBG_jiangli", origin, Vector2(340, 22), TextureRect.STRETCH_SCALE)
+	_add_named_image("image/com/DrawCard/zh_progressbar_jiangli", origin + Vector2(6, 6), Vector2(220, 10), TextureRect.STRETCH_SCALE)
+	for i in 4:
+		_add_named_image("image/com/DrawCard/bx_icon_0%d" % (i + 1), origin + Vector2(52 + i * 82, -48), Vector2(58, 58), TextureRect.STRETCH_KEEP_ASPECT_CENTERED)
+
+func _add_named_image(resource_path: String, position: Vector2, size: Vector2, stretch_mode: TextureRect.StretchMode) -> TextureRect:
+	var image := TextureRect.new()
+	image.position = position
+	image.size = size
+	image.texture = _texture_for_named_resource(resource_path)
+	image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	image.stretch_mode = stretch_mode
+	image.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	canvas.add_child(image)
+	return image
+
+func _add_named_image_to(parent: Control, resource_path: String, position: Vector2, size: Vector2, stretch_mode: TextureRect.StretchMode) -> TextureRect:
+	var image := TextureRect.new()
+	image.position = position
+	image.size = size
+	image.texture = _texture_for_named_resource(resource_path)
+	image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	image.stretch_mode = stretch_mode
+	image.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	parent.add_child(image)
+	return image
+
+func _texture_for_named_resource(resource_path: String) -> Texture2D:
+	var item: Dictionary = named_resources.get(resource_path, {})
+	if item.is_empty():
+		return null
+	return _load_indexed_texture(item)
+
 func _node_label_text(node: Dictionary) -> String:
 	return str(node.get("label_text", ""))
 
@@ -388,6 +455,11 @@ func _load_equipment_icons() -> void:
 	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(EQUIPMENT_ICON_INDEX_PATH))
 	if typeof(parsed) == TYPE_ARRAY:
 		equipment_icons = parsed
+
+func _load_named_resources() -> void:
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(NAMED_RESOURCE_INDEX_PATH))
+	if typeof(parsed) == TYPE_DICTIONARY:
+		named_resources = parsed
 
 func _requested_layout() -> String:
 	var scene_args := Navigation.consume_scene_args()
