@@ -21,6 +21,7 @@ var layout_stats: Dictionary = {}
 var equipment_icons: Array = []
 var named_resources: Dictionary = {}
 var prefab_node_hints: Dictionary = {}
+var prefab_mask_clips: Dictionary = {}
 
 func _ready() -> void:
 	_load_texture_map()
@@ -109,6 +110,7 @@ func _load_layout(layout_name: String) -> void:
 	var stats: Dictionary = layout_stats.get(layout_name, {})
 	title.text = "原始 Cocos Prefab 预览 - %s" % layout_name
 	detail.text = _layout_detail_text(parsed, nodes, stats)
+	_build_prefab_mask_clips(nodes)
 	for node in _sorted_nodes(nodes):
 		_add_node_rect(node)
 	_add_layout_mock()
@@ -120,8 +122,7 @@ func _add_node_rect(node: Dictionary) -> void:
 	var pos_arr: Array = node.get("global_position", node.get("position", [0, 0]))
 	var anchor_arr: Array = node.get("anchor", [0.5, 0.5])
 	var size := Vector2(float(size_arr[0]), float(size_arr[1]))
-	var pos := Vector2(float(pos_arr[0]), -float(pos_arr[1]))
-	var anchor := Vector2(float(anchor_arr[0]), 1.0 - float(anchor_arr[1]))
+	var rect_bounds := _prefab_node_rect(node)
 	var name := str(node.get("name", ""))
 	var rect: Control
 	var manual_texture_path := _texture_for_node(name) if _is_login_layout() else ""
@@ -153,7 +154,7 @@ func _add_node_rect(node: Dictionary) -> void:
 			panel.modulate = _color_for_name(name)
 			panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			rect = panel
-	rect.position = _canvas_center() + pos - Vector2(size.x * anchor.x, size.y * anchor.y)
+	rect.position = rect_bounds.position
 	rect.size = Vector2(max(size.x, 48.0), max(size.y, 28.0))
 	rect.scale = _node_scale(node)
 	rect.tooltip_text = JSON.stringify(node, "\t")
@@ -1691,6 +1692,10 @@ func _layout_detail_text(parsed: Dictionary, nodes: Array, stats: Dictionary) ->
 		"nodes: %d" % nodes.size(),
 		"texture nodes: %d" % int(stats.get("texture_nodes", 0)),
 	]
+	var mask_count := _count_nodes_with_component(nodes, "cc.Mask")
+	var scroll_count := _count_nodes_with_component(nodes, "cc.ScrollView")
+	if mask_count > 0 or scroll_count > 0:
+		lines.append("mask/scroll: %d / %d" % [mask_count, scroll_count])
 	var hint_info := _hint_info_for_prefab(prefab_name)
 	if not hint_info.is_empty():
 		lines.append("")
@@ -1719,6 +1724,16 @@ func _hint_info_for_prefab(prefab_name: String) -> Dictionary:
 	if prefab_node_hints.has(key):
 		return prefab_node_hints.get(key, {})
 	return prefab_node_hints.get(current_layout, {})
+
+func _count_nodes_with_component(nodes: Array, component: String) -> int:
+	var count := 0
+	for node in nodes:
+		if typeof(node) != TYPE_DICTIONARY:
+			continue
+		var component_types: Array = node.get("component_types", [])
+		if component in component_types:
+			count += 1
+	return count
 
 func _format_hint_counts(counts: Dictionary, limit: int) -> String:
 	var pairs: Array = []
@@ -1835,6 +1850,33 @@ func _is_login_layout() -> bool:
 
 func _is_action_node(name: String) -> bool:
 	return name in ["loginBtn", "btn_start", "btnStart"]
+
+func _build_prefab_mask_clips(nodes: Array) -> void:
+	prefab_mask_clips.clear()
+	for node in nodes:
+		if typeof(node) != TYPE_DICTIONARY:
+			continue
+		var component_types: Array = node.get("component_types", [])
+		if not "cc.Mask" in component_types:
+			continue
+		var bounds := _prefab_node_rect(node)
+		var clip := Control.new()
+		clip.position = bounds.position
+		clip.size = bounds.size
+		clip.clip_contents = true
+		clip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		clip.z_index = 20
+		canvas.add_child(clip)
+		prefab_mask_clips[int(node.get("index", -1))] = clip
+
+func _prefab_node_rect(node: Dictionary) -> Rect2:
+	var size_arr: Array = node.get("size", [80, 36])
+	var pos_arr: Array = node.get("global_position", node.get("position", [0, 0]))
+	var anchor_arr: Array = node.get("anchor", [0.5, 0.5])
+	var size := Vector2(float(size_arr[0]), float(size_arr[1]))
+	var pos := Vector2(float(pos_arr[0]), -float(pos_arr[1]))
+	var anchor := Vector2(float(anchor_arr[0]), 1.0 - float(anchor_arr[1]))
+	return Rect2(_canvas_center() + pos - Vector2(size.x * anchor.x, size.y * anchor.y), size)
 
 func _sorted_nodes(nodes: Array) -> Array:
 	var sorted := nodes.duplicate()
