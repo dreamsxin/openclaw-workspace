@@ -171,6 +171,8 @@ func _add_node_rect(node: Dictionary) -> void:
 func _add_layout_mock() -> void:
 	if current_layout == "英雄":
 		_add_hero_panel_mock()
+	elif current_layout == "背包":
+		_add_bag_panel_mock()
 
 func _add_hero_panel_mock() -> void:
 	var player: Node2D = SimpleSpinePlayerScript.new()
@@ -188,6 +190,38 @@ func _add_hero_panel_mock() -> void:
 	var bounds_center: Vector2 = bounds.position + bounds.size * 0.5
 	var target_center: Vector2 = target.position + target.size * 0.5
 	player.position = target_center - bounds_center * scale_value
+
+func _add_bag_panel_mock() -> void:
+	var icon_paths := [
+		"res://assets/resources/native/1f/1f6b547b4.png",
+		"res://assets/resources/native/1a/1a7921f32.png",
+		"res://assets/resources/native/18/18b29ae48.png",
+		"res://assets/resources/native/14/14d2fafcf.png",
+		"res://assets/resources/native/15/15a1d9111.png",
+		"res://assets/resources/native/16/1604df330.png",
+	]
+	var start := _canvas_center() + Vector2(-255, -88)
+	var cell_size := Vector2(72, 72)
+	for i in 18:
+		var cell := PanelContainer.new()
+		cell.position = start + Vector2((i % 6) * 82, int(i / 6) * 82)
+		cell.size = cell_size
+		cell.modulate = Color(0.25, 0.22, 0.32, 0.88)
+		canvas.add_child(cell)
+		var icon := TextureRect.new()
+		icon.position = Vector2(10, 8)
+		icon.size = Vector2(52, 52)
+		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		icon.texture = _load_texture(icon_paths[i % icon_paths.size()])
+		cell.add_child(icon)
+		var count := Label.new()
+		count.text = "x%d" % (i + 1)
+		count.position = Vector2(34, 48)
+		count.size = Vector2(34, 20)
+		count.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		count.add_theme_font_size_override("font_size", 13)
+		cell.add_child(count)
 
 func _node_label_text(node: Dictionary) -> String:
 	return str(node.get("label_text", ""))
