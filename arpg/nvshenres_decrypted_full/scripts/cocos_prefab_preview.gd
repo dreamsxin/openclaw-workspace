@@ -115,12 +115,19 @@ func _add_node_rect(node: Dictionary) -> void:
 		texture_path = str(node.get("texture_path", ""))
 	if texture_path != "":
 		var tex := _load_node_texture("res://" + texture_path, node, manual_texture_path == "")
-		var img := TextureRect.new()
-		img.texture = tex
-		img.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		img.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		img.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		rect = img
+		if _is_sliced_sprite(node):
+			var nine := NinePatchRect.new()
+			nine.texture = tex
+			_apply_nine_patch_margins(nine, node)
+			nine.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			rect = nine
+		else:
+			var img := TextureRect.new()
+			img.texture = tex
+			img.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			img.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+			img.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			rect = img
 	else:
 		if _node_label_text(node) != "":
 			var text_rect := Control.new()
@@ -158,6 +165,23 @@ func _add_node_rect(node: Dictionary) -> void:
 
 func _node_label_text(node: Dictionary) -> String:
 	return str(node.get("label_text", ""))
+
+func _is_sliced_sprite(node: Dictionary) -> bool:
+	if int(node.get("sprite_type", 0)) != 1:
+		return false
+	var insets: Array = node.get("sprite_cap_insets", [])
+	if insets.size() < 4:
+		return false
+	return float(insets[0]) > 0.0 or float(insets[1]) > 0.0 or float(insets[2]) > 0.0 or float(insets[3]) > 0.0
+
+func _apply_nine_patch_margins(nine: NinePatchRect, node: Dictionary) -> void:
+	var insets: Array = node.get("sprite_cap_insets", [])
+	if insets.size() < 4:
+		return
+	nine.patch_margin_left = int(round(float(insets[0])))
+	nine.patch_margin_top = int(round(float(insets[1])))
+	nine.patch_margin_right = int(round(float(insets[2])))
+	nine.patch_margin_bottom = int(round(float(insets[3])))
 
 func _add_text_label(parent: Control, node: Dictionary, text: String) -> void:
 	var label := Label.new()

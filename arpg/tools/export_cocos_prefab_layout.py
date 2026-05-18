@@ -93,6 +93,9 @@ def export_layout(prefab_path: str) -> dict:
                         if candidate_info.get("texture_path"):
                             sprite_uuid = candidate_uuid
                             sprite_info = candidate_info
+                            if class_name == "cc.Sprite":
+                                sprite_info["sprite_type"] = int(values.get("_type", 0) or 0)
+                                sprite_info["sprite_size_mode"] = int(values.get("_sizeMode", 0) or 0)
                             break
                     if sprite_info:
                         break
@@ -119,6 +122,9 @@ def export_layout(prefab_path: str) -> dict:
             "sprite_offset": sprite_info.get("sprite_offset", []),
             "sprite_original_size": sprite_info.get("sprite_original_size", []),
             "sprite_rotated": bool(sprite_info.get("sprite_rotated", False)),
+            "sprite_cap_insets": sprite_info.get("sprite_cap_insets", []),
+            "sprite_type": int(sprite_info.get("sprite_type", 0) or 0),
+            "sprite_size_mode": int(sprite_info.get("sprite_size_mode", 0) or 0),
             "skeleton_uuid": skeleton_uuid,
             "skeleton_name": skeleton_info.get("name", ""),
             "skeleton_textures": skeleton_info.get("textures", []),
@@ -182,6 +188,7 @@ def resolve_sprite_frame(sprite_uuid: str) -> dict:
         "sprite_offset": frame.get("offset", []),
         "sprite_original_size": frame.get("originalSize", []),
         "sprite_rotated": bool(frame.get("rotated", False)),
+        "sprite_cap_insets": frame.get("capInsets", []),
     }
 
 
