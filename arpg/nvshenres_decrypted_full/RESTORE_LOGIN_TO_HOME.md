@@ -440,6 +440,16 @@ Spine 查看器：
 - 如果该 skeleton 已存在 `data/spine_runtime/<name>.json`，会出现 `Open Spine Viewer`。
 - 点击后会带着 runtime 路径和默认动画进入 `spine_character_viewer.tscn`。
 
+主要 prefab 预览：
+
+```powershell
+& $godot --path $proj --scene "res://scenes/cocos_prefab_preview.tscn" --quit-after 100 -- --prefab-layout "公会" --capture-prefab-preview "D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\prefab_guild.png" *> $log
+```
+
+- `背包`：使用 `GridBoxItemPre` + `image/equipment` mock 数据。
+- `抽卡`：使用 `image/com/DrawCard` mock 数据。
+- `公会`：使用 `image/com/Guild`、`image/guildFlag` mock 数据。
+
 局部 slot 调试：
 
 ```powershell

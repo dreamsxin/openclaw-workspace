@@ -11,6 +11,9 @@ CONFIG_PATH = ROOT / "assets" / "resources" / "config.json"
 OUT_PATH = ROOT / "data" / "named_resource_index.json"
 PREFIXES = [
     "image/com/DrawCard/",
+    "image/com/Guild/",
+    "image/common/gh_",
+    "image/guildFlag/",
 ]
 
 

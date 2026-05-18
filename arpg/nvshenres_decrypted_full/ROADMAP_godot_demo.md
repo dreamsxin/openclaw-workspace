@@ -229,14 +229,16 @@ RESTORE_LOGIN_TO_HOME.md
 - `export_cocos_prefab_layout.py` 已把 `Prefab/BagPanel/GridBoxItemPre` 加入导出清单，`BagPre` 的动态条目可按原子 Prefab 结构叠加。
 - `export_equipment_icon_index.py` 可从 `assets/resources/config.json` 导出 `data/equipment_icon_index.json`，解析源码中常见的 `image/equipment/<icon>` 图标路径。
 - `BagPre` 预览已叠加本地背包条目 mock，条目结构来自 `GridBoxItemPre`，图标来自真实 `image/equipment` SpriteFrame/Texture2D。
-- `export_named_resource_index.py` 可导出 `image/com/DrawCard/*` 等按路径加载的 UI 资源索引。
+- `export_named_resource_index.py` 可导出 `image/com/DrawCard/*`、`image/com/Guild/*`、`image/guildFlag/*` 等按路径加载的 UI 资源索引。
 - `drawCardPre` 预览已叠加本地抽卡 mock，补卡池背景、三张卡牌、宝箱进度和召唤按钮状态，资源来自 `image/com/DrawCard`。
+- `GuildMainPre` 预览已叠加本地公会大厅 mock，补公会背景、旗帜、公会信息和公会首领/科技/成员/公会战入口，资源来自 `image/com/Guild` 与 `image/guildFlag`。
 
 下一步优先级：
 
 1. 完善 `HeroMainPre` 的 ScrollView 裁剪、Layout 重排和角色展示 mock 数据。
 2. 继续完善 `BagPre` 的页签交互、ScrollView 裁剪和运行时分类数据。
-3. 继续完善 `drawCardPre` / `DrawCardActivityPre` 的卡牌动画、抽卡结果和展示 Spine。
+3. 继续完善 `GuildMainPre` 的 guild Spine/灯光动画，或推进 `SkyCityPre` / `JingjiPre` 的场景级 mock。
+4. 继续完善 `drawCardPre` / `DrawCardActivityPre` 的卡牌动画、抽卡结果和展示 Spine。
 
 ## 当前风险
 
