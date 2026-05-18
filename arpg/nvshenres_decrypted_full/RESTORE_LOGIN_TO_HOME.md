@@ -276,6 +276,10 @@ DrawCardActivityRenWuItemCom
 - `cocos_prefab_preview.gd` 对四个子页增加了运行时 mock 层，避免只显示 prefab 坐标框。
 - mock 数据只替代服务端返回的 `setData(...)` 内容；按钮、宝箱、底板等仍尽量使用已解析出的原始 SpriteFrame。
 - 对 `13003/13004/13005` 增加了页面级静态过滤，隐藏会干扰运行时列表的原始按钮、Label、进度和列表项占位节点。
+- `tools/export_cocos_prefab_layout.py` 已新增 `component_bindings` 导出，记录自定义脚本组件字段到节点的推断绑定。
+- `13003.json` 现在可看到 `DrawCardActivityCycleItemCom` 的关键字段绑定：`girdLayout -> gridLayout`、`btn_buy -> btn_buy`、`JDT_progress -> progressBar`、`title -> label_name`。
+- `13004.json` 现在可看到 `DrawCardActivityRenWuItemCom` 的关键字段绑定：`itemNode -> itemNode`、`descText -> title`、`taskProgress -> progressBar`、`taskProgressLab -> count`、`submitBtn -> getBtn`、`imgComplete -> isOver`。
+- `cocos_prefab_preview.gd` 右侧详情栏已显示这些脚本字段绑定，用于后续按源码 `setData(...)` 精确替换手工 row。
 - 已用 Godot 控制台验证四个子页都可运行，无脚本解析错误。
 
 遗留问题：
@@ -284,6 +288,7 @@ DrawCardActivityRenWuItemCom
 2. `ScrollView`、`Mask`、`Widget` 尚未完整自动还原，目前列表位置靠手工参考导出的全局坐标。
 3. Cocos 运行时真实奖励图标、礼包价格、任务进度来自服务端配置，本地 demo 当前使用固定 mock 数据。
 4. 当前行底板继续使用原始资源，贴图自带亮线装饰，视觉上会穿过任务行背景；不是额外静态节点遮挡。
+5. `component_bindings` 目前采用字段名/别名和 owner 子树推断，已验证活动抽卡关键字段，复杂跨树引用仍需结合源码确认。
 
 关键结论：
 

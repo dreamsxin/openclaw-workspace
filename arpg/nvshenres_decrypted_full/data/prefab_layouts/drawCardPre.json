@@ -8137,5 +8137,941 @@
       "label_vertical_align": 0,
       "widget": {}
     }
+  ],
+  "component_bindings": [
+    {
+      "owner_index": 1,
+      "owner_name": "drawCardPre",
+      "component": "2272bDhqCNEI6InSvxt6oRH",
+      "fields": {
+        "bg": {
+          "index": 60,
+          "name": "bg"
+        }
+      },
+      "raw_refs": {
+        "node": -28,
+        "btnBack": -22,
+        "btnHelp": -21,
+        "imgTip": -20,
+        "btnCall1": -19,
+        "btnCall10": -18,
+        "nodeProgress": -17,
+        "progress": -16,
+        "txtProgress": -15,
+        "togSkip": -14,
+        "lblGJFont": -13,
+        "nodeAbsUpAct": -12,
+        "thCardNode": -11,
+        "btnTJ": -10,
+        "btnZHH": -9,
+        "btnDH": -8,
+        "bg": -3,
+        "info": -2,
+        "coinItem": 305
+      },
+      "unresolved_fields": {
+        "btnTabs": [
+          -23,
+          -24,
+          -25,
+          -26,
+          -27
+        ],
+        "btnBack": -22,
+        "btnHelp": -21,
+        "imgTip": -20,
+        "btnCall1": -19,
+        "btnCall10": -18,
+        "nodeProgress": -17,
+        "progress": -16,
+        "txtProgress": -15,
+        "togSkip": -14,
+        "lblGJFont": -13,
+        "nodeAbsUpAct": -12,
+        "thCardNode": -11,
+        "btnTJ": -10,
+        "btnZHH": -9,
+        "btnDH": -8,
+        "drawPreview": [
+          -4,
+          -5,
+          -6,
+          -7
+        ],
+        "info": -2,
+        "coinItem": 305
+      }
+    },
+    {
+      "owner_index": 1,
+      "owner_name": "drawCardPre",
+      "component": "686bbR+4RJCD6LE5xwLGsLv",
+      "fields": {},
+      "raw_refs": {
+        "duration": 0,
+        "outTime": 500,
+        "node": -30
+      },
+      "unresolved_fields": {
+        "duration": 0,
+        "outTime": 500
+      }
+    },
+    {
+      "owner_index": 5,
+      "owner_name": "btn_dh",
+      "component": "74fa2y55aFC67mpGCct49HP",
+      "fields": {},
+      "raw_refs": {
+        "node": -78
+      },
+      "unresolved_fields": {
+        "layoutNum": "4"
+      }
+    },
+    {
+      "owner_index": 5,
+      "owner_name": "btn_dh",
+      "component": "92740ofKPhE0Ic2zXtuqycW",
+      "fields": {},
+      "raw_refs": {
+        "node": -81
+      },
+      "unresolved_fields": {
+        "effects": [
+          [
+            39,
+            239.8,
+            300,
+            0,
+            100
+          ],
+          [
+            40,
+            1,
+            240,
+            700,
+            -300,
+            0,
+            true
+          ]
+        ]
+      }
+    },
+    {
+      "owner_index": 13,
+      "owner_name": "btnIsShowMagic",
+      "component": "74fa2y55aFC67mpGCct49HP",
+      "fields": {},
+      "raw_refs": {
+        "node": -131
+      },
+      "unresolved_fields": {
+        "layoutNum": "6"
+      }
+    },
+    {
+      "owner_index": 13,
+      "owner_name": "btnIsShowMagic",
+      "component": "92740ofKPhE0Ic2zXtuqycW",
+      "fields": {},
+      "raw_refs": {
+        "node": -135
+      },
+      "unresolved_fields": {
+        "effects": [
+          [
+            112,
+            100
+          ],
+          [
+            113,
+            1,
+            -1,
+            true
+          ]
+        ]
+      }
+    },
+    {
+      "owner_index": 15,
+      "owner_name": "img_tip",
+      "component": "74fa2y55aFC67mpGCct49HP",
+      "fields": {},
+      "raw_refs": {
+        "node": -146
+      },
+      "unresolved_fields": {
+        "layoutNum": "4"
+      }
+    },
+    {
+      "owner_index": 15,
+      "owner_name": "img_tip",
+      "component": "92740ofKPhE0Ic2zXtuqycW",
+      "fields": {},
+      "raw_refs": {
+        "node": -148
+      },
+      "unresolved_fields": {
+        "effects": [
+          [
+            97,
+            0.001,
+            -5,
+            -5,
+            -147
+          ],
+          [
+            100,
+            1,
+            100,
+            0,
+            true
+          ]
+        ]
+      }
+    },
+    {
+      "owner_index": 16,
+      "owner_name": "btn_back",
+      "component": "74fa2y55aFC67mpGCct49HP",
+      "fields": {},
+      "raw_refs": {
+        "node": -152
+      },
+      "unresolved_fields": {
+        "layoutNum": "4"
+      }
+    },
+    {
+      "owner_index": 16,
+      "owner_name": "btn_back",
+      "component": "92740ofKPhE0Ic2zXtuqycW",
+      "fields": {},
+      "raw_refs": {
+        "node": -155
+      },
+      "unresolved_fields": {
+        "effects": [
+          [
+            98,
+            11,
+            -300,
+            100,
+            300
+          ],
+          [
+            99,
+            1,
+            0,
+            -300,
+            0,
+            true
+          ]
+        ]
+      }
+    },
+    {
+      "owner_index": 17,
+      "owner_name": "btn_zhh",
+      "component": "74fa2y55aFC67mpGCct49HP",
+      "fields": {},
+      "raw_refs": {
+        "node": -157
+      },
+      "unresolved_fields": {
+        "layoutNum": "4"
+      }
+    },
+    {
+      "owner_index": 17,
+      "owner_name": "btn_zhh",
+      "component": "92740ofKPhE0Ic2zXtuqycW",
+      "fields": {},
+      "raw_refs": {
+        "node": -160
+      },
+      "unresolved_fields": {
+        "effects": [
+          [
+            103,
+            0,
+            0.01,
+            0
+          ],
+          [
+            104,
+            1,
+            700,
+            -300,
+            true
+          ]
+        ]
+      }
+    },
+    {
+      "owner_index": 18,
+      "owner_name": "btn_call1",
+      "component": "74fa2y55aFC67mpGCct49HP",
+      "fields": {},
+      "raw_refs": {
+        "node": -163
+      },
+      "unresolved_fields": {
+        "layoutNum": "4"
+      }
+    },
+    {
+      "owner_index": 18,
+      "owner_name": "btn_call1",
+      "component": "92740ofKPhE0Ic2zXtuqycW",
+      "fields": {},
+      "raw_refs": {
+        "node": -166
+      },
+      "unresolved_fields": {
+        "effects": [
+          [
+            39,
+            80,
+            300,
+            0,
+            100
+          ],
+          [
+            40,
+            1,
+            80,
+            700,
+            -300,
+            0,
+            true
+          ]
+        ]
+      }
+    },
+    {
+      "owner_index": 20,
+      "owner_name": "btn_call10",
+      "component": "74fa2y55aFC67mpGCct49HP",
+      "fields": {},
+      "raw_refs": {
+        "node": -174
+      },
+      "unresolved_fields": {
+        "layoutNum": "4"
+      }
+    },
+    {
+      "owner_index": 20,
+      "owner_name": "btn_call10",
+      "component": "92740ofKPhE0Ic2zXtuqycW",
+      "fields": {},
+      "raw_refs": {
+        "node": -177
+      },
+      "unresolved_fields": {
+        "effects": [
+          [
+            39,
+            160,
+            300,
+            0,
+            100
+          ],
+          [
+            40,
+            1,
+            160,
+            700,
+            -300,
+            0,
+            true
+          ]
+        ]
+      }
+    },
+    {
+      "owner_index": 29,
+      "owner_name": "btn_help",
+      "component": "74fa2y55aFC67mpGCct49HP",
+      "fields": {},
+      "raw_refs": {
+        "node": -222
+      },
+      "unresolved_fields": {
+        "layoutNum": "6"
+      }
+    },
+    {
+      "owner_index": 29,
+      "owner_name": "btn_help",
+      "component": "92740ofKPhE0Ic2zXtuqycW",
+      "fields": {},
+      "raw_refs": {
+        "node": -225
+      },
+      "unresolved_fields": {
+        "effects": [
+          [
+            101,
+            10,
+            1,
+            1
+          ],
+          [
+            102,
+            1,
+            -1,
+            -1,
+            -1,
+            true
+          ]
+        ]
+      }
+    },
+    {
+      "owner_index": 30,
+      "owner_name": "btn_tj",
+      "component": "74fa2y55aFC67mpGCct49HP",
+      "fields": {},
+      "raw_refs": {
+        "node": -227
+      },
+      "unresolved_fields": {
+        "layoutNum": "4"
+      }
+    },
+    {
+      "owner_index": 30,
+      "owner_name": "btn_tj",
+      "component": "92740ofKPhE0Ic2zXtuqycW",
+      "fields": {},
+      "raw_refs": {
+        "node": -230
+      },
+      "unresolved_fields": {
+        "effects": [
+          [
+            48,
+            100,
+            0,
+            100
+          ],
+          [
+            49,
+            1,
+            -300,
+            0,
+            true
+          ]
+        ]
+      }
+    },
+    {
+      "owner_index": 34,
+      "owner_name": "imgUp",
+      "component": "db4d2313PhMz4xuKgLRApf2",
+      "fields": {},
+      "raw_refs": {
+        "node": -249
+      }
+    },
+    {
+      "owner_index": 34,
+      "owner_name": "imgUp",
+      "component": "db4d2313PhMz4xuKgLRApf2",
+      "fields": {},
+      "raw_refs": {
+        "node": -250
+      }
+    },
+    {
+      "owner_index": 40,
+      "owner_name": "star_bgMagic",
+      "component": "e285bStulNHzI7HFtTnSxbf",
+      "fields": {},
+      "raw_refs": {
+        "node": -268
+      }
+    },
+    {
+      "owner_index": 40,
+      "owner_name": "star_bgMagic",
+      "component": "92740ofKPhE0Ic2zXtuqycW",
+      "fields": {},
+      "raw_refs": {
+        "node": -269
+      },
+      "unresolved_fields": {
+        "effects": [
+          [
+            47
+          ]
+        ]
+      }
+    },
+    {
+      "owner_index": 41,
+      "owner_name": "bgMagic",
+      "component": "e285bStulNHzI7HFtTnSxbf",
+      "fields": {},
+      "raw_refs": {
+        "node": -271
+      }
+    },
+    {
+      "owner_index": 41,
+      "owner_name": "bgMagic",
+      "component": "92740ofKPhE0Ic2zXtuqycW",
+      "fields": {},
+      "raw_refs": {
+        "node": -272
+      },
+      "unresolved_fields": {
+        "effects": [
+          [
+            47
+          ]
+        ]
+      }
+    },
+    {
+      "owner_index": 46,
+      "owner_name": "zh_btn_chakan1",
+      "component": "acd34FBsQNGO7fA/yFlRuH0",
+      "fields": {},
+      "raw_refs": {
+        "speed": 1,
+        "node": -283,
+        "center": 3
+      },
+      "unresolved_fields": {
+        "radius": null,
+        "speed": 1,
+        "startAngle": null,
+        "center": 3
+      }
+    },
+    {
+      "owner_index": 47,
+      "owner_name": "zh_btn_chakan2",
+      "component": "acd34FBsQNGO7fA/yFlRuH0",
+      "fields": {},
+      "raw_refs": {
+        "speed": 1,
+        "node": -285,
+        "center": 3
+      },
+      "unresolved_fields": {
+        "radius": null,
+        "speed": 1,
+        "startAngle": null,
+        "center": 3
+      }
+    },
+    {
+      "owner_index": 48,
+      "owner_name": "zh_btn_chakan3",
+      "component": "acd34FBsQNGO7fA/yFlRuH0",
+      "fields": {},
+      "raw_refs": {
+        "speed": 1,
+        "node": -287,
+        "center": 3
+      },
+      "unresolved_fields": {
+        "radius": null,
+        "speed": 1,
+        "startAngle": null,
+        "center": 3
+      }
+    },
+    {
+      "owner_index": 49,
+      "owner_name": "zh_btn_chakan4",
+      "component": "acd34FBsQNGO7fA/yFlRuH0",
+      "fields": {},
+      "raw_refs": {
+        "speed": 1,
+        "node": -289,
+        "center": 3
+      },
+      "unresolved_fields": {
+        "radius": null,
+        "speed": 1,
+        "startAngle": null,
+        "center": 3
+      }
+    },
+    {
+      "owner_index": 51,
+      "owner_name": "zh_tianmingSSR_diban",
+      "component": "74fa2y55aFC67mpGCct49HP",
+      "fields": {},
+      "raw_refs": {
+        "node": -294
+      },
+      "unresolved_fields": {
+        "layoutNum": "4"
+      }
+    },
+    {
+      "owner_index": 54,
+      "owner_name": "btn_yl",
+      "component": "74fa2y55aFC67mpGCct49HP",
+      "fields": {},
+      "raw_refs": {
+        "node": -302
+      },
+      "unresolved_fields": {
+        "layoutNum": "8"
+      }
+    },
+    {
+      "owner_index": 55,
+      "owner_name": "txt_freeCall",
+      "component": "74fa2y55aFC67mpGCct49HP",
+      "fields": {},
+      "raw_refs": {
+        "node": -304
+      },
+      "unresolved_fields": {
+        "layoutNum": "6"
+      }
+    },
+    {
+      "owner_index": 55,
+      "owner_name": "txt_freeCall",
+      "component": "92740ofKPhE0Ic2zXtuqycW",
+      "fields": {},
+      "raw_refs": {
+        "node": -306
+      },
+      "unresolved_fields": {
+        "effects": [
+          [
+            114,
+            -300,
+            6
+          ],
+          [
+            49,
+            1,
+            300,
+            -1,
+            true
+          ]
+        ]
+      }
+    },
+    {
+      "owner_index": 56,
+      "owner_name": "txt_timeCall",
+      "component": "74fa2y55aFC67mpGCct49HP",
+      "fields": {},
+      "raw_refs": {
+        "node": -307
+      },
+      "unresolved_fields": {
+        "layoutNum": "6"
+      }
+    },
+    {
+      "owner_index": 56,
+      "owner_name": "txt_timeCall",
+      "component": "92740ofKPhE0Ic2zXtuqycW",
+      "fields": {},
+      "raw_refs": {
+        "node": -309
+      },
+      "unresolved_fields": {
+        "effects": [
+          [
+            115,
+            160,
+            -300,
+            6
+          ],
+          [
+            116,
+            1,
+            160,
+            300,
+            -1,
+            true
+          ]
+        ]
+      }
+    },
+    {
+      "owner_index": 62,
+      "owner_name": "fazhengMagic",
+      "component": "e285bStulNHzI7HFtTnSxbf",
+      "fields": {},
+      "raw_refs": {
+        "node": -320
+      }
+    },
+    {
+      "owner_index": 72,
+      "owner_name": "line",
+      "component": "24c59tnBStFsoltvtIkpedV",
+      "fields": {},
+      "raw_refs": {
+        "node": -340
+      }
+    },
+    {
+      "owner_index": 73,
+      "owner_name": "img3",
+      "component": "acd34FBsQNGO7fA/yFlRuH0",
+      "fields": {},
+      "raw_refs": {
+        "speed": 5,
+        "node": -342,
+        "center": 3
+      },
+      "unresolved_fields": {
+        "radius": null,
+        "speed": 5,
+        "startAngle": null,
+        "center": 3
+      }
+    },
+    {
+      "owner_index": 74,
+      "owner_name": "icon1",
+      "component": "acd34FBsQNGO7fA/yFlRuH0",
+      "fields": {},
+      "raw_refs": {
+        "speed": 1,
+        "node": -344,
+        "center": 3
+      },
+      "unresolved_fields": {
+        "radius": null,
+        "speed": 1,
+        "startAngle": null,
+        "center": 3
+      }
+    },
+    {
+      "owner_index": 75,
+      "owner_name": "icon2",
+      "component": "acd34FBsQNGO7fA/yFlRuH0",
+      "fields": {},
+      "raw_refs": {
+        "speed": 1,
+        "node": -346,
+        "center": 3
+      },
+      "unresolved_fields": {
+        "radius": null,
+        "speed": 1,
+        "startAngle": null,
+        "center": 3
+      }
+    },
+    {
+      "owner_index": 76,
+      "owner_name": "icon3",
+      "component": "acd34FBsQNGO7fA/yFlRuH0",
+      "fields": {},
+      "raw_refs": {
+        "speed": 1,
+        "node": -348,
+        "center": 3
+      },
+      "unresolved_fields": {
+        "radius": null,
+        "speed": 1,
+        "startAngle": null,
+        "center": 3
+      }
+    },
+    {
+      "owner_index": 77,
+      "owner_name": "icon4",
+      "component": "acd34FBsQNGO7fA/yFlRuH0",
+      "fields": {},
+      "raw_refs": {
+        "speed": 1,
+        "node": -350,
+        "center": 3
+      },
+      "unresolved_fields": {
+        "radius": null,
+        "speed": 1,
+        "startAngle": null,
+        "center": 3
+      }
+    },
+    {
+      "owner_index": 78,
+      "owner_name": "icon5",
+      "component": "acd34FBsQNGO7fA/yFlRuH0",
+      "fields": {},
+      "raw_refs": {
+        "speed": 1,
+        "node": -352,
+        "center": 3
+      },
+      "unresolved_fields": {
+        "radius": null,
+        "speed": 1,
+        "startAngle": null,
+        "center": 3
+      }
+    },
+    {
+      "owner_index": 79,
+      "owner_name": "iconSelectMagic",
+      "component": "acd34FBsQNGO7fA/yFlRuH0",
+      "fields": {},
+      "raw_refs": {
+        "speed": 1,
+        "node": -354,
+        "center": 3
+      },
+      "unresolved_fields": {
+        "radius": null,
+        "speed": 1,
+        "startAngle": null,
+        "center": 3
+      }
+    },
+    {
+      "owner_index": 80,
+      "owner_name": "curMagic4",
+      "component": "acd34FBsQNGO7fA/yFlRuH0",
+      "fields": {},
+      "raw_refs": {
+        "speed": 1,
+        "node": -356,
+        "center": 3
+      },
+      "unresolved_fields": {
+        "radius": null,
+        "speed": 1,
+        "startAngle": null,
+        "center": 3
+      }
+    },
+    {
+      "owner_index": 81,
+      "owner_name": "curMagic5",
+      "component": "acd34FBsQNGO7fA/yFlRuH0",
+      "fields": {},
+      "raw_refs": {
+        "speed": 1,
+        "node": -358,
+        "center": 3
+      },
+      "unresolved_fields": {
+        "radius": null,
+        "speed": 1,
+        "startAngle": null,
+        "center": 3
+      }
+    },
+    {
+      "owner_index": 82,
+      "owner_name": "zh_icon_zhenying0",
+      "component": "acd34FBsQNGO7fA/yFlRuH0",
+      "fields": {},
+      "raw_refs": {
+        "speed": 1,
+        "faceToTarget": true,
+        "faceAxis": 2,
+        "node": -360,
+        "center": 3
+      },
+      "unresolved_fields": {
+        "radius": null,
+        "speed": 1,
+        "startAngle": null,
+        "faceToTarget": true,
+        "faceAxis": 2,
+        "center": 3
+      }
+    },
+    {
+      "owner_index": 83,
+      "owner_name": "imgSelect",
+      "component": "acd34FBsQNGO7fA/yFlRuH0",
+      "fields": {},
+      "raw_refs": {
+        "speed": 1,
+        "faceToTarget": true,
+        "node": -362,
+        "center": 3
+      },
+      "unresolved_fields": {
+        "radius": null,
+        "speed": 1,
+        "startAngle": null,
+        "faceToTarget": true,
+        "center": 3
+      }
+    },
+    {
+      "owner_index": 89,
+      "owner_name": "imgTag",
+      "component": "92740ofKPhE0Ic2zXtuqycW",
+      "fields": {},
+      "raw_refs": {
+        "node": -371
+      },
+      "unresolved_fields": {
+        "effects": [
+          [
+            107,
+            10,
+            500,
+            1,
+            1,
+            true,
+            100,
+            300
+          ]
+        ]
+      }
+    },
+    {
+      "owner_index": 92,
+      "owner_name": "moneyBox",
+      "component": "74fa2y55aFC67mpGCct49HP",
+      "fields": {},
+      "raw_refs": {
+        "node": -375
+      },
+      "unresolved_fields": {
+        "layoutNum": "6"
+      }
+    },
+    {
+      "owner_index": 92,
+      "owner_name": "moneyBox",
+      "component": "92740ofKPhE0Ic2zXtuqycW",
+      "fields": {},
+      "raw_refs": {
+        "_enabled": false,
+        "node": -376
+      },
+      "unresolved_fields": {
+        "_enabled": false,
+        "effects": [
+          [
+            117,
+            9,
+            -1,
+            true
+          ]
+        ]
+      }
+    }
   ]
 }

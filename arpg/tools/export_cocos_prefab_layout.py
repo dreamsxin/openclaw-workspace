@@ -153,7 +153,14 @@ def export_layout(prefab_path: str) -> dict:
     for index, node in node_records.items():
         node["global_position"] = global_position(index, node_records, global_cache)
 
-    return {"prefab": prefab_path, "import": prefab["import"], "nodes": list(node_records.values())}
+    component_bindings = extract_custom_component_bindings(objects, classes, templates, node_records)
+
+    return {
+        "prefab": prefab_path,
+        "import": prefab["import"],
+        "nodes": list(node_records.values()),
+        "component_bindings": component_bindings,
+    }
 
 
 def vec2_from_cocos(value: object) -> list[float] | None:
@@ -241,6 +248,104 @@ def global_position(index: int, node_records: dict[int, dict], cache: dict[int, 
         y += float(parent[1])
     cache[index] = [x, y]
     return cache[index]
+
+
+def extract_custom_component_bindings(objects: list, classes: list, templates: list, node_records: dict[int, dict]) -> list[dict]:
+    bindings = []
+    for owner_index, item in enumerate(objects):
+        if owner_index not in node_records or not isinstance(item, list):
+            continue
+        for component in iter_components(item):
+            class_name, values = decode_component(component, classes, templates)
+            if not is_custom_runtime_component(class_name):
+                continue
+            fields = {}
+            raw_refs = {}
+            unresolved = {}
+            for field, value in values.items():
+                if isinstance(value, int):
+                    raw_refs[field] = value
+                target_index = infer_component_field_target(field, owner_index, node_records)
+                if target_index is not None and target_index in node_records:
+                    fields[field] = {
+                        "index": target_index,
+                        "name": node_records[target_index].get("name", ""),
+                    }
+                elif field != "node":
+                    unresolved[field] = value
+            entry = {
+                "owner_index": owner_index,
+                "owner_name": node_records[owner_index].get("name", ""),
+                "component": class_name,
+                "fields": fields,
+            }
+            if raw_refs:
+                entry["raw_refs"] = raw_refs
+            if unresolved:
+                entry["unresolved_fields"] = unresolved
+            bindings.append(entry)
+    return bindings
+
+
+def is_custom_runtime_component(class_name: str) -> bool:
+    if not class_name:
+        return False
+    if class_name.startswith("cc."):
+        return False
+    if class_name.startswith("sp."):
+        return False
+    return True
+
+
+def infer_component_field_target(field: str, owner_index: int, node_records: dict[int, dict]) -> int | None:
+    candidates = descendant_indices(owner_index, node_records)
+    candidates.append(owner_index)
+    alias_names = component_field_aliases(field)
+    for alias in alias_names:
+        alias_norm = normalize_name(alias)
+        for index in candidates:
+            if normalize_name(str(node_records[index].get("name", ""))) == alias_norm:
+                return index
+    field_norm = normalize_name(field)
+    for index in candidates:
+        if normalize_name(str(node_records[index].get("name", ""))) == field_norm:
+            return index
+    return None
+
+
+def descendant_indices(owner_index: int, node_records: dict[int, dict]) -> list[int]:
+    result = []
+    pending = [owner_index]
+    while pending:
+        current = pending.pop(0)
+        for index, node in node_records.items():
+            if node.get("parent_index") == current:
+                result.append(index)
+                pending.append(index)
+    return result
+
+
+def normalize_name(value: str) -> str:
+    return "".join(ch for ch in value.lower() if ch.isalnum())
+
+
+def component_field_aliases(field: str) -> list[str]:
+    aliases = {
+        "girdLayout": ["gridLayout", "girdLayout"],
+        "JDT_label": ["yet_label", "JDT_label", "taskProgressLab", "count"],
+        "JDT_progress": ["progressBar", "JDT_progress"],
+        "title": ["title", "label_name"],
+        "txt_xiangou": ["label_xiangou", "txt_xiangou"],
+        "img_receive": ["gzzz_img_yishouqin", "img_receive", "isOver"],
+        "submitBtn": ["submitBtn", "getBtn", "btn_buy"],
+        "btnLabel": ["btnLabel", "Label"],
+        "imgComplete": ["imgComplete", "isOver"],
+        "descText": ["descText", "title"],
+        "taskProgress": ["taskProgress", "progressBar"],
+        "taskProgressLab": ["taskProgressLab", "count", "JDT_label"],
+        "vir_list": ["vir_list", "logScrollView", "scrollview"],
+    }
+    return aliases.get(field, [field])
 
 
 def resolve_sprite_frame(sprite_uuid: str) -> dict:

@@ -1588,6 +1588,12 @@ func _layout_detail_text(parsed: Dictionary, nodes: Array, stats: Dictionary) ->
 			lines.append("")
 			lines.append("关键节点:")
 			lines.append(examples)
+	var component_bindings: Array = parsed.get("component_bindings", [])
+	var binding_text := _format_component_bindings(component_bindings, 8)
+	if binding_text != "":
+		lines.append("")
+		lines.append("脚本字段绑定:")
+		lines.append(binding_text)
 	lines.append("")
 	lines.append("这是从原始 Cocos Prefab 提取的节点布局预览。当前已尽量关联 SpriteFrame/native 图片；无法自动确认贴图的节点继续显示半透明矩形。节点用途由拼音/缩写推断，仅作辅助，仍需结合源码和坐标确认。")
 	return "\n".join(lines)
@@ -1630,6 +1636,29 @@ func _format_hint_examples(nodes: Array, limit: int) -> String:
 		if not include:
 			continue
 		lines.append("%s => %s" % [str(node.get("name", "")), "/".join(hints)])
+		if lines.size() >= limit:
+			break
+	return "\n".join(lines)
+
+func _format_component_bindings(bindings: Array, limit: int) -> String:
+	var lines: Array[String] = []
+	for binding in bindings:
+		if typeof(binding) != TYPE_DICTIONARY:
+			continue
+		var fields: Dictionary = binding.get("fields", {})
+		if fields.is_empty():
+			continue
+		var parts: Array[String] = []
+		for field in fields.keys():
+			var target: Variant = fields[field]
+			if typeof(target) != TYPE_DICTIONARY:
+				continue
+			parts.append("%s->%s" % [str(field), str(target.get("name", ""))])
+			if parts.size() >= 5:
+				break
+		if parts.is_empty():
+			continue
+		lines.append("%s: %s" % [str(binding.get("owner_name", "")), " / ".join(parts)])
 		if lines.size() >= limit:
 			break
 	return "\n".join(lines)
