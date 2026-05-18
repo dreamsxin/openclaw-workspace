@@ -565,13 +565,24 @@ Spine 查看器：
 - `背包` 当前还额外补了分类按钮、详情面板和操作按钮；详情区仍受原 prefab 暗层影响，后续需统一处理 Mask/ScrollView 层级。
 - 带运行时 mock 的 prefab 预览页会跳过无贴图、无文本的 Cocos 容器占位节点，避免 `content`、`mask`、`box` 这类半透明灰块遮住动态内容。
 - `抽卡`：使用 `image/com/DrawCard` mock 数据。
-- `抽卡` 当前还额外补了右侧卡池页签、召唤积分/消耗、十连结果预览和积分兑换信息；已加入页面级静态层过滤，后续继续精修布局位置。
+- `抽卡` 当前还额外补了右侧卡池页签、召唤积分/消耗、十连结果预览和积分兑换信息；已加入页面级静态层过滤，后续继续接入抽卡 Spine 和结果子 Prefab。
+- `抽卡` mock 布局已改为从 Cocos 全局坐标压缩映射：页签参考 `tabBtn_5/tabBtn_1/tabBtn_3/tabBtn_2/tabBtn_4`，召唤按钮参考 `btn_call1/btn_call10`，奖励条参考 `progressBar/txt_progress`，动态展示容器参考 `HeroUiBox`。
 - `公会`：使用 `image/com/Guild`、`image/guildFlag` mock 数据。
 - `天空城`：使用 `image/com/skyCity` mock 建筑、矿物、空岛和副本入口。
 - `竞技`：使用 `image/com/Jingji`、`image/com/pvpActivity` mock 玩法入口、排名、奖励和膜拜信息。
 - `战斗`：使用 `image/com/map`、`image/head`、`image/com/Battle*` mock 战场、站位、血条和胜利面板。
 - `活动抽卡`：使用 `image/com/ActivityPanel/ZhaoHuan`、`image/com/ActivityPanel/NewHeroComing`、`image/com/ActivityPanel/thousandDrawCardActivity` mock 活动奖池、抽数奖励和兑换区。
 - `英雄`：使用 `image/en/HeroPanel`、`image/comHeroGrid`、`image/skill`、`image/head` mock 英雄列表、属性、技能、装备和角色展示。
+
+抽卡源码定位：
+
+- `assets/main/index.js:39976`：`DrawMainPanel.preUrl = "Prefab/DrawCard/drawCardPre"`，确认入口 prefab。
+- `assets/main/index.js:39908`：`DrawMainPanelCom.onLoad` 绑定 `btnTabs[0]`、`btnTabs[1]`，并通过 `getChildByName("HeroUiBox")` 找到整屏动态展示容器。
+- `assets/main/index.js:39916`：`onEnable` 调用 `setImgUrl(this.bg, "image/com/DrawCard/zh_bg")`，说明背景不是 prefab 静态贴图，而是运行时设置。
+- `assets/main/index.js:39978` 到 `39994`：预加载 `uispine/ZhaoHuan_GaoJi`、`ZhaoHuan_XianZhi`、`ZhaoHuan_YouQing`、`ZhaoHuan_PuTong` 和 `Prefab/DrawCard/HeroShowPre`。
+- `assets/main/index.js:39997` 到 `40015`、`40813` 到 `40815`、`41120` 到 `41134`：抽卡和切换卡池时使用 `ZhaoHuan_ChouKa`、`ZhaoHuan_ChouKa_back`、`ZhaoHuan_ChouKa_front`，以及不同卡池的 enter 动画。
+- `assets/main/index.js:33756` 到 `33764`、`39232`：奖励宝箱图标按状态动态切换 `image/com/DrawCard/bx_icon_0*` 和 `bx_icon_0*a`。
+- `data/prefab_layouts/drawCardPre.json` 关键全局坐标：`tabBtn_5(501,252)`、`tabBtn_1(501,158)`、`tabBtn_3(501,53.774)`、`tabBtn_2(501,-44.813)`、`tabBtn_4(501,-150.879)`、`btn_call1(-466,-96)`、`btn_call10(-466,-192)`、`progressBar(-445.515,-34.509)`、`btn2_call1(-140.873,-229.353)`、`btn2_call10(188.935,-227.964)`、`HeroUiBox(0,0)`。
 
 局部 slot 调试：
 

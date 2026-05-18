@@ -484,10 +484,10 @@ func _add_draw_card_mock() -> void:
 	var card_resources := ["image/com/DrawCard/zh_image_pan2", "image/com/DrawCard/bx_icon_03", "image/com/DrawCard/bx_icon_02"]
 	for i in 3:
 		var card := PanelContainer.new()
-		card.position = center + Vector2(-310 + i * 180, -55)
+		card.position = _mock_cocos_position(Vector2(-220 + i * 170, 70), 0.68)
 		card.size = Vector2(150, 205)
 		card.z_index = 100
-		card.modulate = Color(0.18, 0.14, 0.28, 0.86)
+		card.self_modulate = Color(0.18, 0.14, 0.28, 0.86)
 		canvas.add_child(card)
 		_add_named_image_to(card, card_resources[i], Vector2(22, 18), Vector2(106, 112), TextureRect.STRETCH_KEEP_ASPECT_CENTERED)
 		var label := Label.new()
@@ -503,11 +503,11 @@ func _add_draw_card_mock() -> void:
 		button.position = Vector2(28, 170)
 		button.size = Vector2(94, 28)
 		card.add_child(button)
-	_add_draw_card_reward_bar(center + Vector2(-335, 178))
-	_add_draw_card_tabs(center + Vector2(448, -216))
-	_add_draw_card_cost_panel(center + Vector2(-512, 94))
-	_add_draw_card_result_preview(center + Vector2(-156, 134))
-	_add_draw_card_exchange_panel(center + Vector2(236, 94))
+	_add_draw_card_reward_bar(_mock_cocos_position(Vector2(-445.515, -34.509), 0.68) + Vector2(-12, -46))
+	_add_draw_card_tabs()
+	_add_draw_card_cost_panel(_mock_cocos_position(Vector2(-466, -96), 0.68) + Vector2(-119, -33))
+	_add_draw_card_result_preview(_mock_cocos_position(Vector2(0, -205), 0.68) + Vector2(-180, -16))
+	_add_draw_card_exchange_panel(_mock_cocos_position(Vector2(250, -96), 0.68) + Vector2(-105, -33))
 
 func _add_draw_card_reward_bar(origin: Vector2) -> void:
 	var bg := _add_named_image("image/com/DrawCard/zh_progressBG_jiangli", origin, Vector2(340, 22), TextureRect.STRETCH_SCALE)
@@ -518,16 +518,17 @@ func _add_draw_card_reward_bar(origin: Vector2) -> void:
 		var box := _add_named_image("image/com/DrawCard/bx_icon_0%d" % (i + 1), origin + Vector2(52 + i * 82, -48), Vector2(58, 58), TextureRect.STRETCH_KEEP_ASPECT_CENTERED)
 		box.z_index = 102
 
-func _add_draw_card_tabs(origin: Vector2) -> void:
+func _add_draw_card_tabs() -> void:
 	var tabs := [
-		{"text": "普通", "res": "image/com/DrawCard/zh_btn_putongon"},
-		{"text": "高级", "res": "image/com/DrawCard/zh_btn_gaojioff"},
-		{"text": "友情", "res": "image/com/DrawCard/zh_btn_youqingoff"},
-		{"text": "天命", "res": "image/com/DrawCard/zh_btn_xianzhioff"},
+		{"text": "英灵来袭", "res": "image/com/DrawCard/zh_btn_gaojioff", "pos": Vector2(501, 252)},
+		{"text": "普通", "res": "image/com/DrawCard/zh_btn_putongon", "pos": Vector2(501, 158)},
+		{"text": "友情", "res": "image/com/DrawCard/zh_btn_youqingoff", "pos": Vector2(501, 53.774)},
+		{"text": "高级", "res": "image/com/DrawCard/zh_btn_gaojioff", "pos": Vector2(501, -44.813)},
+		{"text": "天命", "res": "image/com/DrawCard/zh_btn_xianzhioff", "pos": Vector2(501, -150.879)},
 	]
 	for i in tabs.size():
 		var button := Button.new()
-		button.position = origin + Vector2(0, i * 72)
+		button.position = _mock_cocos_position(tabs[i].pos, 0.68) + Vector2(-68, -26)
 		button.size = Vector2(138, 52)
 		button.text = ""
 		button.z_index = 100
@@ -547,7 +548,7 @@ func _add_draw_card_cost_panel(position: Vector2) -> void:
 	panel.position = position
 	panel.size = Vector2(238, 118)
 	panel.z_index = 100
-	panel.modulate = Color(0.08, 0.08, 0.12, 0.9)
+	panel.self_modulate = Color(0.08, 0.08, 0.12, 0.9)
 	canvas.add_child(panel)
 	var title_label := Label.new()
 	title_label.text = "召唤积分  11/120"
@@ -573,7 +574,7 @@ func _add_draw_card_result_preview(position: Vector2) -> void:
 	panel.position = position
 	panel.size = Vector2(360, 142)
 	panel.z_index = 100
-	panel.modulate = Color(0.08, 0.08, 0.12, 0.9)
+	panel.self_modulate = Color(0.08, 0.08, 0.12, 0.9)
 	canvas.add_child(panel)
 	var title_label := Label.new()
 	title_label.text = "十连结果预览"
@@ -595,7 +596,7 @@ func _add_draw_card_exchange_panel(position: Vector2) -> void:
 	panel.position = position
 	panel.size = Vector2(210, 142)
 	panel.z_index = 100
-	panel.modulate = Color(0.08, 0.08, 0.12, 0.9)
+	panel.self_modulate = Color(0.08, 0.08, 0.12, 0.9)
 	canvas.add_child(panel)
 	_add_named_image_to(panel, "image/com/DrawCard/zh_btn_duihuan", Vector2(34, 14), Vector2(142, 46), TextureRect.STRETCH_SCALE)
 	var info := Label.new()
@@ -1169,8 +1170,6 @@ func _should_skip_node(node: Dictionary) -> bool:
 func _should_skip_layout_static_node(name: String, texture_path: String, label_text: String) -> bool:
 	if current_layout != "抽卡":
 		return false
-	if texture_path == "" and label_text == "":
-		return false
 	var keep_names := ["btn_dh", "Background", "img_tip"]
 	if name in keep_names and texture_path != "":
 		return false
@@ -1195,6 +1194,9 @@ func _canvas_center() -> Vector2:
 	if canvas.size.x > 0.0 and canvas.size.y > 0.0:
 		return canvas.size * 0.5
 	return Vector2(440, 310)
+
+func _mock_cocos_position(cocos_position: Vector2, scale: float = 1.0) -> Vector2:
+	return _canvas_center() + Vector2(cocos_position.x, -cocos_position.y) * scale
 
 func _node_scale(node: Dictionary) -> Vector2:
 	var scale_arr: Array = node.get("scale", [1.0, 1.0])

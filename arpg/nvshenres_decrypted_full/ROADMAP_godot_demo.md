@@ -255,14 +255,16 @@ RESTORE_LOGIN_TO_HOME.md
 - 过滤后仍保留真实贴图、真实 Label 和 Button 节点；登录/选服等未使用 mock overlay 的页面不受该规则影响。
 - `drawCardPre` 预览已继续补本地抽卡动态内容：右侧卡池页签、召唤积分/消耗、十连结果预览、积分兑换信息。
 - `drawCardPre` 已加入页面级静态层过滤，屏蔽会干扰 mock 的原始按钮、页签和提示 Label；同时提高本地 mock 层级，减少重叠。
-- 当前 `drawCardPre` 主要剩余问题是 mock 布局位置仍偏粗，需要继续按原节点坐标和运行时代码精修。
+- `drawCardPre` 已从 `assets/main/index.js` 追到运行时资源：`DrawMainPanel.preUrl` 指向 `Prefab/DrawCard/drawCardPre`，`DrawMainPanelCom.onEnable` 设置 `image/com/DrawCard/zh_bg`，卡池展示使用 `uispine/ZhaoHuan_PuTong/YouQing/GaoJi/XianZhi`，抽卡过程使用 `ZhaoHuan_ChouKa/back/front`。
+- `drawCardPre` mock 布局已改为按 Cocos 全局坐标压缩映射，当前基准节点为 `tabBtn_5/tabBtn_1/tabBtn_3/tabBtn_2/tabBtn_4`、`btn_call1/btn_call10`、`progressBar`、`HeroUiBox`。
+- 当前 `drawCardPre` 主要剩余问题是抽卡 Spine、结果卡牌 `HeroShowPre` 和页签切换动画还没完整接入。
 
 下一步优先级：
 
 1. 完善 `HeroMainPre` 的 ScrollView 裁剪、Layout 重排、右侧信息层级和动态节点替换。
 2. 继续完善 `BagPre` 的页签交互、ScrollView/Mask 裁剪、详情层级和运行时分类数据。
 3. 继续完善 `DrawCardActivityPre` 的 `13002..13005` 子 prefab、页签切换和抽卡活动 Spine。
-4. 继续完善 `drawCardPre` 的页面级静态层替换、抽卡动画、结果卡牌和展示 Spine。
+4. 继续完善 `drawCardPre` 的抽卡 Spine、结果卡牌 `HeroShowPre`、页签切换动画和真实奖励状态。
 5. 继续完善 `battle` 的真实 Spine 战斗角色、技能特效、站位坐标和战斗结束子 prefab。
 
 ## 当前风险
