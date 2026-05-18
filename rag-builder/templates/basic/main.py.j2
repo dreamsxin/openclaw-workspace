@@ -1,0 +1,77 @@
+#!/usr/bin/env python3
+"""{{ project_name }} — Simple RAG Q&A system."""
+
+import os
+from pathlib import Path
+
+from dotenv import load_dotenv
+
+load_dotenv()
+
+
+def main():
+    """Run the RAG pipeline."""
+    print("🚀 Starting {{ project_name }}...")
+    agent = build_agent()
+
+    print("\n💬 Ready! Type your questions (or 'quit' to exit):\n")
+    while True:
+        try:
+            user_input = input("You: ").strip()
+        except (EOFError, KeyboardInterrupt):
+            break
+        if user_input.lower() in ("quit", "exit", "q"):
+            break
+        if not user_input:
+            continue
+
+        response = agent.chat(user_input)
+        print(f"\nAssistant: {response}\n")
+
+
+def build_agent():
+    """Build a simple RAG (no agent, direct retrieval)."""
+    import sys
+    sys.path.insert(0, str(Path(__file__).parent))
+
+    from rag_builder.agent.builder import RAGAgent
+    from rag_builder.config import (
+        EmbedderConfig, EmbedderType, LLMConfig, LLMProvider,
+        RetrieverConfig, VectorStoreConfig, VectorStoreType,
+    )
+    from rag_builder.embedder import create_embedder
+    from rag_builder.retriever import Retriever
+    from rag_builder.vectorstore.chroma_store import ChromaVectorStore
+    from rag_builder.vectorstore.faiss_store import FaissVectorStore
+
+    llm_config = LLMConfig(
+        provider=LLMProvider(os.getenv("LLM_PROVIDER", "{{ llm_provider }}")),
+        model=os.getenv("LLM_MODEL", "{{ llm_model }}"),
+        base_url=os.getenv("LLM_BASE_URL") or None,
+        api_key=os.getenv("LLM_API_KEY"),
+    )
+    embedder_config = EmbedderConfig(
+        provider=EmbedderType(os.getenv("EMBEDDER_PROVIDER", "{{ embedder_provider }}")),
+        model=os.getenv("EMBEDDER_MODEL", "{{ embedder_model }}"),
+        api_key=os.getenv("EMBEDDER_API_KEY") or os.getenv("LLM_API_KEY"),
+    )
+    vs_config = VectorStoreConfig(
+        store_type=VectorStoreType(os.getenv("VECTORSTORE_TYPE", "{{ vectorstore_type }}")),
+        persist_dir=os.getenv("VECTORSTORE_DIR", "./vectorstore"),
+    )
+
+    embedder = create_embedder(embedder_config)
+    if vs_config.store_type == VectorStoreType.CHROMA:
+        vs = ChromaVectorStore(vs_config, embedder.dimensions)
+    else:
+        vs = FaissVectorStore(vs_config, embedder.dimensions)
+
+    retriever = Retriever(vectorstore=vs, embedder=embedder, config=RetrieverConfig(
+        top_k=int(os.getenv("TOP_K", "5")),
+    ))
+
+    return RAGAgent(retriever=retriever, llm_config=llm_config)
+
+
+if __name__ == "__main__":
+    main()

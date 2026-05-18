@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Agent Builder</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#08080e;--s1:#101018;--s2:#181824;--s3:#222234;--bd:#2a2a42;
+  --bdA:#6c5ce7;--tx:#e8e8f0;--dim:#7878a0;--acc:#6c5ce7;--accG:rgba(108,92,231,.25);
+  --gn:#00d2a0;--gnG:rgba(0,210,160,.25);--or:#f0883e;--pk:#e84393;
+  --bl:#3b82f6;--cy:#22d3ee;--rd:#ef4444;--r:12px;--rs:8px;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-serif;background:var(--bg);color:var(--tx);height:100vh;overflow:hidden}
+button{font-family:inherit;cursor:pointer}
+input,select,textarea{font-family:inherit}
+
+/* ── header ── */
+.hdr{height:52px;background:var(--s1);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:100;position:relative}
+.hdr-l{display:flex;align-items:center;gap:10px}
+.logo{width:30px;height:30px;background:linear-gradient(135deg,var(--acc),var(--pk));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.hdr h1{font-size:15px;font-weight:600;letter-spacing:-.3px}
+.hdr-r{display:flex;gap:8px;align-items:center}
+.deploy-status{font-size:12px;padding:4px 10px;border-radius:20px;display:none;align-items:center;gap:5px}
+.deploy-status.ok{display:flex;background:rgba(0,210,160,.12);color:var(--gn);border:1px solid rgba(0,210,160,.3)}
+.deploy-status.err{display:flex;background:rgba(239,68,68,.12);color:var(--rd);border:1px solid rgba(239,68,68,.3)}
+.deploy-status.loading{display:flex;background:rgba(108,92,231,.12);color:var(--acc);border:1px solid rgba(108,92,231,.3)}
+
+.btn{padding:7px 14px;border-radius:var(--rs);border:1px solid var(--bd);background:var(--s2);color:var(--tx);font-size:12px;transition:all .2s;display:flex;align-items:center;gap:5px}
+.btn:hover{border-color:var(--bdA);background:var(--s3)}
+.btn-p{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:600}
+.btn-p:hover{background:#7c6cf0}
+.btn-gn{background:var(--gn);border-color:var(--gn);color:#fff;font-weight:600}
+.btn-gn:hover{background:#00e6b0}
+
+/* ── layout ── */
+.main{display:flex;height:calc(100vh - 52px)}
+
+/* ── sidebar ── */
+.sb{width:280px;background:var(--s1);border-right:1px solid var(--bd);overflow-y:auto;flex-shrink:0;scrollbar-width:thin;scrollbar-color:var(--bd) transparent}
+.sb::-webkit-scrollbar{width:5px}.sb::-webkit-scrollbar-thumb{background:var(--bd);border-radius:3px}
+.sb-s{border-bottom:1px solid var(--bd);padding:14px}
+.sb-s:last-child{border-bottom:none}
+.sh{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;margin-bottom:10px}
+.sh h3{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--dim)}
+.sh .arr{font-size:10px;color:var(--dim);transition:transform .2s}
+.sh .arr.c{transform:rotate(-90deg)}
+.sc{transition:max-height .3s,opacity .2s;overflow:hidden}
+.sc.hide{max-height:0!important;opacity:0;padding:0!important}
+
+/* tool cards */
+.tc{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);cursor:pointer;transition:all .15s;margin-bottom:5px}
+.tc:hover{border-color:var(--bdA);transform:translateX(2px)}
+.tc.on{border-color:var(--acc);background:rgba(108,92,231,.07);box-shadow:0 0 10px var(--accG)}
+.tc .ck{width:16px;height:16px;border:2px solid var(--bd);border-radius:4px;flex-shrink:0;position:relative;transition:all .15s}
+.tc.on .ck{background:var(--acc);border-color:var(--acc)}
+.tc.on .ck::after{content:'✓';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;font-size:9px;font-weight:700}
+.tc .ic{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.tc .inf{flex:1;min-width:0}
+.tc .nm{font-size:12px;font-weight:500}
+.tc .ds{font-size:10px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* config inputs */
+.cg{margin-bottom:14px}
+.cg label{display:block;font-size:10px;font-weight:600;color:var(--dim);margin-bottom:5px;text-transform:uppercase;letter-spacing:.3px}
+.ci{width:100%;padding:7px 10px;background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);color:var(--tx);font-size:12px;outline:none;transition:border-color .2s}
+.ci:focus{border-color:var(--acc)}
+select.ci{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' fill='%237878a0'%3E%3Cpath d='M1 3l4 4 4-4'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;padding-right:24px}
+select.ci option{background:var(--s2);color:var(--tx)}
+textarea.ci{min-height:60px;resize:vertical;font-size:11px;line-height:1.5}
+
+/* compress / output cards */
+.cc{padding:10px;background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);margin-bottom:6px;cursor:pointer;transition:all .15s}
+.cc:hover{border-color:var(--bdA)}
+.cc.on{border-color:var(--gn);background:rgba(0,210,160,.05)}
+.cc .ch{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.cc .cn{font-size:12px;font-weight:600}
+.cc .cd{font-size:10px;color:var(--dim);line-height:1.4}
+.cc .tg{display:inline-block;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:600;margin-top:4px}
+
+/* ── canvas ── */
+.cvs{flex:1;position:relative;overflow:hidden;
+  background:radial-gradient(circle at 50% 50%,rgba(108,92,231,.025) 0%,transparent 70%),
+  linear-gradient(rgba(42,42,66,.25) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(42,42,66,.25) 1px,transparent 1px);
+  background-size:100% 100%,20px 20px,20px 20px}
+.cvs svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1}
+.cvs-n{position:absolute;top:0;left:0;width:100%;height:100%;z-index:2}
+
+/* nodes */
+.nd{position:absolute;background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);box-shadow:0 4px 20px rgba(0,0,0,.4);min-width:180px;cursor:move;user-select:none;transition:box-shadow .2s,border-color .2s;z-index:10;animation:ndIn .2s ease-out}
+@keyframes ndIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+.nd:hover{border-color:var(--bdA)}.nd.sel{border-color:var(--acc);box-shadow:0 0 16px var(--accG),0 4px 20px rgba(0,0,0,.4)}
+.nd-h{padding:8px 12px;display:flex;align-items:center;gap:7px;border-bottom:1px solid var(--bd);border-radius:var(--r) var(--r) 0 0}
+.nd-h .dt{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.nd-h .tt{font-size:12px;font-weight:600}
+.nd-h .cl{margin-left:auto;width:18px;height:18px;display:flex;align-items:center;justify-content:center;border-radius:4px;color:var(--dim);font-size:13px;transition:all .12s}
+.nd-h .cl:hover{background:var(--rd);color:#fff}
+.nd-b{padding:10px 12px;font-size:11px;color:var(--dim)}
+.nd-b .pr{display:flex;justify-content:space-between;padding:3px 0}
+.nd-b .pv{background:var(--s3);padding:1px 7px;border-radius:3px;font-size:10px;font-family:'SF Mono','Fira Code',monospace;color:var(--cy)}
+.nd-p{position:absolute;width:10px;height:10px;border-radius:50%;background:var(--s3);border:2px solid var(--bd);cursor:crosshair;z-index:20;transition:all .12s}
+.nd-p:hover{transform:scale(1.4);border-color:var(--acc);background:var(--acc);box-shadow:0 0 8px var(--accG)}
+.nd-p.pi{left:-5px;top:50%;transform:translateY(-50%)}.nd-p.pi:hover{transform:translateY(-50%) scale(1.4)}
+.nd-p.po{right:-5px;top:50%;transform:translateY(-50%)}.nd-p.po:hover{transform:translateY(-50%) scale(1.4)}
+
+/* connections */
+.conn{stroke:var(--acc);stroke-width:2;fill:none;opacity:.5}
+.conn-t{stroke:var(--acc);stroke-width:2;stroke-dasharray:6 3;fill:none;opacity:.4}
+
+/* status bar */
+.stb{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);padding:6px 18px;display:flex;align-items:center;gap:16px;font-size:11px;color:var(--dim);z-index:50;box-shadow:0 4px 20px rgba(0,0,0,.4)}
+.si{display:flex;align-items:center;gap:5px}
+.sd{width:5px;height:5px;border-radius:50%;background:var(--gn);animation:pls 2s infinite}
+@keyframes pls{0%,100%{opacity:1}50%{opacity:.3}}
+
+.empty{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;color:var(--dim);z-index:5;pointer-events:none}
+.empty .ei{font-size:40px;margin-bottom:10px;opacity:.25}
+.empty h3{font-size:14px;margin-bottom:5px;opacity:.4}
+.empty p{font-size:11px;opacity:.3}
+
+/* ── right panel: chat + config tabs ── */
+.rp{width:340px;background:var(--s1);border-left:1px solid var(--bd);display:flex;flex-direction:column;flex-shrink:0}
+.rp-tabs{display:flex;border-bottom:1px solid var(--bd)}
+.rp-tab{flex:1;padding:10px;text-align:center;font-size:12px;font-weight:500;color:var(--dim);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s}
+.rp-tab.on{color:var(--tx);border-bottom-color:var(--acc)}
+.rp-body{flex:1;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--bd) transparent}
+.rp-body::-webkit-scrollbar{width:5px}.rp-body::-webkit-scrollbar-thumb{background:var(--bd);border-radius:3px}
+
+/* config tab */
+.cfg-body{padding:14px}
+
+/* chat tab */
+.chat{display:flex;flex-direction:column;height:100%}
+.chat-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;scrollbar-width:thin;scrollbar-color:var(--bd) transparent}
+.chat-msgs::-webkit-scrollbar{width:5px}.chat-msgs::-webkit-scrollbar-thumb{background:var(--bd);border-radius:3px}
+.msg{max-width:90%;padding:8px 12px;border-radius:var(--r);font-size:12px;line-height:1.6;word-break:break-word}
+.msg.user{align-self:flex-end;background:var(--acc);color:#fff;border-bottom-right-radius:4px}
+.msg.agent{align-self:flex-start;background:var(--s3);border-bottom-left-radius:4px}
+.msg.tool{align-self:flex-start;background:var(--s2);border:1px solid var(--bd);font-size:11px;color:var(--dim);font-family:monospace}
+.msg .typing{display:inline-block;animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.chat-input{display:flex;gap:6px;padding:10px;border-top:1px solid var(--bd)}
+.chat-input input{flex:1;padding:8px 12px;background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);color:var(--tx);font-size:12px;outline:none}
+.chat-input input:focus{border-color:var(--acc)}
+
+/* modal */
+.modal-bg{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:1000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-bg.show{opacity:1;pointer-events:all}
+.modal{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);width:520px;max-height:80vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.5);transform:translateY(20px);transition:transform .3s}
+.modal-bg.show .modal{transform:translateY(0)}
+.modal-h{padding:16px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+.modal-h h2{font-size:15px;font-weight:600}
+.modal-x{width:26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:6px;cursor:pointer;color:var(--dim);font-size:17px;transition:all .12s}
+.modal-x:hover{background:var(--s3);color:var(--tx)}
+.modal-b{padding:20px}
+.modal-f{padding:14px 20px;border-top:1px solid var(--bd);display:flex;justify-content:flex-end;gap:8px}
+.json-pre{background:var(--bg);border:1px solid var(--bd);border-radius:var(--rs);padding:14px;font-family:'SF Mono','Fira Code',monospace;font-size:11px;line-height:1.6;color:var(--cy);max-height:360px;overflow-y:auto;white-space:pre-wrap;word-break:break-all}
+</style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<div class="hdr">
+  <div class="hdr-l">
+    <div class="logo">⚡</div>
+    <h1>AI Agent Builder</h1>
+  </div>
+  <div class="hdr-r">
+    <div class="deploy-status" id="deployStatus"></div>
+    <button class="btn" onclick="testAgent()">🧪 测试</button>
+    <button class="btn" onclick="showExport()">📤 导出</button>
+    <button class="btn btn-gn" onclick="deployAgent()">🚀 一键部署</button>
+  </div>
+</div>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+
+  <!-- ── Sidebar ── -->
+  <div class="sb">
+
+    <!-- Model -->
+    <div class="sb-s">
+      <div class="sh" onclick="tog(this)"><h3>🧠 模型</h3><span class="arr">▼</span></div>
+      <div class="sc">
+        <div class="cg"><label>基础模型</label>
+          <select class="ci" id="mBase">
+            <option value="gpt-4o">GPT-4o</option>
+            <option value="gpt-4o-mini">GPT-4o Mini</option>
+            <option value="claude-sonnet-4-20250514">Claude Sonnet 4</option>
+            <option value="claude-3-5-haiku-20241022">Claude 3.5 Haiku</option>
+            <option value="deepseek-chat">DeepSeek V3</option>
+            <option value="deepseek-reasoner">DeepSeek R1</option>
+            <option value="qwen-max">通义千问 Max</option>
+            <option value="glm-4">GLM-4</option>
+          </select>
+        </div>
+        <div class="cg"><label>推理模型 (可选)</label>
+          <select class="ci" id="mReason">
+            <option value="">不使用</option>
+            <option value="o3">o3</option>
+            <option value="o4-mini">o4-mini</option>
+            <option value="deepseek-reasoner">DeepSeek R1</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tools -->
+    <div class="sb-s">
+      <div class="sh" onclick="tog(this)"><h3>🔧 工具</h3><span class="arr">▼</span></div>
+      <div class="sc" id="toolGrid"></div>
+    </div>
+
+    <!-- Compression -->
+    <div class="sb-s">
+      <div class="sh" onclick="tog(this)"><h3>📦 上下文压缩</h3><span class="arr">▼</span></div>
+      <div class="sc" id="compOpts"></div>
+    </div>
+
+    <!-- Memory -->
+    <div class="sb-s">
+      <div class="sh" onclick="tog(this)"><h3>💾 记忆</h3><span class="arr">▼</span></div>
+      <div class="sc">
+        <div class="cg"><label>短期</label>
+          <select class="ci" id="mShort">
+            <option value="sliding-window">滑动窗口</option>
+            <option value="token-budget">Token 预算</option>
+            <option value="summary-buffer">摘要缓冲</option>
+          </select>
+        </div>
+        <div class="cg"><label>长期</label>
+          <select class="ci" id="mLong">
+            <option value="none">不使用</option>
+            <option value="file-based">文件存储</option>
+          </select>
+        </div>
+        <div class="cg"><label>窗口大小</label>
+          <input type="number" class="ci" id="mWin" value="20" min="1" max="200">
+        </div>
+      </div>
+    </div>
+
+    <!-- Safety -->
+    <div class="sb-s">
+      <div class="sh" onclick="tog(this)"><h3>🛡️ 安全</h3><span class="arr">▼</span></div>
+      <div class="sc">
+        <div class="cg"><label>安全等级</label>
+          <select class="ci" id="sLevel">
+            <option value="strict">严格</option>
+            <option value="balanced" selected>平衡</option>
+            <option value="relaxed">宽松</option>
+          </select>
+        </div>
+        <div class="cg"><label>系统提示词</label>
+          <textarea class="ci" id="sPrompt" placeholder="定义 Agent 行为和边界…"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Orchestration -->
+    <div class="sb-s">
+      <div class="sh" onclick="tog(this)"><h3>⚙️ 编排</h3><span class="arr">▼</span></div>
+      <div class="sc">
+        <div class="cg"><label>模式</label>
+          <select class="ci" id="oMode">
+            <option value="react">ReAct (推理+行动)</option>
+            <option value="plan-execute">Plan & Execute</option>
+            <option value="chain">链式调用</option>
+          </select>
+        </div>
+        <div class="cg"><label>最大迭代</label>
+          <input type="number" class="ci" id="oIter" value="10" min="1" max="50">
+        </div>
+        <div class="cg"><label>超时 (秒)</label>
+          <input type="number" class="ci" id="oTimeout" value="300" min="30" max="3600">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Canvas ── -->
+  <div class="cvs" id="cvs">
+    <svg id="cvsSvg"></svg>
+    <div class="cvs-n" id="cvsN"></div>
+    <div class="empty" id="empty">
+      <div class="ei">🎯</div>
+      <h3>从左侧勾选工具开始构建</h3>
+      <p>勾选后自动生成节点，拖拽调整位置</p>
+    </div>
+    <div class="stb">
+      <div class="si"><span class="sd"></span><span id="nCnt">0 节点</span></div>
+      <div class="si"><span id="cCnt">0 连接</span></div>
+      <div class="si"><span id="tCnt">0 工具</span></div>
+    </div>
+  </div>
+
+  <!-- ── Right Panel ── -->
+  <div class="rp">
+    <div class="rp-tabs">
+      <div class="rp-tab on" data-tab="chat" onclick="switchTab('chat')">💬 对话测试</div>
+      <div class="rp-tab" data-tab="config" onclick="switchTab('config')">⚙️ 节点配置</div>
+    </div>
+    <div class="rp-body">
+      <!-- Chat -->
+      <div class="chat" id="tabChat">
+        <div class="chat-msgs" id="chatMsgs">
+          <div class="msg agent">👋 配置好 Agent 后点击「🚀 一键部署」，然后在这里测试对话。</div>
+        </div>
+        <div class="chat-input">
+          <input id="chatIn" placeholder="输入消息…" onkeydown="if(event.key==='Enter')sendChat()">
+          <button class="btn btn-p" onclick="sendChat()">发送</button>
+        </div>
+      </div>
+      <!-- Config -->
+      <div id="tabConfig" style="display:none">
+        <div class="cfg-body" id="cfgBody">
+          <div style="text-align:center;padding:40px 0;color:var(--dim)">
+            <div style="font-size:28px;margin-bottom:10px;opacity:.25">🖱️</div>
+            <p style="font-size:12px">点击画布节点查看配置</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Export Modal -->
+<div class="modal-bg" id="exportModal">
+  <div class="modal">
+    <div class="modal-h"><h2>📤 配置导出</h2><div class="modal-x" onclick="closeModal()">×</div></div>
+    <div class="modal-b"><div class="json-pre" id="jsonPre"></div></div>
+    <div class="modal-f">
+      <button class="btn" onclick="closeModal()">关闭</button>
+      <button class="btn btn-p" onclick="copyJson()">📋 复制</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════
+// DATA
+// ════════════════════════════════════════════════
+const TOOLS=[
+  {id:'web_search',name:'网络搜索',desc:'实时搜索互联网',icon:'🔍',color:'var(--bl)',cat:'信息获取'},
+  {id:'web_fetch',name:'网页抓取',desc:'获取解析网页内容',icon:'🌐',color:'var(--bl)',cat:'信息获取'},
+  {id:'code_exec',name:'代码执行',desc:'运行 Python/JS/Shell',icon:'💻',color:'var(--gn)',cat:'代码能力'},
+  {id:'file_ops',name:'文件操作',desc:'读写管理本地文件',icon:'📁',color:'var(--gn)',cat:'代码能力'},
+  {id:'api_call',name:'API 调用',desc:'调用 REST/GraphQL API',icon:'🔗',color:'var(--or)',cat:'数据处理'},
+];
+const COMPS=[
+  {id:'none',name:'不压缩',desc:'保留完整上下文',icon:'📝',tag:'高消耗',tc:'var(--rd)'},
+  {id:'sliding-window',name:'滑动窗口',desc:'保留最近 N 轮对话',icon:'🪟',tag:'低延迟',tc:'var(--gn)'},
+  {id:'summary',name:'摘要压缩',desc:'LLM 压缩历史为摘要',icon:'📋',tag:'平衡',tc:'var(--or)'},
+  {id:'hierarchical',name:'分层压缩',desc:'近期详细→远期粗略',icon:'🏗️',tag:'推荐',tc:'var(--acc)'},
+  {id:'importance',name:'重要性过滤',desc:'按相关性保留关键信息',icon:'⭐',tag:'智能',tc:'var(--cy)'},
+  {id:'token-budget',name:'Token 预算',desc:'严格控制 Token 数量',icon:'💰',tag:'精确',tc:'var(--or)'},
+];
+
+// ════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════
+let S={
+  nodes:[], conns:[], sel:null, tools:new Set(), comp:'hierarchical',
+  drag:null, dragOff:{x:0,y:0}, conn:null, nid:1, deployed:false
+};
+
+// ════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════
+function init(){
+  renderTools(); renderComps(); setupCanvas();
+  addNode('core','🤖 Agent Core','var(--acc)',380,80,{mode:'react',maxIter:10,timeout:300});
+  addNode('llm','🧠 LLM','var(--cy)',380,280,{model:'gpt-4o',temp:0.7,maxTok:4096});
+  addConn(1,2); updStatus();
+}
+
+// ════════════════════════════════════════════════
+// SIDEBAR RENDER
+// ════════════════════════════════════════════════
+function renderTools(){
+  let g=document.getElementById('toolGrid'),h='',cat='';
+  TOOLS.forEach(t=>{
+    if(t.cat!==cat){cat=t.cat;h+=`<div style="font-size:10px;color:var(--dim);padding:6px 0 3px;font-weight:500">${cat}</div>`}
+    h+=`<div class="tc" data-t="${t.id}" onclick="togTool('${t.id}')"><div class="ck"></div><div class="ic" style="background:${t.color}18;color:${t.color}">${t.icon}</div><div class="inf"><div class="nm">${t.name}</div><div class="ds">${t.desc}</div></div></div>`;
+  });
+  g.innerHTML=h;
+}
+function renderComps(){
+  document.getElementById('compOpts').innerHTML=COMPS.map(c=>
+    `<div class="cc ${S.comp===c.id?'on':''}" data-c="${c.id}" onclick="selComp('${c.id}')"><div class="ch"><span>${c.icon}</span><span class="cn">${c.name}</span></div><div class="cd">${c.desc}</div><span class="tg" style="background:${c.tc}18;color:${c.tc}">${c.tag}</span></div>`
+  ).join('');
+}
+
+// ════════════════════════════════════════════════
+// TOOL TOGGLE
+// ════════════════════════════════════════════════
+function togTool(id){
+  let card=document.querySelector(`[data-t="${id}"]`);
+  if(S.tools.has(id)){
+    S.tools.delete(id); card.classList.remove('on');
+    let n=S.nodes.find(n=>n.tid===id);
+    if(n)rmNode(n.id);
+  }else{
+    S.tools.add(id); card.classList.add('on');
+    let t=TOOLS.find(t=>t.id===id);
+    let x=80+Math.random()*400, y=80+Math.random()*350;
+    let nid=addNode(id,t.icon+' '+t.name,t.color,x,y,{});
+    let core=S.nodes.find(n=>n.type==='core');
+    if(core)addConn(core.id,nid);
+  }
+  updStatus();
+}
+
+function selComp(id){S.comp=id;document.querySelectorAll('.cc').forEach(c=>c.classList.toggle('on',c.dataset.c===id))}
+
+// ════════════════════════════════════════════════
+// NODES
+// ════════════════════════════════════════════════
+function addNode(type,title,color,x,y,params){
+  let id=S.nid++, node={id,type,title,color,x,y,params};
+  S.nodes.push(node);
+  let el=document.createElement('div');
+  el.className='nd';el.id='nd-'+id;el.style.left=x+'px';el.style.top=y+'px';el.dataset.nid=id;
+  let ph=Object.entries(params).slice(0,3).map(([k,v])=>`<div class="pr"><span>${k}</span><span class="pv">${v}</span></div>`).join('');
+  el.innerHTML=`<div class="nd-p pi" data-p="in" data-n="${id}"></div><div class="nd-p po" data-p="out" data-n="${id}"></div><div class="nd-h"><div class="dt" style="background:${color}"></div><span class="tt">${title}</span><div class="cl" onclick="rmNode(${id})">×</div></div><div class="nd-b">${ph||'<span style="color:var(--dim)">无参数</span>'}</div>`;
+  el.addEventListener('mousedown',e=>{
+    if(e.target.classList.contains('nd-p')||e.target.classList.contains('cl'))return;
+    S.drag=id;S.dragOff={x:e.clientX-node.x,y:e.clientY-node.y};selNode(id);e.preventDefault();
+  });
+  el.querySelectorAll('.nd-p').forEach(p=>{
+    p.addEventListener('mousedown',e=>{e.stopPropagation();if(p.dataset.p==='out')S.conn={nid:id}});
+    p.addEventListener('mouseup',e=>{if(S.conn&&p.dataset.p==='in'&&S.conn.nid!==id){addConn(S.conn.nid,id);S.conn=null;clearTmp()}});
+  });
+  el.addEventListener('click',()=>selNode(id));
+  document.getElementById('cvsN').appendChild(el);
+  document.getElementById('empty').style.display='none';
+  return id;
+}
+
+function rmNode(id){
+  S.conns=S.conns.filter(c=>c.f!==id&&c.t!==id);
+  S.nodes=S.nodes.filter(n=>n.id!==id);
+  let el=document.getElementById('nd-'+id);if(el)el.remove();
+  if(S.sel===id){S.sel=null;showDefCfg()}
+  renderConns();updStatus();
+  if(!S.nodes.length)document.getElementById('empty').style.display='';
+}
+
+function selNode(id){
+  S.sel=id;
+  document.querySelectorAll('.nd').forEach(n=>n.classList.remove('sel'));
+  let el=document.getElementById('nd-'+id);if(el)el.classList.add('sel');
+  showNodeCfg(id);
+}
+
+// ════════════════════════════════════════════════
+// CONNECTIONS
+// ════════════════════════════════════════════════
+function addConn(f,t){
+  if(S.conns.some(c=>c.f===f&&c.t===t))return;
+  S.conns.push({f,t});renderConns();updStatus();
+}
+function renderConns(){
+  let svg=document.getElementById('cvsSvg');svg.innerHTML='';
+  let box=document.getElementById('cvs').getBoundingClientRect();
+  S.conns.forEach(c=>{
+    let fe=document.getElementById('nd-'+c.f),te=document.getElementById('nd-'+c.t);
+    if(!fe||!te)return;
+    let fr=fe.getBoundingClientRect(),tr=te.getBoundingClientRect();
+    let x1=fr.right-box.left,y1=fr.top+fr.height/2-box.top,x2=tr.left-box.left,y2=tr.top+tr.height/2-box.top;
+    let mx=(x1+x2)/2;
+    let p=document.createElementNS('http://www.w3.org/2000/svg','path');
+    p.setAttribute('d',`M${x1} ${y1} C${mx} ${y1},${mx} ${y2},${x2} ${y2}`);
+    p.setAttribute('class','conn');svg.appendChild(p);
+    let a=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    a.setAttribute('cx',x2);a.setAttribute('cy',y2);a.setAttribute('r','3');
+    a.setAttribute('fill','var(--acc)');a.setAttribute('opacity','.7');svg.appendChild(a);
+  });
+}
+function drawTmp(x1,y1,x2,y2){
+  let t=document.getElementById('tmpL');
+  if(!t){t=document.createElementNS('http://www.w3.org/2000/svg','path');t.id='tmpL';t.setAttribute('class','conn-t');document.getElementById('cvsSvg').appendChild(t)}
+  t.setAttribute('d',`M${x1} ${y1} C${(x1+x2)/2} ${y1},${(x1+x2)/2} ${y2},${x2} ${y2}`);
+}
+function clearTmp(){let t=document.getElementById('tmpL');if(t)t.remove()}
+
+// ════════════════════════════════════════════════
+// CANVAS EVENTS
+// ════════════════════════════════════════════════
+function setupCanvas(){
+  document.addEventListener('mousemove',e=>{
+    if(S.drag!==null){
+      let n=S.nodes.find(n=>n.id===S.drag);if(!n)return;
+      n.x=e.clientX-S.dragOff.x;n.y=e.clientY-S.dragOff.y;
+      let el=document.getElementById('nd-'+n.id);if(el){el.style.left=n.x+'px';el.style.top=n.y+'px'}
+      renderConns();
+    }
+    if(S.conn){
+      let fe=document.getElementById('nd-'+S.conn.nid);
+      if(fe){let r=fe.getBoundingClientRect(),b=document.getElementById('cvs').getBoundingClientRect();
+        drawTmp(r.right-b.left,r.top+r.height/2-b.top,e.clientX-b.left,e.clientY-b.top)}
+    }
+  });
+  document.addEventListener('mouseup',()=>{S.drag=null;if(S.conn){S.conn=null;clearTmp()}});
+  document.getElementById('cvs').addEventListener('click',e=>{
+    if(e.target===document.getElementById('cvs')||e.target===document.getElementById('cvsN')||e.target===document.getElementById('cvsSvg')){
+      S.sel=null;document.querySelectorAll('.nd').forEach(n=>n.classList.remove('sel'));showDefCfg()}
+  });
+}
+
+// ════════════════════════════════════════════════
+// CONFIG PANEL
+// ════════════════════════════════════════════════
+function showNodeCfg(id){
+  let n=S.nodes.find(n=>n.id===id);if(!n)return;
+  let b=document.getElementById('cfgBody'),p=n.params||{};
+  let fields='';
+  if(n.type==='core'){
+    fields=`<div class="cg"><label>编排模式</label><select class="ci" onchange="updP(${id},'mode',this.value)"><option value="react" ${p.mode==='react'?'selected':''}>ReAct</option><option value="plan-execute" ${p.mode==='plan-execute'?'selected':''}>Plan&Execute</option><option value="chain" ${p.mode==='chain'?'selected':''}>链式</option></select></div><div class="cg"><label>最大迭代</label><input type="number" class="ci" value="${p.maxIter||10}" onchange="updP(${id},'maxIter',+this.value)"></div><div class="cg"><label>超时(秒)</label><input type="number" class="ci" value="${p.timeout||300}" onchange="updP(${id},'timeout',+this.value)"></div>`;
+  }else if(n.type==='llm'){
+    fields=`<div class="cg"><label>Temperature</label><input type="range" min="0" max="2" step="0.1" value="${p.temp||0.7}" oninput="updP(${id},'temp',+this.value);this.nextElementSibling.textContent=this.value" style="width:100%"><span style="font-size:11px;color:var(--cy)">${p.temp||0.7}</span></div><div class="cg"><label>Max Tokens</label><input type="number" class="ci" value="${p.maxTok||4096}" onchange="updP(${id},'maxTok',+this.value)"></div>`;
+  }else{
+    fields=`<div class="cg"><label>工具说明</label><div style="font-size:11px;color:var(--dim);padding:7px;background:var(--bg);border-radius:6px">${TOOLS.find(t=>t.id===n.type)?.desc||'自定义工具'}</div></div>`;
+  }
+  let conns=S.conns.filter(c=>c.f===id||c.t===id).map(c=>{
+    let o=c.f===id?c.t:c.f,other=S.nodes.find(n=>n.id===o);
+    return`<div style="padding:3px 0;color:var(--dim)">${c.f===id?'→':'←'} ${other?.title||'?'}</div>`;
+  }).join('')||'<div style="color:var(--dim)">无连接</div>';
+  b.innerHTML=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;padding:10px;background:var(--s2);border-radius:8px;border:1px solid var(--bd)"><div style="width:32px;height:32px;border-radius:7px;background:${n.color}18;color:${n.color};display:flex;align-items:center;justify-content:center;font-size:16px">${n.title.split(' ')[0]}</div><div><div style="font-size:13px;font-weight:600">${n.title}</div><div style="font-size:10px;color:var(--dim)">ID ${n.id}</div></div></div>${fields}<div class="cg"><label>连接</label><div style="font-size:11px">${conns}</div></div>`;
+}
+function showDefCfg(){document.getElementById('cfgBody').innerHTML='<div style="text-align:center;padding:40px 0;color:var(--dim)"><div style="font-size:28px;margin-bottom:10px;opacity:.25">🖱️</div><p style="font-size:12px">点击画布节点查看配置</p></div>'}
+function updP(nid,k,v){let n=S.nodes.find(n=>n.id===nid);if(n){if(!n.params)n.params={};n.params[k]=v;let el=document.getElementById('nd-'+nid);if(el){let b=el.querySelector('.nd-b');b.innerHTML=Object.entries(n.params).slice(0,3).map(([k,v])=>`<div class="pr"><span>${k}</span><span class="pv">${v}</span></div>`).join('')}}}
+
+// ════════════════════════════════════════════════
+// STATUS
+// ════════════════════════════════════════════════
+function updStatus(){
+  document.getElementById('nCnt').textContent=S.nodes.length+' 节点';
+  document.getElementById('cCnt').textContent=S.conns.length+' 连接';
+  document.getElementById('tCnt').textContent=S.tools.size+' 工具';
+}
+
+// ════════════════════════════════════════════════
+// SECTION TOGGLE
+// ════════════════════════════════════════════════
+function tog(h){let c=h.nextElementSibling,a=h.querySelector('.arr');if(c.classList.contains('hide')){c.classList.remove('hide');a.classList.remove('c')}else{c.classList.add('hide');a.classList.add('c')}}
+
+// ════════════════════════════════════════════════
+// TAB SWITCH
+// ════════════════════════════════════════════════
+function switchTab(t){
+  document.querySelectorAll('.rp-tab').forEach(x=>x.classList.toggle('on',x.dataset.tab===t));
+  document.getElementById('tabChat').style.display=t==='chat'?'':'none';
+  document.getElementById('tabConfig').style.display=t==='config'?'':'none';
+}
+
+// ════════════════════════════════════════════════
+// BUILD CONFIG
+// ════════════════════════════════════════════════
+function buildConfig(){
+  let core=S.nodes.find(n=>n.type==='core'),llm=S.nodes.find(n=>n.type==='llm');
+  return{
+    agent:{name:'AI Agent',model:document.getElementById('mBase').value,
+      reasoningModel:document.getElementById('mReason').value||null,
+      systemPrompt:document.getElementById('sPrompt').value,
+      safetyLevel:document.getElementById('sLevel').value},
+    orchestration:{type:core?.params?.mode||document.getElementById('oMode').value,
+      maxIterations:+document.getElementById('oIter').value,
+      timeout:+document.getElementById('oTimeout').value},
+    tools:Array.from(S.tools).map(id=>{let t=TOOLS.find(t=>t.id===id);return{id,name:t?.name||id,retries:3,timeout:30}}),
+    context:{compression:S.comp,memory:{
+      shortTerm:document.getElementById('mShort').value,
+      longTerm:document.getElementById('mLong').value,
+      windowSize:+document.getElementById('mWin').value}},
+    output:{format:'stream'},
+    workflow:{nodes:S.nodes.map(n=>({id:n.id,type:n.type,title:n.title,position:{x:n.x,y:n.y},config:{params:n.params}})),
+      connections:S.conns.map(c=>({from:c.f,to:c.t}))}
+  };
+}
+
+// ════════════════════════════════════════════════
+// DEPLOY 🚀
+// ════════════════════════════════════════════════
+async function deployAgent(){
+  let cfg=buildConfig(),st=document.getElementById('deployStatus');
+  st.className='deploy-status loading';st.textContent='⏳ 部署中…';
+  try{
+    let r=await fetch('/api/config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({config:cfg})});
+    let d=await r.json();
+    if(r.ok){
+      S.deployed=true;
+      st.className='deploy-status ok';st.innerHTML=`✅ 已部署 · ${d.model} · ${d.tools?.length||0} 工具`;
+      addChat('agent',`🚀 Agent 已部署！\n模型: ${d.model}\n工具: ${d.tools?.join(', ')||'无'}\n\n现在可以在左侧对话测试了。`);
+    }else{
+      st.className='deploy-status err';st.textContent='❌ '+d.detail;
+    }
+  }catch(e){
+    st.className='deploy-status err';st.textContent='❌ 连接失败: '+e.message;
+  }
+}
+
+// ════════════════════════════════════════════════
+// TEST AGENT
+// ════════════════════════════════════════════════
+async function testAgent(){
+  if(!S.deployed){addChat('agent','⚠️ 请先点击「🚀 一键部署」');return}
+  switchTab('chat');
+  addChat('agent','🧪 测试中…');
+  try{
+    let r=await fetch('/api/health');let d=await r.json();
+    addChat('agent',`✅ 服务正常\n模型: ${d.model}\n工具: ${d.tools.join(', ')||'无'}`);
+  }catch(e){addChat('agent','❌ '+e.message)}
+}
+
+// ════════════════════════════════════════════════
+// CHAT
+// ════════════════════════════════════════════════
+function addChat(role,text){
+  let m=document.getElementById('chatMsgs');
+  let d=document.createElement('div');d.className='msg '+role;d.textContent=text;
+  m.appendChild(d);m.scrollTop=m.scrollHeight;
+}
+
+async function sendChat(){
+  let inp=document.getElementById('chatIn'),text=inp.value.trim();
+  if(!text)return;inp.value='';
+  if(!S.deployed){addChat('agent','⚠️ 请先部署');return}
+  addChat('user',text);
+
+  // streaming via SSE
+  let div=document.createElement('div');div.className='msg agent';div.innerHTML='<span class="typing">●</span>';
+  document.getElementById('chatMsgs').appendChild(div);
+  let msgs=document.getElementById('chatMsgs');msgs.scrollTop=msgs.scrollHeight;
+
+  try{
+    let r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text,stream:true})});
+    let reader=r.body.getReader(),dec=new TextDecoder(),buf='',full='';
+    while(true){
+      let{done,value}=await reader.read();if(done)break;
+      buf+=dec.decode(value,{stream:true});
+      let lines=buf.split('\n');buf=lines.pop()||'';
+      for(let ln of lines){
+        if(!ln.startsWith('data: '))continue;
+        let payload=ln.slice(6);
+        if(payload==='[DONE]')continue;
+        try{
+          let ev=JSON.parse(payload);
+          if(ev.type==='token'){full+=ev.content;div.textContent=full}
+          else if(ev.type==='tool_call'){full+=`\n🔧 ${ev.name}…\n`;div.textContent=full}
+          else if(ev.type==='tool_result'){full+=`📎 ${ev.content.slice(0,120)}\n`;div.textContent=full}
+          else if(ev.type==='error'){full+=`\n❌ ${ev.content}`;div.textContent=full}
+        }catch(e){}
+        msgs.scrollTop=msgs.scrollHeight;
+      }
+    }
+    if(!full)div.textContent='(无响应)';
+  }catch(e){div.textContent='❌ '+e.message}
+}
+
+// ════════════════════════════════════════════════
+// EXPORT / MODAL
+// ════════════════════════════════════════════════
+function showExport(){document.getElementById('jsonPre').textContent=JSON.stringify(buildConfig(),null,2);document.getElementById('exportModal').classList.add('show')}
+function closeModal(){document.getElementById('exportModal').classList.remove('show')}
+function copyJson(){navigator.clipboard.writeText(document.getElementById('jsonPre').textContent).then(()=>{let b=event.target;b.textContent='✅ 已复制';setTimeout(()=>b.textContent='📋 复制',1200)})}
+
+window.addEventListener('resize',renderConns);
+init();
+</script>
+</body>
+</html>

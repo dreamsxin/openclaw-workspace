@@ -1,0 +1,37 @@
+{
+  "agent": {
+    "name": "AI Agent",
+    "model": "gpt-4o",
+    "reasoningModel": null,
+    "systemPrompt": "",
+    "safetyLevel": "balanced"
+  },
+  "orchestration": {
+    "type": "react",
+    "maxIterations": 10,
+    "timeout": 300
+  },
+  "tools": [
+    { "id": "web_search", "name": "网络搜索", "retries": 3, "timeout": 15 },
+    { "id": "web_fetch", "name": "网页抓取", "retries": 2, "timeout": 20 },
+    { "id": "code_exec", "name": "代码执行", "retries": 1, "timeout": 30 },
+    { "id": "file_ops", "name": "文件操作", "retries": 2, "timeout": 10 },
+    { "id": "api_call", "name": "API 调用", "retries": 3, "timeout": 30 }
+  ],
+  "context": {
+    "compression": "hierarchical",
+    "memory": {
+      "shortTerm": "sliding-window",
+      "longTerm": "file-based",
+      "windowSize": 20
+    }
+  },
+  "output": { "format": "stream" },
+  "workflow": {
+    "nodes": [
+      { "id": 1, "type": "core", "title": "Agent Core", "position": { "x": 380, "y": 80 }, "config": { "params": { "mode": "react", "maxIter": 10, "timeout": 300 } } },
+      { "id": 2, "type": "llm", "title": "LLM", "position": { "x": 380, "y": 280 }, "config": { "params": { "model": "gpt-4o", "temp": 0.7, "maxTok": 4096 } } }
+    ],
+    "connections": [ { "from": 1, "to": 2 } ]
+  }
+}

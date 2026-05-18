@@ -1,0 +1,132 @@
+#!/usr/bin/env python3
+"""{{ project_name }} — Index documents into the vector store.
+
+Supports incremental indexing: only new/modified files are re-indexed.
+Deleted files are automatically removed from the vector store.
+
+Usage:
+    python index_docs.py                    # Incremental update
+    python index_docs.py --rebuild          # Full rebuild
+    python index_docs.py --status           # Show index status
+"""
+
+import os
+import sys
+from pathlib import Path
+
+from dotenv import load_dotenv
+
+load_dotenv()
+
+
+def main():
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Index documents")
+    parser.add_argument("source", nargs="?", default="./docs", help="Document directory")
+    parser.add_argument("--rebuild", action="store_true", help="Full rebuild (ignore incremental)")
+    parser.add_argument("--status", action="store_true", help="Show index status")
+    args = parser.parse_args()
+
+    if args.status:
+        show_status()
+        return
+
+    source = Path(args.source)
+    if not source.exists():
+        print(f"✗ Directory not found: {args.source}")
+        sys.exit(1)
+
+    # Add project to path
+    sys.path.insert(0, str(Path(__file__).parent))
+
+    from rag_builder.chunker import chunk_documents
+    from rag_builder.config import (
+        ChunkConfig,
+        EmbedderConfig,
+        EmbedderType,
+        VectorStoreConfig,
+        VectorStoreType,
+    )
+    from rag_builder.embedder import create_embedder
+    from rag_builder.indexer import IndexManifest, file_content_hash, incremental_index, full_index
+    from rag_builder.parsers import parse_file
+
+    # Build config from env
+    embedder_config = EmbedderConfig(
+        provider=EmbedderType(os.getenv("EMBEDDER_PROVIDER", "openai")),
+        model=os.getenv("EMBEDDER_MODEL", "text-embedding-3-small"),
+        api_key=os.getenv("EMBEDDER_API_KEY") or os.getenv("LLM_API_KEY"),
+    )
+    vs_config = VectorStoreConfig(
+        store_type=VectorStoreType(os.getenv("VECTORSTORE_TYPE", "chroma")),
+        persist_dir=os.getenv("VECTORSTORE_DIR", "./vectorstore"),
+    )
+    chunk_config = ChunkConfig(
+        chunk_size=int(os.getenv("CHUNK_SIZE", "512")),
+        chunk_overlap=int(os.getenv("CHUNK_OVERLAP", "64")),
+    )
+
+    from rag_builder.config import ProjectConfig
+
+    config = ProjectConfig(
+        source_dir=str(source),
+        embedder=embedder_config,
+        vectorstore=vs_config,
+        chunk=chunk_config,
+    )
+
+    # Scan files
+    extensions = config.supported_extensions
+    files = []
+    for ext in extensions:
+        files.extend(source.rglob(f"*{ext}"))
+    files.sort()
+
+    if not files:
+        print(f"⚠ No documents found in {args.source}")
+        return
+
+    print(f"📂 Found {len(files)} documents")
+
+    if args.rebuild:
+        full_index(config, files)
+    else:
+        incremental_index(config, files)
+
+
+def show_status():
+    """Show current index status."""
+    import json
+
+    vs_dir = Path(os.getenv("VECTORSTORE_DIR", "./vectorstore"))
+    manifest_path = vs_dir / "index_manifest.json"
+
+    if not manifest_path.exists():
+        print("⚠ No index found. Run: python index_docs.py")
+        return
+
+    data = json.loads(manifest_path.read_text())
+    files = data.get("files", {})
+    total_chunks = data.get("total_chunks", 0)
+
+    print(f"📊 Index Status")
+    print(f"  Files:    {len(files)}")
+    print(f"  Chunks:   {total_chunks}")
+
+    from datetime import datetime
+
+    ts = data.get("last_updated", 0)
+    if ts:
+        print(f"  Updated:  {datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')}")
+
+    # Type breakdown
+    types: dict[str, int] = {}
+    for rec in files.values():
+        ext = Path(rec["path"]).suffix.lower()
+        types[ext] = types.get(ext, 0) + 1
+    print(f"  Types:    {', '.join(f'{k}: {v}' for k, v in sorted(types.items()))}")
+
+
+if __name__ == "__main__":
+    main()

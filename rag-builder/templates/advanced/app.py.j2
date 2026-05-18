@@ -1,0 +1,69 @@
+"""{{ project_name }} — Web UI with Streamlit."""
+
+import os
+import sys
+from pathlib import Path
+
+import streamlit as st
+from dotenv import load_dotenv
+
+load_dotenv()
+
+st.set_page_config(page_title="{{ project_name }}", page_icon="🤖", layout="wide")
+
+
+@st.cache_resource
+def load_agent():
+    """Load the RAG agent (cached)."""
+    from main import build_agent
+    return build_agent()
+
+
+def main():
+    st.title("🤖 {{ project_name }}")
+    st.caption("Ask questions about your documents")
+
+    # Sidebar
+    with st.sidebar:
+        st.header("Settings")
+        if st.button("🗑️ Clear Chat"):
+            st.session_state.messages = []
+            st.rerun()
+
+        if st.button("🔄 Reset Agent"):
+            st.cache_resource.clear()
+            st.rerun()
+
+        st.divider()
+        st.markdown(
+            "**Config:**\n"
+            f"- LLM: `{os.getenv('LLM_MODEL', '{{ llm_model }}')}`\n"
+            f"- Embedder: `{os.getenv('EMBEDDER_MODEL', '{{ embedder_model }}')}`\n"
+            f"- Vector Store: `{os.getenv('VECTORSTORE_TYPE', '{{ vectorstore_type }}')}`"
+        )
+
+    # Chat history
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
+
+    for msg in st.session_state.messages:
+        with st.chat_message(msg["role"]):
+            st.markdown(msg["content"])
+
+    # User input
+    if prompt := st.chat_input("Ask a question about your documents"):
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        with st.chat_message("user"):
+            st.markdown(prompt)
+
+        with st.chat_message("assistant"):
+            with st.spinner("Thinking..."):
+                agent = load_agent()
+                response = agent.chat(prompt)
+                st.markdown(response)
+
+        st.session_state.messages.append({"role": "assistant", "content": response})
+
+
+if __name__ == "__main__":
+    main()
