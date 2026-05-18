@@ -4,6 +4,8 @@ const MAIN_DEMO := "res://scenes/main_demo.tscn"
 const RESOURCE_BROWSER := "res://scenes/resource_browser.tscn"
 const TEXTURE_MAP_PATH := "res://data/login_texture_map.json"
 const LAYOUT_MANIFEST_PATH := "res://data/prefab_layouts.json"
+const BAG_ITEM_LAYOUT_PATH := "res://data/prefab_layouts/GridBoxItemPre.json"
+const EQUIPMENT_ICON_INDEX_PATH := "res://data/equipment_icon_index.json"
 const HERO_105004_SPINE := "res://data/spine_runtime/105004.json"
 const SimpleSpinePlayerScript := preload("res://scripts/simple_spine_player.gd")
 
@@ -14,10 +16,12 @@ var current_layout := "登录选服"
 var texture_map: Dictionary = {}
 var layouts: Dictionary = {}
 var layout_stats: Dictionary = {}
+var equipment_icons: Array = []
 
 func _ready() -> void:
 	_load_texture_map()
 	_load_layout_manifest()
+	_load_equipment_icons()
 	_build_ui()
 	var requested_layout := _requested_layout()
 	if requested_layout != "":
@@ -192,36 +196,94 @@ func _add_hero_panel_mock() -> void:
 	player.position = target_center - bounds_center * scale_value
 
 func _add_bag_panel_mock() -> void:
-	var icon_paths := [
-		"res://assets/resources/native/1f/1f6b547b4.png",
-		"res://assets/resources/native/1a/1a7921f32.png",
-		"res://assets/resources/native/18/18b29ae48.png",
-		"res://assets/resources/native/14/14d2fafcf.png",
-		"res://assets/resources/native/15/15a1d9111.png",
-		"res://assets/resources/native/16/1604df330.png",
-	]
-	var start := _canvas_center() + Vector2(-255, -88)
-	var cell_size := Vector2(72, 72)
-	for i in 18:
-		var cell := PanelContainer.new()
-		cell.position = start + Vector2((i % 6) * 82, int(i / 6) * 82)
-		cell.size = cell_size
-		cell.modulate = Color(0.25, 0.22, 0.32, 0.88)
-		canvas.add_child(cell)
-		var icon := TextureRect.new()
-		icon.position = Vector2(10, 8)
-		icon.size = Vector2(52, 52)
-		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		icon.texture = _load_texture(icon_paths[i % icon_paths.size()])
-		cell.add_child(icon)
-		var count := Label.new()
-		count.text = "x%d" % (i + 1)
-		count.position = Vector2(34, 48)
-		count.size = Vector2(34, 20)
-		count.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-		count.add_theme_font_size_override("font_size", 13)
-		cell.add_child(count)
+	var names := ["神铸核心", "星辉宝箱", "召唤券", "经验药剂", "升星石", "秘银"]
+	var start := _canvas_center() + Vector2(-395, -136)
+	for i in 8:
+		var icon_data := _equipment_icon(i)
+		_add_bag_item_row(start + Vector2(0, i * 64), icon_data, names[i % names.size()], (i + 1) * 5, i == 0)
+
+func _add_bag_item_row(origin: Vector2, icon_data: Dictionary, item_name: String, item_count: int, checked: bool) -> void:
+	var row := Control.new()
+	row.position = origin
+	row.size = Vector2(251, 58)
+	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	canvas.add_child(row)
+
+	var bg := PanelContainer.new()
+	bg.size = row.size
+	bg.modulate = Color(0.11, 0.09, 0.13, 0.72)
+	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_child(bg)
+
+	var item_box := _node_from_layout("ItemBox")
+	var icon_box := PanelContainer.new()
+	icon_box.position = Vector2(12, 5)
+	icon_box.size = Vector2(54, 54)
+	icon_box.modulate = Color(0.25, 0.22, 0.32, 0.95)
+	icon_box.tooltip_text = JSON.stringify(item_box, "\t") if item_box else "GridBoxItemPre.ItemBox"
+	row.add_child(icon_box)
+
+	var icon := TextureRect.new()
+	icon.position = Vector2(5, 5)
+	icon.size = Vector2(44, 44)
+	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	icon.texture = _load_indexed_texture(icon_data)
+	icon_box.add_child(icon)
+
+	var name_label := Label.new()
+	name_label.text = item_name
+	name_label.position = Vector2(76, 8)
+	name_label.size = Vector2(130, 22)
+	name_label.clip_text = true
+	name_label.add_theme_font_size_override("font_size", 18)
+	name_label.add_theme_color_override("font_color", Color(0.95, 0.86, 0.62, 1.0))
+	row.add_child(name_label)
+
+	var count_label := Label.new()
+	count_label.text = "x%d" % item_count
+	count_label.position = Vector2(76, 33)
+	count_label.size = Vector2(80, 20)
+	count_label.add_theme_font_size_override("font_size", 16)
+	count_label.add_theme_color_override("font_color", Color(0.78, 0.9, 1.0, 1.0))
+	row.add_child(count_label)
+
+	var check := _node_from_layout("chek2" if checked else "chek1")
+	var check_rect := TextureRect.new()
+	check_rect.position = Vector2(212, 18)
+	check_rect.size = Vector2(24, 24)
+	check_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	check_rect.stretch_mode = TextureRect.STRETCH_SCALE
+	if check and str(check.get("texture_path", "")) != "":
+		check_rect.texture = _load_node_texture("res://" + str(check.get("texture_path", "")), check)
+	else:
+		check_rect.modulate = Color(0.4, 0.52, 0.72, 0.85)
+	row.add_child(check_rect)
+
+func _node_from_layout(node_name: String) -> Dictionary:
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(BAG_ITEM_LAYOUT_PATH))
+	if typeof(parsed) != TYPE_DICTIONARY:
+		return {}
+	for node in parsed.get("nodes", []):
+		if typeof(node) == TYPE_DICTIONARY and str(node.get("name", "")) == node_name:
+			return node
+	return {}
+
+func _equipment_icon(index: int) -> Dictionary:
+	if equipment_icons.is_empty():
+		return {}
+	var sprite_entries := equipment_icons.filter(func(item: Dictionary) -> bool:
+		return int(item.get("type_index", 0)) == 9 and str(item.get("texture_path", "")) != ""
+	)
+	if sprite_entries.is_empty():
+		return equipment_icons[index % equipment_icons.size()]
+	return sprite_entries[index % sprite_entries.size()]
+
+func _load_indexed_texture(icon_data: Dictionary) -> Texture2D:
+	var path := str(icon_data.get("texture_path", ""))
+	if path == "":
+		return null
+	return _load_node_texture("res://" + path, icon_data, true)
 
 func _node_label_text(node: Dictionary) -> String:
 	return str(node.get("label_text", ""))
@@ -321,6 +383,11 @@ func _load_layout_manifest() -> void:
 			continue
 		layouts[label] = "res://" + layout_path
 		layout_stats[label] = item
+
+func _load_equipment_icons() -> void:
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(EQUIPMENT_ICON_INDEX_PATH))
+	if typeof(parsed) == TYPE_ARRAY:
+		equipment_icons = parsed
 
 func _requested_layout() -> String:
 	var scene_args := Navigation.consume_scene_args()

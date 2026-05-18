@@ -20,6 +20,7 @@ PREFABS = [
     ("主城头像", "Prefab/mainpanel/heroHead"),
     ("英雄", "Prefab/HeroPanel/HeroMainPre"),
     ("背包", "Prefab/BagPanel/BagPre"),
+    ("背包格子", "Prefab/BagPanel/GridBoxItemPre"),
     ("抽卡", "Prefab/DrawCard/drawCardPre"),
     ("战斗", "Prefab/Battle/battle"),
     ("活动抽卡", "Prefab/ActivityPanel/DrawCardActivity/DrawCardActivityPre"),

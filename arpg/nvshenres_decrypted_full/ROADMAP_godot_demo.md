@@ -226,17 +226,20 @@ RESTORE_LOGIN_TO_HOME.md
 - `HeroMainPre` 预览已叠加本地 mock 的 `105004` Spine 角色展示，用于检查英雄面板的角色展示区域。
 - `export_cocos_prefab_layout.py` 已导出 `_anchorPoint`；`cocos_prefab_preview.gd` 已按 Cocos anchor 计算节点左上角。英雄面板属性、标题、按钮文字位置比中心点近似更接近原布局。
 - `export_cocos_prefab_layout.py` 已导出并基础应用 `cc.Widget` 的 `_alignFlags` 与 left/right/top/bottom，主要覆盖四边拉伸、左/右/上/下贴边和中心对齐。
-- `BagPre` 预览已叠加本地物品格 mock，用于检查背包主体区域和格子排列。
+- `export_cocos_prefab_layout.py` 已把 `Prefab/BagPanel/GridBoxItemPre` 加入导出清单，`BagPre` 的动态条目可按原子 Prefab 结构叠加。
+- `export_equipment_icon_index.py` 可从 `assets/resources/config.json` 导出 `data/equipment_icon_index.json`，解析源码中常见的 `image/equipment/<icon>` 图标路径。
+- `BagPre` 预览已叠加本地背包条目 mock，条目结构来自 `GridBoxItemPre`，图标来自真实 `image/equipment` SpriteFrame/Texture2D。
 
 下一步优先级：
 
 1. 完善 `HeroMainPre` 的 ScrollView 裁剪、Layout 重排和角色展示 mock 数据。
-2. 将 `BagPre` 的物品 mock 从 atlas 整图替换为真实 SpriteFrame 裁剪图标，并补页签交互。
+2. 继续完善 `BagPre` 的页签交互、ScrollView 裁剪和运行时分类数据。
 3. 完善 `drawCardPre` / `DrawCardActivityPre` 的卡池背景、按钮和展示 Spine。
 
 ## 当前风险
 
 - 部分资源由 JS 运行时选择，单看 prefab 看不到完整引用。
+- 坐标、尺寸、锚点可以从 prefab 读取；运行时列表项通常由子 Prefab 动态实例化，必须结合源码路径规则和本地 mock 数据补齐。
 - 部分 UI 使用九宫格、mask、scroll、layout，直接 TextureRect 会失真。
 - Spine 是最大差距；没有 runtime 时角色只能做近似展示。
 - Cocos Creator 压缩序列化字段多，新增 prefab 时要优先修工具，不要逐个手工猜。

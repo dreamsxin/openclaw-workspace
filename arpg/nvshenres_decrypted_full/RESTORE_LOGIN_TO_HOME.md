@@ -306,7 +306,8 @@ UI 层：Prefab/mainpanel/MainPre
 - `HeroMainPre` 预览已叠加本地 mock 的 `105004` Spine 角色展示，便于从主城进入英雄面板后检查角色展示效果。
 - Prefab 导出器已补 `_anchorPoint`；预览器已按 Cocos anchor 计算节点左上角，减少 Label 和按钮相对面板的错位。
 - Prefab 导出器已补 `cc.Widget` 的 `_alignFlags` 与 left/right/top/bottom，并在导出阶段做基础贴边/拉伸计算。登录面板等使用 Widget 的 prefab 更接近 Cocos 运行时布局。
-- `BagPre` 预览已叠加本地物品格 mock，用于从主城进入背包后检查主体区域和格子排列。
+- `BagPre` 预览已叠加本地背包条目 mock。条目结构来自 `Prefab/BagPanel/GridBoxItemPre`，真实图标来自 `assets/resources/config.json` 中的 `image/equipment/<icon>` 索引。
+- 当前结论：prefab 可还原静态节点坐标、尺寸、锚点、Widget；背包列表等动态内容需要继续追源码中的 `cc.instantiate` / `setImgUrl` 规则，并用子 Prefab 加本地数据补齐。
 
 当前不足：
 
