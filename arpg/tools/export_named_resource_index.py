@@ -12,6 +12,8 @@ OUT_PATH = ROOT / "data" / "named_resource_index.json"
 PREFIXES = [
     "image/com/DrawCard/",
     "image/com/Guild/",
+    "image/com/Jingji/",
+    "image/com/pvpActivity/",
     "image/com/skyCity/",
     "image/common/gh_",
     "image/guildFlag/",

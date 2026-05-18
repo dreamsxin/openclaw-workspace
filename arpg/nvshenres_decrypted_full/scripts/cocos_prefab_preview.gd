@@ -186,6 +186,8 @@ func _add_layout_mock() -> void:
 		_add_guild_mock()
 	elif current_layout == "天空城":
 		_add_sky_city_mock()
+	elif current_layout == "竞技":
+		_add_jingji_mock()
 
 func _add_hero_panel_mock() -> void:
 	var player: Node2D = SimpleSpinePlayerScript.new()
@@ -501,6 +503,104 @@ func _add_sky_city_action_button(position: Vector2, text: String) -> void:
 	button.text = text
 	button.add_theme_font_size_override("font_size", 21)
 	canvas.add_child(button)
+
+func _add_jingji_mock() -> void:
+	var center := _canvas_center()
+	_add_named_image("image/com/pvpActivity/sky-bg", center + Vector2(-472, -260), Vector2(872, 494), TextureRect.STRETCH_KEEP_ASPECT_COVERED).modulate = Color(1, 1, 1, 0.62)
+	_add_named_image("image/com/pvpActivity/slmu-dabiaoti", center + Vector2(-142, -250), Vector2(300, 74), TextureRect.STRETCH_KEEP_ASPECT_CENTERED)
+	_add_jingji_mode_card(center + Vector2(-106, -180), Vector2(230, 126), "冠军联赛", "image/com/pvpActivity/slmu-1", "排名 99", "可挑战")
+	_add_jingji_mode_card(center + Vector2(-382, -42), Vector2(230, 126), "战神殿", "image/com/Jingji/team/rk_zhanshendiankuang", "暂未开放", "冠军联赛前 50")
+	_add_jingji_mode_card(center + Vector2(168, -42), Vector2(230, 126), "王者争霸", "image/com/Jingji/team/rk_wangzhezhengba_72", "历史最高 99", "赛季玩法")
+	_add_jingji_mode_card(center + Vector2(-382, 130), Vector2(230, 126), "组队竞技", "image/com/Jingji/team/rk_zuduijingjikuang", "暂未开放", "3v3 队伍")
+	_add_jingji_mode_card(center + Vector2(168, 130), Vector2(230, 126), "巅峰对决", "image/com/pvpActivity/slmu-4", "暂未开放", "跨服竞技")
+	_add_jingji_rank_panel(center + Vector2(-596, -208))
+	_add_jingji_reward_panel(center + Vector2(430, -166))
+	_add_jingji_bottom_notice(center + Vector2(-170, 272))
+
+func _add_jingji_mode_card(position: Vector2, size: Vector2, title_text: String, resource_path: String, status_text: String, subtitle: String) -> void:
+	var button := Button.new()
+	button.position = position
+	button.size = size
+	button.text = ""
+	button.tooltip_text = title_text
+	canvas.add_child(button)
+	_add_named_image_to(button, "image/com/pvpActivity/slmu-moren", Vector2.ZERO, size, TextureRect.STRETCH_SCALE).modulate = Color(1, 1, 1, 0.72)
+	_add_named_image_to(button, resource_path, Vector2(16, 12), Vector2(88, 82), TextureRect.STRETCH_KEEP_ASPECT_CENTERED)
+	var title_label := Label.new()
+	title_label.text = title_text
+	title_label.position = Vector2(100, 16)
+	title_label.size = Vector2(size.x - 108, 30)
+	title_label.add_theme_font_size_override("font_size", 22)
+	title_label.add_theme_color_override("font_color", Color(1.0, 0.9, 0.58))
+	button.add_child(title_label)
+	var status := Label.new()
+	status.text = status_text
+	status.position = Vector2(102, 51)
+	status.size = Vector2(size.x - 112, 24)
+	status.add_theme_font_size_override("font_size", 17)
+	status.add_theme_color_override("font_color", Color(0.86, 0.95, 1.0))
+	button.add_child(status)
+	var sub := Label.new()
+	sub.text = subtitle
+	sub.position = Vector2(20, size.y - 32)
+	sub.size = Vector2(size.x - 40, 24)
+	sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	sub.add_theme_font_size_override("font_size", 15)
+	sub.add_theme_color_override("font_color", Color(0.72, 0.78, 0.86))
+	button.add_child(sub)
+
+func _add_jingji_rank_panel(position: Vector2) -> void:
+	var panel := PanelContainer.new()
+	panel.position = position
+	panel.size = Vector2(170, 220)
+	panel.modulate = Color(0.08, 0.09, 0.14, 0.72)
+	canvas.add_child(panel)
+	_add_named_image_to(panel, "image/com/Jingji/jj_icon_mobai", Vector2(42, 16), Vector2(86, 86), TextureRect.STRETCH_KEEP_ASPECT_CENTERED)
+	var label := Label.new()
+	label.text = "被膜拜次数\n128\n今日奖励 x2"
+	label.position = Vector2(12, 112)
+	label.size = Vector2(146, 90)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.add_theme_font_size_override("font_size", 18)
+	label.add_theme_color_override("font_color", Color(0.95, 0.9, 0.72))
+	panel.add_child(label)
+
+func _add_jingji_reward_panel(position: Vector2) -> void:
+	var panel := PanelContainer.new()
+	panel.position = position
+	panel.size = Vector2(208, 250)
+	panel.modulate = Color(0.08, 0.09, 0.14, 0.68)
+	canvas.add_child(panel)
+	var title_label := Label.new()
+	title_label.text = "赛季奖励"
+	title_label.position = Vector2(0, 14)
+	title_label.size = Vector2(208, 28)
+	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title_label.add_theme_font_size_override("font_size", 22)
+	title_label.add_theme_color_override("font_color", Color(1.0, 0.88, 0.55))
+	panel.add_child(title_label)
+	for i in 3:
+		_add_named_image_to(panel, "image/com/pvpActivity/slmu-jiangpinkuang", Vector2(26, 56 + i * 56), Vector2(156, 44), TextureRect.STRETCH_SCALE)
+		var reward := Label.new()
+		reward.text = ["钻石 x300", "竞技币 x1200", "英雄碎片 x20"][i]
+		reward.position = Vector2(42, 66 + i * 56)
+		reward.size = Vector2(126, 24)
+		reward.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		reward.add_theme_font_size_override("font_size", 16)
+		reward.add_theme_color_override("font_color", Color(0.88, 0.94, 1.0))
+		panel.add_child(reward)
+
+func _add_jingji_bottom_notice(position: Vector2) -> void:
+	_add_named_image("image/com/pvpActivity/slmu-heichangtiao", position, Vector2(360, 34), TextureRect.STRETCH_SCALE).modulate = Color(1, 1, 1, 0.76)
+	var label := Label.new()
+	label.text = "赛季结束时将通过邮件发送排名奖励"
+	label.position = position
+	label.size = Vector2(360, 34)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.add_theme_font_size_override("font_size", 17)
+	label.add_theme_color_override("font_color", Color(0.86, 0.92, 1.0))
+	canvas.add_child(label)
 
 func _node_label_text(node: Dictionary) -> String:
 	return str(node.get("label_text", ""))

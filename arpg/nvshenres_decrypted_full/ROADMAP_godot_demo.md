@@ -236,12 +236,15 @@ RESTORE_LOGIN_TO_HOME.md
 - `GuildMainPre` 预览已叠加本地公会大厅 mock，补公会背景、旗帜、公会信息和公会首领/科技/成员/公会战入口，资源来自 `image/com/Guild` 与 `image/guildFlag`。
 - `SkyCityPre` 预览已叠加本地天空城 mock，补空岛、云层、建筑、矿物、副本入口和底部操作按钮。
 - `export_named_resource_index.py` 已扩展 `image/com/skyCity/*`，`data/named_resource_index.json` 当前包含 325 条命名资源，可供天空城及其子界面继续复用。
+- `JingjiPre` 静态 prefab 只有文字和空节点，主要贴图由运行时路径加载；`export_named_resource_index.py` 已扩展 `image/com/Jingji/*` 和 `image/com/pvpActivity/*`。
+- `JingjiPre` 预览已叠加本地竞技 mock，补 PVP 背景、冠军联赛、战神殿、王者争霸、组队竞技、巅峰对决、膜拜信息和赛季奖励区域。
+- `data/named_resource_index.json` 当前包含 507 条命名资源。
 
 下一步优先级：
 
 1. 完善 `HeroMainPre` 的 ScrollView 裁剪、Layout 重排和角色展示 mock 数据。
 2. 继续完善 `BagPre` 的页签交互、ScrollView 裁剪和运行时分类数据。
-3. 继续完善 `SkyCityPre` 的建筑子 prefab、UISpine 动画和按钮跳转，或推进 `JingjiPre` 的场景级 mock。
+3. 继续完善 `JingjiPre` / `SkyCityPre` 的子 prefab、UISpine 动画和按钮跳转。
 4. 继续完善 `drawCardPre` / `DrawCardActivityPre` 的卡牌动画、抽卡结果和展示 Spine。
 
 ## 当前风险
