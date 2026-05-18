@@ -269,19 +269,21 @@ DrawCardActivityRenWuItemCom
 - `13003` 是循环礼包/循环任务列表，`content` 下动态实例化 `DrawCardActivityCycleItemCom`。
 - `13004` 是抽数任务页，`boxList` 驱动上方宝箱进度和红点，`taskList` 驱动下方任务列表。
 - `13005` 是许愿礼包页，`giftContent` 下动态实例化 `giftItemPre`。
+- `DrawCardActivityCycleItemCom` 和 `DrawCardActivityRenWuItemCom` 没有独立的明显 prefab 路径；`data/catalog.json` 显示它们的脚本 UUID 已分别嵌在 `13003`、`13004` prefab 的 `component_types` 中。
 
 当前实现状态：
 
 - `cocos_prefab_preview.gd` 对四个子页增加了运行时 mock 层，避免只显示 prefab 坐标框。
 - mock 数据只替代服务端返回的 `setData(...)` 内容；按钮、宝箱、底板等仍尽量使用已解析出的原始 SpriteFrame。
+- 对 `13003/13004/13005` 增加了页面级静态过滤，隐藏会干扰运行时列表的原始按钮、Label、进度和列表项占位节点。
 - 已用 Godot 控制台验证四个子页都可运行，无脚本解析错误。
 
 遗留问题：
 
-1. 子页仍混合显示部分原 prefab 静态节点，个别装饰会压到 mock 文本。
+1. 子页列表仍是手工 mock row，没有完全复用 Cocos 原组件字段绑定。
 2. `ScrollView`、`Mask`、`Widget` 尚未完整自动还原，目前列表位置靠手工参考导出的全局坐标。
 3. Cocos 运行时真实奖励图标、礼包价格、任务进度来自服务端配置，本地 demo 当前使用固定 mock 数据。
-4. 后续应把 `DrawCardActivityCycleItemCom` / `DrawCardActivityRenWuItemCom` 单独导出并映射到 Godot 列表项模板。
+4. 当前行底板继续使用原始资源，贴图自带亮线装饰，视觉上会穿过任务行背景；不是额外静态节点遮挡。
 
 关键结论：
 

@@ -267,12 +267,14 @@ RESTORE_LOGIN_TO_HOME.md
   - `活动抽卡-抽数任务`：模拟 `DrawCardActivity13004.setData(e,t,n)` 的 `boxList` 宝箱进度、红点和 `taskList` 任务列表。
   - `活动抽卡-许愿礼包`：模拟 `DrawCardActivity13005` 的 `giftContent` 礼包列表。
 - 已用 Godot 控制台截图回归 `13002/13003/13004/13005` 四页，确认无脚本解析错误；当前剩余问题是原 prefab 静态装饰和 mock 文本仍有局部重叠。
+- 已确认 `DrawCardActivityCycleItemCom` / `DrawCardActivityRenWuItemCom` 的脚本组件嵌在 `13003/13004` prefab 内，不是独立命名 prefab 路径；后续应从导出的节点绑定字段中提炼列表项模板。
+- 活动抽卡子页已增加静态节点过滤，隐藏原始按钮、Label、进度和列表项占位，减少与运行时 mock 的重叠。
 
 下一步优先级：
 
 1. 完善 `HeroMainPre` 的 ScrollView 裁剪、Layout 重排、右侧信息层级和动态节点替换。
 2. 继续完善 `BagPre` 的页签交互、ScrollView/Mask 裁剪、详情层级和运行时分类数据。
-3. 把 `DrawCardActivityCycleItemCom` / `DrawCardActivityRenWuItemCom` 单独导出为列表项模板，替换活动抽卡子页当前的手工 row。
+3. 从 `13003/13004` 已嵌入的 `DrawCardActivityCycleItemCom` / `DrawCardActivityRenWuItemCom` 组件字段中提炼列表项模板，替换活动抽卡子页当前的手工 row。
 4. 继续完善 `drawCardPre` 的抽卡 Spine、结果卡牌 `HeroShowPre`、页签切换动画和真实奖励状态。
 5. 将 `prefab_node_name_hints.json` 继续接入资源浏览器，显示节点名推断用途，减少手工查 JSON。
 6. 继续完善 `battle` 的真实 Spine 战斗角色、技能特效、站位坐标和战斗结束子 prefab。

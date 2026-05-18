@@ -1311,6 +1311,7 @@ func _add_activity_cycle_row(position: Vector2, data: Dictionary) -> void:
 	var panel := PanelContainer.new()
 	panel.position = position
 	panel.size = Vector2(760, 82)
+	panel.z_index = 160
 	panel.self_modulate = Color(0.08, 0.08, 0.12, 0.72)
 	canvas.add_child(panel)
 	_add_named_image_to(panel, "image/com/ActivityPanel/ZhaoHuan/wxzh_item_bg", Vector2(10, 9), Vector2(740, 64), TextureRect.STRETCH_SCALE)
@@ -1325,6 +1326,7 @@ func _add_activity_task_row(position: Vector2, data: Dictionary) -> void:
 	var panel := PanelContainer.new()
 	panel.position = position
 	panel.size = Vector2(668, 78)
+	panel.z_index = 160
 	panel.self_modulate = Color(0.08, 0.08, 0.12, 0.7)
 	canvas.add_child(panel)
 	_add_named_image_to(panel, "image/com/ActivityPanel/ZhaoHuan/wxzh_item_bg", Vector2(8, 8), Vector2(652, 60), TextureRect.STRETCH_SCALE)
@@ -1339,6 +1341,7 @@ func _add_activity_gift_card(position: Vector2, data: Dictionary) -> void:
 	var panel := PanelContainer.new()
 	panel.position = position
 	panel.size = Vector2(238, 330)
+	panel.z_index = 160
 	panel.self_modulate = Color(0.08, 0.08, 0.12, 0.76)
 	canvas.add_child(panel)
 	_add_named_image_to(panel, "image/com/ActivityPanel/ZhaoHuan/wxzh_item_bg", Vector2(18, 18), Vector2(202, 170), TextureRect.STRETCH_SCALE)
@@ -1351,6 +1354,7 @@ func _add_activity_button_like(position: Vector2, text: String, size: Vector2 = 
 	var button := Button.new()
 	button.position = position
 	button.size = size
+	button.z_index = 190
 	button.text = text
 	button.add_theme_font_size_override("font_size", 17)
 	canvas.add_child(button)
@@ -1359,11 +1363,13 @@ func _add_activity_progress_bar(position: Vector2, size: Vector2, progress: floa
 	var bg := ColorRect.new()
 	bg.position = position
 	bg.size = size
+	bg.z_index = 180
 	bg.color = Color(0.06, 0.07, 0.09, 0.86)
 	canvas.add_child(bg)
 	var fill := ColorRect.new()
 	fill.position = position + Vector2(2, 2)
 	fill.size = Vector2(max(0.0, size.x - 4.0) * clampf(progress, 0.0, 1.0), max(0.0, size.y - 4.0))
+	fill.z_index = 181
 	fill.color = Color(0.96, 0.66, 0.18, 0.92)
 	canvas.add_child(fill)
 
@@ -1371,6 +1377,7 @@ func _add_activity_red_dot(position: Vector2) -> void:
 	var dot := ColorRect.new()
 	dot.position = position
 	dot.size = Vector2(16, 16)
+	dot.z_index = 220
 	dot.color = Color(0.92, 0.04, 0.04, 0.95)
 	canvas.add_child(dot)
 
@@ -1378,6 +1385,7 @@ func _add_activity_badge(position: Vector2, text: String, color: Color, size: Ve
 	var bg := ColorRect.new()
 	bg.position = position
 	bg.size = size
+	bg.z_index = 200
 	bg.color = color
 	canvas.add_child(bg)
 	_add_activity_small_label(text, position, size, Color.WHITE, HORIZONTAL_ALIGNMENT_CENTER, font_size)
@@ -1387,6 +1395,7 @@ func _add_activity_small_label(text: String, position: Vector2, size: Vector2, c
 	label.text = text
 	label.position = position
 	label.size = size
+	label.z_index = 210
 	label.horizontal_alignment = align
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	label.add_theme_font_size_override("font_size", font_size)
@@ -1398,6 +1407,7 @@ func _add_activity_multiline_label(text: String, position: Vector2, size: Vector
 	label.text = text
 	label.position = position
 	label.size = size
+	label.z_index = 210
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	label.add_theme_font_size_override("font_size", font_size)
@@ -1465,12 +1475,19 @@ func _should_skip_node(node: Dictionary) -> bool:
 	return false
 
 func _should_skip_layout_static_node(name: String, texture_path: String, label_text: String) -> bool:
-	if current_layout != "抽卡":
-		return false
-	var keep_names := ["btn_dh", "Background", "img_tip"]
-	if name in keep_names and texture_path != "":
-		return false
-	return true
+	if current_layout == "抽卡":
+		var keep_names := ["btn_dh", "Background", "img_tip"]
+		if name in keep_names and texture_path != "":
+			return false
+		return true
+	if current_layout in ["活动抽卡-循环礼包", "活动抽卡-抽数任务", "活动抽卡-许愿礼包"]:
+		if label_text != "":
+			return true
+		if name in ["Item", "item", "liuguang", "select"] or name.begins_with("JDT_"):
+			return true
+		if name in ["btn_buy", "btn_qianwang", "submitBtn", "btnLabel", "img_receive", "imgComplete"]:
+			return true
+	return false
 
 func _should_skip_placeholder_node(name: String, texture_path: String, label_text: String) -> bool:
 	if texture_path != "" or label_text != "":
