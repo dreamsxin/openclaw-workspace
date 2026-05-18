@@ -2,6 +2,7 @@ extends Control
 
 const CATALOG_PATH := "res://data/catalog.json"
 const SPINE_INDEX_PATH := "res://data/spine_preview_index.json"
+const SPINE_VIEWER := "res://scenes/spine_character_viewer.tscn"
 
 var catalog: Dictionary = {}
 var spine_index: Dictionary = {}
@@ -15,6 +16,8 @@ var title: Label
 var detail: Label
 var audio_player: AudioStreamPlayer
 var type_buttons: HBoxContainer
+var spine_actions: HBoxContainer
+var current_spine_info: Dictionary = {}
 
 func _ready() -> void:
 	_build_ui()
@@ -58,6 +61,16 @@ func _build_ui() -> void:
 	detail.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	right.add_child(detail)
 
+	spine_actions = HBoxContainer.new()
+	spine_actions.visible = false
+	spine_actions.add_theme_constant_override("separation", 8)
+	right.add_child(spine_actions)
+
+	var open_spine := Button.new()
+	open_spine.text = "Open Spine Viewer"
+	open_spine.pressed.connect(_open_current_spine)
+	spine_actions.add_child(open_spine)
+
 	preview = TextureRect.new()
 	preview.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
 	preview.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
@@ -94,6 +107,8 @@ func _show_kind(kind: String) -> void:
 	text_preview.text = ""
 	text_preview.visible = false
 	preview.visible = true
+	spine_actions.visible = false
+	current_spine_info = {}
 	audio_player.stop()
 
 	match kind:
@@ -183,6 +198,8 @@ func _show_spine_item(item: Dictionary) -> void:
 	if info.is_empty():
 		text_preview.text = detail.text
 		return
+	current_spine_info = info
+	spine_actions.visible = _runtime_path_for_spine(info) != ""
 
 	detail.text = "%s\nspine=%s  bones=%d  slots=%d  skins=%d  animations=%d" % [
 		info.get("path", item.get("path", "")),
@@ -212,5 +229,34 @@ func _show_spine_item(item: Dictionary) -> void:
 	for texture_name in info.get("texture_names", []):
 		output += "  - %s\n" % texture_name
 	output += "\nNOTE\n"
-	output += "Godot 当前未接入 Spine runtime，因此这里显示 atlas/png 与动画索引；真正骨骼播放需要 Godot Spine 插件或自写 Spine 解析器。\n"
+	var runtime_path := _runtime_path_for_spine(info)
+	if runtime_path != "":
+		output += "已导出 runtime：%s，可点击 Open Spine Viewer 播放。\n" % runtime_path
+	else:
+		output += "尚未导出 runtime。可用 tools/export_spine_runtime_data.py 导出后播放。\n"
 	text_preview.text = output
+
+func _open_current_spine() -> void:
+	var runtime_path := _runtime_path_for_spine(current_spine_info)
+	if runtime_path == "":
+		return
+	var animations: Array = current_spine_info.get("animations", [])
+	var animation := "idle"
+	if not animations.has(animation) and not animations.is_empty():
+		animation = str(animations[0])
+	Navigation.go_with_args(SPINE_VIEWER, {
+		"spine_path": runtime_path,
+		"animation": animation,
+		"label": str(current_spine_info.get("name", runtime_path.get_file().get_basename())),
+	})
+
+func _runtime_path_for_spine(info: Dictionary) -> String:
+	var name := str(info.get("name", ""))
+	var candidates := [
+		"res://data/spine_runtime/%s.json" % name,
+		"res://data/spine_runtime/%s.json" % str(info.get("path", "")).get_file().get_basename(),
+	]
+	for candidate in candidates:
+		if FileAccess.file_exists(candidate):
+			return candidate
+	return ""

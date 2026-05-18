@@ -4,7 +4,9 @@ const LAYOUT_PATH := "res://data/prefab_layouts/MainPre.json"
 const FLOATING_CITY_SCENE := "res://scenes/original_main_city.tscn"
 const RESOURCE_BROWSER := "res://scenes/resource_browser.tscn"
 const PREFAB_PREVIEW := "res://scenes/cocos_prefab_preview.tscn"
+const SPINE_VIEWER := "res://scenes/spine_character_viewer.tscn"
 const DESIGN_SIZE := Vector2(1280, 720)
+const SimpleSpinePlayerScript := preload("res://scripts/simple_spine_player.gd")
 const ATLAS_1A := "res://assets/resources/native/1a/1a7921f32.png"
 const ATLAS_1D := "res://assets/resources/native/1d/1d816a710.png"
 const ATLAS_1F := "res://assets/resources/native/1f/1f6b547b4.png"
@@ -17,7 +19,8 @@ const NAV_YINGXIONG := "res://assets/resources/native/9a/9a9cb544-24ba-41c7-8cab
 const NAV_CANGKU := "res://assets/resources/native/83/83903e83-5933-42e2-b569-f4c51ebdea94.png"
 const NAV_MAOXIAN := "res://assets/resources/native/e1/e116f353-6974-488e-86a7-19f294f47e7b.png"
 const PLAYER_HEAD := "res://assets/resources/native/d7/d7bf0f4d-1dc9-4fda-80c0-65dfeee3316a.png"
-const AD_IMAGE := "res://assets/resources/native/cd/cdc789e9-d998-4c15-8920-b7ac60af8734.png"
+const AD_BANNER := "res://assets/resources/native/00/002545b0-69b1-4515-ac70-e545a4c8b5d2.png"
+const HERO_105004_SPINE := "res://data/spine_runtime/105004.json"
 
 const BACKGROUNDS := [
 	{
@@ -54,6 +57,10 @@ const HEROES := [
 		"path": "res://assets/resources/native/96/964573c8-6b8e-41e3-8fe1-ec4de01897e0.png",
 		"position": Vector2(462, 72),
 		"size": Vector2(410, 640),
+		"spine": HERO_105004_SPINE,
+		"animation": "idle",
+		"spine_position": Vector2(620, 670),
+		"spine_scale": Vector2(0.58, 0.58),
 	},
 	{
 		"name": "Herolh/104002",
@@ -79,6 +86,7 @@ var design_root: Control
 var prefab_layer: Control
 var background_image: TextureRect
 var hero_image: TextureRect
+var hero_spine: Node2D
 var title_label: Label
 var bg_index := 0
 var hero_index := 0
@@ -121,6 +129,11 @@ func _build_ui() -> void:
 	hero_image.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	design_root.add_child(hero_image)
 
+	hero_spine = SimpleSpinePlayerScript.new()
+	hero_spine.visible = false
+	hero_spine.z_index = 1
+	design_root.add_child(hero_spine)
+
 	prefab_layer = Control.new()
 	prefab_layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	design_root.add_child(prefab_layer)
@@ -155,6 +168,7 @@ func _add_debug_bar() -> void:
 	_add_top_button(top, "Hero", func(): _cycle_hero())
 	_add_top_button(top, "Resources", func(): Navigation.go(RESOURCE_BROWSER))
 	_add_top_button(top, "Prefab", func(): Navigation.go(PREFAB_PREVIEW))
+	_add_top_button(top, "Spine", func(): Navigation.go(SPINE_VIEWER))
 	_add_top_button(top, "Island", func(): Navigation.go(FLOATING_CITY_SCENE))
 
 func _add_top_button(parent: HBoxContainer, text: String, callback: Callable) -> void:
@@ -281,18 +295,18 @@ func _add_left_quick_buttons() -> void:
 
 func _add_event_grid() -> void:
 	var entries := [
-		{"label": "活动", "pos": Vector2(-610.0, 213.773), "atlas": ATLAS_1A, "rect": Rect2i(347, 64, 80, 71)},
-		{"label": "福利", "pos": Vector2(-610.0, 111.773), "atlas": ATLAS_1A, "rect": Rect2i(433, 64, 80, 71)},
-		{"label": "开服", "pos": Vector2(-610.0, 9.773), "atlas": ATLAS_1A, "rect": Rect2i(3, 120, 80, 80)},
-		{"label": "礼包", "pos": Vector2(-500.0, 213.773), "atlas": ATLAS_1F, "rect": Rect2i(781, 348, 80, 80)},
-		{"label": "限时", "pos": Vector2(-500.0, 111.773), "atlas": ATLAS_1A, "rect": Rect2i(519, 69, 80, 71)},
-		{"label": "皮肤", "pos": Vector2(-500.0, 9.773), "atlas": ATLAS_1A, "rect": Rect2i(360, 141, 80, 80)},
-		{"label": "竞技", "pos": Vector2(-390.0, 213.773), "atlas": ATLAS_1F, "rect": Rect2i(864, 929, 80, 71)},
-		{"label": "升星", "pos": Vector2(-390.0, 111.773), "atlas": ATLAS_1A, "rect": Rect2i(261, 64, 80, 71)},
-		{"label": "首充", "pos": Vector2(-390.0, 9.773), "atlas": ATLAS_1A, "rect": Rect2i(3, 120, 80, 80)},
-		{"label": "特惠", "pos": Vector2(-280.0, 213.773), "atlas": ATLAS_1A, "rect": Rect2i(446, 146, 80, 80)},
-		{"label": "广告", "pos": Vector2(-280.0, 111.773), "atlas": ATLAS_1F, "rect": Rect2i(864, 843, 72, 80)},
-		{"label": "召唤", "pos": Vector2(-280.0, 9.773), "atlas": ATLAS_1F, "rect": Rect2i(707, 551, 34, 34)},
+		{"label": "活动", "pos": Vector2(-510.0, 213.773), "atlas": ATLAS_1A, "rect": Rect2i(347, 64, 80, 71)},
+		{"label": "福利", "pos": Vector2(-510.0, 111.773), "atlas": ATLAS_1A, "rect": Rect2i(433, 64, 80, 71)},
+		{"label": "开服", "pos": Vector2(-510.0, 9.773), "atlas": ATLAS_1A, "rect": Rect2i(3, 120, 80, 80)},
+		{"label": "礼包", "pos": Vector2(-400.0, 213.773), "atlas": ATLAS_1F, "rect": Rect2i(781, 348, 80, 80)},
+		{"label": "限时", "pos": Vector2(-400.0, 111.773), "atlas": ATLAS_1A, "rect": Rect2i(519, 69, 80, 71)},
+		{"label": "皮肤", "pos": Vector2(-400.0, 9.773), "atlas": ATLAS_1A, "rect": Rect2i(360, 141, 80, 80)},
+		{"label": "竞技", "pos": Vector2(-290.0, 213.773), "atlas": ATLAS_1F, "rect": Rect2i(864, 929, 80, 71)},
+		{"label": "升星", "pos": Vector2(-290.0, 111.773), "atlas": ATLAS_1A, "rect": Rect2i(261, 64, 80, 71)},
+		{"label": "首充", "pos": Vector2(-290.0, 9.773), "atlas": ATLAS_1A, "rect": Rect2i(3, 120, 80, 80)},
+		{"label": "特惠", "pos": Vector2(-180.0, 213.773), "atlas": ATLAS_1A, "rect": Rect2i(446, 146, 80, 80)},
+		{"label": "广告", "pos": Vector2(-180.0, 111.773), "atlas": ATLAS_1F, "rect": Rect2i(864, 843, 72, 80)},
+		{"label": "召唤", "pos": Vector2(-180.0, 9.773), "atlas": ATLAS_1F, "rect": Rect2i(707, 551, 34, 34)},
 	]
 	for item in entries:
 		var atlas := str(item.get("atlas", ""))
@@ -300,55 +314,60 @@ func _add_event_grid() -> void:
 		_add_event_button(_cocos_center_to_screen(item.pos), str(item.label), atlas, rect, bool(item.get("rotated", false)))
 
 func _add_ad_banner() -> void:
+	var ad_size := Vector2(320, 150)
+	var box := Control.new()
+	box.position = _cocos_center_to_screen(Vector2(-464.409, -115.622)) - ad_size * 0.5
+	box.size = ad_size
+	prefab_layer.add_child(box)
+
 	var banner := TextureRect.new()
-	banner.position = _cocos_to_screen(Vector2(-464.409, -115.622), Vector2(320, 150))
-	banner.size = Vector2(320, 150)
-	banner.texture = _load_texture(AD_IMAGE)
+	banner.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	banner.texture = _load_texture(AD_BANNER)
 	banner.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	banner.stretch_mode = TextureRect.STRETCH_SCALE
+	banner.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	banner.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	prefab_layer.add_child(banner)
+	box.add_child(banner)
 
 	var hit := Button.new()
 	hit.text = ""
 	hit.flat = true
 	hit.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	hit.tooltip_text = "活动预览"
-	banner.add_child(hit)
+	box.add_child(hit)
 
 func _add_right_ribbons() -> void:
 	var entries := [
-		{"label": "通行证", "pos": Vector2(429.983, 220.949), "bg": Rect2i(639, 292, 364, 50), "icon": Rect2i(864, 757, 80, 73), "icon_atlas": ATLAS_1F, "icon_rotated": true},
-		{"label": "仓库", "pos": Vector2(447.809, 171.94), "bg": Rect2i(639, 292, 364, 50), "icon": Rect2i(747, 551, 34, 34), "icon_atlas": ATLAS_1F},
-		{"label": "竞技", "pos": Vector2(465.442, 122.605), "bg": Rect2i(675, 65, 341, 56), "icon": Rect2i(667, 551, 34, 34), "icon_atlas": ATLAS_1F},
-		{"label": "学院", "pos": Vector2(481.647, 65.805), "bg": Rect2i(675, 65, 341, 56), "icon": Rect2i(3, 3, 34, 34), "icon_atlas": ATLAS_1A},
-		{"label": "英魂", "pos": Vector2(482.615, 8.606), "bg": Rect2i(675, 230, 336, 56), "icon": Rect2i(707, 551, 34, 34), "icon_atlas": ATLAS_1F},
-		{"label": "锻造", "pos": Vector2(477.315, -43.11), "bg": Rect2i(675, 3, 342, 56), "icon": Rect2i(720, 984, 34, 34), "icon_atlas": ATLAS_1F},
-		{"label": "占卜", "pos": Vector2(471.126, -95.893), "bg": Rect2i(675, 230, 336, 56), "icon": Rect2i(707, 551, 34, 34), "icon_atlas": ATLAS_1F},
-		{"label": "寻星", "pos": Vector2(449.239, -148.14), "bg": Rect2i(675, 3, 342, 56), "icon": Rect2i(707, 551, 34, 34), "icon_atlas": ATLAS_1F},
-		{"label": "商会", "pos": Vector2(419.342, -187.272), "bg": Rect2i(675, 3, 342, 56), "icon": Rect2i(627, 551, 34, 34), "icon_atlas": ATLAS_1F},
+		{"label": "通行证", "pos": Vector2(429.983, 220.949), "bg": Rect2i(639, 292, 364, 50), "bg_offset": Vector2(-10.5, 0), "icon": Rect2i(864, 757, 80, 73), "icon_atlas": ATLAS_1F, "icon_rotated": true},
+		{"label": "仓库", "pos": Vector2(447.809, 171.94), "bg": Rect2i(639, 292, 364, 50), "bg_offset": Vector2(-10.5, 0), "icon": Rect2i(747, 551, 34, 34), "icon_atlas": ATLAS_1F},
+		{"label": "竞技", "pos": Vector2(465.442, 122.605), "bg": Rect2i(675, 65, 341, 56), "bg_offset": Vector2(1, 0), "icon": Rect2i(667, 551, 34, 34), "icon_atlas": ATLAS_1F},
+		{"label": "学院", "pos": Vector2(481.647, 65.805), "bg": Rect2i(675, 65, 341, 56), "bg_offset": Vector2(1, 0), "icon": Rect2i(3, 3, 34, 34), "icon_atlas": ATLAS_1A},
+		{"label": "英魂", "pos": Vector2(482.615, 8.606), "bg": Rect2i(675, 230, 336, 56), "bg_offset": Vector2(3.5, 0), "icon": Rect2i(707, 551, 34, 34), "icon_atlas": ATLAS_1F},
+		{"label": "锻造", "pos": Vector2(477.315, -43.11), "bg": Rect2i(675, 3, 342, 56), "bg_offset": Vector2(0.5, 0), "icon": Rect2i(720, 984, 34, 34), "icon_atlas": ATLAS_1F},
+		{"label": "占卜", "pos": Vector2(471.126, -95.893), "bg": Rect2i(684, 591, 387, 58), "bg_offset": Vector2(-22, 0), "bg_rotated": true, "icon": Rect2i(3, 225, 100, 95), "icon_atlas": ATLAS_1A},
+		{"label": "寻星", "pos": Vector2(449.239, -148.14), "bg": Rect2i(684, 591, 387, 58), "bg_offset": Vector2(-22, 0), "bg_rotated": true, "icon": Rect2i(43, 3, 34, 34), "icon_atlas": ATLAS_1A},
+		{"label": "商会", "pos": Vector2(419.342, -187.272), "bg": Rect2i(675, 3, 342, 56), "bg_offset": Vector2(0.5, 0), "icon": Rect2i(627, 551, 34, 34), "icon_atlas": ATLAS_1F},
 	]
 	for item in entries:
 		_add_ribbon_button(_cocos_center_to_screen(item.pos), item)
 
 func _add_ribbon_button(center: Vector2, item: Dictionary) -> void:
 	var box := Control.new()
-	box.position = center - Vector2(172, 28)
-	box.size = Vector2(344, 56)
-	box.rotation = deg_to_rad(-10)
+	box.position = center - Vector2(130, 17)
+	box.size = Vector2(260, 34)
+	box.rotation = deg_to_rad(-8)
 	prefab_layer.add_child(box)
 
 	var bg := TextureRect.new()
 	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	bg.texture = _load_texture_region(ATLAS_1F, item.bg, bool(item.get("bg_rotated", false)))
+	bg.texture = _load_texture_region(ATLAS_1F, item.bg, bool(item.get("bg_rotated", false)), Vector2i(431, 58), item.get("bg_offset", Vector2.ZERO))
 	bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	bg.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	box.add_child(bg)
 
 	var icon := TextureRect.new()
-	icon.position = Vector2(34, 11)
-	icon.size = Vector2(34, 34)
+	icon.position = Vector2(11, 1)
+	icon.size = Vector2(32, 32)
 	icon.texture = _load_texture_region(str(item.icon_atlas), item.icon, bool(item.get("icon_rotated", false)))
 	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
@@ -357,10 +376,11 @@ func _add_ribbon_button(center: Vector2, item: Dictionary) -> void:
 
 	var label := Label.new()
 	label.text = str(item.label)
-	label.position = Vector2(77, 10)
-	label.size = Vector2(120, 36)
+	label.position = Vector2(105, 2)
+	label.size = Vector2(92, 30)
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	label.add_theme_font_size_override("font_size", 20)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.add_theme_font_size_override("font_size", 17)
 	label.add_theme_color_override("font_color", Color(0.22, 0.17, 0.09))
 	box.add_child(label)
 
@@ -372,17 +392,17 @@ func _add_ribbon_button(center: Vector2, item: Dictionary) -> void:
 
 func _add_bottom_nav() -> void:
 	var entries := [
-		{"label": "城镇", "x": 190, "atlas": ATLAS_1A, "rect": Rect2i(3, 3, 34, 34), "size": Vector2(54, 54)},
-		{"label": "英雄", "x": 360, "atlas": ATLAS_1F, "rect": Rect2i(627, 551, 34, 34), "size": Vector2(54, 54)},
-		{"label": "召唤", "x": 560, "atlas": ATLAS_1F, "rect": Rect2i(707, 551, 34, 34), "size": Vector2(54, 54)},
-		{"label": "冒险", "x": 762, "atlas": ATLAS_1F, "rect": Rect2i(864, 929, 80, 71), "size": Vector2(62, 56)},
-		{"label": "副本", "x": 910, "atlas": ATLAS_1F, "rect": Rect2i(864, 929, 80, 71), "size": Vector2(62, 56)},
-		{"label": "公会", "x": 1090, "atlas": ATLAS_1A, "rect": Rect2i(861, 3, 80, 69), "size": Vector2(76, 68)},
+		{"label": "城镇", "x": 190, "atlas": ATLAS_1F, "rect": Rect2i(787, 551, 152, 141), "size": Vector2(88, 82)},
+		{"label": "英雄", "x": 360, "atlas": ATLAS_1A, "rect": Rect2i(3, 334, 150, 142), "size": Vector2(88, 82)},
+		{"label": "仓库", "x": 560, "atlas": ATLAS_1A, "rect": Rect2i(477, 242, 125, 123), "size": Vector2(82, 78)},
+		{"label": "冒险", "x": 762, "atlas": ATLAS_14, "rect": Rect2i(3, 3, 181, 143), "size": Vector2(104, 82)},
+		{"label": "副本", "x": 910, "atlas": ATLAS_1A, "rect": Rect2i(879, 276, 134, 133), "size": Vector2(84, 80)},
+		{"label": "公会", "x": 1090, "atlas": ATLAS_1A, "rect": Rect2i(345, 232, 119, 126), "size": Vector2(82, 80)},
 	]
 	for item in entries:
 		var box := Control.new()
-		box.position = Vector2(float(item.x) - 62, 624)
-		box.size = Vector2(124, 72)
+		box.position = Vector2(float(item.x) - 62, 604)
+		box.size = Vector2(124, 96)
 		prefab_layer.add_child(box)
 
 		var image := TextureRect.new()
@@ -400,7 +420,7 @@ func _add_bottom_nav() -> void:
 
 		var text := Label.new()
 		text.text = str(item.label)
-		text.position = Vector2(0, 42)
+		text.position = Vector2(0, 66)
 		text.size = Vector2(124, 28)
 		text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		text.add_theme_font_size_override("font_size", 18)
@@ -414,10 +434,9 @@ func _add_bottom_nav() -> void:
 		box.add_child(hit)
 
 func _add_chat_panel() -> void:
-	var panel := PanelContainer.new()
-	panel.position = _cocos_to_screen(Vector2(-549.183, -237.175), Vector2(394, 95))
-	panel.size = Vector2(394, 95)
-	panel.modulate = Color(0.04, 0.05, 0.10, 0.78)
+	var panel := Control.new()
+	panel.position = Vector2(44, 562)
+	panel.size = Vector2(330, 52)
 	prefab_layer.add_child(panel)
 
 	var text := Label.new()
@@ -425,9 +444,9 @@ func _add_chat_panel() -> void:
 	text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	text.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	text.offset_left = 12
-	text.offset_top = 10
+	text.offset_top = 4
 	text.offset_right = -12
-	text.offset_bottom = -10
+	text.offset_bottom = -4
 	text.add_theme_font_size_override("font_size", 15)
 	text.add_theme_color_override("font_color", Color(0.74, 0.90, 1.0))
 	panel.add_child(text)
@@ -512,13 +531,24 @@ func _apply_background() -> void:
 
 func _apply_hero() -> void:
 	var item: Dictionary = HEROES[hero_index]
-	var texture := _load_texture(str(item.path))
-	if texture:
-		hero_image.texture = texture
-	hero_image.position = item.position
-	hero_image.size = item.size
-	hero_image.pivot_offset = hero_image.size * 0.5
-	_start_hero_motion(item.position)
+	if item.has("spine"):
+		hero_image.visible = false
+		hero_spine.visible = true
+		hero_spine.position = item.get("spine_position", Vector2(620, 670))
+		hero_spine.scale = item.get("spine_scale", Vector2(0.58, 0.58))
+		hero_spine.load_spine(str(item.spine), str(item.get("animation", "idle")))
+		if hero_tween:
+			hero_tween.kill()
+	else:
+		hero_spine.visible = false
+		hero_image.visible = true
+		var texture := _load_texture(str(item.path))
+		if texture:
+			hero_image.texture = texture
+		hero_image.position = item.position
+		hero_image.size = item.size
+		hero_image.pivot_offset = hero_image.size * 0.5
+		_start_hero_motion(item.position)
 	_update_title()
 
 func _update_title() -> void:
@@ -643,6 +673,11 @@ func _arr_to_vec2(value: Variant) -> Vector2:
 		return Vector2(float(value[0]), float(value[1]))
 	return Vector2.ZERO
 
+func _arr_to_vec2i(value: Variant) -> Vector2i:
+	if typeof(value) == TYPE_ARRAY and value.size() >= 2:
+		return Vector2i(int(value[0]), int(value[1]))
+	return Vector2i.ZERO
+
 func _sorted_nodes(nodes: Array) -> Array:
 	var sorted := nodes.duplicate()
 	sorted.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
@@ -690,15 +725,11 @@ func _load_texture(path: String) -> Texture2D:
 		return null
 	return ImageTexture.create_from_image(image)
 
-func _load_texture_region(path: String, region: Rect2i, rotated := false) -> Texture2D:
+func _load_texture_region(path: String, region: Rect2i, rotated := false, original_size := Vector2i.ZERO, offset := Vector2.ZERO) -> Texture2D:
 	var image := Image.new()
 	if image.load(path) != OK:
 		return null
-	if region.size.x > 0 and region.size.y > 0 and Rect2i(Vector2i.ZERO, image.get_size()).encloses(region):
-		image = image.get_region(region)
-		if rotated:
-			image.rotate_90(COUNTERCLOCKWISE)
-	return ImageTexture.create_from_image(image)
+	return _make_sprite_frame_texture(image, region, rotated, original_size, offset)
 
 func _load_node_texture(path: String, node: Dictionary) -> Texture2D:
 	var image := Image.new()
@@ -707,12 +738,38 @@ func _load_node_texture(path: String, node: Dictionary) -> Texture2D:
 	var sprite_rect: Array = node.get("sprite_rect", [])
 	if sprite_rect.size() == 4:
 		var crop := Rect2i(int(sprite_rect[0]), int(sprite_rect[1]), int(sprite_rect[2]), int(sprite_rect[3]))
-		if crop.size.x > 0 and crop.size.y > 0 and Rect2i(Vector2i.ZERO, image.get_size()).encloses(crop):
-			image = image.get_region(crop)
+		var original_size := _arr_to_vec2i(node.get("sprite_original_size", []))
+		var offset := _arr_to_vec2(node.get("sprite_offset", []))
+		return _make_sprite_frame_texture(image, crop, bool(node.get("sprite_rotated", false)), original_size, offset)
 	return ImageTexture.create_from_image(image)
+
+func _make_sprite_frame_texture(atlas: Image, region: Rect2i, rotated := false, original_size := Vector2i.ZERO, offset := Vector2.ZERO) -> Texture2D:
+	var crop := region
+	if rotated:
+		crop = Rect2i(region.position, Vector2i(region.size.y, region.size.x))
+	if crop.size.x <= 0 or crop.size.y <= 0 or not Rect2i(Vector2i.ZERO, atlas.get_size()).encloses(crop):
+		return ImageTexture.create_from_image(atlas)
+
+	var frame := atlas.get_region(crop)
+	if rotated:
+		frame.rotate_90(COUNTERCLOCKWISE)
+
+	if original_size.x <= 0 or original_size.y <= 0:
+		return ImageTexture.create_from_image(frame)
+	if original_size == frame.get_size():
+		return ImageTexture.create_from_image(frame)
+
+	frame.convert(Image.FORMAT_RGBA8)
+	var canvas := Image.create_empty(original_size.x, original_size.y, false, Image.FORMAT_RGBA8)
+	canvas.fill(Color(0, 0, 0, 0))
+	var paste_x := int(round((float(original_size.x - frame.get_width()) * 0.5) + offset.x))
+	var paste_y := int(round((float(original_size.y - frame.get_height()) * 0.5) - offset.y))
+	canvas.blit_rect(frame, Rect2i(Vector2i.ZERO, frame.get_size()), Vector2i(paste_x, paste_y))
+	return ImageTexture.create_from_image(canvas)
 
 func _capture_if_requested() -> void:
 	var args := OS.get_cmdline_args()
+	args.append_array(OS.get_cmdline_user_args())
 	if not "--capture-home-screen" in args:
 		return
 	for i in 8:

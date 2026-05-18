@@ -34,6 +34,8 @@
   - `cc.Sprite._spriteFrame`
   - `cc.Button._N$normalSprite/_N$pressedSprite/_N$hoverSprite/_N$disabledSprite`
   - `sp.Skeleton._N$skeletonData`
+- 已在 `data/prefab_layouts/*.json` 中补充 SpriteFrame trim 元数据：`sprite_offset`、`sprite_original_size`、`sprite_rotated`。
+- `scripts/cocos_prefab_layer.gd`、`scripts/cocos_prefab_preview.gd`、`scripts/original_home_screen.gd` 已统一按 Cocos SpriteFrame 规则复原：rotated 先交换裁剪宽高再旋回，offset/originalSize 贴回透明原始尺寸画布。
 - 已导出节点父子关系：
   - `parent_index`
   - `active`
@@ -83,19 +85,23 @@
   - 生成 `data/mainpre_asset_trace.json`，保存 `image/com/mainpanel/*` 的 SpriteFrame -> import -> native atlas -> rect 映射。
   - 左侧快捷按钮已改用真实 `zjm_btn_HaoYou/zjm_btn_YouJian/zjm_btn_PaiHang/zjm_btn_XinWen/zjm_btn_ZhanBao` 区域。
   - 活动入口矩阵已用 `zjm_icon_huodong/FuLi/first/libao/xianshihuodong/skin/tianti/shengxingjihua/thank/meirilibao/zhaohuan` 等真实 atlas 区域替换多数占位。
+  - 活动广告入口已确认使用 `assets/resources/native/00/002545b0-69b1-4515-ac70-e545a4c8b5d2.png`，对应 `MainPre.json` 的 `zjm_image_GuanGao1` 区域，节点尺寸约 `320x150`，全局中心约 `(-464.409, -115.622)`。
   - 右侧入口条已用 `zjm_btn_rukou0..4` 和 `zjm_icon_baoju/cangku/jingji/xueyuan/zhaohuan/duanzao` 等真实 SpriteFrame 替换。
+  - 右侧入口条已按 `MainPre.json` 的父节点尺寸 `260x34` 收缩，避免早期手写 `344x56` 导致入口条互相压住。
+  - 底部导航已改用 `cm_icon_ChengZhen/YingXiong/CangKu/FuBen/GongHui` 和多语言 `cm_btn_Maoxian` 的真实 SpriteFrame。
   - 左上头像已补 `image/head/105004`，并参考 `heroHead` 坐标调整。
 
 当前注意事项：
 
-- 部分 SpriteFrame 含 `rotated: 1`、`offset`、`originalSize`，直接按 `rect` 裁剪会出现黑块或尺寸偏差。`original_home_screen.gd` 已加入基础 rotated 支持，但还没有完整处理 Cocos trim/offset。
+- 部分 SpriteFrame 含 `rotated: 1`、`offset`、`originalSize`，直接按 `rect` 裁剪会出现黑块或尺寸偏差。当前通用 prefab layer、prefab 预览器和主城页已支持基础 trim 复原；登录页/选服页等独立旧脚本还保留本地裁剪函数。
 - `daohangPre` 的底部导航主体是 Spine/UISpine 资源，不能简单把 atlas 原图当按钮贴图；当前先用稳定 SpriteFrame 做静态替代。
+- 当前只找到 `image/en/mainpanel/cm_btn_Maoxian` 等多语言冒险按钮，未找到 `image/com/mainpanel/cm_btn_Maoxian`，Godot 先用英文按钮图叠加中文 Label。
 - `zjm_btn_rukou5` 在 `config.json` 中没有同名 SpriteFrame，MainPre 中可能是节点名复用或运行时代码/子资源生成，后续继续查运行时逻辑。
 
 下一步：
 
-- 继续按 `MainPre.json` + `heroHead/daohangPre` 修坐标，优先修左上玩家信息、右侧入口条文本/图标、底部导航。
-- 完整实现 SpriteFrame 的 rotated、offset、originalSize 复原，减少裁剪黑块。
+- 继续按 `MainPre.json` + `heroHead/daohangPre` 修坐标，优先修右侧入口条文本/图标、底部导航。
+- 将登录页/选服页等独立旧脚本也迁移到统一 SpriteFrame 复原函数。
 - 从 `Prefab/bigImage/*` 自动生成背景候选列表。
 - 从 `Prefab/HerolhPrefab/*` 自动生成角色候选列表。
 - 将主城 UI 的顶部资源栏、左侧入口、底部入口、右侧入口分区固定下来。
@@ -103,7 +109,7 @@
 
 ## 阶段 4：Spine 角色和特效预览
 
-状态：开始实施。
+状态：已接入项目内轻量 runtime，继续校正精度。
 
 已完成：
 
@@ -115,20 +121,47 @@
   - bones/slots/skins 数量
   - 动画名列表
   - atlas 贴图预览
+- 新增 `tools/export_spine_runtime_data.py`，可把 Cocos `sp.SkeletonData` 导出为 `data/spine_runtime/*.json`。
+- 新增 `scripts/simple_spine_player.gd`：
+  - 支持 Spine 3.8 JSON 的 bones / slots / skins。
+  - 支持 region attachment。
+  - 支持 mesh attachment。
+  - 支持 weighted mesh。
+  - 支持 bone rotate / translate / scale timeline。
+  - 支持 slot attachment / color timeline。
+  - 支持 drawOrder timeline。
+  - 支持 deform timeline 的 mesh 顶点偏移。
+  - 支持 atlas `rotate: true` 的 mesh UV 换算；已修正 YiKaLuoSi 左侧脚部 rotated mesh 方向。
+  - 支持 Bezier 曲线采样，骨骼/颜色/deform 插值不再只是线性近似。
+  - 支持 slot blend mode 的 additive/multiply 基础映射。
+  - 支持 setup-only 单骨/二骨 IK，当前用 YiKaLuoSi 的 `yik` / `zik` 验证腿部约束。
+  - IK 后会重算子骨骼世界矩阵，避免 weighted mesh 使用旧矩阵。
+  - 支持 `only_slots` 调试渲染，可隔离头部、腿部等局部 slot。
+- 新增 `scenes/spine_character_viewer.tscn`，用于独立查看角色 Spine 动画。
+- 资源浏览器 Spine 条目如果已导出 runtime JSON，会显示 `Open Spine Viewer` 并跳转播放。
+- 已导出并验证：
+  - `data/spine_runtime/YiKaLuoSi.json`
+  - `data/spine_runtime/105004.json`
+- 主城 `Herolh/105004` 已由静态 PNG 切换为 `SimpleSpinePlayer` 播放。
+- YiKaLuoSi 调试结论：
+  - `YiKaLuoSi_toushi03` 挂在独立的 `bone21`，不是头部 `bone5`，当前保留最小角色级位置补偿。
+  - 屏幕左侧脚部对应 rotated atlas mesh，问题来源是 mesh UV 旋转方向，不是 deform timeline。
+  - `YiKaLuoSi_zuojiao` 是 weighted mesh，权重骨骼包括 `bone9`、`bone10`、`bone11`。
 
 限制：
 
-- Godot 当前未接入 Spine runtime。
-- 现在显示的是 atlas/png 和动画索引，不是真正骨骼动画播放。
+- 这是项目内轻量 Spine runtime，不是官方 Spine Runtime。
+- clipping、path、transform constraint 等高级能力尚未实现。
+- IK 当前覆盖 setup-only 单骨/二骨约束，尚未实现 IK 时间线、stretch/compress/uniform 等高级选项。
+- 局部 weighted mesh / deform 已可用，但和原版仍可能有细微差异。
+- Godot 直接 `Image.load()` 读取 PNG 会输出导出警告，本地 demo 可接受；正式导出需走 import 资源。
 
 下一步优先级：
 
-1. 调研可用 Godot 4 Spine 插件是否能加载 Spine 3.8 数据。
-2. 如果插件可用，接入 `sp.SkeletonData` 的 JSON/atlas/png。
-3. 如果插件不可用，先写一个简化预览器：
-   - 解析 atlas 区域。
-   - 显示 attachment 拼图。
-   - 按 `idle/show` 的关键帧做局部近似动画。
+1. 继续用 `spine_character_viewer.tscn` 对比 `idle/run/attack/skill1/skill2`。
+2. 修正剩余 mesh 细节：少量 weighted mesh 形变误差、slot blend mode 精度。
+3. 把 `Prefab/HeroPrefab/*` 和 `Prefab/HerolhPrefab/*` 批量导出为 runtime JSON，并在资源浏览器中直接播放。
+4. 继续扩展 Spine 约束：IK timeline、transform constraint、clipping/path。
 
 ## 阶段 5：核心界面批量还原
 

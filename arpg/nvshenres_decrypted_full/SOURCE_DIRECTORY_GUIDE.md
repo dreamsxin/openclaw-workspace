@@ -83,6 +83,8 @@
 | `Prefab/mainpanel/daohangPre` | `data/prefab_layouts/daohangPre.json` | 主城底部导航子 Prefab。包含部分 UISpine/Spine 导航资源，不能完全按静态 SpriteFrame 使用。 |
 | `Prefab/mainpanel/heroHead` | `data/prefab_layouts/heroHead.json` | 主城左上玩家头像/等级/战力区域子 Prefab。用于校正玩家信息坐标。 |
 | `image/head/105004` | `assets/resources/native/d7/d7bf0f4d-1dc9-4fda-80c0-65dfeee3316a.png` | 默认主城角色 `105004` 的头像 SpriteFrame。 |
+| `MainPre/zjm_image_GuanGao1` | `assets/resources/native/00/002545b0-69b1-4515-ac70-e545a4c8b5d2.png` | 主城左下活动广告入口图。节点尺寸约 `320x150`，全局中心约 `(-464.409, -115.622)`。 |
+| `image/com/mainpanel/cm_icon_ChengZhen` 等 | `assets/resources/native/1f/1f6b547b4.png`、`assets/resources/native/1a/1a7921f32.png` | 主城底部导航静态图标。`cm_btn_Maoxian` 当前只找到多语言版本，如 `image/en/mainpanel/cm_btn_Maoxian`。 |
 | `image/com/mainpanel/zjm_btn_rukou0..4` | `assets/resources/native/1f/1f6b547b4.png` | 主城右侧入口条 SpriteFrame。`zjm_btn_rukou4` 带 rotated 标记。 |
 | `Prefab/HerolhPrefab/105004` | `assets/resources/import/00/00482677-9b33-43a2-91b3-fd0d9c1259a6.json` | 默认主城角色立绘 prefab，指向 Spine 数据。 |
 | `assets/resources/native/75/750b6077-9d0c-4446-9e4c-3c3ae2fb6ee5.png` | native PNG | 与原始 `加载页.jpg` 匹配的启动加载背景图。 |
@@ -99,6 +101,7 @@
 | `D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\data\prefab_restore_inventory.csv` | Prefab 还原清单 CSV。适合排序、过滤和批处理。 |
 | `D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\data\prefab_restore_inventory.md` | Prefab 还原清单 Markdown。适合人工阅读。 |
 | `D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\data\spine_preview_index.json` | Spine 索引，当前用于资源浏览器查看 skeleton 名、动画名、atlas/png。 |
+| `D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\data\spine_runtime\*.json` | 从 Cocos `sp.SkeletonData` 导出的轻量 runtime 数据。当前已验证 `YiKaLuoSi.json`、`105004.json`。 |
 
 `data/prefab_layouts/*.json` 的字段含义：
 
@@ -112,6 +115,10 @@
 | `position` | 节点本地坐标。 |
 | `global_position` | 已按父节点累加后的简化全局坐标。当前预览主要用它。 |
 | `texture_path` | SpriteFrame 对应的 native 图片路径。 |
+| `sprite_rect` | SpriteFrame 在 atlas 中的裁剪矩形。 |
+| `sprite_offset` | Cocos SpriteFrame trim 后相对原始尺寸中心的偏移。 |
+| `sprite_original_size` | trim 前原始 SpriteFrame 尺寸。 |
+| `sprite_rotated` | atlas 内是否旋转存储。Godot 侧需要先交换裁剪宽高再旋回。 |
 | `skeleton_*` | Spine SkeletonData 解析结果。 |
 
 ## Godot 场景与脚本
@@ -125,6 +132,8 @@
 | `scenes/original_main_city.tscn` / `scripts/original_main_city.gd` | 之前保留的独立主城/预览场景。 |
 | `scenes/resource_browser.tscn` / `scripts/resource_browser.gd` | 资源浏览器。支持图片、文本、音频、Prefab、Scene、Spine 索引查看。 |
 | `scenes/cocos_prefab_preview.tscn` / `scripts/cocos_prefab_preview.gd` | Prefab 布局预览器。用于检查导出的 `data/prefab_layouts`。 |
+| `scenes/spine_character_viewer.tscn` / `scripts/spine_character_viewer.gd` | Spine 角色查看器。支持 `--spine-path`、`--spine-animation`、`--debug-slots`、`--capture-spine-viewer`。 |
+| `scripts/simple_spine_player.gd` | 项目内轻量 Spine runtime。支持 region/mesh/weighted mesh、drawOrder、deform、Bezier、基础 blend、setup-only 单骨/二骨 IK、rotated mesh UV。 |
 
 当前本地运行命令：
 
@@ -141,6 +150,7 @@ D:\work\openclaw-workspace\arpg\tools\Godot_v4.6.2-stable_win64_console.exe --pa
 | `D:\work\openclaw-workspace\arpg\tools\build_godot_resource_demo.py` | 构建 Godot 资源 Demo 和资源索引的脚本。 |
 | `D:\work\openclaw-workspace\arpg\tools\export_cocos_prefab_layout.py` | 把 Cocos prefab import JSON 导出为简化布局 JSON。 |
 | `D:\work\openclaw-workspace\arpg\tools\export_spine_preview_index.py` | 导出 Spine 预览索引。 |
+| `D:\work\openclaw-workspace\arpg\tools\export_spine_runtime_data.py` | 把 Cocos Spine 数据导出为 Godot 轻量 runtime 使用的 JSON。 |
 | `D:\work\openclaw-workspace\arpg\tools\README_nvshen_decrypt.md` | 资源解密定位过程和脚本说明。 |
 | `D:\work\openclaw-workspace\arpg\tools\Godot_v4.6.2-stable_win64_console.exe` | 当前用于运行/测试 Godot 工程的控制台版 Godot。 |
 

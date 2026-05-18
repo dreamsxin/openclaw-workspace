@@ -3,6 +3,7 @@ extends Node
 var history: Array[String] = []
 var cursor := -1
 var navigating_history := false
+var scene_args: Dictionary = {}
 
 func _ready() -> void:
 	var scene := _current_scene_path()
@@ -27,6 +28,15 @@ func go(path: String) -> void:
 	history.append(path)
 	cursor = history.size() - 1
 	get_tree().change_scene_to_file(path)
+
+func go_with_args(path: String, args: Dictionary) -> void:
+	scene_args = args
+	go(path)
+
+func consume_scene_args() -> Dictionary:
+	var args := scene_args.duplicate(true)
+	scene_args.clear()
+	return args
 
 func back() -> void:
 	if not can_back():

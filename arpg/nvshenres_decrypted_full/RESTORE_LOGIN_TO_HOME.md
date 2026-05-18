@@ -261,7 +261,7 @@ assets/resources/native/14/140096250.png
 assets/resources/native/18/18b29ae48.png
 ```
 
-注意：部分 SpriteFrame 有 `rotated: 1`、`offset`、`originalSize`，直接裁剪 rect 会有黑块/偏移。当前 Godot 脚本只实现了基础 rotated 处理，还没有完整复原 Cocos trim/offset。
+注意：部分 SpriteFrame 有 `rotated: 1`、`offset`、`originalSize`，直接裁剪 rect 会有黑块/偏移。当前导出器已写出 `sprite_offset`、`sprite_original_size`、`sprite_rotated`，通用 prefab layer、prefab 预览器和主城页已按 Cocos trim 规则复原到透明原始尺寸画布。
 
 主城应分层：
 
@@ -280,6 +280,10 @@ UI 层：Prefab/mainpanel/MainPre
 - 已使用 `global_position`，避免子节点局部坐标直接当根坐标。
 - 已跳过 `_active=false` 隐藏节点。
 - 已过滤一部分九宫格/动态面板误拉伸节点。
+- 已将左侧竖排快捷按钮和左侧四列活动入口拆开坐标，避免图标重叠。
+- 已确认主城活动广告入口资源为 `assets/resources/native/00/002545b0-69b1-4515-ac70-e545a4c8b5d2.png`，对应 `MainPre.json` 的 `zjm_image_GuanGao1`，尺寸约 `320x150`，全局中心约 `(-464.409, -115.622)`。
+- 已按 `MainPre.json` 将右侧入口条收缩到 `260x34` 的父节点尺寸，并把底部导航替换为 `cm_icon_ChengZhen/YingXiong/CangKu/FuBen/GongHui` 等真实 SpriteFrame。
+- 已用 `zjm_btn_rukou0..4` 的 `offset/originalSize/rotated` 元数据复原右侧入口条，`zjm_btn_rukou4` 不再依赖手工规避 rotated 裁剪。
 
 当前不足：
 
@@ -343,11 +347,11 @@ bigImage 背景 + HerolhPrefab 角色 + MainPre UI
 
 - 背景可选，不要求和账号数据完全一致。
 - 角色可选，不要求和服务端阵容一致。
-- 角色先显示 Spine atlas/替代立绘，但必须标注未接入真实 Spine runtime。
+- 角色使用项目内 `SimpleSpinePlayer` 播放 Spine，允许和官方 runtime 有小差异。
 
 长期目标：
 
-- 真正播放 `idle` / `show` 动画。
+- 继续提高 `idle` / `show` 动画精度。
 - 主城入口按钮能跳转到对应 prefab 预览页。
 
 ## 验证方式
@@ -369,6 +373,53 @@ D:\work\openclaw-workspace\arpg\tools\Godot_v4.6.2-stable_win64_console.exe --he
 - 登录页：`--capture-login`
 - 选服页：`--capture-server-select`
 - 主页面：`--capture-home-screen`
+
+Godot 4.6.2 命令注意：
+
+```powershell
+$godot = "D:\work\openclaw-workspace\arpg\tools\Godot_v4.6.2-stable_win64_console.exe"
+$proj = "D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full"
+$out = "D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\home_check.png"
+$log = "D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\godot_check.log"
+$godotLog = "D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\godot_engine.log"
+& $godot --path $proj --scene "res://scenes/original_home_screen.tscn" --quit-after 80 --log-file $godotLog -- --capture-home-screen $out *> $log
+```
+
+- 指定场景使用 `--scene <path>`。
+- `--` 后面的参数由 `OS.get_cmdline_user_args()` 读取。
+- `--headless` 使用 dummy 渲染，不能用 `get_viewport().get_texture()` 截图。
+- PowerShell 中使用 `*> file.log` 可同时重定向 stdout/stderr，方便查看 Godot 脚本错误。
+
+Spine 查看器：
+
+```powershell
+& $godot --path $proj --scene "res://scenes/spine_character_viewer.tscn" --quit-after 80 --log-file $godotLog -- --spine-animation attack --capture-spine-viewer "D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\spine_attack.png" *> $log
+```
+
+也可以直接指定 runtime JSON：
+
+```powershell
+& $godot --path $proj --scene "res://scenes/spine_character_viewer.tscn" --quit-after 80 -- --spine-path "res://data/spine_runtime/YiKaLuoSi.json" --spine-animation attack --capture-spine-viewer "D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\spine_attack.png" *> $log
+```
+
+资源浏览器：
+
+- 进入 `Spine` 分类。
+- 如果该 skeleton 已存在 `data/spine_runtime/<name>.json`，会出现 `Open Spine Viewer`。
+- 点击后会带着 runtime 路径和默认动画进入 `spine_character_viewer.tscn`。
+
+局部 slot 调试：
+
+```powershell
+& $godot --path $proj --scene "res://scenes/spine_character_viewer.tscn" --quit-after 80 -- --spine-path "res://data/spine_runtime/YiKaLuoSi.json" --spine-animation idle --debug-slots "YiKaLuoSi_zuodatui,YiKaLuoSi_zuojiao,YiKaLuoSi_youdatui,YiKaLuoSi_youjiao" --capture-spine-viewer "D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\spine_legs.png" *> $log
+```
+
+YiKaLuoSi 当前还原记录：
+
+- 头饰：`YiKaLuoSi_toushi03` 绑定独立 `bone21`，和头部 `bone5` 不同；当前在 runtime 内保留最小角色级补偿，避免头冠悬浮。
+- 腿部：`yik` / `zik` 是 setup-only 二骨 IK，runtime 已补 IK 求解和 IK 后子骨骼重算。
+- 左侧脚部：问题主要来自 `rotate: true` mesh atlas UV 方向，已修正 rotated mesh UV 映射。
+- `YiKaLuoSi_zuojiao` 是 weighted mesh，使用 `bone9`、`bone10`、`bone11` 权重；未发现 idle/run/attack/skill 的 deform timeline。
 
 ## 当前判断
 
