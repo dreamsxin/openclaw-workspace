@@ -388,6 +388,12 @@ bigImage 背景 + HerolhPrefab 角色 + MainPre UI
 D:\work\openclaw-workspace\arpg\tools\Godot_v4.6.2-stable_win64_console.exe --path "D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full"
 ```
 
+当前默认入口是 `res://scenes/original_login.tscn`，启动后直接进入登录页。启动加载页仍保留，可显式运行：
+
+```powershell
+D:\work\openclaw-workspace\arpg\tools\Godot_v4.6.2-stable_win64_console.exe --path "D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full" --scene "res://scenes/original_loading.tscn"
+```
+
 无窗口基础校验：
 
 ```powershell
