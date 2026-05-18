@@ -1,4 +1,1122 @@
 {
+  "13002": {
+    "prefab": "13002",
+    "node_count": 16,
+    "hint_counts": {
+      "背景": 3,
+      "文本": 3,
+      "召唤": 1,
+      "框": 1,
+      "容器/宝箱": 1,
+      "图标": 1
+    },
+    "nodes": [
+      {
+        "name": "zhaohuanNode",
+        "hints": [
+          "召唤"
+        ],
+        "global_position": [
+          215.0,
+          0.0
+        ],
+        "size": [
+          80.0,
+          36.0
+        ],
+        "label_text": "",
+        "texture_path": ""
+      },
+      {
+        "name": "ylcs_frame_qipao",
+        "hints": [
+          "框"
+        ],
+        "global_position": [
+          283.157,
+          219.229
+        ],
+        "size": [
+          500.0,
+          179.0
+        ],
+        "label_text": "",
+        "texture_path": "assets/resources/native/71/71561142-4c83-4933-afca-cb7a17f67053.png"
+      },
+      {
+        "name": "Background",
+        "hints": [
+          "背景"
+        ],
+        "global_position": [
+          0.0,
+          0.0
+        ],
+        "size": [
+          194.0,
+          66.0
+        ],
+        "label_text": "",
+        "texture_path": ""
+      },
+      {
+        "name": "Background",
+        "hints": [
+          "背景"
+        ],
+        "global_position": [
+          296.534,
+          -215.424
+        ],
+        "size": [
+          194.0,
+          66.0
+        ],
+        "label_text": "",
+        "texture_path": ""
+      },
+      {
+        "name": "ylcs_bg",
+        "hints": [
+          "背景"
+        ],
+        "global_position": [
+          150.30200000000002,
+          -52.329
+        ],
+        "size": [
+          816.0,
+          624.0
+        ],
+        "label_text": "",
+        "texture_path": ""
+      },
+      {
+        "name": "label",
+        "hints": [
+          "文本"
+        ],
+        "global_position": [
+          317.546,
+          243.49400000000003
+        ],
+        "size": [
+          350.0,
+          22.68
+        ],
+        "label_text": "达成条件可领取黄金大宝箱",
+        "texture_path": ""
+      },
+      {
+        "name": "Box",
+        "hints": [
+          "容器/宝箱"
+        ],
+        "global_position": [
+          -99.19200000000001,
+          6.0
+        ],
+        "size": [
+          300.0,
+          335.0
+        ],
+        "label_text": "",
+        "texture_path": ""
+      },
+      {
+        "name": "bx_icon_04a",
+        "hints": [
+          "图标"
+        ],
+        "global_position": [
+          -64.983,
+          212.557
+        ],
+        "size": [
+          160.0,
+          159.0
+        ],
+        "label_text": "",
+        "texture_path": ""
+      },
+      {
+        "name": "Label",
+        "hints": [
+          "文本"
+        ],
+        "global_position": [
+          0.0,
+          2.0
+        ],
+        "size": [
+          250.0,
+          63.0
+        ],
+        "label_text": "",
+        "texture_path": ""
+      },
+      {
+        "name": "Label",
+        "hints": [
+          "文本"
+        ],
+        "global_position": [
+          296.534,
+          -213.424
+        ],
+        "size": [
+          200.0,
+          63.0
+        ],
+        "label_text": "",
+        "texture_path": ""
+      }
+    ]
+  },
+  "13003": {
+    "prefab": "13003",
+    "node_count": 24,
+    "hint_counts": {
+      "文本": 12,
+      "图片": 2,
+      "按钮": 2,
+      "进度条": 2,
+      "内容容器": 1,
+      "进度": 1
+    },
+    "nodes": [
+      {
+        "name": "dsfl_image_banner",
+        "hints": [
+          "图片"
+        ],
+        "global_position": [
+          183.775,
+          236.0
+        ],
+        "size": [
+          850.0,
+          128.0
+        ],
+        "label_text": "",
+        "texture_path": ""
+      },
+      {
+        "name": "content",
+        "hints": [
+          "内容容器"
+        ],
+        "global_position": [
+          0.0,
+          0.0
+        ],
+        "size": [
+          844.0,
+          127.0
+        ],
+        "label_text": "",
+        "texture_path": ""
+      },
+      {
+        "name": "btn_buy",
+        "hints": [
+          "按钮"
+        ],
+        "global_position": [
+          318.388,
+          -63.5
+        ],
+        "size": [
+          154.0,
+          66.0
+        ],
+        "label_text": "",
+        "texture_path": ""
+      },
+      {
+        "name": "progressBar",
+        "hints": [
+          "进度",
+          "进度条"
+        ],
+        "global_position": [
+          323.706,
+          -65.019
+        ],
+        "size": [
+          155.0,
+          18.0
+        ],
+        "label_text": "",
+        "texture_path": ""
+      },
+      {
+        "name": "btn_qianwang",
+        "hints": [
+          "按钮"
+        ],
+        "global_position": [
+          318.388,
+          -63.5
+        ],
+        "size": [
+          154.0,
+          66.0
+        ],
+        "label_text": "",
+        "texture_path": ""
+      },
+      {
+        "name": "gzzz_img_yishouqin",
+        "hints": [
+          "图片"
+        ],
+        "global_position": [
+          318.754,
+          -63.5
+        ],
+        "size": [
+          150.0,
+          65.0
+        ],
+        "label_text": "",
+        "texture_path": ""
+      },
+      {
+        "name": "lblName1",
+        "hints": [
+          "文本"
+        ],
+        "global_position": [
+          203.775,
+          246.0
+        ],
+        "size": [
+          57.35248870247516,
+          59.44
+        ],
+        "label_text": "对",
+        "texture_path": ""
+      },
+      {
+        "name": "lblName2",
+        "hints": [
+          "文本"
+        ],
+        "global_position": [
+          246.775,
+          244.0
+        ],
+        "size": [
+          52.502262456795606,
+          54.4
+        ],
+        "label_text": "应",
+        "texture_path": ""
+      },
+      {
+        "name": "lblName3",
+        "hints": [
+          "文本"
+        ],
+        "global_position": [
+          288.554,
+          246.0
+        ],
+        "size": [
+          57.35248870247516,
+          59.44
+        ],
+        "label_text": "奖",
+        "texture_path": ""
+      },
+      {
+        "name": "lblName4",
+        "hints": [
+          "文本"
+        ],
+        "global_position": [
+          333.966,
+          247.0
+        ],
+        "size": [
+          64.6278280709945,
+          67.0
+        ],
+        "label_text": "励",
+        "texture_path": ""
+      },
+      {
+        "name": "yet_label",
+        "hints": [
+          "文本"
+        ],
+        "global_position": [
+          329.501,
+          -63.5
+        ],
+        "size": [
+          42.93,
+          29.2
+        ],
+        "label_text": "",
+        "texture_path": ""
+      },
+      {
+        "name": "lblName5",
+        "hints": [
+          "文本"
+        ],
+        "global_position": [
+          -197.095,
+          202.613
+        ],
+        "size": [
+          340.0,
+          21.42
+        ],
+        "label_text": "活动期间累计消耗钻石达到指定金额即可领取",
+        "texture_path": ""
+      },
+      {
+        "name": "lblName6",
+        "hints": [
+          "文本"
+        ],
+        "global_position": [
+          395.775,
+          236.0
+        ],
+        "size": [
+          80.0,
+          25.2
+        ],
+        "label_text": "即可领取",
+        "texture_path": ""
+      },
+      {
+        "name": "label_name",
+        "hints": [
+          "文本"
+        ],
+        "global_position": [
+          -396.0,
+          -18.5
+        ],
+        "size": [
+          40.0,
+          25.2
+        ],
+        "label_text": "",
+        "texture_path": ""
+      },
+      {
+        "name": "label_xiangou",
+        "hints": [
+          "文本"
+        ],
+        "global_position": [
+          95.0,
+          -18.5
+        ],
+        "size": [
+          127.32,
+          25.2
+        ],
+        "label_text": "",
+        "texture_path": ""
+      },
+      {
+        "name": "Label",
+        "hints": [
+          "文本"
+        ],
+        "global_position": [
+          318.388,
+          -63.5
+        ],
+        "size": [
+          56.0,
+          35.28
+        ],
+        "label_text": "领取",
+        "texture_path": ""
+      },
+      {
+        "name": "bar",
+        "hints": [
+          "进度条"
+        ],
+        "global_position": [
+          246.20600000000002,
+          -65.019
+        ],
+        "size": [
+          46.5,
+          18.0
+        ],
+        "label_text": "",
+        "texture_path": ""
+      },
+      {
+        "name": "New Label",
+        "hints": [
+          "文本"
+        ],
+        "global_position": [
+          318.557,
+          -61.624
+        ],
+        "size": [
+          72.0,
+          30.24
+        ],
+        "label_text": "已领取",
+        "texture_path": ""
+      },
+      {
+        "name": "Label",
+        "hints": [
+          "文本"
+        ],
+        "global_position": [
+          318.388,
+          -63.5
+        ],
+        "size": [
+          56.0,
+          35.28
+        ],
+        "label_text": "前往",
+        "texture_path": ""
+      }
+    ]
+  },
+  "13004": {
+    "prefab": "13004",
+    "node_count": 44,
+    "hint_counts": {
+      "容器/宝箱": 7,
+      "图片": 6,
+      "红点": 6,
+      "进度条": 4,
+      "文本": 3,
+      "进度": 2,
+      "按钮": 1,
+      "内容容器": 1,
+      "背景": 1
+    },
+    "nodes": [
+      {
+        "name": "boxNode",
+        "hints": [
+          "容器/宝箱"
+        ],
+        "global_position": [
+          30.0,
+          175.0
+        ],
+        "size": [
+          647.0,
+          65.0
+        ],
+        "label_text": "",
+        "texture_path": ""
+      },
+      {
+        "name": "boxItem1",
+        "hints": [
+          "容器/宝箱"
+        ],
+        "global_position": [
+          -258.0,
+          175.0
+        ],
+        "size": [
+          77.0,
+          65.0
+        ],
+        "label_text": "",
+        "texture_path": ""
+      },
+      {
+        "name": "boxItem2",
+        "hints": [
+          "容器/宝箱"
+        ],
+        "global_position": [
+          -141.0,
+          175.0
+        ],
+        "size": [
+          77.0,
+          65.0
+        ],
+        "label_text": "",
+        "texture_path": ""
+      },
+      {
+        "name": "boxItem3",
+        "hints": [
+          "容器/宝箱"
+        ],
+        "global_position": [
+          -27.0,
+          175.0
+        ],
+        "size": [
+          77.0,
+          65.0
+        ],
+        "label_text": "",
+        "texture_path": ""
+      },
+      {
+        "name": "boxItem4",
+        "hints": [
+          "容器/宝箱"
+        ],
+        "global_position": [
+          87.0,
+          175.0
+        ],
+        "size": [
+          77.0,
+          65.0
+        ],
+        "label_text": "",
+        "texture_path": ""
+      },
+      {
+        "name": "boxItem5",
+        "hints": [
+          "容器/宝箱"
+        ],
+        "global_position": [
+          201.0,
+          175.0
+        ],
+        "size": [
+          77.0,
+          65.0
+        ],
+        "label_text": "",
+        "texture_path": ""
+      },
+      {
+        "name": "boxItem6",
+        "hints": [
+          "容器/宝箱"
+        ],
+        "global_position": [
+          315.0,
+          175.0
+        ],
+        "size": [
+          77.0,
+          65.0
+        ],
+        "label_text": "",
+        "texture_path": ""
+      },
+      {
+        "name": "getBtn",
+        "hints": [
+          "按钮"
+        ],
+        "global_position": [
+          238.509,
+          -54.598
+        ],
+        "size": [
+          155.0,
+          55.0
+        ],
+        "label_text": "",
+        "texture_path": ""
+      },
+      {
+        "name": "logProgressBar",
+        "hints": [
+          "进度",
+          "进度条"
+        ],
+        "global_position": [
+          153.934,
+          128.0
+        ],
+        "size": [
+          709.0,
+          18.0
+        ],
+        "label_text": "",
+        "texture_path": ""
+      },
+      {
+        "name": "content",
+        "hints": [
+          "内容容器"
+        ],
+        "global_position": [
+          0.0,
+          0.0
+        ],
+        "size": [
+          668.0,
+          100.0
+        ],
+        "label_text": "",
+        "texture_path": ""
+      },
+      {
+        "name": "progressBar",
+        "hints": [
+          "进度",
+          "进度条"
+        ],
+        "global_position": [
+          -77.491,
+          -71.598
+        ],
+        "size": [
+          294.0,
+          9.0
+        ],
+        "label_text": "",
+        "texture_path": ""
+      },
+      {
+        "name": "Label",
+        "hints": [
+          "文本"
+        ],
+        "global_position": [
+          238.509,
+          -52.598
+        ],
+        "size": [
+          96.0,
+          60.48
+        ],
+        "label_text": "领取",
+        "texture_path": ""
+      },
+      {
+        "name": "img",
+        "hints": [
+          "图片"
+        ],
+        "global_position": [
+          -258.0,
+          175.0
+        ],
+        "size": [
+          130.0,
+          130.0
+        ],
+        "label_text": "",
+        "texture_path": "assets/resources/native/14/14003f053.png"
+      },
+      {
+        "name": "index",
+        "hints": [],
+        "global_position": [
+          -258.0,
+          225.0
+        ],
+        "size": [
+          28.82,
+          59.44
+        ],
+        "label_text": "1",
+        "texture_path": ""
+      },
+      {
+        "name": "img",
+        "hints": [
+          "图片"
+        ],
+        "global_position": [
+          -141.0,
+          175.0
+        ],
+        "size": [
+          130.0,
+          130.0
+        ],
+        "label_text": "",
+        "texture_path": "assets/resources/native/17/17f7aa586.png"
+      },
+      {
+        "name": "index",
+        "hints": [],
+        "global_position": [
+          -141.0,
+          225.0
+        ],
+        "size": [
+          28.82,
+          59.44
+        ],
+        "label_text": "2",
+        "texture_path": ""
+      },
+      {
+        "name": "img",
+        "hints": [
+          "图片"
+        ],
+        "global_position": [
+          -27.0,
+          175.0
+        ],
+        "size": [
+          151.0,
+          127.0
+        ],
+        "label_text": "",
+        "texture_path": "assets/resources/native/17/17f7aa586.png"
+      },
+      {
+        "name": "index",
+        "hints": [],
+        "global_position": [
+          -27.0,
+          225.0
+        ],
+        "size": [
+          28.82,
+          59.44
+        ],
+        "label_text": "3",
+        "texture_path": ""
+      },
+      {
+        "name": "img",
+        "hints": [
+          "图片"
+        ],
+        "global_position": [
+          87.0,
+          175.0
+        ],
+        "size": [
+          151.0,
+          127.0
+        ],
+        "label_text": "",
+        "texture_path": ""
+      },
+      {
+        "name": "index",
+        "hints": [],
+        "global_position": [
+          87.0,
+          225.0
+        ],
+        "size": [
+          28.82,
+          59.44
+        ],
+        "label_text": "4",
+        "texture_path": ""
+      },
+      {
+        "name": "img",
+        "hints": [
+          "图片"
+        ],
+        "global_position": [
+          201.0,
+          175.0
+        ],
+        "size": [
+          148.0,
+          135.0
+        ],
+        "label_text": "",
+        "texture_path": ""
+      },
+      {
+        "name": "index",
+        "hints": [],
+        "global_position": [
+          201.0,
+          225.0
+        ],
+        "size": [
+          28.82,
+          59.44
+        ],
+        "label_text": "5",
+        "texture_path": ""
+      },
+      {
+        "name": "img",
+        "hints": [
+          "图片"
+        ],
+        "global_position": [
+          315.0,
+          175.0
+        ],
+        "size": [
+          148.0,
+          135.0
+        ],
+        "label_text": "",
+        "texture_path": ""
+      },
+      {
+        "name": "index",
+        "hints": [],
+        "global_position": [
+          315.0,
+          225.0
+        ],
+        "size": [
+          28.82,
+          59.44
+        ],
+        "label_text": "6",
+        "texture_path": ""
+      },
+      {
+        "name": "New Label",
+        "hints": [
+          "文本"
+        ],
+        "global_position": [
+          181.888,
+          -302.122
+        ],
+        "size": [
+          250.0,
+          31.5
+        ],
+        "label_text": "同一英雄仅限参与一次",
+        "texture_path": ""
+      },
+      {
+        "name": "hongdian",
+        "hints": [
+          "红点"
+        ],
+        "global_position": [
+          -233.72,
+          192.28
+        ],
+        "size": [
+          31.0,
+          31.0
+        ],
+        "label_text": "",
+        "texture_path": "assets/resources/native/14/14003f053.png"
+      },
+      {
+        "name": "hongdian",
+        "hints": [
+          "红点"
+        ],
+        "global_position": [
+          -116.72,
+          192.28
+        ],
+        "size": [
+          31.0,
+          31.0
+        ],
+        "label_text": "",
+        "texture_path": "assets/resources/native/71/71561142-4c83-4933-afca-cb7a17f67053.png"
+      },
+      {
+        "name": "hongdian",
+        "hints": [
+          "红点"
+        ],
+        "global_position": [
+          -2.719999999999999,
+          192.28
+        ],
+        "size": [
+          31.0,
+          31.0
+        ],
+        "label_text": "",
+        "texture_path": "assets/resources/native/17/17f7aa586.png"
+      },
+      {
+        "name": "hongdian",
+        "hints": [
+          "红点"
+        ],
+        "global_position": [
+          111.28,
+          192.28
+        ],
+        "size": [
+          31.0,
+          31.0
+        ],
+        "label_text": "",
+        "texture_path": ""
+      },
+      {
+        "name": "hongdian",
+        "hints": [
+          "红点"
+        ],
+        "global_position": [
+          225.28,
+          192.28
+        ],
+        "size": [
+          31.0,
+          31.0
+        ],
+        "label_text": "",
+        "texture_path": ""
+      },
+      {
+        "name": "hongdian",
+        "hints": [
+          "红点"
+        ],
+        "global_position": [
+          339.28,
+          192.28
+        ],
+        "size": [
+          31.0,
+          31.0
+        ],
+        "label_text": "",
+        "texture_path": ""
+      },
+      {
+        "name": "bar",
+        "hints": [
+          "进度条"
+        ],
+        "global_position": [
+          -200.566,
+          128.0
+        ],
+        "size": [
+          709.0,
+          18.0
+        ],
+        "label_text": "",
+        "texture_path": ""
+      },
+      {
+        "name": "bg",
+        "hints": [
+          "背景"
+        ],
+        "global_position": [
+          0.0,
+          -52.5
+        ],
+        "size": [
+          668.0,
+          95.0
+        ],
+        "label_text": "",
+        "texture_path": ""
+      },
+      {
+        "name": "bar",
+        "hints": [
+          "进度条"
+        ],
+        "global_position": [
+          -224.49099999999999,
+          -71.598
+        ],
+        "size": [
+          147.0,
+          9.0
+        ],
+        "label_text": "",
+        "texture_path": ""
+      },
+      {
+        "name": "label",
+        "hints": [
+          "文本"
+        ],
+        "global_position": [
+          238.509,
+          -54.598
+        ],
+        "size": [
+          144.0,
+          60.48
+        ],
+        "label_text": "已完成",
+        "texture_path": ""
+      }
+    ]
+  },
+  "13005": {
+    "prefab": "13005",
+    "node_count": 5,
+    "hint_counts": {
+      "进度条": 2,
+      "内容容器": 1
+    },
+    "nodes": [
+      {
+        "name": "scrollBar",
+        "hints": [
+          "进度条"
+        ],
+        "global_position": [
+          306.199,
+          -1.822
+        ],
+        "size": [
+          12.0,
+          250.0
+        ],
+        "label_text": "",
+        "texture_path": ""
+      },
+      {
+        "name": "content",
+        "hints": [
+          "内容容器"
+        ],
+        "global_position": [
+          0.0,
+          250.0
+        ],
+        "size": [
+          800.0,
+          144.0
+        ],
+        "label_text": "",
+        "texture_path": ""
+      },
+      {
+        "name": "bar",
+        "hints": [
+          "进度条"
+        ],
+        "global_position": [
+          305.199,
+          -1.822
+        ],
+        "size": [
+          10.0,
+          30.0
+        ],
+        "label_text": "",
+        "texture_path": ""
+      }
+    ]
+  },
   "BagPre": {
     "prefab": "BagPre",
     "node_count": 62,
@@ -2060,6 +3178,81 @@
         "size": [
           0.0,
           37.8
+        ],
+        "label_text": "",
+        "texture_path": ""
+      }
+    ]
+  },
+  "DrawCardActivityToggle": {
+    "prefab": "DrawCardActivityToggle",
+    "node_count": 6,
+    "hint_counts": {
+      "文本": 2,
+      "背景": 1,
+      "红点": 1
+    },
+    "nodes": [
+      {
+        "name": "Background",
+        "hints": [
+          "背景"
+        ],
+        "global_position": [
+          0.0,
+          -84.5
+        ],
+        "size": [
+          50.0,
+          142.0
+        ],
+        "label_text": "",
+        "texture_path": "assets/resources/native/18/18b29ae48.png"
+      },
+      {
+        "name": "New Label",
+        "hints": [
+          "文本"
+        ],
+        "global_position": [
+          0.0,
+          -84.5
+        ],
+        "size": [
+          120.0,
+          35.28
+        ],
+        "label_text": "",
+        "texture_path": ""
+      },
+      {
+        "name": "New Label",
+        "hints": [
+          "文本"
+        ],
+        "global_position": [
+          0.0,
+          -84.5
+        ],
+        "size": [
+          120.0,
+          35.28
+        ],
+        "label_text": "",
+        "texture_path": ""
+      },
+      {
+        "name": "red",
+        "hints": [
+          "红点"
+        ],
+        "global_position": [
+          22.0,
+          -17.5
+        ],
+        "size": [
+          31.0,
+          31.0
         ],
         "label_text": "",
         "texture_path": ""

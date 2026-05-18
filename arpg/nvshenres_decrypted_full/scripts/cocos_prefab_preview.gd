@@ -1023,10 +1023,10 @@ func _add_draw_card_activity_mock() -> void:
 
 func _add_draw_activity_tabs(position: Vector2) -> void:
 	var tabs := [
-		{"id": "13002", "text": "登录领取"},
-		{"id": "13003", "text": "循环礼包"},
-		{"id": "13004", "text": "抽数任务"},
-		{"id": "13005", "text": "许愿礼包"},
+		{"id": "13002", "text": "登录领取", "layout": "活动抽卡-登录领取"},
+		{"id": "13003", "text": "循环礼包", "layout": "活动抽卡-循环礼包"},
+		{"id": "13004", "text": "抽数任务", "layout": "活动抽卡-抽数任务"},
+		{"id": "13005", "text": "许愿礼包", "layout": "活动抽卡-许愿礼包"},
 	]
 	for i in tabs.size():
 		var button := Button.new()
@@ -1034,6 +1034,7 @@ func _add_draw_activity_tabs(position: Vector2) -> void:
 		button.size = Vector2(142, 48)
 		button.text = ""
 		button.tooltip_text = "DrawCardActivity%s" % tabs[i].id
+		button.pressed.connect(_load_layout.bind(str(tabs[i].layout)))
 		canvas.add_child(button)
 		_add_named_image_to(button, "image/common/cm_btn2" if i == 0 else "image/common/cm_btn1", Vector2.ZERO, Vector2(142, 48), TextureRect.STRETCH_SCALE)
 		var label := Label.new()
