@@ -479,14 +479,15 @@ func _add_draw_card_mock() -> void:
 	var center := _canvas_center()
 	var bg := _add_named_image("image/com/DrawCard/zh_bg", center + Vector2(-420, -230), Vector2(820, 360), TextureRect.STRETCH_KEEP_ASPECT_COVERED)
 	bg.modulate = Color(1, 1, 1, 0.72)
+	bg.z_index = 40
 	var card_names := ["普通召唤", "高级召唤", "友情召唤"]
 	var card_resources := ["image/com/DrawCard/zh_image_pan2", "image/com/DrawCard/bx_icon_03", "image/com/DrawCard/bx_icon_02"]
 	for i in 3:
 		var card := PanelContainer.new()
 		card.position = center + Vector2(-310 + i * 180, -55)
 		card.size = Vector2(150, 205)
-		card.z_index = 70
-		card.modulate = Color(0.18, 0.14, 0.28, 0.62)
+		card.z_index = 100
+		card.modulate = Color(0.18, 0.14, 0.28, 0.86)
 		canvas.add_child(card)
 		_add_named_image_to(card, card_resources[i], Vector2(22, 18), Vector2(106, 112), TextureRect.STRETCH_KEEP_ASPECT_CENTERED)
 		var label := Label.new()
@@ -510,12 +511,12 @@ func _add_draw_card_mock() -> void:
 
 func _add_draw_card_reward_bar(origin: Vector2) -> void:
 	var bg := _add_named_image("image/com/DrawCard/zh_progressBG_jiangli", origin, Vector2(340, 22), TextureRect.STRETCH_SCALE)
-	bg.z_index = 70
+	bg.z_index = 100
 	var bar := _add_named_image("image/com/DrawCard/zh_progressbar_jiangli", origin + Vector2(6, 6), Vector2(220, 10), TextureRect.STRETCH_SCALE)
-	bar.z_index = 71
+	bar.z_index = 101
 	for i in 4:
 		var box := _add_named_image("image/com/DrawCard/bx_icon_0%d" % (i + 1), origin + Vector2(52 + i * 82, -48), Vector2(58, 58), TextureRect.STRETCH_KEEP_ASPECT_CENTERED)
-		box.z_index = 72
+		box.z_index = 102
 
 func _add_draw_card_tabs(origin: Vector2) -> void:
 	var tabs := [
@@ -529,7 +530,7 @@ func _add_draw_card_tabs(origin: Vector2) -> void:
 		button.position = origin + Vector2(0, i * 72)
 		button.size = Vector2(138, 52)
 		button.text = ""
-		button.z_index = 70
+		button.z_index = 100
 		canvas.add_child(button)
 		_add_named_image_to(button, str(tabs[i].res), Vector2(0, 0), Vector2(138, 52), TextureRect.STRETCH_SCALE)
 		var label := Label.new()
@@ -545,8 +546,8 @@ func _add_draw_card_cost_panel(position: Vector2) -> void:
 	var panel := PanelContainer.new()
 	panel.position = position
 	panel.size = Vector2(238, 118)
-	panel.z_index = 70
-	panel.modulate = Color(0.08, 0.08, 0.12, 0.72)
+	panel.z_index = 100
+	panel.modulate = Color(0.08, 0.08, 0.12, 0.9)
 	canvas.add_child(panel)
 	var title_label := Label.new()
 	title_label.text = "召唤积分  11/120"
@@ -571,8 +572,8 @@ func _add_draw_card_result_preview(position: Vector2) -> void:
 	var panel := PanelContainer.new()
 	panel.position = position
 	panel.size = Vector2(360, 142)
-	panel.z_index = 70
-	panel.modulate = Color(0.08, 0.08, 0.12, 0.68)
+	panel.z_index = 100
+	panel.modulate = Color(0.08, 0.08, 0.12, 0.9)
 	canvas.add_child(panel)
 	var title_label := Label.new()
 	title_label.text = "十连结果预览"
@@ -593,8 +594,8 @@ func _add_draw_card_exchange_panel(position: Vector2) -> void:
 	var panel := PanelContainer.new()
 	panel.position = position
 	panel.size = Vector2(210, 142)
-	panel.z_index = 70
-	panel.modulate = Color(0.08, 0.08, 0.12, 0.72)
+	panel.z_index = 100
+	panel.modulate = Color(0.08, 0.08, 0.12, 0.9)
 	canvas.add_child(panel)
 	_add_named_image_to(panel, "image/com/DrawCard/zh_btn_duihuan", Vector2(34, 14), Vector2(142, 46), TextureRect.STRETCH_SCALE)
 	var info := Label.new()
@@ -1156,12 +1157,24 @@ func _should_skip_node(node: Dictionary) -> bool:
 	var name := str(node.get("name", ""))
 	var texture_path := str(node.get("texture_path", ""))
 	var label_text := _node_label_text(node)
+	if _should_skip_layout_static_node(name, texture_path, label_text):
+		return true
 	var parent_index: Variant = node.get("parent_index")
 	if parent_index == null and texture_path == "" and name.to_lower().ends_with("pre"):
 		return true
 	if _should_skip_placeholder_node(name, texture_path, label_text):
 		return true
 	return false
+
+func _should_skip_layout_static_node(name: String, texture_path: String, label_text: String) -> bool:
+	if current_layout != "抽卡":
+		return false
+	if texture_path == "" and label_text == "":
+		return false
+	var keep_names := ["btn_dh", "Background", "img_tip"]
+	if name in keep_names and texture_path != "":
+		return false
+	return true
 
 func _should_skip_placeholder_node(name: String, texture_path: String, label_text: String) -> bool:
 	if texture_path != "" or label_text != "":

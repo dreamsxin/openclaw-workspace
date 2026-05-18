@@ -565,7 +565,7 @@ Spine 查看器：
 - `背包` 当前还额外补了分类按钮、详情面板和操作按钮；详情区仍受原 prefab 暗层影响，后续需统一处理 Mask/ScrollView 层级。
 - 带运行时 mock 的 prefab 预览页会跳过无贴图、无文本的 Cocos 容器占位节点，避免 `content`、`mask`、`box` 这类半透明灰块遮住动态内容。
 - `抽卡`：使用 `image/com/DrawCard` mock 数据。
-- `抽卡` 当前还额外补了右侧卡池页签、召唤积分/消耗、十连结果预览和积分兑换信息；仍需继续处理原 prefab 静态贴图/文本与 mock 内容重叠。
+- `抽卡` 当前还额外补了右侧卡池页签、召唤积分/消耗、十连结果预览和积分兑换信息；已加入页面级静态层过滤，后续继续精修布局位置。
 - `公会`：使用 `image/com/Guild`、`image/guildFlag` mock 数据。
 - `天空城`：使用 `image/com/skyCity` mock 建筑、矿物、空岛和副本入口。
 - `竞技`：使用 `image/com/Jingji`、`image/com/pvpActivity` mock 玩法入口、排名、奖励和膜拜信息。

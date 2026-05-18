@@ -254,7 +254,8 @@ RESTORE_LOGIN_TO_HOME.md
 - `cocos_prefab_preview.gd` 已对带运行时 mock 的页面过滤无贴图、无文本的 Cocos 容器占位节点，减少 `content`、`mask`、`box` 等半透明灰块对背包/英雄页的遮挡。
 - 过滤后仍保留真实贴图、真实 Label 和 Button 节点；登录/选服等未使用 mock overlay 的页面不受该规则影响。
 - `drawCardPre` 预览已继续补本地抽卡动态内容：右侧卡池页签、召唤积分/消耗、十连结果预览、积分兑换信息。
-- 当前 `drawCardPre` 仍会与原 prefab 的真实静态贴图和文本重叠，后续需要按节点名做页面级静态层替换，而不是继续叠加 mock。
+- `drawCardPre` 已加入页面级静态层过滤，屏蔽会干扰 mock 的原始按钮、页签和提示 Label；同时提高本地 mock 层级，减少重叠。
+- 当前 `drawCardPre` 主要剩余问题是 mock 布局位置仍偏粗，需要继续按原节点坐标和运行时代码精修。
 
 下一步优先级：
 
