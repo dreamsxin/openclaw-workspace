@@ -273,6 +273,8 @@ RESTORE_LOGIN_TO_HOME.md
 - `export_cocos_prefab_layout.py` 已新增节点级 `component_types` 导出，可在 layout JSON 里识别 `cc.Mask`、`cc.ScrollView`、`cc.ProgressBar` 和自定义脚本组件。
 - `cocos_prefab_preview.gd` 已使用 `component_types` 创建通用 `cc.Mask` 裁剪容器登记表，并按 `parent_index` 祖先链把静态 prefab 子节点挂入最近的 Mask 容器。
 - Mask 子树挂载会保持原 Cocos 全局位置表现，同时转换为 Godot 裁剪容器局部坐标；已验证 `HeroMainPre`、`BagPre`、活动抽卡任务页可启动无脚本错误。
+- 对导出时丢失父链的 ScrollView，预览器会把孤立的 `content + cc.Layout` 近邻匹配到 `view + cc.Mask`，再把 content 子树挂入该 viewport；已验证 `HeroMainPre`、`BagPre`、`13003`。
+- `HeroMainPre` 当前过滤原始 `tabTxt` 静态 Label，避免窄 viewport 裁剪后显示成单字列；后续需要按 `HeroSidePrefab` 的运行时页签逻辑重建。
 - prefab 预览器右侧详情栏新增 `mask/scroll` 统计。
 - `13003` 已提取 `DrawCardActivityCycleItemCom` 的字段绑定：`girdLayout/btn_buy/btn_qianwang/img_receive/JDT_label/JDT_progress/title/txt_xiangou`。
 - `13004` 已提取 `DrawCardActivityRenWuItemCom` 的字段绑定：`itemNode/descText/taskProgress/taskProgressLab/submitBtn/btnLabel/imgComplete`。
@@ -286,7 +288,7 @@ RESTORE_LOGIN_TO_HOME.md
 
 1. 完善 `HeroMainPre` 的 ScrollView 裁剪、Layout 重排、右侧信息层级和动态节点替换。
 2. 继续完善 `BagPre` 的页签交互、ScrollView/Mask 裁剪、详情层级和运行时分类数据。
-3. 继续推广通用 prefab 裁剪：目前已支持 `cc.Mask` 祖先链挂载，下一步补 `cc.ScrollView` content/viewport 关系、`Widget` 对齐和 `Layout` 重排，再按 `GridLogic.create(...)` 补真实奖励 Grid 子项样式。
+3. 继续推广通用 prefab 裁剪：目前已支持 `cc.Mask` 祖先链挂载和部分 `cc.ScrollView` content/viewport 近邻推断，下一步补滚动偏移、`Widget` 对齐和 `Layout` 重排，再按 `GridLogic.create(...)` 补真实奖励 Grid 子项样式。
 4. 继续完善 `drawCardPre` 的抽卡 Spine、结果卡牌 `HeroShowPre`、页签切换动画和真实奖励状态。
 5. 将 `prefab_node_name_hints.json` 继续接入资源浏览器，显示节点名推断用途，减少手工查 JSON。
 6. 继续完善 `battle` 的真实 Spine 战斗角色、技能特效、站位坐标和战斗结束子 prefab。

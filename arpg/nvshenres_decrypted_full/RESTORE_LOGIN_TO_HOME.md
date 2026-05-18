@@ -280,6 +280,8 @@ DrawCardActivityRenWuItemCom
 - `tools/export_cocos_prefab_layout.py` 已新增节点级 `component_types` 导出，后续可直接识别 `cc.Mask`、`cc.ScrollView`、`cc.ProgressBar`、自定义脚本等组件类型。
 - `cocos_prefab_preview.gd` 已基于 `component_types` 创建通用 `cc.Mask` 裁剪容器登记表，并会沿 `parent_index` 查找最近的 Mask 祖先，把静态 prefab 子节点挂到对应 Godot `Control.clip_contents` 容器内。
 - Mask 子树挂载时会把 Cocos 全局坐标转换为 Godot 裁剪容器内局部坐标；已覆盖 `HeroMainPre` 头像列表、右侧信息遮罩等存在明确父子链的节点。
+- `cocos_prefab_preview.gd` 已开始推断导出时丢失父链的 ScrollView：对孤立的 `content + cc.Layout` 查找最近的 `view + cc.Mask`，并把 content 及其子树挂入对应裁剪容器；已验证 `HeroMainPre`、`BagPre`、`13003`。
+- `HeroMainPre` 的原始 `tabTxt` 静态 Label 会被运行时 mock 过滤，避免在窄 ScrollView viewport 下被裁成单字列；后续应改为按 `HeroSidePrefab` 真实逻辑重建页签。
 - prefab 预览器右侧详情栏会显示 `mask/scroll` 统计，便于判断哪些界面需要优先补裁剪关系。
 - `13003.json` 现在可看到 `DrawCardActivityCycleItemCom` 的关键字段绑定：`girdLayout -> gridLayout`、`btn_buy -> btn_buy`、`JDT_progress -> progressBar`、`title -> label_name`。
 - `13004.json` 现在可看到 `DrawCardActivityRenWuItemCom` 的关键字段绑定：`itemNode -> itemNode`、`descText -> title`、`taskProgress -> progressBar`、`taskProgressLab -> count`、`submitBtn -> getBtn`、`imgComplete -> isOver`。
@@ -293,7 +295,7 @@ DrawCardActivityRenWuItemCom
 遗留问题：
 
 1. 子页列表已开始按 Cocos 原组件字段坐标绘制，但数据写入仍是本地 mock，不是完整 Cocos 组件实例化。
-2. `Mask` 已开始自动裁剪存在明确 `parent_index` 祖先链的静态节点；`ScrollView`、`Widget`、Layout 重排尚未完整自动还原，动态列表仍需要结合源码组件逻辑和本地 mock 数据。
+2. `Mask` 已开始自动裁剪存在明确 `parent_index` 祖先链的静态节点，并能对部分孤立 ScrollView content 做近邻推断；`Widget`、Layout 重排和滚动偏移尚未完整自动还原，动态列表仍需要结合源码组件逻辑和本地 mock 数据。
 3. Cocos 运行时真实奖励图标、礼包价格、任务进度来自服务端配置，本地 demo 当前使用固定 mock 数据。
 4. 当前行底板继续使用原始资源，贴图自带亮线装饰，视觉上会穿过任务行背景；不是额外静态节点遮挡。
 5. `component_bindings` 目前采用字段名/别名和 owner 子树推断，已验证活动抽卡关键字段，复杂跨树引用仍需结合源码确认。

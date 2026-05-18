@@ -24,6 +24,7 @@ var prefab_node_hints: Dictionary = {}
 var prefab_mask_clips: Dictionary = {}
 var prefab_nodes_by_index: Dictionary = {}
 var prefab_mask_parent_by_node: Dictionary = {}
+var prefab_inferred_mask_by_node: Dictionary = {}
 
 func _ready() -> void:
 	_load_texture_map()
@@ -114,6 +115,7 @@ func _load_layout(layout_name: String) -> void:
 	detail.text = _layout_detail_text(parsed, nodes, stats)
 	_index_prefab_nodes(nodes)
 	_build_prefab_mask_clips(nodes)
+	_build_inferred_scrollview_masks(nodes)
 	_build_prefab_mask_parent_map(nodes)
 	for node in _sorted_nodes(nodes):
 		_add_node_rect(node)
@@ -1597,6 +1599,9 @@ func _should_skip_node(node: Dictionary) -> bool:
 	return false
 
 func _should_skip_layout_static_node(name: String, texture_path: String, label_text: String) -> bool:
+	if current_layout == "英雄":
+		if name == "tabTxt":
+			return true
 	if current_layout == "抽卡":
 		var keep_names := ["btn_dh", "Background", "img_tip"]
 		if name in keep_names and texture_path != "":
@@ -1877,6 +1882,75 @@ func _build_prefab_mask_clips(nodes: Array) -> void:
 		canvas.add_child(clip)
 		prefab_mask_clips[_dict_int(node, "index", -1)] = clip
 
+func _build_inferred_scrollview_masks(nodes: Array) -> void:
+	prefab_inferred_mask_by_node.clear()
+	var views: Array = []
+	var contents: Array = []
+	for node in nodes:
+		if typeof(node) != TYPE_DICTIONARY:
+			continue
+		var name := str(node.get("name", "")).to_lower()
+		var component_types: Array = node.get("component_types", [])
+		if name == "view" and "cc.Mask" in component_types:
+			views.append(node)
+		elif name == "content" and "cc.Layout" in component_types:
+			contents.append(node)
+	for content in contents:
+		if _dict_int(content, "parent_index", -1) >= 0:
+			continue
+		var view := _nearest_scrollview_mask(content, views)
+		if view.is_empty():
+			continue
+		var view_index := _dict_int(view, "index", -1)
+		var content_index := _dict_int(content, "index", -1)
+		if view_index < 0 or content_index < 0:
+			continue
+		prefab_inferred_mask_by_node[content_index] = view_index
+		for child in nodes:
+			if typeof(child) != TYPE_DICTIONARY:
+				continue
+			if _is_descendant_of_node(child, content_index):
+				var child_index := _dict_int(child, "index", -1)
+				if child_index >= 0:
+					prefab_inferred_mask_by_node[child_index] = view_index
+
+func _nearest_scrollview_mask(content: Dictionary, views: Array) -> Dictionary:
+	var best: Dictionary = {}
+	var best_distance := INF
+	var content_rect := _prefab_node_rect(content)
+	var content_center := content_rect.get_center()
+	var content_size := content_rect.size
+	for view in views:
+		if typeof(view) != TYPE_DICTIONARY:
+			continue
+		var view_index := _dict_int(view, "index", -1)
+		if not prefab_mask_clips.has(view_index):
+			continue
+		var view_rect := _prefab_node_rect(view)
+		var view_size := view_rect.size
+		var similar_width: bool = abs(view_size.x - content_size.x) <= max(20.0, view_size.x * 0.08)
+		var similar_height: bool = abs(view_size.y - content_size.y) <= max(20.0, view_size.y * 0.08)
+		if not (similar_width or similar_height):
+			continue
+		var distance: float = content_center.distance_to(view_rect.get_center())
+		if distance < best_distance:
+			best_distance = distance
+			best = view
+	return best
+
+func _is_descendant_of_node(node: Dictionary, ancestor_index: int) -> bool:
+	var parent_index := _dict_int(node, "parent_index", -1)
+	var guard := 0
+	while parent_index >= 0 and guard < 256:
+		if parent_index == ancestor_index:
+			return true
+		if not prefab_nodes_by_index.has(parent_index):
+			return false
+		var parent_node: Dictionary = prefab_nodes_by_index[parent_index]
+		parent_index = _dict_int(parent_node, "parent_index", -1)
+		guard += 1
+	return false
+
 func _index_prefab_nodes(nodes: Array) -> void:
 	prefab_nodes_by_index.clear()
 	for node in nodes:
@@ -1892,6 +1966,9 @@ func _build_prefab_mask_parent_map(nodes: Array) -> void:
 		if typeof(node) != TYPE_DICTIONARY:
 			continue
 		var node_index := _dict_int(node, "index", -1)
+		if prefab_inferred_mask_by_node.has(node_index):
+			prefab_mask_parent_by_node[node_index] = prefab_inferred_mask_by_node[node_index]
+			continue
 		var mask_index := _nearest_mask_parent_index(node)
 		if node_index >= 0 and mask_index >= 0:
 			prefab_mask_parent_by_node[node_index] = mask_index
