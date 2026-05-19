@@ -1,0 +1,9 @@
+{
+  "purpose": "Split index generated from assets/resources/config.json for UI/resource reverse lookup.",
+  "regenerate": "python tools\\export_cocos_config_index.py",
+  "files": {
+    "summary.json": "Counts by Cocos type and logical path prefix.",
+    "by_type/*.json": "Compact path/uuid indexes grouped by Cocos asset type.",
+    "by_path_prefix/*.json": "Records grouped by selected UI/resource prefixes."
+  }
+}

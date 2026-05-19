@@ -76,6 +76,22 @@
 | `D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\assets\resources\import` | Cocos 序列化资源 JSON。Prefab、SpriteFrame、SkeletonData 等主要在这里。 |
 | `D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\assets\resources\native` | 图片、音频、二进制等 native 文件。Godot 预览加载图片主要来自这里。 |
 
+`assets/resources/config.json` 的关键结构：
+
+- `types`：Cocos 类型表。当前 resources bundle 有 15 类资源，包括 `cc.Prefab`、`cc.SpriteFrame`、`cc.Texture2D`、`cc.SpriteAtlas`、`sp.SkeletonData`、`cc.AudioClip` 等。
+- `paths`：逻辑路径表。每条形如 `[资源路径, type_index, ...]`，资源路径如 `Prefab/mainpanel/MainPre`、`image/com/mainpanel/zjm_btn_rukou0`。
+- `uuids`：与 `paths` 下标对应的 UUID 表，部分是 Cocos 22 位压缩 UUID，需要用 `decompress_cocos_uuid()` 解压后才能定位 import/native。
+- `importBase` / `nativeBase`：当前分别是 `import` / `native`，结合解压 UUID 前两位组成实际文件目录。
+
+反查 SpriteFrame 的顺序：
+
+1. 先从 `config.json.paths` 通过逻辑路径找到 UUID。
+2. 解压 UUID，读取 `assets/resources/import/<前两位>/<uuid>.json`。
+3. 从 SpriteFrame import JSON 读取 atlas Texture2D UUID、`rect`、`offset`、`originalSize`、`rotated`、`capInsets`。
+4. 再用 Texture2D UUID 定位 `assets/resources/native/<前两位>/<uuid>.png`。
+
+因此 prefab layout 中 `texture_path` 为空不等于资源缺失。很多节点没有直接写 `_spriteFrame`，但节点名能对应 `image/com/<模块>/<节点名>`；当前导出器已用 `config.json` 作为兜底映射。
+
 已确认的核心路径：
 
 | Cocos 资源路径 | import / native 路径 | 作用 |
@@ -100,6 +116,9 @@
 | 路径 | 作用 |
 | --- | --- |
 | `D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\data\catalog.json` | 资源总索引。资源浏览器主要读取它。 |
+| `D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\data\config_index\summary.json` | 从 `assets/resources/config.json` 拆出的统计摘要。当前 resources bundle 共 17141 条路径资源，其中 `cc.SpriteFrame=8139`、`cc.Texture2D=4744`、`cc.Prefab=1007`、`sp.SkeletonData=993`、`cc.AudioClip=1061`。 |
+| `D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\data\config_index\by_type\*.json` | 按 Cocos 类型拆分的轻量索引，例如 `cc.SpriteFrame.json`、`cc.Prefab.json`、`sp.SkeletonData.json`。用于快速按类型筛路径和 UUID。 |
+| `D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\data\config_index\by_path_prefix\*.json` | 按常用界面路径前缀拆分的索引，例如 `image__com__mainpanel.json`、`Prefab__mainpanel.json`、`Prefab__HeroPanel.json`。 |
 | `D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\data\prefabs.csv` | 原始 prefab 清单。用于统计和筛选还原目标。 |
 | `D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\data\prefab_layouts.json` | 已导出的核心 prefab 布局汇总。 |
 | `D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\data\prefab_layouts\*.json` | 单个 prefab 的简化布局 JSON。Godot 当前用它还原 UI 层。 |
@@ -167,6 +186,7 @@ D:\work\openclaw-workspace\arpg\tools\Godot_v4.6.2-stable_win64_console.exe --pa
 | `D:\work\openclaw-workspace\arpg\tools\decrypt_nvshen_resources.py` | 批量解密资源脚本。用于从原始资源生成可读/可加载资源。 |
 | `D:\work\openclaw-workspace\arpg\tools\cocos_xor_resource_tool.py` | Cocos 资源 XOR/格式辅助工具。 |
 | `D:\work\openclaw-workspace\arpg\tools\build_godot_resource_demo.py` | 构建 Godot 资源 Demo 和资源索引的脚本。 |
+| `D:\work\openclaw-workspace\arpg\tools\export_cocos_config_index.py` | 拆分 `assets/resources/config.json`，生成 `data/config_index`。后续排查资源路径、SpriteFrame atlas、Prefab/Spine/Audio 列表优先用这个。 |
 | `D:\work\openclaw-workspace\arpg\tools\export_cocos_prefab_layout.py` | 把 Cocos prefab import JSON 导出为简化布局 JSON。 |
 | `D:\work\openclaw-workspace\arpg\tools\export_spine_preview_index.py` | 导出 Spine 预览索引。 |
 | `D:\work\openclaw-workspace\arpg\tools\export_spine_runtime_data.py` | 把 Cocos Spine 数据导出为 Godot 轻量 runtime 使用的 JSON。 |

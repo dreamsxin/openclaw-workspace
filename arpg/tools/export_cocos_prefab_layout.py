@@ -10,6 +10,18 @@ ROOT = Path(r"D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full")
 OUT_DIR = ROOT / "data" / "prefab_layouts"
 MANIFEST_PATH = ROOT / "data" / "prefab_layouts.json"
 BUNDLES = ["resources", "main", "internal"]
+RESOURCE_CONFIG_PATH = ROOT / "assets" / "resources" / "config.json"
+RESOURCE_CONFIG = json.loads(RESOURCE_CONFIG_PATH.read_text(encoding="utf-8")) if RESOURCE_CONFIG_PATH.exists() else {}
+RESOURCE_PATHS = RESOURCE_CONFIG.get("paths", {})
+RESOURCE_UUIDS = RESOURCE_CONFIG.get("uuids", [])
+RESOURCE_PATH_TO_UUID = {
+    item[0]: RESOURCE_UUIDS[int(index)]
+    for index, item in RESOURCE_PATHS.items()
+    if isinstance(item, list)
+    and len(item) >= 2
+    and str(item[1]) == "9"
+    and int(index) < len(RESOURCE_UUIDS)
+}
 PREFABS = [
     ("启动加载", "Prefab/loading/LoadingPre"),
     ("加载进度", "Prefab/loading/loadingProgress"),
@@ -25,6 +37,7 @@ PREFABS = [
     ("商店商品", "Prefab/Shop/GoodsItemPre"),
     ("商店购买确认", "Prefab/Shop/ShopBuyEquitPre"),
     ("英雄", "Prefab/HeroPanel/HeroMainPre"),
+    ("英雄详情", "Prefab/HeroPanel/HeroBookDetailPre"),
     ("英雄页签", "Prefab/HeroPanel/HeroTabPre"),
     ("英雄列表", "Prefab/HeroListPanel/HeroListPre"),
     ("英雄列表卡片", "Prefab/comPrefab/HeroGridPre"),
@@ -121,6 +134,11 @@ def export_layout(prefab_path: str) -> dict:
                             if class_name == "cc.Sprite":
                                 sprite_info["sprite_type"] = int(values.get("_type", 0) or 0)
                                 sprite_info["sprite_size_mode"] = int(values.get("_sizeMode", 0) or 0)
+                                sprite_info["sprite_fill_type"] = int(values.get("_fillType", 0) or 0)
+                                sprite_info["sprite_fill_start"] = float(values.get("_fillStart", 0.0) or 0.0)
+                                sprite_info["sprite_fill_range"] = float(values.get("_fillRange", 0.0) or 0.0)
+                                sprite_info["sprite_fill_center"] = vec2_from_cocos(values.get("_fillCenter")) or []
+                                sprite_info["sprite_trimmed_mode"] = bool(values.get("_isTrimmedMode", True))
                             break
                     if sprite_info:
                         break
@@ -130,6 +148,11 @@ def export_layout(prefab_path: str) -> dict:
                     if candidate_info:
                         skeleton_uuid = candidate_uuid
                         skeleton_info = candidate_info
+        if not sprite_info:
+            candidate_info = resolve_sprite_frame_by_resource_path(infer_resource_paths(prefab_path, name))
+            if candidate_info.get("texture_path"):
+                sprite_uuid = candidate_info.get("sprite_uuid", "")
+                sprite_info = candidate_info
         node_records[index] = {
             "index": index,
             "name": name,
@@ -142,6 +165,7 @@ def export_layout(prefab_path: str) -> dict:
             "scale": [float(trs[6]), float(trs[7])] if trs else [1.0, 1.0],
             "rotation_z": float(trs[9]) if trs else 0.0,
             "sprite_uuid": sprite_uuid,
+            "sprite_resource_path": sprite_info.get("resource_path", ""),
             "texture_path": sprite_info.get("texture_path", ""),
             "sprite_name": sprite_info.get("sprite_name", ""),
             "sprite_rect": sprite_info.get("sprite_rect", []),
@@ -150,7 +174,14 @@ def export_layout(prefab_path: str) -> dict:
             "sprite_rotated": bool(sprite_info.get("sprite_rotated", False)),
             "sprite_cap_insets": sprite_info.get("sprite_cap_insets", []),
             "sprite_type": int(sprite_info.get("sprite_type", 0) or 0),
+            "sprite_type_name": sprite_type_name(int(sprite_info.get("sprite_type", 0) or 0)),
             "sprite_size_mode": int(sprite_info.get("sprite_size_mode", 0) or 0),
+            "sprite_size_mode_name": sprite_size_mode_name(int(sprite_info.get("sprite_size_mode", 0) or 0)),
+            "sprite_fill_type": int(sprite_info.get("sprite_fill_type", 0) or 0),
+            "sprite_fill_start": float(sprite_info.get("sprite_fill_start", 0.0) or 0.0),
+            "sprite_fill_range": float(sprite_info.get("sprite_fill_range", 0.0) or 0.0),
+            "sprite_fill_center": sprite_info.get("sprite_fill_center", []),
+            "sprite_trimmed_mode": bool(sprite_info.get("sprite_trimmed_mode", True)),
             "skeleton_uuid": skeleton_uuid,
             "skeleton_name": skeleton_info.get("name", ""),
             "skeleton_textures": skeleton_info.get("textures", []),
@@ -169,12 +200,16 @@ def export_layout(prefab_path: str) -> dict:
     global_cache = {}
     for index, node in node_records.items():
         node["global_position"] = global_position(index, node_records, global_cache)
+    origin_mode = detect_origin_mode(node_records)
+    for node in node_records.values():
+        add_screen_rect(node, origin_mode)
 
     component_bindings = extract_custom_component_bindings(objects, classes, templates, node_records)
 
     return {
         "prefab": prefab_path,
         "import": prefab["import"],
+        "origin_mode": origin_mode,
         "nodes": list(node_records.values()),
         "component_bindings": component_bindings,
     }
@@ -190,6 +225,61 @@ def anchor_from_cocos(value: object) -> list[float] | None:
     if isinstance(value, list) and len(value) == 3 and all(isinstance(x, (int, float)) for x in value[1:]):
         return [float(value[1]), float(value[2])]
     return None
+
+
+def sprite_type_name(value: int) -> str:
+    names = {
+        0: "simple",
+        1: "sliced",
+        2: "tiled",
+        3: "filled",
+        4: "mesh",
+    }
+    return names.get(value, f"unknown_{value}")
+
+
+def sprite_size_mode_name(value: int) -> str:
+    names = {
+        0: "custom",
+        1: "trimmed",
+        2: "raw",
+    }
+    return names.get(value, f"unknown_{value}")
+
+
+def detect_origin_mode(node_records: dict[int, dict]) -> str:
+    for node in node_records.values():
+        size = node.get("size", [0.0, 0.0])
+        pos = node.get("global_position", [0.0, 0.0])
+        if len(size) < 2 or len(pos) < 2:
+            continue
+        w = float(size[0])
+        h = float(size[1])
+        x = float(pos[0])
+        y = float(pos[1])
+        if w >= 1200.0 and h >= 700.0 and abs(x - 640.0) < 4.0 and abs(y - 360.0) < 4.0:
+            return "bottom_left"
+    return "center"
+
+
+def add_screen_rect(node: dict, origin_mode: str) -> None:
+    pos = node.get("global_position", node.get("position", [0.0, 0.0]))
+    size = node.get("size", [0.0, 0.0])
+    anchor = node.get("anchor", [0.5, 0.5])
+    x = float(pos[0])
+    y = float(pos[1])
+    w = float(size[0])
+    h = float(size[1])
+    ax = float(anchor[0])
+    ay = float(anchor[1])
+    if origin_mode == "bottom_left":
+        screen_x = x - w * ax
+        screen_y = 720.0 - y - h * (1.0 - ay)
+    else:
+        screen_x = 640.0 + x - w * ax
+        screen_y = 360.0 - y - h * (1.0 - ay)
+    node["screen_position"] = [screen_x, screen_y]
+    node["screen_rect"] = [screen_x, screen_y, w, h]
 
 
 def apply_widget_layout(node_records: dict[int, dict]) -> None:
@@ -390,6 +480,49 @@ def resolve_sprite_frame(sprite_uuid: str) -> dict:
         "sprite_rotated": bool(frame.get("rotated", False)),
         "sprite_cap_insets": frame.get("capInsets", []),
     }
+
+
+def resolve_sprite_frame_by_resource_path(paths: list[str]) -> dict:
+    for resource_path in paths:
+        sprite_uuid = RESOURCE_PATH_TO_UUID.get(resource_path)
+        if not sprite_uuid:
+            continue
+        info = resolve_sprite_frame(sprite_uuid)
+        if info.get("texture_path"):
+            info["sprite_uuid"] = sprite_uuid
+            info["resource_path"] = resource_path
+            return info
+    return {}
+
+
+def infer_resource_paths(prefab_path: str, node_name: str) -> list[str]:
+    paths: list[str] = []
+    if not node_name:
+        return paths
+    base = Path(prefab_path).name
+    if "mainpanel" in prefab_path.lower() or base in {"MainPre", "daohangPre", "heroHead"}:
+        paths.append(f"image/com/mainpanel/{node_name}")
+        if node_name.startswith("cm_tab_"):
+            paths.append(f"image/com/mainpanel/cm_icon_{node_name.removeprefix('cm_tab_').removesuffix('1')}")
+        if node_name == "cm_tab_ChuJi1":
+            paths.append("image/com/mainpanel/cm_icon_ChuJi")
+        if node_name == "cm_tab_ZhaoHuan":
+            paths.append("image/com/mainpanel/cm_icon_ZhaoHuan")
+            paths.append("image/com/mainpanel/zjm_icon_zhaohuan")
+        if node_name == "zjm_btn_rukou5":
+            paths.append("image/com/mainpanel/zjm_btn_rukou3")
+        if node_name.startswith("zjm_btn_"):
+            paths.append(f"image/com/mainpanel/{node_name}")
+        if node_name.startswith("zjm_icon_"):
+            paths.append(f"image/com/mainpanel/{node_name}")
+    if "login" in prefab_path.lower():
+        paths.append(f"image/com/login/{node_name}")
+    paths.append(node_name)
+    deduped = []
+    for path in paths:
+        if path not in deduped:
+            deduped.append(path)
+    return deduped
 
 
 def resolve_skeleton_data(skeleton_uuid: str) -> dict:

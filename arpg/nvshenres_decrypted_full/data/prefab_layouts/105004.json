@@ -1,6 +1,7 @@
 {
   "prefab": "Prefab/HerolhPrefab/105004",
   "import": "assets/resources/import/00/00482677-9b33-43a2-91b3-fd0d9c1259a6.json",
+  "origin_mode": "center",
   "nodes": [
     {
       "index": 1,
@@ -29,6 +30,7 @@
       ],
       "rotation_z": 0.0,
       "sprite_uuid": "",
+      "sprite_resource_path": "",
       "texture_path": "",
       "sprite_name": "",
       "sprite_rect": [],
@@ -37,7 +39,14 @@
       "sprite_rotated": false,
       "sprite_cap_insets": [],
       "sprite_type": 0,
+      "sprite_type_name": "simple",
       "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
       "skeleton_uuid": "",
       "skeleton_name": "",
       "skeleton_textures": [],
@@ -48,7 +57,17 @@
       "label_horizontal_align": 0,
       "label_vertical_align": 0,
       "widget": {},
-      "component_types": []
+      "component_types": [],
+      "screen_position": [
+        252.91000000000003,
+        -176.985
+      ],
+      "screen_rect": [
+        252.91000000000003,
+        -176.985,
+        774.18,
+        1073.97
+      ]
     },
     {
       "index": 2,
@@ -77,6 +96,7 @@
       ],
       "rotation_z": 1.0,
       "sprite_uuid": "",
+      "sprite_resource_path": "",
       "texture_path": "",
       "sprite_name": "",
       "sprite_rect": [],
@@ -85,7 +105,14 @@
       "sprite_rotated": false,
       "sprite_cap_insets": [],
       "sprite_type": 0,
+      "sprite_type_name": "simple",
       "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
       "skeleton_uuid": "",
       "skeleton_name": "",
       "skeleton_textures": [],
@@ -98,6 +125,16 @@
       "widget": {},
       "component_types": [
         "cc.Sprite"
+      ],
+      "screen_position": [
+        358.61,
+        -111.209
+      ],
+      "screen_rect": [
+        358.61,
+        -111.209,
+        812.0,
+        1124.0
       ]
     },
     {
@@ -127,6 +164,7 @@
       ],
       "rotation_z": 1.0,
       "sprite_uuid": "",
+      "sprite_resource_path": "",
       "texture_path": "",
       "sprite_name": "",
       "sprite_rect": [],
@@ -135,7 +173,14 @@
       "sprite_rotated": false,
       "sprite_cap_insets": [],
       "sprite_type": 0,
+      "sprite_type_name": "simple",
       "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
       "skeleton_uuid": "842mNijLZBW6uFp+/RET0n",
       "skeleton_name": "LaRuiOu_LH",
       "skeleton_textures": [
@@ -153,6 +198,16 @@
       "widget": {},
       "component_types": [
         "sp.Skeleton"
+      ],
+      "screen_position": [
+        184.90786743164062,
+        156.0172119140625
+      ],
+      "screen_rect": [
+        184.90786743164062,
+        156.0172119140625,
+        774.1842651367188,
+        1073.965576171875
       ]
     }
   ],

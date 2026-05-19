@@ -112,21 +112,34 @@ Godot 当前工程已接入项目内轻量 Spine runtime，用于本地预览角
 ## 资源与清单
 
 - `data/catalog.json`：总资源索引。
+- `data/config_index/summary.json`：从 `assets/resources/config.json` 拆出的 resources bundle 摘要，当前共 17141 条逻辑路径资源。
+- `data/config_index/by_type/*.json`：按 Cocos 类型拆分的资源索引，例如 `cc.SpriteFrame.json`、`cc.Prefab.json`、`sp.SkeletonData.json`。
+- `data/config_index/by_path_prefix/*.json`：按常用路径前缀拆分的索引；主城优先查 `image__com__mainpanel.json` 和 `Prefab__mainpanel.json`。
 - `data/prefabs.csv`：原始 prefab 清单。
 - `data/prefab_layouts.json`：已导出的核心 prefab 布局清单。
 - `data/prefab_layouts/MoneyItemPre.json`：资源条 prefab，主城顶部金币/钻石条使用。
 - `data/prefab_layouts/ShopPre.json`：商会/黑市商店 prefab，主屏 `openShop()` 的目标。
 - `data/prefab_layouts/GoodsItemPre.json`：商店商品卡 prefab，含 `GoodsItemCom` 的 `discount/rare/fight/prize/limit/selectBtn` 绑定。
 - `data/prefab_layouts/HeroMainPre.json`：英雄主界面 prefab，独立英雄页的中心 Spine、右侧信息面板和功能页签布局参考。
+- `data/prefab_layouts/HeroBookDetailPre.json`：截图里的英雄详情/图鉴详情页主体 prefab。源码入口是 `HeroBookDetailPanel.preUrl="Prefab/HeroPanel/HeroBookDetailPre"`，包含 `heroBodyBox/skinBodyBox/rightBox/skinBox/infoToggle/skinToggle/btnChaKan/btnLingqu/btnPingLun` 等字段绑定。
+- `data/hero_resource_inventory.json`：英雄资源完整清单，来自 `config.json`、`named_resource_index.json` 和反编译源码字段链。
+- `data/hero_catalog.json`：Godot 英雄列表运行时目录，当前 75 个 6 位英雄 id，按 `SSS > SSR > SR > R > N` 排序。
+- `HERO_RESOURCE_INVENTORY.md`：英雄资源分析文档，记录头像、图鉴、立绘 prefab、战斗 prefab、语音、皮肤/变体和离线品质推断规则。
+- `tools/export_hero_resource_inventory.py`：重新生成英雄资源清单和 Godot 英雄目录的工具。
+- `data/prefab_source_inventory.json/.csv/.md`：从 `prefabs.csv`、反编译源码 `preUrl/url` 和已有文档线索交叉生成的完整 prefab 索引。当前统计为 1018 个 prefab、492 个源码直接引用入口、129 个文档已知候选。
+- `tools/export_prefab_source_inventory.py`：重新生成完整 prefab 资源索引的工具。下一步手工还原界面时，优先查看 `data/prefab_source_inventory.md` 的“源码高频入口”和“已知还原候选”。
 - `data/prefab_layouts/HeroTabPre.json`：英雄页签 prefab，确认 `cm_tab2_on/off` 页签资源。
-- `data/prefab_layouts/HeroListPre.json`：完整英雄列表页 prefab。当前 Godot 已新增独立 `original_hero_list_panel.tscn`，主屏“英雄”先打开列表，点击英雄后再进入 `HeroMainPre` 风格详情页。
+- `data/prefab_layouts/HeroListPre.json`：完整英雄列表页 prefab。当前 Godot 已新增独立 `original_hero_list_panel.tscn`，主屏“英雄”先打开列表，点击英雄后进入 `HeroBookDetailPre` 风格详情页。
 - `data/prefab_layouts/HeroGridPre.json`、`HeroBookItemPre.json`、`HeroLevelSharedPre.json`、`HeroNormalarrayPre.json`、`HeroStarPre.json`：英雄列表页的卡片、图鉴、共享等级、阵容和升星子 prefab 布局参考。
+- 英雄列表/详情页回归参数：`--hero-list-open-id <id>` 可从列表按 id 打开详情；`--hero-list-click-at 200,260` 可模拟点击首个卡片；`--hero-id <id>` 可直接指定详情页英雄。图鉴页优先使用 `image/heroBook/<id>` 长图。
+- 英雄详情页新增衣装、全屏预览和语音回归：`--hero-full-preview` 隐藏其他 UI 只显示角色，`--hero-click-once` 模拟点击角色并播放 `sound/cv/<hero>/<soundId>`。语音索引由 `tools/export_hero_voice_index.py` 生成到 `data/hero_voice_index.json`，MP3 拷贝在 `assets/hero_voice/**`。
 - `data/prefab_restore_inventory.csv`：整理后的 prefab 还原清单。
 - `data/prefab_restore_inventory.md`：按分类和优先级整理的 prefab 清单。
 - `data/spine_preview_index.json`：Spine 预览索引。
 - `RESTORE_LOGIN_TO_HOME.md`：登录页 -> 选服页 -> 主页面的专项还原梳理。
 - `SOURCE_DIRECTORY_GUIDE.md`：原始目录、解密目录、Cocos bundle、反编译源码和工具脚本的作用索引。
 - `tools/inspect_prefab_layout.py`：检查导出的 prefab layout、贴图节点、文本节点、Mask/ScrollView 和脚本字段绑定。
+- `tools/export_cocos_config_index.py`：重新拆分 `assets/resources/config.json` 到 `data/config_index`，用于反查资源逻辑路径、UUID、native 文件和 SpriteFrame 裁剪信息。
 - `debug_outputs/`：本地截图、Godot stdout/stderr 日志和临时回归输出目录。该目录默认被 git 忽略，只保留 `.gitkeep`。
 
 当前统计：

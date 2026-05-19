@@ -1,6 +1,7 @@
 {
   "prefab": "Prefab/mainpanel/heroHead",
   "import": "assets/resources/import/1c/1c08b9aa-14aa-4356-a47a-ccf13db7ce0e.json",
+  "origin_mode": "center",
   "nodes": [
     {
       "index": 1,
@@ -29,6 +30,7 @@
       ],
       "rotation_z": 1.0,
       "sprite_uuid": "",
+      "sprite_resource_path": "",
       "texture_path": "",
       "sprite_name": "",
       "sprite_rect": [],
@@ -37,7 +39,14 @@
       "sprite_rotated": false,
       "sprite_cap_insets": [],
       "sprite_type": 0,
+      "sprite_type_name": "simple",
       "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
       "skeleton_uuid": "",
       "skeleton_name": "",
       "skeleton_textures": [],
@@ -51,6 +60,16 @@
       "component_types": [
         "5589bWGmHBBT70UJwcaB1Bd",
         "74fa2y55aFC67mpGCct49HP"
+      ],
+      "screen_position": [
+        11.0,
+        35.0
+      ],
+      "screen_rect": [
+        11.0,
+        35.0,
+        80.0,
+        36.0
       ]
     },
     {
@@ -80,6 +99,7 @@
       ],
       "rotation_z": 1.0,
       "sprite_uuid": "",
+      "sprite_resource_path": "",
       "texture_path": "",
       "sprite_name": "",
       "sprite_rect": [],
@@ -88,7 +108,14 @@
       "sprite_rotated": false,
       "sprite_cap_insets": [],
       "sprite_type": 0,
+      "sprite_type_name": "simple",
       "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
       "skeleton_uuid": "",
       "skeleton_name": "",
       "skeleton_textures": [],
@@ -101,6 +128,16 @@
       "widget": {},
       "component_types": [
         "cc.Button"
+      ],
+      "screen_position": [
+        296.721,
+        14.0
+      ],
+      "screen_rect": [
+        296.721,
+        14.0,
+        57.0,
+        50.0
       ]
     },
     {
@@ -130,6 +167,7 @@
       ],
       "rotation_z": 1.0,
       "sprite_uuid": "",
+      "sprite_resource_path": "",
       "texture_path": "",
       "sprite_name": "",
       "sprite_rect": [],
@@ -138,7 +176,14 @@
       "sprite_rotated": false,
       "sprite_cap_insets": [],
       "sprite_type": 0,
+      "sprite_type_name": "simple",
       "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
       "skeleton_uuid": "",
       "skeleton_name": "",
       "skeleton_textures": [],
@@ -151,6 +196,16 @@
       "widget": {},
       "component_types": [
         "cc.Button"
+      ],
+      "screen_position": [
+        377.721,
+        14.0
+      ],
+      "screen_rect": [
+        377.721,
+        14.0,
+        57.0,
+        50.0
       ]
     },
     {
@@ -180,6 +235,7 @@
       ],
       "rotation_z": 1.0,
       "sprite_uuid": "",
+      "sprite_resource_path": "",
       "texture_path": "",
       "sprite_name": "",
       "sprite_rect": [],
@@ -188,7 +244,14 @@
       "sprite_rotated": false,
       "sprite_cap_insets": [],
       "sprite_type": 0,
+      "sprite_type_name": "simple",
       "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
       "skeleton_uuid": "",
       "skeleton_name": "",
       "skeleton_textures": [],
@@ -201,6 +264,16 @@
       "widget": {},
       "component_types": [
         "cc.Button"
+      ],
+      "screen_position": [
+        260.439,
+        9.478000000000009
+      ],
+      "screen_rect": [
+        260.439,
+        9.478000000000009,
+        112.0,
+        28.0
       ]
     },
     {
@@ -230,6 +303,7 @@
       ],
       "rotation_z": 1.0,
       "sprite_uuid": "",
+      "sprite_resource_path": "",
       "texture_path": "",
       "sprite_name": "",
       "sprite_rect": [],
@@ -238,7 +312,14 @@
       "sprite_rotated": false,
       "sprite_cap_insets": [],
       "sprite_type": 0,
+      "sprite_type_name": "simple",
       "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
       "skeleton_uuid": "",
       "skeleton_name": "",
       "skeleton_textures": [],
@@ -251,6 +332,16 @@
       "widget": {},
       "component_types": [
         "cc.Layout"
+      ],
+      "screen_position": [
+        613.28,
+        346.0
+      ],
+      "screen_rect": [
+        613.28,
+        346.0,
+        300.0,
+        28.0
       ]
     },
     {
@@ -279,16 +370,40 @@
         1.0
       ],
       "rotation_z": 1.0,
-      "sprite_uuid": "",
-      "texture_path": "",
-      "sprite_name": "",
-      "sprite_rect": [],
-      "sprite_offset": [],
-      "sprite_original_size": [],
-      "sprite_rotated": false,
-      "sprite_cap_insets": [],
+      "sprite_uuid": "1fpBOfbr9Ku73VwnafEBWv",
+      "sprite_resource_path": "image/com/mainpanel/cm_frame9_zhanli",
+      "texture_path": "assets/resources/native/1f/1f6b547b4.png",
+      "sprite_name": "cm_frame9_zhanli",
+      "sprite_rect": [
+        639,
+        3,
+        66,
+        27
+      ],
+      "sprite_offset": [
+        0,
+        0
+      ],
+      "sprite_original_size": [
+        66,
+        27
+      ],
+      "sprite_rotated": true,
+      "sprite_cap_insets": [
+        14,
+        0,
+        14,
+        0
+      ],
       "sprite_type": 0,
+      "sprite_type_name": "simple",
       "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
       "skeleton_uuid": "",
       "skeleton_name": "",
       "skeleton_textures": [],
@@ -302,6 +417,16 @@
       "component_types": [
         "cc.Sprite",
         "cc.Layout"
+      ],
+      "screen_position": [
+        99.0,
+        46.5
+      ],
+      "screen_rect": [
+        99.0,
+        46.5,
+        56.54,
+        27.0
       ]
     },
     {
@@ -331,6 +456,7 @@
       ],
       "rotation_z": 0.0,
       "sprite_uuid": "",
+      "sprite_resource_path": "",
       "texture_path": "",
       "sprite_name": "",
       "sprite_rect": [],
@@ -339,7 +465,14 @@
       "sprite_rotated": false,
       "sprite_cap_insets": [],
       "sprite_type": 0,
+      "sprite_type_name": "simple",
       "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
       "skeleton_uuid": "",
       "skeleton_name": "",
       "skeleton_textures": [],
@@ -364,7 +497,17 @@
         "cc.Sprite",
         "cc.Widget"
       ],
-      "widget_applied": true
+      "widget_applied": true,
+      "screen_position": [
+        260.439,
+        9.478000000000009
+      ],
+      "screen_rect": [
+        260.439,
+        9.478000000000009,
+        112.0,
+        28.0
+      ]
     },
     {
       "index": 8,
@@ -393,6 +536,7 @@
       ],
       "rotation_z": 0.0,
       "sprite_uuid": "",
+      "sprite_resource_path": "",
       "texture_path": "",
       "sprite_name": "",
       "sprite_rect": [],
@@ -401,7 +545,14 @@
       "sprite_rotated": false,
       "sprite_cap_insets": [],
       "sprite_type": 0,
+      "sprite_type_name": "simple",
       "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
       "skeleton_uuid": "",
       "skeleton_name": "",
       "skeleton_textures": [],
@@ -426,7 +577,17 @@
         "cc.Sprite",
         "cc.Widget"
       ],
-      "widget_applied": true
+      "widget_applied": true,
+      "screen_position": [
+        296.721,
+        14.0
+      ],
+      "screen_rect": [
+        296.721,
+        14.0,
+        57.0,
+        50.0
+      ]
     },
     {
       "index": 9,
@@ -455,6 +616,7 @@
       ],
       "rotation_z": 0.0,
       "sprite_uuid": "",
+      "sprite_resource_path": "",
       "texture_path": "",
       "sprite_name": "",
       "sprite_rect": [],
@@ -463,7 +625,14 @@
       "sprite_rotated": false,
       "sprite_cap_insets": [],
       "sprite_type": 0,
+      "sprite_type_name": "simple",
       "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
       "skeleton_uuid": "",
       "skeleton_name": "",
       "skeleton_textures": [],
@@ -488,7 +657,17 @@
         "cc.Sprite",
         "cc.Widget"
       ],
-      "widget_applied": true
+      "widget_applied": true,
+      "screen_position": [
+        377.721,
+        14.0
+      ],
+      "screen_rect": [
+        377.721,
+        14.0,
+        57.0,
+        50.0
+      ]
     },
     {
       "index": 10,
@@ -517,6 +696,7 @@
       ],
       "rotation_z": 1.0,
       "sprite_uuid": "0fNNU1pe1Idr18oChHXIet",
+      "sprite_resource_path": "",
       "texture_path": "assets/resources/native/6e/6e0a08c4-ce5c-4071-b1ed-ddb9b5beb9a1.png",
       "sprite_name": "70011",
       "sprite_rect": [
@@ -541,7 +721,14 @@
         0
       ],
       "sprite_type": 0,
+      "sprite_type_name": "simple",
       "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
       "skeleton_uuid": "",
       "skeleton_name": "",
       "skeleton_textures": [],
@@ -554,6 +741,16 @@
       "widget": {},
       "component_types": [
         "cc.Sprite"
+      ],
+      "screen_position": [
+        90.94600000000003,
+        41.889999999999986
+      ],
+      "screen_rect": [
+        90.94600000000003,
+        41.889999999999986,
+        75.0,
+        22.0
       ]
     },
     {
@@ -583,6 +780,7 @@
       ],
       "rotation_z": 1.0,
       "sprite_uuid": "",
+      "sprite_resource_path": "",
       "texture_path": "",
       "sprite_name": "",
       "sprite_rect": [],
@@ -591,7 +789,14 @@
       "sprite_rotated": false,
       "sprite_cap_insets": [],
       "sprite_type": 0,
+      "sprite_type_name": "simple",
       "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
       "skeleton_uuid": "",
       "skeleton_name": "",
       "skeleton_textures": [],
@@ -602,7 +807,17 @@
       "label_horizontal_align": 0,
       "label_vertical_align": 0,
       "widget": {},
-      "component_types": []
+      "component_types": [],
+      "screen_position": [
+        129.99999999999997,
+        43.88
+      ],
+      "screen_rect": [
+        129.99999999999997,
+        43.88,
+        15.54,
+        32.239999999999995
+      ]
     },
     {
       "index": 12,
@@ -631,6 +846,7 @@
       ],
       "rotation_z": 1.0,
       "sprite_uuid": "",
+      "sprite_resource_path": "",
       "texture_path": "",
       "sprite_name": "",
       "sprite_rect": [],
@@ -639,7 +855,14 @@
       "sprite_rotated": false,
       "sprite_cap_insets": [],
       "sprite_type": 0,
+      "sprite_type_name": "simple",
       "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
       "skeleton_uuid": "",
       "skeleton_name": "",
       "skeleton_textures": [],
@@ -652,6 +875,16 @@
       "widget": {},
       "component_types": [
         "cc.Sprite"
+      ],
+      "screen_position": [
+        98.0,
+        49.0
+      ],
+      "screen_rect": [
+        98.0,
+        49.0,
+        127.0,
+        28.0
       ]
     },
     {
@@ -681,6 +914,7 @@
       ],
       "rotation_z": 1.0,
       "sprite_uuid": "",
+      "sprite_resource_path": "",
       "texture_path": "",
       "sprite_name": "",
       "sprite_rect": [],
@@ -689,7 +923,14 @@
       "sprite_rotated": false,
       "sprite_cap_insets": [],
       "sprite_type": 0,
+      "sprite_type_name": "simple",
       "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
       "skeleton_uuid": "",
       "skeleton_name": "",
       "skeleton_textures": [],
@@ -700,7 +941,17 @@
       "label_horizontal_align": 0,
       "label_vertical_align": 0,
       "widget": {},
-      "component_types": []
+      "component_types": [],
+      "screen_position": [
+        135.0,
+        48.4
+      ],
+      "screen_rect": [
+        135.0,
+        48.4,
+        84.0,
+        29.2
+      ]
     },
     {
       "index": 14,
@@ -729,6 +980,7 @@
       ],
       "rotation_z": 0.0,
       "sprite_uuid": "",
+      "sprite_resource_path": "",
       "texture_path": "",
       "sprite_name": "",
       "sprite_rect": [],
@@ -737,7 +989,14 @@
       "sprite_rotated": false,
       "sprite_cap_insets": [],
       "sprite_type": 0,
+      "sprite_type_name": "simple",
       "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
       "skeleton_uuid": "",
       "skeleton_name": "",
       "skeleton_textures": [],
@@ -750,6 +1009,16 @@
       "widget": {},
       "component_types": [
         "cc.Mask"
+      ],
+      "screen_position": [
+        16.0,
+        18.0
+      ],
+      "screen_rect": [
+        16.0,
+        18.0,
+        70.0,
+        70.0
       ]
     },
     {
@@ -779,6 +1048,7 @@
       ],
       "rotation_z": 0.0,
       "sprite_uuid": "fcBGzuhtZMy6AbkLenmVEM",
+      "sprite_resource_path": "",
       "texture_path": "assets/resources/native/18/18b29ae48.png",
       "sprite_name": "cm_TX_TouXiangDi2",
       "sprite_rect": [
@@ -803,7 +1073,14 @@
         0
       ],
       "sprite_type": 0,
+      "sprite_type_name": "simple",
       "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
       "skeleton_uuid": "",
       "skeleton_name": "",
       "skeleton_textures": [],
@@ -816,6 +1093,16 @@
       "widget": {},
       "component_types": [
         "cc.Sprite"
+      ],
+      "screen_position": [
+        16.0,
+        18.0
+      ],
+      "screen_rect": [
+        16.0,
+        18.0,
+        70.0,
+        70.0
       ]
     },
     {
@@ -844,16 +1131,40 @@
         1.0
       ],
       "rotation_z": 1.0,
-      "sprite_uuid": "",
-      "texture_path": "",
-      "sprite_name": "",
-      "sprite_rect": [],
-      "sprite_offset": [],
-      "sprite_original_size": [],
+      "sprite_uuid": "b6OQs/iW9NyrdgfvRP3NF5",
+      "sprite_resource_path": "image/com/mainpanel/cm_TX_MingZiDi",
+      "texture_path": "assets/resources/native/1f/1f6b547b4.png",
+      "sprite_name": "cm_TX_MingZiDi",
+      "sprite_rect": [
+        420,
+        993,
+        176,
+        28
+      ],
+      "sprite_offset": [
+        0,
+        0
+      ],
+      "sprite_original_size": [
+        176,
+        28
+      ],
       "sprite_rotated": false,
-      "sprite_cap_insets": [],
+      "sprite_cap_insets": [
+        47,
+        10,
+        68,
+        10
+      ],
       "sprite_type": 0,
+      "sprite_type_name": "simple",
       "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
       "skeleton_uuid": "",
       "skeleton_name": "",
       "skeleton_textures": [],
@@ -866,6 +1177,16 @@
       "widget": {},
       "component_types": [
         "cc.Sprite"
+      ],
+      "screen_position": [
+        67.30399999999997,
+        9.882999999999981
+      ],
+      "screen_rect": [
+        67.30399999999997,
+        9.882999999999981,
+        176.0,
+        28.0
       ]
     },
     {
@@ -895,6 +1216,7 @@
       ],
       "rotation_z": 1.0,
       "sprite_uuid": "",
+      "sprite_resource_path": "",
       "texture_path": "",
       "sprite_name": "",
       "sprite_rect": [],
@@ -903,7 +1225,14 @@
       "sprite_rotated": false,
       "sprite_cap_insets": [],
       "sprite_type": 0,
+      "sprite_type_name": "simple",
       "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
       "skeleton_uuid": "",
       "skeleton_name": "",
       "skeleton_textures": [],
@@ -914,7 +1243,17 @@
       "label_horizontal_align": 0,
       "label_vertical_align": 0,
       "widget": {},
-      "component_types": []
+      "component_types": [],
+      "screen_position": [
+        651.28,
+        345.546
+      ],
+      "screen_rect": [
+        651.28,
+        345.546,
+        128.0,
+        27.2
+      ]
     },
     {
       "index": 18,
@@ -942,16 +1281,40 @@
         0.65
       ],
       "rotation_z": 1.0,
-      "sprite_uuid": "",
-      "texture_path": "",
-      "sprite_name": "",
-      "sprite_rect": [],
-      "sprite_offset": [],
-      "sprite_original_size": [],
+      "sprite_uuid": "fdihzO3+lAGJMTJ9GQdNn0",
+      "sprite_resource_path": "image/com/mainpanel/cm_TX_TouXiangKuangi",
+      "texture_path": "assets/resources/native/1f/1f6b547b4.png",
+      "sprite_name": "cm_TX_TouXiangKuangi",
+      "sprite_rect": [
+        679,
+        348,
+        96,
+        82
+      ],
+      "sprite_offset": [
+        0,
+        0
+      ],
+      "sprite_original_size": [
+        96,
+        82
+      ],
       "sprite_rotated": false,
-      "sprite_cap_insets": [],
+      "sprite_cap_insets": [
+        0,
+        0,
+        0,
+        0
+      ],
       "sprite_type": 0,
+      "sprite_type_name": "simple",
       "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
       "skeleton_uuid": "",
       "skeleton_name": "",
       "skeleton_textures": [],
@@ -964,6 +1327,16 @@
       "widget": {},
       "component_types": [
         "cc.Sprite"
+      ],
+      "screen_position": [
+        -54.0,
+        -52.0
+      ],
+      "screen_rect": [
+        -54.0,
+        -52.0,
+        210.0,
+        210.0
       ]
     },
     {
@@ -993,6 +1366,7 @@
       ],
       "rotation_z": 1.0,
       "sprite_uuid": "",
+      "sprite_resource_path": "",
       "texture_path": "",
       "sprite_name": "",
       "sprite_rect": [],
@@ -1001,7 +1375,14 @@
       "sprite_rotated": false,
       "sprite_cap_insets": [],
       "sprite_type": 0,
+      "sprite_type_name": "simple",
       "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
       "skeleton_uuid": "",
       "skeleton_name": "",
       "skeleton_textures": [],
@@ -1014,6 +1395,16 @@
       "widget": {},
       "component_types": [
         "cc.Sprite"
+      ],
+      "screen_position": [
+        90.332,
+        13.740000000000009
+      ],
+      "screen_rect": [
+        90.332,
+        13.740000000000009,
+        30.0,
+        30.0
       ]
     },
     {
@@ -1043,6 +1434,7 @@
       ],
       "rotation_z": 0.0,
       "sprite_uuid": "",
+      "sprite_resource_path": "",
       "texture_path": "",
       "sprite_name": "",
       "sprite_rect": [],
@@ -1051,7 +1443,14 @@
       "sprite_rotated": false,
       "sprite_cap_insets": [],
       "sprite_type": 0,
+      "sprite_type_name": "simple",
       "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
       "skeleton_uuid": "",
       "skeleton_name": "",
       "skeleton_textures": [],
@@ -1062,7 +1461,17 @@
       "label_horizontal_align": 0,
       "label_vertical_align": 0,
       "widget": {},
-      "component_types": []
+      "component_types": [],
+      "screen_position": [
+        93.207,
+        15.14000000000001
+      ],
+      "screen_rect": [
+        93.207,
+        15.14000000000001,
+        24.25,
+        27.2
+      ]
     },
     {
       "index": 21,
@@ -1091,6 +1500,7 @@
       ],
       "rotation_z": 1.0,
       "sprite_uuid": "",
+      "sprite_resource_path": "",
       "texture_path": "",
       "sprite_name": "",
       "sprite_rect": [],
@@ -1099,7 +1509,14 @@
       "sprite_rotated": false,
       "sprite_cap_insets": [],
       "sprite_type": 0,
+      "sprite_type_name": "simple",
       "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
       "skeleton_uuid": "",
       "skeleton_name": "",
       "skeleton_textures": [],
@@ -1113,6 +1530,16 @@
       "component_types": [
         "cc.Label",
         "cc.LabelOutline"
+      ],
+      "screen_position": [
+        275.221,
+        51.408000000000015
+      ],
+      "screen_rect": [
+        275.221,
+        51.408000000000015,
+        100.0,
+        18.0
       ]
     },
     {
@@ -1142,6 +1569,7 @@
       ],
       "rotation_z": 1.0,
       "sprite_uuid": "",
+      "sprite_resource_path": "",
       "texture_path": "",
       "sprite_name": "",
       "sprite_rect": [],
@@ -1150,7 +1578,14 @@
       "sprite_rotated": false,
       "sprite_cap_insets": [],
       "sprite_type": 0,
+      "sprite_type_name": "simple",
       "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
       "skeleton_uuid": "",
       "skeleton_name": "",
       "skeleton_textures": [],
@@ -1164,6 +1599,16 @@
       "component_types": [
         "cc.Label",
         "cc.LabelOutline"
+      ],
+      "screen_position": [
+        356.221,
+        51.408000000000015
+      ],
+      "screen_rect": [
+        356.221,
+        51.408000000000015,
+        100.0,
+        18.0
       ]
     },
     {
@@ -1193,6 +1638,7 @@
       ],
       "rotation_z": 0.0,
       "sprite_uuid": "21/QHtdL5BGrgiblSnCo9e",
+      "sprite_resource_path": "",
       "texture_path": "assets/resources/native/18/18b29ae48.png",
       "sprite_name": "cm_icon_HongDian",
       "sprite_rect": [
@@ -1217,7 +1663,14 @@
         0
       ],
       "sprite_type": 0,
+      "sprite_type_name": "simple",
       "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
       "skeleton_uuid": "",
       "skeleton_name": "",
       "skeleton_textures": [],
@@ -1230,6 +1683,16 @@
       "widget": {},
       "component_types": [
         "cc.Sprite"
+      ],
+      "screen_position": [
+        16.0,
+        18.0
+      ],
+      "screen_rect": [
+        16.0,
+        18.0,
+        70.0,
+        70.0
       ]
     },
     {
@@ -1259,6 +1722,7 @@
       ],
       "rotation_z": 1.0,
       "sprite_uuid": "0cHniVqepH3rOK36xm5sLX",
+      "sprite_resource_path": "",
       "texture_path": "assets/resources/native/18/18935b9e9.png",
       "sprite_name": "cm_TX_VIPDi",
       "sprite_rect": [
@@ -1283,7 +1747,14 @@
         0
       ],
       "sprite_type": 0,
+      "sprite_type_name": "simple",
       "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
       "skeleton_uuid": "",
       "skeleton_name": "",
       "skeleton_textures": [],
@@ -1296,6 +1767,16 @@
       "widget": {},
       "component_types": [
         "cc.Sprite"
+      ],
+      "screen_position": [
+        68.84300000000002,
+        30.56099999999998
+      ],
+      "screen_rect": [
+        68.84300000000002,
+        30.56099999999998,
+        201.0,
+        13.0
       ]
     },
     {
@@ -1325,6 +1806,7 @@
       ],
       "rotation_z": 1.0,
       "sprite_uuid": "acKnZcUl1N0ZVWKF1m3hZS",
+      "sprite_resource_path": "",
       "texture_path": "assets/resources/native/18/18b29ae48.png",
       "sprite_name": "cm_TX_DengJi",
       "sprite_rect": [
@@ -1349,7 +1831,14 @@
         0
       ],
       "sprite_type": 0,
+      "sprite_type_name": "simple",
       "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
       "skeleton_uuid": "",
       "skeleton_name": "",
       "skeleton_textures": [],
@@ -1362,6 +1851,16 @@
       "widget": {},
       "component_types": [
         "cc.Sprite"
+      ],
+      "screen_position": [
+        112.0,
+        31.5
+      ],
+      "screen_rect": [
+        112.0,
+        31.5,
+        199.0,
+        11.0
       ]
     },
     {
@@ -1391,6 +1890,7 @@
       ],
       "rotation_z": 1.0,
       "sprite_uuid": "",
+      "sprite_resource_path": "",
       "texture_path": "",
       "sprite_name": "",
       "sprite_rect": [],
@@ -1399,7 +1899,14 @@
       "sprite_rotated": false,
       "sprite_cap_insets": [],
       "sprite_type": 0,
+      "sprite_type_name": "simple",
       "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
       "skeleton_uuid": "",
       "skeleton_name": "",
       "skeleton_textures": [],
@@ -1410,7 +1917,17 @@
       "label_horizontal_align": 0,
       "label_vertical_align": 0,
       "widget": {},
-      "component_types": []
+      "component_types": [],
+      "screen_position": [
+        132.14600000000002,
+        43.07299999999998
+      ],
+      "screen_rect": [
+        132.14600000000002,
+        43.07299999999998,
+        27.73,
+        20.0
+      ]
     },
     {
       "index": 28,
@@ -1439,6 +1956,7 @@
       ],
       "rotation_z": 0.0,
       "sprite_uuid": "",
+      "sprite_resource_path": "",
       "texture_path": "",
       "sprite_name": "",
       "sprite_rect": [],
@@ -1447,7 +1965,14 @@
       "sprite_rotated": false,
       "sprite_cap_insets": [],
       "sprite_type": 0,
+      "sprite_type_name": "simple",
       "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
       "skeleton_uuid": "",
       "skeleton_name": "",
       "skeleton_textures": [],
@@ -1460,6 +1985,16 @@
       "widget": {},
       "component_types": [
         "cc.Sprite"
+      ],
+      "screen_position": [
+        613.28,
+        350.5
+      ],
+      "screen_rect": [
+        613.28,
+        350.5,
+        19.0,
+        19.0
       ]
     },
     {
@@ -1489,6 +2024,7 @@
       ],
       "rotation_z": 1.0,
       "sprite_uuid": "",
+      "sprite_resource_path": "",
       "texture_path": "",
       "sprite_name": "",
       "sprite_rect": [],
@@ -1497,7 +2033,14 @@
       "sprite_rotated": false,
       "sprite_cap_insets": [],
       "sprite_type": 0,
+      "sprite_type_name": "simple",
       "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
       "skeleton_uuid": "",
       "skeleton_name": "",
       "skeleton_textures": [],
@@ -1510,6 +2053,16 @@
       "widget": {},
       "component_types": [
         "cc.Sprite"
+      ],
+      "screen_position": [
+        632.28,
+        350.5
+      ],
+      "screen_rect": [
+        632.28,
+        350.5,
+        19.0,
+        19.0
       ]
     },
     {
@@ -1539,6 +2092,7 @@
       ],
       "rotation_z": 1.0,
       "sprite_uuid": "",
+      "sprite_resource_path": "",
       "texture_path": "",
       "sprite_name": "",
       "sprite_rect": [],
@@ -1547,7 +2101,14 @@
       "sprite_rotated": false,
       "sprite_cap_insets": [],
       "sprite_type": 0,
+      "sprite_type_name": "simple",
       "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
       "skeleton_uuid": "",
       "skeleton_name": "",
       "skeleton_textures": [],
@@ -1560,6 +2121,16 @@
       "widget": {},
       "component_types": [
         "cc.Sprite"
+      ],
+      "screen_position": [
+        107.0,
+        42.5
+      ],
+      "screen_rect": [
+        107.0,
+        42.5,
+        23.0,
+        35.0
       ]
     },
     {
@@ -1589,6 +2160,7 @@
       ],
       "rotation_z": 1.0,
       "sprite_uuid": "",
+      "sprite_resource_path": "",
       "texture_path": "",
       "sprite_name": "",
       "sprite_rect": [],
@@ -1597,7 +2169,14 @@
       "sprite_rotated": false,
       "sprite_cap_insets": [],
       "sprite_type": 0,
+      "sprite_type_name": "simple",
       "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
       "skeleton_uuid": "",
       "skeleton_name": "",
       "skeleton_textures": [],
@@ -1610,6 +2189,16 @@
       "widget": {},
       "component_types": [
         "cc.Sprite"
+      ],
+      "screen_position": [
+        58.803999999999974,
+        13.786999999999978
+      ],
+      "screen_rect": [
+        58.803999999999974,
+        13.786999999999978,
+        26.0,
+        26.0
       ]
     },
     {
@@ -1639,6 +2228,7 @@
       ],
       "rotation_z": 1.0,
       "sprite_uuid": "",
+      "sprite_resource_path": "",
       "texture_path": "",
       "sprite_name": "",
       "sprite_rect": [],
@@ -1647,7 +2237,14 @@
       "sprite_rotated": false,
       "sprite_cap_insets": [],
       "sprite_type": 0,
+      "sprite_type_name": "simple",
       "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
       "skeleton_uuid": "",
       "skeleton_name": "",
       "skeleton_textures": [],
@@ -1660,6 +2257,16 @@
       "widget": {},
       "component_types": [
         "cc.Label"
+      ],
+      "screen_position": [
+        246.68800000000005,
+        -2.7219999999999906
+      ],
+      "screen_rect": [
+        246.68800000000005,
+        -2.7219999999999906,
+        160.0,
+        50.4
       ]
     },
     {
@@ -1689,6 +2296,7 @@
       ],
       "rotation_z": 1.0,
       "sprite_uuid": "",
+      "sprite_resource_path": "",
       "texture_path": "",
       "sprite_name": "",
       "sprite_rect": [],
@@ -1697,7 +2305,14 @@
       "sprite_rotated": false,
       "sprite_cap_insets": [],
       "sprite_type": 0,
+      "sprite_type_name": "simple",
       "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
       "skeleton_uuid": "",
       "skeleton_name": "",
       "skeleton_textures": [],
@@ -1710,6 +2325,16 @@
       "widget": {},
       "component_types": [
         "cc.Sprite"
+      ],
+      "screen_position": [
+        324.721,
+        11.5
+      ],
+      "screen_rect": [
+        324.721,
+        11.5,
+        31.0,
+        31.0
       ]
     },
     {
@@ -1739,6 +2364,7 @@
       ],
       "rotation_z": 1.0,
       "sprite_uuid": "",
+      "sprite_resource_path": "",
       "texture_path": "",
       "sprite_name": "",
       "sprite_rect": [],
@@ -1747,7 +2373,14 @@
       "sprite_rotated": false,
       "sprite_cap_insets": [],
       "sprite_type": 0,
+      "sprite_type_name": "simple",
       "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
       "skeleton_uuid": "",
       "skeleton_name": "",
       "skeleton_textures": [],
@@ -1760,6 +2393,16 @@
       "widget": {},
       "component_types": [
         "cc.Sprite"
+      ],
+      "screen_position": [
+        405.721,
+        11.5
+      ],
+      "screen_rect": [
+        405.721,
+        11.5,
+        31.0,
+        31.0
       ]
     }
   ],
