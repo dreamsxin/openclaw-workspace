@@ -82,9 +82,10 @@ Godot 当前工程已接入项目内轻量 Spine runtime，用于本地预览角
 - `assets/main/index.js:144648` 附近：`ShopPanel.preUrl = "Prefab/Shop/ShopPre"`，黑市商店类型常量 `SHOP_TYPE_BLACKMARKET = 1`。
 - `data/prefabs.csv` 中 `Prefab/Shop/ShopPre` 对应 import `assets/resources/import/7c/7c718dca-b02d-4286-8545-996490fc0bc7.json`。
 - `tools/export_cocos_prefab_layout.py` 已把 `商店` 加入核心 prefab 导出；`data/prefab_layouts/ShopPre.json` 当前导出 67 个节点、7 个贴图节点。
+- `ShopPre` 的动态子 prefab 已继续导出：`ShopItemPre.json`、`GoodsItemPre.json`、`ShopBuyEquitPre.json`，用于还原商店页签、商品卡和购买确认框。
 - `tools/inspect_prefab_layout.py 商店 --limit 25` 可快速打印 `ShopPre` 的贴图/文本/Mask 节点和 `ShopCom` 字段绑定。
 - 已新增 `scenes/original_shop_panel.tscn` 和 `scripts/original_shop_panel.gd`。主屏顶部 `SHOP` 和右侧 `商会` 入口现在进入独立商店页；Prefab 按钮仍可回看原始 `ShopPre` 布局。
-- 独立商店页按 `ShopPanel.setData()` 的运行逻辑手工实现：顶部货币条、基础/战斗商城主页签、右侧商店类型、两列商品列表、刷新条和本地购买弹窗；商品图标从 `data/equipment_icon_index.json` 读取真实 SpriteFrame。
+- 独立商店页按 `ShopPanel.setData()` 的运行逻辑手工实现：顶部货币条、基础/战斗商城主页签、右侧商店类型、两列商品列表、刷新条和本地购买弹窗；商品图标从 `data/equipment_icon_index.json` 读取真实 SpriteFrame，商品卡尺寸和主要元素坐标参考 `GoodsItemPre`。
 
 ## Prefab 还原注意事项
 
@@ -110,6 +111,7 @@ Godot 当前工程已接入项目内轻量 Spine runtime，用于本地预览角
 - `data/prefab_layouts.json`：已导出的核心 prefab 布局清单。
 - `data/prefab_layouts/MoneyItemPre.json`：资源条 prefab，主城顶部金币/钻石条使用。
 - `data/prefab_layouts/ShopPre.json`：商会/黑市商店 prefab，主屏 `openShop()` 的目标。
+- `data/prefab_layouts/GoodsItemPre.json`：商店商品卡 prefab，含 `GoodsItemCom` 的 `discount/rare/fight/prize/limit/selectBtn` 绑定。
 - `data/prefab_restore_inventory.csv`：整理后的 prefab 还原清单。
 - `data/prefab_restore_inventory.md`：按分类和优先级整理的 prefab 清单。
 - `data/spine_preview_index.json`：Spine 预览索引。

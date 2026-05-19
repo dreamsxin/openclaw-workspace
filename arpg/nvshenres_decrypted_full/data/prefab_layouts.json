@@ -70,6 +70,27 @@
     "texture_nodes": 7
   },
   {
+    "label": "商店页签",
+    "prefab": "Prefab/Shop/ShopItemPre",
+    "layout": "data/prefab_layouts/ShopItemPre.json",
+    "nodes": 7,
+    "texture_nodes": 1
+  },
+  {
+    "label": "商店商品",
+    "prefab": "Prefab/Shop/GoodsItemPre",
+    "layout": "data/prefab_layouts/GoodsItemPre.json",
+    "nodes": 21,
+    "texture_nodes": 3
+  },
+  {
+    "label": "商店购买确认",
+    "prefab": "Prefab/Shop/ShopBuyEquitPre",
+    "layout": "data/prefab_layouts/ShopBuyEquitPre.json",
+    "nodes": 33,
+    "texture_nodes": 7
+  },
+  {
     "label": "英雄",
     "prefab": "Prefab/HeroPanel/HeroMainPre",
     "layout": "data/prefab_layouts/HeroMainPre.json",

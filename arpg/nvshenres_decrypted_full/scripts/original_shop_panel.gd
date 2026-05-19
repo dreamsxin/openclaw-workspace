@@ -174,8 +174,8 @@ func _build_goods_area() -> void:
 
 	goods_grid = GridContainer.new()
 	goods_grid.columns = 2
-	goods_grid.add_theme_constant_override("h_separation", 18)
-	goods_grid.add_theme_constant_override("v_separation", 16)
+	goods_grid.add_theme_constant_override("h_separation", 26)
+	goods_grid.add_theme_constant_override("v_separation", 18)
 	scroll.add_child(goods_grid)
 
 func _build_shop_type_tabs() -> void:
@@ -208,7 +208,7 @@ func _refresh_goods() -> void:
 		child.queue_free()
 	for i in GOODS.size():
 		var card := Button.new()
-		card.custom_minimum_size = Vector2(386, 172)
+		card.custom_minimum_size = Vector2(350, 120)
 		card.text = ""
 		card.pressed.connect(_buy_goods.bind(i))
 		goods_grid.add_child(card)
@@ -217,7 +217,7 @@ func _refresh_goods() -> void:
 func _draw_goods_card(parent: Control, item: Dictionary, index: int) -> void:
 	var bg := ColorRect.new()
 	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	bg.color = Color(0.07, 0.06, 0.095, 0.9)
+	bg.color = Color(0.065, 0.058, 0.09, 0.92)
 	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	parent.add_child(bg)
 
@@ -225,39 +225,54 @@ func _draw_goods_card(parent: Control, item: Dictionary, index: int) -> void:
 	var frame_colors: Array[Color] = [Color(0.36, 0.34, 0.43), Color(0.38, 0.3, 0.62), Color(0.76, 0.45, 0.14)]
 	var frame_color := frame_colors[rare]
 	var icon_bg := ColorRect.new()
-	icon_bg.position = Vector2(18, 20)
-	icon_bg.size = Vector2(94, 94)
+	icon_bg.position = Vector2(8, 5)
+	icon_bg.size = Vector2(110, 110)
 	icon_bg.color = frame_color
 	icon_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	parent.add_child(icon_bg)
 
 	var icon := TextureRect.new()
-	icon.position = Vector2(29, 31)
-	icon.size = Vector2(72, 72)
+	icon.position = Vector2(20, 17)
+	icon.size = Vector2(86, 86)
 	icon.texture = _load_indexed_texture(_equipment_icon(int(item.item)))
 	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	parent.add_child(icon)
 
-	_add_label(parent, str(item.name), Vector2(130, 20), Vector2(190, 30), 21, Color(1.0, 0.88, 0.54))
-	_add_label(parent, str(item.limit), Vector2(130, 54), Vector2(210, 26), 16, Color(0.75, 0.88, 1.0))
+	_add_label(parent, str(item.name), Vector2(126, 14), Vector2(198, 30), 21, Color(1.0, 0.88, 0.54))
+	_add_label(parent, str(item.limit), Vector2(126, 52), Vector2(190, 24), 16, Color(0.75, 0.88, 1.0))
 	if str(item.discount) != "":
-		_add_label(parent, str(item.discount), Vector2(292, 18), Vector2(64, 28), 16, Color(1.0, 0.55, 0.38), HORIZONTAL_ALIGNMENT_CENTER)
+		var discount_bg := ColorRect.new()
+		discount_bg.position = Vector2(0, 0)
+		discount_bg.size = Vector2(70, 30)
+		discount_bg.color = Color(0.68, 0.18, 0.12, 0.92)
+		discount_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		parent.add_child(discount_bg)
+		_add_label(parent, str(item.discount), Vector2(7, 2), Vector2(56, 26), 15, Color(1.0, 0.9, 0.7), HORIZONTAL_ALIGNMENT_CENTER)
+
+	if rare > 0:
+		var tag_bg := ColorRect.new()
+		tag_bg.position = Vector2(19, 91)
+		tag_bg.size = Vector2(88, 22)
+		tag_bg.color = Color(0.18, 0.12, 0.28, 0.95) if rare == 1 else Color(0.36, 0.16, 0.08, 0.95)
+		tag_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		parent.add_child(tag_bg)
+		_add_label(parent, "稀有" if rare == 1 else "战意专属", Vector2(19, 89), Vector2(88, 25), 14, Color(1.0, 0.88, 0.58), HORIZONTAL_ALIGNMENT_CENTER)
 
 	var price_icon := TextureRect.new()
-	price_icon.position = Vector2(128, 102)
+	price_icon.position = Vector2(118, 82)
 	price_icon.size = Vector2(34, 34)
 	price_icon.texture = _texture_for_named_resource(str(item.currency))
 	price_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	price_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	price_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	parent.add_child(price_icon)
-	_add_label(parent, str(item.price), Vector2(166, 103), Vector2(80, 30), 18, Color(0.96, 0.9, 0.74))
+	_add_label(parent, str(item.price), Vector2(154, 84), Vector2(82, 28), 18, Color(0.96, 0.9, 0.74))
 
 	var buy := Label.new()
 	buy.text = "购买"
-	buy.position = Vector2(286, 104)
+	buy.position = Vector2(258, 78)
 	buy.size = Vector2(76, 32)
 	buy.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	buy.vertical_alignment = VERTICAL_ALIGNMENT_CENTER

@@ -250,7 +250,8 @@ assets/main/index.js
 - 主屏红点统一使用 `MoneyItemPre` 中可确认的 `cm_icon_HongDian` SpriteFrame：`assets/resources/native/18/18b29ae48.png`，rect `[375,295,31,31]`。不要直接使用 `MainPre.json` 里部分 `hongdian` 导出的 texture_path；压缩序列化解析会把它误指向父按钮图标或碎片图。
 - 主屏 `openShop()` 已确认不是额外的主屏静态 prefab：源码在 `assets/main/index.js:35031` 附近调用 `PanelManager.openShop(ShopPanel.SHOP_TYPE_BLACKMARKET, MainUIPanel.instance)`；`ShopPanel.preUrl` 在 `assets/main/index.js:144648` 附近指向 `Prefab/Shop/ShopPre`。
 - `ShopPre` 已加入核心导出清单，`data/prefab_layouts/ShopPre.json` 当前有 67 个节点、7 个贴图节点；主屏顶部 `SHOP` 和右侧 `商会` 入口现在进入独立 `original_shop_panel.tscn`，面板内的 `Prefab` 按钮可跳回 `商店` prefab 预览。
-- `original_shop_panel.gd` 已按 `ShopPanel.setData()` 手工复刻本地商店：主类型页签、右侧商店类型、两列商品、货币条、刷新条和购买弹窗；本地商品图标使用 `data/equipment_icon_index.json` 的真实装备 SpriteFrame。
+- `ShopItemPre`、`GoodsItemPre`、`ShopBuyEquitPre` 已加入导出；`GoodsItemPre` 关键绑定为 `equitNode/discount/rare/fight/prize/limit/selectBtn/without`，商品卡尺寸为 `350x120`。
+- `original_shop_panel.gd` 已按 `ShopPanel.setData()` 手工复刻本地商店：主类型页签、右侧商店类型、两列商品、货币条、刷新条和购买弹窗；本地商品图标使用 `data/equipment_icon_index.json` 的真实装备 SpriteFrame，商品卡布局参考 `GoodsItemPre`。
 - 新增 `tools/inspect_prefab_layout.py`，用于快速打印 `ShopPre` 这类 layout 的贴图/文本节点和 `component_bindings`，后续定位 UI 字段不需要反复写临时 PowerShell。
 
 主屏剩余缺口：
