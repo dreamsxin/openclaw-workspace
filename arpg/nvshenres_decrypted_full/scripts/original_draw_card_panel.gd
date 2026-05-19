@@ -3,13 +3,14 @@ extends Control
 const HOME_SCENE := "res://scenes/original_home_screen.tscn"
 const PREFAB_PREVIEW := "res://scenes/cocos_prefab_preview.tscn"
 const DESIGN_SIZE := Vector2(1280, 720)
+const SimpleSpinePlayerScript := preload("res://scripts/simple_spine_player.gd")
 
 const TABS := [
-	{"label": "英灵来袭", "off": "image/com/DrawCard/zh_btn_gaojioff", "on": "image/com/DrawCard/zh_btn_gaojion"},
-	{"label": "普通", "off": "image/com/DrawCard/zh_btn_putongoff", "on": "image/com/DrawCard/zh_btn_putongon"},
-	{"label": "友情", "off": "image/com/DrawCard/zh_btn_youqingoff", "on": "image/com/DrawCard/zh_btn_youqingon"},
-	{"label": "高级", "off": "image/com/DrawCard/zh_btn_gaojioff", "on": "image/com/DrawCard/zh_btn_gaojion"},
-	{"label": "天命", "off": "image/com/DrawCard/zh_btn_xianzhioff", "on": "image/com/DrawCard/zh_btn_xianzhion"},
+	{"label": "英灵来袭", "off": "image/com/DrawCard/zh_btn_gaojioff", "on": "image/com/DrawCard/zh_btn_gaojion", "spine": "res://data/spine_runtime/ZhaoHuan_GaoJi.json", "offset": Vector2(330, 0), "scale": 0.58},
+	{"label": "普通", "off": "image/com/DrawCard/zh_btn_putongoff", "on": "image/com/DrawCard/zh_btn_putongon", "spine": "res://data/spine_runtime/ZhaoHuan_PuTong.json", "offset": Vector2(330, 0), "scale": 0.58},
+	{"label": "友情", "off": "image/com/DrawCard/zh_btn_youqingoff", "on": "image/com/DrawCard/zh_btn_youqingon", "spine": "res://data/spine_runtime/ZhaoHuan_YouQing.json", "offset": Vector2(330, 0), "scale": 0.58},
+	{"label": "高级", "off": "image/com/DrawCard/zh_btn_gaojioff", "on": "image/com/DrawCard/zh_btn_gaojion", "spine": "res://data/spine_runtime/ZhaoHuan_GaoJi.json", "offset": Vector2(330, 0), "scale": 0.58},
+	{"label": "天命", "off": "image/com/DrawCard/zh_btn_xianzhioff", "on": "image/com/DrawCard/zh_btn_xianzhion", "spine": "res://data/spine_runtime/ZhaoHuan_XianZhi.json", "offset": Vector2(300, -12), "scale": 0.56},
 ]
 const HERO_IDS := ["105004", "205008", "305006", "405007", "505004", "204001", "104002", "2050081"]
 
@@ -21,8 +22,12 @@ var reward_root: Control
 var info_label: Label
 var progress_fill: ColorRect
 var progress_label: Label
+var pool_stage: Node2D
+var pool_spine: Node2D
+var summon_effect: Node2D
 var selected_tab := 1
 var summon_count := 11
+var pool_spine_key := ""
 
 func _ready() -> void:
 	_load_named_resources()
@@ -64,6 +69,7 @@ func _build_ui() -> void:
 	_build_exchange_panel()
 	_layout_design_root()
 	_refresh_tabs()
+	_refresh_pool_spine()
 	_refresh_progress()
 	_refresh_results()
 
@@ -96,31 +102,30 @@ func _add_top_button(parent: HBoxContainer, text: String, callback: Callable) ->
 
 func _build_feature_panel() -> void:
 	var panel := Control.new()
-	panel.position = Vector2(118, 74)
-	panel.size = Vector2(706, 350)
+	panel.position = Vector2(80, 52)
+	panel.size = Vector2(824, 462)
 	design_root.add_child(panel)
 
-	var card_resources := ["image/com/DrawCard/zh_image_pan2", "image/com/DrawCard/bx_icon_03", "image/com/DrawCard/bx_icon_02"]
-	var names := ["限定英雄", "高级召唤", "友情召唤"]
-	for i in 3:
-		var card := Control.new()
-		card.position = Vector2(36 + i * 214, 46)
-		card.size = Vector2(176, 245)
-		panel.add_child(card)
-		var bg := ColorRect.new()
-		bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		bg.color = Color(0.08, 0.06, 0.12, 0.78)
-		bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		card.add_child(bg)
-		_add_named_image(card, card_resources[i], Vector2(26, 20), Vector2(124, 124))
-		_add_label(card, names[i], Vector2(0, 152), Vector2(176, 30), 21, Color(1.0, 0.88, 0.48), HORIZONTAL_ALIGNMENT_CENTER)
-		var button := Button.new()
-		button.text = "查看"
-		button.position = Vector2(42, 194)
-		button.size = Vector2(92, 34)
-		card.add_child(button)
+	var glow := ColorRect.new()
+	glow.position = Vector2(64, 40)
+	glow.size = Vector2(650, 326)
+	glow.color = Color(0.05, 0.06, 0.12, 0.32)
+	glow.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	panel.add_child(glow)
 
-	info_label = _add_label(panel, "10连招募必出5星SR或SSR英雄", Vector2(80, 306), Vector2(520, 32), 20, Color(1.0, 0.92, 0.62), HORIZONTAL_ALIGNMENT_CENTER)
+	pool_stage = Node2D.new()
+	pool_stage.position = Vector2.ZERO
+	panel.add_child(pool_stage)
+
+	summon_effect = SimpleSpinePlayerScript.new()
+	summon_effect.position = Vector2(248, 338)
+	summon_effect.scale = Vector2(0.58, 0.58)
+	summon_effect.visible = false
+	pool_stage.add_child(summon_effect)
+	if FileAccess.file_exists("res://data/spine_runtime/ZhaoHuan_ChouKa.json"):
+		summon_effect.load_spine("res://data/spine_runtime/ZhaoHuan_ChouKa.json", "take")
+
+	info_label = _add_label(panel, "普通卡池：10连招募必出5星SR或SSR英雄", Vector2(112, 360), Vector2(560, 32), 20, Color(1.0, 0.92, 0.62), HORIZONTAL_ALIGNMENT_CENTER)
 
 func _build_reward_progress() -> void:
 	reward_root = Control.new()
@@ -211,12 +216,14 @@ func _build_exchange_panel() -> void:
 func _select_tab(index: int) -> void:
 	selected_tab = index
 	_refresh_tabs()
+	_refresh_pool_spine()
 	_refresh_results()
 
 func _summon(amount: int) -> void:
 	summon_count += amount
 	_refresh_progress()
 	_refresh_results()
+	_play_summon_effect()
 
 func _refresh_tabs() -> void:
 	for i in tab_buttons.size():
@@ -246,6 +253,46 @@ func _refresh_results() -> void:
 		_add_named_image(hero_result_root, "image/head/%s" % hero_id, Vector2(x + 6, 58), Vector2(44, 44))
 		_add_named_image(hero_result_root, "image/comHeroGrid/cm_tag_SSR1", Vector2(x, 52), Vector2(30, 18))
 	info_label.text = "%s卡池：10连招募必出5星SR或SSR英雄" % str(TABS[selected_tab].label)
+
+func _refresh_pool_spine() -> void:
+	if pool_stage == null:
+		return
+	var tab: Dictionary = TABS[selected_tab]
+	var data_path := str(tab.get("spine", ""))
+	if data_path == pool_spine_key and pool_spine:
+		return
+	if pool_spine:
+		pool_spine.queue_free()
+		pool_spine = null
+	pool_spine_key = data_path
+	if not FileAccess.file_exists(data_path):
+		return
+	pool_spine = SimpleSpinePlayerScript.new()
+	pool_stage.add_child(pool_spine)
+	pool_spine.load_spine(data_path, "enter")
+	_fit_spine_to_rect(pool_spine, Rect2(Vector2(86, 36), Vector2(628, 312)), float(tab.get("scale", 0.58)))
+	pool_spine.position += tab.get("offset", Vector2.ZERO)
+
+func _play_summon_effect() -> void:
+	if summon_effect == null:
+		return
+	summon_effect.visible = true
+	summon_effect.play("take")
+	var tween := create_tween()
+	tween.tween_interval(0.55)
+	tween.tween_callback(func(): summon_effect.visible = false)
+
+func _fit_spine_to_rect(player: Node2D, target: Rect2, max_scale: float) -> void:
+	if not player.has_method("update_preview_pose") or not player.has_method("get_draw_bounds"):
+		return
+	player.update_preview_pose(0.4)
+	var bounds: Rect2 = player.get_draw_bounds()
+	if bounds.size.x <= 0.0 or bounds.size.y <= 0.0:
+		return
+	var scale_value: float = minf(minf(target.size.x / bounds.size.x, target.size.y / bounds.size.y), max_scale)
+	player.scale = Vector2(scale_value, scale_value)
+	var bounds_center := bounds.position + bounds.size * 0.5
+	player.position = target.position + target.size * 0.5 - bounds_center * scale_value
 
 func _add_named_image(parent: Control, resource_name: String, position: Vector2, size: Vector2) -> TextureRect:
 	var image := TextureRect.new()

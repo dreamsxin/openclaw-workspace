@@ -681,8 +681,27 @@ Spine 查看器：
 - `assets/main/index.js:39916`：`onEnable` 调用 `setImgUrl(this.bg, "image/com/DrawCard/zh_bg")`，说明背景不是 prefab 静态贴图，而是运行时设置。
 - `assets/main/index.js:39978` 到 `39994`：预加载 `uispine/ZhaoHuan_GaoJi`、`ZhaoHuan_XianZhi`、`ZhaoHuan_YouQing`、`ZhaoHuan_PuTong` 和 `Prefab/DrawCard/HeroShowPre`。
 - `assets/main/index.js:39997` 到 `40015`、`40813` 到 `40815`、`41120` 到 `41134`：抽卡和切换卡池时使用 `ZhaoHuan_ChouKa`、`ZhaoHuan_ChouKa_back`、`ZhaoHuan_ChouKa_front`，以及不同卡池的 enter 动画。
+- `original_draw_card_panel.gd` 已按上述源码接入真实 Spine runtime：
+  - 普通：`data/spine_runtime/ZhaoHuan_PuTong.json`
+  - 友情：`data/spine_runtime/ZhaoHuan_YouQing.json`
+  - 高级/英灵来袭：`data/spine_runtime/ZhaoHuan_GaoJi.json`
+  - 天命：`data/spine_runtime/ZhaoHuan_XianZhi.json`
+  - 点击召唤：`data/spine_runtime/ZhaoHuan_ChouKa.json`
+- 这些 runtime 由 `tools/export_spine_runtime_data.py --uuid <uuid> --out data/spine_runtime/<name>.json` 导出；对应 uuid 来自 `data/spine_preview_index.json`。
+- `original_draw_card_panel.gd` 中的 `_fit_spine_to_rect()` 会先用 `SimpleSpinePlayer.get_draw_bounds()` 缩放，再按卡池配置补偿 Cocos 根骨坐标偏移。这个偏移是资源骨骼坐标造成的，不是资源丢失。
 - `assets/main/index.js:33756` 到 `33764`、`39232`：奖励宝箱图标按状态动态切换 `image/com/DrawCard/bx_icon_0*` 和 `bx_icon_0*a`。
 - `data/prefab_layouts/drawCardPre.json` 关键全局坐标：`tabBtn_5(501,252)`、`tabBtn_1(501,158)`、`tabBtn_3(501,53.774)`、`tabBtn_2(501,-44.813)`、`tabBtn_4(501,-150.879)`、`btn_call1(-466,-96)`、`btn_call10(-466,-192)`、`progressBar(-445.515,-34.509)`、`btn2_call1(-140.873,-229.353)`、`btn2_call10(188.935,-227.964)`、`HeroUiBox(0,0)`。
+
+主屏与英雄页源码/布局线索：
+
+- `MainUIPanel`/`DaohangPanel` 运行时代码在 `assets/main/index.js:34335` 附近；主城头像、导航按钮、红点、货币和运营入口都由脚本动态控制。
+- `data/prefab_layouts/MainPre.json` 关键节点：
+  - 右侧弧形入口：`zjm_btn_jingji(465,122)`、`zjm_btn_baoju(430,221)`、`zjm_btn_cangku(448,172)`、`zjm_btn_yinghun(483,9)`、`zjm_btn_duanzao(477,-43)`、`zjm_btn_zhanbu(471,-96)`、`zjm_btn_xunxing(449,-148)`、`zjm_btn_shop(419,-187)`。
+  - 左侧竖栏：`zjm_btn_HaoYou(-602,226)`、`zjm_btn_YouJian(-602,163)`、`zjm_btn_PaiHang(-602,103)`、`zjm_btn_XinWen(-602,41)`、`zjm_btn_ZhanBao(-602,-20)`。
+  - 活动入口：`zjm_icon_zhaohuanactivity(-280,10)`、`advertisingbtn(-280,112)`、聊天区 `scrollview(-550,-237)`。
+  - 角色展示容器：`lihui`、`herolh` 都是全屏容器，真实角色由 `RoleLh`/`Prefab/HerolhPrefab/<body>` 运行时挂载。
+- `data/prefab_layouts/HeroMainPre.json` 说明当前独立英雄页还不对：原版不是左侧英雄头像列表，而是 `scrollview/content` 下的 `tab01..tab05` 竖向功能页签；中心是 `heroBodyBox`，左右切换按钮是 `btnPre(-500,10)` / `btnNext(91,10)`，右侧面板是 `heroContentPrefab(361,11)`，底部/右侧功能按钮在 `btnUpLv`、`btnJinJie`、`btnReset`、`btn_xianQing`。
+- 因此后续 `original_hero_panel.gd` 需要从“左侧英雄列表”改为“中心立绘 + 左右切换 + 左侧功能页签 + 右侧属性/技能/装备区”的结构；英雄列表只作为资源浏览或调试入口，不应出现在原版主英雄页默认布局。
 
 活动抽卡源码定位：
 

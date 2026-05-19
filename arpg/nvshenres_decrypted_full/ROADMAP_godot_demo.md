@@ -293,6 +293,16 @@ RESTORE_LOGIN_TO_HOME.md
 - 主城“召唤”入口已改为进入独立抽卡界面，不再默认打开 prefab 预览器。
 - 独立抽卡界面参考 `drawCardPre.json` 的大布局手工实现：中部卡池展示、奖励宝箱进度、召唤按钮、十连结果预览、积分兑换和右侧五个卡池页签。
 - 独立抽卡界面读取 `data/named_resource_index.json` 中 `image/com/DrawCard/*` 与英雄头像资源，支持页签切换、召唤次数进度变化和结果预览刷新。
+- 独立抽卡界面已接入 `DrawMainPanel` 真实资源链：
+  - `DrawMainPanel.preUrl = "Prefab/DrawCard/drawCardPre"`。
+  - 卡池主视觉对应 `uispine/ZhaoHuan_PuTong`、`ZhaoHuan_YouQing`、`ZhaoHuan_GaoJi`、`ZhaoHuan_XianZhi`。
+  - 召唤过程对应 `uispine/ZhaoHuan_ChouKa`，后续再补 `ZhaoHuan_ChouKa_back/front`。
+  - 已导出 `data/spine_runtime/ZhaoHuan_*.json`，并在页签切换时播放 `enter`。
+- `original_draw_card_panel.gd` 当前仍是本地 demo 状态：主视觉 Spine 已替换静态占位卡牌，但 `HeroShowPre` 单抽详情、十连翻牌 `HeroBookItemPre` 和 back/front 全屏抽卡特效尚未完全复刻。
+- 主屏/英雄页偏差已确认：
+  - `MainPre.json` 可提供主屏左侧竖栏、右侧弧形入口、活动广告入口、聊天区和角色容器坐标。
+  - `HeroMainPre.json` 原版英雄页不是左侧头像列表，而是左侧竖向功能页签、中心 `heroBodyBox`、左右 `btnPre/btnNext` 切换和右侧 `heroContentPrefab` 信息面板。
+  - 下一步需要把 `original_hero_panel.gd` 的左侧英雄列表改成原版左右切换结构，并把英雄列表降级为调试/资源浏览入口。
 - prefab 预览器右侧详情栏新增 `mask/scroll` 统计。
 - `13003` 已提取 `DrawCardActivityCycleItemCom` 的字段绑定：`girdLayout/btn_buy/btn_qianwang/img_receive/JDT_label/JDT_progress/title/txt_xiangou`。
 - `13004` 已提取 `DrawCardActivityRenWuItemCom` 的字段绑定：`itemNode/descText/taskProgress/taskProgressLab/submitBtn/btnLabel/imgComplete`。
@@ -304,9 +314,9 @@ RESTORE_LOGIN_TO_HOME.md
 
 下一步优先级：
 
-1. 继续完善独立 `original_hero_panel`：追 `HeroSidePrefab` 页签真实资源、装备槽亮度/层级、升星/战意/衣装真实按钮资源。
+1. 继续完善独立 `original_hero_panel`：按 `HeroMainPre.json` 改为左侧竖向页签、中心 `heroBodyBox`、`btnPre/btnNext` 切换和右侧 `heroContentPrefab`，移除默认左侧头像列表。
 2. 继续完善独立 `original_bag_panel`：追 `GridBoxItemPre` 真实选中框、品质框、背包分类按钮资源、图鉴/合成按钮资源。
-3. 继续完善独立 `original_draw_card_panel`：接入抽卡 Spine、结果卡牌 `HeroShowPre`、召唤动画跳过开关和真实按钮资源。
+3. 继续完善独立 `original_draw_card_panel`：补 `HeroShowPre`、`HeroBookItemPre` 十连翻牌、`ZhaoHuan_ChouKa_back/front` 全屏抽卡特效、召唤动画跳过开关和真实按钮资源。
 4. 新增独立活动抽卡入口页或战斗页，把仍在 prefab 预览器里的主功能继续迁出。
 5. `cocos_prefab_preview.gd` 后续只在发现坐标/字段/资源缺口时增强，不再作为最终界面承载层。
 6. 继续推广通用 prefab 裁剪作为分析能力：目前已支持 `cc.Mask` 祖先链挂载和部分 `cc.ScrollView` content/viewport 近邻推断，下一步补滚动偏移、`Widget` 对齐和 `Layout` 重排，再按 `GridLogic.create(...)` 补真实奖励 Grid 子项样式。
