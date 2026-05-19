@@ -185,6 +185,20 @@
 
 ## 阶段 5：核心界面批量还原
 
+状态：进行中。
+
+商店页当前进展：
+
+- `Prefab/Shop/ShopPre` 已做成独立 `original_shop_panel.tscn`，主城 `SHOP/商会` 入口可直接打开。
+- `ShopItemPre/GoodsItemPre/ShopBuyEquitPre` 已作为子 prefab 资源依据接入手工界面：页签图标、商品折扣/稀有标签、商品购买按钮、购买确认弹窗背景、滑条、加减/MAX/购买按钮均使用原 SpriteFrame 裁剪图。
+- 商店页支持命令行回归：`--shop-open-buy <index>` 和 `--capture-shop-panel <png>`，截图和日志放入 `debug_outputs/`。
+
+商店页下一步：
+
+- 继续从 `GoodsItemCom` 的 `equitNode/prize/limit/selectBtn/without` 字段补商品卡九宫格、已售罄态和选中态。
+- 继续从 `ShopPre` 追 `goodsContent/ShopTypeContainer/freeRefreshBtn/chargeRefreshBtn` 的真实动态挂载逻辑，替换刷新条和主类型页签的手工色块。
+- 将商店数据从当前 mock 商品列表改成可由反编译配置或本地配置表驱动，保留离线可点击购买弹窗。
+
 登录到主页面的专项梳理见：
 
 ```text

@@ -252,6 +252,11 @@ assets/main/index.js
 - `ShopPre` 已加入核心导出清单，`data/prefab_layouts/ShopPre.json` 当前有 67 个节点、7 个贴图节点；主屏顶部 `SHOP` 和右侧 `商会` 入口现在进入独立 `original_shop_panel.tscn`，面板内的 `Prefab` 按钮可跳回 `商店` prefab 预览。
 - `ShopItemPre`、`GoodsItemPre`、`ShopBuyEquitPre` 已加入导出；`GoodsItemPre` 关键绑定为 `equitNode/discount/rare/fight/prize/limit/selectBtn/without`，商品卡尺寸为 `350x120`。
 - `original_shop_panel.gd` 已按 `ShopPanel.setData()` 手工复刻本地商店：主类型页签、右侧商店类型、两列商品、货币条、刷新条和购买弹窗；本地商品图标使用 `data/equipment_icon_index.json` 的真实装备 SpriteFrame，商品卡布局参考 `GoodsItemPre`，购买确认框参考 `ShopBuyEquitPre`。
+- 商店子 prefab 当前可用资源链：
+  - `ShopItemPre`：右侧商店类型条使用 `image/equipment/102` 图标结构，Godot 侧按 `SHOP_TYPES.icon` 映射 `named_resource_index.json`。
+  - `GoodsItemPre`：折扣标签来自 `assets/resources/native/18/184257350.png` 的 `sc_tag_xiyou`，稀有标签来自同 atlas 的 `sc_tag_vip`，战意/禁用态暂用 `default_btn_disabled`。
+  - `ShopBuyEquitPre`：弹窗背景用 `default_btn_normal` 九宫格替代，标题线用 `default_btn_disabled`，数量加减用 `sc_frame9_kongjian1di2`，滑条用 `xs_slider_qingbao1`，确认/MAX 按钮用 `cm_btn_LvSe1` / `cm_btn_LvSe1_1`。
+- Godot `Button` 的子 `TextureRect` 会压住内部文字，商店页现在统一用“按钮空文本 + SpriteFrame 子图 + 独立 Label”来保证底图和文字层级。
 - 商店页回归参数：`--shop-open-buy <index>` 可启动时打开购买确认框，`--capture-shop-panel <png>` 可截图。
 - 新增 `tools/inspect_prefab_layout.py`，用于快速打印 `ShopPre` 这类 layout 的贴图/文本节点和 `component_bindings`，后续定位 UI 字段不需要反复写临时 PowerShell。
 - 截图和日志统一输出到 `debug_outputs/`，不要再写到工程根目录；该目录已在 `.gitignore` 中忽略。

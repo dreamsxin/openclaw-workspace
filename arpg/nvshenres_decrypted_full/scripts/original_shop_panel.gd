@@ -6,6 +6,23 @@ const DESIGN_SIZE := Vector2(1280, 720)
 const BG_PATH := "res://assets/resources/native/92/929b60ed-1b1e-4419-b357-d7c9d1e43436.jpg"
 const MONEY_GOLD := "image/equipment/101"
 const MONEY_DIAMOND := "image/equipment/102"
+const SHOP_TAG_ATLAS := "res://assets/resources/native/18/184257350.png"
+const SHOP_TAG_DISCOUNT_RECT := Rect2i(327, 770, 88, 22)
+const SHOP_TAG_RARE_RECT := Rect2i(238, 738, 109, 26)
+const COMMON_DISABLED_ATLAS := "res://assets/resources/native/71/71561142-4c83-4933-afca-cb7a17f67053.png"
+const COMMON_DISABLED_RECT := Rect2i(0, 0, 40, 40)
+const DIALOG_BG_ATLAS := "res://assets/resources/native/e8/e851e89b-faa2-4484-bea6-5c01dd9f06e2.png"
+const DIALOG_BG_RECT := Rect2i(0, 0, 40, 40)
+const GREEN_BUTTON_ATLAS := "res://assets/resources/native/15/15a1d9111.png"
+const GREEN_BUTTON_RECT := Rect2i(512, 589, 285, 66)
+const GREEN_SMALL_BUTTON_ATLAS := "res://assets/resources/native/1d/1d816a710.png"
+const GREEN_SMALL_BUTTON_RECT := Rect2i(861, 782, 238, 66)
+const PLUS_ATLAS := "res://assets/resources/native/15/15a1d9111.png"
+const PLUS_RECT := Rect2i(996, 828, 24, 24)
+const SMALL_FRAME_RECT := Rect2i(125, 841, 54, 56)
+const SLIDER_ATLAS := "res://assets/resources/native/1a/1a61aeab8.png"
+const SLIDER_BG_RECT := Rect2i(747, 87, 256, 18)
+const SHOP_SEPARATOR_RECT := Rect2i(39, 963, 2, 46)
 
 const MAIN_TYPES := [
 	{"label": "基础商店", "type": 1},
@@ -124,7 +141,7 @@ func _add_money_item(parent: Container, icon_name: String, value: String) -> voi
 	var bg := ColorRect.new()
 	bg.position = Vector2(18, 4)
 	bg.size = Vector2(164, 34)
-	bg.color = Color(0.04, 0.045, 0.07, 0.72)
+	bg.color = Color(0.025, 0.028, 0.04, 0.76)
 	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	box.add_child(bg)
 	var icon := TextureRect.new()
@@ -137,10 +154,11 @@ func _add_money_item(parent: Container, icon_name: String, value: String) -> voi
 	box.add_child(icon)
 	_add_label(box, value, Vector2(58, 7), Vector2(88, 28), 18, Color(0.96, 0.9, 0.72), HORIZONTAL_ALIGNMENT_RIGHT)
 	var plus := Button.new()
-	plus.text = "+"
+	plus.text = ""
 	plus.position = Vector2(152, 7)
 	plus.size = Vector2(30, 28)
 	box.add_child(plus)
+	_add_sprite_frame_image(plus, PLUS_ATLAS, PLUS_RECT, Vector2(3, 2), Vector2(24, 24), false, Vector2i(24, 24), Vector2.ZERO, TextureRect.STRETCH_KEEP_ASPECT_CENTERED)
 
 func _build_main_type_tabs() -> void:
 	var box := HBoxContainer.new()
@@ -244,21 +262,14 @@ func _draw_goods_card(parent: Control, item: Dictionary, index: int) -> void:
 	_add_label(parent, str(item.name), Vector2(126, 14), Vector2(198, 30), 21, Color(1.0, 0.88, 0.54))
 	_add_label(parent, str(item.limit), Vector2(126, 52), Vector2(190, 24), 16, Color(0.75, 0.88, 1.0))
 	if str(item.discount) != "":
-		var discount_bg := ColorRect.new()
-		discount_bg.position = Vector2(0, 0)
-		discount_bg.size = Vector2(70, 30)
-		discount_bg.color = Color(0.68, 0.18, 0.12, 0.92)
-		discount_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		parent.add_child(discount_bg)
+		_add_sprite_frame_image(parent, SHOP_TAG_ATLAS, SHOP_TAG_DISCOUNT_RECT, Vector2(0, 0), Vector2(70, 30), true, Vector2i(88, 22))
 		_add_label(parent, str(item.discount), Vector2(7, 2), Vector2(56, 26), 15, Color(1.0, 0.9, 0.7), HORIZONTAL_ALIGNMENT_CENTER)
 
 	if rare > 0:
-		var tag_bg := ColorRect.new()
-		tag_bg.position = Vector2(19, 91)
-		tag_bg.size = Vector2(88, 22)
-		tag_bg.color = Color(0.18, 0.12, 0.28, 0.95) if rare == 1 else Color(0.36, 0.16, 0.08, 0.95)
-		tag_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		parent.add_child(tag_bg)
+		if rare == 1:
+			_add_sprite_frame_image(parent, SHOP_TAG_ATLAS, SHOP_TAG_RARE_RECT, Vector2(19, 91), Vector2(88, 22))
+		else:
+			_add_sprite_frame_image(parent, COMMON_DISABLED_ATLAS, COMMON_DISABLED_RECT, Vector2(19, 91), Vector2(88, 22))
 		_add_label(parent, "稀有" if rare == 1 else "战意专属", Vector2(19, 89), Vector2(88, 25), 14, Color(1.0, 0.88, 0.58), HORIZONTAL_ALIGNMENT_CENTER)
 
 	var price_icon := TextureRect.new()
@@ -271,14 +282,9 @@ func _draw_goods_card(parent: Control, item: Dictionary, index: int) -> void:
 	parent.add_child(price_icon)
 	_add_label(parent, str(item.price), Vector2(154, 84), Vector2(82, 28), 18, Color(0.96, 0.9, 0.74))
 
-	var buy := Label.new()
-	buy.text = "购买"
-	buy.position = Vector2(258, 78)
-	buy.size = Vector2(76, 32)
-	buy.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	buy.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	buy.add_theme_font_size_override("font_size", 18)
-	parent.add_child(buy)
+	var buy_bg := _add_sprite_frame_image(parent, GREEN_SMALL_BUTTON_ATLAS, GREEN_SMALL_BUTTON_RECT, Vector2(256, 78), Vector2(78, 32), true, Vector2i(238, 66), Vector2.ZERO, TextureRect.STRETCH_SCALE)
+	buy_bg.modulate = Color(0.9, 1.0, 1.0, 0.82)
+	_add_label(parent, "购买", Vector2(256, 77), Vector2(78, 34), 18, Color(0.95, 1.0, 0.92), HORIZONTAL_ALIGNMENT_CENTER)
 
 func _refresh_shop_type_tabs() -> void:
 	for child in shop_type_box.get_children():
@@ -289,11 +295,12 @@ func _refresh_shop_type_tabs() -> void:
 			continue
 		var button := Button.new()
 		button.custom_minimum_size = Vector2(226, 64)
-		button.text = str(item.label)
+		button.text = ""
 		button.add_theme_font_size_override("font_size", 21)
 		button.pressed.connect(_select_shop_type.bind(int(item.type)))
 		shop_type_box.add_child(button)
 		shop_type_buttons.append(button)
+		_add_shop_type_button_content(button, item)
 		if selected_shop_type == int(item.type):
 			button.disabled = true
 
@@ -338,18 +345,9 @@ func _show_buy_dialog(item: Dictionary) -> void:
 	panel.size = Vector2(465, 507)
 	buy_dialog.add_child(panel)
 
-	var bg := ColorRect.new()
-	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	bg.color = Color(0.055, 0.052, 0.075, 0.97)
-	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	panel.add_child(bg)
+	_add_sprite_frame_image(panel, DIALOG_BG_ATLAS, DIALOG_BG_RECT, Vector2.ZERO, panel.size, false, Vector2i(40, 40), Vector2.ZERO, TextureRect.STRETCH_SCALE)
 
-	var title_line := ColorRect.new()
-	title_line.position = Vector2(82, 54)
-	title_line.size = Vector2(302, 4)
-	title_line.color = Color(0.75, 0.58, 0.26, 0.86)
-	title_line.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	panel.add_child(title_line)
+	_add_sprite_frame_image(panel, COMMON_DISABLED_ATLAS, COMMON_DISABLED_RECT, Vector2(82, 54), Vector2(302, 8), false, Vector2i(40, 40), Vector2.ZERO, TextureRect.STRETCH_SCALE)
 
 	_add_label(panel, str(item.name), Vector2(120, 74), Vector2(224, 36), 24, Color(1.0, 0.88, 0.55), HORIZONTAL_ALIGNMENT_CENTER)
 
@@ -374,12 +372,14 @@ func _show_buy_dialog(item: Dictionary) -> void:
 	var count_state := {"value": 1}
 	var count_label := _add_label(panel, "1", Vector2(218, 317), Vector2(36, 30), 20, Color(1.0, 0.9, 0.65), HORIZONTAL_ALIGNMENT_CENTER)
 	var total_label := _add_label(panel, str(item.price), Vector2(218, 421), Vector2(80, 30), 19, Color(1.0, 0.9, 0.65))
+	var bar_bg := _add_sprite_frame_image(panel, SLIDER_ATLAS, SLIDER_BG_RECT, Vector2(120, 330), Vector2(185, 18), false, Vector2i(256, 18), Vector2.ZERO, TextureRect.STRETCH_SCALE)
 	var bar_fill := ColorRect.new()
 	bar_fill.position = Vector2(122, 333)
 	bar_fill.size = Vector2(32, 12)
 	bar_fill.color = Color(0.67, 0.46, 0.2, 0.95)
 	bar_fill.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	panel.add_child(bar_fill)
+	panel.move_child(bar_bg, bar_fill.get_index())
 
 	var update_count := func() -> void:
 		count_label.text = str(count_state.value)
@@ -399,14 +399,6 @@ func _show_buy_dialog(item: Dictionary) -> void:
 		update_count.call()
 	, Vector2(54, 31))
 
-	var bar_bg := ColorRect.new()
-	bar_bg.position = Vector2(120, 330)
-	bar_bg.size = Vector2(185, 18)
-	bar_bg.color = Color(0.02, 0.024, 0.035, 0.9)
-	bar_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	panel.add_child(bar_bg)
-	panel.move_child(bar_bg, panel.get_child_count() - 2)
-
 	var price_icon := TextureRect.new()
 	price_icon.position = Vector2(166, 416)
 	price_icon.size = Vector2(34, 34)
@@ -418,12 +410,15 @@ func _show_buy_dialog(item: Dictionary) -> void:
 	_add_label(panel, "总价", Vector2(96, 418), Vector2(70, 30), 18, Color(0.82, 0.86, 0.96), HORIZONTAL_ALIGNMENT_RIGHT)
 
 	var confirm := Button.new()
-	confirm.text = "购买"
+	confirm.text = ""
 	confirm.position = Vector2(112, 462)
 	confirm.size = Vector2(240, 38)
 	confirm.add_theme_font_size_override("font_size", 20)
 	confirm.pressed.connect(func(): _close_buy_dialog())
 	panel.add_child(confirm)
+	_add_sprite_frame_image(confirm, GREEN_BUTTON_ATLAS, GREEN_BUTTON_RECT, Vector2.ZERO, confirm.size, false, Vector2i(285, 66), Vector2.ZERO, TextureRect.STRETCH_SCALE)
+	confirm.move_child(confirm.get_child(confirm.get_child_count() - 1), 0)
+	_add_center_label(confirm, "购买", 20, Color(0.95, 1.0, 0.92))
 
 	var close := Button.new()
 	close.text = "X"
@@ -435,11 +430,30 @@ func _show_buy_dialog(item: Dictionary) -> void:
 
 func _add_count_button(parent: Control, text: String, position: Vector2, callback: Callable, size := Vector2(44, 44)) -> void:
 	var button := Button.new()
-	button.text = text
+	button.text = ""
 	button.position = position
 	button.size = size
 	button.pressed.connect(callback)
 	parent.add_child(button)
+	if text in ["-", "+"]:
+		_add_sprite_frame_image(button, SHOP_TAG_ATLAS, SMALL_FRAME_RECT, Vector2.ZERO, button.size, true, Vector2i(54, 56), Vector2.ZERO, TextureRect.STRETCH_SCALE)
+		button.move_child(button.get_child(button.get_child_count() - 1), 0)
+	elif text == "MAX":
+		_add_sprite_frame_image(button, GREEN_SMALL_BUTTON_ATLAS, GREEN_SMALL_BUTTON_RECT, Vector2.ZERO, button.size, true, Vector2i(238, 66), Vector2.ZERO, TextureRect.STRETCH_SCALE)
+		button.move_child(button.get_child(button.get_child_count() - 1), 0)
+	_add_center_label(button, text, 18 if text != "MAX" else 14, Color(0.95, 1.0, 0.92))
+
+func _add_shop_type_button_content(button: Button, item: Dictionary) -> void:
+	_add_sprite_frame_image(button, SHOP_TAG_ATLAS, SHOP_SEPARATOR_RECT, Vector2(0, 8), Vector2(4, 48), false, Vector2i(2, 46), Vector2.ZERO, TextureRect.STRETCH_SCALE)
+	var icon := TextureRect.new()
+	icon.position = Vector2(14, 2)
+	icon.size = Vector2(58, 58)
+	icon.texture = _texture_for_named_resource(str(item.icon))
+	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	button.add_child(icon)
+	_add_label(button, str(item.label), Vector2(74, 13), Vector2(124, 34), 21, Color(0.92, 0.88, 0.76), HORIZONTAL_ALIGNMENT_CENTER)
 
 func _close_buy_dialog() -> void:
 	if buy_dialog:
@@ -452,6 +466,9 @@ func _add_top_button(parent: HBoxContainer, text: String, callback: Callable) ->
 	button.custom_minimum_size = Vector2(74, 30)
 	button.pressed.connect(callback)
 	parent.add_child(button)
+
+func _add_center_label(parent: Control, text: String, font_size: int, color: Color) -> Label:
+	return _add_label(parent, text, Vector2.ZERO, parent.size, font_size, color, HORIZONTAL_ALIGNMENT_CENTER)
 
 func _add_label(parent: Control, text: String, position: Vector2, size: Vector2, font_size: int, color: Color, align := HORIZONTAL_ALIGNMENT_LEFT) -> Label:
 	var label := Label.new()
@@ -533,6 +550,17 @@ func _load_texture_region(path: String, region: Rect2i, rotated := false, origin
 	if image.load(path) != OK:
 		return null
 	return _make_sprite_frame_texture(image, region, rotated, original_size, offset)
+
+func _add_sprite_frame_image(parent: Control, atlas_path: String, rect: Rect2i, position: Vector2, size: Vector2, rotated := false, original_size := Vector2i.ZERO, offset := Vector2.ZERO, stretch := TextureRect.STRETCH_KEEP_ASPECT_CENTERED) -> TextureRect:
+	var image := TextureRect.new()
+	image.position = position
+	image.size = size
+	image.texture = _load_texture_region(atlas_path, rect, rotated, original_size, offset)
+	image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	image.stretch_mode = stretch
+	image.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	parent.add_child(image)
+	return image
 
 func _make_sprite_frame_texture(atlas: Image, region: Rect2i, rotated := false, original_size := Vector2i.ZERO, offset := Vector2.ZERO) -> Texture2D:
 	var crop := region
