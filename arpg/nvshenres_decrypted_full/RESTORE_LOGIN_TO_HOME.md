@@ -294,6 +294,9 @@ DrawCardActivityRenWuItemCom
 - 已新增独立背包/仓库界面 `scenes/original_bag_panel.tscn` / `scripts/original_bag_panel.gd`，主城底部“仓库”入口进入该场景，不再打开 prefab 预览器。
 - 独立背包界面参考 `BagPre.json` 手工实现左侧滚动网格、右侧分类按钮、详情区和底部操作按钮；本地 mock 图标来自 `data/equipment_icon_index.json` 的真实装备 SpriteFrame。
 - 独立背包界面支持页签切换和选中道具切换，并提供 `--bag-tab`、`--bag-item`、`--capture-bag-panel` 参数做截图回归。
+- 已新增独立抽卡界面 `scenes/original_draw_card_panel.tscn` / `scripts/original_draw_card_panel.gd`，主城“召唤”入口进入该场景，不再打开 prefab 预览器。
+- 独立抽卡界面参考 `drawCardPre.json` 手工实现中部卡池展示、奖励进度、召唤按钮、结果预览、积分兑换和右侧卡池页签；资源来自 `data/named_resource_index.json` 的 `image/com/DrawCard/*` 与英雄头像索引。
+- 独立抽卡界面支持页签切换、召唤次数变化和结果预览刷新，并提供 `--draw-tab`、`--draw-count`、`--capture-draw-card` 参数做截图回归。
 - prefab 预览器右侧详情栏会显示 `mask/scroll` 统计，便于判断哪些界面需要优先补裁剪关系。
 - `13003.json` 现在可看到 `DrawCardActivityCycleItemCom` 的关键字段绑定：`girdLayout -> gridLayout`、`btn_buy -> btn_buy`、`JDT_progress -> progressBar`、`title -> label_name`。
 - `13004.json` 现在可看到 `DrawCardActivityRenWuItemCom` 的关键字段绑定：`itemNode -> itemNode`、`descText -> title`、`taskProgress -> progressBar`、`taskProgressLab -> count`、`submitBtn -> getBtn`、`imgComplete -> isOver`。

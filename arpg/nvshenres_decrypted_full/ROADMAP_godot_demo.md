@@ -287,6 +287,12 @@ RESTORE_LOGIN_TO_HOME.md
 - 主城底部“仓库”入口已改为进入独立背包界面，不再默认打开 prefab 预览器。
 - 独立背包界面按 `BagPre.json` 的大布局手工实现：左侧滚动道具网格、右侧装备/道具/碎片/符文/神器分类、底部详情区和使用/出售/一键出售操作区。
 - 独立背包界面从 `data/equipment_icon_index.json` 读取真实 `image/equipment/*` SpriteFrame 作为本地 mock 图标，支持页签和选中道具切换。
+- 已新增独立抽卡界面：
+  - `scenes/original_draw_card_panel.tscn`
+  - `scripts/original_draw_card_panel.gd`
+- 主城“召唤”入口已改为进入独立抽卡界面，不再默认打开 prefab 预览器。
+- 独立抽卡界面参考 `drawCardPre.json` 的大布局手工实现：中部卡池展示、奖励宝箱进度、召唤按钮、十连结果预览、积分兑换和右侧五个卡池页签。
+- 独立抽卡界面读取 `data/named_resource_index.json` 中 `image/com/DrawCard/*` 与英雄头像资源，支持页签切换、召唤次数进度变化和结果预览刷新。
 - prefab 预览器右侧详情栏新增 `mask/scroll` 统计。
 - `13003` 已提取 `DrawCardActivityCycleItemCom` 的字段绑定：`girdLayout/btn_buy/btn_qianwang/img_receive/JDT_label/JDT_progress/title/txt_xiangou`。
 - `13004` 已提取 `DrawCardActivityRenWuItemCom` 的字段绑定：`itemNode/descText/taskProgress/taskProgressLab/submitBtn/btnLabel/imgComplete`。
@@ -300,9 +306,10 @@ RESTORE_LOGIN_TO_HOME.md
 
 1. 继续完善独立 `original_hero_panel`：追 `HeroSidePrefab` 页签真实资源、装备槽亮度/层级、升星/战意/衣装真实按钮资源。
 2. 继续完善独立 `original_bag_panel`：追 `GridBoxItemPre` 真实选中框、品质框、背包分类按钮资源、图鉴/合成按钮资源。
-3. 新增独立 `original_draw_card_panel`，把抽卡主界面从 prefab 预览器 mock 迁出。
-4. `cocos_prefab_preview.gd` 后续只在发现坐标/字段/资源缺口时增强，不再作为最终界面承载层。
-5. 继续推广通用 prefab 裁剪作为分析能力：目前已支持 `cc.Mask` 祖先链挂载和部分 `cc.ScrollView` content/viewport 近邻推断，下一步补滚动偏移、`Widget` 对齐和 `Layout` 重排，再按 `GridLogic.create(...)` 补真实奖励 Grid 子项样式。
+3. 继续完善独立 `original_draw_card_panel`：接入抽卡 Spine、结果卡牌 `HeroShowPre`、召唤动画跳过开关和真实按钮资源。
+4. 新增独立活动抽卡入口页或战斗页，把仍在 prefab 预览器里的主功能继续迁出。
+5. `cocos_prefab_preview.gd` 后续只在发现坐标/字段/资源缺口时增强，不再作为最终界面承载层。
+6. 继续推广通用 prefab 裁剪作为分析能力：目前已支持 `cc.Mask` 祖先链挂载和部分 `cc.ScrollView` content/viewport 近邻推断，下一步补滚动偏移、`Widget` 对齐和 `Layout` 重排，再按 `GridLogic.create(...)` 补真实奖励 Grid 子项样式。
 4. 继续完善 `drawCardPre` 的抽卡 Spine、结果卡牌 `HeroShowPre`、页签切换动画和真实奖励状态。
 5. 将 `prefab_node_name_hints.json` 继续接入资源浏览器，显示节点名推断用途，减少手工查 JSON。
 6. 继续完善 `battle` 的真实 Spine 战斗角色、技能特效、站位坐标和战斗结束子 prefab。
