@@ -405,7 +405,9 @@ RESTORE_LOGIN_TO_HOME.md
   - `original_server_select.gd` 已新增本地服务器列表弹层，参考 `pfLoginPanelPre.nodeSv/svBg/scrollTab/scrollserver` 坐标；点击服务器条打开 mock 列表，选择服务器更新主界面名称和状态标签。
   - `original_server_select.gd` 已按源码补开始游戏后的 `LoadingPre.isFist=1` 连接 alert：先显示“正在连接服务器”，随后切到“正在登录服务器”，最后进入主城；维护状态服只提示维护。
   - `original_server_select.gd` 已按 `PFLoginCom.refreshGGView()` 和 `pfLoginPanelPre.nodeGG` 补本地公告浮层，使用 `gonggao_bg/scrollview/tmptxt` 坐标，不再用系统 `AcceptDialog`。
+  - `original_server_select.gd` 已按 `PFLoginCom.clickAccountSwitch()` 和 `pfLoginPanelPre.nodeAlert` 补切换账号确认框，取消关闭，确定返回调试登录页。
   - `original_server_select.gd` 已按 `useprivacyPanel` 补本地隐私协议浮层；同意/拒绝会更新选服页勾选状态。`Prefab/loading/useprivacyPre` 和 `configs/useprivacy` 资源已确认，后续再导出精确布局并清洗真实正文。
+  - `original_server_select.gd` 已按 `shilingPanel` 补本地适龄提示浮层；`Prefab/loading/shilingPre` 和 `configs/shiling16` 资源已确认，后续再导出精确布局并清洗真实正文。
   - `original_home_screen.gd` 底部导航已改为 `daohangPre.json` 的真实六个图标资源/坐标，第三个入口改为仓库。
   - 已用 Godot `--headless --scene ... --quit-after` 验证加载、登录、选服、主屏均能启动；日志仅剩直接 `Image.load()` 的本地 demo 警告。
 - 资源显示问题修正：
@@ -438,7 +440,7 @@ RESTORE_LOGIN_TO_HOME.md
 
 1. 继续完善独立 `original_hero_list_panel`：追 `HeroGridCom.setData(...)`、`HeroBookItem.setData(...)` 的真实字段绑定，补 `image/heroBook/<id>` 长图、卡片选中/锁定/红点/上阵/助战状态和 ScrollView 滚动细节。
 2. 继续完善独立 `original_hero_panel`：追 `HeroSidePrefab` 和 `heroContentPrefab` 的真实按钮/页签/职业/阵营资源，细化左右翻页按钮、星级、装备槽和技能格。
-3. 补启动登录流程缺口：继续把 `updataScene.fire` 热更新入口、`PFLoginPanel` 适龄提示和服务器列表滚动分组 mock 成可检查的独立节点。
+3. 补启动登录流程缺口：继续把 `updataScene.fire` 热更新入口和服务器列表滚动分组 mock 成可检查的独立节点。
 4. 继续完善独立 `original_bag_panel`：追 `GridBoxItemPre` 真实选中框、品质框、背包分类按钮资源、图鉴/合成按钮资源。
 5. 继续完善独立 `original_draw_card_panel`：补 `HeroShowPre`、`HeroBookItemPre` 十连翻牌、`ZhaoHuan_ChouKa_back/front` 全屏抽卡特效、召唤动画跳过开关和真实按钮资源。
 6. 继续细化独立商店界面：追 `ShopItemPre`、`GoodsItemCom` 的真实背景、折扣、限购、稀有/战力标识和购买确认 `ShopBuyEquitPre`。

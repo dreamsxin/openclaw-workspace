@@ -31,6 +31,8 @@ var selected_server_status := "hot"
 var server_label: Label
 var server_popup: Control
 var server_status_icon: TextureRect
+var account_overlay: Control
+var age_overlay: Control
 var notice_overlay: Control
 var privacy_overlay: Control
 var privacy_toggle_icon: TextureRect
@@ -96,7 +98,7 @@ func _build_ui() -> void:
 	top_bar.add_child(prefab)
 
 	_add_icon_button(_layout_rect("btnGG", Rect2(Vector2(1168, 103.559), Vector2(58, 58))), ICON_NOTICE_RECT, "公告", func(): _show_local_notice())
-	_add_icon_button(_layout_rect("btnSwitchAcount", Rect2(Vector2(1168, 179.559), Vector2(58, 58))), ICON_ACCOUNT_RECT, "切换账号", func(): Navigation.go(LOGIN_SCENE))
+	_add_icon_button(_layout_rect("btnSwitchAcount", Rect2(Vector2(1168, 179.559), Vector2(58, 58))), ICON_ACCOUNT_RECT, "切换账号", func(): _show_account_overlay())
 	_add_icon_button(_layout_rect("btnDiscord", Rect2(Vector2(1168, 262.559), Vector2(58, 58))), ICON_NOTICE_RECT, "discord", func(): _show_local_notice())
 	_add_icon_button(_layout_rect("btnFacebook", Rect2(Vector2(1168, 344.559), Vector2(58, 58))), ICON_NOTICE_RECT, "facebook", func(): _show_local_notice())
 
@@ -193,11 +195,21 @@ func _build_ui() -> void:
 	banhao.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	var tip_rect := _layout_rect("lblTip", Rect2(Vector2(393.015, 687.553), Vector2(496.68, 31.5)))
 	_add_label(design_root, "本网络游戏适合年满16周岁以上的用户使用：请您确认已如实进行实名注册", tip_rect.position, tip_rect.size, 13, Color(0.86, 0.86, 0.9)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var tip_hit := Button.new()
+	tip_hit.text = ""
+	tip_hit.flat = true
+	tip_hit.position = tip_rect.position
+	tip_hit.size = tip_rect.size
+	tip_hit.tooltip_text = "适龄提示"
+	tip_hit.pressed.connect(_show_age_overlay)
+	design_root.add_child(tip_hit)
 
 	var version_rect := _layout_rect("vesiontxt", Rect2(Vector2(42.638, 688.346), Vector2(174.82, 28.98)))
 	_add_label(design_root, "资源版本号:v1.0.0", version_rect.position, version_rect.size, 13, Color(0.86, 0.86, 0.9)).horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	_add_privacy_row()
 	_build_server_popup()
+	_build_account_overlay()
+	_build_age_overlay()
 	_build_notice_overlay()
 	_build_privacy_overlay()
 	_build_connect_overlay()
@@ -361,6 +373,110 @@ func _build_server_popup() -> void:
 	close.size = Vector2(82, 34)
 	close.pressed.connect(_hide_server_popup)
 	server_popup.add_child(close)
+
+func _build_account_overlay() -> void:
+	account_overlay = Control.new()
+	account_overlay.visible = false
+	account_overlay.position = Vector2.ZERO
+	account_overlay.size = DESIGN_SIZE
+	account_overlay.z_index = 62
+	design_root.add_child(account_overlay)
+
+	var dim := ColorRect.new()
+	dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	dim.color = Color(0.0, 0.0, 0.0, 0.55)
+	account_overlay.add_child(dim)
+
+	var panel_rect := Rect2(Vector2(338.5, 175.5), Vector2(603.0, 369.0))
+	var panel := TextureRect.new()
+	panel.position = panel_rect.position
+	panel.size = panel_rect.size
+	panel.texture = _load_texture_region(ALERT_ATLAS_PATH, ALERT_FRAME_RECT)
+	panel.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	panel.stretch_mode = TextureRect.STRETCH_SCALE
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	account_overlay.add_child(panel)
+
+	var title := _add_label(account_overlay, "提示", Vector2(376.385, 187.992), Vector2(180, 40.32), 24, Color(0.45, 0.34, 0.18))
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+
+	var body := RichTextLabel.new()
+	body.position = Vector2(439.0, 294.0)
+	body.size = Vector2(400.0, 92.0)
+	body.bbcode_enabled = true
+	body.fit_content = true
+	body.scroll_active = false
+	body.text = "[center]游客账号切换后将无法找回，\n是否确定切换账号？[/center]"
+	body.add_theme_font_size_override("normal_font_size", 22)
+	body.add_theme_color_override("default_color", Color(0.24, 0.22, 0.19))
+	body.add_theme_stylebox_override("normal", StyleBoxEmpty.new())
+	account_overlay.add_child(body)
+
+	var cancel := Button.new()
+	cancel.text = "取消"
+	cancel.position = Vector2(442, 430)
+	cancel.size = Vector2(160, 54)
+	cancel.pressed.connect(_hide_account_overlay)
+	account_overlay.add_child(cancel)
+
+	var confirm := Button.new()
+	confirm.text = "确定"
+	confirm.position = Vector2(680, 430)
+	confirm.size = Vector2(160, 54)
+	confirm.pressed.connect(func(): Navigation.go(LOGIN_SCENE))
+	account_overlay.add_child(confirm)
+
+func _build_age_overlay() -> void:
+	age_overlay = Control.new()
+	age_overlay.visible = false
+	age_overlay.position = Vector2.ZERO
+	age_overlay.size = DESIGN_SIZE
+	age_overlay.z_index = 63
+	design_root.add_child(age_overlay)
+
+	var dim := ColorRect.new()
+	dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	dim.color = Color(0.0, 0.0, 0.0, 0.55)
+	age_overlay.add_child(dim)
+
+	var close_area := Button.new()
+	close_area.text = ""
+	close_area.flat = true
+	close_area.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	close_area.pressed.connect(_hide_age_overlay)
+	age_overlay.add_child(close_area)
+
+	var panel_rect := Rect2(Vector2(338.5, 175.5), Vector2(603.0, 369.0))
+	var panel := TextureRect.new()
+	panel.position = panel_rect.position
+	panel.size = panel_rect.size
+	panel.texture = _load_texture_region(ALERT_ATLAS_PATH, ALERT_FRAME_RECT)
+	panel.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	panel.stretch_mode = TextureRect.STRETCH_SCALE
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	age_overlay.add_child(panel)
+
+	var title := _add_label(age_overlay, "适龄提示", Vector2(392, 196), Vector2(180, 40.32), 24, Color(0.45, 0.34, 0.18))
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+
+	var body := RichTextLabel.new()
+	body.position = Vector2(408, 258)
+	body.size = Vector2(464, 176)
+	body.bbcode_enabled = true
+	body.fit_content = true
+	body.scroll_active = false
+	body.text = "[center]本网络游戏适合年满16周岁以上的用户使用。\n\n请您确认已如实进行实名注册。为了您的健康，请合理控制游戏时间。[/center]"
+	body.add_theme_font_size_override("normal_font_size", 22)
+	body.add_theme_color_override("default_color", Color(0.24, 0.22, 0.19))
+	body.add_theme_stylebox_override("normal", StyleBoxEmpty.new())
+	age_overlay.add_child(body)
+
+	var close := Button.new()
+	close.text = "确定"
+	close.position = Vector2(560, 454)
+	close.size = Vector2(160, 54)
+	close.pressed.connect(_hide_age_overlay)
+	age_overlay.add_child(close)
 
 func _build_notice_overlay() -> void:
 	notice_overlay = Control.new()
@@ -608,6 +724,10 @@ func _apply_startup_args() -> void:
 	args.append_array(OS.get_cmdline_user_args())
 	if "--open-server-list" in args:
 		_show_server_popup()
+	if "--open-account" in args:
+		_show_account_overlay()
+	if "--open-age" in args:
+		_show_age_overlay()
 	if "--open-notice" in args:
 		_show_local_notice()
 	if "--open-privacy" in args:
@@ -618,6 +738,10 @@ func _apply_startup_args() -> void:
 func _show_local_notice() -> void:
 	if server_popup:
 		server_popup.visible = false
+	if account_overlay:
+		account_overlay.visible = false
+	if age_overlay:
+		age_overlay.visible = false
 	if notice_overlay:
 		notice_overlay.visible = true
 
@@ -625,9 +749,43 @@ func _hide_local_notice() -> void:
 	if notice_overlay:
 		notice_overlay.visible = false
 
+func _show_account_overlay() -> void:
+	if server_popup:
+		server_popup.visible = false
+	if notice_overlay:
+		notice_overlay.visible = false
+	if privacy_overlay:
+		privacy_overlay.visible = false
+	if account_overlay:
+		account_overlay.visible = true
+
+func _hide_account_overlay() -> void:
+	if account_overlay:
+		account_overlay.visible = false
+
+func _show_age_overlay() -> void:
+	if server_popup:
+		server_popup.visible = false
+	if account_overlay:
+		account_overlay.visible = false
+	if notice_overlay:
+		notice_overlay.visible = false
+	if privacy_overlay:
+		privacy_overlay.visible = false
+	if age_overlay:
+		age_overlay.visible = true
+
+func _hide_age_overlay() -> void:
+	if age_overlay:
+		age_overlay.visible = false
+
 func _show_privacy_overlay() -> void:
 	if server_popup:
 		server_popup.visible = false
+	if account_overlay:
+		account_overlay.visible = false
+	if age_overlay:
+		age_overlay.visible = false
 	if notice_overlay:
 		notice_overlay.visible = false
 	if privacy_overlay:
@@ -663,6 +821,10 @@ func _show_connect_overlay() -> void:
 		server_popup.visible = false
 	if notice_overlay:
 		notice_overlay.visible = false
+	if account_overlay:
+		account_overlay.visible = false
+	if age_overlay:
+		age_overlay.visible = false
 	if privacy_overlay:
 		privacy_overlay.visible = false
 	if connect_overlay:

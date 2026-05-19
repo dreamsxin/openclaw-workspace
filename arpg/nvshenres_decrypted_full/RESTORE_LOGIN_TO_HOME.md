@@ -203,7 +203,9 @@ texture_nodes: 10
 
 - 选服页已经能显示带静态人物的背景、公告/账号按钮、本地演示服、开始按钮。
 - 公告按钮按 `PFLoginCom.onBtnGGClick() -> PFLoginPanel.getGGFromServer() -> refreshGGView()` 的显示方式做成本地 mock：不请求服务器，直接打开 `pfLoginPanelPre.nodeGG` 风格浮层，布局使用 `gonggao_bg/scrollview/tmptxt/txt_1` 的 `screen_rect`。
+- 切换账号按钮按 `PFLoginCom.clickAccountSwitch()` 补本地确认框：使用 `pfLoginPanelPre.nodeAlert` 中的 `cm_frame_TanChuang2/richtext/btnCancel/btnConfirm` 结构，取消关闭，确定返回调试登录页。
 - 隐私协议按 `useprivacyPanel` 源码行为做成本地 mock：点击协议行打开面板，拒绝会取消勾选，同意会勾选并关闭；当前 `Prefab/loading/useprivacyPre` 资源路径已确认但 layout 尚未导出，正文先用摘要，后续再清洗 `configs/useprivacy`。
+- 适龄提示按 `shilingPanel` 源码行为做成本地 mock：点击底部适龄文字打开提示面板，点击确定或空白关闭；当前 `Prefab/loading/shilingPre` 资源路径已确认但 layout 尚未导出，正文先用 16 岁适龄摘要。
 - 点击开始进入主页面。
 - 目前服务器列表是本地 mock，符合“不连接服务端”的目标。
 - 当前实现仍偏手工，未完全由 `pfLoginPanelPre.json` 自动生成。
@@ -216,7 +218,7 @@ texture_nodes: 10
 
 下一步：
 
-1. 账号切换弹层用本地 mock 实现；公告 mock 已按 `nodeGG` 坐标补上，隐私协议 mock 已按源码行为补上但仍需精确 layout 和真实正文。
+1. 账号切换、公告、隐私协议、适龄提示 mock 已按源码行为补上；隐私/适龄仍需精确 layout 和真实正文。
 2. 服务器列表继续完善 ScrollView 真实滚动、最近登录/推荐/全部服务器分组，以及选中态。
 3. 补 `Label`、`Button`、`NinePatchRect` 映射。
 4. 明确哪些节点由服务端列表数据动态生成，不从 prefab 静态找。
