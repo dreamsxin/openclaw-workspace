@@ -31,6 +31,7 @@ var selected_server_status := "hot"
 var server_label: Label
 var server_popup: Control
 var server_status_icon: TextureRect
+var notice_overlay: Control
 var connect_overlay: Control
 var connect_label: Label
 var connect_elapsed := 0.0
@@ -194,6 +195,7 @@ func _build_ui() -> void:
 	_add_label(design_root, "资源版本号:v1.0.0", version_rect.position, version_rect.size, 13, Color(0.86, 0.86, 0.9)).horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	_add_privacy_row()
 	_build_server_popup()
+	_build_notice_overlay()
 	_build_connect_overlay()
 
 	_layout_design_root()
@@ -347,6 +349,67 @@ func _build_server_popup() -> void:
 	close.pressed.connect(_hide_server_popup)
 	server_popup.add_child(close)
 
+func _build_notice_overlay() -> void:
+	notice_overlay = Control.new()
+	notice_overlay.visible = false
+	notice_overlay.position = Vector2.ZERO
+	notice_overlay.size = DESIGN_SIZE
+	notice_overlay.z_index = 60
+	design_root.add_child(notice_overlay)
+
+	var dim := ColorRect.new()
+	dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	dim.color = Color(0.0, 0.0, 0.0, 0.55)
+	notice_overlay.add_child(dim)
+
+	var close_area := Button.new()
+	close_area.text = ""
+	close_area.flat = true
+	close_area.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	close_area.pressed.connect(_hide_local_notice)
+	notice_overlay.add_child(close_area)
+
+	var panel_rect := Rect2(Vector2(224.0, 33.968), Vector2(832.0, 603.0))
+	var panel := PanelContainer.new()
+	panel.position = panel_rect.position
+	panel.size = panel_rect.size
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.91, 0.88, 0.78, 0.98)
+	style.border_color = Color(0.46, 0.37, 0.23, 1.0)
+	style.set_border_width_all(3)
+	style.corner_radius_top_left = 6
+	style.corner_radius_top_right = 6
+	style.corner_radius_bottom_left = 6
+	style.corner_radius_bottom_right = 6
+	panel.add_theme_stylebox_override("panel", style)
+	notice_overlay.add_child(panel)
+
+	var title_rect := Rect2(Vector2(609.964, 70.934), Vector2(72.0, 45.36))
+	var title := _add_label(notice_overlay, "公告", title_rect.position - Vector2(34, 0), title_rect.size + Vector2(68, 0), 28, Color(0.33, 0.26, 0.16))
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+
+	var scroll_rect := Rect2(Vector2(264.494, 170.473), Vector2(750.0, 400.0))
+	var scroll := ScrollContainer.new()
+	scroll.position = scroll_rect.position
+	scroll.size = scroll_rect.size
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	notice_overlay.add_child(scroll)
+
+	var body := RichTextLabel.new()
+	body.custom_minimum_size = Vector2(scroll_rect.size.x - 28, 760)
+	body.bbcode_enabled = true
+	body.fit_content = true
+	body.scroll_active = false
+	body.add_theme_font_size_override("normal_font_size", 22)
+	body.add_theme_color_override("default_color", Color(0.25, 0.23, 0.2))
+	body.add_theme_stylebox_override("normal", StyleBoxEmpty.new())
+	body.text = "[center][b]本地资源还原公告[/b][/center]\n\n欢迎进入 Maiden Academy 本地 Demo。\n\n当前版本用于离线检查已解密资源、界面布局、Spine 动画和主流程跳转，不会连接真实服务器。\n\n已还原流程：启动加载、登录调试页、平台选服页、连接服务器提示、主城、英雄列表、英雄详情、召唤、仓库和商会。\n\n后续会继续按原始 prefab 和源码入口补齐公告、隐私协议、活动页、系统入口和英雄详情子功能。"
+	scroll.add_child(body)
+
+	var close_tip_rect := Rect2(Vector2(556.879, 652.596), Vector2(154.0, 27.72))
+	var close_tip := _add_label(notice_overlay, "点击空白处关闭", close_tip_rect.position, close_tip_rect.size, 18, Color(0.86, 0.82, 0.68))
+	close_tip.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+
 func _build_connect_overlay() -> void:
 	connect_overlay = Control.new()
 	connect_overlay.visible = false
@@ -463,15 +526,20 @@ func _apply_startup_args() -> void:
 	args.append_array(OS.get_cmdline_user_args())
 	if "--open-server-list" in args:
 		_show_server_popup()
+	if "--open-notice" in args:
+		_show_local_notice()
 	if "--connect-overlay" in args or "--start-game" in args:
 		_show_connect_overlay()
 
 func _show_local_notice() -> void:
-	var dialog := AcceptDialog.new()
-	dialog.title = "公告"
-	dialog.dialog_text = "本地 Demo：当前仅展示已解密资源和离线界面流程。"
-	add_child(dialog)
-	dialog.popup_centered()
+	if server_popup:
+		server_popup.visible = false
+	if notice_overlay:
+		notice_overlay.visible = true
+
+func _hide_local_notice() -> void:
+	if notice_overlay:
+		notice_overlay.visible = false
 
 func _on_start_game() -> void:
 	if selected_server_status == "maintain":
@@ -486,6 +554,8 @@ func _on_start_game() -> void:
 func _show_connect_overlay() -> void:
 	if server_popup:
 		server_popup.visible = false
+	if notice_overlay:
+		notice_overlay.visible = false
 	if connect_overlay:
 		connect_overlay.visible = true
 	if connect_label:
