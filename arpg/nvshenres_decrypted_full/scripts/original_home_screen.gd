@@ -159,11 +159,13 @@ func _build_ui() -> void:
 
 	prefab_layer = Control.new()
 	prefab_layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	prefab_layer.z_index = 20
 	design_root.add_child(prefab_layer)
 
 	hero_hit_area = Button.new()
 	hero_hit_area.flat = true
 	hero_hit_area.text = ""
+	hero_hit_area.z_index = 10
 	hero_hit_area.position = Vector2(500, 92)
 	hero_hit_area.size = Vector2(360, 520)
 	hero_hit_area.focus_mode = Control.FOCUS_NONE
@@ -666,6 +668,9 @@ func _apply_cmdline_overrides() -> void:
 		if found_bg >= 0:
 			bg_index = found_bg
 			_apply_background()
+	var entry_arg := _cmd_arg_value(args, "--home-open-entry")
+	if entry_arg != "":
+		call_deferred("_open_home_entry", entry_arg)
 
 func _cmd_arg_value(args: Array, key: String) -> String:
 	var index := args.find(key)

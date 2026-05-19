@@ -192,6 +192,7 @@
 - `Prefab/Shop/ShopPre` 已做成独立 `original_shop_panel.tscn`，主城 `SHOP/商会` 入口可直接打开。
 - `ShopItemPre/GoodsItemPre/ShopBuyEquitPre` 已作为子 prefab 资源依据接入手工界面：页签图标、商品折扣/稀有标签、商品购买按钮、购买确认弹窗背景、滑条、加减/MAX/购买按钮均使用原 SpriteFrame 裁剪图。
 - 商店页支持命令行回归：`--shop-open-buy <index>` 和 `--capture-shop-panel <png>`，截图和日志放入 `debug_outputs/`。
+- 主城入口支持命令行回归：`--home-open-entry 商会` 可自动触发右侧商会入口并跳到商店页；主城 UI 层级已高于角色点击区。
 
 商店页下一步：
 
