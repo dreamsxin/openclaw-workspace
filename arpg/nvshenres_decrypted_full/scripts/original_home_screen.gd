@@ -109,6 +109,8 @@ var hero_image: TextureRect
 var hero_spine: Node2D
 var hero_hit_area: Button
 var title_label: Label
+var right_ribbon_hit_layer: Control
+var right_ribbon_hits: Array[Dictionary] = []
 var bg_index := 0
 var hero_index := 1
 var hero_tween: Tween
@@ -122,6 +124,17 @@ func _ready() -> void:
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_RESIZED and design_root:
 		_layout_design_root()
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		var design_position := _viewport_to_design(event.position)
+		for i in range(right_ribbon_hits.size() - 1, -1, -1):
+			var item: Dictionary = right_ribbon_hits[i]
+			var rect: Rect2 = item.rect
+			if rect.has_point(design_position):
+				get_viewport().set_input_as_handled()
+				_open_home_entry(str(item.entry))
+				return
 
 func _build_ui() -> void:
 	var backdrop := ColorRect.new()
@@ -160,7 +173,14 @@ func _build_ui() -> void:
 	prefab_layer = Control.new()
 	prefab_layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	prefab_layer.z_index = 20
+	prefab_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	design_root.add_child(prefab_layer)
+
+	right_ribbon_hit_layer = Control.new()
+	right_ribbon_hit_layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	right_ribbon_hit_layer.z_index = 30
+	right_ribbon_hit_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	design_root.add_child(right_ribbon_hit_layer)
 
 	hero_hit_area = Button.new()
 	hero_hit_area.flat = true
@@ -216,6 +236,9 @@ func _add_top_button(parent: HBoxContainer, text: String, callback: Callable) ->
 func _build_manual_main_city() -> void:
 	for child in prefab_layer.get_children():
 		child.queue_free()
+	for child in right_ribbon_hit_layer.get_children():
+		child.queue_free()
+	right_ribbon_hits.clear()
 
 	_add_player_panel()
 	_add_currency_bar()
@@ -423,6 +446,7 @@ func _add_ribbon_button(center: Vector2, item: Dictionary) -> void:
 	box.position = center - Vector2(130, 17)
 	box.size = Vector2(260, 34)
 	box.rotation = deg_to_rad(-8)
+	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	prefab_layer.add_child(box)
 
 	var bg := TextureRect.new()
@@ -452,15 +476,24 @@ func _add_ribbon_button(center: Vector2, item: Dictionary) -> void:
 	label.add_theme_color_override("font_color", Color(0.22, 0.17, 0.09))
 	box.add_child(label)
 
+	_add_red_dot(box, Vector2(42, 3), Vector2(18, 18))
+	_add_ribbon_hit_area(center, item)
+
+func _add_ribbon_hit_area(center: Vector2, item: Dictionary) -> void:
+	var hit_rect := Rect2(center - Vector2(148, 26), Vector2(296, 52))
+	right_ribbon_hits.append({
+		"rect": hit_rect,
+		"entry": str(item.get("entry", item.label)),
+	})
 	var hit := Button.new()
 	hit.text = ""
 	hit.flat = true
-	hit.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	hit.position = hit_rect.position
+	hit.size = hit_rect.size
+	hit.focus_mode = Control.FOCUS_NONE
 	hit.tooltip_text = "%s 预览" % str(item.label)
 	hit.pressed.connect(_open_home_entry.bind(str(item.get("entry", item.label))))
-	box.add_child(hit)
-
-	_add_red_dot(box, Vector2(22, 17), Vector2(22, 22))
+	right_ribbon_hit_layer.add_child(hit)
 
 func _add_bottom_nav() -> void:
 	var entries := [
@@ -671,12 +704,39 @@ func _apply_cmdline_overrides() -> void:
 	var entry_arg := _cmd_arg_value(args, "--home-open-entry")
 	if entry_arg != "":
 		call_deferred("_open_home_entry", entry_arg)
+	var click_arg := _cmd_arg_value(args, "--home-click-at")
+	if click_arg != "":
+		call_deferred("_click_at_from_arg", click_arg)
 
 func _cmd_arg_value(args: Array, key: String) -> String:
 	var index := args.find(key)
 	if index >= 0 and index + 1 < args.size():
 		return str(args[index + 1])
 	return ""
+
+func _click_at_from_arg(value: String) -> void:
+	var parts := value.split(",", false)
+	if parts.size() != 2 or not parts[0].is_valid_float() or not parts[1].is_valid_float():
+		return
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var position := Vector2(float(parts[0]), float(parts[1]))
+	var viewport := get_viewport()
+	if viewport == null:
+		return
+	var press := InputEventMouseButton.new()
+	press.button_index = MOUSE_BUTTON_LEFT
+	press.pressed = true
+	press.position = position
+	viewport.push_input(press)
+	if not is_inside_tree():
+		return
+	var release := InputEventMouseButton.new()
+	release.button_index = MOUSE_BUTTON_LEFT
+	release.pressed = false
+	release.position = position
+	if viewport != null:
+		viewport.push_input(release)
 
 func item_has_spine() -> bool:
 	return HEROES[hero_index].has("spine")
@@ -933,6 +993,11 @@ func _cocos_to_screen(position: Vector2, size: Vector2) -> Vector2:
 
 func _cocos_center_to_screen(position: Vector2) -> Vector2:
 	return Vector2(DESIGN_SIZE.x * 0.5 + position.x, DESIGN_SIZE.y * 0.5 - position.y)
+
+func _viewport_to_design(position: Vector2) -> Vector2:
+	if design_root == null:
+		return position
+	return (position - design_root.position) / design_root.scale
 
 func _arr_to_vec2(value: Variant) -> Vector2:
 	if typeof(value) == TYPE_ARRAY and value.size() >= 2:

@@ -87,7 +87,7 @@ Godot 当前工程已接入项目内轻量 Spine runtime，用于本地预览角
 - 已新增 `scenes/original_shop_panel.tscn` 和 `scripts/original_shop_panel.gd`。主屏顶部 `SHOP` 和右侧 `商会` 入口现在进入独立商店页；Prefab 按钮仍可回看原始 `ShopPre` 布局。
 - 独立商店页按 `ShopPanel.setData()` 的运行逻辑手工实现：顶部货币条、基础/战斗商城主页签、右侧商店类型、两列商品列表、刷新条和本地购买弹窗；商品图标从 `data/equipment_icon_index.json` 读取真实 SpriteFrame，商品卡尺寸和主要元素坐标参考 `GoodsItemPre`，购买确认框参考 `ShopBuyEquitPre`。
 - 商店页已继续接入子 prefab 的真实 SpriteFrame：`ShopItemPre` 的右侧页签图标，`GoodsItemPre` 的折扣/稀有标签，`ShopBuyEquitPre` 的购买确认背景、标题线、加减按钮、滑条和绿色确认按钮。按钮文字不要直接放在 `Button.text` 上被子贴图覆盖，当前改为 SpriteFrame 底图 + 独立 `Label`。
-- 主城右侧“商会”入口已修复可点击性：主城 UI 层放在角色点击区上方，避免角色动画 hit 区截获右侧入口鼠标事件。
+- 主城右侧九个入口已修复可点击性：可视斜条继续按原始布局旋转显示，点击使用独立顶层矩形命中层，并在 `_input` 中按设计坐标分发，避免旋转 Control 和角色 hit 区截获鼠标事件；红点也移到图标右上角，避免遮住入口图标。
 - 商店页可用 `--shop-open-buy <index>` 启动参数直接打开购买确认框，配合 `--capture-shop-panel` 做回归截图。
 
 ## Prefab 还原注意事项

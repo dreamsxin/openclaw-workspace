@@ -258,8 +258,10 @@ assets/main/index.js
   - `ShopBuyEquitPre`：弹窗背景用 `default_btn_normal` 九宫格替代，标题线用 `default_btn_disabled`，数量加减用 `sc_frame9_kongjian1di2`，滑条用 `xs_slider_qingbao1`，确认/MAX 按钮用 `cm_btn_LvSe1` / `cm_btn_LvSe1_1`。
 - Godot `Button` 的子 `TextureRect` 会压住内部文字，商店页现在统一用“按钮空文本 + SpriteFrame 子图 + 独立 Label”来保证底图和文字层级。
 - 主城 `hero_hit_area` 用于点击角色切换 Spine 动作，必须低于 UI 按钮层；当前 `prefab_layer.z_index = 20`、`hero_hit_area.z_index = 10`，否则右侧“商会”等入口会被角色点击区截获。
+- 右侧九个斜向入口不要直接依赖旋转 Control/Button 的命中。当前实现把显示层和命中层拆开：`_add_ribbon_button()` 只画旋转资源，`right_ribbon_hit_layer` 放置独立不旋转矩形 hit area，`_input()` 再按 `right_ribbon_hits` 的设计坐标兜底分发点击。这样最后一个“商会”在真实鼠标点击下也能进入商店。
+- 右侧入口红点不要放在图标中心，当前移到图标右上角，避免遮住 `通行证/仓库/竞技/.../商会` 的图标。
 - 商店页回归参数：`--shop-open-buy <index>` 可启动时打开购买确认框，`--capture-shop-panel <png>` 可截图。
-- 主城入口回归参数：`--home-open-entry 商会` 可启动后自动走主城入口路由，用于验证会进入 `original_shop_panel.tscn`。
+- 主城入口回归参数：`--home-open-entry 商会` 可启动后自动走主城入口路由，用于验证会进入 `original_shop_panel.tscn`；`--home-click-at 1059,547` 可模拟真实屏幕点击商会区域。
 - 新增 `tools/inspect_prefab_layout.py`，用于快速打印 `ShopPre` 这类 layout 的贴图/文本节点和 `component_bindings`，后续定位 UI 字段不需要反复写临时 PowerShell。
 - 截图和日志统一输出到 `debug_outputs/`，不要再写到工程根目录；该目录已在 `.gitignore` 中忽略。
 
