@@ -4,14 +4,18 @@ const PREFAB_PREVIEW := "res://scenes/cocos_prefab_preview.tscn"
 const RESOURCE_BROWSER := "res://scenes/resource_browser.tscn"
 const SERVER_SELECT := "res://scenes/original_server_select.tscn"
 const LAYOUT_PATH := "res://data/prefab_layouts/LoginPre.json"
-const BG_PATH := "res://assets/resources/native/11/1176e8f9-db52-4635-b647-5192e470dc81.png"
+const BG_PATH := "res://assets/resources/native/75/750b6077-9d0c-4446-9e4c-3c3ae2fb6ee5.png"
 const UI_ATLAS_PATH := "res://assets/resources/native/14/1430d496a.png"
 const LOGIN_BUTTON_ATLAS := "res://assets/resources/native/1d/1d1cac610.png"
-const LOGIN_BUTTON_PATH := "res://assets/resources/native/5b/5bdf6505-27d4-4c65-93ef-f9d027895e2b.png"
-const LOGIN_BUTTON_RECT := Rect2i(3, 612, 400, 254)
+const LOGIN_BUTTON_SHEET := "res://assets/resources/native/11/1109b405e.png"
+const LOGIN_BUTTON_RECT := Rect2i(3, 3, 414, 102)
 const LOGO_RECT := Rect2i(3, 612, 400, 254)
 const BOTTOM_RECT := Rect2i(206, 996, 2, 34)
-const SIDE_ICON_RECTS := [Rect2i(851, 957, 58, 58), Rect2i(787, 893, 58, 58), Rect2i(851, 957, 58, 58)]
+const SIDE_ICON_RECTS := {
+	"btnUserRule": Rect2i(851, 893, 58, 58),
+	"btnUserCenter": Rect2i(787, 957, 58, 58),
+	"btnGG": Rect2i(851, 957, 58, 58),
+}
 const DESIGN_SIZE := Vector2(1280, 720)
 
 var design_root: Control
@@ -68,7 +72,7 @@ func _build_ui() -> void:
 
 	var login_image := TextureRect.new()
 	login_image.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	login_image.texture = _load_texture(LOGIN_BUTTON_PATH)
+	login_image.texture = _load_texture_region(LOGIN_BUTTON_SHEET, LOGIN_BUTTON_RECT)
 	login_image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	login_image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	login_image.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -84,13 +88,13 @@ func _build_ui() -> void:
 	_add_label(login_box, "进入游戏", Vector2(195, 26), Vector2(160, 50), 28, Color(1.0, 0.94, 0.72)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 	var side_items := [
-		{"label": "用户协议", "node": "btnUserRule", "pos": Vector2(1176, 271.097), "rect": SIDE_ICON_RECTS[0]},
-		{"label": "用户中心", "node": "btnUserCenter", "pos": Vector2(1176, 186.097), "rect": SIDE_ICON_RECTS[1]},
-		{"label": "公告", "node": "btnGG", "pos": Vector2(1176, 101.097), "rect": SIDE_ICON_RECTS[2]},
+		{"label": "用户协议", "node": "btnUserRule", "pos": Vector2(1176, 271.097)},
+		{"label": "用户中心", "node": "btnUserCenter", "pos": Vector2(1176, 186.097)},
+		{"label": "公告", "node": "btnGG", "pos": Vector2(1176, 101.097)},
 	]
 	for item in side_items:
 		var rect := _layout_rect(str(item.node), Rect2(item.pos, Vector2(58, 58)))
-		_add_side_button(rect.position, rect.size, item.rect, item.label)
+		_add_side_button(rect.position, rect.size, SIDE_ICON_RECTS.get(str(item.node), Rect2i()), item.label)
 
 	var top_bar := HBoxContainer.new()
 	top_bar.position = Vector2(876, 16)

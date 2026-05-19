@@ -4,11 +4,11 @@ const MAIN_CITY := "res://scenes/original_home_screen.tscn"
 const LOGIN_SCENE := "res://scenes/original_login.tscn"
 const PREFAB_PREVIEW := "res://scenes/cocos_prefab_preview.tscn"
 const LAYOUT_PATH := "res://data/prefab_layouts/pfLoginPanelPre.json"
-const BG_PATH := "res://assets/resources/native/11/1176e8f9-db52-4635-b647-5192e470dc81.png"
+const BG_PATH := "res://assets/resources/native/75/750b6077-9d0c-4446-9e4c-3c3ae2fb6ee5.png"
 const LOGIN_ATLAS_PATH := "res://assets/resources/native/1d/1d1cac610.png"
 const UI_ATLAS_PATH := "res://assets/resources/native/14/1430d496a.png"
 const BUTTON_ATLAS_PATH := "res://assets/resources/native/14/14d2fafcf.png"
-const LOGIN_BUTTON_PATH := "res://assets/resources/native/5b/5bdf6505-27d4-4c65-93ef-f9d027895e2b.png"
+const LOGIN_BUTTON_SHEET := "res://assets/resources/native/11/1109b405e.png"
 const BOTTOM_RECT := Rect2i(206, 996, 2, 34)
 const SERVER_BOX_RECT := Rect2i(987, 43, 29, 28)
 const SERVER_TAG_HOT_RECT := Rect2i(987, 3, 34, 34)
@@ -16,7 +16,7 @@ const SERVER_TAG_NEW_RECT := Rect2i(955, 987, 34, 34)
 const SWITCH_ICON_RECT := Rect2i(170, 996, 30, 24)
 const ICON_ACCOUNT_RECT := Rect2i(787, 893, 58, 58)
 const ICON_NOTICE_RECT := Rect2i(851, 957, 58, 58)
-const START_BUTTON_RECT := Rect2i(823, 221, 194, 66)
+const START_BUTTON_RECT := Rect2i(3, 3, 414, 102)
 const DESIGN_SIZE := Vector2(1280, 720)
 
 var design_root: Control
@@ -118,7 +118,7 @@ func _build_ui() -> void:
 
 	var start_image := TextureRect.new()
 	start_image.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	start_image.texture = _load_texture(LOGIN_BUTTON_PATH)
+	start_image.texture = _load_texture_region(LOGIN_BUTTON_SHEET, START_BUTTON_RECT)
 	start_image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	start_image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	start_image.mouse_filter = Control.MOUSE_FILTER_IGNORE

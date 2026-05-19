@@ -341,38 +341,51 @@ func _rect_or_fallback(name: String, fallback_center: Vector2, fallback_size: Ve
 
 func _add_player_panel() -> void:
 	var root := Control.new()
-	root.position = Vector2(0, 0)
-	root.size = Vector2(315, 86)
+	root.position = Vector2.ZERO
+	root.size = Vector2(315, 102)
 	prefab_layer.add_child(root)
 
+	var avatar_frame_rect := _layout_rect("cm_TX_TouXiangKuangi", 0, "nav")
+	var avatar_rect := _layout_rect("cm_image_TouXiang1", 0, "nav")
+	var name_bg_rect := _layout_rect("cm_TX_MingZiDi", 0, "nav")
+	var power_bg_rect := _layout_rect("cm_frame9_zhanli", 0, "nav")
+
 	var avatar_bg := TextureRect.new()
-	avatar_bg.position = Vector2(16, 0)
-	avatar_bg.size = Vector2(84, 84)
-	avatar_bg.texture = _load_texture_region(ATLAS_18A, Rect2i(3, 119, 110, 110))
+	avatar_bg.position = avatar_frame_rect.position if avatar_frame_rect.size.x > 0.0 else Vector2(-54, -52)
+	avatar_bg.size = avatar_frame_rect.size if avatar_frame_rect.size.x > 0.0 else Vector2(210, 210)
+	var avatar_frame_node := _layout_node("cm_TX_TouXiangKuangi", 0, "nav")
+	avatar_bg.texture = _load_node_texture_from_layout(avatar_frame_node)
+	if avatar_bg.texture == null:
+		avatar_bg.texture = _load_texture_region(ATLAS_1F, Rect2i(679, 348, 96, 82))
 	avatar_bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	avatar_bg.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	avatar_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(avatar_bg)
 
 	var avatar := TextureRect.new()
-	avatar.position = Vector2(25, 6)
-	avatar.size = Vector2(66, 66)
+	avatar.position = avatar_rect.position if avatar_rect.size.x > 0.0 else Vector2(16, 18)
+	avatar.size = avatar_rect.size if avatar_rect.size.x > 0.0 else Vector2(70, 70)
 	avatar.texture = _load_texture(PLAYER_HEAD)
 	avatar.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	avatar.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	avatar.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(avatar)
 
-	var name_bg := PanelContainer.new()
-	name_bg.position = Vector2(94, 11)
-	name_bg.size = Vector2(174, 30)
-	name_bg.modulate = Color(0.04, 0.05, 0.09, 0.66)
+	var name_bg := TextureRect.new()
+	name_bg.position = name_bg_rect.position if name_bg_rect.size.x > 0.0 else Vector2(68, 14)
+	name_bg.size = name_bg_rect.size if name_bg_rect.size.x > 0.0 else Vector2(176, 28)
+	var name_bg_node := _layout_node("cm_TX_MingZiDi", 0, "nav")
+	name_bg.texture = _load_node_texture_from_layout(name_bg_node)
+	name_bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	name_bg.stretch_mode = TextureRect.STRETCH_SCALE
+	name_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(name_bg)
 
 	var name := Label.new()
 	name.text = "骑鹅大侠"
-	name.position = Vector2(103, 12)
-	name.size = Vector2(140, 28)
+	name.position = name_bg.position + Vector2(18, 0)
+	name.size = Vector2(maxf(80.0, name_bg.size.x - 34.0), name_bg.size.y)
+	name.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	name.add_theme_font_size_override("font_size", 17)
 	name.add_theme_color_override("font_color", Color(0.92, 0.90, 0.82))
 	root.add_child(name)
@@ -385,8 +398,18 @@ func _add_player_panel() -> void:
 	level.add_theme_font_size_override("font_size", 14)
 	root.add_child(level)
 
+	var power_bg := TextureRect.new()
+	power_bg.position = power_bg_rect.position if power_bg_rect.size.x > 0.0 else Vector2(79, 57)
+	power_bg.size = power_bg_rect.size if power_bg_rect.size.x > 0.0 else Vector2(176, 28)
+	var power_bg_node := _layout_node("cm_frame9_zhanli", 0, "nav")
+	power_bg.texture = _load_node_texture_from_layout(power_bg_node)
+	power_bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	power_bg.stretch_mode = TextureRect.STRETCH_SCALE
+	power_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(power_bg)
+
 	var power_icon := TextureRect.new()
-	power_icon.position = Vector2(100, 45)
+	power_icon.position = power_bg.position + Vector2(18, -1)
 	power_icon.size = Vector2(22, 32)
 	power_icon.texture = _load_texture_region(ATLAS_18A, Rect2i(415, 568, 30, 30))
 	power_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
@@ -396,8 +419,9 @@ func _add_player_panel() -> void:
 
 	var power := Label.new()
 	power.text = "3027113"
-	power.position = Vector2(126, 49)
-	power.size = Vector2(120, 24)
+	power.position = power_bg.position + Vector2(45, 1)
+	power.size = Vector2(maxf(92.0, power_bg.size.x - 58.0), power_bg.size.y)
+	power.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	power.add_theme_font_size_override("font_size", 18)
 	power.add_theme_color_override("font_color", Color(0.96, 0.90, 0.68))
 	root.add_child(power)
@@ -476,16 +500,23 @@ func _add_event_grid() -> void:
 	var entries := [
 		{"label": "活动", "node": "zjm_icon_huodong", "atlas": ATLAS_1A, "rect": Rect2i(347, 64, 80, 71)},
 		{"label": "福利", "node": "zjm_icon_FuLi", "atlas": ATLAS_1A, "rect": Rect2i(433, 64, 80, 71)},
-		{"label": "开服", "node": "zjm_icon_kaifu", "atlas": ATLAS_1A, "rect": Rect2i(3, 120, 80, 80)},
+		{"label": "新服", "node": "zjm_icon_kaifu", "atlas": ATLAS_1A, "rect": Rect2i(777, 78, 80, 71)},
+		{"label": "打工", "node": "zjm_icon_dagong", "atlas": ATLAS_1A, "rect": Rect2i(3, 43, 80, 71)},
+		{"label": "王者争霸", "node": "zjm_icon_wangzhe", "atlas": ATLAS_1A, "rect": Rect2i(605, 69, 80, 71)},
+		{"label": "公会战", "node": "zjm_icon_ghz", "atlas": ATLAS_1A, "rect": Rect2i(861, 3, 80, 69)},
+		{"label": "天梯", "node": "zjm_icon_tianti", "atlas": ATLAS_1F, "rect": Rect2i(864, 929, 80, 71), "rotated": true},
 		{"label": "礼包", "node": "zjm_icon_libao", "occurrence": 2, "atlas": ATLAS_1F, "rect": Rect2i(781, 348, 80, 80)},
 		{"label": "限时", "node": "zjm_icon_xianshihuodong", "atlas": ATLAS_1A, "rect": Rect2i(519, 69, 80, 71)},
 		{"label": "皮肤", "node": "zjm_icon_skin", "atlas": ATLAS_1A, "rect": Rect2i(360, 141, 80, 80)},
-		{"label": "竞技", "node": "zjm_icon_pvp", "atlas": ATLAS_1F, "rect": Rect2i(864, 929, 80, 71)},
-		{"label": "升星", "node": "zjm_icon_elevate", "atlas": ATLAS_1A, "rect": Rect2i(261, 64, 80, 71)},
+		{"label": "竞技", "node": "zjm_icon_pvp", "atlas": ATLAS_1F, "rect": Rect2i(945, 688, 80, 75), "rotated": true},
+		{"label": "升星", "node": "zjm_icon_star", "atlas": ATLAS_1A, "rect": Rect2i(261, 64, 80, 71)},
 		{"label": "首充", "node": "zjm_icon_first", "atlas": ATLAS_1A, "rect": Rect2i(3, 120, 80, 80)},
 		{"label": "特惠", "node": "zjm_icon_thank", "atlas": ATLAS_1A, "rect": Rect2i(446, 146, 80, 80)},
 		{"label": "广告", "node": "zjm_icon_daily", "atlas": ATLAS_1F, "rect": Rect2i(864, 843, 72, 80)},
-		{"label": "召唤", "node": "zjm_icon_zhaohuanactivity", "atlas": ATLAS_1F, "rect": Rect2i(707, 551, 34, 34)},
+		{"label": "召唤卡", "node": "zjm_icon_zhaohuanactivity", "atlas": ATLAS_1A, "rect": Rect2i(608, 247, 131, 123)},
+		{"label": "竟榜抽奖", "node": "zjm_icon_pvpActivity", "atlas": ATLAS_1F, "rect": Rect2i(943, 774, 80, 78), "rotated": true},
+		{"label": "食铁神兽", "node": "zjm_icon_stssActivity", "atlas": ATLAS_1A, "rect": Rect2i(89, 62, 80, 71)},
+		{"label": "预注册", "node": "zjm_icon_prereg", "atlas": ATLAS_1F, "rect": Rect2i(547, 602, 131, 119)},
 	]
 	for item in entries:
 		var atlas := str(item.get("atlas", ""))
@@ -525,15 +556,15 @@ func _add_ad_banner() -> void:
 
 func _add_right_ribbons() -> void:
 	var entries := [
-		{"label": "通行证", "node": "zjm_btn_rukou0", "occurrence": 0, "icon_node": "zjm_icon_baoju", "bg": Rect2i(639, 292, 364, 50), "bg_offset": Vector2(-10.5, 0), "icon": Rect2i(864, 757, 80, 73), "icon_atlas": ATLAS_1F, "icon_rotated": true},
+		{"label": "通行证", "node": "zjm_btn_rukou0", "occurrence": 0, "icon_node": "zjm_icon_baoju", "bg": Rect2i(639, 292, 364, 50), "bg_offset": Vector2(-10.5, 0), "icon": Rect2i(864, 757, 80, 73), "icon_atlas": ATLAS_1F, "icon_rotated": true, "prefer_manual_icon": true},
 		{"label": "仓库", "node": "zjm_btn_rukou0", "occurrence": 1, "icon_node": "zjm_icon_cangku", "bg": Rect2i(639, 292, 364, 50), "bg_offset": Vector2(-10.5, 0), "icon": Rect2i(747, 551, 34, 34), "icon_atlas": ATLAS_1F},
 		{"label": "竞技", "node": "zjm_btn_rukou1", "occurrence": 0, "icon_node": "zjm_icon_jingji", "bg": Rect2i(675, 65, 341, 56), "bg_offset": Vector2(1, 0), "icon": Rect2i(667, 551, 34, 34), "icon_atlas": ATLAS_1F},
 		{"label": "学院", "node": "zjm_btn_rukou1", "occurrence": 1, "icon_node": "zjm_icon_xueyuan", "bg": Rect2i(675, 65, 341, 56), "bg_offset": Vector2(1, 0), "icon": Rect2i(3, 3, 34, 34), "icon_atlas": ATLAS_1A},
-		{"label": "英魂", "entry": "召唤", "node": "zjm_btn_rukou2", "occurrence": 0, "icon_node": "zjm_icon_zhaohuan", "icon_occurrence": 0, "bg": Rect2i(675, 230, 336, 56), "bg_offset": Vector2(3.5, 0), "icon": Rect2i(707, 551, 34, 34), "icon_atlas": ATLAS_1F},
-		{"label": "锻造", "node": "zjm_btn_rukou3", "occurrence": 0, "icon_node": "zjm_icon_zhaohuan", "icon_occurrence": 1, "bg": Rect2i(675, 3, 342, 56), "bg_offset": Vector2(0.5, 0), "icon": Rect2i(720, 984, 34, 34), "icon_atlas": ATLAS_1F},
-		{"label": "占卜", "node": "zjm_btn_rukou4", "occurrence": 0, "icon_node": "zjm_icon_zhaohuan", "icon_occurrence": 2, "bg": Rect2i(684, 591, 387, 58), "bg_offset": Vector2(-22, 0), "bg_rotated": true, "icon": Rect2i(3, 225, 100, 95), "icon_atlas": ATLAS_1A},
-		{"label": "寻星", "node": "zjm_btn_rukou4", "occurrence": 1, "icon_node": "zjm_icon_zhaohuan", "icon_occurrence": 3, "bg": Rect2i(684, 591, 387, 58), "bg_offset": Vector2(-22, 0), "bg_rotated": true, "icon": Rect2i(43, 3, 34, 34), "icon_atlas": ATLAS_1A},
-		{"label": "商会", "node": "zjm_btn_rukou5", "occurrence": 0, "icon_node": "zjm_icon_zhaohuan", "icon_occurrence": 4, "bg": Rect2i(675, 3, 342, 56), "bg_offset": Vector2(0.5, 0), "icon": Rect2i(627, 551, 34, 34), "icon_atlas": ATLAS_1F},
+		{"label": "英魂", "entry": "召唤", "node": "zjm_btn_rukou2", "occurrence": 0, "icon_node": "zjm_icon_zhaohuan", "icon_occurrence": 0, "bg": Rect2i(675, 230, 336, 56), "bg_offset": Vector2(3.5, 0), "icon": Rect2i(83, 3, 34, 34), "icon_atlas": ATLAS_1A, "prefer_manual_icon": true},
+		{"label": "锻造", "node": "zjm_btn_rukou3", "occurrence": 0, "icon_node": "zjm_icon_zhaohuan", "icon_occurrence": 1, "bg": Rect2i(675, 3, 342, 56), "bg_offset": Vector2(0.5, 0), "icon": Rect2i(720, 984, 34, 34), "icon_atlas": ATLAS_1F, "prefer_manual_icon": true},
+		{"label": "占卜", "node": "zjm_btn_rukou4", "occurrence": 0, "icon_node": "zjm_icon_zhaohuan", "icon_occurrence": 2, "bg": Rect2i(684, 591, 387, 58), "bg_offset": Vector2(-22, 0), "bg_rotated": true, "icon": Rect2i(3, 225, 100, 95), "icon_atlas": ATLAS_1A, "prefer_manual_icon": true},
+		{"label": "寻星", "node": "zjm_btn_rukou4", "occurrence": 1, "icon_node": "zjm_icon_zhaohuan", "icon_occurrence": 3, "bg": Rect2i(684, 591, 387, 58), "bg_offset": Vector2(-22, 0), "bg_rotated": true, "icon": Rect2i(43, 3, 34, 34), "icon_atlas": ATLAS_1A, "prefer_manual_icon": true},
+		{"label": "商会", "node": "zjm_btn_rukou5", "occurrence": 0, "icon_node": "zjm_icon_zhaohuan", "icon_occurrence": 4, "bg": Rect2i(675, 3, 342, 56), "bg_offset": Vector2(0.5, 0), "icon": Rect2i(547, 551, 34, 34), "icon_atlas": ATLAS_1F, "prefer_manual_icon": true},
 	]
 	for item in entries:
 		var rect := _layout_rect(str(item.node), int(item.get("occurrence", 0)))
@@ -565,7 +596,8 @@ func _add_ribbon_button(source_rect: Rect2, item: Dictionary) -> void:
 	icon.position = icon_rect.position - source_rect.position if icon_rect.size.x > 0.0 else Vector2(11, 1)
 	icon.size = icon_rect.size if icon_rect.size.x > 0.0 else Vector2(32, 32)
 	var icon_node := _layout_node(str(item.get("icon_node", "")), int(item.get("icon_occurrence", 0)))
-	icon.texture = _load_node_texture_from_layout(icon_node)
+	if not bool(item.get("prefer_manual_icon", false)):
+		icon.texture = _load_node_texture_from_layout(icon_node)
 	if icon.texture == null:
 		icon.texture = _load_texture_region(str(item.icon_atlas), item.icon, bool(item.get("icon_rotated", false)))
 	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
@@ -744,8 +776,8 @@ func _add_event_button(center: Vector2, text: String, atlas_path: String = "", r
 
 	var label := Label.new()
 	label.text = text
-	label.position = Vector2(-10, 54)
-	label.size = Vector2(100, 26)
+	label.position = Vector2(-16, maxf(50.0, size.y - 26.0))
+	label.size = Vector2(size.x + 32.0, 26)
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.add_theme_font_size_override("font_size", 15)
 	label.add_theme_color_override("font_color", Color.WHITE)
@@ -788,6 +820,7 @@ func _open_home_entry(label: String) -> void:
 		"广告": "活动抽卡",
 		"活动": "活动面板",
 		"福利": "福利",
+		"新服": "活动面板",
 		"开服": "活动面板",
 		"礼包": "福利",
 		"限时": "活动面板",
@@ -795,6 +828,14 @@ func _open_home_entry(label: String) -> void:
 		"升星": "升星计划",
 		"首充": "首充",
 		"特惠": "福利",
+		"打工": "学院塔",
+		"王者争霸": "竞技",
+		"公会战": "公会",
+		"天梯": "竞技",
+		"召唤卡": "活动抽卡",
+		"竟榜抽奖": "活动面板",
+		"食铁神兽": "活动面板",
+		"预注册": "活动面板",
 		"通行证": "通行证",
 		"竞技": "竞技",
 		"学院": "学院塔",
