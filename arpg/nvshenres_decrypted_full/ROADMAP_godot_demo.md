@@ -406,8 +406,9 @@ RESTORE_LOGIN_TO_HOME.md
   - `original_server_select.gd` 已按源码补开始游戏后的 `LoadingPre.isFist=1` 连接 alert：先显示“正在连接服务器”，随后切到“正在登录服务器”，最后进入主城；维护状态服只提示维护。
   - `original_server_select.gd` 已按 `PFLoginCom.refreshGGView()` 和 `pfLoginPanelPre.nodeGG` 补本地公告浮层，使用 `gonggao_bg/scrollview/tmptxt` 坐标，不再用系统 `AcceptDialog`。
   - `original_server_select.gd` 已按 `PFLoginCom.clickAccountSwitch()` 和 `pfLoginPanelPre.nodeAlert` 补切换账号确认框，取消关闭，确定返回调试登录页。
-  - `original_server_select.gd` 已按 `useprivacyPanel` 补本地隐私协议浮层；同意/拒绝会更新选服页勾选状态。`Prefab/loading/useprivacyPre` 和 `configs/useprivacy` 资源已确认，后续再导出精确布局并清洗真实正文。
-  - `original_server_select.gd` 已按 `shilingPanel` 补本地适龄提示浮层；`Prefab/loading/shilingPre` 和 `configs/shiling16` 资源已确认，后续再导出精确布局并清洗真实正文。
+  - `tools/export_cocos_prefab_layout.py` 已新增导出 `Prefab/loading/useprivacyPre` 和 `Prefab/loading/shilingPre`，生成 `data/prefab_layouts/useprivacyPre.json`、`data/prefab_layouts/shilingPre.json`。
+  - `original_server_select.gd` 已按 `useprivacyPanel` 补本地隐私协议浮层；同意/拒绝会更新选服页勾选状态。当前已使用 `useprivacyPre.json` 的 panel/title/scroll/button 坐标，后续清洗 `configs/useprivacy` 替换摘要正文。
+  - `original_server_select.gd` 已按 `shilingPanel` 补本地适龄提示浮层；当前已使用 `shilingPre.json` 的 panel/title/button 坐标。ScrollView content 原点导出仍不完整，正文区域在 Godot 里有局部内边距修正；后续继续完善导出器。
   - `original_home_screen.gd` 底部导航已改为 `daohangPre.json` 的真实六个图标资源/坐标，第三个入口改为仓库。
   - 已用 Godot `--headless --scene ... --quit-after` 验证加载、登录、选服、主屏均能启动；日志仅剩直接 `Image.load()` 的本地 demo 警告。
 - 资源显示问题修正：

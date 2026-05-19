@@ -4,6 +4,8 @@ const MAIN_CITY := "res://scenes/original_home_screen.tscn"
 const LOGIN_SCENE := "res://scenes/original_login.tscn"
 const PREFAB_PREVIEW := "res://scenes/cocos_prefab_preview.tscn"
 const LAYOUT_PATH := "res://data/prefab_layouts/pfLoginPanelPre.json"
+const AGE_LAYOUT_PATH := "res://data/prefab_layouts/shilingPre.json"
+const PRIVACY_LAYOUT_PATH := "res://data/prefab_layouts/useprivacyPre.json"
 const BG_PATH := "res://converted/png/a84d3470-bde7-4589-9b33-65a957c34507.png"
 const LOGIN_ATLAS_PATH := "res://assets/resources/native/1d/1d1cac610.png"
 const UI_ATLAS_PATH := "res://assets/resources/native/14/1430d496a.png"
@@ -26,6 +28,8 @@ const DESIGN_SIZE := Vector2(1280, 720)
 
 var design_root: Control
 var layout_nodes: Dictionary = {}
+var age_layout_nodes: Dictionary = {}
+var privacy_layout_nodes: Dictionary = {}
 var selected_server_name := "本地演示服"
 var selected_server_status := "hot"
 var server_label: Label
@@ -43,7 +47,9 @@ var connect_elapsed := 0.0
 var connect_running := false
 
 func _ready() -> void:
-	_load_layout_index()
+	layout_nodes = _load_layout_index(LAYOUT_PATH)
+	age_layout_nodes = _load_layout_index(AGE_LAYOUT_PATH)
+	privacy_layout_nodes = _load_layout_index(PRIVACY_LAYOUT_PATH)
 	_build_ui()
 	_apply_startup_args()
 	_capture_if_requested()
@@ -216,23 +222,28 @@ func _build_ui() -> void:
 
 	_layout_design_root()
 
-func _load_layout_index() -> void:
-	if not FileAccess.file_exists(LAYOUT_PATH):
-		return
-	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(LAYOUT_PATH))
+func _load_layout_index(path: String) -> Dictionary:
+	var index := {}
+	if not FileAccess.file_exists(path):
+		return index
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
 	if typeof(parsed) != TYPE_DICTIONARY:
-		return
+		return index
 	for node in parsed.get("nodes", []):
 		if typeof(node) != TYPE_DICTIONARY:
 			continue
 		var name := str(node.get("name", ""))
-		if name != "" and not layout_nodes.has(name):
-			layout_nodes[name] = node
+		if name != "" and not index.has(name):
+			index[name] = node
+	return index
 
 func _layout_rect(name: String, fallback: Rect2) -> Rect2:
-	if not layout_nodes.has(name):
+	return _rect_from_layout(layout_nodes, name, fallback)
+
+func _rect_from_layout(source: Dictionary, name: String, fallback: Rect2) -> Rect2:
+	if not source.has(name):
 		return fallback
-	var node: Dictionary = layout_nodes[name]
+	var node: Dictionary = source[name]
 	var rect: Array = node.get("screen_rect", [])
 	if rect.size() >= 4:
 		return Rect2(Vector2(float(rect[0]), float(rect[1])), Vector2(float(rect[2]), float(rect[3])))
@@ -387,7 +398,7 @@ func _build_account_overlay() -> void:
 	dim.color = Color(0.0, 0.0, 0.0, 0.55)
 	account_overlay.add_child(dim)
 
-	var panel_rect := Rect2(Vector2(338.5, 175.5), Vector2(603.0, 369.0))
+	var panel_rect := _rect_from_layout(age_layout_nodes, "shilingPre", Rect2(Vector2(337.5, 64.0), Vector2(605.0, 592.0)))
 	var panel := TextureRect.new()
 	panel.position = panel_rect.position
 	panel.size = panel_rect.size
@@ -456,12 +467,20 @@ func _build_age_overlay() -> void:
 	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	age_overlay.add_child(panel)
 
-	var title := _add_label(age_overlay, "适龄提示", Vector2(392, 196), Vector2(180, 40.32), 24, Color(0.45, 0.34, 0.18))
+	var title_rect := _rect_from_layout(age_layout_nodes, "title", Rect2(Vector2(363.202, 67.289), Vector2(160, 50.4)))
+	var title := _add_label(age_overlay, "适龄提示", title_rect.position, title_rect.size, 24, Color(0.45, 0.34, 0.18))
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 
+	var scroll_rect := _rect_from_layout(age_layout_nodes, "scrollview", Rect2(Vector2(350, 132), Vector2(578, 500)))
+	scroll_rect = Rect2(scroll_rect.position + Vector2(0, 104), scroll_rect.size - Vector2(0, 160))
+	var scroll := ScrollContainer.new()
+	scroll.position = scroll_rect.position
+	scroll.size = scroll_rect.size
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	age_overlay.add_child(scroll)
+
 	var body := RichTextLabel.new()
-	body.position = Vector2(408, 258)
-	body.size = Vector2(464, 176)
+	body.custom_minimum_size = Vector2(scroll_rect.size.x - 28, 360)
 	body.bbcode_enabled = true
 	body.fit_content = true
 	body.scroll_active = false
@@ -469,12 +488,16 @@ func _build_age_overlay() -> void:
 	body.add_theme_font_size_override("normal_font_size", 22)
 	body.add_theme_color_override("default_color", Color(0.24, 0.22, 0.19))
 	body.add_theme_stylebox_override("normal", StyleBoxEmpty.new())
-	age_overlay.add_child(body)
+	scroll.add_child(body)
 
+	var close_rect := _rect_from_layout(age_layout_nodes, "button", Rect2(Vector2(709.588, 578.013), Vector2(194, 66)))
+	if close_rect.position.y > 720.0 or close_rect.size.x <= 0.0:
+		close_rect = Rect2(Vector2(543, 578.013), Vector2(194, 66))
+	close_rect.position = Vector2(543, 578.013)
 	var close := Button.new()
 	close.text = "确定"
-	close.position = Vector2(560, 454)
-	close.size = Vector2(160, 54)
+	close.position = close_rect.position
+	close.size = close_rect.size
 	close.pressed.connect(_hide_age_overlay)
 	age_overlay.add_child(close)
 
@@ -552,32 +575,29 @@ func _build_privacy_overlay() -> void:
 	dim.color = Color(0.0, 0.0, 0.0, 0.58)
 	privacy_overlay.add_child(dim)
 
-	var panel_rect := Rect2(Vector2(282.0, 74.0), Vector2(716.0, 574.0))
-	var panel := PanelContainer.new()
+	var panel_rect := _rect_from_layout(privacy_layout_nodes, "useprivacyPre", Rect2(Vector2(337.5, 64.0), Vector2(605.0, 592.0)))
+	var panel := TextureRect.new()
 	panel.position = panel_rect.position
 	panel.size = panel_rect.size
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.90, 0.88, 0.80, 0.98)
-	style.border_color = Color(0.44, 0.36, 0.24, 1.0)
-	style.set_border_width_all(3)
-	style.corner_radius_top_left = 6
-	style.corner_radius_top_right = 6
-	style.corner_radius_bottom_left = 6
-	style.corner_radius_bottom_right = 6
-	panel.add_theme_stylebox_override("panel", style)
+	panel.texture = _load_texture_region(ALERT_ATLAS_PATH, ALERT_FRAME_RECT)
+	panel.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	panel.stretch_mode = TextureRect.STRETCH_SCALE
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	privacy_overlay.add_child(panel)
 
-	var title := _add_label(privacy_overlay, "用户协议与隐私政策", Vector2(468, 100), Vector2(344, 42), 26, Color(0.32, 0.25, 0.15))
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var title_rect := _rect_from_layout(privacy_layout_nodes, "title", Rect2(Vector2(341.289, 67.289), Vector2(360, 50.4)))
+	var title := _add_label(privacy_overlay, "用户协议和隐私政策", title_rect.position, title_rect.size, 24, Color(0.45, 0.34, 0.18))
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 
+	var scroll_rect := _rect_from_layout(privacy_layout_nodes, "scrollview", Rect2(Vector2(350, 132), Vector2(578, 427)))
 	var scroll := ScrollContainer.new()
-	scroll.position = Vector2(330, 158)
-	scroll.size = Vector2(620, 346)
+	scroll.position = scroll_rect.position
+	scroll.size = scroll_rect.size
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	privacy_overlay.add_child(scroll)
 
 	var body := RichTextLabel.new()
-	body.custom_minimum_size = Vector2(592, 700)
+	body.custom_minimum_size = Vector2(scroll_rect.size.x - 28, 700)
 	body.bbcode_enabled = true
 	body.fit_content = true
 	body.scroll_active = false
@@ -587,23 +607,26 @@ func _build_privacy_overlay() -> void:
 	body.text = "[b]隐私政策摘要[/b]\n\n本地 Demo 不会连接真实服务器，也不会上传账号、设备、网络或支付信息。\n\n原始游戏中该面板由 `useprivacyPanel` 打开 `Prefab/loading/useprivacyPre`，正文来自 `configs/useprivacy`，拒绝会取消登录页勾选，同意会勾选并关闭面板。\n\n当前实现保留这个交互关系，用于离线检查登录流程和 UI 层级。后续可清洗真实 TextAsset 后替换本文案。\n\n[b]用户协议摘要[/b]\n\n1. 本 Demo 只用于资源和界面还原验证。\n2. 所有服务器列表、公告、账号状态均为本地 mock。\n3. 点击同意后只更新本地勾选状态。"
 	scroll.add_child(body)
 
+	var reject_rect := _rect_from_layout(privacy_layout_nodes, "btnCancel", Rect2(Vector2(385.468, 575.568), Vector2(194, 66)))
 	var reject := Button.new()
 	reject.text = "拒绝"
-	reject.position = Vector2(404, 548)
-	reject.size = Vector2(160, 56)
+	reject.position = reject_rect.position
+	reject.size = reject_rect.size
 	reject.pressed.connect(func(): _set_privacy_checked(false))
 	privacy_overlay.add_child(reject)
 
+	var agree_rect := _rect_from_layout(privacy_layout_nodes, "button", Rect2(Vector2(709.588, 578.013), Vector2(194, 66)))
 	var agree := Button.new()
 	agree.text = "同意"
-	agree.position = Vector2(716, 548)
-	agree.size = Vector2(160, 56)
+	agree.position = agree_rect.position
+	agree.size = agree_rect.size
 	agree.pressed.connect(func(): _set_privacy_checked(true))
 	privacy_overlay.add_child(agree)
 
+	var close_rect := _rect_from_layout(privacy_layout_nodes, "btnclose", Rect2(Vector2(884.385, 62.27), Vector2(68, 68)))
 	var close := Button.new()
 	close.text = "X"
-	close.position = Vector2(952, 86)
+	close.position = close_rect.position + Vector2(17, 17)
 	close.size = Vector2(34, 34)
 	close.pressed.connect(_hide_privacy_overlay)
 	privacy_overlay.add_child(close)

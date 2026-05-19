@@ -25,6 +25,8 @@ RESOURCE_PATH_TO_UUID = {
 PREFABS = [
     ("启动加载", "Prefab/loading/LoadingPre"),
     ("加载进度", "Prefab/loading/loadingProgress"),
+    ("适龄提示", "Prefab/loading/shilingPre"),
+    ("隐私协议", "Prefab/loading/useprivacyPre"),
     ("登录面板", "Prefab/login/LoginPre"),
     ("登录选服", "Prefab/login/pfLoginPanelPre"),
     ("主城", "Prefab/mainpanel/MainPre"),
