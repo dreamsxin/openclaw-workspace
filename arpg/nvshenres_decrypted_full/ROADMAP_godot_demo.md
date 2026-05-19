@@ -92,6 +92,7 @@
   - 底部导航已根据 `daohangPre.json` 和 `assets/main/index.js` 修正第三入口：`btn3` / `cm_tab_ZhaoHuan` 是“召唤”，已替换早期误放的“仓库”，点击进入本地抽卡页。
   - 底部导航位置已改为直接使用 `daohangPre.json` 的 Cocos 坐标；“冒险”已换成 `cm_icon_ChuJi`，去掉英文 `Adventure` 图残留。
   - 已导出 `Prefab/comPrefab/MoneyItemPre`，顶部金币/钻石条使用 `cm_frame_HuoBi2` 背景，并按源码 `MoneyItem.setType()` 接入 `image/equipment/101`、`image/equipment/102` 图标。
+  - 顶部资源条已按 `DaohangPanel.creatMoney()` 使用 Cocos x 坐标：金币 `319`、钻石 `521`；加号替换为真实 `image/common/cm_btn_JiaHao` SpriteFrame。
   - 主屏红点已从纯红色方块替换为真实 `cm_icon_HongDian` SpriteFrame：`assets/resources/native/18/18b29ae48.png` rect `[375,295,31,31]`；左侧快捷入口、活动矩阵、右侧入口和底栏均使用统一 `_add_red_dot()`。
   - 左上头像已补 `image/head/105004`，并参考 `heroHead` 坐标调整。
 

@@ -71,6 +71,11 @@ Godot 当前工程已接入项目内轻量 Spine runtime，用于本地预览角
 - 可稳定复用的真实 SpriteFrame 来自 `MoneyItemPre`：`assets/resources/native/18/18b29ae48.png`，rect `[375,295,31,31]`，sprite 名 `cm_icon_HongDian`。
 - `original_home_screen.gd` 当前统一通过 `_add_red_dot()` 裁剪该 SpriteFrame，替换早期纯红色方块。
 
+主屏顶部资源条记录：
+
+- `DaohangPanel.creatMoney()` 运行时实例化两个 `MoneyItemPre`：`money2` 金币 x=319，`money1` 钻石 x=521，父节点是 `moneyBox`。
+- `MoneyItemPre.btnAdd` 使用 `image/common/cm_btn_JiaHao`，SpriteFrame 为 `assets/resources/native/15/15a1d9111.png` rect `[996,828,24,24]`。
+
 ## Prefab 还原注意事项
 
 早期错误来源：

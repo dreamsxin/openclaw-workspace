@@ -23,6 +23,7 @@ const AD_BANNER := "res://assets/resources/native/00/002545b0-69b1-4515-ac70-e54
 const RED_DOT_RECT := Rect2i(375, 295, 31, 31)
 const MONEY_GOLD := "res://assets/resources/native/9e/9ec8c387-6381-46b4-93eb-7ebe016dbffc.png"
 const MONEY_DIAMOND := "res://assets/resources/native/47/47e154d7-f9c2-4a5a-85c0-b299960f439b.png"
+const MONEY_ADD_RECT := Rect2i(996, 828, 24, 24)
 const HERO_105004_SPINE := "res://data/spine_runtime/105004.json"
 const HERO_SULA_SPINE := "res://data/spine_runtime/SuLa_LH.json"
 const HERO_YOUDUOLA_SPINE := "res://data/spine_runtime/YouDuoLa_LH.json"
@@ -296,8 +297,8 @@ func _add_currency_bar() -> void:
 	shop.pressed.connect(_open_prefab_layout.bind("商店"))
 	prefab_layer.add_child(shop)
 
-	_add_money_item(Vector2(930, 27), MONEY_GOLD, "2.25M", true)
-	_add_money_item(Vector2(1110, 27), MONEY_DIAMOND, "878", true)
+	_add_money_item(_cocos_center_to_screen(Vector2(319, 328)), MONEY_GOLD, "2.25M", true)
+	_add_money_item(_cocos_center_to_screen(Vector2(521, 328)), MONEY_DIAMOND, "878", true)
 
 func _add_money_item(center: Vector2, icon_path: String, value: String, show_add := true) -> void:
 	var box := Control.new()
@@ -334,14 +335,13 @@ func _add_money_item(center: Vector2, icon_path: String, value: String, show_add
 	box.add_child(label)
 
 	if show_add:
-		var plus := Label.new()
-		plus.text = "+"
-		plus.position = Vector2(138, 2)
-		plus.size = Vector2(28, 30)
-		plus.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		plus.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		plus.add_theme_font_size_override("font_size", 28)
-		plus.add_theme_color_override("font_color", Color(1.0, 0.92, 0.58))
+		var plus := TextureRect.new()
+		plus.position = Vector2(139, 6)
+		plus.size = Vector2(24, 24)
+		plus.texture = _load_texture_region(ATLAS_15, MONEY_ADD_RECT)
+		plus.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		plus.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		plus.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		box.add_child(plus)
 
 func _add_left_quick_buttons() -> void:
