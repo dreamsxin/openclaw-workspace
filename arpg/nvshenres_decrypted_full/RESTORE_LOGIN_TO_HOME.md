@@ -702,6 +702,7 @@ Spine 查看器：
   - 角色展示容器：`lihui`、`herolh` 都是全屏容器，真实角色由 `RoleLh`/`Prefab/HerolhPrefab/<body>` 运行时挂载。
 - `data/prefab_layouts/HeroMainPre.json` 说明当前独立英雄页还不对：原版不是左侧英雄头像列表，而是 `scrollview/content` 下的 `tab01..tab05` 竖向功能页签；中心是 `heroBodyBox`，左右切换按钮是 `btnPre(-500,10)` / `btnNext(91,10)`，右侧面板是 `heroContentPrefab(361,11)`，底部/右侧功能按钮在 `btnUpLv`、`btnJinJie`、`btnReset`、`btn_xianQing`。
 - 因此后续 `original_hero_panel.gd` 需要从“左侧英雄列表”改为“中心立绘 + 左右切换 + 左侧功能页签 + 右侧属性/技能/装备区”的结构；英雄列表只作为资源浏览或调试入口，不应出现在原版主英雄页默认布局。
+- 当前实现已按这个方向修改：默认界面不再显示左侧头像列表，改为左侧英雄信息、小功能按钮、中心 Spine、左右翻页、竖向页签和右侧信息面板。下一步继续追 `HeroSidePrefab`/`heroContentPrefab` 的真实 SpriteFrame 与脚本字段绑定。
 
 活动抽卡源码定位：
 

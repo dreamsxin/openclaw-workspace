@@ -303,6 +303,13 @@ RESTORE_LOGIN_TO_HOME.md
   - `MainPre.json` 可提供主屏左侧竖栏、右侧弧形入口、活动广告入口、聊天区和角色容器坐标。
   - `HeroMainPre.json` 原版英雄页不是左侧头像列表，而是左侧竖向功能页签、中心 `heroBodyBox`、左右 `btnPre/btnNext` 切换和右侧 `heroContentPrefab` 信息面板。
   - 下一步需要把 `original_hero_panel.gd` 的左侧英雄列表改成原版左右切换结构，并把英雄列表降级为调试/资源浏览入口。
+- `original_hero_panel.gd` 已开始按原版结构重排：
+  - 移除默认左侧头像列表。
+  - 左侧改为英雄名、头像、星级和传记/衣装/锁定小按钮。
+  - 中心保留 Spine 角色展示，增加 `btnPre/btnNext` 式左右切换。
+  - 功能页签改为竖排 `培养/装备/升星/战意/衣装`。
+  - 右侧信息面板按 `heroContentPrefab` 大小重排，培养和装备页签已能切换。
+  - 当前仍需继续替换真实按钮贴图、还原 `HeroSidePrefab` 细节、补星级/职业/阵营图标和装备槽原始层级。
 - prefab 预览器右侧详情栏新增 `mask/scroll` 统计。
 - `13003` 已提取 `DrawCardActivityCycleItemCom` 的字段绑定：`girdLayout/btn_buy/btn_qianwang/img_receive/JDT_label/JDT_progress/title/txt_xiangou`。
 - `13004` 已提取 `DrawCardActivityRenWuItemCom` 的字段绑定：`itemNode/descText/taskProgress/taskProgressLab/submitBtn/btnLabel/imgComplete`。
@@ -314,7 +321,7 @@ RESTORE_LOGIN_TO_HOME.md
 
 下一步优先级：
 
-1. 继续完善独立 `original_hero_panel`：按 `HeroMainPre.json` 改为左侧竖向页签、中心 `heroBodyBox`、`btnPre/btnNext` 切换和右侧 `heroContentPrefab`，移除默认左侧头像列表。
+1. 继续完善独立 `original_hero_panel`：追 `HeroSidePrefab` 和 `heroContentPrefab` 的真实按钮/页签/职业/阵营资源，细化左右翻页按钮、星级、装备槽和技能格。
 2. 继续完善独立 `original_bag_panel`：追 `GridBoxItemPre` 真实选中框、品质框、背包分类按钮资源、图鉴/合成按钮资源。
 3. 继续完善独立 `original_draw_card_panel`：补 `HeroShowPre`、`HeroBookItemPre` 十连翻牌、`ZhaoHuan_ChouKa_back/front` 全屏抽卡特效、召唤动画跳过开关和真实按钮资源。
 4. 新增独立活动抽卡入口页或战斗页，把仍在 prefab 预览器里的主功能继续迁出。
