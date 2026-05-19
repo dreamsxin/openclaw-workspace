@@ -65,6 +65,12 @@ Godot 当前工程已接入项目内轻量 Spine runtime，用于本地预览角
 - `Prefab/HerolhPrefab/105004` 内真正的 Skeleton 子节点本地坐标是 `(-68,-333)`、scale 为 `(1,0.95)`，Godot 侧需要换算成屏幕偏移 `(-68,+333)` 后再绘制。
 - 因此主城默认 105004 不能再用矩形 fit 居中，否则角色会整体放大并向上裁切；当前 `original_home_screen.gd` 已按 prefab 子节点偏移放置。
 
+主屏红点资源记录：
+
+- 红点节点名通常是 `hongdian` / `cm_icon_HongDian`，不能直接使用 `MainPre.json` 某些 `hongdian` 导出的整图路径；这些节点在压缩 prefab 中容易被误解析成父按钮 SpriteFrame。
+- 可稳定复用的真实 SpriteFrame 来自 `MoneyItemPre`：`assets/resources/native/18/18b29ae48.png`，rect `[375,295,31,31]`，sprite 名 `cm_icon_HongDian`。
+- `original_home_screen.gd` 当前统一通过 `_add_red_dot()` 裁剪该 SpriteFrame，替换早期纯红色方块。
+
 ## Prefab 还原注意事项
 
 早期错误来源：

@@ -92,6 +92,7 @@
   - 底部导航已根据 `daohangPre.json` 和 `assets/main/index.js` 修正第三入口：`btn3` / `cm_tab_ZhaoHuan` 是“召唤”，已替换早期误放的“仓库”，点击进入本地抽卡页。
   - 底部导航位置已改为直接使用 `daohangPre.json` 的 Cocos 坐标；“冒险”已换成 `cm_icon_ChuJi`，去掉英文 `Adventure` 图残留。
   - 已导出 `Prefab/comPrefab/MoneyItemPre`，顶部金币/钻石条使用 `cm_frame_HuoBi2` 背景，并按源码 `MoneyItem.setType()` 接入 `image/equipment/101`、`image/equipment/102` 图标。
+  - 主屏红点已从纯红色方块替换为真实 `cm_icon_HongDian` SpriteFrame：`assets/resources/native/18/18b29ae48.png` rect `[375,295,31,31]`；左侧快捷入口、活动矩阵、右侧入口和底栏均使用统一 `_add_red_dot()`。
   - 左上头像已补 `image/head/105004`，并参考 `heroHead` 坐标调整。
 
 当前注意事项：
@@ -101,6 +102,7 @@
 - `daohangPre` 没有把 `cm_tab_ZhaoHuan` 的 texture_path 直接导出来，但源码明确 `DaohangPanel.btn3` 是 `zhaohuan`；后续若补完整底栏资源，应继续围绕 `btn3/cm_tab_ZhaoHuan` 追踪，而不是复用仓库图标。
 - 当前只找到 `image/en/mainpanel/cm_btn_Maoxian` 等多语言冒险按钮，未找到 `image/com/mainpanel/cm_btn_Maoxian`，Godot 先用英文按钮图叠加中文 Label。
 - `zjm_btn_rukou5` 在 `config.json` 中没有同名 SpriteFrame，MainPre 中可能是节点名复用或运行时代码/子资源生成，后续继续查运行时逻辑。
+- `MainPre.json` 里的部分 `hongdian` SpriteFrame 解析不可靠，可能指向父按钮图标；红点以 `MoneyItemPre` 的 `cm_icon_HongDian` 为准。
 
 下一步：
 

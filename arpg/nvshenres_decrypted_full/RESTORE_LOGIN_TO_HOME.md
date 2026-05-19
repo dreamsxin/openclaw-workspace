@@ -245,6 +245,7 @@ assets/main/index.js
 - 底栏“召唤”目前使用 `image/com/mainpanel/zjm_icon_kuafuzhaohuan` 静态 SpriteFrame 作为召唤语义替代；`daohangPre` 中 `cm_tab_ZhaoHuan` 的真实动态主体仍需要继续追踪 `sp.Skeleton`/UISpine 资源。
 - 仓库只保留在右侧 `zjm_btn_cangku` 入口条，点击进入本地背包/仓库页。
 - 顶部金币/钻石条使用 `MoneyItemPre` 的 `cm_frame_HuoBi2` 背景，图标按 `MoneyItem.setType()` 源码映射到 `image/equipment/101` 和 `image/equipment/102`。
+- 主屏红点统一使用 `MoneyItemPre` 中可确认的 `cm_icon_HongDian` SpriteFrame：`assets/resources/native/18/18b29ae48.png`，rect `[375,295,31,31]`。不要直接使用 `MainPre.json` 里部分 `hongdian` 导出的 texture_path；压缩序列化解析会把它误指向父按钮图标或碎片图。
 
 主屏剩余缺口：
 

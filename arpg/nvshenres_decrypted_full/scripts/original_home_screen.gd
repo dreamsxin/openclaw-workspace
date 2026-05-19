@@ -20,6 +20,7 @@ const ATLAS_18A := "res://assets/resources/native/18/18b29ae48.png"
 const ATLAS_18B := "res://assets/resources/native/18/18935b9e9.png"
 const PLAYER_HEAD := "res://assets/resources/native/d7/d7bf0f4d-1dc9-4fda-80c0-65dfeee3316a.png"
 const AD_BANNER := "res://assets/resources/native/00/002545b0-69b1-4515-ac70-e545a4c8b5d2.png"
+const RED_DOT_RECT := Rect2i(375, 295, 31, 31)
 const MONEY_GOLD := "res://assets/resources/native/9e/9ec8c387-6381-46b4-93eb-7ebe016dbffc.png"
 const MONEY_DIAMOND := "res://assets/resources/native/47/47e154d7-f9c2-4a5a-85c0-b299960f439b.png"
 const HERO_105004_SPINE := "res://data/spine_runtime/105004.json"
@@ -397,6 +398,8 @@ func _add_ad_banner() -> void:
 	hit.pressed.connect(_open_prefab_layout.bind("活动抽卡"))
 	box.add_child(hit)
 
+	_add_red_dot(box, Vector2(306, 16), Vector2(24, 24))
+
 func _add_right_ribbons() -> void:
 	var entries := [
 		{"label": "通行证", "pos": Vector2(429.983, 220.949), "bg": Rect2i(639, 292, 364, 50), "bg_offset": Vector2(-10.5, 0), "icon": Rect2i(864, 757, 80, 73), "icon_atlas": ATLAS_1F, "icon_rotated": true},
@@ -454,6 +457,8 @@ func _add_ribbon_button(center: Vector2, item: Dictionary) -> void:
 	hit.pressed.connect(_open_home_entry.bind(str(item.get("entry", item.label))))
 	box.add_child(hit)
 
+	_add_red_dot(box, Vector2(22, 17), Vector2(22, 22))
+
 func _add_bottom_nav() -> void:
 	var entries := [
 		{"label": "城镇", "pos": Vector2(-448.355, -295.829), "atlas": ATLAS_1F, "rect": Rect2i(787, 551, 152, 141), "size": Vector2(92, 84)},
@@ -506,6 +511,8 @@ func _add_bottom_nav() -> void:
 			hit.pressed.connect(_open_prefab_layout.bind(layout))
 		box.add_child(hit)
 
+		_add_red_dot(box, Vector2(91, 24), Vector2(24, 24))
+
 func _add_chat_panel() -> void:
 	var panel := Control.new()
 	panel.position = Vector2(44, 562)
@@ -546,6 +553,8 @@ func _add_icon_button(center: Vector2, size: Vector2, text: String, atlas_path: 
 	hit.pressed.connect(_open_home_entry.bind(text))
 	box.add_child(hit)
 
+	_add_red_dot(box, size - Vector2(8, 10), Vector2(22, 22))
+
 func _add_event_button(center: Vector2, text: String, atlas_path: String = "", rect: Rect2i = Rect2i(), rotated := false) -> void:
 	var box := Control.new()
 	box.position = center - Vector2(40, 40)
@@ -575,11 +584,7 @@ func _add_event_button(center: Vector2, text: String, atlas_path: String = "", r
 	label.add_theme_color_override("font_color", Color.WHITE)
 	box.add_child(label)
 
-	var red := ColorRect.new()
-	red.position = Vector2(58, 3)
-	red.size = Vector2(14, 14)
-	red.color = Color(0.9, 0.05, 0.08, 1.0)
-	box.add_child(red)
+	_add_red_dot(box, Vector2(64, 8), Vector2(24, 24))
 
 	var hit := Button.new()
 	hit.text = ""
@@ -588,6 +593,16 @@ func _add_event_button(center: Vector2, text: String, atlas_path: String = "", r
 	hit.tooltip_text = text
 	hit.pressed.connect(_open_home_entry.bind(text))
 	box.add_child(hit)
+
+func _add_red_dot(parent: Control, center: Vector2, size := Vector2(24, 24)) -> void:
+	var dot := TextureRect.new()
+	dot.position = center - size * 0.5
+	dot.size = size
+	dot.texture = _load_texture_region(ATLAS_18A, RED_DOT_RECT)
+	dot.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	dot.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	dot.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	parent.add_child(dot)
 
 func _open_home_entry(label: String) -> void:
 	if label == "英雄":
