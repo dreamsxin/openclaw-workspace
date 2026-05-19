@@ -24,10 +24,16 @@ const DESIGN_SIZE := Vector2(1280, 720)
 
 var design_root: Control
 var layout_nodes: Dictionary = {}
+var selected_server_name := "本地演示服"
+var selected_server_status := "hot"
+var server_label: Label
+var server_popup: Control
+var server_status_icon: TextureRect
 
 func _ready() -> void:
 	_load_layout_index()
 	_build_ui()
+	_apply_startup_args()
 	_capture_if_requested()
 
 func _build_ui() -> void:
@@ -102,23 +108,24 @@ func _build_ui() -> void:
 	server_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	server_row.add_child(server_bg)
 
-	var server_label := Label.new()
+	server_label = Label.new()
 	var server_label_rect := _layout_rect("txtServer", Rect2(Vector2(1001.893, 442.168), Vector2(92, 35.28)))
 	server_label.position = server_label_rect.position - server_rect.position - Vector2(50, 0)
 	server_label.size = Vector2(150, server_label_rect.size.y)
-	server_label.text = "本地演示服"
+	server_label.text = selected_server_name
 	server_label.add_theme_font_size_override("font_size", 20)
 	server_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	server_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	server_row.add_child(server_label)
 
-	var hot := TextureRect.new()
-	hot.position = Vector2(184, 3)
-	hot.size = Vector2(34, 34)
-	hot.texture = _load_texture_region(LOGIN_ATLAS_PATH, SERVER_TAG_HOT_RECT)
-	hot.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	hot.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	server_row.add_child(hot)
+	server_status_icon = TextureRect.new()
+	server_status_icon.position = Vector2(184, 3)
+	server_status_icon.size = Vector2(34, 34)
+	server_status_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	server_status_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	server_status_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	server_row.add_child(server_status_icon)
+	_update_selected_server_visual()
 
 	var switch_icon := TextureRect.new()
 	switch_icon.position = Vector2(212, 8)
@@ -126,7 +133,16 @@ func _build_ui() -> void:
 	switch_icon.texture = _load_texture_region(UI_ATLAS_PATH, SWITCH_ICON_RECT)
 	switch_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	switch_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	switch_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	server_row.add_child(switch_icon)
+
+	var server_hit := Button.new()
+	server_hit.text = ""
+	server_hit.flat = true
+	server_hit.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	server_hit.tooltip_text = "选择服务器"
+	server_hit.pressed.connect(_show_server_popup)
+	server_row.add_child(server_hit)
 
 	var start_box := Control.new()
 	var start_rect := _layout_rect("btn_start", Rect2(Vector2(753.176, 492.225), Vector2(550, 102)))
@@ -161,6 +177,7 @@ func _build_ui() -> void:
 	var version_rect := _layout_rect("vesiontxt", Rect2(Vector2(42.638, 688.346), Vector2(174.82, 28.98)))
 	_add_label(design_root, "资源版本号:v1.0.0", version_rect.position, version_rect.size, 13, Color(0.86, 0.86, 0.9)).horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	_add_privacy_row()
+	_build_server_popup()
 
 	_layout_design_root()
 
@@ -233,6 +250,151 @@ func _add_privacy_row() -> void:
 	privacy.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
 	privacy.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	design_root.add_child(privacy)
+
+func _build_server_popup() -> void:
+	server_popup = Control.new()
+	server_popup.visible = false
+	server_popup.position = Vector2.ZERO
+	server_popup.size = DESIGN_SIZE
+	server_popup.z_index = 50
+	design_root.add_child(server_popup)
+
+	var dim := ColorRect.new()
+	dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	dim.color = Color(0.0, 0.0, 0.0, 0.45)
+	server_popup.add_child(dim)
+
+	var close_area := Button.new()
+	close_area.text = ""
+	close_area.flat = true
+	close_area.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	close_area.pressed.connect(_hide_server_popup)
+	server_popup.add_child(close_area)
+
+	var panel_rect := _layout_rect("svBg", Rect2(Vector2(97.5, 171.0), Vector2(953.0, 512.0)))
+	var panel := PanelContainer.new()
+	panel.position = panel_rect.position
+	panel.size = panel_rect.size
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.12, 0.12, 0.18, 0.94)
+	style.border_color = Color(0.78, 0.69, 0.48, 1.0)
+	style.set_border_width_all(2)
+	style.corner_radius_top_left = 4
+	style.corner_radius_top_right = 4
+	style.corner_radius_bottom_left = 4
+	style.corner_radius_bottom_right = 4
+	panel.add_theme_stylebox_override("panel", style)
+	server_popup.add_child(panel)
+
+	_add_label(server_popup, "选择服务器", Vector2(panel_rect.position.x + 390, panel_rect.position.y + 14), Vector2(180, 36), 24, Color(1.0, 0.91, 0.65)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+
+	var tab_rect := _layout_rect("scrollTab", Rect2(Vector2(98.598, 201.0), Vector2(180.0, 470.0)))
+	var tab_box := VBoxContainer.new()
+	tab_box.position = tab_rect.position + Vector2(12, 58)
+	tab_box.size = Vector2(tab_rect.size.x - 24, tab_rect.size.y - 80)
+	tab_box.add_theme_constant_override("separation", 12)
+	server_popup.add_child(tab_box)
+	for label in ["最近登录", "推荐", "全部服务器"]:
+		var tab := Button.new()
+		tab.text = label
+		tab.custom_minimum_size = Vector2(tab_box.size.x, 48)
+		tab_box.add_child(tab)
+
+	var list_rect := _layout_rect("scrollserver", Rect2(Vector2(283.866, 201.0), Vector2(742.0, 401.0)))
+	var list := GridContainer.new()
+	list.columns = 2
+	list.position = list_rect.position + Vector2(20, 56)
+	list.size = list_rect.size - Vector2(40, 78)
+	list.add_theme_constant_override("h_separation", 18)
+	list.add_theme_constant_override("v_separation", 14)
+	server_popup.add_child(list)
+
+	var servers := [
+		{"name": "本地演示服", "id": "S148", "status": "hot"},
+		{"name": "曙光新服", "id": "S149", "status": "new"},
+		{"name": "稳定测试服", "id": "S147", "status": "hot"},
+		{"name": "维护演示服", "id": "S146", "status": "maintain"},
+		{"name": "离线预览服", "id": "S145", "status": "hot"},
+		{"name": "资源检查服", "id": "S144", "status": "new"},
+	]
+	for server in servers:
+		_add_server_list_item(list, str(server.id), str(server.name), str(server.status))
+
+	var tip := _add_label(server_popup, "本地 Demo 不连接服务器，选择项只用于界面展示。", Vector2(panel_rect.position.x + 285, panel_rect.position.y + 454), Vector2(420, 26), 15, Color(0.78, 0.8, 0.9))
+	tip.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+
+	var close := Button.new()
+	close.text = "关闭"
+	close.position = Vector2(panel_rect.position.x + panel_rect.size.x - 118, panel_rect.position.y + 18)
+	close.size = Vector2(82, 34)
+	close.pressed.connect(_hide_server_popup)
+	server_popup.add_child(close)
+
+func _add_server_list_item(parent: Control, server_id: String, server_name: String, status: String) -> void:
+	var row := Button.new()
+	row.text = ""
+	row.custom_minimum_size = Vector2(334, 54)
+	row.pressed.connect(func(): _select_server(server_name, status))
+	parent.add_child(row)
+
+	var bg := NinePatchRect.new()
+	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	bg.texture = _load_texture_region(LOGIN_ATLAS_PATH, SERVER_BOX_RECT)
+	bg.patch_margin_left = 10
+	bg.patch_margin_top = 10
+	bg.patch_margin_right = 10
+	bg.patch_margin_bottom = 10
+	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_child(bg)
+
+	var id_label := _add_label(row, server_id, Vector2(16, 7), Vector2(76, 40), 18, Color(0.88, 0.9, 1.0))
+	id_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	var name_label := _add_label(row, server_name, Vector2(96, 7), Vector2(150, 40), 18, Color(1.0, 0.96, 0.78))
+	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+
+	var tag := TextureRect.new()
+	tag.position = Vector2(282, 10)
+	tag.size = Vector2(34, 34)
+	tag.texture = _server_tag_texture(status)
+	tag.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	tag.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	tag.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_child(tag)
+
+func _show_server_popup() -> void:
+	if server_popup:
+		server_popup.visible = true
+
+func _hide_server_popup() -> void:
+	if server_popup:
+		server_popup.visible = false
+
+func _select_server(name: String, status: String) -> void:
+	selected_server_name = name
+	selected_server_status = status
+	_update_selected_server_visual()
+	_hide_server_popup()
+
+func _update_selected_server_visual() -> void:
+	if server_label:
+		server_label.text = selected_server_name
+	if server_status_icon:
+		server_status_icon.texture = _server_tag_texture(selected_server_status)
+
+func _server_tag_texture(status: String) -> Texture2D:
+	match status:
+		"new":
+			return _load_texture_region(UI_ATLAS_PATH, SERVER_TAG_NEW_RECT)
+		"maintain":
+			return _load_texture_region(UI_ATLAS_PATH, SERVER_TAG_MAINTAIN_RECT)
+		_:
+			return _load_texture_region(LOGIN_ATLAS_PATH, SERVER_TAG_HOT_RECT)
+
+func _apply_startup_args() -> void:
+	var args := OS.get_cmdline_args()
+	args.append_array(OS.get_cmdline_user_args())
+	if "--open-server-list" in args:
+		_show_server_popup()
 
 func _show_local_notice() -> void:
 	var dialog := AcceptDialog.new()

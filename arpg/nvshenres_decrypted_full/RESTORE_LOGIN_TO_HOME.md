@@ -207,11 +207,12 @@ texture_nodes: 10
 - 原始 `PFLoginPanel` 是正式启动登录/选服面板：`assets/main/index.js:128183` 设置 `preUrl="Prefab/login/pfLoginPanelPre"`。
 - `PFLoginPanel.onShow()` 会刷新版本号、隐私勾选、公告按钮和适龄/隐私入口；`getLastSever()` 请求 `game/getServerList.php?lst=last...`，`getAllSever()` 请求全部服务器列表。
 - `PFLoginPanel.onStartGame()` 会关闭平台登录面板并调用 `GameWorld.connect()`。Godot 当前没有真实网络，因此这一步被本地“开始游戏/选服确认”替代。
+- 已按 `pfLoginPanelPre.json` 的 `nodeSv/svBg/scrollTab/scrollserver` 坐标补本地服务器列表弹层；`Hot/New/Maintain` 标签分别来自 `dl_tag_huobao`、`dl_tag_xinfu`、`dl_tag_weihu`。其中 `Hot` 在 `assets/resources/native/1d/1d1cac610.png`，`New/Maintain` 在 `assets/resources/native/14/1430d496a.png`，不能混用 atlas。
 
 下一步：
 
-1. 服务器列表继续用本地 mock 数据填充，优先补 `nodeSv` 弹层和服务器状态标签。
-2. 公告、账号、隐私协议弹层用本地 mock 实现。
+1. 公告、账号、隐私协议弹层用本地 mock 实现。
+2. 服务器列表继续完善 ScrollView 真实滚动、最近登录/推荐/全部服务器分组，以及选中态。
 3. 补 `Label`、`Button`、`NinePatchRect` 映射。
 4. 明确哪些节点由服务端列表数据动态生成，不从 prefab 静态找。
 
