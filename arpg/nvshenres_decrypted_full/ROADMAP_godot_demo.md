@@ -270,7 +270,12 @@ RESTORE_LOGIN_TO_HOME.md
 - 已新增 `tools/analyze_prefab_node_names.py` 和 `data/prefab_node_name_hints.json`，用于根据 prefab 节点名里的拼音/缩写推断用途；当前覆盖 21 个导出的 prefab，可辅助判断 `zjm` 主界面、`zh` 召唤、`gh` 公会、`btn_dh` 兑换、`btn_call*` 召唤按钮、`tabBtn_*` 页签等节点。
 - `cocos_prefab_preview.gd` 已接入 `prefab_node_name_hints.json`，右侧详情栏会显示节点名用途统计和关键节点示例。
 - `DrawCardActivityPre` 已从源码确认父级只动态加载子 prefab；现已导出并接入 `Prefab/ActivityPanel/DrawCardActivity/13002..13005` 和 `DrawCardActivityToggle`，父级 mock 页签可跳转到真实子 prefab 预览。
-- 主屏商会/商店链路已确认：`MainUIPanel.openShop()` -> `PanelManager.openShop(ShopPanel.SHOP_TYPE_BLACKMARKET, MainUIPanel.instance)` -> `ShopPanel.preUrl = "Prefab/Shop/ShopPre"`。`ShopPre` 已导出为 `data/prefab_layouts/ShopPre.json`，主屏顶部 `SHOP` 和右侧 `商会` 入口均可进入商店 prefab 预览。
+- 主屏商会/商店链路已确认：`MainUIPanel.openShop()` -> `PanelManager.openShop(ShopPanel.SHOP_TYPE_BLACKMARKET, MainUIPanel.instance)` -> `ShopPanel.preUrl = "Prefab/Shop/ShopPre"`。`ShopPre` 已导出为 `data/prefab_layouts/ShopPre.json`，主屏顶部 `SHOP` 和右侧 `商会` 入口均进入独立商店页。
+- 已新增 `tools/inspect_prefab_layout.py`，用于检查任意已导出的 prefab layout 的贴图/文本/Mask/ScrollView 节点和 `component_bindings`，例如 `python tools/inspect_prefab_layout.py 商店 --limit 25`。
+- 已新增独立商店界面：
+  - `scenes/original_shop_panel.tscn`
+  - `scripts/original_shop_panel.gd`
+- 独立商店界面参考 `ShopPre.json` 与 `ShopPanel.setData()` 实现本地 demo：顶部金币/钻石货币、基础/战斗商城主页签、右侧商店类型、两列商品列表、刷新条和购买弹窗；商品图标来自 `data/equipment_icon_index.json`。
 - 活动抽卡四个子 prefab 已补运行时 mock 层：
   - `活动抽卡-登录领取`：模拟 `DrawCardActivity13002.rewardOne()` / `rewardall()` 的登录领取和一键领取状态。
   - `活动抽卡-循环礼包`：模拟 `DrawCardActivity13003.setData(e,t)` 下的 `content` 循环礼包列表。
@@ -336,7 +341,7 @@ RESTORE_LOGIN_TO_HOME.md
 2. 确认主屏默认展示角色是否固定为 105004，还是登录后由服务器/本地英雄选择覆盖；如果要对齐截图中的男主，需要继续追 `roleLhbody` 的运行时赋值来源和对应 `Prefab/HerolhPrefab/<id>`。
 3. 继续完善独立 `original_bag_panel`：追 `GridBoxItemPre` 真实选中框、品质框、背包分类按钮资源、图鉴/合成按钮资源。
 4. 继续完善独立 `original_draw_card_panel`：补 `HeroShowPre`、`HeroBookItemPre` 十连翻牌、`ZhaoHuan_ChouKa_back/front` 全屏抽卡特效、召唤动画跳过开关和真实按钮资源。
-5. 根据 `ShopPre`、`ShopCom`、`ShopItemCom` 和 `GoodsItemCom` 建立独立商店界面，用本地 mock 商品数据替代服务端返回。
+5. 继续细化独立商店界面：追 `ShopItemPre`、`GoodsItemCom` 的真实背景、折扣、限购、稀有/战力标识和购买确认 `ShopBuyEquitPre`。
 6. 新增独立活动抽卡入口页或战斗页，把仍在 prefab 预览器里的主功能继续迁出。
 7. `cocos_prefab_preview.gd` 后续只在发现坐标/字段/资源缺口时增强，不再作为最终界面承载层。
 8. 继续推广通用 prefab 裁剪作为分析能力：目前已支持 `cc.Mask` 祖先链挂载和部分 `cc.ScrollView` content/viewport 近邻推断，下一步补滚动偏移、`Widget` 对齐和 `Layout` 重排，再按 `GridLogic.create(...)` 补真实奖励 Grid 子项样式。

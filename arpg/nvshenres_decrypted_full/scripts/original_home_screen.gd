@@ -8,6 +8,7 @@ const SPINE_VIEWER := "res://scenes/spine_character_viewer.tscn"
 const HERO_PANEL_SCENE := "res://scenes/original_hero_panel.tscn"
 const BAG_PANEL_SCENE := "res://scenes/original_bag_panel.tscn"
 const DRAW_CARD_SCENE := "res://scenes/original_draw_card_panel.tscn"
+const SHOP_PANEL_SCENE := "res://scenes/original_shop_panel.tscn"
 const DESIGN_SIZE := Vector2(1280, 720)
 const SimpleSpinePlayerScript := preload("res://scripts/simple_spine_player.gd")
 const ATLAS_1A := "res://assets/resources/native/1a/1a7921f32.png"
@@ -294,7 +295,7 @@ func _add_currency_bar() -> void:
 	shop.add_theme_font_size_override("font_size", 18)
 	shop.add_theme_color_override("font_color", Color(0.55, 0.22, 0.08))
 	shop.tooltip_text = "商店"
-	shop.pressed.connect(_open_prefab_layout.bind("商店"))
+	shop.pressed.connect(func(): Navigation.go(SHOP_PANEL_SCENE))
 	prefab_layer.add_child(shop)
 
 	_add_money_item(_cocos_center_to_screen(Vector2(319, 328)), MONEY_GOLD, "2.25M", true)
@@ -613,6 +614,9 @@ func _open_home_entry(label: String) -> void:
 		return
 	if label == "召唤":
 		Navigation.go(DRAW_CARD_SCENE)
+		return
+	if label == "商会" or label == "商店":
+		Navigation.go(SHOP_PANEL_SCENE)
 		return
 	var layout_map := {
 		"广告": "活动抽卡",
