@@ -20,6 +20,7 @@ PREFABS = [
     ("主城头像", "Prefab/mainpanel/heroHead"),
     ("主城默认角色", "Prefab/HerolhPrefab/105004"),
     ("资源条", "Prefab/comPrefab/MoneyItemPre"),
+    ("商店", "Prefab/Shop/ShopPre"),
     ("英雄", "Prefab/HeroPanel/HeroMainPre"),
     ("背包", "Prefab/BagPanel/BagPre"),
     ("背包格子", "Prefab/BagPanel/GridBoxItemPre"),

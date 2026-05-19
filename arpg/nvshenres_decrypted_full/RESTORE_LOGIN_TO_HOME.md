@@ -248,11 +248,13 @@ assets/main/index.js
 - 顶部资源条位置按 `DaohangPanel.creatMoney()`：金币 `money2.x = 319`，钻石 `money1.x = 521`，父节点 `moneyBox` 在 Cocos y=328；Godot 中分别换算到中心 `(959,32)` 和 `(1161,32)`。
 - 资源条加号使用 `image/common/cm_btn_JiaHao`：`assets/resources/native/15/15a1d9111.png`，rect `[996,828,24,24]`。
 - 主屏红点统一使用 `MoneyItemPre` 中可确认的 `cm_icon_HongDian` SpriteFrame：`assets/resources/native/18/18b29ae48.png`，rect `[375,295,31,31]`。不要直接使用 `MainPre.json` 里部分 `hongdian` 导出的 texture_path；压缩序列化解析会把它误指向父按钮图标或碎片图。
+- 主屏 `openShop()` 已确认不是额外的主屏静态 prefab：源码在 `assets/main/index.js:35031` 附近调用 `PanelManager.openShop(ShopPanel.SHOP_TYPE_BLACKMARKET, MainUIPanel.instance)`；`ShopPanel.preUrl` 在 `assets/main/index.js:144648` 附近指向 `Prefab/Shop/ShopPre`。
+- `ShopPre` 已加入核心导出清单，`data/prefab_layouts/ShopPre.json` 当前有 67 个节点、7 个贴图节点；主屏顶部 `SHOP` 和右侧 `商会` 入口现在都能跳转到 `商店` prefab 预览。
 
 主屏剩余缺口：
 
 1. 底部导航主体在原始 prefab 中有 `cm_menu_*` Spine 节点，当前 Godot 仍是静态 SpriteFrame 替代。
-2. 顶部 `moneyBox` 已接入 `MoneyItemPre` 背景和金币/钻石图标，但商店按钮、加号按钮和真实 `MoneyItem` 动态刷新仍是静态替代。
+2. 顶部 `moneyBox` 已接入 `MoneyItemPre` 背景、金币/钻石图标和加号 SpriteFrame；商店入口已路由到 `ShopPre`，但独立商店界面和真实 `MoneyItem` 动态刷新仍待实现。
 3. 左侧活动入口存在运行时开关和运营数据驱动，当前只固定展示一组常见入口。
 4. 右侧入口条 `zjm_btn_rukou5` 缺同名 SpriteFrame，需要继续从运行时代码或 atlas 中确认商会入口背景。
 5. 主城背景和角色虽可切换，但还没有从 `Prefab/bigImage/*` 与 `Prefab/HerolhPrefab/*` 自动生成完整候选列表。

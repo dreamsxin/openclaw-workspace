@@ -76,6 +76,14 @@ Godot 当前工程已接入项目内轻量 Spine runtime，用于本地预览角
 - `DaohangPanel.creatMoney()` 运行时实例化两个 `MoneyItemPre`：`money2` 金币 x=319，`money1` 钻石 x=521，父节点是 `moneyBox`。
 - `MoneyItemPre.btnAdd` 使用 `image/common/cm_btn_JiaHao`，SpriteFrame 为 `assets/resources/native/15/15a1d9111.png` rect `[996,828,24,24]`。
 
+主屏商会/商店入口记录：
+
+- `assets/main/index.js:35031` 附近：`MainUIPanel.openShop()` 调用 `PanelManager.openShop(ShopPanel.SHOP_TYPE_BLACKMARKET, MainUIPanel.instance)`。
+- `assets/main/index.js:144648` 附近：`ShopPanel.preUrl = "Prefab/Shop/ShopPre"`，黑市商店类型常量 `SHOP_TYPE_BLACKMARKET = 1`。
+- `data/prefabs.csv` 中 `Prefab/Shop/ShopPre` 对应 import `assets/resources/import/7c/7c718dca-b02d-4286-8545-996490fc0bc7.json`。
+- `tools/export_cocos_prefab_layout.py` 已把 `商店` 加入核心 prefab 导出；`data/prefab_layouts/ShopPre.json` 当前导出 67 个节点、7 个贴图节点。
+- `original_home_screen.gd` 当前把顶部 `SHOP` 和右侧 `商会` 入口都路由到 `商店` prefab 预览，后续再按 `ShopCom`/`ShopItemCom` 运行时数据重建独立商店界面。
+
 ## Prefab 还原注意事项
 
 早期错误来源：
@@ -99,6 +107,7 @@ Godot 当前工程已接入项目内轻量 Spine runtime，用于本地预览角
 - `data/prefabs.csv`：原始 prefab 清单。
 - `data/prefab_layouts.json`：已导出的核心 prefab 布局清单。
 - `data/prefab_layouts/MoneyItemPre.json`：资源条 prefab，主城顶部金币/钻石条使用。
+- `data/prefab_layouts/ShopPre.json`：商会/黑市商店 prefab，主屏 `openShop()` 的目标。
 - `data/prefab_restore_inventory.csv`：整理后的 prefab 还原清单。
 - `data/prefab_restore_inventory.md`：按分类和优先级整理的 prefab 清单。
 - `data/spine_preview_index.json`：Spine 预览索引。
@@ -121,6 +130,7 @@ json: 18458
 - `Prefab/login/LoginPre`
 - `Prefab/login/pfLoginPanelPre`
 - `Prefab/mainpanel/MainPre`
+- `Prefab/Shop/ShopPre`
 - `Prefab/HeroPanel/HeroMainPre`
 - `Prefab/BagPanel/BagPre`
 - `Prefab/DrawCard/drawCardPre`

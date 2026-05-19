@@ -270,6 +270,7 @@ RESTORE_LOGIN_TO_HOME.md
 - 已新增 `tools/analyze_prefab_node_names.py` 和 `data/prefab_node_name_hints.json`，用于根据 prefab 节点名里的拼音/缩写推断用途；当前覆盖 21 个导出的 prefab，可辅助判断 `zjm` 主界面、`zh` 召唤、`gh` 公会、`btn_dh` 兑换、`btn_call*` 召唤按钮、`tabBtn_*` 页签等节点。
 - `cocos_prefab_preview.gd` 已接入 `prefab_node_name_hints.json`，右侧详情栏会显示节点名用途统计和关键节点示例。
 - `DrawCardActivityPre` 已从源码确认父级只动态加载子 prefab；现已导出并接入 `Prefab/ActivityPanel/DrawCardActivity/13002..13005` 和 `DrawCardActivityToggle`，父级 mock 页签可跳转到真实子 prefab 预览。
+- 主屏商会/商店链路已确认：`MainUIPanel.openShop()` -> `PanelManager.openShop(ShopPanel.SHOP_TYPE_BLACKMARKET, MainUIPanel.instance)` -> `ShopPanel.preUrl = "Prefab/Shop/ShopPre"`。`ShopPre` 已导出为 `data/prefab_layouts/ShopPre.json`，主屏顶部 `SHOP` 和右侧 `商会` 入口均可进入商店 prefab 预览。
 - 活动抽卡四个子 prefab 已补运行时 mock 层：
   - `活动抽卡-登录领取`：模拟 `DrawCardActivity13002.rewardOne()` / `rewardall()` 的登录领取和一键领取状态。
   - `活动抽卡-循环礼包`：模拟 `DrawCardActivity13003.setData(e,t)` 下的 `content` 循环礼包列表。
@@ -335,9 +336,10 @@ RESTORE_LOGIN_TO_HOME.md
 2. 确认主屏默认展示角色是否固定为 105004，还是登录后由服务器/本地英雄选择覆盖；如果要对齐截图中的男主，需要继续追 `roleLhbody` 的运行时赋值来源和对应 `Prefab/HerolhPrefab/<id>`。
 3. 继续完善独立 `original_bag_panel`：追 `GridBoxItemPre` 真实选中框、品质框、背包分类按钮资源、图鉴/合成按钮资源。
 4. 继续完善独立 `original_draw_card_panel`：补 `HeroShowPre`、`HeroBookItemPre` 十连翻牌、`ZhaoHuan_ChouKa_back/front` 全屏抽卡特效、召唤动画跳过开关和真实按钮资源。
-5. 新增独立活动抽卡入口页或战斗页，把仍在 prefab 预览器里的主功能继续迁出。
-6. `cocos_prefab_preview.gd` 后续只在发现坐标/字段/资源缺口时增强，不再作为最终界面承载层。
-7. 继续推广通用 prefab 裁剪作为分析能力：目前已支持 `cc.Mask` 祖先链挂载和部分 `cc.ScrollView` content/viewport 近邻推断，下一步补滚动偏移、`Widget` 对齐和 `Layout` 重排，再按 `GridLogic.create(...)` 补真实奖励 Grid 子项样式。
+5. 根据 `ShopPre`、`ShopCom`、`ShopItemCom` 和 `GoodsItemCom` 建立独立商店界面，用本地 mock 商品数据替代服务端返回。
+6. 新增独立活动抽卡入口页或战斗页，把仍在 prefab 预览器里的主功能继续迁出。
+7. `cocos_prefab_preview.gd` 后续只在发现坐标/字段/资源缺口时增强，不再作为最终界面承载层。
+8. 继续推广通用 prefab 裁剪作为分析能力：目前已支持 `cc.Mask` 祖先链挂载和部分 `cc.ScrollView` content/viewport 近邻推断，下一步补滚动偏移、`Widget` 对齐和 `Layout` 重排，再按 `GridLogic.create(...)` 补真实奖励 Grid 子项样式。
 4. 继续完善 `drawCardPre` 的抽卡 Spine、结果卡牌 `HeroShowPre`、页签切换动画和真实奖励状态。
 5. 将 `prefab_node_name_hints.json` 继续接入资源浏览器，显示节点名推断用途，减少手工查 JSON。
 6. 继续完善 `battle` 的真实 Spine 战斗角色、技能特效、站位坐标和战斗结束子 prefab。
