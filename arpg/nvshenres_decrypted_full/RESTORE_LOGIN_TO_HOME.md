@@ -209,6 +209,32 @@ Prefab/mainpanel/heroHead
 data/prefab_layouts/heroHead.json
 ```
 
+底部导航定位：
+
+```text
+daohangPre.json
+  cm_tab_ChengZhen1  global_position ~= (-448.355, -295.829)
+  cm_tab_YingXiong1  global_position ~= (-280.898, -294.476)
+  cm_tab_ZhaoHuan    global_position ~= ( -95.901, -292.829)
+  btn3               global_position ~= ( -79.694, -293.768)
+  cm_tab_FuBen       global_position ~= ( 269.368, -295.829)
+  cm_tab_GongHui1    global_position ~= ( 447.148, -295.829)
+```
+
+反编译代码确认：
+
+```text
+assets/main/index.js
+  DaohangPanel.onfrist:
+    L.default.instance.dhBtn3 = this.com.btn3
+    L.default.instance.zhaohuan = this.com.btn3
+
+  DaohangPanel.openSelectBtn:
+    case "btn3" -> cm_tab_ZhaoHuan
+```
+
+结论：主屏底部第三个按钮是“召唤”，不是“仓库”。仓库入口属于 `MainPre` 右侧入口条 `zjm_btn_cangku`，底栏不应占用 `btn3` 位置。Godot 主屏已将底栏第三项改为“召唤”，点击进入 `original_draw_card_panel.tscn`；右侧 `zjm_btn_yinghun` 因图标资源名为 `zjm_icon_zhaohuan`，离线 Demo 暂时也路由到召唤页。
+
 辅助追踪文件：
 
 ```text

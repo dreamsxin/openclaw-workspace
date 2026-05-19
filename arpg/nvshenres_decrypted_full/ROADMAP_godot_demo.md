@@ -89,12 +89,14 @@
   - 右侧入口条已用 `zjm_btn_rukou0..4` 和 `zjm_icon_baoju/cangku/jingji/xueyuan/zhaohuan/duanzao` 等真实 SpriteFrame 替换。
   - 右侧入口条已按 `MainPre.json` 的父节点尺寸 `260x34` 收缩，避免早期手写 `344x56` 导致入口条互相压住。
   - 底部导航已改用 `cm_icon_ChengZhen/YingXiong/CangKu/FuBen/GongHui` 和多语言 `cm_btn_Maoxian` 的真实 SpriteFrame。
+  - 底部导航已根据 `daohangPre.json` 和 `assets/main/index.js` 修正第三入口：`btn3` / `cm_tab_ZhaoHuan` 是“召唤”，已替换早期误放的“仓库”，点击进入本地抽卡页。
   - 左上头像已补 `image/head/105004`，并参考 `heroHead` 坐标调整。
 
 当前注意事项：
 
 - 部分 SpriteFrame 含 `rotated: 1`、`offset`、`originalSize`，直接按 `rect` 裁剪会出现黑块或尺寸偏差。当前通用 prefab layer、prefab 预览器和主城页已支持基础 trim 复原；登录页/选服页等独立旧脚本还保留本地裁剪函数。
 - `daohangPre` 的底部导航主体是 Spine/UISpine 资源，不能简单把 atlas 原图当按钮贴图；当前先用稳定 SpriteFrame 做静态替代。
+- `daohangPre` 没有把 `cm_tab_ZhaoHuan` 的 texture_path 直接导出来，但源码明确 `DaohangPanel.btn3` 是 `zhaohuan`；后续若补完整底栏资源，应继续围绕 `btn3/cm_tab_ZhaoHuan` 追踪，而不是复用仓库图标。
 - 当前只找到 `image/en/mainpanel/cm_btn_Maoxian` 等多语言冒险按钮，未找到 `image/com/mainpanel/cm_btn_Maoxian`，Godot 先用英文按钮图叠加中文 Label。
 - `zjm_btn_rukou5` 在 `config.json` 中没有同名 SpriteFrame，MainPre 中可能是节点名复用或运行时代码/子资源生成，后续继续查运行时逻辑。
 

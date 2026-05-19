@@ -19,7 +19,7 @@ const ATLAS_18A := "res://assets/resources/native/18/18b29ae48.png"
 const ATLAS_18B := "res://assets/resources/native/18/18935b9e9.png"
 const NAV_CHENGZHEN := "res://assets/resources/native/87/8715b80b-6cbc-4b88-bf7d-8c2ab401db4e.png"
 const NAV_YINGXIONG := "res://assets/resources/native/9a/9a9cb544-24ba-41c7-8cab-41a43a9e9c33.png"
-const NAV_CANGKU := "res://assets/resources/native/83/83903e83-5933-42e2-b569-f4c51ebdea94.png"
+const NAV_ZHAOHUAN := "res://assets/resources/native/83/83903e83-5933-42e2-b569-f4c51ebdea94.png"
 const NAV_MAOXIAN := "res://assets/resources/native/e1/e116f353-6974-488e-86a7-19f294f47e7b.png"
 const PLAYER_HEAD := "res://assets/resources/native/d7/d7bf0f4d-1dc9-4fda-80c0-65dfeee3316a.png"
 const AD_BANNER := "res://assets/resources/native/00/002545b0-69b1-4515-ac70-e545a4c8b5d2.png"
@@ -372,7 +372,7 @@ func _add_right_ribbons() -> void:
 		{"label": "仓库", "pos": Vector2(447.809, 171.94), "bg": Rect2i(639, 292, 364, 50), "bg_offset": Vector2(-10.5, 0), "icon": Rect2i(747, 551, 34, 34), "icon_atlas": ATLAS_1F},
 		{"label": "竞技", "pos": Vector2(465.442, 122.605), "bg": Rect2i(675, 65, 341, 56), "bg_offset": Vector2(1, 0), "icon": Rect2i(667, 551, 34, 34), "icon_atlas": ATLAS_1F},
 		{"label": "学院", "pos": Vector2(481.647, 65.805), "bg": Rect2i(675, 65, 341, 56), "bg_offset": Vector2(1, 0), "icon": Rect2i(3, 3, 34, 34), "icon_atlas": ATLAS_1A},
-		{"label": "英魂", "pos": Vector2(482.615, 8.606), "bg": Rect2i(675, 230, 336, 56), "bg_offset": Vector2(3.5, 0), "icon": Rect2i(707, 551, 34, 34), "icon_atlas": ATLAS_1F},
+		{"label": "英魂", "entry": "召唤", "pos": Vector2(482.615, 8.606), "bg": Rect2i(675, 230, 336, 56), "bg_offset": Vector2(3.5, 0), "icon": Rect2i(707, 551, 34, 34), "icon_atlas": ATLAS_1F},
 		{"label": "锻造", "pos": Vector2(477.315, -43.11), "bg": Rect2i(675, 3, 342, 56), "bg_offset": Vector2(0.5, 0), "icon": Rect2i(720, 984, 34, 34), "icon_atlas": ATLAS_1F},
 		{"label": "占卜", "pos": Vector2(471.126, -95.893), "bg": Rect2i(684, 591, 387, 58), "bg_offset": Vector2(-22, 0), "bg_rotated": true, "icon": Rect2i(3, 225, 100, 95), "icon_atlas": ATLAS_1A},
 		{"label": "寻星", "pos": Vector2(449.239, -148.14), "bg": Rect2i(684, 591, 387, 58), "bg_offset": Vector2(-22, 0), "bg_rotated": true, "icon": Rect2i(43, 3, 34, 34), "icon_atlas": ATLAS_1A},
@@ -420,14 +420,14 @@ func _add_ribbon_button(center: Vector2, item: Dictionary) -> void:
 	hit.flat = true
 	hit.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	hit.tooltip_text = "%s 预览" % str(item.label)
-	hit.pressed.connect(_open_home_entry.bind(str(item.label)))
+	hit.pressed.connect(_open_home_entry.bind(str(item.get("entry", item.label))))
 	box.add_child(hit)
 
 func _add_bottom_nav() -> void:
 	var entries := [
 		{"label": "城镇", "x": 190, "atlas": ATLAS_1F, "rect": Rect2i(787, 551, 152, 141), "size": Vector2(88, 82)},
 		{"label": "英雄", "x": 360, "atlas": ATLAS_1A, "rect": Rect2i(3, 334, 150, 142), "size": Vector2(88, 82), "layout": "英雄"},
-		{"label": "仓库", "x": 560, "atlas": ATLAS_1A, "rect": Rect2i(477, 242, 125, 123), "size": Vector2(82, 78), "layout": "背包"},
+		{"label": "召唤", "x": 560, "path": NAV_ZHAOHUAN, "size": Vector2(92, 82), "entry": "召唤"},
 		{"label": "冒险", "x": 762, "atlas": ATLAS_14, "rect": Rect2i(3, 3, 181, 143), "size": Vector2(104, 82), "layout": "战斗"},
 		{"label": "副本", "x": 910, "atlas": ATLAS_1A, "rect": Rect2i(879, 276, 134, 133), "size": Vector2(84, 80), "layout": "天空城"},
 		{"label": "公会", "x": 1090, "atlas": ATLAS_1A, "rect": Rect2i(345, 232, 119, 126), "size": Vector2(82, 80), "layout": "公会"},
@@ -464,8 +464,12 @@ func _add_bottom_nav() -> void:
 		hit.text = ""
 		hit.flat = true
 		hit.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		var entry := str(item.get("entry", ""))
 		var layout := str(item.get("layout", ""))
-		if layout != "":
+		if entry != "":
+			hit.tooltip_text = "%s 预览" % str(item.label)
+			hit.pressed.connect(_open_home_entry.bind(entry))
+		elif layout != "":
 			hit.tooltip_text = "%s 预览" % layout
 			hit.pressed.connect(_open_prefab_layout.bind(layout))
 		box.add_child(hit)

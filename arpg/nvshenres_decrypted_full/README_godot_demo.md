@@ -19,6 +19,7 @@ D:\work\openclaw-workspace\arpg\tools\Godot_v4.6.2-stable_win64_console.exe --pa
 - `scenes/original_loading.tscn`：默认启动场景。
 - 登录流程：启动加载页 -> 登录页 -> 选服页 -> 原始主城页。
 - 主城页保留了导航按钮，可进入资源浏览器、Prefab 预览器和旧的浮岛主城预览。
+- 主城底部导航第三个入口已按原始 `daohangPre.btn3/cm_tab_ZhaoHuan` 修正为“召唤”，点击进入本地抽卡页；仓库入口保留在右侧入口条。
 - 资源浏览器支持图片、音频、文本、Prefab、Scene、Spine 索引查看。
 
 ## 已确认的主城资源链
@@ -48,16 +49,13 @@ D:\work\openclaw-workspace\arpg\tools\Godot_v4.6.2-stable_win64_console.exe --pa
 - 贴图示例：`assets/resources/native/96/964573c8-6b8e-41e3-8fe1-ec4de01897e0.png`
 - 动画名包括 `idle`、`show`
 
-Godot 当前工程未接入 Spine runtime，所以不能真正播放骨骼动画。资源浏览器已先实现 Spine 索引查看：
+Godot 当前工程已接入项目内轻量 Spine runtime，用于本地预览角色立绘和部分界面特效。资源浏览器也支持 Spine 索引查看：
 
 - `data/spine_preview_index.json`
 - 显示 skeleton 名称、Spine 版本、骨骼数、slot 数、动画列表、atlas 贴图。
-- 贴图可预览，但这只是 atlas/png 预览，不等于角色动画播放。
+- 贴图可预览；已导出的 runtime JSON 可在 Spine Viewer 中播放。
 
-下一步如果要真实播放 Spine，需要二选一：
-
-- 接入 Godot Spine 插件/runtime。
-- 自写 Spine JSON/atlas 的简化解析和渲染器。
+当前主城默认角色已用 `105004` Spine 播放 `idle`，点击角色可切换可用动作；这仍是轻量 runtime，不等于官方 Spine Runtime，复杂约束和裁剪仍需继续补齐。
 
 ## Prefab 还原注意事项
 
@@ -115,6 +113,6 @@ json: 18458
 ## 当前限制
 
 - 主城页已改为 `MainPre` UI 层 + 可切换背景 + 可切换角色预览，但还不是完整 Cocos 运行时复刻。
-- Spine 角色目前只能查看 atlas 和动画索引，真实骨骼动画尚未播放。
+- Spine 角色可用轻量 runtime 播放已导出的 runtime JSON，但复杂约束、clipping/path 等仍未完整支持。
 - Label、ScrollView、Layout、Widget、九宫格 Sprite 仍需要继续映射。
 - 一些界面资源由脚本或子 prefab 动态挂载，不能只看父 prefab 的贴图数量判断是否缺资源。
