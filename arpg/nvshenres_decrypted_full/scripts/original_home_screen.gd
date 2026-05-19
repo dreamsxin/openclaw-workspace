@@ -79,9 +79,9 @@ const HEROES := [
 		"size": Vector2(410, 640),
 		"spine": HERO_105004_SPINE,
 		"animation": "idle",
-		"spine_target": Rect2(Vector2(350, 48), Vector2(560, 668)),
-		"spine_scale_bias": 1.28,
-		"spine_offset": Vector2(-18, -78),
+		"spine_origin_position": Vector2(640, 360),
+		"spine_prefab_offset": Vector2(-68, 333),
+		"spine_origin_scale": Vector2(1.0, 0.95),
 	},
 	{
 		"name": "SuLa_LH",
@@ -203,26 +203,26 @@ func _build_ui() -> void:
 
 	prefab_layer = Control.new()
 	prefab_layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	prefab_layer.z_index = 20
+	prefab_layer.z_index = 500
 	prefab_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	design_root.add_child(prefab_layer)
 
 	bottom_nav_hit_layer = Control.new()
 	bottom_nav_hit_layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	bottom_nav_hit_layer.z_index = 60
+	bottom_nav_hit_layer.z_index = 700
 	bottom_nav_hit_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	design_root.add_child(bottom_nav_hit_layer)
 
 	right_ribbon_hit_layer = Control.new()
 	right_ribbon_hit_layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	right_ribbon_hit_layer.z_index = 30
+	right_ribbon_hit_layer.z_index = 650
 	right_ribbon_hit_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	design_root.add_child(right_ribbon_hit_layer)
 
 	hero_hit_area = Button.new()
 	hero_hit_area.flat = true
 	hero_hit_area.text = ""
-	hero_hit_area.z_index = 10
+	hero_hit_area.z_index = 400
 	hero_hit_area.position = Vector2(500, 92)
 	hero_hit_area.size = Vector2(360, 520)
 	hero_hit_area.focus_mode = Control.FOCUS_NONE
