@@ -3,6 +3,8 @@ extends Control
 const HOME_SCENE := "res://scenes/original_home_screen.tscn"
 const HERO_DETAIL_SCENE := "res://scenes/original_hero_panel.tscn"
 const PREFAB_PREVIEW := "res://scenes/cocos_prefab_preview.tscn"
+const HERO_CATALOG_PATH := "res://data/hero_catalog.json"
+const HERO_SPINE_INDEX_PATH := "res://data/hero_spine_runtime_index.json"
 const DESIGN_SIZE := Vector2(1280, 720)
 const BG_PATH := "res://assets/resources/native/ac/ac082229-4446-4cfe-bbaf-5e9849e208c3.png"
 const ATLAS_18A := "res://assets/resources/native/18/18b29ae48.png"
@@ -19,6 +21,7 @@ const CAMP_TABS := [
 ]
 
 const SIDE_TABS := ["英雄", "图鉴", "共享", "英魂", "阵容", "升星"]
+const QUALITY_ORDER := {"SSS": 0, "SSR": 1, "SR": 2, "R": 3, "N": 4}
 
 const HEROES := [
 	{"id": "105004", "name": "伊卡洛斯", "camp": 4, "job": "灵师", "power": "3027113", "level": "120", "stars": 5, "owned": true, "combat": true},
@@ -39,6 +42,8 @@ var count_label: Label
 var title_label: Label
 var detail_label: Label
 var named_resources: Dictionary = {}
+var hero_catalog: Array = []
+var hero_spine_index: Dictionary = {}
 var camp_buttons: Array[Button] = []
 var side_buttons: Array[Button] = []
 var selected_camp := 0
@@ -46,6 +51,8 @@ var selected_side_tab := 0
 
 func _ready() -> void:
 	_load_named_resources()
+	_load_hero_catalog()
+	_load_hero_spine_index()
 	_build_ui()
 	_apply_cmdline_args()
 	_capture_if_requested()
@@ -106,7 +113,7 @@ func _build_top_bar() -> void:
 	Navigation.add_buttons(top)
 	_add_top_button(top, "主城", func(): Navigation.go(HOME_SCENE))
 	_add_top_button(top, "详情", func(): Navigation.go(HERO_DETAIL_SCENE))
-	_add_top_button(top, "Prefab", func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "英雄"}))
+	_add_top_button(top, "Prefab", func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "英雄列表"}))
 
 func _build_camp_tabs() -> void:
 	var panel := HBoxContainer.new()
@@ -178,7 +185,7 @@ func _build_bottom_actions() -> void:
 	bottom.position = Vector2(144, 636)
 	bottom.size = Vector2(880, 56)
 	design_root.add_child(bottom)
-	detail_label = _add_label(bottom, "点击英雄卡片进入 HeroMainPre 详情页。", Vector2(0, 8), Vector2(590, 34), 18, Color(0.78, 0.90, 1.0))
+	detail_label = _add_label(bottom, "点击英雄卡片进入 HeroBookDetailPre 详情页。", Vector2(0, 8), Vector2(590, 34), 18, Color(0.78, 0.90, 1.0))
 	_add_action_button(bottom, "英雄图鉴", Vector2(616, 8), Vector2(116, 38), func(): _select_side_tab(1))
 	_add_action_button(bottom, "共享等级", Vector2(748, 8), Vector2(116, 38), func(): _select_side_tab(2))
 
@@ -219,7 +226,7 @@ func _refresh_grid() -> void:
 	for child in grid.get_children():
 		child.queue_free()
 	var filtered := _filtered_heroes()
-	count_label.text = "%d/%d" % [filtered.size(), HEROES.size()]
+	count_label.text = "%d/%d" % [filtered.size(), _all_heroes().size()]
 	if selected_side_tab == 0:
 		grid.columns = 5
 		for hero in filtered:
@@ -243,24 +250,33 @@ func _refresh_grid() -> void:
 		_add_star_material_cards()
 
 func _add_hero_card(hero: Dictionary) -> void:
+	var hero_id := str(hero.get("id", ""))
+	var hero_name := str(hero.get("name", hero_id))
+	var hero_level := str(hero.get("level", "1"))
+	var hero_job := str(hero.get("job", "未知"))
+	var hero_power := str(hero.get("power", "0"))
+	var hero_camp := int(hero.get("camp", 0))
+	var hero_quality := str(hero.get("quality", "SSR"))
+	var hero_owned := bool(hero.get("owned", true))
 	var card := Button.new()
 	card.text = ""
 	card.custom_minimum_size = Vector2(152, 206)
-	card.tooltip_text = "%s Lv.%s" % [hero.name, hero.level]
+	card.tooltip_text = "%s %s Lv.%s" % [hero_quality, hero_name, hero_level]
 	card.pressed.connect(_open_hero_detail.bind(hero))
 	grid.add_child(card)
 
 	var bg := ColorRect.new()
 	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	bg.color = Color(0.05, 0.06, 0.09, 0.90) if bool(hero.owned) else Color(0.03, 0.03, 0.04, 0.86)
+	bg.color = Color(0.05, 0.06, 0.09, 0.90) if hero_owned else Color(0.03, 0.03, 0.04, 0.86)
 	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	card.add_child(bg)
 
 	_add_named_image_to(card, "image/comHeroGrid/cm_frame_TouXiangDi5", Vector2(22, 10), Vector2(108, 108))
-	_add_named_image_to(card, "image/head/%s" % hero.id, Vector2(35, 22), Vector2(82, 82))
+	_add_named_image_to(card, "image/head/%s" % hero_id, Vector2(35, 22), Vector2(82, 82))
 	_add_named_image_to(card, "image/comHeroGrid/cm_frame_TouXiangKuang6", Vector2(22, 10), Vector2(108, 108))
-	_add_named_image_to(card, "image/comHeroGrid/cm_tag_SSR1", Vector2(20, 8), Vector2(42, 26))
-	_add_named_image_to(card, _camp_icon_path(int(hero.camp)), Vector2(105, 18), Vector2(30, 30))
+	_add_named_image_to(card, _quality_tag_path(hero_quality), Vector2(20, 8), Vector2(42, 26))
+	_add_quality_label(card, hero_quality, Vector2(17, 8), Vector2(48, 24))
+	_add_named_image_to(card, _camp_icon_path(hero_camp), Vector2(105, 18), Vector2(30, 30))
 	for i in int(hero.get("stars", 5)):
 		_add_named_image_to(card, "image/comHeroGrid/cm_icon_XingXing1_1", Vector2(22 + i * 22, 108), Vector2(20, 20))
 	if bool(hero.get("combat", false)):
@@ -269,10 +285,10 @@ func _add_hero_card(hero: Dictionary) -> void:
 		_add_status_badge(card, "助战", Vector2(10, 72), Color(0.30, 0.48, 0.18, 0.88))
 	if bool(hero.get("red", false)):
 		_add_named_image_to(card, "image/common/cm_icon_HongDian", Vector2(118, 4), Vector2(26, 26))
-	_add_label(card, str(hero.name), Vector2(10, 130), Vector2(132, 26), 18, Color(1.0, 0.86, 0.52)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_add_label(card, "%s  Lv.%s" % [hero.job, hero.level], Vector2(10, 156), Vector2(132, 22), 14, Color(0.78, 0.90, 1.0)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_add_label(card, "战力 %s" % hero.power, Vector2(8, 178), Vector2(136, 22), 13, Color(0.96, 0.94, 0.78)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	if not bool(hero.owned):
+	_add_label(card, hero_name, Vector2(10, 130), Vector2(132, 26), 18, Color(1.0, 0.86, 0.52)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_add_label(card, "%s  Lv.%s" % [hero_job, hero_level], Vector2(10, 156), Vector2(132, 22), 14, Color(0.78, 0.90, 1.0)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_add_label(card, "战力 %s" % hero_power, Vector2(8, 178), Vector2(136, 22), 13, Color(0.96, 0.94, 0.78)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	if not hero_owned:
 		var lock := ColorRect.new()
 		lock.position = Vector2(0, 0)
 		lock.size = card.custom_minimum_size
@@ -282,18 +298,25 @@ func _add_hero_card(hero: Dictionary) -> void:
 		_add_label(card, "未获得", Vector2(36, 76), Vector2(80, 28), 18, Color(0.9, 0.9, 0.95)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 func _add_book_card(hero: Dictionary) -> void:
+	var hero_id := str(hero.get("id", ""))
+	var hero_name := str(hero.get("name", hero_id))
+	var hero_camp := int(hero.get("camp", 0))
+	var hero_quality := str(hero.get("quality", "SSR"))
 	var card := Button.new()
 	card.text = ""
 	card.custom_minimum_size = Vector2(126, 332)
-	card.tooltip_text = "%s 图鉴" % hero.name
+	card.tooltip_text = "%s %s 图鉴" % [hero_quality, hero_name]
 	card.pressed.connect(_open_hero_detail.bind(hero))
 	grid.add_child(card)
 	_add_named_image_to(card, "image/common/cm_frame_kadicheng", Vector2(9, 4), Vector2(108, 328))
-	_add_named_image_to(card, "image/head/%s" % hero.id, Vector2(23, 44), Vector2(80, 80))
-	_add_named_image_to(card, _camp_icon_path(int(hero.camp)), Vector2(82, 16), Vector2(28, 28))
-	_add_label(card, str(hero.name), Vector2(10, 262), Vector2(106, 26), 16, Color(1.0, 0.86, 0.52)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_add_label(card, "星级 %s" % hero.get("stars", 3), Vector2(16, 290), Vector2(94, 22), 14, Color(0.90, 0.92, 1.0)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	if not bool(hero.owned):
+	var book_image := _add_named_image_to(card, "image/heroBook/%s" % hero_id, Vector2(13, 20), Vector2(100, 236))
+	if book_image == null:
+		_add_named_image_to(card, "image/head/%s" % hero_id, Vector2(23, 44), Vector2(80, 80))
+	_add_named_image_to(card, _camp_icon_path(hero_camp), Vector2(82, 16), Vector2(28, 28))
+	_add_quality_label(card, hero_quality, Vector2(8, 16), Vector2(48, 24))
+	_add_label(card, hero_name, Vector2(10, 262), Vector2(106, 26), 16, Color(1.0, 0.86, 0.52)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_add_label(card, "%s  星级 %s" % [hero_quality, hero.get("stars", 3)], Vector2(16, 290), Vector2(94, 22), 14, Color(0.90, 0.92, 1.0)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	if not bool(hero.get("owned", true)):
 		var shade := ColorRect.new()
 		shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 		shade.color = Color(0, 0, 0, 0.42)
@@ -314,14 +337,17 @@ func _add_shared_level_cards(heroes: Array) -> void:
 		card.add_child(bg)
 		if i < min(heroes.size(), 4):
 			var hero: Dictionary = heroes[i]
+			var hero_id := str(hero.get("id", ""))
 			_add_named_image_to(card, "image/comHeroGrid/cm_frame_TouXiangDi5", Vector2(44, 18), Vector2(110, 110))
-			_add_named_image_to(card, "image/head/%s" % hero.id, Vector2(57, 31), Vector2(84, 84))
-			_add_label(card, "%s  Lv.%s" % [hero.name, hero.level], Vector2(10, 134), Vector2(178, 26), 16, Color(1.0, 0.86, 0.52)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			_add_named_image_to(card, "image/head/%s" % hero_id, Vector2(57, 31), Vector2(84, 84))
+			_add_label(card, "%s  Lv.%s" % [hero.get("name", hero_id), hero.get("level", "1")], Vector2(10, 134), Vector2(178, 26), 16, Color(1.0, 0.86, 0.52)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		else:
 			_add_label(card, "+", Vector2(0, 42), Vector2(198, 54), 42, Color(0.75, 0.86, 1.0)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 			_add_label(card, "添加共享英雄", Vector2(0, 112), Vector2(198, 26), 16, Color(0.86, 0.92, 1.0)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 func _add_soul_card(hero: Dictionary) -> void:
+	var hero_id := str(hero.get("id", ""))
+	var hero_name := str(hero.get("name", hero_id))
 	var card := Button.new()
 	card.text = ""
 	card.custom_minimum_size = Vector2(152, 168)
@@ -332,12 +358,14 @@ func _add_soul_card(hero: Dictionary) -> void:
 	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	card.add_child(bg)
 	_add_named_image_to(card, "image/comHeroGrid/cm_frame_TouXiangDi4", Vector2(36, 12), Vector2(80, 80))
-	_add_named_image_to(card, "image/head/%s" % hero.id, Vector2(46, 22), Vector2(60, 60))
-	_add_label(card, "%s英魂" % hero.name, Vector2(8, 100), Vector2(136, 24), 16, Color(1.0, 0.86, 0.52)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_add_progress(card, Vector2(18, 132), Vector2(116, 12), 0.42 if bool(hero.owned) else 0.18)
+	_add_named_image_to(card, "image/head/%s" % hero_id, Vector2(46, 22), Vector2(60, 60))
+	_add_label(card, "%s英魂" % hero_name, Vector2(8, 100), Vector2(136, 24), 16, Color(1.0, 0.86, 0.52)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_add_progress(card, Vector2(18, 132), Vector2(116, 12), 0.42 if bool(hero.get("owned", true)) else 0.18)
 	_add_label(card, "42/100", Vector2(20, 144), Vector2(112, 20), 13, Color(0.86, 0.92, 1.0)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 func _add_formation_cards(heroes: Array) -> void:
+	if heroes.is_empty():
+		return
 	for i in 6:
 		var card := Button.new()
 		card.text = ""
@@ -353,7 +381,7 @@ func _add_formation_cards(heroes: Array) -> void:
 		for j in 3:
 			var hero: Dictionary = heroes[(i + j) % max(heroes.size(), 1)]
 			_add_named_image_to(card, "image/comHeroGrid/cm_frame_TouXiangDi3", Vector2(154 + j * 32, 18), Vector2(30, 30))
-			_add_named_image_to(card, "image/head/%s" % hero.id, Vector2(158 + j * 32, 22), Vector2(22, 22))
+			_add_named_image_to(card, "image/head/%s" % hero.get("id", ""), Vector2(158 + j * 32, 22), Vector2(22, 22))
 		_add_label(card, "攻击 +%d%%  生命 +%d%%" % [8 + i, 12 + i], Vector2(18, 82), Vector2(220, 24), 14, Color(0.88, 0.95, 0.78))
 
 func _add_star_material_cards() -> void:
@@ -410,7 +438,7 @@ func _select_side_tab(index: int) -> void:
 	selected_side_tab = index
 	_refresh()
 	var messages := [
-		"英雄列表：点击任意英雄进入 HeroMainPre。",
+		"英雄列表：点击任意英雄进入 HeroBookDetailPre。",
 		"图鉴页：已按 HeroBookItemPre 的竖卡结构重建，后续补全立绘和收集状态。",
 		"共享等级：已按 HeroLevelSharedPre 的共享槽位做本地 mock。",
 		"英魂页：本地显示碎片进度，后续继续追 YingHun 入口资源。",
@@ -420,14 +448,53 @@ func _select_side_tab(index: int) -> void:
 	_set_detail_text(messages[index])
 
 func _open_hero_detail(hero: Dictionary) -> void:
-	Navigation.go_with_args(HERO_DETAIL_SCENE, {"hero_id": str(hero.id)})
+	Navigation.go_with_args(HERO_DETAIL_SCENE, {"hero_id": str(hero.get("id", ""))})
+
+func _open_hero_id(hero_id: String) -> void:
+	for hero in _all_heroes():
+		if str(hero.get("id", "")) == hero_id:
+			_open_hero_detail(hero)
+			return
 
 func _filtered_heroes() -> Array:
 	var result := []
-	for hero in HEROES:
-		if selected_camp == 0 or int(hero.camp) == selected_camp:
+	for hero in _all_heroes():
+		if selected_camp == 0 or int(hero.get("camp", 0)) == selected_camp:
+			result.append(hero)
+	result.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		var qa := _quality_sort_value(str(a.get("quality", "N")))
+		var qb := _quality_sort_value(str(b.get("quality", "N")))
+		if qa == qb:
+			return str(a.get("id", "")) < str(b.get("id", ""))
+		return qa < qb
+	)
+	return result
+
+func _all_heroes() -> Array:
+	var source: Array = HEROES if hero_catalog.is_empty() else hero_catalog
+	if hero_spine_index.is_empty():
+		return source
+	var result := []
+	for hero in source:
+		if _has_spine_runtime(str(hero.get("id", ""))):
 			result.append(hero)
 	return result
+
+func _has_spine_runtime(body_id: String) -> bool:
+	return typeof(hero_spine_index.get(body_id, null)) == TYPE_DICTIONARY
+
+func _quality_sort_value(quality: String) -> int:
+	return int(QUALITY_ORDER.get(quality, 99))
+
+func _quality_tag_path(quality: String) -> String:
+	if quality == "SSS":
+		return "image/comHeroGrid/cm_tag_SSR1"
+	return "image/comHeroGrid/cm_tag_%s1" % quality
+
+func _add_quality_label(parent: Control, quality: String, position: Vector2, size: Vector2) -> void:
+	var label := _add_label(parent, quality, position, size, 13, Color(1.0, 0.92, 0.55))
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 
 func _camp_icon_path(camp: int) -> String:
 	return "image/comHeroGrid/cm_icon_ZhenYing%d" % clampi(camp, 0, 5)
@@ -492,6 +559,16 @@ func _load_named_resources() -> void:
 	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string("res://data/named_resource_index.json"))
 	if typeof(parsed) == TYPE_DICTIONARY:
 		named_resources = parsed
+
+func _load_hero_catalog() -> void:
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(HERO_CATALOG_PATH))
+	if typeof(parsed) == TYPE_ARRAY:
+		hero_catalog = parsed
+
+func _load_hero_spine_index() -> void:
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(HERO_SPINE_INDEX_PATH))
+	if typeof(parsed) == TYPE_DICTIONARY:
+		hero_spine_index = parsed.get("heroes", {})
 
 func _add_label(parent: Control, text: String, position: Vector2, size: Vector2, font_size: int, color: Color) -> Label:
 	var label := Label.new()
@@ -571,12 +648,48 @@ func _apply_cmdline_args() -> void:
 	if tab_arg.is_valid_int():
 		selected_side_tab = clampi(int(tab_arg), 0, SIDE_TABS.size() - 1)
 	_refresh()
+	var open_id := _cmd_arg_value(args, "--hero-list-open-id")
+	if open_id != "":
+		call_deferred("_open_hero_id", open_id)
+	var open_index := _cmd_arg_value(args, "--hero-list-open-index")
+	if open_index.is_valid_int():
+		var filtered := _filtered_heroes()
+		var index := clampi(int(open_index), 0, max(filtered.size() - 1, 0))
+		if not filtered.is_empty():
+			call_deferred("_open_hero_detail", filtered[index])
+	var click_arg := _cmd_arg_value(args, "--hero-list-click-at")
+	if click_arg != "":
+		call_deferred("_click_at_from_arg", click_arg)
 
 func _cmd_arg_value(args: Array, key: String) -> String:
 	var index := args.find(key)
 	if index >= 0 and index + 1 < args.size():
 		return str(args[index + 1])
 	return ""
+
+func _click_at_from_arg(value: String) -> void:
+	var parts := value.split(",", false)
+	if parts.size() != 2 or not parts[0].is_valid_float() or not parts[1].is_valid_float():
+		return
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var position := Vector2(float(parts[0]), float(parts[1]))
+	var viewport := get_viewport()
+	if viewport == null:
+		return
+	var press := InputEventMouseButton.new()
+	press.button_index = MOUSE_BUTTON_LEFT
+	press.pressed = true
+	press.position = position
+	viewport.push_input(press)
+	if not is_inside_tree():
+		return
+	var release := InputEventMouseButton.new()
+	release.button_index = MOUSE_BUTTON_LEFT
+	release.pressed = false
+	release.position = position
+	if viewport != null:
+		viewport.push_input(release)
 
 func _capture_if_requested() -> void:
 	var args := OS.get_cmdline_args()

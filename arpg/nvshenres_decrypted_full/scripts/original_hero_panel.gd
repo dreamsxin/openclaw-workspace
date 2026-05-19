@@ -10,40 +10,66 @@ const BG_PATH := "res://assets/resources/native/ac/ac082229-4446-4cfe-bbaf-5e984
 const ATLAS_18A := "res://assets/resources/native/18/18b29ae48.png"
 const ATLAS_1A := "res://assets/resources/native/1a/1a7921f32.png"
 const ATLAS_1F := "res://assets/resources/native/1f/1f6b547b4.png"
+const ATLAS_15 := "res://assets/resources/native/15/15a1d9111.png"
 const HERO_TAB_ON_ATLAS := "res://assets/resources/native/15/15a1d9111.png"
 const HERO_TAB_ON_RECT := Rect2i(530, 950, 64, 100)
 const HERO_TAB_OFF_ATLAS := "res://assets/resources/native/18/18b29ae48.png"
 const HERO_TAB_OFF_RECT := Rect2i(104, 349, 57, 100)
+const HERO_BOOK_TAG_TEX := "res://assets/resources/native/08/089f225e-78e8-428c-aeec-39bb5b669f43.png"
 const HERO_105004_SPINE := "res://data/spine_runtime/105004.json"
 const HERO_SULA_SPINE := "res://data/spine_runtime/SuLa_LH.json"
 const HERO_YOUDUOLA_SPINE := "res://data/spine_runtime/YouDuoLa_LH.json"
+const HERO_VOICE_INDEX_PATH := "res://data/hero_voice_index.json"
+const HERO_CATALOG_PATH := "res://data/hero_catalog.json"
+const HERO_SPINE_INDEX_PATH := "res://data/hero_spine_runtime_index.json"
+const HERO_TOUCH_SOUNDS := ["1", "2", "3", "5"]
 
 const HEROES := [
-	{"id": "105004", "name": "伊卡洛斯", "job": "灵师", "spine": HERO_105004_SPINE, "power": "3027113", "level": "120/360", "attrs": ["攻击 120360", "生命 568420", "防御 42310", "速度 1785"], "target": Rect2(Vector2(330, 88), Vector2(430, 600))},
-	{"id": "205008", "name": "苏拉", "job": "战士", "spine": HERO_SULA_SPINE, "power": "2864100", "level": "108/300", "attrs": ["攻击 104820", "生命 612500", "防御 48990", "速度 1620"], "target": Rect2(Vector2(330, 80), Vector2(430, 610))},
-	{"id": "305006", "name": "尤朵拉", "job": "射手", "spine": HERO_YOUDUOLA_SPINE, "power": "2719800", "level": "104/300", "attrs": ["攻击 132500", "生命 438200", "防御 36210", "速度 1915"], "target": Rect2(Vector2(330, 80), Vector2(430, 610))},
-	{"id": "405007", "name": "拉瑞欧", "job": "守护", "head": "res://assets/resources/native/64/645eff01-c534-4380-951e-72eeea0bbd45.png", "power": "2339000", "level": "96/260", "attrs": ["攻击 82420", "生命 690000", "防御 62410", "速度 1210"]},
+	{"id": "105004", "name": "伊卡洛斯", "job": "灵师", "camp": 4, "stars": 5, "spine": HERO_105004_SPINE, "power": "3027113", "level": "120/360", "attrs": ["攻击 120360", "生命 568420", "防御 42310", "速度 1785"], "target": Rect2(Vector2(330, 88), Vector2(430, 600))},
+	{"id": "205008", "name": "苏拉", "job": "战士", "camp": 2, "stars": 5, "spine": HERO_SULA_SPINE, "power": "2864100", "level": "108/300", "attrs": ["攻击 104820", "生命 612500", "防御 48990", "速度 1620"], "target": Rect2(Vector2(330, 80), Vector2(430, 610))},
+	{"id": "305006", "name": "尤朵拉", "job": "射手", "camp": 1, "stars": 5, "spine": HERO_YOUDUOLA_SPINE, "power": "2719800", "level": "104/300", "attrs": ["攻击 132500", "生命 438200", "防御 36210", "速度 1915"], "target": Rect2(Vector2(330, 80), Vector2(430, 610))},
+	{"id": "405007", "name": "拉瑞欧", "job": "守护", "camp": 3, "stars": 5, "power": "2339000", "level": "96/260", "attrs": ["攻击 82420", "生命 690000", "防御 62410", "速度 1210"]},
+	{"id": "505004", "name": "诺萨", "job": "刺客", "camp": 5, "stars": 5, "power": "2188000", "level": "92/260", "attrs": ["攻击 96800", "生命 402600", "防御 34200", "速度 1840"]},
+	{"id": "204002", "name": "艾琳", "job": "辅助", "camp": 1, "stars": 5, "power": "2013000", "level": "88/240", "attrs": ["攻击 68400", "生命 520800", "防御 41800", "速度 1505"]},
+	{"id": "104002", "name": "莉莉", "job": "法师", "camp": 2, "stars": 5, "power": "1884000", "level": "84/240", "attrs": ["攻击 91200", "生命 376000", "防御 30200", "速度 1710"]},
+	{"id": "504002", "name": "奥斯曼", "job": "守护", "camp": 5, "stars": 3, "power": "1722000", "level": "80/220", "attrs": ["攻击 63400", "生命 602000", "防御 55200", "速度 1180"]},
+	{"id": "304001", "name": "米莉娅", "job": "射手", "camp": 3, "stars": 3, "power": "1699000", "level": "78/220", "attrs": ["攻击 84600", "生命 336000", "防御 28800", "速度 1765"]},
+	{"id": "204001", "name": "阿瓦隆", "job": "战士", "camp": 1, "stars": 3, "power": "1586000", "level": "76/220", "attrs": ["攻击 74200", "生命 468000", "防御 39200", "速度 1450"]},
 ]
 
 var design_root: Control
 var hero_layer: Control
 var hero_spine: Node2D
 var hero_image: TextureRect
+var power_label: Label
+var top_bar: HBoxContainer
 var title_label: Label
 var detail_panel: Control
+var equipment_panel: Control
 var tab_panel: Control
 var side_panel: Control
 var head_list: VBoxContainer
+var voice_player: AudioStreamPlayer
+var full_preview_exit_button: Button
 var tab_buttons: Array[Button] = []
 var prev_button: Button
 var next_button: Button
 var named_resources: Dictionary = {}
+var voice_index: Dictionary = {}
+var hero_spine_index: Dictionary = {}
+var hero_catalog: Array = []
 var selected_hero := 0
 var selected_tab := 0
 var selected_animation := 0
+var selected_skin := 0
+var voice_cursor := 0
+var full_preview := false
 
 func _ready() -> void:
 	_load_named_resources()
+	_load_voice_index()
+	_load_hero_spine_index()
+	_load_hero_catalog()
 	_build_ui()
 	_apply_navigation_args()
 	_apply_cmdline_args()
@@ -78,35 +104,102 @@ func _build_ui() -> void:
 	shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	design_root.add_child(shade)
 
+	_build_prefab_chrome()
+
+	voice_player = AudioStreamPlayer.new()
+	add_child(voice_player)
+
 	_build_top_bar()
 	_build_side_panel()
 	_build_hero_stage()
+	_build_power_strip()
+	_build_equipment_panel()
 	_build_tabs()
 	_build_detail_panel()
+	_build_bottom_nav()
+	_build_full_preview_exit()
 	_layout_design_root()
 	_apply_hero()
 	_refresh_all()
 
 func _build_top_bar() -> void:
 	var top := HBoxContainer.new()
-	top.anchor_left = 1.0
-	top.anchor_right = 1.0
-	top.offset_left = -720
-	top.offset_top = 8
-	top.offset_right = -12
+	top_bar = top
+	top.anchor_left = 0.0
+	top.anchor_right = 0.0
+	top.offset_left = 186
+	top.offset_top = 12
+	top.offset_right = 438
 	top.offset_bottom = 42
 	top.alignment = BoxContainer.ALIGNMENT_END
 	top.add_theme_constant_override("separation", 6)
 	add_child(top)
 
 	title_label = Label.new()
-	title_label.text = "HeroMainPre"
-	title_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	title_label.text = ""
+	title_label.visible = false
+	title_label.custom_minimum_size = Vector2.ZERO
 	top.add_child(title_label)
 	Navigation.add_buttons(top)
-	_add_top_button(top, "主城", func(): Navigation.go(HOME_SCENE))
-	_add_top_button(top, "Prefab", func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "英雄"}))
+	_add_top_button(top, "Prefab", func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "英雄详情"}))
 	_add_top_button(top, "Spine", func(): Navigation.go(SPINE_VIEWER))
+
+func _build_prefab_chrome() -> void:
+	var top_band := ColorRect.new()
+	top_band.position = Vector2(0, 0)
+	top_band.size = Vector2(DESIGN_SIZE.x, 58)
+	top_band.color = Color(0.015, 0.018, 0.03, 0.34)
+	top_band.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	design_root.add_child(top_band)
+
+	var bottom_band := ColorRect.new()
+	bottom_band.position = Vector2(0, 621)
+	bottom_band.size = Vector2(DESIGN_SIZE.x, 99)
+	bottom_band.color = Color(0.015, 0.018, 0.03, 0.42)
+	bottom_band.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	design_root.add_child(bottom_band)
+
+	var side_split := ColorRect.new()
+	side_split.position = Vector2(1004, 0)
+	side_split.size = Vector2(2, DESIGN_SIZE.y)
+	side_split.color = Color(0.88, 0.74, 0.43, 0.22)
+	side_split.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	design_root.add_child(side_split)
+
+	_add_resource_bar(Vector2(754, 12), "image/equipment/101", "2.25M")
+	_add_resource_bar(Vector2(920, 12), "image/equipment/104", "102.70M")
+	_add_resource_bar(Vector2(1090, 12), "image/equipment/102", "4579")
+
+	var back := Button.new()
+	back.text = "<"
+	back.position = Vector2(46, 16)
+	back.size = Vector2(54, 38)
+	back.tooltip_text = "返回"
+	back.pressed.connect(func(): Navigation.go(HOME_SCENE))
+	design_root.add_child(back)
+
+	var home := Button.new()
+	home.text = ""
+	home.position = Vector2(120, 16)
+	home.size = Vector2(54, 38)
+	home.tooltip_text = "主城"
+	home.pressed.connect(func(): Navigation.go(HOME_SCENE))
+	design_root.add_child(home)
+	_add_sprite_frame_image(home, ATLAS_1F, Rect2i(787, 551, 152, 141), Vector2(8, -5), Vector2(42, 38))
+
+func _add_resource_bar(position: Vector2, icon_path: String, text: String) -> void:
+	var box := Control.new()
+	box.position = position
+	box.size = Vector2(144, 30)
+	design_root.add_child(box)
+	var bg := ColorRect.new()
+	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	bg.color = Color(0.035, 0.04, 0.07, 0.80)
+	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	box.add_child(bg)
+	_add_named_image_to(box, icon_path, Vector2(-4, -3), Vector2(38, 38))
+	_add_label(box, text, Vector2(38, 3), Vector2(78, 24), 16, Color(0.95, 0.96, 1.0))
+	_add_label(box, "+", Vector2(116, -1), Vector2(26, 28), 24, Color(1.0, 0.92, 0.58)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 func _add_top_button(parent: HBoxContainer, text: String, callback: Callable) -> void:
 	var button := Button.new()
@@ -117,42 +210,42 @@ func _add_top_button(parent: HBoxContainer, text: String, callback: Callable) ->
 
 func _build_side_panel() -> void:
 	side_panel = Control.new()
-	side_panel.position = Vector2(18, 80)
-	side_panel.size = Vector2(216, 560)
+	side_panel.position = Vector2(34, 92)
+	side_panel.size = Vector2(190, 546)
 	design_root.add_child(side_panel)
 
 	var name_bg := ColorRect.new()
 	name_bg.position = Vector2(0, 0)
-	name_bg.size = Vector2(196, 146)
-	name_bg.color = Color(0.04, 0.045, 0.075, 0.72)
+	name_bg.size = Vector2(182, 134)
+	name_bg.color = Color(0.035, 0.04, 0.065, 0.76)
 	name_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	side_panel.add_child(name_bg)
 
-	_add_named_image_to(side_panel, "image/comHeroGrid/cm_frame_TouXiangDi5", Vector2(14, 14), Vector2(68, 68))
-	_add_label(side_panel, "", Vector2(90, 18), Vector2(104, 28), 20, Color(1.0, 0.88, 0.52)).name = "hero_name"
-	_add_label(side_panel, "", Vector2(90, 50), Vector2(104, 24), 15, Color(0.78, 0.86, 1.0)).name = "hero_job"
-
-	for i in 5:
-		_add_named_image_to(side_panel, "image/comHeroGrid/cm_icon_XingXing1_1", Vector2(16 + i * 27, 100), Vector2(24, 24))
+	_add_named_image_to(side_panel, "image/comHeroGrid/cm_frame_TouXiangDi5", Vector2(0, 0), Vector2(62, 62))
+	_add_label(side_panel, "", Vector2(70, 6), Vector2(126, 28), 20, Color(1.0, 0.88, 0.52)).name = "hero_name"
+	_add_label(side_panel, "", Vector2(70, 39), Vector2(126, 24), 15, Color(0.78, 0.86, 1.0)).name = "hero_job"
+	var quality := TextureRect.new()
+	quality.name = "quality_tag"
+	quality.position = Vector2(-14, 74)
+	quality.size = Vector2(148, 68)
+	quality.texture = _load_texture(HERO_BOOK_TAG_TEX)
+	quality.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	quality.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	quality.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	side_panel.add_child(quality)
 
 	for i in 3:
 		var icon := Button.new()
-		icon.position = Vector2(18, 232 + i * 68)
+		icon.position = Vector2(18, 220 + i * 58)
 		icon.size = Vector2(54, 54)
 		icon.text = ""
 		icon.add_theme_font_size_override("font_size", 12)
 		side_panel.add_child(icon)
 		_add_named_image_to(icon, ["image/common/cm_btn_PingLun", "image/common/cm_btn_ShiZhuang", "image/common/cm_icon_GongJi"][i], Vector2(5, 5), Vector2(44, 44))
 
-	var scroll := ScrollContainer.new()
-	scroll.position = Vector2(86, 156)
-	scroll.size = Vector2(76, 398)
-	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	side_panel.add_child(scroll)
-
 	head_list = VBoxContainer.new()
-	head_list.add_theme_constant_override("separation", 10)
-	scroll.add_child(head_list)
+	head_list.visible = false
+	side_panel.add_child(head_list)
 
 func _build_hero_stage() -> void:
 	hero_layer = Control.new()
@@ -172,15 +265,15 @@ func _build_hero_stage() -> void:
 	var hit := Button.new()
 	hit.flat = true
 	hit.text = ""
-	hit.position = Vector2(220, 54)
-	hit.size = Vector2(430, 600)
-	hit.tooltip_text = "切换动作"
-	hit.pressed.connect(_cycle_animation)
+	hit.position = Vector2(248, 38)
+	hit.size = Vector2(448, 612)
+	hit.tooltip_text = "切换动作 / 播放语音"
+	hit.pressed.connect(_on_hero_clicked)
 	hero_layer.add_child(hit)
 
 	prev_button = Button.new()
 	prev_button.text = "<"
-	prev_button.position = Vector2(166, 322)
+	prev_button.position = Vector2(120, 311)
 	prev_button.size = Vector2(42, 78)
 	prev_button.tooltip_text = "上一个英雄"
 	prev_button.pressed.connect(_previous_hero)
@@ -188,16 +281,47 @@ func _build_hero_stage() -> void:
 
 	next_button = Button.new()
 	next_button.text = ">"
-	next_button.position = Vector2(708, 322)
+	next_button.position = Vector2(710, 311)
 	next_button.size = Vector2(42, 78)
 	next_button.tooltip_text = "下一个英雄"
 	next_button.pressed.connect(_next_hero)
 	design_root.add_child(next_button)
 
+func _build_power_strip() -> void:
+	var strip := ColorRect.new()
+	strip.position = Vector2(392, 456)
+	strip.size = Vector2(252, 38)
+	strip.color = Color(0.045, 0.04, 0.055, 0.82)
+	strip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	design_root.add_child(strip)
+	power_label = _add_label(design_root, "", Vector2(438, 459), Vector2(188, 34), 26, Color(1.0, 0.88, 0.54))
+
+func _build_equipment_panel() -> void:
+	equipment_panel = VBoxContainer.new()
+	equipment_panel.position = Vector2(864, 128)
+	equipment_panel.size = Vector2(70, 340)
+	equipment_panel.z_index = 24
+	equipment_panel.add_theme_constant_override("separation", 12)
+	design_root.add_child(equipment_panel)
+	var icons := ["yx_icon_zhuangbei0", "yx_icon_zhuangbei1", "yx_icon_zhuangbei2", "yx_icon_zhuangbei3"]
+	for i in icons.size():
+		var slot := Control.new()
+		slot.custom_minimum_size = Vector2(58, 58)
+		equipment_panel.add_child(slot)
+		var bg := ColorRect.new()
+		bg.position = Vector2(0, 0)
+		bg.size = Vector2(58, 58)
+		bg.color = Color(0.03, 0.04, 0.065, 0.72)
+		bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		slot.add_child(bg)
+		_add_named_image_to(slot, "image/en/HeroPanel/%s" % icons[i], Vector2(8, 8), Vector2(42, 42))
+		_add_label(slot, str([3, 3, 2, 2][i]), Vector2(38, 30), Vector2(18, 20), 15, Color(1.0, 0.88, 0.50)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+
 func _build_tabs() -> void:
 	tab_panel = VBoxContainer.new()
-	tab_panel.position = Vector2(666, 118)
+	tab_panel.position = Vector2(1178, 72)
 	tab_panel.size = Vector2(88, 500)
+	tab_panel.z_index = 30
 	tab_panel.add_theme_constant_override("separation", 14)
 	design_root.add_child(tab_panel)
 	for label in ["培养", "装备", "升星", "战意", "衣装"]:
@@ -212,8 +336,9 @@ func _build_tabs() -> void:
 
 func _build_detail_panel() -> void:
 	detail_panel = Control.new()
-	detail_panel.position = Vector2(786, 86)
-	detail_panel.size = Vector2(404, 527)
+	detail_panel.position = Vector2(934, 68)
+	detail_panel.size = Vector2(254, 420)
+	detail_panel.z_index = 20
 	design_root.add_child(detail_panel)
 
 	var frame_bg := _add_named_image_to(detail_panel, "image/en/HeroPanel/yx_frame_BaiBan", Vector2.ZERO, detail_panel.size)
@@ -222,27 +347,75 @@ func _build_detail_panel() -> void:
 	var shade := ColorRect.new()
 	shade.name = "panel_bg"
 	shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	shade.color = Color(0.0, 0.0, 0.0, 0.58)
+	shade.color = Color(0.055, 0.055, 0.065, 0.54)
 	shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	detail_panel.add_child(shade)
+
+func _build_bottom_nav() -> void:
+	var nav := Control.new()
+	nav.position = Vector2(216, 506)
+	nav.size = Vector2(850, 90)
+	nav.z_index = 35
+	design_root.add_child(nav)
+	var line := ColorRect.new()
+	line.position = Vector2(0, 31)
+	line.size = Vector2(850, 2)
+	line.color = Color(0.9, 0.76, 0.42, 0.65)
+	line.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	nav.add_child(line)
+	var items := [
+		["城镇", ATLAS_1F, Rect2i(787, 551, 152, 141), Vector2(54, 48), HOME_SCENE],
+		["英雄", ATLAS_1A, Rect2i(3, 334, 150, 142), Vector2(54, 48), ""],
+		["召唤", ATLAS_1A, Rect2i(940, 89, 80, 80), Vector2(50, 50), "res://scenes/original_draw_card_panel.tscn"],
+		["冒险", ATLAS_1A, Rect2i(159, 345, 150, 145), Vector2(54, 50), ""],
+		["副本", ATLAS_1A, Rect2i(879, 276, 134, 133), Vector2(52, 50), ""],
+		["公会", ATLAS_1A, Rect2i(345, 232, 119, 126), Vector2(50, 50), ""],
+	]
+	for i in items.size():
+		var x := 20 + i * 142
+		var button := Button.new()
+		button.text = ""
+		button.position = Vector2(x, 0)
+		button.size = Vector2(104, 82)
+		if str(items[i][4]) != "":
+			button.pressed.connect(func(path := str(items[i][4])): Navigation.go(path))
+		nav.add_child(button)
+		var icon_size: Vector2 = items[i][3]
+		_add_sprite_frame_image(button, str(items[i][1]), items[i][2], Vector2((104 - icon_size.x) * 0.5, 0), icon_size)
+		_add_label(button, str(items[i][0]), Vector2(0, 49), Vector2(104, 28), 16, Color(1.0, 0.88, 0.54)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+
+func _build_full_preview_exit() -> void:
+	full_preview_exit_button = Button.new()
+	full_preview_exit_button.text = "返回"
+	full_preview_exit_button.position = Vector2(1116, 24)
+	full_preview_exit_button.size = Vector2(92, 42)
+	full_preview_exit_button.z_index = 80
+	full_preview_exit_button.visible = false
+	full_preview_exit_button.pressed.connect(_toggle_full_preview)
+	design_root.add_child(full_preview_exit_button)
 
 func _select_hero(index: int) -> void:
 	selected_hero = index
 	selected_animation = 0
+	selected_skin = 0
 	_refresh_all()
 
 func _select_tab(index: int) -> void:
 	selected_tab = index
+	if selected_tab != 4:
+		selected_skin = 0
 	_refresh_all()
 
 func _previous_hero() -> void:
-	selected_hero = wrapi(selected_hero - 1, 0, HEROES.size())
+	selected_hero = wrapi(selected_hero - 1, 0, _all_heroes().size())
 	selected_animation = 0
+	selected_skin = 0
 	_refresh_all()
 
 func _next_hero() -> void:
-	selected_hero = wrapi(selected_hero + 1, 0, HEROES.size())
+	selected_hero = wrapi(selected_hero + 1, 0, _all_heroes().size())
 	selected_animation = 0
+	selected_skin = 0
 	_refresh_all()
 
 func _refresh_all() -> void:
@@ -252,24 +425,36 @@ func _refresh_all() -> void:
 	_refresh_detail()
 
 func _apply_hero() -> void:
-	var hero: Dictionary = HEROES[selected_hero]
-	title_label.text = "HeroMainPre | %s | %s" % [hero.name, _current_animation_name(hero)]
-	if hero.has("spine"):
+	var hero: Dictionary = _current_hero()
+	var body_id := _current_body_id(hero)
+	title_label.text = "HeroBookDetailPre | %s | %s | body %s" % [hero.get("name", hero.get("id", "")), _current_animation_name(hero), body_id]
+	var spine_path := _spine_path_for_body(body_id, hero)
+	if spine_path != "" and body_id == str(hero.get("id", "")):
 		hero_image.visible = false
 		hero_spine.visible = true
-		if hero_spine.load_spine(str(hero.spine), _current_animation_name(hero)):
+		if hero_spine.load_spine(spine_path, _current_animation_name(hero)):
 			_fit_spine(hero)
 	else:
 		hero_spine.visible = false
 		hero_image.visible = true
-		var texture := _load_texture(str(hero.get("head", "")))
+		var texture := _texture_for_body(body_id)
 		hero_image.texture = texture
-		hero_image.position = Vector2(270, 80)
-		hero_image.size = Vector2(360, 520)
+		if full_preview:
+			hero_image.position = Vector2(314, 24)
+			hero_image.size = Vector2(650, 670)
+		else:
+			hero_image.position = Vector2(276, 64)
+			hero_image.size = Vector2(452, 590)
+
+func _on_hero_clicked() -> void:
+	_cycle_animation()
+	var sound_id := str(HERO_TOUCH_SOUNDS[voice_cursor % HERO_TOUCH_SOUNDS.size()])
+	voice_cursor += 1
+	_play_hero_voice(sound_id)
 
 func _cycle_animation() -> void:
-	var hero: Dictionary = HEROES[selected_hero]
-	if not hero.has("spine"):
+	var hero: Dictionary = _current_hero()
+	if _spine_path_for_body(_current_body_id(hero), hero) == "":
 		return
 	var animations := _animation_names(hero)
 	if animations.size() <= 1:
@@ -282,13 +467,23 @@ func _cycle_animation() -> void:
 func _refresh_side_panel() -> void:
 	if side_panel == null:
 		return
-	var hero: Dictionary = HEROES[selected_hero]
+	var hero: Dictionary = _current_hero()
 	var name_label := side_panel.get_node_or_null("hero_name") as Label
 	if name_label:
-		name_label.text = str(hero.name)
+		name_label.text = str(hero.get("name", hero.get("id", "")))
 	var job_label := side_panel.get_node_or_null("hero_job") as Label
 	if job_label:
-		job_label.text = str(hero.job)
+		job_label.text = str(hero.get("job", "未知"))
+	if power_label:
+		power_label.text = "⚡ %s" % hero.get("power", "0")
+	for child in side_panel.get_children():
+		if child.name.begins_with("dynamic_star"):
+			child.queue_free()
+	for i in 5:
+		var star_name := "image/comHeroGrid/cm_icon_XingXing1_1" if i < int(hero.get("stars", 5)) else "image/comHeroGrid/cm_icon_XingXing1"
+		var star := _add_named_image_to(side_panel, star_name, Vector2(16 + i * 27, 100), Vector2(24, 24))
+		if star:
+			star.name = "dynamic_star_%d" % i
 	for child in side_panel.get_children():
 		if child.name == "dynamic_head":
 			child.queue_free()
@@ -296,7 +491,7 @@ func _refresh_side_panel() -> void:
 	head_root.name = "dynamic_head"
 	head_root.position = Vector2.ZERO
 	side_panel.add_child(head_root)
-	_add_named_image_to(head_root, "image/head/%s" % hero.id, Vector2(22, 22), Vector2(52, 52))
+	_add_named_image_to(head_root, "image/head/%s" % hero.get("id", ""), Vector2(8, 8), Vector2(46, 46))
 	_refresh_head_list()
 
 func _refresh_head_list() -> void:
@@ -304,8 +499,9 @@ func _refresh_head_list() -> void:
 		return
 	for child in head_list.get_children():
 		child.queue_free()
-	for i in HEROES.size():
-		var hero: Dictionary = HEROES[i]
+	var heroes := _all_heroes()
+	for i in heroes.size():
+		var hero: Dictionary = heroes[i]
 		var button := Button.new()
 		button.text = ""
 		button.custom_minimum_size = Vector2(64, 64)
@@ -324,26 +520,28 @@ func _refresh_tabs() -> void:
 			_add_sprite_frame_image(button, HERO_TAB_ON_ATLAS, HERO_TAB_ON_RECT, Vector2(12, -8), Vector2(64, 100), true, Vector2i(64, 100), Vector2.ZERO, TextureRect.STRETCH_SCALE)
 		else:
 			_add_sprite_frame_image(button, HERO_TAB_OFF_ATLAS, HERO_TAB_OFF_RECT, Vector2(16, -8), Vector2(57, 100), false, Vector2i(57, 100), Vector2.ZERO, TextureRect.STRETCH_SCALE)
-		_add_label(button, ["培养", "装备", "升星", "战意", "衣装"][i], Vector2(0, 12), button.custom_minimum_size, 18, Color(0.92, 0.9, 0.82)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		var tab_label := _add_label(button, ["培养", "装备", "升星", "战意", "衣装"][i], Vector2(-16, 12), Vector2(120, 62), 18, Color(0.92, 0.9, 0.82))
+		tab_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		tab_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 
 func _refresh_detail() -> void:
 	for child in detail_panel.get_children():
 		if child.name == "panel_bg" or child.name == "panel_frame":
 			continue
 		child.queue_free()
-	var hero: Dictionary = HEROES[selected_hero]
+	var hero: Dictionary = _current_hero()
 	var root := Control.new()
 	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	root.offset_left = 22
+	root.offset_left = 18
 	root.offset_top = 18
-	root.offset_right = -20
+	root.offset_right = -16
 	root.offset_bottom = -18
 	detail_panel.add_child(root)
 
-	_add_label(root, "%s  Lv.%s" % [hero.name, hero.level], Vector2(0, 0), Vector2(340, 34), 24, Color(1.0, 0.87, 0.5))
-	_add_label(root, "%s  高输出 物理伤害" % hero.job, Vector2(0, 34), Vector2(340, 28), 16, Color(0.77, 0.86, 1.0))
-	_add_named_image_to(root, "image/en/HeroPanel/yx_frame_ZhanLi", Vector2(-6, 70), Vector2(360, 36))
-	_add_label(root, "战力  %s" % hero.power, Vector2(0, 70), Vector2(340, 34), 22, Color(1.0, 0.96, 0.78))
+	_add_label(root, "%s  Lv.%s" % [hero.get("name", hero.get("id", "")), hero.get("level", "1")], Vector2(0, 0), Vector2(316, 34), 23, Color(1.0, 0.87, 0.5))
+	_add_label(root, "%s  %s  物理伤害" % [hero.get("quality", "SSR"), hero.get("job", "未知")], Vector2(0, 34), Vector2(316, 28), 16, Color(0.77, 0.86, 1.0))
+	_add_named_image_to(root, "image/en/HeroPanel/yx_frame_ZhanLi", Vector2(-6, 70), Vector2(326, 36))
+	_add_label(root, "战力  %s" % hero.get("power", "0"), Vector2(0, 70), Vector2(316, 34), 22, Color(1.0, 0.96, 0.78))
 
 	if selected_tab == 0:
 		_add_culture_tab(root, hero)
@@ -357,11 +555,12 @@ func _refresh_detail() -> void:
 		_add_skin_tab(root)
 
 func _add_culture_tab(root: Control, hero: Dictionary) -> void:
-	for i in hero.attrs.size():
-		_add_label(root, str(hero.attrs[i]), Vector2(0, 126 + i * 40), Vector2(230, 30), 18, Color(0.9, 0.96, 1.0))
-	_add_progress(root, Vector2(0, 306), Vector2(260, 20), 0.72, "等级  %s" % hero.level)
-	_add_action_button(root, "升2级", Vector2(42, 374), Vector2(130, 42))
-	_add_action_button(root, "进阶", Vector2(194, 374), Vector2(130, 42))
+	var attrs: Array = hero.get("attrs", _generated_attrs(hero))
+	for i in attrs.size():
+		_add_label(root, str(attrs[i]), Vector2(0, 126 + i * 40), Vector2(210, 30), 18, Color(0.9, 0.96, 1.0))
+	_add_progress(root, Vector2(0, 306), Vector2(246, 20), 0.72, "等级  %s" % hero.get("level", "1"))
+	_add_action_button(root, "升2级", Vector2(26, 374), Vector2(102, 42))
+	_add_action_button(root, "进阶", Vector2(142, 374), Vector2(102, 42))
 
 func _add_equipment_tab(root: Control) -> void:
 	var equips := ["yx_icon_zhuangbei0", "yx_icon_zhuangbei1", "yx_icon_zhuangbei2", "yx_icon_zhuangbei3", "yx_icon_zhuangbei4", "yx_icon_zhuangbei5"]
@@ -392,8 +591,16 @@ func _add_will_tab(root: Control) -> void:
 	_add_action_button(root, "激活战意", Vector2(0, 374), Vector2(150, 42))
 
 func _add_skin_tab(root: Control) -> void:
-	_add_label(root, "敬请期待", Vector2(0, 160), Vector2(320, 44), 24, Color(0.92, 0.92, 0.96))
-	_add_action_button(root, "前往获取", Vector2(0, 374), Vector2(150, 42))
+	var hero: Dictionary = _current_hero()
+	var skins := _skin_body_ids(hero)
+	var body_id := _current_body_id(hero)
+	_add_label(root, "衣装预览", Vector2(0, 126), Vector2(300, 30), 22, Color(1.0, 0.86, 0.52))
+	_add_label(root, "skinToggle 打开 skinBox，隐藏 rightBox 和前后切换，skinLH.body 使用衣装 body。", Vector2(0, 164), Vector2(316, 62), 15, Color(0.80, 0.90, 1.0))
+	_add_label(root, "当前 body: %s  (%d/%d)" % [body_id, selected_skin + 1, skins.size()], Vector2(0, 238), Vector2(320, 28), 17, Color(0.92, 0.96, 1.0))
+	_add_action_button(root, "下个衣装", Vector2(0, 300), Vector2(108, 38), _next_skin)
+	_add_action_button(root, "播放展示", Vector2(122, 300), Vector2(108, 38), func(): _play_hero_voice("7-1"))
+	_add_action_button(root, "全屏预览", Vector2(0, 354), Vector2(108, 38), _toggle_full_preview)
+	_add_action_button(root, "前往获取", Vector2(122, 354), Vector2(108, 38), func(): _play_hero_voice("10"))
 
 func _add_progress(parent: Control, position: Vector2, size: Vector2, value: float, text: String) -> void:
 	var bg := ColorRect.new()
@@ -408,18 +615,21 @@ func _add_progress(parent: Control, position: Vector2, size: Vector2, value: flo
 	parent.add_child(fill)
 	_add_label(parent, text, position + Vector2(0, -28), Vector2(size.x, 24), 16, Color(0.96, 0.9, 0.68))
 
-func _add_action_button(parent: Control, text: String, position: Vector2, size: Vector2) -> void:
+func _add_action_button(parent: Control, text: String, position: Vector2, size: Vector2, callback := Callable()) -> Button:
 	var button := Button.new()
 	button.text = ""
 	button.position = position
 	button.size = size
+	if callback.is_valid():
+		button.pressed.connect(callback)
 	parent.add_child(button)
 	_add_named_image_to(button, "image/common/cm_btn_LvSe1", Vector2.ZERO, size)
 	_add_label(button, text, Vector2.ZERO, size, 18, Color(0.95, 1.0, 0.92)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	return button
 
 func _add_head_icon(parent: Control, hero: Dictionary, position: Vector2, size: Vector2) -> void:
 	_add_named_image_to(parent, "image/comHeroGrid/cm_frame_TouXiangDi5", position, size)
-	_add_named_image_to(parent, "image/head/%s" % hero.id, position + Vector2(8, 8), size - Vector2(16, 16))
+	_add_named_image_to(parent, "image/head/%s" % hero.get("id", ""), position + Vector2(8, 8), size - Vector2(16, 16))
 	_add_named_image_to(parent, "image/comHeroGrid/cm_tag_SSR1", position, Vector2(34, 22))
 
 func _add_named_image_to(parent: Control, resource_name: String, position: Vector2, size: Vector2) -> TextureRect:
@@ -473,6 +683,35 @@ func _load_named_resources() -> void:
 	if typeof(parsed) == TYPE_DICTIONARY:
 		named_resources = parsed
 
+func _load_voice_index() -> void:
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(HERO_VOICE_INDEX_PATH))
+	if typeof(parsed) == TYPE_DICTIONARY:
+		voice_index = parsed
+
+func _load_hero_spine_index() -> void:
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(HERO_SPINE_INDEX_PATH))
+	if typeof(parsed) == TYPE_DICTIONARY:
+		hero_spine_index = parsed.get("heroes", {})
+
+func _load_hero_catalog() -> void:
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(HERO_CATALOG_PATH))
+	if typeof(parsed) != TYPE_ARRAY:
+		return
+	var known_by_id := {}
+	for hero in HEROES:
+		known_by_id[str(hero.get("id", ""))] = hero
+	hero_catalog.clear()
+	for item in parsed:
+		if typeof(item) != TYPE_DICTIONARY:
+			continue
+		var hero: Dictionary = item.duplicate(true)
+		var known: Dictionary = known_by_id.get(str(hero.get("id", "")), {})
+		for key in known.keys():
+			hero[key] = known[key]
+		if not hero.has("attrs"):
+			hero["attrs"] = _generated_attrs(hero)
+		hero_catalog.append(hero)
+
 func _add_label(parent: Control, text: String, position: Vector2, size: Vector2, font_size: int, color: Color) -> Label:
 	var label := Label.new()
 	label.text = text
@@ -491,12 +730,83 @@ func _fit_spine(hero: Dictionary) -> void:
 	var bounds: Rect2 = hero_spine.get_draw_bounds()
 	if bounds.size.x <= 0.0 or bounds.size.y <= 0.0:
 		return
-	var target: Rect2 = hero.get("target", Rect2(Vector2(330, 88), Vector2(430, 600)))
+	var target: Rect2 = hero.get("target", Rect2(Vector2(252, 34), Vector2(526, 626)))
+	if not hero.has("target"):
+		target = Rect2(Vector2(252, 34), Vector2(526, 626))
+	if full_preview:
+		target = Rect2(Vector2(300, 28), Vector2(680, 660))
 	var scale_value: float = min(target.size.x / bounds.size.x, target.size.y / bounds.size.y)
 	hero_spine.scale = Vector2(scale_value, scale_value)
 	var bounds_center := bounds.position + bounds.size * 0.5
 	var target_center := target.position + target.size * 0.5
 	hero_spine.position = target_center - bounds_center * scale_value
+
+func _texture_for_body(body_id: String) -> Texture2D:
+	var texture := _texture_for_named_resource("image/skin/showImg/%s" % body_id)
+	if texture == null:
+		texture = _texture_for_named_resource("image/heroBook/%s" % body_id)
+	if texture == null:
+		texture = _texture_for_named_resource("image/head/%s" % body_id)
+	return texture
+
+func _skin_body_ids(hero: Dictionary) -> Array[String]:
+	var ids: Array[String] = [str(hero.get("id", ""))]
+	for skin in hero.get("skins", []):
+		var skin_id := str(skin)
+		if skin_id != ids[0] and not ids.has(skin_id):
+			ids.append(skin_id)
+	return ids
+
+func _current_body_id(hero: Dictionary) -> String:
+	var skins := _skin_body_ids(hero)
+	selected_skin = clampi(selected_skin, 0, max(skins.size() - 1, 0))
+	return skins[selected_skin]
+
+func _next_skin() -> void:
+	var skins := _skin_body_ids(_current_hero())
+	selected_skin = wrapi(selected_skin + 1, 0, max(skins.size(), 1))
+	_refresh_all()
+
+func _toggle_full_preview() -> void:
+	full_preview = not full_preview
+	if top_bar:
+		top_bar.visible = not full_preview
+	if side_panel:
+		side_panel.visible = not full_preview
+	if tab_panel:
+		tab_panel.visible = not full_preview
+	if detail_panel:
+		detail_panel.visible = not full_preview
+	if equipment_panel:
+		equipment_panel.visible = not full_preview
+	if prev_button:
+		prev_button.visible = not full_preview
+	if next_button:
+		next_button.visible = not full_preview
+	if full_preview_exit_button:
+		full_preview_exit_button.visible = full_preview
+	_apply_hero()
+
+func _play_hero_voice(sound_id: String) -> void:
+	var hero_id := str(_current_hero().get("id", ""))
+	var hero_voice: Dictionary = voice_index.get(hero_id, {})
+	var entry: Dictionary = hero_voice.get(sound_id, {})
+	if entry.is_empty():
+		return
+	var path := str(entry.get("path", ""))
+	var stream := _load_mp3_stream(path)
+	if stream:
+		voice_player.stop()
+		voice_player.stream = stream
+		voice_player.play()
+
+func _load_mp3_stream(path: String) -> AudioStreamMP3:
+	var file := FileAccess.open(path, FileAccess.READ)
+	if file == null:
+		return null
+	var stream := AudioStreamMP3.new()
+	stream.data = file.get_buffer(file.get_length())
+	return stream
 
 func _current_animation_name(hero: Dictionary) -> String:
 	var animations := _animation_names(hero)
@@ -506,7 +816,7 @@ func _current_animation_name(hero: Dictionary) -> String:
 	return str(animations[selected_animation])
 
 func _animation_names(hero: Dictionary) -> Array:
-	var path := str(hero.get("spine", ""))
+	var path := _spine_path_for_body(str(hero.get("id", "")), hero)
 	if path == "":
 		return []
 	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
@@ -521,27 +831,77 @@ func _animation_names(hero: Dictionary) -> Array:
 		names.push_front("idle")
 	return names
 
+func _spine_path_for_body(body_id: String, hero: Dictionary) -> String:
+	if body_id == str(hero.get("id", "")) and hero.has("spine"):
+		return str(hero.get("spine", ""))
+	var entry: Dictionary = hero_spine_index.get(body_id, {})
+	return str(entry.get("runtime", ""))
+
 func _apply_cmdline_args() -> void:
 	var args := OS.get_cmdline_args()
 	args.append_array(OS.get_cmdline_user_args())
 	var hero_arg := _cmd_arg_value(args, "--hero-index")
 	if hero_arg.is_valid_int():
-		selected_hero = clampi(int(hero_arg), 0, HEROES.size() - 1)
+		selected_hero = clampi(int(hero_arg), 0, _all_heroes().size() - 1)
+	var hero_id := _cmd_arg_value(args, "--hero-id")
+	if hero_id != "":
+		_select_hero_id(hero_id)
 	var tab_arg := _cmd_arg_value(args, "--hero-tab")
 	if tab_arg.is_valid_int():
 		selected_tab = clampi(int(tab_arg), 0, 4)
 	_refresh_all()
+	if "--hero-full-preview" in args:
+		call_deferred("_toggle_full_preview")
+	if "--hero-click-once" in args:
+		call_deferred("_on_hero_clicked")
 
 func _apply_navigation_args() -> void:
 	var scene_args := Navigation.consume_scene_args()
 	var hero_id := str(scene_args.get("hero_id", ""))
 	if hero_id == "":
 		return
-	for i in HEROES.size():
-		if str(HEROES[i].id) == hero_id:
+	var heroes := _all_heroes()
+	for i in heroes.size():
+		if str(heroes[i].get("id", "")) == hero_id:
+			_select_hero(i)
+			return
+
+func _select_hero_id(hero_id: String) -> void:
+	var heroes := _all_heroes()
+	for i in heroes.size():
+		if str(heroes[i].get("id", "")) == hero_id:
 			selected_hero = i
 			selected_animation = 0
 			return
+
+func _all_heroes() -> Array:
+	var source: Array = HEROES if hero_catalog.is_empty() else hero_catalog
+	if hero_spine_index.is_empty():
+		return source
+	var result := []
+	for hero in source:
+		if _has_spine_runtime(str(hero.get("id", ""))):
+			result.append(hero)
+	return result
+
+func _current_hero() -> Dictionary:
+	var heroes := _all_heroes()
+	if heroes.is_empty():
+		return {}
+	selected_hero = clampi(selected_hero, 0, heroes.size() - 1)
+	return heroes[selected_hero]
+
+func _has_spine_runtime(body_id: String) -> bool:
+	return typeof(hero_spine_index.get(body_id, null)) == TYPE_DICTIONARY
+
+func _generated_attrs(hero: Dictionary) -> Array:
+	var power := int(str(hero.get("power", "600000")))
+	return [
+		"攻击 %d" % max(1000, int(power / 25)),
+		"生命 %d" % max(10000, int(power / 5)),
+		"防御 %d" % max(500, int(power / 72)),
+		"速度 %d" % (900 + int(str(hero.get("id", "0")).to_int() % 900)),
+	]
 
 func _cmd_arg_value(args: Array, key: String) -> String:
 	var index := args.find(key)

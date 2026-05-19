@@ -391,8 +391,22 @@ DrawCardActivityRenWuItemCom
 - 已导出 `HeroTabPre.json` 和 `HeroListPre.json`。`HeroTabPre` 确认页签选中态使用 `cm_tab2_on`，未选中态在 `HeroMainPre` 中可见 `cm_tab2_off`；`HeroListPre` 是完整英雄列表页，不等同于 `HeroMainPre` 左侧小入口。
 - 已继续导出英雄列表相关子 prefab：`HeroGridPre.json`、`HeroBookItemPre.json`、`HeroLevelSharedPre.json`、`HeroNormalarrayPre.json`、`HeroStarPre.json`。
 - `HeroGridPre` 字段绑定已确认：`imgHeroHead/imgZhenYing/imgTag/imgDi/imgKuamg/imgLock/imgHongdian/imgZhan/imgYuan/imgJiBan` 等节点由 `HeroGridCom.setData(...)` 运行时写入；当前列表页已用 `comHeroGrid` 头像框、阵营、SSR、星级、红点、上阵/助战状态做本地 mock。
-- `HeroBookItemPre` 是图鉴竖卡结构，包含 `ImgDi/ImgDi2/ImgKuang/heroImg/heroName/lblStar`；当前图鉴页已按竖卡布局重建，但 `heroImg` 仍使用头像代替，后续需要追 `image/heroBook/<id>` 或对应长图资源。
+- `HeroBookItemPre` 是图鉴竖卡结构，包含 `ImgDi/ImgDi2/ImgKuang/heroImg/heroName/lblStar`；当前图鉴页已从 `data/named_resource_index.json` 使用 `image/heroBook/<id>` 长图资源，找不到长图时才回退头像。
 - `original_hero_panel.gd` 当前用 `HeroTabPre/HeroMainPre` 的 `cm_tab2_on/off` 替换 Godot 默认页签按钮，右侧详情面板使用 `image/en/HeroPanel/yx_frame_BaiBan` 并压暗，培养页按钮使用 `cm_btn_LvSe1`。
+- `original_hero_panel.gd` 的本地英雄池已和 `original_hero_list_panel.gd` 对齐到 10 个英雄；有 Spine runtime 的 `105004/205008/305006` 播放动态角色，其余英雄用 `image/heroBook/<id>` 图鉴立绘作为详情页主图。列表点击现在通过 `hero_id` 打开对应英雄，不再因为详情页缺少 id 而回到默认英雄。
+- 英雄详情源码补充线索：
+  - `HeroBookDetailPanel` 在 `assets/main/index.js:74392` 附近，`preUrl="Prefab/HeroPanel/HeroBookDetailPre"`，包含 `skinToggle/skinBox/skinLH`、`btnChaKan` 和 `xuanzuan`。
+  - `showSkin()` 会打开 `skinBox`、隐藏 `rightBox`、隐藏前后切换按钮、隐藏 `heroBodyBox`，并显示 `skinBodyBox`；`skinLH.body = skinData.data.body` 后会用 `image/skin/showImg/<body>` 显示皮肤图。
+  - `btnChaKan()` 是全屏/查看逻辑：设置 `isSee=true`，隐藏主导航 `DaohangPanel.instance.active=false` 和 `showBox`，只保留角色展示与旋转/返回操作。
+  - `MySoundManager.playHeroSound(bodyID, soundId)` 在 `assets/main/index.js:116001` 附近，真实路径拼为 `sound/cv/<bodyID>/<soundId>`；点击/战斗常见 soundId 是 `[1,2,3,5]`，胜利/展示类还有 `7-1/7-2/8-1/8-2/9/10`。
+- Godot 侧已新增 `tools/export_hero_voice_index.py`，从 `assets/resources/config.json` 导出 `data/hero_voice_index.json`，并把 10 个本地英雄的 110 个 MP3 拷贝到 `assets/hero_voice/<hero>/<sound>.mp3`。`original_hero_panel.gd` 点击角色会切动作并按 `1/2/3/5` 轮流播放语音，衣装页“播放展示”使用 `7-1`，“前往获取”使用 `10`。
+- `original_hero_panel.gd` 的衣装页已做成本地交互：`下个衣装` 在基础 body 与可找到的 `<id>1` 资源间切换；`全屏预览` 会隐藏顶栏、左侧头像栏、右侧面板、页签和前后切换，只保留角色和返回按钮，模拟原始 `btnChaKan()`。
+- 英雄流程回归参数：
+  - `--hero-list-open-id <id> --capture-hero-panel <png>`：从英雄列表直接按 id 打开对应详情页。
+  - `--hero-list-click-at 200,260 --capture-hero-panel <png>`：模拟点击列表首个英雄卡片进入详情页。
+  - `--hero-id <id> --capture-hero-panel <png>`：直接打开对应英雄详情页。
+  - `--hero-full-preview --capture-hero-panel <png>`：打开详情页后进入全屏预览。
+  - `--hero-click-once --capture-hero-panel <png>`：模拟点击角色，验证切动作和语音加载。
 - 已新增独立背包/仓库界面 `scenes/original_bag_panel.tscn` / `scripts/original_bag_panel.gd`，主城底部“仓库”入口进入该场景，不再打开 prefab 预览器。
 - 独立背包界面参考 `BagPre.json` 手工实现左侧滚动网格、右侧分类按钮、详情区和底部操作按钮；本地 mock 图标来自 `data/equipment_icon_index.json` 的真实装备 SpriteFrame。
 - 独立背包界面支持页签切换和选中道具切换，并提供 `--bag-tab`、`--bag-item`、`--capture-bag-panel` 参数做截图回归。

@@ -20,7 +20,9 @@ func render() -> void:
 	if typeof(parsed) != TYPE_DICTIONARY:
 		return
 	var nodes: Array = parsed.get("nodes", [])
-	var mode := _origin_mode(nodes)
+	var mode := str(parsed.get("origin_mode", ""))
+	if mode == "":
+		mode = _origin_mode(nodes)
 	for node in _sorted_nodes(nodes):
 		_add_prefab_node(node, mode)
 
@@ -37,14 +39,10 @@ func _add_prefab_node(node: Dictionary, mode: String) -> void:
 	var texture_path := str(node.get("texture_path", ""))
 	var control: Control
 	if texture_path != "":
-		var image := TextureRect.new()
-		image.texture = _load_node_texture("res://" + texture_path, node)
-		if image.texture == null:
+		var texture := _load_node_texture("res://" + texture_path, node)
+		if texture == null:
 			return
-		image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		image.stretch_mode = TextureRect.STRETCH_SCALE
-		image.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		control = image
+		control = _make_sprite_control(texture, node)
 	elif draw_placeholders and _should_placeholder(name):
 		var panel := PanelContainer.new()
 		panel.modulate = Color(0.08, 0.07, 0.06, 0.52)
@@ -63,9 +61,9 @@ func _add_prefab_node(node: Dictionary, mode: String) -> void:
 		else:
 			return
 
-	var position := _arr_to_vec2(node.get("global_position", node.get("position", [0.0, 0.0])))
-	control.size = size
-	control.position = _cocos_to_screen(position, size, mode)
+	var rect := _node_rect(node, size, mode)
+	control.position = rect.position
+	control.size = rect.size
 	var rotation_z := float(node.get("rotation_z", 0.0))
 	if absf(rotation_z) > 0.01 and absf(rotation_z - 1.0) > 0.01:
 		control.rotation = deg_to_rad(rotation_z)
@@ -79,6 +77,38 @@ func _add_prefab_node(node: Dictionary, mode: String) -> void:
 		hit.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 		hit.pressed.connect(func(): _emit_node_pressed(name))
 		control.add_child(hit)
+
+func _make_sprite_control(texture: Texture2D, node: Dictionary) -> Control:
+	var sprite_type := str(node.get("sprite_type_name", "simple"))
+	var cap_insets: Array = node.get("sprite_cap_insets", [])
+	if sprite_type == "sliced" and cap_insets.size() >= 4:
+		var patch := NinePatchRect.new()
+		patch.texture = texture
+		patch.patch_margin_left = int(cap_insets[0])
+		patch.patch_margin_top = int(cap_insets[1])
+		patch.patch_margin_right = int(cap_insets[2])
+		patch.patch_margin_bottom = int(cap_insets[3])
+		patch.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		return patch
+	var image := TextureRect.new()
+	image.texture = texture
+	image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	if sprite_type == "tiled":
+		image.stretch_mode = TextureRect.STRETCH_TILE
+	else:
+		image.stretch_mode = TextureRect.STRETCH_SCALE
+	image.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return image
+
+func _node_rect(node: Dictionary, fallback_size: Vector2, mode: String) -> Rect2:
+	var screen_rect: Array = node.get("screen_rect", [])
+	if screen_rect.size() >= 4:
+		return Rect2(
+			Vector2(float(screen_rect[0]), float(screen_rect[1])),
+			Vector2(float(screen_rect[2]), float(screen_rect[3]))
+		)
+	var position := _arr_to_vec2(node.get("global_position", node.get("position", [0.0, 0.0])))
+	return Rect2(_cocos_to_screen(position, fallback_size, mode), fallback_size)
 
 func _emit_node_pressed(name: String) -> void:
 	if node_pressed.has(name):

@@ -6,6 +6,7 @@
 
 - `SOURCE_DIRECTORY_GUIDE.md`：目录、关键文件、反编译源码和工具脚本作用索引。
 - `RESTORE_LOGIN_TO_HOME.md`：启动加载页 -> 登录页 -> 选服页 -> 主城页专项还原梳理。
+- `HERO_RESOURCE_INVENTORY.md`：英雄资源专项分析，覆盖头像、图鉴、立绘 Prefab、战斗 Prefab、语音和衣装/变体。
 
 ## 阶段 1：资源索引与基础入口
 
@@ -43,14 +44,24 @@
   - `position`
   - `global_position`
 - Godot 预览使用 `global_position`，跳过 `_active=false`。
+- 已导出 Cocos 坐标复原字段：
+  - `origin_mode`：当前 prefab 使用中心坐标还是左下角设计坐标。
+  - `screen_position` / `screen_rect`：统一换算到 Godot 1280x720 设计画布后的左上角坐标和尺寸。
+  - `anchor`、`size`、`scale`、`rotation_z`：保留原始节点变换，供后续校验。
+- 已导出 Sprite 显示方式字段：
+  - `sprite_type_name`：`simple` / `sliced` / `tiled` / `filled` / `mesh`。
+  - `sprite_size_mode_name`：`custom` / `trimmed` / `raw`。
+  - `sprite_cap_insets`：九宫格边距。
+  - `sprite_fill_type`、`sprite_fill_start`、`sprite_fill_range`、`sprite_fill_center`：进度/填充类 Sprite 需要的参数。
+- `scripts/cocos_prefab_layer.gd` 已优先使用 `screen_rect`，并按 `sliced` 创建 `NinePatchRect`、按 `tiled` 使用平铺显示。
+- `scripts/cocos_prefab_preview.gd` 已同步优先使用 `screen_rect`，普通 Sprite 默认拉伸到节点尺寸，`tiled` 按平铺显示。
 
 下一步：
 
-- 解析并应用 anchor/pivot。
 - 解析 opacity/color。
-- 区分普通 Sprite、Button 状态图、九宫格 Sprite。
+- 继续补 `filled`、`mesh` Sprite 的专用渲染。
+- 继续校验 Button 状态图、Widget、Layout、ScrollView 和 Mask。
 - 支持 Label 文本和字体样式。
-- 支持 Widget、Layout、ScrollView。
 - 将 `cocos_prefab_layer.gd` 与 `cocos_prefab_preview.gd` 的渲染逻辑收敛，避免两套坐标/裁剪策略分叉。
 
 ## 阶段 3：主城还原
@@ -158,6 +169,37 @@
   - `assets/resources/native/1b/1baef3d2-6771-487a-84f3-f3222ae92456.png` -> `data/spine_runtime/YouDuoLa_LH.json`
 - `spine_character_viewer.tscn` 已增加左侧 Spine 列表，自动扫描 `data/spine_runtime/*.json`，当前可直接切换 `LaRuiOu_LH`、`SuLa_LH`、`YiKaLuoSi`、`YouDuoLa_LH`。
 - `spine_character_viewer.tscn` 已按骨骼绘制包围盒自动缩放/居中，动画按钮根据 skeleton 内 `animations` 动态生成。
+
+## 阶段 5：英雄列表和详情页
+
+状态：进行中。
+
+已完成：
+
+- 新增 `tools/export_hero_resource_inventory.py`，从 `assets/resources/config.json` 与 `data/named_resource_index.json` 生成英雄资源清单。
+- 新增 `data/hero_resource_inventory.json`，当前识别 75 个 6 位基础英雄 id：头像 75、图鉴立绘 75、`Prefab/HerolhPrefab` 75、`Prefab/HeroPrefab` 63、有 `sound/cv` 目录的英雄 61、`image/skin/showImg` 17。
+- 新增 `data/hero_catalog.json`，作为 Godot 英雄列表运行时目录。
+- 新增 `HERO_RESOURCE_INVENTORY.md`，记录英雄资源入口、源码字段链和离线品质推断规则。
+- 新增 `tools/export_hero_spine_runtime_batch.py`，批量从 `Prefab/HerolhPrefab/<body>` 导出详情页 RoleLh Spine runtime。
+- 新增 `data/hero_spine_runtime_index.json`，当前包含 79 个可播放 body：63 个基础英雄 + 16 个衣装/变体。
+- `original_hero_list_panel.gd` 已从硬编码 10 人改为优先读取 `hero_catalog.json`，按 `SSS > SSR > SR > R > N` 排序，卡片显示品质、阵营、头像、战力和锁定状态。
+- `original_hero_list_panel.gd` 和 `original_hero_panel.gd` 已同步读取 `hero_catalog.json` 和 `hero_spine_runtime_index.json`；英雄列表和详情页头像列表只展示有 RoleLh Spine runtime 的英雄。
+- `original_hero_panel.gd` 已按 `HeroMainPre.json` 的关键坐标做第一轮手工布局收敛：左上英雄信息、中央 `heroBodyBox`、右侧页签、右侧属性面板位置更接近原始 prefab。
+- 已参考 `D:\work\openclaw-workspace\arpg\nvshenres\英雄页.jpg` 补齐顶部资源条、底部战力条、底部主导航、右侧装备/技能竖列和最右页签列。
+
+当前限制：
+
+- `config.json` 只给资源路径，不包含完整静态英雄表；当前品质按资源完整度推断，不等同最终线上数值表。
+- 12 个 6 位 body 的 `HerolhPrefab` 没有可解析的 `_N$skeletonData`：`101001`、`102001`、`103001`、`201001`、`202001`、`203001`、`301001`、`302001`、`303001`、`403001`、`503001`、`605001`。这些当前不展示，后续继续查是否有其它替代动画资源。
+- `hero_voice_index.json` 当前仍是演示语音子集；`hero_resource_inventory.json` 已记录全量 `sound/cv` 资源数量，后续可扩展语音导出工具。
+
+下一步：
+
+- 继续在反编译源码和资源中寻找真实英雄静态表，替换 `hero_catalog.json` 中的 `name/camp/job/quality/grade`。
+- 扩展 `export_hero_voice_index.py`，支持按 `hero_resource_inventory.json` 批量导出所有英雄语音。
+- 继续追 12 个无 skeletonData 的低阶/特殊 body，确认它们是否确实是静态 prefab，或是否需要从其它 `spineBin/spineBinSkin/Prefab/HeroPrefab` 资源还原动画。
+- 继续把详情页衣装页从本地说明面板改成原始 `skinBox/skinInfo/noSkin/btnNext` 层级，并补 `btnChaKan()` 横屏全屏预览状态。
+- 继续替换英雄详情页左上 SSR/阵营图标、右侧白纸属性面板、属性 icon 和技能/装备真实图标资源。
 - 主城 `Herolh/105004` 已由静态 PNG 切换为 `SimpleSpinePlayer` 播放。
 - 主城页的 Hero 轮换已接入 `105004`、`SuLa_LH`、`YouDuoLa_LH` 三个动态 Spine，并用包围盒自动适配主城角色展示区域。
 - 主城默认角色已改为 `105004` Spine，符合 `assets/main/index.js` 中 `_roleLhbody = "105004"` 的运行时默认值；静态插画只作为轮换候选保留。
@@ -320,6 +362,8 @@ RESTORE_LOGIN_TO_HOME.md
 - 英雄列表相关子 prefab 已导出：`HeroGridPre`、`HeroBookItemPre`、`HeroLevelSharedPre`、`HeroNormalarrayPre`、`HeroStarPre`。
 - `original_hero_list_panel.gd` 已把右侧 6 个页签推进为可查看内容：英雄网格使用 `HeroGridPre` 相关 `comHeroGrid` 资源，图鉴页使用 `HeroBookItemPre` 竖卡结构，共享/阵容/升星页参考对应 prefab 做本地 mock。
 - 独立英雄界面当前支持左侧英雄头像列表、中心 Spine 展示、点击角色切换动作、右侧培养/装备/升星/战意/衣装页签和本地属性 mock。
+- 英雄列表和详情页英雄池已对齐到 10 个本地英雄；列表通过 `hero_id` 打开对应详情页，详情页对 `105004/205008/305006` 使用 Spine runtime，其余英雄使用 `image/heroBook/<id>` 图鉴长图。新增 `--hero-list-open-id`、`--hero-list-click-at`、`--hero-id` 回归参数验证跳转和指定英雄。
+- 英雄详情页已继续补原始交互链：衣装页参考 `HeroBookDetailPanel.showSkin()`，可在基础 body 与可用 `<id>1` 皮肤资源间切换；全屏预览参考 `btnChaKan()` 隐藏其他 UI；点击角色会切动作并按 `sound/cv/<hero>/<soundId>` 播放本地 MP3。`tools/export_hero_voice_index.py` 会生成 `data/hero_voice_index.json` 和 `assets/hero_voice/**`。
 - 独立英雄界面的资源加载改为读取 `data/named_resource_index.json`，支持 `texture_path` 与 `sprite_rect` 两种索引字段，避免之前只认 `native_path/rect` 导致头像不显示。
 - `export_cocos_prefab_layout.py` 已新增导出 `HeroTabPre` 和 `HeroListPre`。独立英雄界面已用 `HeroTabPre/HeroMainPre` 的 `cm_tab2_on/off` 替换默认页签按钮，左侧增加小型英雄头像竖列用于本地切换，右侧信息面板使用 `yx_frame_BaiBan` 和 `cm_btn_LvSe1` 资源。
 - 已新增独立背包/仓库界面：
@@ -344,8 +388,27 @@ RESTORE_LOGIN_TO_HOME.md
   - `MainPre.json` 可提供主屏左侧竖栏、右侧弧形入口、活动广告入口、聊天区和角色容器坐标。
   - 主屏默认角色 105004 已按原游戏链路重放：`MainUIPanel._roleLhbody` -> `lihuiCom.showLh()` -> `RoleLh` -> `Prefab/HerolhPrefab/105004` -> `MainPre.herolh`。当前 `original_home_screen.gd` 使用 `herolh` 根原点 `(640,360)`，再叠加 Skeleton 子节点偏移 `(-68,+333)` 和 scale `(1,0.95)`，不再用矩形 fit。
   - 原始主屏底部“英雄”不是直接打开 `HeroMainPre`。源码链为 `DaohangPanel.openHeroPanel()` -> `HeroListPanel.preUrl="Prefab/HeroListPanel/HeroListPre"` -> 列表点击 `openHeroDetail()` -> `HeroMainPanel.preUrl="Prefab/HeroPanel/HeroMainPre"`。
+  - 根据 `英雄页.jpg` 截图继续反查，图鉴/详情截图的精确主体是 `HeroBookDetailPanel.preUrl="Prefab/HeroPanel/HeroBookDetailPre"`，导出布局为 `data/prefab_layouts/HeroBookDetailPre.json`。截图里的顶部资源条和底部主导航由独立 `Prefab/mainpanel/daohangPre` 叠加，不属于详情 prefab 本身。
   - `HeroMainPre.json` 原版英雄页不是左侧头像列表，而是左侧竖向功能页签、中心 `heroBodyBox`、左右 `btnPre/btnNext` 切换和右侧 `heroContentPrefab` 信息面板。
   - `original_hero_list_panel.tscn` 已作为英雄入口页接入，后续需要继续替换真实 `HeroGridPre/HeroBookItemPre` 子项资源；`original_hero_panel.gd` 的左侧英雄列表只保留为调试/快速切换能力。
+- 当前手工界面审计表已新增：`UI_RESTORE_AUDIT.md`。该表按 Godot 场景、手工脚本、原始 prefab、源码入口模块、当前状态和下一步逐页记录。
+- 本轮入口修正：
+  - 登录页“原始界面预览”直达 `LoginPre`。
+  - 选服页新增“原始选服”按钮，直达 `pfLoginPanelPre`。
+  - 英雄列表 Prefab 入口直达 `HeroListPre`，详情文案改为 `HeroBookDetailPre`。
+  - 英雄详情 Prefab 入口直达 `HeroBookDetailPre`，标题改为 `HeroBookDetailPre`，底部“召唤”跳转修为 `original_draw_card_panel.tscn`。
+  - 英雄详情左上补 `HeroBookDetailPre.imgTag` 对应品质图资源 `assets/resources/native/08/089f225e-78e8-428c-aeec-39bb5b669f43.png`。
+- 按 `UI_RESTORE_AUDIT.md` 顺序开始逐页收敛：
+  - `original_loading.gd` 已按 `LoadingPre.json` 重排底部 1018 宽进度条、百分比、加载提示和 `正在连接服务器` 文案。
+  - `original_login.gd` 已切换到 `LoginPre.json` 的真实背景 `e8/e851...`、logo `b4/b43...`、底部文字带 `ed/edd...`、登录按钮和右侧三按钮坐标。
+  - `original_server_select.gd` 已切换到 `pfLoginPanelPre.json` 的真实背景、底部版权区、右侧公告/切换账号/discord/facebook、服务器选择条、热标和进入按钮。
+  - `original_home_screen.gd` 底部导航已改为 `daohangPre.json` 的真实六个图标资源/坐标，第三个入口改为仓库。
+  - 已用 Godot `--headless --scene ... --quit-after` 验证加载、登录、选服、主屏均能启动；日志仅剩直接 `Image.load()` 的本地 demo 警告。
+- 资源显示问题修正：
+  - 已读取 `UI_ANALYSIS_REPORT.md` 和 `coordinate_issues_analysis.md`。结论是不能仅凭 `texture_path` 直接替换资源，必须检查实际图片尺寸并处理 `sprite_rect/originalSize/rotated`。
+  - `LoginPre` / `pfLoginPanelPre` 中部分看似真实的 `bg/logo/wenziDi` native 文件实际只有 `40x40`，直接铺全屏会空白或严重失真；登录/选服页已恢复到之前验证可显示的背景、底部带和按钮资源，同时保留 prefab 坐标。
+  - `daohangPre` 的部分导航 SpriteFrame 指向横条或极薄切片，直接当图标使用会不显示；主屏底部导航保留 prefab 坐标，但对冒险/副本/公会暂回退到可显示 atlas 近似图标。
+  - 下一轮要优先落实 `coordinate_issues_analysis.md` 的 P0/P2：导出统一 `screen_rect` 并在 Godot 侧统一使用，避免继续出现三套坐标转换。
 - `original_hero_panel.gd` 已开始按原版结构重排：
   - 左侧改为英雄名、头像、星级、小型英雄头像竖列和传记/衣装/锁定小按钮。
   - 中心保留 Spine 角色展示，增加 `btnPre/btnNext` 式左右切换。
@@ -356,6 +419,10 @@ RESTORE_LOGIN_TO_HOME.md
 - `13003` 已提取 `DrawCardActivityCycleItemCom` 的字段绑定：`girdLayout/btn_buy/btn_qianwang/img_receive/JDT_label/JDT_progress/title/txt_xiangou`。
 - `13004` 已提取 `DrawCardActivityRenWuItemCom` 的字段绑定：`itemNode/descText/taskProgress/taskProgressLab/submitBtn/btnLabel/imgComplete`。
 - `cocos_prefab_preview.gd` 右侧详情栏已显示脚本字段绑定，后续可直接按 `setData(...)` 把 mock 数据写入对应节点，而不是继续靠手工 row。
+- 新增完整 prefab 索引流程：
+  - `tools/export_prefab_source_inventory.py` 会遍历 `data/prefabs.csv` 中全部 prefab，并扫描 `assets/main/index.js` 里的 `preUrl/url` 引用，再合并 README/路线文档中已经记录的 `Prefab/...` 线索。
+  - 生成产物为 `data/prefab_source_inventory.json`、`data/prefab_source_inventory.csv`、`data/prefab_source_inventory.md`。
+  - 当前结果：1018 个 prefab，492 个有源码直接引用，129 个已出现在文档中。下一步手工还原应优先从 `data/prefab_source_inventory.md` 的“源码高频入口”和“已知还原候选”选界面。
 - `活动抽卡-抽数任务` 的任务列表 mock 已开始改为字段驱动模板坐标，当前按 `13004.item` 内部的 `itemNode/title/count/progressBar/getBtn/isOver` 位置绘制行内容。
 - `活动抽卡-循环礼包` 的列表 mock 已开始改为字段驱动模板坐标，当前按 `13003.Item` 内部的 `girdLayout/title/txt_xiangou/JDT_progress/JDT_label/btn_buy/btn_qianwang/img_receive` 位置绘制行内容。
 - 活动抽卡 `13003/13004` 列表已绘制到 Godot `Control.clip_contents` 裁剪容器中，模拟 ScrollView/Mask 首屏范围；仍保留整行可视判断避免绘制完全越界的行。

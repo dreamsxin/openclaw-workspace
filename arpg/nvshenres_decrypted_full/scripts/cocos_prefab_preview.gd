@@ -147,7 +147,7 @@ func _add_node_rect(node: Dictionary) -> void:
 			var img := TextureRect.new()
 			img.texture = tex
 			img.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-			img.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+			img.stretch_mode = _texture_stretch_mode(node)
 			img.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			rect = img
 	else:
@@ -1542,12 +1542,21 @@ func _node_label_text(node: Dictionary) -> String:
 	return str(node.get("label_text", ""))
 
 func _is_sliced_sprite(node: Dictionary) -> bool:
-	if int(node.get("sprite_type", 0)) != 1:
+	var type_name := str(node.get("sprite_type_name", ""))
+	if type_name != "" and type_name != "sliced":
+		return false
+	if type_name == "" and int(node.get("sprite_type", 0)) != 1:
 		return false
 	var insets: Array = node.get("sprite_cap_insets", [])
 	if insets.size() < 4:
 		return false
 	return float(insets[0]) > 0.0 or float(insets[1]) > 0.0 or float(insets[2]) > 0.0 or float(insets[3]) > 0.0
+
+func _texture_stretch_mode(node: Dictionary) -> TextureRect.StretchMode:
+	var type_name := str(node.get("sprite_type_name", "simple"))
+	if type_name == "tiled":
+		return TextureRect.STRETCH_TILE
+	return TextureRect.STRETCH_SCALE
 
 func _apply_nine_patch_margins(nine: NinePatchRect, node: Dictionary) -> void:
 	var insets: Array = node.get("sprite_cap_insets", [])
@@ -2001,6 +2010,11 @@ func _dict_int(data: Dictionary, key: String, fallback: int) -> int:
 	return int(value)
 
 func _prefab_node_rect(node: Dictionary) -> Rect2:
+	var screen_rect: Array = node.get("screen_rect", [])
+	if screen_rect.size() >= 4:
+		var design_pos := Vector2(float(screen_rect[0]), float(screen_rect[1]))
+		var design_size := Vector2(float(screen_rect[2]), float(screen_rect[3]))
+		return Rect2(_canvas_design_origin() + design_pos, design_size)
 	var size_arr: Array = node.get("size", [80, 36])
 	var pos_arr: Array = node.get("global_position", node.get("position", [0, 0]))
 	var anchor_arr: Array = node.get("anchor", [0.5, 0.5])
@@ -2008,6 +2022,9 @@ func _prefab_node_rect(node: Dictionary) -> Rect2:
 	var pos := Vector2(float(pos_arr[0]), -float(pos_arr[1]))
 	var anchor := Vector2(float(anchor_arr[0]), 1.0 - float(anchor_arr[1]))
 	return Rect2(_canvas_center() + pos - Vector2(size.x * anchor.x, size.y * anchor.y), size)
+
+func _canvas_design_origin() -> Vector2:
+	return _canvas_center() - Vector2(640.0, 360.0)
 
 func _sorted_nodes(nodes: Array) -> Array:
 	var sorted := nodes.duplicate()
