@@ -90,6 +90,8 @@
   - 右侧入口条已按 `MainPre.json` 的父节点尺寸 `260x34` 收缩，避免早期手写 `344x56` 导致入口条互相压住。
   - 底部导航已改用 `cm_icon_ChengZhen/YingXiong/CangKu/FuBen/GongHui` 和多语言 `cm_btn_Maoxian` 的真实 SpriteFrame。
   - 底部导航已根据 `daohangPre.json` 和 `assets/main/index.js` 修正第三入口：`btn3` / `cm_tab_ZhaoHuan` 是“召唤”，已替换早期误放的“仓库”，点击进入本地抽卡页。
+  - 底部导航位置已改为直接使用 `daohangPre.json` 的 Cocos 坐标；“冒险”已换成 `cm_icon_ChuJi`，去掉英文 `Adventure` 图残留。
+  - 已导出 `Prefab/comPrefab/MoneyItemPre`，顶部金币/钻石条使用 `cm_frame_HuoBi2` 背景，并按源码 `MoneyItem.setType()` 接入 `image/equipment/101`、`image/equipment/102` 图标。
   - 左上头像已补 `image/head/105004`，并参考 `heroHead` 坐标调整。
 
 当前注意事项：
@@ -103,6 +105,8 @@
 下一步：
 
 - 继续按 `MainPre.json` + `heroHead/daohangPre` 修坐标，优先修右侧入口条文本/图标、底部导航。
+- 继续追踪 `daohangPre` 的 `cm_menu_*` Spine/UISpine 资源，把底部导航从静态 SpriteFrame 替换为原始动态主体。
+- 继续复原顶部 `moneyBox`：商店按钮、加号按钮、资源刷新逻辑和 `MoneyItem.changebg()` 状态。
 - 将登录页/选服页等独立旧脚本也迁移到统一 SpriteFrame 复原函数。
 - 从 `Prefab/bigImage/*` 自动生成背景候选列表。
 - 从 `Prefab/HerolhPrefab/*` 自动生成角色候选列表。
@@ -303,6 +307,7 @@ RESTORE_LOGIN_TO_HOME.md
 - `original_draw_card_panel.gd` 当前仍是本地 demo 状态：主视觉 Spine 已替换静态占位卡牌，但 `HeroShowPre` 单抽详情、十连翻牌 `HeroBookItemPre` 和 back/front 全屏抽卡特效尚未完全复刻。
 - 主屏/英雄页偏差已确认：
   - `MainPre.json` 可提供主屏左侧竖栏、右侧弧形入口、活动广告入口、聊天区和角色容器坐标。
+  - 主屏默认角色 105004 已按原游戏链路重放：`MainUIPanel._roleLhbody` -> `lihuiCom.showLh()` -> `RoleLh` -> `Prefab/HerolhPrefab/105004` -> `MainPre.herolh`。当前 `original_home_screen.gd` 使用 `herolh` 根原点 `(640,360)`，再叠加 Skeleton 子节点偏移 `(-68,+333)` 和 scale `(1,0.95)`，不再用矩形 fit。
   - `HeroMainPre.json` 原版英雄页不是左侧头像列表，而是左侧竖向功能页签、中心 `heroBodyBox`、左右 `btnPre/btnNext` 切换和右侧 `heroContentPrefab` 信息面板。
   - 下一步需要把 `original_hero_panel.gd` 的左侧英雄列表改成原版左右切换结构，并把英雄列表降级为调试/资源浏览入口。
 - `original_hero_panel.gd` 已开始按原版结构重排：
@@ -324,11 +329,12 @@ RESTORE_LOGIN_TO_HOME.md
 下一步优先级：
 
 1. 继续完善独立 `original_hero_panel`：追 `HeroSidePrefab` 和 `heroContentPrefab` 的真实按钮/页签/职业/阵营资源，细化左右翻页按钮、星级、装备槽和技能格。
-2. 继续完善独立 `original_bag_panel`：追 `GridBoxItemPre` 真实选中框、品质框、背包分类按钮资源、图鉴/合成按钮资源。
-3. 继续完善独立 `original_draw_card_panel`：补 `HeroShowPre`、`HeroBookItemPre` 十连翻牌、`ZhaoHuan_ChouKa_back/front` 全屏抽卡特效、召唤动画跳过开关和真实按钮资源。
-4. 新增独立活动抽卡入口页或战斗页，把仍在 prefab 预览器里的主功能继续迁出。
-5. `cocos_prefab_preview.gd` 后续只在发现坐标/字段/资源缺口时增强，不再作为最终界面承载层。
-6. 继续推广通用 prefab 裁剪作为分析能力：目前已支持 `cc.Mask` 祖先链挂载和部分 `cc.ScrollView` content/viewport 近邻推断，下一步补滚动偏移、`Widget` 对齐和 `Layout` 重排，再按 `GridLogic.create(...)` 补真实奖励 Grid 子项样式。
+2. 确认主屏默认展示角色是否固定为 105004，还是登录后由服务器/本地英雄选择覆盖；如果要对齐截图中的男主，需要继续追 `roleLhbody` 的运行时赋值来源和对应 `Prefab/HerolhPrefab/<id>`。
+3. 继续完善独立 `original_bag_panel`：追 `GridBoxItemPre` 真实选中框、品质框、背包分类按钮资源、图鉴/合成按钮资源。
+4. 继续完善独立 `original_draw_card_panel`：补 `HeroShowPre`、`HeroBookItemPre` 十连翻牌、`ZhaoHuan_ChouKa_back/front` 全屏抽卡特效、召唤动画跳过开关和真实按钮资源。
+5. 新增独立活动抽卡入口页或战斗页，把仍在 prefab 预览器里的主功能继续迁出。
+6. `cocos_prefab_preview.gd` 后续只在发现坐标/字段/资源缺口时增强，不再作为最终界面承载层。
+7. 继续推广通用 prefab 裁剪作为分析能力：目前已支持 `cc.Mask` 祖先链挂载和部分 `cc.ScrollView` content/viewport 近邻推断，下一步补滚动偏移、`Widget` 对齐和 `Layout` 重排，再按 `GridLogic.create(...)` 补真实奖励 Grid 子项样式。
 4. 继续完善 `drawCardPre` 的抽卡 Spine、结果卡牌 `HeroShowPre`、页签切换动画和真实奖励状态。
 5. 将 `prefab_node_name_hints.json` 继续接入资源浏览器，显示节点名推断用途，减少手工查 JSON。
 6. 继续完善 `battle` 的真实 Spine 战斗角色、技能特效、站位坐标和战斗结束子 prefab。

@@ -15,14 +15,13 @@ const ATLAS_1D := "res://assets/resources/native/1d/1d816a710.png"
 const ATLAS_1F := "res://assets/resources/native/1f/1f6b547b4.png"
 const ATLAS_14 := "res://assets/resources/native/14/140096250.png"
 const ATLAS_19 := "res://assets/resources/native/19/19ac1e70d.png"
+const ATLAS_15 := "res://assets/resources/native/15/15a1d9111.png"
 const ATLAS_18A := "res://assets/resources/native/18/18b29ae48.png"
 const ATLAS_18B := "res://assets/resources/native/18/18935b9e9.png"
-const NAV_CHENGZHEN := "res://assets/resources/native/87/8715b80b-6cbc-4b88-bf7d-8c2ab401db4e.png"
-const NAV_YINGXIONG := "res://assets/resources/native/9a/9a9cb544-24ba-41c7-8cab-41a43a9e9c33.png"
-const NAV_ZHAOHUAN := "res://assets/resources/native/83/83903e83-5933-42e2-b569-f4c51ebdea94.png"
-const NAV_MAOXIAN := "res://assets/resources/native/e1/e116f353-6974-488e-86a7-19f294f47e7b.png"
 const PLAYER_HEAD := "res://assets/resources/native/d7/d7bf0f4d-1dc9-4fda-80c0-65dfeee3316a.png"
 const AD_BANNER := "res://assets/resources/native/00/002545b0-69b1-4515-ac70-e545a4c8b5d2.png"
+const MONEY_GOLD := "res://assets/resources/native/9e/9ec8c387-6381-46b4-93eb-7ebe016dbffc.png"
+const MONEY_DIAMOND := "res://assets/resources/native/47/47e154d7-f9c2-4a5a-85c0-b299960f439b.png"
 const HERO_105004_SPINE := "res://data/spine_runtime/105004.json"
 const HERO_SULA_SPINE := "res://data/spine_runtime/SuLa_LH.json"
 const HERO_YOUDUOLA_SPINE := "res://data/spine_runtime/YouDuoLa_LH.json"
@@ -64,7 +63,9 @@ const HEROES := [
 		"size": Vector2(410, 640),
 		"spine": HERO_105004_SPINE,
 		"animation": "idle",
-		"spine_target": Rect2(Vector2(420, 96), Vector2(430, 590)),
+		"spine_origin_position": Vector2(640, 360),
+		"spine_prefab_offset": Vector2(-68, 333),
+		"spine_origin_scale": Vector2(1.0, 0.95),
 	},
 	{
 		"name": "SuLa_LH",
@@ -176,35 +177,34 @@ func _build_ui() -> void:
 
 func _add_debug_bar() -> void:
 	var top := HBoxContainer.new()
-	top.anchor_left = 1.0
+	top.anchor_left = 0.0
 	top.anchor_top = 0.0
-	top.anchor_right = 1.0
+	top.anchor_right = 0.0
 	top.anchor_bottom = 0.0
-	top.offset_left = -760
+	top.offset_left = 320
 	top.offset_top = 4
-	top.offset_right = -10
-	top.offset_bottom = 38
-	top.alignment = BoxContainer.ALIGNMENT_END
-	top.add_theme_constant_override("separation", 6)
+	top.offset_right = 786
+	top.offset_bottom = 32
+	top.alignment = BoxContainer.ALIGNMENT_BEGIN
+	top.add_theme_constant_override("separation", 4)
 	add_child(top)
 
 	title_label = Label.new()
 	title_label.text = "MainPre prefab"
 	title_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	top.add_child(title_label)
 
 	Navigation.add_buttons(top)
 	_add_top_button(top, "BG", func(): _cycle_background())
 	_add_top_button(top, "Hero", func(): _cycle_hero())
-	_add_top_button(top, "Resources", func(): Navigation.go(RESOURCE_BROWSER))
-	_add_top_button(top, "Prefab", func(): Navigation.go(PREFAB_PREVIEW))
+	_add_top_button(top, "Res", func(): Navigation.go(RESOURCE_BROWSER))
+	_add_top_button(top, "Pre", func(): Navigation.go(PREFAB_PREVIEW))
 	_add_top_button(top, "Spine", func(): Navigation.go(SPINE_VIEWER))
-	_add_top_button(top, "Island", func(): Navigation.go(FLOATING_CITY_SCENE))
+	_add_top_button(top, "City", func(): Navigation.go(FLOATING_CITY_SCENE))
 
 func _add_top_button(parent: HBoxContainer, text: String, callback: Callable) -> void:
 	var button := Button.new()
 	button.text = text
-	button.custom_minimum_size = Vector2(78, 30)
+	button.custom_minimum_size = Vector2(54, 28)
 	button.pressed.connect(callback)
 	parent.add_child(button)
 
@@ -285,32 +285,63 @@ func _add_player_panel() -> void:
 	root.add_child(power)
 
 func _add_currency_bar() -> void:
-	var top := HBoxContainer.new()
-	top.anchor_left = 1.0
-	top.anchor_top = 0.0
-	top.anchor_right = 1.0
-	top.anchor_bottom = 0.0
-	top.offset_left = -470
-	top.offset_top = 10
-	top.offset_right = -18
-	top.offset_bottom = 42
-	top.alignment = BoxContainer.ALIGNMENT_END
-	top.add_theme_constant_override("separation", 10)
-	prefab_layer.add_child(top)
+	var shop := Button.new()
+	shop.text = "SHOP"
+	shop.position = Vector2(818, 10)
+	shop.size = Vector2(96, 34)
+	shop.add_theme_font_size_override("font_size", 18)
+	shop.add_theme_color_override("font_color", Color(0.55, 0.22, 0.08))
+	shop.tooltip_text = "商店"
+	shop.pressed.connect(_open_prefab_layout.bind("商店"))
+	prefab_layer.add_child(shop)
 
-	_add_currency(top, "SHOP")
-	_add_currency(top, "2.25M +")
-	_add_currency(top, "878 +")
+	_add_money_item(Vector2(930, 27), MONEY_GOLD, "2.25M", true)
+	_add_money_item(Vector2(1110, 27), MONEY_DIAMOND, "878", true)
 
-func _add_currency(parent: HBoxContainer, text: String) -> void:
+func _add_money_item(center: Vector2, icon_path: String, value: String, show_add := true) -> void:
+	var box := Control.new()
+	box.position = center - Vector2(86, 18)
+	box.size = Vector2(172, 36)
+	prefab_layer.add_child(box)
+
+	var bg := TextureRect.new()
+	bg.position = Vector2(-3, 0)
+	bg.size = Vector2(179, 36)
+	bg.texture = _load_texture_region(ATLAS_15, Rect2i(106, 400, 36, 179), true, Vector2i(179, 36))
+	bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	bg.stretch_mode = TextureRect.STRETCH_SCALE
+	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	box.add_child(bg)
+
+	var icon := TextureRect.new()
+	icon.position = Vector2(-9, -9)
+	icon.size = Vector2(54, 54)
+	icon.texture = _load_texture(icon_path)
+	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	box.add_child(icon)
+
 	var label := Label.new()
-	label.text = text
-	label.custom_minimum_size = Vector2(118, 30)
-	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.text = value
+	label.position = Vector2(44, 4)
+	label.size = Vector2(86, 28)
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	label.add_theme_font_size_override("font_size", 18)
-	label.add_theme_color_override("font_color", Color(0.98, 0.92, 0.72))
-	parent.add_child(label)
+	label.add_theme_color_override("font_color", Color(0.95, 0.92, 0.82))
+	box.add_child(label)
+
+	if show_add:
+		var plus := Label.new()
+		plus.text = "+"
+		plus.position = Vector2(138, 2)
+		plus.size = Vector2(28, 30)
+		plus.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		plus.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		plus.add_theme_font_size_override("font_size", 28)
+		plus.add_theme_color_override("font_color", Color(1.0, 0.92, 0.58))
+		box.add_child(plus)
 
 func _add_left_quick_buttons() -> void:
 	var entries := [
@@ -425,16 +456,17 @@ func _add_ribbon_button(center: Vector2, item: Dictionary) -> void:
 
 func _add_bottom_nav() -> void:
 	var entries := [
-		{"label": "城镇", "x": 190, "atlas": ATLAS_1F, "rect": Rect2i(787, 551, 152, 141), "size": Vector2(88, 82)},
-		{"label": "英雄", "x": 360, "atlas": ATLAS_1A, "rect": Rect2i(3, 334, 150, 142), "size": Vector2(88, 82), "layout": "英雄"},
-		{"label": "召唤", "x": 560, "path": NAV_ZHAOHUAN, "size": Vector2(92, 82), "entry": "召唤"},
-		{"label": "冒险", "x": 762, "atlas": ATLAS_14, "rect": Rect2i(3, 3, 181, 143), "size": Vector2(104, 82), "layout": "战斗"},
-		{"label": "副本", "x": 910, "atlas": ATLAS_1A, "rect": Rect2i(879, 276, 134, 133), "size": Vector2(84, 80), "layout": "天空城"},
-		{"label": "公会", "x": 1090, "atlas": ATLAS_1A, "rect": Rect2i(345, 232, 119, 126), "size": Vector2(82, 80), "layout": "公会"},
+		{"label": "城镇", "pos": Vector2(-448.355, -295.829), "atlas": ATLAS_1F, "rect": Rect2i(787, 551, 152, 141), "size": Vector2(92, 84)},
+		{"label": "英雄", "pos": Vector2(-280.898, -294.476), "atlas": ATLAS_1A, "rect": Rect2i(3, 334, 150, 142), "size": Vector2(92, 84), "entry": "英雄"},
+		{"label": "召唤", "pos": Vector2(-95.901, -292.829), "atlas": ATLAS_1A, "rect": Rect2i(940, 89, 80, 80), "size": Vector2(78, 78), "entry": "召唤"},
+		{"label": "冒险", "pos": Vector2(83.78, -295.192), "atlas": ATLAS_1A, "rect": Rect2i(159, 345, 150, 145), "size": Vector2(92, 86), "layout": "战斗"},
+		{"label": "副本", "pos": Vector2(269.368, -295.829), "atlas": ATLAS_1A, "rect": Rect2i(879, 276, 134, 133), "size": Vector2(84, 82), "layout": "天空城"},
+		{"label": "公会", "pos": Vector2(447.148, -295.829), "atlas": ATLAS_1A, "rect": Rect2i(345, 232, 119, 126), "size": Vector2(82, 82), "layout": "公会"},
 	]
 	for item in entries:
 		var box := Control.new()
-		box.position = Vector2(float(item.x) - 62, 604)
+		var center := _cocos_center_to_screen(item.pos)
+		box.position = center - Vector2(62, 52)
 		box.size = Vector2(124, 96)
 		prefab_layer.add_child(box)
 
@@ -453,7 +485,7 @@ func _add_bottom_nav() -> void:
 
 		var text := Label.new()
 		text.text = str(item.label)
-		text.position = Vector2(0, 66)
+		text.position = Vector2(0, 68)
 		text.size = Vector2(124, 28)
 		text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		text.add_theme_font_size_override("font_size", 18)
@@ -729,9 +761,16 @@ func _hero_animation_names(item: Dictionary) -> Array:
 func _fit_spine_hero(item: Dictionary) -> void:
 	hero_spine.update_preview_pose(0.0)
 	var bounds: Rect2 = hero_spine.get_draw_bounds()
+	if item.has("spine_origin_position"):
+		var origin_scale := _scale_vector(item.get("spine_origin_scale", 1.0))
+		hero_spine.scale = origin_scale
+		hero_spine.position = item.get("spine_origin_position", Vector2(640, 360)) + item.get("spine_prefab_offset", Vector2.ZERO) + item.get("spine_offset", Vector2.ZERO)
+		_update_hero_hit_area(bounds, hero_spine.position, origin_scale)
+		return
 	if bounds.size.x <= 0.0 or bounds.size.y <= 0.0:
 		hero_spine.position = item.get("spine_position", Vector2(620, 670))
 		hero_spine.scale = item.get("spine_scale", Vector2(0.58, 0.58))
+		_update_hero_hit_area(bounds, hero_spine.position, _scale_vector(hero_spine.scale))
 		return
 	var target: Rect2 = item.get("spine_target", Rect2(Vector2(420, 96), Vector2(430, 590)))
 	var scale_value: float = min(target.size.x / bounds.size.x, target.size.y / bounds.size.y)
@@ -740,6 +779,22 @@ func _fit_spine_hero(item: Dictionary) -> void:
 	var bounds_center := bounds.position + bounds.size * 0.5
 	var target_center := target.position + target.size * 0.5
 	hero_spine.position = target_center - bounds_center * scale_value + item.get("spine_offset", Vector2.ZERO)
+	_update_hero_hit_area(bounds, hero_spine.position, Vector2(scale_value, scale_value))
+
+func _scale_vector(value: Variant) -> Vector2:
+	if value is Vector2:
+		return value
+	var scalar := float(value)
+	return Vector2(scalar, scalar)
+
+func _update_hero_hit_area(bounds: Rect2, origin: Vector2, scale_value: Vector2) -> void:
+	if bounds.size.x <= 0.0 or bounds.size.y <= 0.0:
+		hero_hit_area.position = Vector2(500, 92)
+		hero_hit_area.size = Vector2(360, 520)
+		return
+	var screen_rect := Rect2(origin + bounds.position * scale_value, bounds.size * scale_value)
+	hero_hit_area.position = screen_rect.position
+	hero_hit_area.size = screen_rect.size
 
 func _start_hero_motion(base_position: Vector2) -> void:
 	if hero_tween:

@@ -57,6 +57,14 @@ Godot 当前工程已接入项目内轻量 Spine runtime，用于本地预览角
 
 当前主城默认角色已用 `105004` Spine 播放 `idle`，点击角色可切换可用动作；这仍是轻量 runtime，不等于官方 Spine Runtime，复杂约束和裁剪仍需继续补齐。
 
+主屏角色坐标链记录：
+
+- `MainUIPanel` 默认 `_roleLhbody = "105004"`，`onShow()` 调用 `showLh(this.roleLhbody)`。
+- `showLh()` 通过 `RoleLh` 动态加载 `Prefab/HerolhPrefab/105004`，并把实例直接挂到 `MainPre` 的 `herolh` 全屏节点。
+- `MainPre.herolh` 在 Cocos 中是 `(0,0)`、`1280x720`、锚点 `(0.5,0.5)`，换算到 Godot 设计分辨率后根原点为屏幕中心 `(640,360)`。
+- `Prefab/HerolhPrefab/105004` 内真正的 Skeleton 子节点本地坐标是 `(-68,-333)`、scale 为 `(1,0.95)`，Godot 侧需要换算成屏幕偏移 `(-68,+333)` 后再绘制。
+- 因此主城默认 105004 不能再用矩形 fit 居中，否则角色会整体放大并向上裁切；当前 `original_home_screen.gd` 已按 prefab 子节点偏移放置。
+
 ## Prefab 还原注意事项
 
 早期错误来源：
@@ -79,6 +87,7 @@ Godot 当前工程已接入项目内轻量 Spine runtime，用于本地预览角
 - `data/catalog.json`：总资源索引。
 - `data/prefabs.csv`：原始 prefab 清单。
 - `data/prefab_layouts.json`：已导出的核心 prefab 布局清单。
+- `data/prefab_layouts/MoneyItemPre.json`：资源条 prefab，主城顶部金币/钻石条使用。
 - `data/prefab_restore_inventory.csv`：整理后的 prefab 还原清单。
 - `data/prefab_restore_inventory.md`：按分类和优先级整理的 prefab 清单。
 - `data/spine_preview_index.json`：Spine 预览索引。

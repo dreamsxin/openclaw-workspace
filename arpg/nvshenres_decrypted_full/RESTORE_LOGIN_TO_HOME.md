@@ -207,6 +207,9 @@ data/prefab_layouts/daohangPre.json
 
 Prefab/mainpanel/heroHead
 data/prefab_layouts/heroHead.json
+
+Prefab/comPrefab/MoneyItemPre
+data/prefab_layouts/MoneyItemPre.json
 ```
 
 底部导航定位：
@@ -234,6 +237,22 @@ assets/main/index.js
 ```
 
 结论：主屏底部第三个按钮是“召唤”，不是“仓库”。仓库入口属于 `MainPre` 右侧入口条 `zjm_btn_cangku`，底栏不应占用 `btn3` 位置。Godot 主屏已将底栏第三项改为“召唤”，点击进入 `original_draw_card_panel.tscn`；右侧 `zjm_btn_yinghun` 因图标资源名为 `zjm_icon_zhaohuan`，离线 Demo 暂时也路由到召唤页。
+
+当前手工布局实现约定：
+
+- 底栏按钮中心点直接采用 `daohangPre.json` 的 `cm_tab_*` / `btn4` 坐标换算到 1280x720，不再使用早期等距手写坐标。
+- 底栏“冒险”使用 `image/com/mainpanel/cm_icon_ChuJi` 的 SpriteFrame，避免残留英文 `image/en/mainpanel/cm_btn_Maoxian` 图。
+- 底栏“召唤”目前使用 `image/com/mainpanel/zjm_icon_kuafuzhaohuan` 静态 SpriteFrame 作为召唤语义替代；`daohangPre` 中 `cm_tab_ZhaoHuan` 的真实动态主体仍需要继续追踪 `sp.Skeleton`/UISpine 资源。
+- 仓库只保留在右侧 `zjm_btn_cangku` 入口条，点击进入本地背包/仓库页。
+- 顶部金币/钻石条使用 `MoneyItemPre` 的 `cm_frame_HuoBi2` 背景，图标按 `MoneyItem.setType()` 源码映射到 `image/equipment/101` 和 `image/equipment/102`。
+
+主屏剩余缺口：
+
+1. 底部导航主体在原始 prefab 中有 `cm_menu_*` Spine 节点，当前 Godot 仍是静态 SpriteFrame 替代。
+2. 顶部 `moneyBox` 已接入 `MoneyItemPre` 背景和金币/钻石图标，但商店按钮、加号按钮和真实 `MoneyItem` 动态刷新仍是静态替代。
+3. 左侧活动入口存在运行时开关和运营数据驱动，当前只固定展示一组常见入口。
+4. 右侧入口条 `zjm_btn_rukou5` 缺同名 SpriteFrame，需要继续从运行时代码或 atlas 中确认商会入口背景。
+5. 主城背景和角色虽可切换，但还没有从 `Prefab/bigImage/*` 与 `Prefab/HerolhPrefab/*` 自动生成完整候选列表。
 
 辅助追踪文件：
 
@@ -721,6 +740,13 @@ Spine 查看器：
 主屏与英雄页源码/布局线索：
 
 - `MainUIPanel`/`DaohangPanel` 运行时代码在 `assets/main/index.js:34335` 附近；主城头像、导航按钮、红点、货币和运营入口都由脚本动态控制。
+- 主屏默认角色定位源码链：
+  - `assets/main/index.js:99534`：`MainUIPanel` 构造时 `_roleLhbody = "105004"`。
+  - `assets/main/index.js:99797`：`onShow()` 调用 `this.showLh(this.roleLhbody)`。
+  - `assets/main/index.js:26408` 附近：`lihuiCom.showLh(e)` 清空 `this.com.heroLh`，创建 `RoleLh`，设置 `this.lhpre.body = e`，然后 `this.com.heroLh.addChild(this.lhpre)`；这里没有额外 x/y/scale。
+  - `RoleLh.body` 会加载 `Prefab/HerolhPrefab/<bodyID>`；`RoleLh.onloadOver()` 会用 prefab 内 Skeleton 节点 width/height 回填父节点尺寸。
+  - `data/prefab_layouts/MainPre.json` 中 `herolh` 是全屏节点，Cocos 坐标 `(0,0)`、尺寸 `1280x720`、锚点 `(0.5,0.5)`，所以实例根原点对应 Godot `(640,360)`。
+  - `Prefab/HerolhPrefab/105004` 的 import 为 `assets/resources/import/00/00482677-9b33-43a2-91b3-fd0d9c1259a6.json`；导出后可见 Skeleton 子节点 `105004` 的本地位置 `(-68,-333)`、scale `(1,0.95)`，Godot 需要映射成 `spine_prefab_offset = Vector2(-68,333)`。
 - `data/prefab_layouts/MainPre.json` 关键节点：
   - 右侧弧形入口：`zjm_btn_jingji(465,122)`、`zjm_btn_baoju(430,221)`、`zjm_btn_cangku(448,172)`、`zjm_btn_yinghun(483,9)`、`zjm_btn_duanzao(477,-43)`、`zjm_btn_zhanbu(471,-96)`、`zjm_btn_xunxing(449,-148)`、`zjm_btn_shop(419,-187)`。
   - 左侧竖栏：`zjm_btn_HaoYou(-602,226)`、`zjm_btn_YouJian(-602,163)`、`zjm_btn_PaiHang(-602,103)`、`zjm_btn_XinWen(-602,41)`、`zjm_btn_ZhanBao(-602,-20)`。
