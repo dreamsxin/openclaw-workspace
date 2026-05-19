@@ -45,6 +45,7 @@ var selected_animation := 0
 func _ready() -> void:
 	_load_named_resources()
 	_build_ui()
+	_apply_navigation_args()
 	_apply_cmdline_args()
 	_capture_if_requested()
 
@@ -530,6 +531,17 @@ func _apply_cmdline_args() -> void:
 	if tab_arg.is_valid_int():
 		selected_tab = clampi(int(tab_arg), 0, 4)
 	_refresh_all()
+
+func _apply_navigation_args() -> void:
+	var scene_args := Navigation.consume_scene_args()
+	var hero_id := str(scene_args.get("hero_id", ""))
+	if hero_id == "":
+		return
+	for i in HEROES.size():
+		if str(HEROES[i].id) == hero_id:
+			selected_hero = i
+			selected_animation = 0
+			return
 
 func _cmd_arg_value(args: Array, key: String) -> String:
 	var index := args.find(key)

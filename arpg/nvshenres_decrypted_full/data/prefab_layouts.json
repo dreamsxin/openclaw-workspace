@@ -112,6 +112,41 @@
     "texture_nodes": 10
   },
   {
+    "label": "英雄列表卡片",
+    "prefab": "Prefab/comPrefab/HeroGridPre",
+    "layout": "data/prefab_layouts/HeroGridPre.json",
+    "nodes": 45,
+    "texture_nodes": 10
+  },
+  {
+    "label": "英雄图鉴卡片",
+    "prefab": "Prefab/HeroListPanel/HeroBookItemPre",
+    "layout": "data/prefab_layouts/HeroBookItemPre.json",
+    "nodes": 32,
+    "texture_nodes": 3
+  },
+  {
+    "label": "英雄等级共享",
+    "prefab": "Prefab/HeroListPanel/HeroLevelSharedPre",
+    "layout": "data/prefab_layouts/HeroLevelSharedPre.json",
+    "nodes": 118,
+    "texture_nodes": 4
+  },
+  {
+    "label": "英雄阵容",
+    "prefab": "Prefab/HeroXZPrefab/HeroNormalarrayPre",
+    "layout": "data/prefab_layouts/HeroNormalarrayPre.json",
+    "nodes": 91,
+    "texture_nodes": 8
+  },
+  {
+    "label": "英雄升星",
+    "prefab": "Prefab/HeroXZPrefab/HeroStarPre",
+    "layout": "data/prefab_layouts/HeroStarPre.json",
+    "nodes": 30,
+    "texture_nodes": 2
+  },
+  {
     "label": "背包",
     "prefab": "Prefab/BagPanel/BagPre",
     "layout": "data/prefab_layouts/BagPre.json",

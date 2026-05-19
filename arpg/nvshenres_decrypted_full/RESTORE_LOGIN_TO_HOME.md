@@ -287,6 +287,7 @@ assets/main/index.js
   - `ShopBuyEquitPre`：弹窗背景用 `default_btn_normal` 九宫格替代，标题线用 `default_btn_disabled`，数量加减用 `sc_frame9_kongjian1di2`，滑条用 `xs_slider_qingbao1`，确认/MAX 按钮用 `cm_btn_LvSe1` / `cm_btn_LvSe1_1`。
 - Godot `Button` 的子 `TextureRect` 会压住内部文字，商店页现在统一用“按钮空文本 + SpriteFrame 子图 + 独立 Label”来保证底图和文字层级。
 - 主城 `hero_hit_area` 用于点击角色切换 Spine 动作，必须低于 UI 按钮层；当前 `prefab_layer.z_index = 20`、`hero_hit_area.z_index = 10`，否则右侧“商会”等入口会被角色点击区截获。
+- 主城底部导航也不要只依赖 Button 命中。角色 Spine 和 `hero_hit_area` 覆盖到底部附近时，`英雄` 按钮会出现难点的问题；当前已新增 `bottom_nav_hit_layer` 和 `bottom_nav_hits`，在 `_input()` 里按设计坐标矩形兜底分发，`--home-click-at 359,654 --capture-hero-list <png>` 已验证可从主屏进入英雄列表。
 - 右侧九个斜向入口不要直接依赖旋转 Control/Button 的命中。当前实现把显示层和命中层拆开：`_add_ribbon_button()` 只画旋转资源，`right_ribbon_hit_layer` 放置独立不旋转矩形 hit area，`_input()` 再按 `right_ribbon_hits` 的设计坐标兜底分发点击。这样最后一个“商会”在真实鼠标点击下也能进入商店。
 - 右侧入口红点不要放在图标中心，当前移到图标右上角，避免遮住 `通行证/仓库/竞技/.../商会` 的图标。
 - 商店页回归参数：`--shop-open-buy <index>` 可启动时打开购买确认框，`--capture-shop-panel <png>` 可截图。
@@ -383,10 +384,14 @@ DrawCardActivityRenWuItemCom
 - Mask 子树挂载时会把 Cocos 全局坐标转换为 Godot 裁剪容器内局部坐标；已覆盖 `HeroMainPre` 头像列表、右侧信息遮罩等存在明确父子链的节点。
 - `cocos_prefab_preview.gd` 已开始推断导出时丢失父链的 ScrollView：对孤立的 `content + cc.Layout` 查找最近的 `view + cc.Mask`，并把 content 及其子树挂入对应裁剪容器；已验证 `HeroMainPre`、`BagPre`、`13003`。
 - `HeroMainPre` 的原始 `tabTxt` 静态 Label 会被运行时 mock 过滤，避免在窄 ScrollView viewport 下被裁成单字列；后续应改为按 `HeroSidePrefab` 真实逻辑重建页签。
-- 已新增独立英雄详情界面 `scenes/original_hero_panel.tscn` / `scripts/original_hero_panel.gd`；当前主城底部“英雄”入口仍直接进入该详情页，已确认这比原始流程少了 `HeroListPre` 英雄列表页。
+- 已新增独立英雄列表界面 `scenes/original_hero_list_panel.tscn` / `scripts/original_hero_list_panel.gd`；主城底部“英雄”入口已改为先进入该列表页，再由英雄卡片点击进入 `HeroMainPre` 风格详情页。
+- 独立英雄列表界面参考 `HeroListPre` 手工实现阵营筛选、英雄卡片网格、右侧 `英雄/图鉴/共享/英魂/阵容/升星` 页签和底部操作入口；当前动态数据为本地 mock，点击英雄通过 `hero_id` 传给 `original_hero_panel.gd`。
 - 独立英雄界面当前按 `HeroMainPre` 的视觉结构手工实现：左侧英雄信息和可点击头像竖列、中心 Spine、右侧培养/装备/升星/战意/衣装页签、点击角色切换动作。
 - 独立英雄界面读取 `data/named_resource_index.json` 加载头像框、头像、SSR 标、装备框等资源，兼容 `texture_path/sprite_rect` 和 `native_path/rect` 两种索引字段。
 - 已导出 `HeroTabPre.json` 和 `HeroListPre.json`。`HeroTabPre` 确认页签选中态使用 `cm_tab2_on`，未选中态在 `HeroMainPre` 中可见 `cm_tab2_off`；`HeroListPre` 是完整英雄列表页，不等同于 `HeroMainPre` 左侧小入口。
+- 已继续导出英雄列表相关子 prefab：`HeroGridPre.json`、`HeroBookItemPre.json`、`HeroLevelSharedPre.json`、`HeroNormalarrayPre.json`、`HeroStarPre.json`。
+- `HeroGridPre` 字段绑定已确认：`imgHeroHead/imgZhenYing/imgTag/imgDi/imgKuamg/imgLock/imgHongdian/imgZhan/imgYuan/imgJiBan` 等节点由 `HeroGridCom.setData(...)` 运行时写入；当前列表页已用 `comHeroGrid` 头像框、阵营、SSR、星级、红点、上阵/助战状态做本地 mock。
+- `HeroBookItemPre` 是图鉴竖卡结构，包含 `ImgDi/ImgDi2/ImgKuang/heroImg/heroName/lblStar`；当前图鉴页已按竖卡布局重建，但 `heroImg` 仍使用头像代替，后续需要追 `image/heroBook/<id>` 或对应长图资源。
 - `original_hero_panel.gd` 当前用 `HeroTabPre/HeroMainPre` 的 `cm_tab2_on/off` 替换 Godot 默认页签按钮，右侧详情面板使用 `image/en/HeroPanel/yx_frame_BaiBan` 并压暗，培养页按钮使用 `cm_btn_LvSe1`。
 - 已新增独立背包/仓库界面 `scenes/original_bag_panel.tscn` / `scripts/original_bag_panel.gd`，主城底部“仓库”入口进入该场景，不再打开 prefab 预览器。
 - 独立背包界面参考 `BagPre.json` 手工实现左侧滚动网格、右侧分类按钮、详情区和底部操作按钮；本地 mock 图标来自 `data/equipment_icon_index.json` 的真实装备 SpriteFrame。
@@ -487,8 +492,9 @@ UI 层：Prefab/mainpanel/MainPre
 - 主城截图回归可用 `--home-hero <name>` 和 `--home-bg <name-or-index>` 指定角色/背景，例如 `--home-hero YouDuoLa_LH`。
 - 主城角色展示区域可点击切换动作。`105004` 已验证可从 `idle` 切到 `show`，也可用 `--home-click-hero-once` 模拟点击。
 - 主城动作可用 `--home-animation <name>` 指定，便于截图回归。
+- 主城底部 `英雄` 入口点击问题已修复：底部导航有独立顶层命中层和 `_input()` 坐标兜底，不再被主城角色 Spine/角色点击区挡住。回归命令：`--home-click-at 359,654 --capture-hero-list debug_runs/home_click_hero_list.png`。
 - 主城主要入口已接到对应 prefab 预览：
-  - 底部 `英雄` -> 原始应先打开 `Prefab/HeroListPanel/HeroListPre`，当前 Godot 仍直接进入 `original_hero_panel.tscn` / `HeroMainPre` 风格详情页，后续需要补 `original_hero_list_panel.tscn`
+  - 底部 `英雄` -> `scenes/original_hero_list_panel.tscn`，对应原始 `Prefab/HeroListPanel/HeroListPre`；点击英雄后进入 `scenes/original_hero_panel.tscn` / `Prefab/HeroPanel/HeroMainPre`
   - 底部 `仓库` -> `Prefab/BagPanel/BagPre`
   - 底部 `冒险` -> `Prefab/Battle/battle`
   - 底部 `副本` -> `Prefab/SkyCityPanel/SkyCityPre`
@@ -810,8 +816,8 @@ Spine 查看器：
 - `HeroListPanel` 源码在 `assets/main/index.js:80735-80740` 设置 `preUrl="Prefab/HeroListPanel/HeroListPre"`，并在 `preloadAnyList` 中预加载 `Prefab/HeroPanel/HeroMainPre`。
 - 主城导航源码链：`DaohangPanel.openSelectBtn()` 的 `btn2` 调用 `openHeroPanel()`；`assets/main/index.js:35059-35068` 中 `openHeroPanel()` 设置 `HeroListPanel.instance.menuType = 1`、`HeroListControl.instance.campType = -1`，然后 `HeroListPanel.open()`。
 - 英雄列表点击源码链：`assets/main/index.js:80884-80897` 中 `HeroListPanel.openHeroDetail()` 把点击的 `dataHero` 写入 `HeroControl.instance.dataHero`，然后打开 `HeroMainPanel.instance`；`HeroMainPanel` 在 `assets/main/index.js:81379` 设置 `preUrl="Prefab/HeroPanel/HeroMainPre"`。
-- 因此原始流程应是 `主屏英雄按钮 -> HeroListPre 英雄列表 -> 点击英雄 -> HeroMainPre 英雄详情`。当前 `original_hero_panel.gd` 可以继续作为详情页，但主屏英雄入口需要先改到新的 `original_hero_list_panel.tscn`。
-- 当前实现方向：保留 `original_hero_panel` 作为 `HeroMainPre` 详情页；新增 `original_hero_list_panel` 按 `HeroListPre` 做阵营筛选、英雄网格、图鉴/共享/阵容/星级页签，本地 mock 点击后再进入详情页。下一步继续追 `HeroListPanelCom`、`HeroGrid`、`HeroBookItemPre` 的真实 SpriteFrame 与脚本字段绑定。
+- 因此原始流程应是 `主屏英雄按钮 -> HeroListPre 英雄列表 -> 点击英雄 -> HeroMainPre 英雄详情`。Godot 当前已按这个两段流程路由：`original_home_screen.gd` 进入 `original_hero_list_panel.tscn`，列表卡片再进入 `original_hero_panel.tscn`。
+- 当前实现方向：保留 `original_hero_panel` 作为 `HeroMainPre` 详情页；继续细化 `original_hero_list_panel`，下一步追 `HeroListPanelCom`、`HeroGridCom.setData(...)`、`HeroBookItem.setData(...)` 的真实字段绑定、`heroBook/<id>` 立绘和 ScrollView item 模板。
 
 活动抽卡源码定位：
 

@@ -5,7 +5,7 @@ const FLOATING_CITY_SCENE := "res://scenes/original_main_city.tscn"
 const RESOURCE_BROWSER := "res://scenes/resource_browser.tscn"
 const PREFAB_PREVIEW := "res://scenes/cocos_prefab_preview.tscn"
 const SPINE_VIEWER := "res://scenes/spine_character_viewer.tscn"
-const HERO_PANEL_SCENE := "res://scenes/original_hero_panel.tscn"
+const HERO_LIST_SCENE := "res://scenes/original_hero_list_panel.tscn"
 const BAG_PANEL_SCENE := "res://scenes/original_bag_panel.tscn"
 const DRAW_CARD_SCENE := "res://scenes/original_draw_card_panel.tscn"
 const SHOP_PANEL_SCENE := "res://scenes/original_shop_panel.tscn"
@@ -104,6 +104,7 @@ const HEROES := [
 
 var design_root: Control
 var prefab_layer: Control
+var bottom_nav_hit_layer: Control
 var background_image: TextureRect
 var hero_image: TextureRect
 var hero_spine: Node2D
@@ -111,6 +112,7 @@ var hero_hit_area: Button
 var title_label: Label
 var right_ribbon_hit_layer: Control
 var right_ribbon_hits: Array[Dictionary] = []
+var bottom_nav_hits: Array[Dictionary] = []
 var bg_index := 0
 var hero_index := 1
 var hero_tween: Tween
@@ -128,6 +130,17 @@ func _notification(what: int) -> void:
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		var design_position := _viewport_to_design(event.position)
+		for i in range(bottom_nav_hits.size() - 1, -1, -1):
+			var nav_item: Dictionary = bottom_nav_hits[i]
+			var nav_rect: Rect2 = nav_item.rect
+			if nav_rect.has_point(design_position):
+				get_viewport().set_input_as_handled()
+				var nav_entry := str(nav_item.get("entry", ""))
+				if nav_entry != "":
+					_open_home_entry(nav_entry)
+				else:
+					_open_prefab_layout(str(nav_item.get("layout", "")))
+				return
 		for i in range(right_ribbon_hits.size() - 1, -1, -1):
 			var item: Dictionary = right_ribbon_hits[i]
 			var rect: Rect2 = item.rect
@@ -175,6 +188,12 @@ func _build_ui() -> void:
 	prefab_layer.z_index = 20
 	prefab_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	design_root.add_child(prefab_layer)
+
+	bottom_nav_hit_layer = Control.new()
+	bottom_nav_hit_layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	bottom_nav_hit_layer.z_index = 60
+	bottom_nav_hit_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	design_root.add_child(bottom_nav_hit_layer)
 
 	right_ribbon_hit_layer = Control.new()
 	right_ribbon_hit_layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -236,9 +255,12 @@ func _add_top_button(parent: HBoxContainer, text: String, callback: Callable) ->
 func _build_manual_main_city() -> void:
 	for child in prefab_layer.get_children():
 		child.queue_free()
+	for child in bottom_nav_hit_layer.get_children():
+		child.queue_free()
 	for child in right_ribbon_hit_layer.get_children():
 		child.queue_free()
 	right_ribbon_hits.clear()
+	bottom_nav_hits.clear()
 
 	_add_player_panel()
 	_add_currency_bar()
@@ -536,7 +558,11 @@ func _add_bottom_nav() -> void:
 		var hit := Button.new()
 		hit.text = ""
 		hit.flat = true
-		hit.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		hit.position = box.position
+		hit.size = box.size
+		hit.z_index = 60
+		hit.focus_mode = Control.FOCUS_NONE
+		hit.mouse_filter = Control.MOUSE_FILTER_STOP
 		var entry := str(item.get("entry", ""))
 		var layout := str(item.get("layout", ""))
 		if entry != "":
@@ -545,7 +571,12 @@ func _add_bottom_nav() -> void:
 		elif layout != "":
 			hit.tooltip_text = "%s 预览" % layout
 			hit.pressed.connect(_open_prefab_layout.bind(layout))
-		box.add_child(hit)
+		bottom_nav_hit_layer.add_child(hit)
+		bottom_nav_hits.append({
+			"rect": Rect2(box.position, box.size),
+			"entry": entry,
+			"layout": layout,
+		})
 
 		_add_red_dot(box, Vector2(91, 24), Vector2(24, 24))
 
@@ -642,7 +673,7 @@ func _add_red_dot(parent: Control, center: Vector2, size := Vector2(24, 24)) -> 
 
 func _open_home_entry(label: String) -> void:
 	if label == "英雄":
-		Navigation.go(HERO_PANEL_SCENE)
+		Navigation.go(HERO_LIST_SCENE)
 		return
 	if label == "仓库":
 		Navigation.go(BAG_PANEL_SCENE)

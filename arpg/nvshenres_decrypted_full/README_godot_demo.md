@@ -89,6 +89,7 @@ Godot 当前工程已接入项目内轻量 Spine runtime，用于本地预览角
 - 独立商店页按 `ShopPanel.setData()` 的运行逻辑手工实现：顶部货币条、基础/战斗商城主页签、右侧商店类型、两列商品列表、刷新条和本地购买弹窗；商品图标从 `data/equipment_icon_index.json` 读取真实 SpriteFrame，商品卡尺寸和主要元素坐标参考 `GoodsItemPre`，购买确认框参考 `ShopBuyEquitPre`。
 - 商店页已继续接入子 prefab 的真实 SpriteFrame：`ShopItemPre` 的右侧页签图标，`GoodsItemPre` 的折扣/稀有标签，`ShopBuyEquitPre` 的购买确认背景、标题线、加减按钮、滑条和绿色确认按钮。按钮文字不要直接放在 `Button.text` 上被子贴图覆盖，当前改为 SpriteFrame 底图 + 独立 `Label`。
 - 主城右侧九个入口已修复可点击性：可视斜条继续按原始布局旋转显示，点击使用独立顶层矩形命中层，并在 `_input` 中按设计坐标分发，避免旋转 Control 和角色 hit 区截获鼠标事件；红点也移到图标右上角，避免遮住入口图标。
+- 主城底部导航也使用独立命中层和 `_input` 坐标兜底；底部“英雄”按钮已验证不会再被主城角色 Spine/角色点击区挡住，回归参数为 `--home-click-at 359,654 --capture-hero-list <png>`。
 - 商店页可用 `--shop-open-buy <index>` 启动参数直接打开购买确认框，配合 `--capture-shop-panel` 做回归截图。
 
 ## Prefab 还原注意事项
@@ -118,7 +119,8 @@ Godot 当前工程已接入项目内轻量 Spine runtime，用于本地预览角
 - `data/prefab_layouts/GoodsItemPre.json`：商店商品卡 prefab，含 `GoodsItemCom` 的 `discount/rare/fight/prize/limit/selectBtn` 绑定。
 - `data/prefab_layouts/HeroMainPre.json`：英雄主界面 prefab，独立英雄页的中心 Spine、右侧信息面板和功能页签布局参考。
 - `data/prefab_layouts/HeroTabPre.json`：英雄页签 prefab，确认 `cm_tab2_on/off` 页签资源。
-- `data/prefab_layouts/HeroListPre.json`：完整英雄列表页 prefab。原始流程是主屏“英雄”先打开 `HeroListPre`，点击英雄后再打开 `HeroMainPre`；当前 Godot 还需要新增独立英雄列表页。
+- `data/prefab_layouts/HeroListPre.json`：完整英雄列表页 prefab。当前 Godot 已新增独立 `original_hero_list_panel.tscn`，主屏“英雄”先打开列表，点击英雄后再进入 `HeroMainPre` 风格详情页。
+- `data/prefab_layouts/HeroGridPre.json`、`HeroBookItemPre.json`、`HeroLevelSharedPre.json`、`HeroNormalarrayPre.json`、`HeroStarPre.json`：英雄列表页的卡片、图鉴、共享等级、阵容和升星子 prefab 布局参考。
 - `data/prefab_restore_inventory.csv`：整理后的 prefab 还原清单。
 - `data/prefab_restore_inventory.md`：按分类和优先级整理的 prefab 清单。
 - `data/spine_preview_index.json`：Spine 预览索引。

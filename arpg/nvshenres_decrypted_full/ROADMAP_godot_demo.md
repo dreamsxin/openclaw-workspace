@@ -194,6 +194,7 @@
 - `ShopItemPre/GoodsItemPre/ShopBuyEquitPre` 已作为子 prefab 资源依据接入手工界面：页签图标、商品折扣/稀有标签、商品购买按钮、购买确认弹窗背景、滑条、加减/MAX/购买按钮均使用原 SpriteFrame 裁剪图。
 - 商店页支持命令行回归：`--shop-open-buy <index>` 和 `--capture-shop-panel <png>`，截图和日志放入 `debug_outputs/`。
 - 主城入口支持命令行回归：`--home-open-entry 商会` 可自动触发右侧商会入口并跳到商店页；`--home-click-at 1059,547` 可模拟真实点击右侧“商会”。右侧九个斜向入口已拆成旋转显示层和独立矩形命中层，主城 UI 层级也高于角色点击区。
+- 主城底部导航新增独立命中层和 `_input()` 坐标兜底；`--home-click-at 359,654 --capture-hero-list <png>` 已验证可从底部“英雄”进入 `original_hero_list_panel.tscn`，避免角色 Spine/角色点击区挡住底栏按钮。
 
 商店页下一步：
 
@@ -310,9 +311,14 @@ RESTORE_LOGIN_TO_HOME.md
 - 对导出时丢失父链的 ScrollView，预览器会把孤立的 `content + cc.Layout` 近邻匹配到 `view + cc.Mask`，再把 content 子树挂入该 viewport；已验证 `HeroMainPre`、`BagPre`、`13003`。
 - `HeroMainPre` 当前过滤原始 `tabTxt` 静态 Label，避免窄 viewport 裁剪后显示成单字列；后续需要按 `HeroSidePrefab` 的运行时页签逻辑重建。
 - 已新增独立英雄界面：
+  - `scenes/original_hero_list_panel.tscn`
+  - `scripts/original_hero_list_panel.gd`
   - `scenes/original_hero_panel.tscn`
   - `scripts/original_hero_panel.gd`
-- 主城底部“英雄”入口当前进入独立英雄详情界面，不再默认打开 prefab 预览器；已确认原始流程应先进入 `HeroListPre`，所以后续要在前面补独立英雄列表页。
+- 主城底部“英雄”入口已改为 `original_hero_list_panel.tscn -> original_hero_panel.tscn`，对齐原始 `HeroListPre -> HeroMainPre` 两段流程。
+- 独立英雄列表界面当前支持阵营筛选、英雄卡片网格、右侧 `英雄/图鉴/共享/英魂/阵容/升星` 页签、本地 mock 点击进入详情。
+- 英雄列表相关子 prefab 已导出：`HeroGridPre`、`HeroBookItemPre`、`HeroLevelSharedPre`、`HeroNormalarrayPre`、`HeroStarPre`。
+- `original_hero_list_panel.gd` 已把右侧 6 个页签推进为可查看内容：英雄网格使用 `HeroGridPre` 相关 `comHeroGrid` 资源，图鉴页使用 `HeroBookItemPre` 竖卡结构，共享/阵容/升星页参考对应 prefab 做本地 mock。
 - 独立英雄界面当前支持左侧英雄头像列表、中心 Spine 展示、点击角色切换动作、右侧培养/装备/升星/战意/衣装页签和本地属性 mock。
 - 独立英雄界面的资源加载改为读取 `data/named_resource_index.json`，支持 `texture_path` 与 `sprite_rect` 两种索引字段，避免之前只认 `native_path/rect` 导致头像不显示。
 - `export_cocos_prefab_layout.py` 已新增导出 `HeroTabPre` 和 `HeroListPre`。独立英雄界面已用 `HeroTabPre/HeroMainPre` 的 `cm_tab2_on/off` 替换默认页签按钮，左侧增加小型英雄头像竖列用于本地切换，右侧信息面板使用 `yx_frame_BaiBan` 和 `cm_btn_LvSe1` 资源。
@@ -339,7 +345,7 @@ RESTORE_LOGIN_TO_HOME.md
   - 主屏默认角色 105004 已按原游戏链路重放：`MainUIPanel._roleLhbody` -> `lihuiCom.showLh()` -> `RoleLh` -> `Prefab/HerolhPrefab/105004` -> `MainPre.herolh`。当前 `original_home_screen.gd` 使用 `herolh` 根原点 `(640,360)`，再叠加 Skeleton 子节点偏移 `(-68,+333)` 和 scale `(1,0.95)`，不再用矩形 fit。
   - 原始主屏底部“英雄”不是直接打开 `HeroMainPre`。源码链为 `DaohangPanel.openHeroPanel()` -> `HeroListPanel.preUrl="Prefab/HeroListPanel/HeroListPre"` -> 列表点击 `openHeroDetail()` -> `HeroMainPanel.preUrl="Prefab/HeroPanel/HeroMainPre"`。
   - `HeroMainPre.json` 原版英雄页不是左侧头像列表，而是左侧竖向功能页签、中心 `heroBodyBox`、左右 `btnPre/btnNext` 切换和右侧 `heroContentPrefab` 信息面板。
-  - 下一步需要新增 `original_hero_list_panel.tscn` 作为英雄入口页，再从列表点击进入现有 `original_hero_panel.tscn` 详情页；`original_hero_panel.gd` 的左侧英雄列表只保留为调试/快速切换能力。
+  - `original_hero_list_panel.tscn` 已作为英雄入口页接入，后续需要继续替换真实 `HeroGridPre/HeroBookItemPre` 子项资源；`original_hero_panel.gd` 的左侧英雄列表只保留为调试/快速切换能力。
 - `original_hero_panel.gd` 已开始按原版结构重排：
   - 左侧改为英雄名、头像、星级、小型英雄头像竖列和传记/衣装/锁定小按钮。
   - 中心保留 Spine 角色展示，增加 `btnPre/btnNext` 式左右切换。
@@ -357,7 +363,7 @@ RESTORE_LOGIN_TO_HOME.md
 
 下一步优先级：
 
-1. 新增独立 `original_hero_list_panel`：按 `HeroListPre` 做英雄入口页，包含阵营筛选、英雄网格、图鉴/共享/阵容/升星等页签，本地 mock 点击后进入 `original_hero_panel`。
+1. 继续完善独立 `original_hero_list_panel`：追 `HeroGridCom.setData(...)`、`HeroBookItem.setData(...)` 的真实字段绑定，补 `image/heroBook/<id>` 长图、卡片选中/锁定/红点/上阵/助战状态和 ScrollView 滚动细节。
 2. 继续完善独立 `original_hero_panel`：追 `HeroSidePrefab` 和 `heroContentPrefab` 的真实按钮/页签/职业/阵营资源，细化左右翻页按钮、星级、装备槽和技能格。
 3. 补启动登录流程缺口：把 `updataScene.fire` 热更新入口、`PFLoginPanel` 公告/隐私/适龄提示和本地服务器列表 mock 成可检查的独立节点。
 4. 继续完善独立 `original_bag_panel`：追 `GridBoxItemPre` 真实选中框、品质框、背包分类按钮资源、图鉴/合成按钮资源。
