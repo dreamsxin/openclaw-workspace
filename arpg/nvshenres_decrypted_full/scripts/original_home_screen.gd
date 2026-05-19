@@ -27,6 +27,15 @@ const NAV_BG_RECT := Rect2i(675, 127, 340, 97)
 const RED_DOT_RECT := Rect2i(375, 295, 31, 31)
 const MONEY_GOLD := "res://assets/resources/native/9e/9ec8c387-6381-46b4-93eb-7ebe016dbffc.png"
 const MONEY_DIAMOND := "res://assets/resources/native/47/47e154d7-f9c2-4a5a-85c0-b299960f439b.png"
+const MONEY_FRAME_ATLAS := "res://assets/resources/native/15/15a1d9111.png"
+const MONEY_ICON_ATLAS_18 := "res://assets/resources/native/18/18b29ae48.png"
+const SHOP_ICON_RECT := Rect2i(163, 3, 91, 53)
+const MONEY_FRAME_1_RECT := Rect2i(330, 400, 178, 36)
+const MONEY_FRAME_2_RECT := Rect2i(106, 400, 179, 36)
+const MONEY_FRAME_3_RECT := Rect2i(847, 288, 172, 36)
+const MONEY_GOLD_RECT := Rect2i(516, 434, 53, 50)
+const MONEY_DIAMOND_RECT := Rect2i(358, 781, 54, 41)
+const MONEY_PURPLE_RECT := Rect2i(236, 742, 32, 36)
 const MONEY_ADD_RECT := Rect2i(996, 828, 24, 24)
 const MAIN_EVENT_GRID_VISIBLE_OFFSET := Vector2(100, 0)
 const HERO_105004_SPINE := "res://data/spine_runtime/105004.json"
@@ -428,19 +437,27 @@ func _add_player_panel() -> void:
 
 func _add_currency_bar() -> void:
 	var shop := Button.new()
-	shop.text = "SHOP"
+	shop.text = ""
 	shop.position = Vector2(818, 10)
-	shop.size = Vector2(96, 34)
-	shop.add_theme_font_size_override("font_size", 18)
-	shop.add_theme_color_override("font_color", Color(0.55, 0.22, 0.08))
+	shop.size = Vector2(96, 56)
+	shop.flat = true
 	shop.tooltip_text = "商店"
 	shop.pressed.connect(func(): Navigation.go(SHOP_PANEL_SCENE))
 	prefab_layer.add_child(shop)
 
-	_add_money_item(_cocos_center_to_screen(Vector2(319, 328)), MONEY_GOLD, "2.25M", true)
-	_add_money_item(_cocos_center_to_screen(Vector2(521, 328)), MONEY_DIAMOND, "878", true)
+	var shop_icon := TextureRect.new()
+	shop_icon.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	shop_icon.texture = _load_texture_region(ATLAS_1A, SHOP_ICON_RECT)
+	shop_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	shop_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	shop_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	shop.add_child(shop_icon)
 
-func _add_money_item(center: Vector2, icon_path: String, value: String, show_add := true) -> void:
+	_add_money_item(_cocos_center_to_screen(Vector2(319, 328)), "2.25M", MONEY_FRAME_2_RECT, true, MONEY_ICON_ATLAS_18, MONEY_GOLD_RECT, true, true, Vector2(60, 60))
+	_add_money_item(_cocos_center_to_screen(Vector2(521, 328)), "102.70M", MONEY_FRAME_3_RECT, false, MONEY_FRAME_ATLAS, MONEY_PURPLE_RECT, true, true, Vector2(46, 50))
+	_add_money_item(_cocos_center_to_screen(Vector2(723, 328)), "4579", MONEY_FRAME_1_RECT, false, MONEY_FRAME_ATLAS, MONEY_DIAMOND_RECT, false, true, Vector2(54, 54))
+
+func _add_money_item(center: Vector2, value: String, bg_rect: Rect2i, bg_rotated: bool, icon_atlas: String, icon_rect: Rect2i, icon_rotated := false, show_add := true, icon_size := Vector2(54, 54)) -> void:
 	var box := Control.new()
 	box.position = center - Vector2(86, 18)
 	box.size = Vector2(172, 36)
@@ -449,16 +466,16 @@ func _add_money_item(center: Vector2, icon_path: String, value: String, show_add
 	var bg := TextureRect.new()
 	bg.position = Vector2(-3, 0)
 	bg.size = Vector2(179, 36)
-	bg.texture = _load_texture_region(ATLAS_15, Rect2i(106, 400, 36, 179), true, Vector2i(179, 36))
+	bg.texture = _load_texture_region(MONEY_FRAME_ATLAS, bg_rect, bg_rotated, Vector2i(179, 36))
 	bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	bg.stretch_mode = TextureRect.STRETCH_SCALE
 	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	box.add_child(bg)
 
 	var icon := TextureRect.new()
-	icon.position = Vector2(-9, -9)
-	icon.size = Vector2(54, 54)
-	icon.texture = _load_texture(icon_path)
+	icon.position = Vector2(-9, (36.0 - icon_size.y) * 0.5)
+	icon.size = icon_size
+	icon.texture = _load_texture_region(icon_atlas, icon_rect, icon_rotated, Vector2i(int(icon_size.x), int(icon_size.y)))
 	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
