@@ -20,6 +20,8 @@ const ICON_ACCOUNT_RECT := Rect2i(787, 893, 58, 58)
 const ICON_NOTICE_RECT := Rect2i(851, 957, 58, 58)
 const START_BUTTON_RECT := Rect2i(3, 3, 414, 102)
 const TOGGLE_OFF_RECT := Rect2i(451, 524, 30, 30)
+const ALERT_ATLAS_PATH := "res://assets/resources/native/1d/1d816a710.png"
+const ALERT_FRAME_RECT := Rect2i(65, 644, 603, 369)
 const DESIGN_SIZE := Vector2(1280, 720)
 
 var design_root: Control
@@ -29,12 +31,26 @@ var selected_server_status := "hot"
 var server_label: Label
 var server_popup: Control
 var server_status_icon: TextureRect
+var connect_overlay: Control
+var connect_label: Label
+var connect_elapsed := 0.0
+var connect_running := false
 
 func _ready() -> void:
 	_load_layout_index()
 	_build_ui()
 	_apply_startup_args()
 	_capture_if_requested()
+
+func _process(delta: float) -> void:
+	if not connect_running:
+		return
+	connect_elapsed += delta
+	if connect_label and connect_elapsed > 0.85:
+		connect_label.text = "正在登录服务器"
+	if connect_elapsed > 1.65:
+		connect_running = false
+		Navigation.go(MAIN_CITY)
 
 func _build_ui() -> void:
 	var backdrop := ColorRect.new()
@@ -163,7 +179,7 @@ func _build_ui() -> void:
 	start_hit.flat = true
 	start_hit.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	start_hit.tooltip_text = "进入主城"
-	start_hit.pressed.connect(_enter_main)
+	start_hit.pressed.connect(_on_start_game)
 	start_box.add_child(start_hit)
 	_add_label(start_box, "进入游戏", Vector2.ZERO, start_box.size, 24, Color(1.0, 0.96, 0.74)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
@@ -178,6 +194,7 @@ func _build_ui() -> void:
 	_add_label(design_root, "资源版本号:v1.0.0", version_rect.position, version_rect.size, 13, Color(0.86, 0.86, 0.9)).horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	_add_privacy_row()
 	_build_server_popup()
+	_build_connect_overlay()
 
 	_layout_design_root()
 
@@ -330,6 +347,57 @@ func _build_server_popup() -> void:
 	close.pressed.connect(_hide_server_popup)
 	server_popup.add_child(close)
 
+func _build_connect_overlay() -> void:
+	connect_overlay = Control.new()
+	connect_overlay.visible = false
+	connect_overlay.position = Vector2.ZERO
+	connect_overlay.size = DESIGN_SIZE
+	connect_overlay.z_index = 80
+	design_root.add_child(connect_overlay)
+
+	var bg := TextureRect.new()
+	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	bg.texture = _load_texture("res://assets/resources/native/75/750b6077-9d0c-4446-9e4c-3c3ae2fb6ee5.png")
+	bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	bg.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	connect_overlay.add_child(bg)
+
+	var alert_rect := Rect2(Vector2(338.5, 175.5), Vector2(603.0, 369.0))
+	var alert_frame := TextureRect.new()
+	alert_frame.position = alert_rect.position
+	alert_frame.size = alert_rect.size
+	alert_frame.texture = _load_texture_region(ALERT_ATLAS_PATH, ALERT_FRAME_RECT)
+	alert_frame.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	alert_frame.stretch_mode = TextureRect.STRETCH_SCALE
+	alert_frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	connect_overlay.add_child(alert_frame)
+
+	var spinner := Control.new()
+	var spinner_rect := Rect2(Vector2(581.265, 257.51), Vector2(117.47, 204.98))
+	spinner.position = spinner_rect.position
+	spinner.size = spinner_rect.size
+	connect_overlay.add_child(spinner)
+
+	var ring := ColorRect.new()
+	ring.position = Vector2(28, 70)
+	ring.size = Vector2(62, 62)
+	ring.color = Color(0.98, 0.86, 0.44, 0.35)
+	spinner.add_child(ring)
+	var dot := ColorRect.new()
+	dot.position = Vector2(55, 16)
+	dot.size = Vector2(12, 12)
+	dot.color = Color(1.0, 0.95, 0.58, 1.0)
+	spinner.add_child(dot)
+
+	var tween := create_tween()
+	tween.set_loops()
+	tween.tween_property(spinner, "rotation", TAU, 1.2).from(0.0)
+
+	var label_rect := Rect2(Vector2(552.5, 494.144), Vector2(175.0, 31.5))
+	connect_label = _add_label(connect_overlay, "正在连接服务器", label_rect.position - Vector2(34, 0), label_rect.size + Vector2(68, 0), 24, Color(0.98, 0.92, 0.74))
+	connect_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+
 func _add_server_list_item(parent: Control, server_id: String, server_name: String, status: String) -> void:
 	var row := Button.new()
 	row.text = ""
@@ -395,6 +463,8 @@ func _apply_startup_args() -> void:
 	args.append_array(OS.get_cmdline_user_args())
 	if "--open-server-list" in args:
 		_show_server_popup()
+	if "--connect-overlay" in args or "--start-game" in args:
+		_show_connect_overlay()
 
 func _show_local_notice() -> void:
 	var dialog := AcceptDialog.new()
@@ -403,8 +473,25 @@ func _show_local_notice() -> void:
 	add_child(dialog)
 	dialog.popup_centered()
 
-func _enter_main() -> void:
-	Navigation.go(MAIN_CITY)
+func _on_start_game() -> void:
+	if selected_server_status == "maintain":
+		var dialog := AcceptDialog.new()
+		dialog.title = "提示"
+		dialog.dialog_text = "服务器正在维护"
+		add_child(dialog)
+		dialog.popup_centered()
+		return
+	_show_connect_overlay()
+
+func _show_connect_overlay() -> void:
+	if server_popup:
+		server_popup.visible = false
+	if connect_overlay:
+		connect_overlay.visible = true
+	if connect_label:
+		connect_label.text = "正在连接服务器"
+	connect_elapsed = 0.0
+	connect_running = true
 
 func _add_label(parent: Control, text: String, position: Vector2, size: Vector2, font_size: int, color: Color) -> Label:
 	var label := Label.new()

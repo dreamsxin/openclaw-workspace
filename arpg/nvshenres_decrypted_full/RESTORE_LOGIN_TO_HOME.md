@@ -16,6 +16,7 @@ project.godot -> run/main_scene="res://scenes/original_loading.tscn"
 original_loading.tscn
   -> original_login.tscn
   -> original_server_select.tscn
+  -> LoadingPre isFist=1 连接提示
   -> original_home_screen.tscn
 ```
 
@@ -38,7 +39,7 @@ assets/src/settings.js
         -> MainUIPanel.open()
 ```
 
-目前 Godot Demo 为了本地离线可运行，省略了热更新、真实 SDK 登录、公告请求、服务端连接和协议握手，把 `PFLoginPanel.getLastSever()/onStartGame()` 简化成选服页本地 mock 后进入主城。
+目前 Godot Demo 为了本地离线可运行，省略了热更新、真实 SDK 登录、公告请求、真实 socket 连接和协议握手，把 `PFLoginPanel.getLastSever()` 简化成本地服务器 mock；`onStartGame()` 仍保留源码中的 `LoadingPre.isFist=1` 连接提示，再延迟进入主城。
 
 旧链路曾经直接从登录页开始：
 
@@ -208,6 +209,8 @@ texture_nodes: 10
 - `PFLoginPanel.onShow()` 会刷新版本号、隐私勾选、公告按钮和适龄/隐私入口；`getLastSever()` 请求 `game/getServerList.php?lst=last...`，`getAllSever()` 请求全部服务器列表。
 - `PFLoginPanel.onStartGame()` 会关闭平台登录面板并调用 `GameWorld.connect()`。Godot 当前没有真实网络，因此这一步被本地“开始游戏/选服确认”替代。
 - 已按 `pfLoginPanelPre.json` 的 `nodeSv/svBg/scrollTab/scrollserver` 坐标补本地服务器列表弹层；`Hot/New/Maintain` 标签分别来自 `dl_tag_huobao`、`dl_tag_xinfu`、`dl_tag_weihu`。其中 `Hot` 在 `assets/resources/native/1d/1d1cac610.png`，`New/Maintain` 在 `assets/resources/native/14/1430d496a.png`，不能混用 atlas。
+- 点击开始后的连接页不是新 prefab，也不是首次启动完整进度页。源码 `GameWorld.connect()` 会设置 `LoadingPanelNode.isFist=1` 后打开 `Prefab/loading/LoadingPre`；`LoadingPanelNode.onShow()` 在该模式下隐藏进度条、百分比、扫光和根 `ani`，只显示 `alert` 节点。`FackProgressCom.show("正在连接服务器")` 循环调用 `onprogess()` 更新文案；`GameWorld.onConnect()` 再把 `LoadingPanelNode.tip` 改为 `正在登录服务器`。
+- Godot 选服页已按这条链路实现本地连接 overlay：使用 `assets/resources/native/75/750b6077-9d0c-4446-9e4c-3c3ae2fb6ee5.png` 做 `LoadingPre.bg`，使用 `image/common/cm_frame_TanChuang2` 对应 `assets/resources/native/1d/1d816a710.png` 的 `[65,644,603,369]` 做 alert 框，按 `LoadingPre.json` 的 `img/New Label/ani` 坐标放置文案和本地转动占位动画。维护状态服仍按 `PFLoginCom.onStartGame()` 逻辑提示“服务器正在维护”，不进入连接。这里的 `ani` 不是普通图片节点，当前缺 `5c564cc0-7b9b-4d41-8ed6-31d77d9d76a8` 对应 import，因此暂不能恢复原动画。
 
 下一步：
 
