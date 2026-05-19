@@ -87,6 +87,15 @@ data/prefab_layouts/loadingProgress.json
 assets/resources/native/75/750b6077-9d0c-4446-9e4c-3c3ae2fb6ee5.png
 ```
 
+注意：这张图对应原始启动加载页，不是带静态人物的登录页。登录/选服页的金发静态人物背景来自 `config.json` / `data/config_index/by_path_prefix/uispine.json` 中的 `uispine/denglu/bg`：
+
+```text
+assets/resources/native/a8/a84d3470-bde7-4589-9b33-65a957c34507.jpg
+converted/png/a84d3470-bde7-4589-9b33-65a957c34507.png
+```
+
+其中 native 文件扩展名是 `.jpg`，但文件头实际为 PNG。Godot 运行时优先使用 `converted/png` 下的转换文件，避免导入器按扩展名误判。`uispine/denglu/HB_BG` 是云城背景，不是登录人物。
+
 说明：
 
 - 用户提供的 `加载页.jpg` 是该资源的 `1280x576` 显示裁切/缩放参考。
@@ -136,14 +145,15 @@ texture_nodes: 6
 
 关键贴图节点：
 
-- `bg`：登录背景，当前导出为 `assets/resources/native/e8/e851e89b-faa2-4484-bea6-5c01dd9f06e2.png`
+- `bg`：`LoginPre` 内部背景节点不能单独代表完整登录底图；原始登录静态人物来自 `uispine/denglu/bg`
 - `loginBtn` / `Background`：登录按钮区域
 - `wenziDi`：底部文字/遮罩区域
 - `logo`：原 prefab 中存在，但 `_active=false`
 
 当前 Godot 实现状态：
 
-- 已能显示登录背景、Logo、底部装饰、登录按钮。
+- 已能显示带静态人物的登录背景、底部装饰、登录按钮。
+- `logo` 节点在 `LoginPre` 中 `_active=false`，当前不强行显示。
 - 点击登录进入选服页。
 - 目前实现仍偏手工，未完全由 `LoginPre.json` 自动生成。
 - 原始逻辑里 `LoginPanel` 主要用于 debug/账号直连流程：`assets/main/index.js:98951` 设置 `preUrl="Prefab/login/LoginPre"`，`loginon()` 会直接设置 `GLOBAL_ACCOUNT/GLOBAL_IP` 并调用 `GameWorld.connect()`。
@@ -181,7 +191,7 @@ texture_nodes: 10
 
 关键贴图节点：
 
-- `2`：大背景，当前导出为 `assets/resources/native/e8/e851e89b-faa2-4484-bea6-5c01dd9f06e2.png`
+- `2`：大背景节点不能单独代表完整登录底图；当前选服页同样使用 `uispine/denglu/bg` 的带人物背景
 - `btnSwitchAcount`：切换账号按钮
 - `btnGG`：公告按钮
 - `wenziDi`：底部文字/装饰区域
@@ -190,7 +200,7 @@ texture_nodes: 10
 
 当前 Godot 实现状态：
 
-- 选服页已经能显示背景、公告/账号按钮、本地演示服、开始按钮。
+- 选服页已经能显示带静态人物的背景、公告/账号按钮、本地演示服、开始按钮。
 - 点击开始进入主页面。
 - 目前服务器列表是本地 mock，符合“不连接服务端”的目标。
 - 当前实现仍偏手工，未完全由 `pfLoginPanelPre.json` 自动生成。
@@ -200,8 +210,8 @@ texture_nodes: 10
 
 下一步：
 
-1. 将背景、公告按钮、账号按钮、底部装饰切换为 prefab 自动渲染。
-2. 服务器列表继续用本地 mock 数据填充。
+1. 服务器列表继续用本地 mock 数据填充，优先补 `nodeSv` 弹层和服务器状态标签。
+2. 公告、账号、隐私协议弹层用本地 mock 实现。
 3. 补 `Label`、`Button`、`NinePatchRect` 映射。
 4. 明确哪些节点由服务端列表数据动态生成，不从 prefab 静态找。
 

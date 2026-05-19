@@ -4,13 +4,13 @@ const PREFAB_PREVIEW := "res://scenes/cocos_prefab_preview.tscn"
 const RESOURCE_BROWSER := "res://scenes/resource_browser.tscn"
 const SERVER_SELECT := "res://scenes/original_server_select.tscn"
 const LAYOUT_PATH := "res://data/prefab_layouts/LoginPre.json"
-const BG_PATH := "res://assets/resources/native/75/750b6077-9d0c-4446-9e4c-3c3ae2fb6ee5.png"
+const BG_PATH := "res://converted/png/a84d3470-bde7-4589-9b33-65a957c34507.png"
 const UI_ATLAS_PATH := "res://assets/resources/native/14/1430d496a.png"
 const LOGIN_BUTTON_ATLAS := "res://assets/resources/native/1d/1d1cac610.png"
 const LOGIN_BUTTON_SHEET := "res://assets/resources/native/11/1109b405e.png"
 const LOGIN_BUTTON_RECT := Rect2i(3, 3, 414, 102)
-const LOGO_RECT := Rect2i(3, 612, 400, 254)
 const BOTTOM_RECT := Rect2i(206, 996, 2, 34)
+const EDIT_BG_RECT := Rect2i(653, 823, 198, 62)
 const SIDE_ICON_RECTS := {
 	"btnUserRule": Rect2i(851, 893, 58, 58),
 	"btnUserCenter": Rect2i(787, 957, 58, 58),
@@ -43,16 +43,6 @@ func _build_ui() -> void:
 	bg.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	design_root.add_child(bg)
-
-	var logo := TextureRect.new()
-	var logo_rect := _layout_rect("logo", Rect2(Vector2(89.5, 0), Vector2(400, 254)))
-	logo.position = logo_rect.position
-	logo.size = logo_rect.size
-	logo.texture = _load_texture_region(LOGIN_BUTTON_ATLAS, LOGO_RECT, true)
-	logo.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	logo.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	logo.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	design_root.add_child(logo)
 
 	var bottom := TextureRect.new()
 	var bottom_rect := Rect2(Vector2(-147.5, 607.0), Vector2(1575, 113))
@@ -87,6 +77,8 @@ func _build_ui() -> void:
 	login_box.add_child(login_hit)
 	_add_label(login_box, "进入游戏", Vector2(195, 26), Vector2(160, 50), 28, Color(1.0, 0.94, 0.72)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
+	_add_debug_login_fields()
+
 	var side_items := [
 		{"label": "用户协议", "node": "btnUserRule", "pos": Vector2(1176, 271.097)},
 		{"label": "用户中心", "node": "btnUserCenter", "pos": Vector2(1176, 186.097)},
@@ -113,6 +105,10 @@ func _build_ui() -> void:
 	resources.text = "资源浏览"
 	resources.pressed.connect(func(): Navigation.go(RESOURCE_BROWSER))
 	top_bar.add_child(resources)
+
+	var version_rect := _layout_rect("vesion", Rect2(Vector2(610.938, 678.55), Vector2(120, 18.9)))
+	var version := _add_label(design_root, "资源版本号:v1.0.0", version_rect.position - Vector2(30, 0), Vector2(180, version_rect.size.y), 13, Color(0.88, 0.9, 0.95))
+	version.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 	_layout_design_root()
 
@@ -159,6 +155,28 @@ func _add_side_button(pos: Vector2, size: Vector2, rect: Rect2i, text: String) -
 	var label := _add_label(design_root, text, pos + Vector2(-5, 66), Vector2(68, 24), 16, Color(0.92, 0.94, 1.0))
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
+func _add_debug_login_fields() -> void:
+	var rows := [
+		{"node": "tbg1", "text": "127.0.0.1"},
+		{"node": "tbg2", "text": "8080"},
+		{"node": "tbg3", "text": "local_user"},
+		{"node": "tbg4", "text": "password"},
+	]
+	for row in rows:
+		var rect := _layout_rect(str(row.node), Rect2(Vector2(541, 232), Vector2(198, 42)))
+		var field_bg := NinePatchRect.new()
+		field_bg.position = rect.position
+		field_bg.size = rect.size
+		field_bg.texture = _load_texture_region(UI_ATLAS_PATH, EDIT_BG_RECT, true)
+		field_bg.patch_margin_left = 22
+		field_bg.patch_margin_top = 16
+		field_bg.patch_margin_right = 18
+		field_bg.patch_margin_bottom = 14
+		field_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		design_root.add_child(field_bg)
+		var label := _add_label(design_root, str(row.text), rect.position + Vector2(14, 2), rect.size - Vector2(28, 4), 18, Color(0.95, 0.96, 1.0))
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+
 func _add_label(parent: Control, text: String, position: Vector2, size: Vector2, font_size: int, color: Color) -> Label:
 	var label := Label.new()
 	label.text = text
@@ -204,6 +222,7 @@ func _layout_design_root() -> void:
 
 func _capture_if_requested() -> void:
 	var args := OS.get_cmdline_args()
+	args.append_array(OS.get_cmdline_user_args())
 	if not "--capture-login" in args:
 		return
 	await get_tree().process_frame

@@ -400,13 +400,13 @@ RESTORE_LOGIN_TO_HOME.md
   - 英雄详情左上补 `HeroBookDetailPre.imgTag` 对应品质图资源 `assets/resources/native/08/089f225e-78e8-428c-aeec-39bb5b669f43.png`。
 - 按 `UI_RESTORE_AUDIT.md` 顺序开始逐页收敛：
   - `original_loading.gd` 已按 `LoadingPre.json` 重排底部 1018 宽进度条、百分比、加载提示和 `正在连接服务器` 文案。
-  - `original_login.gd` 已切换到 `LoginPre.json` 的真实背景 `e8/e851...`、logo `b4/b43...`、底部文字带 `ed/edd...`、登录按钮和右侧三按钮坐标。
-  - `original_server_select.gd` 已切换到 `pfLoginPanelPre.json` 的真实背景、底部版权区、右侧公告/切换账号/discord/facebook、服务器选择条、热标和进入按钮。
+  - `original_login.gd` 已按 `LoginPre.json` 保留调试输入、登录按钮和右侧三按钮坐标；底图改用 `uispine/denglu/bg`，这是原始登录页带金发静态人物的整张背景。
+  - `original_server_select.gd` 已按 `pfLoginPanelPre.json` 保留底部版权区、右侧公告/切换账号/discord/facebook、服务器选择条、热标和进入按钮；底图同样使用 `uispine/denglu/bg`。
   - `original_home_screen.gd` 底部导航已改为 `daohangPre.json` 的真实六个图标资源/坐标，第三个入口改为仓库。
   - 已用 Godot `--headless --scene ... --quit-after` 验证加载、登录、选服、主屏均能启动；日志仅剩直接 `Image.load()` 的本地 demo 警告。
 - 资源显示问题修正：
   - 已读取 `UI_ANALYSIS_REPORT.md` 和 `coordinate_issues_analysis.md`。结论是不能仅凭 `texture_path` 直接替换资源，必须检查实际图片尺寸并处理 `sprite_rect/originalSize/rotated`。
-  - `LoginPre` / `pfLoginPanelPre` 中部分看似真实的 `bg/logo/wenziDi` native 文件实际只有 `40x40`，直接铺全屏会空白或严重失真；登录/选服页已恢复到之前验证可显示的背景、底部带和按钮资源，同时保留 prefab 坐标。
+  - `LoginPre` / `pfLoginPanelPre` 中部分看似真实的 `bg/logo/wenziDi` native 文件实际只有 `40x40`，直接铺全屏会空白或严重失真；登录静态人物也不在两个 prefab 内，而是源码预加载链路旁的 `uispine/denglu/bg`。该 native 扩展名是 `.jpg` 但文件头是 PNG，Godot 使用 `converted/png/a84d3470-bde7-4589-9b33-65a957c34507.png`。
   - `daohangPre` 的部分导航 SpriteFrame 指向横条或极薄切片，直接当图标使用会不显示；主屏底部导航保留 prefab 坐标，但对冒险/副本/公会暂回退到可显示 atlas 近似图标。
   - 下一轮要优先落实 `coordinate_issues_analysis.md` 的 P0/P2：导出统一 `screen_rect` 并在 Godot 侧统一使用，避免继续出现三套坐标转换。
 - `original_hero_panel.gd` 已开始按原版结构重排：

@@ -98,7 +98,9 @@
 | --- | --- | --- |
 | `Prefab/loading/LoadingPre` | `assets/resources/import/71/71d56f9c-78d3-4b4c-99a5-7582c52b12f3.json` | 启动初始化加载页 prefab。 |
 | `Prefab/loading/loadingProgress` | `assets/resources/import/8b/8b71b1c2-4572-4283-8bf1-32396e03cf64.json` | 加载进度条相关 prefab。 |
-| `image/com/login/dl_bg` | `assets/resources/native/e8/...` | 登录页背景资源路径。 |
+| `image/com/login/dl_bg` | `assets/resources/native/75/750b6077-9d0c-4446-9e4c-3c3ae2fb6ee5.png` | 启动加载页/登录相关背景资源；不是带人物的最终登录底图。 |
+| `uispine/denglu/bg` | `assets/resources/native/a8/a84d3470-bde7-4589-9b33-65a957c34507.jpg` / `converted/png/a84d3470-bde7-4589-9b33-65a957c34507.png` | 带金发静态人物的登录/选服背景。native 扩展名是 `.jpg`，文件头实际为 PNG，Godot 使用转换后的 PNG。 |
+| `uispine/denglu/HB_BG` | `assets/resources/native/48/4899e8d7-22c9-49cf-8140-a75e78d32881.png` | 云城背景，不是登录静态人物。 |
 | `Prefab/login/LoginPre` | `assets/resources/import/a3/a3a9989b-23b1-46a6-ad24-112682294a7c.json` | 登录底层 prefab，含背景和登录按钮等。 |
 | `Prefab/login/pfLoginPanelPre` | `assets/resources/import/fc/fc3b94c3-c07b-4eb2-826e-2ad5d962c9e7.json` | 平台登录/开始游戏面板 prefab。 |
 | `Prefab/mainpanel/MainPre` | `assets/resources/import/fd/fd77b1d2-32ad-46c4-be16-ef14bc2423d0.json` | 主城 UI 层 prefab。 |
@@ -253,7 +255,7 @@ rg -n "MainUIPanel|showBg|HeroLhPanel|RoleLh|_roleLhbody|_bgbody|PFLoginPanel|Se
 定位资源路径：
 
 ```powershell
-rg -n "Prefab/login/LoginPre|Prefab/login/pfLoginPanelPre|Prefab/mainpanel/MainPre|Prefab/HerolhPrefab/105004|image/com/login/dl_bg" "D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\assets\resources\config.json"
+rg -n "Prefab/login/LoginPre|Prefab/login/pfLoginPanelPre|Prefab/mainpanel/MainPre|Prefab/HerolhPrefab/105004|image/com/login/dl_bg|uispine/denglu/bg|uispine/denglu/HB_BG" "D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\assets\resources\config.json"
 ```
 
 查询主城已解析 SpriteFrame 映射：
