@@ -355,8 +355,10 @@ DrawCardActivityRenWuItemCom
 - `cocos_prefab_preview.gd` 已开始推断导出时丢失父链的 ScrollView：对孤立的 `content + cc.Layout` 查找最近的 `view + cc.Mask`，并把 content 及其子树挂入对应裁剪容器；已验证 `HeroMainPre`、`BagPre`、`13003`。
 - `HeroMainPre` 的原始 `tabTxt` 静态 Label 会被运行时 mock 过滤，避免在窄 ScrollView viewport 下被裁成单字列；后续应改为按 `HeroSidePrefab` 真实逻辑重建页签。
 - 已新增独立英雄界面 `scenes/original_hero_panel.tscn` / `scripts/original_hero_panel.gd`，主城底部“英雄”入口进入该场景，不再打开 prefab 预览器。
-- 独立英雄界面当前按 `HeroMainPre` 的视觉结构手工实现：左侧英雄头像列表、中心 Spine、右侧培养/装备/升星/战意/衣装页签、点击角色切换动作。
+- 独立英雄界面当前按 `HeroMainPre` 的视觉结构手工实现：左侧英雄信息和可点击头像竖列、中心 Spine、右侧培养/装备/升星/战意/衣装页签、点击角色切换动作。
 - 独立英雄界面读取 `data/named_resource_index.json` 加载头像框、头像、SSR 标、装备框等资源，兼容 `texture_path/sprite_rect` 和 `native_path/rect` 两种索引字段。
+- 已导出 `HeroTabPre.json` 和 `HeroListPre.json`。`HeroTabPre` 确认页签选中态使用 `cm_tab2_on`，未选中态在 `HeroMainPre` 中可见 `cm_tab2_off`；`HeroListPre` 是完整英雄列表页，不等同于 `HeroMainPre` 左侧小入口。
+- `original_hero_panel.gd` 当前用 `HeroTabPre/HeroMainPre` 的 `cm_tab2_on/off` 替换 Godot 默认页签按钮，右侧详情面板使用 `image/en/HeroPanel/yx_frame_BaiBan` 并压暗，培养页按钮使用 `cm_btn_LvSe1`。
 - 已新增独立背包/仓库界面 `scenes/original_bag_panel.tscn` / `scripts/original_bag_panel.gd`，主城底部“仓库”入口进入该场景，不再打开 prefab 预览器。
 - 独立背包界面参考 `BagPre.json` 手工实现左侧滚动网格、右侧分类按钮、详情区和底部操作按钮；本地 mock 图标来自 `data/equipment_icon_index.json` 的真实装备 SpriteFrame。
 - 独立背包界面支持页签切换和选中道具切换，并提供 `--bag-tab`、`--bag-item`、`--capture-bag-panel` 参数做截图回归。
@@ -775,9 +777,9 @@ Spine 查看器：
   - 左侧竖栏：`zjm_btn_HaoYou(-602,226)`、`zjm_btn_YouJian(-602,163)`、`zjm_btn_PaiHang(-602,103)`、`zjm_btn_XinWen(-602,41)`、`zjm_btn_ZhanBao(-602,-20)`。
   - 活动入口：`zjm_icon_zhaohuanactivity(-280,10)`、`advertisingbtn(-280,112)`、聊天区 `scrollview(-550,-237)`。
   - 角色展示容器：`lihui`、`herolh` 都是全屏容器，真实角色由 `RoleLh`/`Prefab/HerolhPrefab/<body>` 运行时挂载。
-- `data/prefab_layouts/HeroMainPre.json` 说明当前独立英雄页还不对：原版不是左侧英雄头像列表，而是 `scrollview/content` 下的 `tab01..tab05` 竖向功能页签；中心是 `heroBodyBox`，左右切换按钮是 `btnPre(-500,10)` / `btnNext(91,10)`，右侧面板是 `heroContentPrefab(361,11)`，底部/右侧功能按钮在 `btnUpLv`、`btnJinJie`、`btnReset`、`btn_xianQing`。
-- 因此后续 `original_hero_panel.gd` 需要从“左侧英雄列表”改为“中心立绘 + 左右切换 + 左侧功能页签 + 右侧属性/技能/装备区”的结构；英雄列表只作为资源浏览或调试入口，不应出现在原版主英雄页默认布局。
-- 当前实现已按这个方向修改：默认界面不再显示左侧头像列表，改为左侧英雄信息、小功能按钮、中心 Spine、左右翻页、竖向页签和右侧信息面板。下一步继续追 `HeroSidePrefab`/`heroContentPrefab` 的真实 SpriteFrame 与脚本字段绑定。
+- `data/prefab_layouts/HeroMainPre.json` 说明英雄页主体是中心 `heroBodyBox`、左右切换按钮 `btnPre(-500,10)` / `btnNext(91,10)`、右侧 `heroContentPrefab(361,11)` 和竖向功能页签。`HeroTabPre.json` 进一步确认功能页签使用 `cm_tab2_on/off` 资源。
+- `HeroListPre.json` 是完整英雄列表页，当前不直接替代 `HeroMainPre`；但本地 Demo 在左侧保留一个小型头像竖列，用于离线快速切换本地 mock 英雄，后续可根据源码确认是否改成独立“英雄列表”入口。
+- 当前实现方向：左侧英雄信息 + 小型英雄头像竖列 + 小功能按钮，中心 Spine 和左右翻页，右侧 `培养/装备/升星/战意/衣装` 页签与信息面板。下一步继续追 `HeroSidePrefab`/`heroContentPrefab` 的真实 SpriteFrame 与脚本字段绑定。
 
 活动抽卡源码定位：
 

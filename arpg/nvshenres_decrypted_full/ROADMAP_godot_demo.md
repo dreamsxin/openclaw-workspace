@@ -313,6 +313,7 @@ RESTORE_LOGIN_TO_HOME.md
 - 主城底部“英雄”入口已改为进入独立英雄界面，不再默认打开 prefab 预览器。
 - 独立英雄界面当前支持左侧英雄头像列表、中心 Spine 展示、点击角色切换动作、右侧培养/装备/升星/战意/衣装页签和本地属性 mock。
 - 独立英雄界面的资源加载改为读取 `data/named_resource_index.json`，支持 `texture_path` 与 `sprite_rect` 两种索引字段，避免之前只认 `native_path/rect` 导致头像不显示。
+- `export_cocos_prefab_layout.py` 已新增导出 `HeroTabPre` 和 `HeroListPre`。独立英雄界面已用 `HeroTabPre/HeroMainPre` 的 `cm_tab2_on/off` 替换默认页签按钮，左侧增加小型英雄头像竖列用于本地切换，右侧信息面板使用 `yx_frame_BaiBan` 和 `cm_btn_LvSe1` 资源。
 - 已新增独立背包/仓库界面：
   - `scenes/original_bag_panel.tscn`
   - `scripts/original_bag_panel.gd`
@@ -337,10 +338,9 @@ RESTORE_LOGIN_TO_HOME.md
   - `HeroMainPre.json` 原版英雄页不是左侧头像列表，而是左侧竖向功能页签、中心 `heroBodyBox`、左右 `btnPre/btnNext` 切换和右侧 `heroContentPrefab` 信息面板。
   - 下一步需要把 `original_hero_panel.gd` 的左侧英雄列表改成原版左右切换结构，并把英雄列表降级为调试/资源浏览入口。
 - `original_hero_panel.gd` 已开始按原版结构重排：
-  - 移除默认左侧头像列表。
-  - 左侧改为英雄名、头像、星级和传记/衣装/锁定小按钮。
+  - 左侧改为英雄名、头像、星级、小型英雄头像竖列和传记/衣装/锁定小按钮。
   - 中心保留 Spine 角色展示，增加 `btnPre/btnNext` 式左右切换。
-  - 功能页签改为竖排 `培养/装备/升星/战意/衣装`。
+  - 功能页签改为竖排 `培养/装备/升星/战意/衣装`，并接入 `cm_tab2_on/off` 资源。
   - 右侧信息面板按 `heroContentPrefab` 大小重排，培养和装备页签已能切换。
   - 当前仍需继续替换真实按钮贴图、还原 `HeroSidePrefab` 细节、补星级/职业/阵营图标和装备槽原始层级。
 - prefab 预览器右侧详情栏新增 `mask/scroll` 统计。

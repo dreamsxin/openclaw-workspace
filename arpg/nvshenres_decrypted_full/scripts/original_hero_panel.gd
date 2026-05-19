@@ -10,6 +10,10 @@ const BG_PATH := "res://assets/resources/native/ac/ac082229-4446-4cfe-bbaf-5e984
 const ATLAS_18A := "res://assets/resources/native/18/18b29ae48.png"
 const ATLAS_1A := "res://assets/resources/native/1a/1a7921f32.png"
 const ATLAS_1F := "res://assets/resources/native/1f/1f6b547b4.png"
+const HERO_TAB_ON_ATLAS := "res://assets/resources/native/15/15a1d9111.png"
+const HERO_TAB_ON_RECT := Rect2i(530, 950, 64, 100)
+const HERO_TAB_OFF_ATLAS := "res://assets/resources/native/18/18b29ae48.png"
+const HERO_TAB_OFF_RECT := Rect2i(104, 349, 57, 100)
 const HERO_105004_SPINE := "res://data/spine_runtime/105004.json"
 const HERO_SULA_SPINE := "res://data/spine_runtime/SuLa_LH.json"
 const HERO_YOUDUOLA_SPINE := "res://data/spine_runtime/YouDuoLa_LH.json"
@@ -29,6 +33,7 @@ var title_label: Label
 var detail_panel: Control
 var tab_panel: Control
 var side_panel: Control
+var head_list: VBoxContainer
 var tab_buttons: Array[Button] = []
 var prev_button: Button
 var next_button: Button
@@ -111,32 +116,42 @@ func _add_top_button(parent: HBoxContainer, text: String, callback: Callable) ->
 
 func _build_side_panel() -> void:
 	side_panel = Control.new()
-	side_panel.position = Vector2(26, 78)
-	side_panel.size = Vector2(190, 560)
+	side_panel.position = Vector2(18, 80)
+	side_panel.size = Vector2(216, 560)
 	design_root.add_child(side_panel)
 
 	var name_bg := ColorRect.new()
 	name_bg.position = Vector2(0, 0)
-	name_bg.size = Vector2(178, 160)
+	name_bg.size = Vector2(196, 146)
 	name_bg.color = Color(0.04, 0.045, 0.075, 0.72)
 	name_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	side_panel.add_child(name_bg)
 
 	_add_named_image_to(side_panel, "image/comHeroGrid/cm_frame_TouXiangDi5", Vector2(14, 14), Vector2(68, 68))
-	_add_label(side_panel, "", Vector2(90, 20), Vector2(90, 28), 20, Color(1.0, 0.88, 0.52)).name = "hero_name"
-	_add_label(side_panel, "", Vector2(90, 52), Vector2(90, 24), 15, Color(0.78, 0.86, 1.0)).name = "hero_job"
+	_add_label(side_panel, "", Vector2(90, 18), Vector2(104, 28), 20, Color(1.0, 0.88, 0.52)).name = "hero_name"
+	_add_label(side_panel, "", Vector2(90, 50), Vector2(104, 24), 15, Color(0.78, 0.86, 1.0)).name = "hero_job"
 
 	for i in 5:
 		_add_named_image_to(side_panel, "image/comHeroGrid/cm_icon_XingXing1_1", Vector2(16 + i * 27, 100), Vector2(24, 24))
 
 	for i in 3:
 		var icon := Button.new()
-		icon.position = Vector2(7, 212 + i * 70)
+		icon.position = Vector2(18, 232 + i * 68)
 		icon.size = Vector2(54, 54)
 		icon.text = ""
 		icon.add_theme_font_size_override("font_size", 12)
 		side_panel.add_child(icon)
 		_add_named_image_to(icon, ["image/common/cm_btn_PingLun", "image/common/cm_btn_ShiZhuang", "image/common/cm_icon_GongJi"][i], Vector2(5, 5), Vector2(44, 44))
+
+	var scroll := ScrollContainer.new()
+	scroll.position = Vector2(86, 156)
+	scroll.size = Vector2(76, 398)
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	side_panel.add_child(scroll)
+
+	head_list = VBoxContainer.new()
+	head_list.add_theme_constant_override("separation", 10)
+	scroll.add_child(head_list)
 
 func _build_hero_stage() -> void:
 	hero_layer = Control.new()
@@ -164,16 +179,16 @@ func _build_hero_stage() -> void:
 
 	prev_button = Button.new()
 	prev_button.text = "<"
-	prev_button.position = Vector2(120, 322)
-	prev_button.size = Vector2(48, 78)
+	prev_button.position = Vector2(166, 322)
+	prev_button.size = Vector2(42, 78)
 	prev_button.tooltip_text = "上一个英雄"
 	prev_button.pressed.connect(_previous_hero)
 	design_root.add_child(prev_button)
 
 	next_button = Button.new()
 	next_button.text = ">"
-	next_button.position = Vector2(710, 322)
-	next_button.size = Vector2(48, 78)
+	next_button.position = Vector2(708, 322)
+	next_button.size = Vector2(42, 78)
 	next_button.tooltip_text = "下一个英雄"
 	next_button.pressed.connect(_next_hero)
 	design_root.add_child(next_button)
@@ -181,14 +196,14 @@ func _build_hero_stage() -> void:
 func _build_tabs() -> void:
 	tab_panel = VBoxContainer.new()
 	tab_panel.position = Vector2(666, 118)
-	tab_panel.size = Vector2(70, 500)
-	tab_panel.add_theme_constant_override("separation", 10)
+	tab_panel.size = Vector2(88, 500)
+	tab_panel.add_theme_constant_override("separation", 14)
 	design_root.add_child(tab_panel)
 	for label in ["培养", "装备", "升星", "战意", "衣装"]:
 		var index := tab_panel.get_child_count()
 		var button := Button.new()
-		button.text = label
-		button.custom_minimum_size = Vector2(64, 86)
+		button.text = ""
+		button.custom_minimum_size = Vector2(88, 84)
 		button.add_theme_font_size_override("font_size", 18)
 		button.pressed.connect(_select_tab.bind(index))
 		tab_panel.add_child(button)
@@ -200,12 +215,15 @@ func _build_detail_panel() -> void:
 	detail_panel.size = Vector2(404, 527)
 	design_root.add_child(detail_panel)
 
-	var bg := ColorRect.new()
-	bg.name = "panel_bg"
-	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	bg.color = Color(0.04, 0.045, 0.07, 0.82)
-	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	detail_panel.add_child(bg)
+	var frame_bg := _add_named_image_to(detail_panel, "image/en/HeroPanel/yx_frame_BaiBan", Vector2.ZERO, detail_panel.size)
+	if frame_bg:
+		frame_bg.name = "panel_frame"
+	var shade := ColorRect.new()
+	shade.name = "panel_bg"
+	shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	shade.color = Color(0.0, 0.0, 0.0, 0.58)
+	shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	detail_panel.add_child(shade)
 
 func _select_hero(index: int) -> void:
 	selected_hero = index
@@ -278,14 +296,38 @@ func _refresh_side_panel() -> void:
 	head_root.position = Vector2.ZERO
 	side_panel.add_child(head_root)
 	_add_named_image_to(head_root, "image/head/%s" % hero.id, Vector2(22, 22), Vector2(52, 52))
+	_refresh_head_list()
+
+func _refresh_head_list() -> void:
+	if head_list == null:
+		return
+	for child in head_list.get_children():
+		child.queue_free()
+	for i in HEROES.size():
+		var hero: Dictionary = HEROES[i]
+		var button := Button.new()
+		button.text = ""
+		button.custom_minimum_size = Vector2(64, 64)
+		button.disabled = i == selected_hero
+		button.pressed.connect(_select_hero.bind(i))
+		head_list.add_child(button)
+		_add_head_icon(button, hero, Vector2(2, 2), Vector2(60, 60))
 
 func _refresh_tabs() -> void:
 	for i in tab_buttons.size():
-		tab_buttons[i].disabled = i == selected_tab
+		var button := tab_buttons[i]
+		for child in button.get_children():
+			child.queue_free()
+		button.disabled = i == selected_tab
+		if i == selected_tab:
+			_add_sprite_frame_image(button, HERO_TAB_ON_ATLAS, HERO_TAB_ON_RECT, Vector2(12, -8), Vector2(64, 100), true, Vector2i(64, 100), Vector2.ZERO, TextureRect.STRETCH_SCALE)
+		else:
+			_add_sprite_frame_image(button, HERO_TAB_OFF_ATLAS, HERO_TAB_OFF_RECT, Vector2(16, -8), Vector2(57, 100), false, Vector2i(57, 100), Vector2.ZERO, TextureRect.STRETCH_SCALE)
+		_add_label(button, ["培养", "装备", "升星", "战意", "衣装"][i], Vector2(0, 12), button.custom_minimum_size, 18, Color(0.92, 0.9, 0.82)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 func _refresh_detail() -> void:
 	for child in detail_panel.get_children():
-		if child.name == "panel_bg":
+		if child.name == "panel_bg" or child.name == "panel_frame":
 			continue
 		child.queue_free()
 	var hero: Dictionary = HEROES[selected_hero]
@@ -299,7 +341,8 @@ func _refresh_detail() -> void:
 
 	_add_label(root, "%s  Lv.%s" % [hero.name, hero.level], Vector2(0, 0), Vector2(340, 34), 24, Color(1.0, 0.87, 0.5))
 	_add_label(root, "%s  高输出 物理伤害" % hero.job, Vector2(0, 34), Vector2(340, 28), 16, Color(0.77, 0.86, 1.0))
-	_add_label(root, "战力  %s" % hero.power, Vector2(0, 72), Vector2(340, 34), 22, Color(1.0, 0.96, 0.78))
+	_add_named_image_to(root, "image/en/HeroPanel/yx_frame_ZhanLi", Vector2(-6, 70), Vector2(360, 36))
+	_add_label(root, "战力  %s" % hero.power, Vector2(0, 70), Vector2(340, 34), 22, Color(1.0, 0.96, 0.78))
 
 	if selected_tab == 0:
 		_add_culture_tab(root, hero)
@@ -314,10 +357,10 @@ func _refresh_detail() -> void:
 
 func _add_culture_tab(root: Control, hero: Dictionary) -> void:
 	for i in hero.attrs.size():
-		_add_label(root, str(hero.attrs[i]), Vector2(0, 122 + i * 40), Vector2(230, 30), 18, Color(0.9, 0.96, 1.0))
-	_add_progress(root, Vector2(0, 300), Vector2(260, 20), 0.72, "等级  %s" % hero.level)
-	_add_action_button(root, "升2级", Vector2(0, 374), Vector2(130, 42))
-	_add_action_button(root, "进阶", Vector2(150, 374), Vector2(130, 42))
+		_add_label(root, str(hero.attrs[i]), Vector2(0, 126 + i * 40), Vector2(230, 30), 18, Color(0.9, 0.96, 1.0))
+	_add_progress(root, Vector2(0, 306), Vector2(260, 20), 0.72, "等级  %s" % hero.level)
+	_add_action_button(root, "升2级", Vector2(42, 374), Vector2(130, 42))
+	_add_action_button(root, "进阶", Vector2(194, 374), Vector2(130, 42))
 
 func _add_equipment_tab(root: Control) -> void:
 	var equips := ["yx_icon_zhuangbei0", "yx_icon_zhuangbei1", "yx_icon_zhuangbei2", "yx_icon_zhuangbei3", "yx_icon_zhuangbei4", "yx_icon_zhuangbei5"]
@@ -366,20 +409,22 @@ func _add_progress(parent: Control, position: Vector2, size: Vector2, value: flo
 
 func _add_action_button(parent: Control, text: String, position: Vector2, size: Vector2) -> void:
 	var button := Button.new()
-	button.text = text
+	button.text = ""
 	button.position = position
 	button.size = size
 	parent.add_child(button)
+	_add_named_image_to(button, "image/common/cm_btn_LvSe1", Vector2.ZERO, size)
+	_add_label(button, text, Vector2.ZERO, size, 18, Color(0.95, 1.0, 0.92)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 func _add_head_icon(parent: Control, hero: Dictionary, position: Vector2, size: Vector2) -> void:
 	_add_named_image_to(parent, "image/comHeroGrid/cm_frame_TouXiangDi5", position, size)
 	_add_named_image_to(parent, "image/head/%s" % hero.id, position + Vector2(8, 8), size - Vector2(16, 16))
 	_add_named_image_to(parent, "image/comHeroGrid/cm_tag_SSR1", position, Vector2(34, 22))
 
-func _add_named_image_to(parent: Control, resource_name: String, position: Vector2, size: Vector2) -> void:
+func _add_named_image_to(parent: Control, resource_name: String, position: Vector2, size: Vector2) -> TextureRect:
 	var texture := _texture_for_named_resource(resource_name)
 	if texture == null:
-		return
+		return null
 	var image := TextureRect.new()
 	image.position = position
 	image.size = size
@@ -388,6 +433,18 @@ func _add_named_image_to(parent: Control, resource_name: String, position: Vecto
 	image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	image.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	parent.add_child(image)
+	return image
+
+func _add_sprite_frame_image(parent: Control, atlas_path: String, rect: Rect2i, position: Vector2, size: Vector2, rotated := false, original_size := Vector2i.ZERO, offset := Vector2.ZERO, stretch := TextureRect.STRETCH_KEEP_ASPECT_CENTERED) -> TextureRect:
+	var image := TextureRect.new()
+	image.position = position
+	image.size = size
+	image.texture = _load_texture_region(atlas_path, rect, rotated, original_size, offset)
+	image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	image.stretch_mode = stretch
+	image.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	parent.add_child(image)
+	return image
 
 func _texture_for_named_resource(resource_name: String) -> Texture2D:
 	var entry: Dictionary = named_resources.get(resource_name, {})

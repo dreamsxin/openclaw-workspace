@@ -115,6 +115,9 @@ Godot 当前工程已接入项目内轻量 Spine runtime，用于本地预览角
 - `data/prefab_layouts/MoneyItemPre.json`：资源条 prefab，主城顶部金币/钻石条使用。
 - `data/prefab_layouts/ShopPre.json`：商会/黑市商店 prefab，主屏 `openShop()` 的目标。
 - `data/prefab_layouts/GoodsItemPre.json`：商店商品卡 prefab，含 `GoodsItemCom` 的 `discount/rare/fight/prize/limit/selectBtn` 绑定。
+- `data/prefab_layouts/HeroMainPre.json`：英雄主界面 prefab，独立英雄页的中心 Spine、右侧信息面板和功能页签布局参考。
+- `data/prefab_layouts/HeroTabPre.json`：英雄页签 prefab，确认 `cm_tab2_on/off` 页签资源。
+- `data/prefab_layouts/HeroListPre.json`：完整英雄列表页 prefab，当前用于区分主英雄页和列表页的资源/布局来源。
 - `data/prefab_restore_inventory.csv`：整理后的 prefab 还原清单。
 - `data/prefab_restore_inventory.md`：按分类和优先级整理的 prefab 清单。
 - `data/spine_preview_index.json`：Spine 预览索引。

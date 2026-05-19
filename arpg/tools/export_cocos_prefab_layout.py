@@ -25,6 +25,8 @@ PREFABS = [
     ("商店商品", "Prefab/Shop/GoodsItemPre"),
     ("商店购买确认", "Prefab/Shop/ShopBuyEquitPre"),
     ("英雄", "Prefab/HeroPanel/HeroMainPre"),
+    ("英雄页签", "Prefab/HeroPanel/HeroTabPre"),
+    ("英雄列表", "Prefab/HeroListPanel/HeroListPre"),
     ("背包", "Prefab/BagPanel/BagPre"),
     ("背包格子", "Prefab/BagPanel/GridBoxItemPre"),
     ("抽卡", "Prefab/DrawCard/drawCardPre"),
