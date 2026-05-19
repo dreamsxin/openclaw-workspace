@@ -37,6 +37,7 @@ var main_type_buttons: Array[Button] = []
 var shop_type_buttons: Array[Button] = []
 var named_resources: Dictionary = {}
 var equipment_icons: Array = []
+var buy_dialog: Control
 var selected_main_type := 1
 var selected_shop_type := 1
 
@@ -317,11 +318,133 @@ func _select_shop_type(value: int) -> void:
 
 func _buy_goods(index: int) -> void:
 	var item: Dictionary = GOODS[index % GOODS.size()]
-	var popup := AcceptDialog.new()
-	popup.title = "购买确认"
-	popup.dialog_text = "本地 Demo：购买 %s x1" % str(item.name)
-	add_child(popup)
-	popup.popup_centered(Vector2i(320, 140))
+	_show_buy_dialog(item)
+
+func _show_buy_dialog(item: Dictionary) -> void:
+	if buy_dialog:
+		buy_dialog.queue_free()
+	buy_dialog = Control.new()
+	buy_dialog.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	design_root.add_child(buy_dialog)
+
+	var dim := ColorRect.new()
+	dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	dim.color = Color(0, 0, 0, 0.58)
+	dim.mouse_filter = Control.MOUSE_FILTER_STOP
+	buy_dialog.add_child(dim)
+
+	var panel := Control.new()
+	panel.position = Vector2(407, 106)
+	panel.size = Vector2(465, 507)
+	buy_dialog.add_child(panel)
+
+	var bg := ColorRect.new()
+	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	bg.color = Color(0.055, 0.052, 0.075, 0.97)
+	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	panel.add_child(bg)
+
+	var title_line := ColorRect.new()
+	title_line.position = Vector2(82, 54)
+	title_line.size = Vector2(302, 4)
+	title_line.color = Color(0.75, 0.58, 0.26, 0.86)
+	title_line.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	panel.add_child(title_line)
+
+	_add_label(panel, str(item.name), Vector2(120, 74), Vector2(224, 36), 24, Color(1.0, 0.88, 0.55), HORIZONTAL_ALIGNMENT_CENTER)
+
+	var icon_bg := ColorRect.new()
+	icon_bg.position = Vector2(177, 118)
+	icon_bg.size = Vector2(110, 110)
+	icon_bg.color = Color(0.16, 0.12, 0.22, 0.96)
+	icon_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	panel.add_child(icon_bg)
+	var icon := TextureRect.new()
+	icon.position = Vector2(189, 130)
+	icon.size = Vector2(86, 86)
+	icon.texture = _load_indexed_texture(_equipment_icon(int(item.item)))
+	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	panel.add_child(icon)
+	_add_label(panel, "x1", Vector2(286, 202), Vector2(52, 30), 20, Color(0.93, 0.94, 1.0))
+	_add_label(panel, "拥有：99", Vector2(172, 242), Vector2(130, 28), 17, Color(0.72, 0.88, 0.74), HORIZONTAL_ALIGNMENT_CENTER)
+	_add_label(panel, str(item.limit), Vector2(142, 270), Vector2(180, 28), 17, Color(0.82, 0.86, 0.96), HORIZONTAL_ALIGNMENT_CENTER)
+
+	var count_state := {"value": 1}
+	var count_label := _add_label(panel, "1", Vector2(218, 317), Vector2(36, 30), 20, Color(1.0, 0.9, 0.65), HORIZONTAL_ALIGNMENT_CENTER)
+	var total_label := _add_label(panel, str(item.price), Vector2(218, 421), Vector2(80, 30), 19, Color(1.0, 0.9, 0.65))
+	var bar_fill := ColorRect.new()
+	bar_fill.position = Vector2(122, 333)
+	bar_fill.size = Vector2(32, 12)
+	bar_fill.color = Color(0.67, 0.46, 0.2, 0.95)
+	bar_fill.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	panel.add_child(bar_fill)
+
+	var update_count := func() -> void:
+		count_label.text = str(count_state.value)
+		total_label.text = str(int(item.price) * int(count_state.value))
+		bar_fill.size.x = 32 + 148 * float(count_state.value) / 10.0
+
+	_add_count_button(panel, "-", Vector2(58, 314), func():
+		count_state.value = maxi(1, int(count_state.value) - 1)
+		update_count.call()
+	)
+	_add_count_button(panel, "+", Vector2(320, 314), func():
+		count_state.value = mini(10, int(count_state.value) + 1)
+		update_count.call()
+	)
+	_add_count_button(panel, "MAX", Vector2(382, 319), func():
+		count_state.value = 10
+		update_count.call()
+	, Vector2(54, 31))
+
+	var bar_bg := ColorRect.new()
+	bar_bg.position = Vector2(120, 330)
+	bar_bg.size = Vector2(185, 18)
+	bar_bg.color = Color(0.02, 0.024, 0.035, 0.9)
+	bar_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	panel.add_child(bar_bg)
+	panel.move_child(bar_bg, panel.get_child_count() - 2)
+
+	var price_icon := TextureRect.new()
+	price_icon.position = Vector2(166, 416)
+	price_icon.size = Vector2(34, 34)
+	price_icon.texture = _texture_for_named_resource(str(item.currency))
+	price_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	price_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	price_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	panel.add_child(price_icon)
+	_add_label(panel, "总价", Vector2(96, 418), Vector2(70, 30), 18, Color(0.82, 0.86, 0.96), HORIZONTAL_ALIGNMENT_RIGHT)
+
+	var confirm := Button.new()
+	confirm.text = "购买"
+	confirm.position = Vector2(112, 462)
+	confirm.size = Vector2(240, 38)
+	confirm.add_theme_font_size_override("font_size", 20)
+	confirm.pressed.connect(func(): _close_buy_dialog())
+	panel.add_child(confirm)
+
+	var close := Button.new()
+	close.text = "X"
+	close.position = Vector2(410, 14)
+	close.size = Vector2(36, 32)
+	close.pressed.connect(_close_buy_dialog)
+	panel.add_child(close)
+	update_count.call()
+
+func _add_count_button(parent: Control, text: String, position: Vector2, callback: Callable, size := Vector2(44, 44)) -> void:
+	var button := Button.new()
+	button.text = text
+	button.position = position
+	button.size = size
+	button.pressed.connect(callback)
+	parent.add_child(button)
+
+func _close_buy_dialog() -> void:
+	if buy_dialog:
+		buy_dialog.queue_free()
+		buy_dialog = null
 
 func _add_top_button(parent: HBoxContainer, text: String, callback: Callable) -> void:
 	var button := Button.new()
@@ -455,6 +578,10 @@ func _apply_cmdline_args() -> void:
 	_refresh_main_type_tabs()
 	_refresh_shop_type_tabs()
 	_refresh_goods()
+	var buy_arg := _cmd_arg_value(args, "--shop-open-buy")
+	if buy_arg.is_valid_int():
+		var index := clampi(int(buy_arg), 0, GOODS.size() - 1)
+		_show_buy_dialog(GOODS[index])
 
 func _cmd_arg_value(args: Array, key: String) -> String:
 	var index := args.find(key)

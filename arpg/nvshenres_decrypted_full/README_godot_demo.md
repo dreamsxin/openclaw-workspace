@@ -85,7 +85,8 @@ Godot 当前工程已接入项目内轻量 Spine runtime，用于本地预览角
 - `ShopPre` 的动态子 prefab 已继续导出：`ShopItemPre.json`、`GoodsItemPre.json`、`ShopBuyEquitPre.json`，用于还原商店页签、商品卡和购买确认框。
 - `tools/inspect_prefab_layout.py 商店 --limit 25` 可快速打印 `ShopPre` 的贴图/文本/Mask 节点和 `ShopCom` 字段绑定。
 - 已新增 `scenes/original_shop_panel.tscn` 和 `scripts/original_shop_panel.gd`。主屏顶部 `SHOP` 和右侧 `商会` 入口现在进入独立商店页；Prefab 按钮仍可回看原始 `ShopPre` 布局。
-- 独立商店页按 `ShopPanel.setData()` 的运行逻辑手工实现：顶部货币条、基础/战斗商城主页签、右侧商店类型、两列商品列表、刷新条和本地购买弹窗；商品图标从 `data/equipment_icon_index.json` 读取真实 SpriteFrame，商品卡尺寸和主要元素坐标参考 `GoodsItemPre`。
+- 独立商店页按 `ShopPanel.setData()` 的运行逻辑手工实现：顶部货币条、基础/战斗商城主页签、右侧商店类型、两列商品列表、刷新条和本地购买弹窗；商品图标从 `data/equipment_icon_index.json` 读取真实 SpriteFrame，商品卡尺寸和主要元素坐标参考 `GoodsItemPre`，购买确认框参考 `ShopBuyEquitPre`。
+- 商店页可用 `--shop-open-buy <index>` 启动参数直接打开购买确认框，配合 `--capture-shop-panel` 做回归截图。
 
 ## Prefab 还原注意事项
 

@@ -276,7 +276,8 @@ RESTORE_LOGIN_TO_HOME.md
   - `scenes/original_shop_panel.tscn`
   - `scripts/original_shop_panel.gd`
 - 商店动态子 prefab 已导出：`ShopItemPre`、`GoodsItemPre`、`ShopBuyEquitPre`。`GoodsItemPre` 的 `GoodsItemCom` 绑定提供 `equitNode/discount/rare/fight/prize/limit/selectBtn/without`，可继续替换真实商品格。
-- 独立商店界面参考 `ShopPre.json`、`GoodsItemPre.json` 与 `ShopPanel.setData()` 实现本地 demo：顶部金币/钻石货币、基础/战斗商城主页签、右侧商店类型、两列商品列表、刷新条和购买弹窗；商品图标来自 `data/equipment_icon_index.json`，商品卡已按 `GoodsItemPre` 的 `350x120` 结构重排。
+- 独立商店界面参考 `ShopPre.json`、`GoodsItemPre.json`、`ShopBuyEquitPre.json` 与 `ShopPanel.setData()` 实现本地 demo：顶部金币/钻石货币、基础/战斗商城主页签、右侧商店类型、两列商品列表、刷新条和购买确认框；商品图标来自 `data/equipment_icon_index.json`，商品卡已按 `GoodsItemPre` 的 `350x120` 结构重排。
+- `original_shop_panel.gd` 支持 `--shop-open-buy <index>`，便于直接检查购买确认框。
 - 活动抽卡四个子 prefab 已补运行时 mock 层：
   - `活动抽卡-登录领取`：模拟 `DrawCardActivity13002.rewardOne()` / `rewardall()` 的登录领取和一键领取状态。
   - `活动抽卡-循环礼包`：模拟 `DrawCardActivity13003.setData(e,t)` 下的 `content` 循环礼包列表。
