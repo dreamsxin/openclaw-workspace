@@ -19,6 +19,27 @@ original_loading.tscn
   -> original_home_screen.tscn
 ```
 
+原始 Cocos 启动链路核对：
+
+```text
+assets/src/settings.js
+  launchScene = "db://assets/Scene/updataScene.fire"
+    -> GameWorld.init()
+      -> LoadingPanelNode.open()
+        -> LoadingPre / loadingProgress
+      -> loadingComplete()
+        -> preload pfLoginPanelPre、MainPre、daohangPre、heroHead、GridPre、HeroGridPre、SkillGridPre、Prefab/HerolhPrefab/104002/104003/204002/305007 等公共资源
+      -> showSeverPanel()
+        -> 非 debug：PFLoginPanel.getLastSever()
+        -> debug：LoginPanel.showProgess()
+      -> PFLoginPanel.onStartGame()
+        -> GameWorld.connect()
+      -> Comopen.showMainPanel()
+        -> MainUIPanel.open()
+```
+
+目前 Godot Demo 为了本地离线可运行，省略了热更新、真实 SDK 登录、公告请求、服务端连接和协议握手，把 `PFLoginPanel.getLastSever()/onStartGame()` 简化成选服页本地 mock 后进入主城。
+
 旧链路曾经直接从登录页开始：
 
 ```text
@@ -73,6 +94,9 @@ assets/resources/native/75/750b6077-9d0c-4446-9e4c-3c3ae2fb6ee5.png
 - `LoadingPre` 中包含 `bg`、`logo`、`dl_progressbar1_jiazai`、`loading_jindutiao`、进度文字和提示文字。
 - `Scene/Main.fire` 摘要里存在 `loadingLayer`，说明该页属于游戏启动初始化流程。
 - `Scene/updataScene.fire` 摘要里存在 `updataBtn`、`updataNode`，应属于热更新/初始化流程。
+- `assets/src/settings.js` 明确 `launchScene="db://assets/Scene/updataScene.fire"`，因此原游戏不是直接启动 `Main.fire` 或登录页。
+- `assets/main/index.js:54446-54462` 的 `GameWorld.init()` 会先初始化 loader/PF，再打开 `LoadingPanelNode`。
+- `assets/main/index.js:54514-54651` 的 `loadingComplete()` 预加载 `pfLoginPanelPre`、`MainPre`、`daohangPre`、公共 Grid、字体、灰度材质、登录 BGM、头像/英雄格 atlas 和若干立绘 prefab。
 
 当前 Godot 实现状态：
 
@@ -122,6 +146,8 @@ texture_nodes: 6
 - 已能显示登录背景、Logo、底部装饰、登录按钮。
 - 点击登录进入选服页。
 - 目前实现仍偏手工，未完全由 `LoginPre.json` 自动生成。
+- 原始逻辑里 `LoginPanel` 主要用于 debug/账号直连流程：`assets/main/index.js:98951` 设置 `preUrl="Prefab/login/LoginPre"`，`loginon()` 会直接设置 `GLOBAL_ACCOUNT/GLOBAL_IP` 并调用 `GameWorld.connect()`。
+- 非 debug 正常链路优先走 `PFLoginPanel`，不是直接显示这个账号输入式 `LoginPre`。
 
 下一步：
 
@@ -168,6 +194,9 @@ texture_nodes: 10
 - 点击开始进入主页面。
 - 目前服务器列表是本地 mock，符合“不连接服务端”的目标。
 - 当前实现仍偏手工，未完全由 `pfLoginPanelPre.json` 自动生成。
+- 原始 `PFLoginPanel` 是正式启动登录/选服面板：`assets/main/index.js:128183` 设置 `preUrl="Prefab/login/pfLoginPanelPre"`。
+- `PFLoginPanel.onShow()` 会刷新版本号、隐私勾选、公告按钮和适龄/隐私入口；`getLastSever()` 请求 `game/getServerList.php?lst=last...`，`getAllSever()` 请求全部服务器列表。
+- `PFLoginPanel.onStartGame()` 会关闭平台登录面板并调用 `GameWorld.connect()`。Godot 当前没有真实网络，因此这一步被本地“开始游戏/选服确认”替代。
 
 下一步：
 
@@ -354,7 +383,7 @@ DrawCardActivityRenWuItemCom
 - Mask 子树挂载时会把 Cocos 全局坐标转换为 Godot 裁剪容器内局部坐标；已覆盖 `HeroMainPre` 头像列表、右侧信息遮罩等存在明确父子链的节点。
 - `cocos_prefab_preview.gd` 已开始推断导出时丢失父链的 ScrollView：对孤立的 `content + cc.Layout` 查找最近的 `view + cc.Mask`，并把 content 及其子树挂入对应裁剪容器；已验证 `HeroMainPre`、`BagPre`、`13003`。
 - `HeroMainPre` 的原始 `tabTxt` 静态 Label 会被运行时 mock 过滤，避免在窄 ScrollView viewport 下被裁成单字列；后续应改为按 `HeroSidePrefab` 真实逻辑重建页签。
-- 已新增独立英雄界面 `scenes/original_hero_panel.tscn` / `scripts/original_hero_panel.gd`，主城底部“英雄”入口进入该场景，不再打开 prefab 预览器。
+- 已新增独立英雄详情界面 `scenes/original_hero_panel.tscn` / `scripts/original_hero_panel.gd`；当前主城底部“英雄”入口仍直接进入该详情页，已确认这比原始流程少了 `HeroListPre` 英雄列表页。
 - 独立英雄界面当前按 `HeroMainPre` 的视觉结构手工实现：左侧英雄信息和可点击头像竖列、中心 Spine、右侧培养/装备/升星/战意/衣装页签、点击角色切换动作。
 - 独立英雄界面读取 `data/named_resource_index.json` 加载头像框、头像、SSR 标、装备框等资源，兼容 `texture_path/sprite_rect` 和 `native_path/rect` 两种索引字段。
 - 已导出 `HeroTabPre.json` 和 `HeroListPre.json`。`HeroTabPre` 确认页签选中态使用 `cm_tab2_on`，未选中态在 `HeroMainPre` 中可见 `cm_tab2_off`；`HeroListPre` 是完整英雄列表页，不等同于 `HeroMainPre` 左侧小入口。
@@ -459,7 +488,7 @@ UI 层：Prefab/mainpanel/MainPre
 - 主城角色展示区域可点击切换动作。`105004` 已验证可从 `idle` 切到 `show`，也可用 `--home-click-hero-once` 模拟点击。
 - 主城动作可用 `--home-animation <name>` 指定，便于截图回归。
 - 主城主要入口已接到对应 prefab 预览：
-  - 底部 `英雄` -> `Prefab/HeroPanel/HeroMainPre`
+  - 底部 `英雄` -> 原始应先打开 `Prefab/HeroListPanel/HeroListPre`，当前 Godot 仍直接进入 `original_hero_panel.tscn` / `HeroMainPre` 风格详情页，后续需要补 `original_hero_list_panel.tscn`
   - 底部 `仓库` -> `Prefab/BagPanel/BagPre`
   - 底部 `冒险` -> `Prefab/Battle/battle`
   - 底部 `副本` -> `Prefab/SkyCityPanel/SkyCityPre`
@@ -778,8 +807,11 @@ Spine 查看器：
   - 活动入口：`zjm_icon_zhaohuanactivity(-280,10)`、`advertisingbtn(-280,112)`、聊天区 `scrollview(-550,-237)`。
   - 角色展示容器：`lihui`、`herolh` 都是全屏容器，真实角色由 `RoleLh`/`Prefab/HerolhPrefab/<body>` 运行时挂载。
 - `data/prefab_layouts/HeroMainPre.json` 说明英雄页主体是中心 `heroBodyBox`、左右切换按钮 `btnPre(-500,10)` / `btnNext(91,10)`、右侧 `heroContentPrefab(361,11)` 和竖向功能页签。`HeroTabPre.json` 进一步确认功能页签使用 `cm_tab2_on/off` 资源。
-- `HeroListPre.json` 是完整英雄列表页，当前不直接替代 `HeroMainPre`；但本地 Demo 在左侧保留一个小型头像竖列，用于离线快速切换本地 mock 英雄，后续可根据源码确认是否改成独立“英雄列表”入口。
-- 当前实现方向：左侧英雄信息 + 小型英雄头像竖列 + 小功能按钮，中心 Spine 和左右翻页，右侧 `培养/装备/升星/战意/衣装` 页签与信息面板。下一步继续追 `HeroSidePrefab`/`heroContentPrefab` 的真实 SpriteFrame 与脚本字段绑定。
+- `HeroListPanel` 源码在 `assets/main/index.js:80735-80740` 设置 `preUrl="Prefab/HeroListPanel/HeroListPre"`，并在 `preloadAnyList` 中预加载 `Prefab/HeroPanel/HeroMainPre`。
+- 主城导航源码链：`DaohangPanel.openSelectBtn()` 的 `btn2` 调用 `openHeroPanel()`；`assets/main/index.js:35059-35068` 中 `openHeroPanel()` 设置 `HeroListPanel.instance.menuType = 1`、`HeroListControl.instance.campType = -1`，然后 `HeroListPanel.open()`。
+- 英雄列表点击源码链：`assets/main/index.js:80884-80897` 中 `HeroListPanel.openHeroDetail()` 把点击的 `dataHero` 写入 `HeroControl.instance.dataHero`，然后打开 `HeroMainPanel.instance`；`HeroMainPanel` 在 `assets/main/index.js:81379` 设置 `preUrl="Prefab/HeroPanel/HeroMainPre"`。
+- 因此原始流程应是 `主屏英雄按钮 -> HeroListPre 英雄列表 -> 点击英雄 -> HeroMainPre 英雄详情`。当前 `original_hero_panel.gd` 可以继续作为详情页，但主屏英雄入口需要先改到新的 `original_hero_list_panel.tscn`。
+- 当前实现方向：保留 `original_hero_panel` 作为 `HeroMainPre` 详情页；新增 `original_hero_list_panel` 按 `HeroListPre` 做阵营筛选、英雄网格、图鉴/共享/阵容/星级页签，本地 mock 点击后再进入详情页。下一步继续追 `HeroListPanelCom`、`HeroGrid`、`HeroBookItemPre` 的真实 SpriteFrame 与脚本字段绑定。
 
 活动抽卡源码定位：
 
@@ -810,4 +842,4 @@ YiKaLuoSi 当前还原记录：
 
 ## 当前判断
 
-登录到主页面可以还原，但应避免继续扩大手工拼图。后续应先完善统一 prefab 渲染器，再把登录、选服、主城逐步切回原始 prefab 驱动；运行时动态部分用本地 mock 数据补齐。
+登录到主页面可以还原，但当前本地流程缺少原始程序里的热更新入口、PF 登录/公告/隐私/适龄提示、真实服务器列表请求、连接握手和 `HeroListPre -> HeroMainPre` 两段式英雄入口。后续应先把这些“缺失但可离线 mock”的流程节点建出来，再继续细化每个界面的资源和坐标。

@@ -49,7 +49,13 @@
 
 | 位置 | 结论 |
 | --- | --- |
+| `assets/src/settings.js:1` | 原始启动场景为 `db://assets/Scene/updataScene.fire`，不是直接进登录页或 `Main.fire`。 |
+| `index.js:54446` | `GameWorld.load()` 打开 `LoadingPanelNode`，加载完成后进入公共资源预加载。 |
 | `index.js:54517` | 登录后平台登录面板加载 `Prefab/login/pfLoginPanelPre`。 |
+| `index.js:54676` | `GameWorld.showSeverPanel()`：非 debug 走 `PFLoginPanel.getLastSever()`，debug 才显示 `LoginPanel.showProgess()`。 |
+| `index.js:80735` | `HeroListPanel.preUrl = "Prefab/HeroListPanel/HeroListPre"`，主屏英雄入口应先进入英雄列表页。 |
+| `index.js:80884` | `HeroListPanel.openHeroDetail()` 点击列表英雄后打开 `HeroMainPanel`。 |
+| `index.js:81379` | `HeroMainPanel.preUrl = "Prefab/HeroPanel/HeroMainPre"`，这是英雄详情页，不是主屏英雄入口第一页。 |
 | `index.js:80002` | `HeroLhPanel` 模块定义，处理英雄立绘展示页。 |
 | `index.js:99534` | 默认主城角色 `_roleLhbody = "105004"`。 |
 | `index.js:99542` | 默认主城背景 `_bgbody = 0`。 |
@@ -206,6 +212,8 @@ D:\work\openclaw-workspace\arpg\tools\Godot_v4.6.2-stable_win64_console.exe --pa
 | 登录页 | `Prefab/login/LoginPre`，`Prefab/login/pfLoginPanelPre`，`index.js:54517` | `scenes/original_login.tscn` |
 | 选服页 | `index.js` 中 `ServerSelectPanel` / `ServerMainPanel` / `ServerData` 相关模块 | `scenes/original_server_select.tscn` |
 | 主城页 | `Prefab/mainpanel/MainPre` + `Prefab/bigImage/<id>` + `Prefab/HerolhPrefab/<bodyID>` | `scenes/original_home_screen.tscn` |
+| 英雄列表页 | `DaohangPanel.openHeroPanel()` -> `HeroListPanel.preUrl="Prefab/HeroListPanel/HeroListPre"` | 待新增 `scenes/original_hero_list_panel.tscn` |
+| 英雄详情页 | `HeroListPanel.openHeroDetail()` -> `HeroMainPanel.preUrl="Prefab/HeroPanel/HeroMainPre"` | `scenes/original_hero_panel.tscn` |
 | 英雄立绘/动画 | `RoleLh`、`HeroLhPanel`、`Prefab/HerolhPrefab/*`、`data/spine_preview_index.json` | 资源浏览器可查看 Spine 索引，尚未真实播放骨骼动画 |
 
 ## 常用定位命令
@@ -242,8 +250,9 @@ rg -n "Cocos2dxJavascriptJavaBridge|evalString|project.json|serviceClassPath|onC
 
 ## 后续优先级
 
-1. 继续从 `assets/main/index.js` 梳理 `LoginPanel`、`PFLoginPanel`、`ServerSelectPanel`、`MainUIPanel` 的真实打开顺序。
-2. 扩展 `export_cocos_prefab_layout.py`，补齐 anchor、opacity/color、Label、Widget、Layout、ScrollView、九宫格 Sprite。
-3. 自动生成 `Prefab/bigImage/*` 背景候选和 `Prefab/HerolhPrefab/*` 角色候选。
-4. 接入或实现 Spine 播放能力，把主城角色从 atlas 预览升级为真正的 `idle/show` 动画。
-5. 用 `data/prefab_restore_inventory.md` 逐个推进高优先级界面：登录、选服、主城、英雄、背包、抽卡、战斗。
+1. 先补原始流程缺口：`updataScene.fire` 热更新入口、`PFLoginPanel` 公告/隐私/适龄提示、服务器列表本地 mock、`HeroListPre -> HeroMainPre` 两段式英雄入口。
+2. 继续从 `assets/main/index.js` 梳理 `LoginPanel`、`PFLoginPanel`、`ServerSelectPanel`、`MainUIPanel` 的真实打开顺序。
+3. 扩展 `export_cocos_prefab_layout.py`，补齐 anchor、opacity/color、Label、Widget、Layout、ScrollView、九宫格 Sprite。
+4. 自动生成 `Prefab/bigImage/*` 背景候选和 `Prefab/HerolhPrefab/*` 角色候选。
+5. 接入或实现 Spine 播放能力，把主城角色从 atlas 预览升级为真正的 `idle/show` 动画。
+6. 用 `data/prefab_restore_inventory.md` 逐个推进高优先级界面：登录、选服、主城、英雄、背包、抽卡、战斗。

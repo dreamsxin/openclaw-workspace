@@ -16,6 +16,7 @@
 - 生成 Godot 4 工程。
 - 默认入口为启动加载页。
 - 启动加载页 -> 登录页 -> 选服页 -> 主城页流程可运行。
+- 已确认原始启动入口是 `assets/src/settings.js` 的 `Scene/updataScene.fire`；当前 Godot 加载页是离线简化版，尚未还原热更新按钮、公告/隐私/适龄提示和真实 PF 登录请求。
 - 资源浏览器可查看图片、音频、文本、Prefab、Scene。
 - 增加 `data/catalog.json`、`data/prefabs.csv`。
 - 增加后退/前进导航按钮。
@@ -213,6 +214,7 @@ RESTORE_LOGIN_TO_HOME.md
 - `Prefab/login/LoginPre`
 - `Prefab/login/pfLoginPanelPre`
 - `Prefab/mainpanel/MainPre`
+- `Prefab/HeroListPanel/HeroListPre`
 - `Prefab/HeroPanel/HeroMainPre`
 - `Prefab/BagPanel/BagPre`
 - `Prefab/DrawCard/drawCardPre`
@@ -310,7 +312,7 @@ RESTORE_LOGIN_TO_HOME.md
 - 已新增独立英雄界面：
   - `scenes/original_hero_panel.tscn`
   - `scripts/original_hero_panel.gd`
-- 主城底部“英雄”入口已改为进入独立英雄界面，不再默认打开 prefab 预览器。
+- 主城底部“英雄”入口当前进入独立英雄详情界面，不再默认打开 prefab 预览器；已确认原始流程应先进入 `HeroListPre`，所以后续要在前面补独立英雄列表页。
 - 独立英雄界面当前支持左侧英雄头像列表、中心 Spine 展示、点击角色切换动作、右侧培养/装备/升星/战意/衣装页签和本地属性 mock。
 - 独立英雄界面的资源加载改为读取 `data/named_resource_index.json`，支持 `texture_path` 与 `sprite_rect` 两种索引字段，避免之前只认 `native_path/rect` 导致头像不显示。
 - `export_cocos_prefab_layout.py` 已新增导出 `HeroTabPre` 和 `HeroListPre`。独立英雄界面已用 `HeroTabPre/HeroMainPre` 的 `cm_tab2_on/off` 替换默认页签按钮，左侧增加小型英雄头像竖列用于本地切换，右侧信息面板使用 `yx_frame_BaiBan` 和 `cm_btn_LvSe1` 资源。
@@ -335,8 +337,9 @@ RESTORE_LOGIN_TO_HOME.md
 - 主屏/英雄页偏差已确认：
   - `MainPre.json` 可提供主屏左侧竖栏、右侧弧形入口、活动广告入口、聊天区和角色容器坐标。
   - 主屏默认角色 105004 已按原游戏链路重放：`MainUIPanel._roleLhbody` -> `lihuiCom.showLh()` -> `RoleLh` -> `Prefab/HerolhPrefab/105004` -> `MainPre.herolh`。当前 `original_home_screen.gd` 使用 `herolh` 根原点 `(640,360)`，再叠加 Skeleton 子节点偏移 `(-68,+333)` 和 scale `(1,0.95)`，不再用矩形 fit。
+  - 原始主屏底部“英雄”不是直接打开 `HeroMainPre`。源码链为 `DaohangPanel.openHeroPanel()` -> `HeroListPanel.preUrl="Prefab/HeroListPanel/HeroListPre"` -> 列表点击 `openHeroDetail()` -> `HeroMainPanel.preUrl="Prefab/HeroPanel/HeroMainPre"`。
   - `HeroMainPre.json` 原版英雄页不是左侧头像列表，而是左侧竖向功能页签、中心 `heroBodyBox`、左右 `btnPre/btnNext` 切换和右侧 `heroContentPrefab` 信息面板。
-  - 下一步需要把 `original_hero_panel.gd` 的左侧英雄列表改成原版左右切换结构，并把英雄列表降级为调试/资源浏览入口。
+  - 下一步需要新增 `original_hero_list_panel.tscn` 作为英雄入口页，再从列表点击进入现有 `original_hero_panel.tscn` 详情页；`original_hero_panel.gd` 的左侧英雄列表只保留为调试/快速切换能力。
 - `original_hero_panel.gd` 已开始按原版结构重排：
   - 左侧改为英雄名、头像、星级、小型英雄头像竖列和传记/衣装/锁定小按钮。
   - 中心保留 Spine 角色展示，增加 `btnPre/btnNext` 式左右切换。
@@ -354,17 +357,17 @@ RESTORE_LOGIN_TO_HOME.md
 
 下一步优先级：
 
-1. 继续完善独立 `original_hero_panel`：追 `HeroSidePrefab` 和 `heroContentPrefab` 的真实按钮/页签/职业/阵营资源，细化左右翻页按钮、星级、装备槽和技能格。
-2. 确认主屏默认展示角色是否固定为 105004，还是登录后由服务器/本地英雄选择覆盖；如果要对齐截图中的男主，需要继续追 `roleLhbody` 的运行时赋值来源和对应 `Prefab/HerolhPrefab/<id>`。
-3. 继续完善独立 `original_bag_panel`：追 `GridBoxItemPre` 真实选中框、品质框、背包分类按钮资源、图鉴/合成按钮资源。
-4. 继续完善独立 `original_draw_card_panel`：补 `HeroShowPre`、`HeroBookItemPre` 十连翻牌、`ZhaoHuan_ChouKa_back/front` 全屏抽卡特效、召唤动画跳过开关和真实按钮资源。
-5. 继续细化独立商店界面：追 `ShopItemPre`、`GoodsItemCom` 的真实背景、折扣、限购、稀有/战力标识和购买确认 `ShopBuyEquitPre`。
-6. 新增独立活动抽卡入口页或战斗页，把仍在 prefab 预览器里的主功能继续迁出。
-7. `cocos_prefab_preview.gd` 后续只在发现坐标/字段/资源缺口时增强，不再作为最终界面承载层。
-8. 继续推广通用 prefab 裁剪作为分析能力：目前已支持 `cc.Mask` 祖先链挂载和部分 `cc.ScrollView` content/viewport 近邻推断，下一步补滚动偏移、`Widget` 对齐和 `Layout` 重排，再按 `GridLogic.create(...)` 补真实奖励 Grid 子项样式。
-4. 继续完善 `drawCardPre` 的抽卡 Spine、结果卡牌 `HeroShowPre`、页签切换动画和真实奖励状态。
-5. 将 `prefab_node_name_hints.json` 继续接入资源浏览器，显示节点名推断用途，减少手工查 JSON。
-6. 继续完善 `battle` 的真实 Spine 战斗角色、技能特效、站位坐标和战斗结束子 prefab。
+1. 新增独立 `original_hero_list_panel`：按 `HeroListPre` 做英雄入口页，包含阵营筛选、英雄网格、图鉴/共享/阵容/升星等页签，本地 mock 点击后进入 `original_hero_panel`。
+2. 继续完善独立 `original_hero_panel`：追 `HeroSidePrefab` 和 `heroContentPrefab` 的真实按钮/页签/职业/阵营资源，细化左右翻页按钮、星级、装备槽和技能格。
+3. 补启动登录流程缺口：把 `updataScene.fire` 热更新入口、`PFLoginPanel` 公告/隐私/适龄提示和本地服务器列表 mock 成可检查的独立节点。
+4. 继续完善独立 `original_bag_panel`：追 `GridBoxItemPre` 真实选中框、品质框、背包分类按钮资源、图鉴/合成按钮资源。
+5. 继续完善独立 `original_draw_card_panel`：补 `HeroShowPre`、`HeroBookItemPre` 十连翻牌、`ZhaoHuan_ChouKa_back/front` 全屏抽卡特效、召唤动画跳过开关和真实按钮资源。
+6. 继续细化独立商店界面：追 `ShopItemPre`、`GoodsItemCom` 的真实背景、折扣、限购、稀有/战力标识和购买确认 `ShopBuyEquitPre`。
+7. 新增独立活动抽卡入口页或战斗页，把仍在 prefab 预览器里的主功能继续迁出。
+8. `cocos_prefab_preview.gd` 后续只在发现坐标/字段/资源缺口时增强，不再作为最终界面承载层。
+9. 继续推广通用 prefab 裁剪作为分析能力：目前已支持 `cc.Mask` 祖先链挂载和部分 `cc.ScrollView` content/viewport 近邻推断，下一步补滚动偏移、`Widget` 对齐和 `Layout` 重排，再按 `GridLogic.create(...)` 补真实奖励 Grid 子项样式。
+10. 将 `prefab_node_name_hints.json` 继续接入资源浏览器，显示节点名推断用途，减少手工查 JSON。
+11. 继续完善 `battle` 的真实 Spine 战斗角色、技能特效、站位坐标和战斗结束子 prefab。
 
 ## 当前风险
 

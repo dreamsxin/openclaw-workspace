@@ -18,6 +18,7 @@ D:\work\openclaw-workspace\arpg\tools\Godot_v4.6.2-stable_win64_console.exe --pa
 
 - `scenes/original_loading.tscn`：默认启动场景。
 - 登录流程：启动加载页 -> 登录页 -> 选服页 -> 原始主城页。
+- 原始 Cocos 启动入口是 `assets/src/settings.js` 的 `Scene/updataScene.fire`，随后 `GameWorld` 打开 `LoadingPanelNode`、预加载 `pfLoginPanelPre/MainPre/daohangPre` 等公共资源，再走 `PFLoginPanel` 选服/开始游戏。当前 Godot 流程是离线简化版，缺少热更新、公告、隐私/适龄提示、真实服务器请求和连接握手。
 - 主城页保留了导航按钮，可进入资源浏览器、Prefab 预览器和旧的浮岛主城预览。
 - 主城底部导航第三个入口已按原始 `daohangPre.btn3/cm_tab_ZhaoHuan` 修正为“召唤”，点击进入本地抽卡页；仓库入口保留在右侧入口条。
 - 资源浏览器支持图片、音频、文本、Prefab、Scene、Spine 索引查看。
@@ -117,7 +118,7 @@ Godot 当前工程已接入项目内轻量 Spine runtime，用于本地预览角
 - `data/prefab_layouts/GoodsItemPre.json`：商店商品卡 prefab，含 `GoodsItemCom` 的 `discount/rare/fight/prize/limit/selectBtn` 绑定。
 - `data/prefab_layouts/HeroMainPre.json`：英雄主界面 prefab，独立英雄页的中心 Spine、右侧信息面板和功能页签布局参考。
 - `data/prefab_layouts/HeroTabPre.json`：英雄页签 prefab，确认 `cm_tab2_on/off` 页签资源。
-- `data/prefab_layouts/HeroListPre.json`：完整英雄列表页 prefab，当前用于区分主英雄页和列表页的资源/布局来源。
+- `data/prefab_layouts/HeroListPre.json`：完整英雄列表页 prefab。原始流程是主屏“英雄”先打开 `HeroListPre`，点击英雄后再打开 `HeroMainPre`；当前 Godot 还需要新增独立英雄列表页。
 - `data/prefab_restore_inventory.csv`：整理后的 prefab 还原清单。
 - `data/prefab_restore_inventory.md`：按分类和优先级整理的 prefab 清单。
 - `data/spine_preview_index.json`：Spine 预览索引。
@@ -143,6 +144,7 @@ json: 18458
 - `Prefab/login/pfLoginPanelPre`
 - `Prefab/mainpanel/MainPre`
 - `Prefab/Shop/ShopPre`
+- `Prefab/HeroListPanel/HeroListPre`
 - `Prefab/HeroPanel/HeroMainPre`
 - `Prefab/BagPanel/BagPre`
 - `Prefab/DrawCard/drawCardPre`
