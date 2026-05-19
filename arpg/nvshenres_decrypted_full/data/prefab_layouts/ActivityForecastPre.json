@@ -1,0 +1,1358 @@
+{
+  "prefab": "Prefab/ActivityForecastPanel/ActivityForecastPre",
+  "import": "assets/resources/import/c1/c1b0b182-4941-4683-af78-bb868a2605b3.json",
+  "origin_mode": "center",
+  "nodes": [
+    {
+      "index": 1,
+      "name": "ActivityForecastPre",
+      "active": true,
+      "parent_index": null,
+      "size": [
+        1044.0,
+        718.0
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        0.0,
+        0.0
+      ],
+      "global_position": [
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 0.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {},
+      "component_types": [
+        "955fa3UMTNG+rG9YjHhAt77"
+      ],
+      "screen_position": [
+        118.0,
+        1.0
+      ],
+      "screen_rect": [
+        118.0,
+        1.0,
+        1044.0,
+        718.0
+      ]
+    },
+    {
+      "index": 2,
+      "name": "dayContent",
+      "active": true,
+      "parent_index": 1,
+      "size": [
+        900.0,
+        30.0
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        0.0,
+        183.341
+      ],
+      "global_position": [
+        0.0,
+        183.341
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {},
+      "component_types": [
+        "cc.Layout"
+      ],
+      "screen_position": [
+        190.0,
+        161.659
+      ],
+      "screen_rect": [
+        190.0,
+        161.659,
+        900.0,
+        30.0
+      ]
+    },
+    {
+      "index": 3,
+      "name": "itemContent",
+      "active": true,
+      "parent_index": 1,
+      "size": [
+        845.0,
+        450.0
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        -7.146000000000001,
+        -56.17
+      ],
+      "global_position": [
+        -7.146000000000001,
+        -56.17
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {},
+      "component_types": [
+        "cc.Layout"
+      ],
+      "screen_position": [
+        210.35400000000004,
+        191.17000000000002
+      ],
+      "screen_rect": [
+        210.35400000000004,
+        191.17000000000002,
+        845.0,
+        450.0
+      ]
+    },
+    {
+      "index": 4,
+      "name": "bg",
+      "active": true,
+      "parent_index": 1,
+      "size": [
+        1044.0,
+        718.0
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        0.0,
+        0.0
+      ],
+      "global_position": [
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 0.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {
+        "align_flags": 45,
+        "left": 0.0,
+        "right": 0.0,
+        "top": 0.0,
+        "bottom": 0.0,
+        "horizontal_center": 0.0,
+        "vertical_center": 0.0,
+        "original_width": 606.0,
+        "original_height": 541.0
+      },
+      "component_types": [
+        "cc.Sprite",
+        "cc.Widget"
+      ],
+      "widget_applied": true,
+      "screen_position": [
+        118.0,
+        1.0
+      ],
+      "screen_rect": [
+        118.0,
+        1.0,
+        1044.0,
+        718.0
+      ]
+    },
+    {
+      "index": 5,
+      "name": "close",
+      "active": true,
+      "parent_index": 1,
+      "size": [
+        68.0,
+        68.0
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        447.016,
+        272.945
+      ],
+      "global_position": [
+        447.016,
+        272.945
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "9a5p+DWL5L/5Xc3D9hLL53",
+      "sprite_resource_path": "",
+      "texture_path": "assets/resources/native/16/1604df330.png",
+      "sprite_name": "cm_btn_GuanBi",
+      "sprite_rect": [
+        952,
+        895,
+        68,
+        68
+      ],
+      "sprite_offset": [
+        0,
+        0
+      ],
+      "sprite_original_size": [
+        68,
+        68
+      ],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {},
+      "component_types": [
+        "cc.Sprite"
+      ],
+      "screen_position": [
+        1053.016,
+        53.05500000000001
+      ],
+      "screen_rect": [
+        1053.016,
+        53.05500000000001,
+        68.0,
+        68.0
+      ]
+    },
+    {
+      "index": 6,
+      "name": "day1",
+      "active": true,
+      "parent_index": 2,
+      "size": [
+        87.58,
+        35.28
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        -366.21,
+        0.0
+      ],
+      "global_position": [
+        -366.21,
+        183.341
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 28,
+      "label_line_height": 28,
+      "label_horizontal_align": 1,
+      "label_vertical_align": 1,
+      "widget": {},
+      "component_types": [
+        "cc.Label"
+      ],
+      "screen_position": [
+        230.00000000000003,
+        159.019
+      ],
+      "screen_rect": [
+        230.00000000000003,
+        159.019,
+        87.58,
+        35.28
+      ]
+    },
+    {
+      "index": 7,
+      "name": "day2",
+      "active": true,
+      "parent_index": 2,
+      "size": [
+        87.58,
+        35.28
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        -246.62999999999994,
+        0.0
+      ],
+      "global_position": [
+        -246.62999999999994,
+        183.341
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 28,
+      "label_line_height": 28,
+      "label_horizontal_align": 1,
+      "label_vertical_align": 1,
+      "widget": {},
+      "component_types": [
+        "cc.Label"
+      ],
+      "screen_position": [
+        349.58000000000004,
+        159.019
+      ],
+      "screen_rect": [
+        349.58000000000004,
+        159.019,
+        87.58,
+        35.28
+      ]
+    },
+    {
+      "index": 8,
+      "name": "day3",
+      "active": true,
+      "parent_index": 2,
+      "size": [
+        87.58,
+        35.28
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        -127.04999999999995,
+        0.0
+      ],
+      "global_position": [
+        -127.04999999999995,
+        183.341
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 28,
+      "label_line_height": 28,
+      "label_horizontal_align": 1,
+      "label_vertical_align": 1,
+      "widget": {},
+      "component_types": [
+        "cc.Label"
+      ],
+      "screen_position": [
+        469.16,
+        159.019
+      ],
+      "screen_rect": [
+        469.16,
+        159.019,
+        87.58,
+        35.28
+      ]
+    },
+    {
+      "index": 9,
+      "name": "day4",
+      "active": true,
+      "parent_index": 2,
+      "size": [
+        87.58,
+        35.28
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        -7.469999999999963,
+        0.0
+      ],
+      "global_position": [
+        -7.469999999999963,
+        183.341
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 28,
+      "label_line_height": 28,
+      "label_horizontal_align": 1,
+      "label_vertical_align": 1,
+      "widget": {},
+      "component_types": [
+        "cc.Label"
+      ],
+      "screen_position": [
+        588.7400000000001,
+        159.019
+      ],
+      "screen_rect": [
+        588.7400000000001,
+        159.019,
+        87.58,
+        35.28
+      ]
+    },
+    {
+      "index": 10,
+      "name": "day5",
+      "active": true,
+      "parent_index": 2,
+      "size": [
+        87.58,
+        35.28
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        112.11000000000004,
+        0.0
+      ],
+      "global_position": [
+        112.11000000000004,
+        183.341
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 28,
+      "label_line_height": 28,
+      "label_horizontal_align": 1,
+      "label_vertical_align": 1,
+      "widget": {},
+      "component_types": [
+        "cc.Label"
+      ],
+      "screen_position": [
+        708.32,
+        159.019
+      ],
+      "screen_rect": [
+        708.32,
+        159.019,
+        87.58,
+        35.28
+      ]
+    },
+    {
+      "index": 11,
+      "name": "day6",
+      "active": true,
+      "parent_index": 2,
+      "size": [
+        87.58,
+        35.28
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        231.69000000000003,
+        0.0
+      ],
+      "global_position": [
+        231.69000000000003,
+        183.341
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 28,
+      "label_line_height": 28,
+      "label_horizontal_align": 1,
+      "label_vertical_align": 1,
+      "widget": {},
+      "component_types": [
+        "cc.Label"
+      ],
+      "screen_position": [
+        827.9000000000001,
+        159.019
+      ],
+      "screen_rect": [
+        827.9000000000001,
+        159.019,
+        87.58,
+        35.28
+      ]
+    },
+    {
+      "index": 12,
+      "name": "day7",
+      "active": true,
+      "parent_index": 2,
+      "size": [
+        87.58,
+        35.28
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        351.27000000000004,
+        0.0
+      ],
+      "global_position": [
+        351.27000000000004,
+        183.341
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 28,
+      "label_line_height": 28,
+      "label_horizontal_align": 1,
+      "label_vertical_align": 1,
+      "widget": {},
+      "component_types": [
+        "cc.Label"
+      ],
+      "screen_position": [
+        947.48,
+        159.019
+      ],
+      "screen_rect": [
+        947.48,
+        159.019,
+        87.58,
+        35.28
+      ]
+    },
+    {
+      "index": 13,
+      "name": "DayItem1",
+      "active": true,
+      "parent_index": 3,
+      "size": [
+        120.0,
+        450.0
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        -360.5,
+        0.0
+      ],
+      "global_position": [
+        -367.646,
+        -56.17
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {},
+      "component_types": [
+        "cc.Layout"
+      ],
+      "screen_position": [
+        212.35399999999998,
+        191.17000000000002
+      ],
+      "screen_rect": [
+        212.35399999999998,
+        191.17000000000002,
+        120.0,
+        450.0
+      ]
+    },
+    {
+      "index": 14,
+      "name": "DayItem2",
+      "active": true,
+      "parent_index": 3,
+      "size": [
+        120.0,
+        450.0
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        -240.5,
+        0.0
+      ],
+      "global_position": [
+        -247.64600000000002,
+        -56.17
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {},
+      "component_types": [
+        "cc.Layout"
+      ],
+      "screen_position": [
+        332.354,
+        191.17000000000002
+      ],
+      "screen_rect": [
+        332.354,
+        191.17000000000002,
+        120.0,
+        450.0
+      ]
+    },
+    {
+      "index": 15,
+      "name": "DayItem3",
+      "active": true,
+      "parent_index": 3,
+      "size": [
+        120.0,
+        450.0
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        -120.5,
+        0.0
+      ],
+      "global_position": [
+        -127.646,
+        -56.17
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {},
+      "component_types": [
+        "cc.Layout"
+      ],
+      "screen_position": [
+        452.35400000000004,
+        191.17000000000002
+      ],
+      "screen_rect": [
+        452.35400000000004,
+        191.17000000000002,
+        120.0,
+        450.0
+      ]
+    },
+    {
+      "index": 16,
+      "name": "DayItem4",
+      "active": true,
+      "parent_index": 3,
+      "size": [
+        120.0,
+        450.0
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        -0.5,
+        0.0
+      ],
+      "global_position": [
+        -7.646000000000001,
+        -56.17
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {},
+      "component_types": [
+        "cc.Layout"
+      ],
+      "screen_position": [
+        572.354,
+        191.17000000000002
+      ],
+      "screen_rect": [
+        572.354,
+        191.17000000000002,
+        120.0,
+        450.0
+      ]
+    },
+    {
+      "index": 17,
+      "name": "DayItem5",
+      "active": true,
+      "parent_index": 3,
+      "size": [
+        120.0,
+        450.0
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        119.5,
+        0.0
+      ],
+      "global_position": [
+        112.354,
+        -56.17
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {},
+      "component_types": [
+        "cc.Layout"
+      ],
+      "screen_position": [
+        692.354,
+        191.17000000000002
+      ],
+      "screen_rect": [
+        692.354,
+        191.17000000000002,
+        120.0,
+        450.0
+      ]
+    },
+    {
+      "index": 18,
+      "name": "DayItem6",
+      "active": true,
+      "parent_index": 3,
+      "size": [
+        120.0,
+        450.0
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        239.5,
+        0.0
+      ],
+      "global_position": [
+        232.35399999999998,
+        -56.17
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {},
+      "component_types": [
+        "cc.Layout"
+      ],
+      "screen_position": [
+        812.354,
+        191.17000000000002
+      ],
+      "screen_rect": [
+        812.354,
+        191.17000000000002,
+        120.0,
+        450.0
+      ]
+    },
+    {
+      "index": 19,
+      "name": "DayItem7",
+      "active": true,
+      "parent_index": 3,
+      "size": [
+        120.0,
+        450.0
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        359.5,
+        0.0
+      ],
+      "global_position": [
+        352.354,
+        -56.17
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {},
+      "component_types": [
+        "cc.Layout"
+      ],
+      "screen_position": [
+        932.354,
+        191.17000000000002
+      ],
+      "screen_rect": [
+        932.354,
+        191.17000000000002,
+        120.0,
+        450.0
+      ]
+    }
+  ],
+  "component_bindings": [
+    {
+      "owner_index": 1,
+      "owner_name": "ActivityForecastPre",
+      "component": "955fa3UMTNG+rG9YjHhAt77",
+      "fields": {
+        "close": {
+          "index": 5,
+          "name": "close"
+        },
+        "dayContent": {
+          "index": 2,
+          "name": "dayContent"
+        },
+        "itemContent": {
+          "index": 3,
+          "name": "itemContent"
+        }
+      },
+      "raw_refs": {
+        "node": -5,
+        "close": -4,
+        "dayContent": -3,
+        "itemContent": -2,
+        "ActivityItem": 18
+      },
+      "unresolved_fields": {
+        "ActivityItem": 18
+      }
+    }
+  ]
+}

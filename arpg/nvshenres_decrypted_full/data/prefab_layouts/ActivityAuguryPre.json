@@ -1,0 +1,2456 @@
+{
+  "prefab": "Prefab/ActivityPanel/changzhuactivity/ActivityAuguryPre",
+  "import": "assets/resources/import/8e/8e95fbf5-9f30-4a50-9fa2-9e126e5367b8.json",
+  "origin_mode": "center",
+  "nodes": [
+    {
+      "index": 1,
+      "name": "ActivityAuguryPre",
+      "active": true,
+      "parent_index": null,
+      "size": [
+        950.0,
+        600.0
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        0.0,
+        0.0
+      ],
+      "global_position": [
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 0.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {},
+      "component_types": [
+        "71a7b8hKaNAt7tdz6XU9PMJ"
+      ],
+      "screen_position": [
+        165.0,
+        60.0
+      ],
+      "screen_rect": [
+        165.0,
+        60.0,
+        950.0,
+        600.0
+      ]
+    },
+    {
+      "index": 2,
+      "name": "nodeCenter",
+      "active": true,
+      "parent_index": 1,
+      "size": [
+        80.0,
+        36.0
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        51.804,
+        0.0
+      ],
+      "global_position": [
+        51.804,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {},
+      "component_types": [],
+      "screen_position": [
+        651.804,
+        342.0
+      ],
+      "screen_rect": [
+        651.804,
+        342.0,
+        80.0,
+        36.0
+      ]
+    },
+    {
+      "index": 3,
+      "name": "Background",
+      "active": true,
+      "parent_index": null,
+      "size": [
+        186.0,
+        186.0
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        0.0,
+        0.0
+      ],
+      "global_position": [
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 0.0,
+      "sprite_uuid": "e97GVMl6JHh5Ml5qEDdSGa",
+      "sprite_resource_path": "",
+      "texture_path": "assets/resources/native/b4/b43ff3c2-02bb-4874-81f7-f2dea6970f18.png",
+      "sprite_name": "default_btn_pressed",
+      "sprite_rect": [
+        0,
+        0,
+        40,
+        40
+      ],
+      "sprite_offset": [
+        0,
+        0
+      ],
+      "sprite_original_size": [
+        40,
+        40
+      ],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [
+        12,
+        12,
+        12,
+        12
+      ],
+      "sprite_type": 1,
+      "sprite_type_name": "sliced",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {
+        "align_flags": 45,
+        "left": 0.0,
+        "right": 0.0,
+        "top": 0.0,
+        "bottom": 0.0,
+        "horizontal_center": 0.0,
+        "vertical_center": 0.0,
+        "original_width": 100.0,
+        "original_height": 40.0
+      },
+      "component_types": [
+        "cc.Sprite",
+        "cc.Widget"
+      ],
+      "screen_position": [
+        547.0,
+        267.0
+      ],
+      "screen_rect": [
+        547.0,
+        267.0,
+        186.0,
+        186.0
+      ]
+    },
+    {
+      "index": 4,
+      "name": "nodeSelectReward",
+      "active": true,
+      "parent_index": 2,
+      "size": [
+        110.0,
+        110.0
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        -435.342,
+        -37.914
+      ],
+      "global_position": [
+        -383.538,
+        -37.914
+      ],
+      "scale": [
+        0.9914448613738104,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {},
+      "component_types": [],
+      "screen_position": [
+        201.462,
+        342.914
+      ],
+      "screen_rect": [
+        201.462,
+        342.914,
+        110.0,
+        110.0
+      ]
+    },
+    {
+      "index": 5,
+      "name": "imgTurn",
+      "active": true,
+      "parent_index": null,
+      "size": [
+        592.0,
+        642.0
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        220.145,
+        60.186
+      ],
+      "global_position": [
+        220.145,
+        60.186
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {},
+      "component_types": [
+        "cc.Sprite",
+        "e285bStulNHzI7HFtTnSxbf"
+      ],
+      "screen_position": [
+        564.145,
+        -21.18599999999998
+      ],
+      "screen_rect": [
+        564.145,
+        -21.18599999999998,
+        592.0,
+        642.0
+      ]
+    },
+    {
+      "index": 6,
+      "name": "nodeRewardClone",
+      "active": false,
+      "parent_index": 2,
+      "size": [
+        90.0,
+        90.0
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        99.676,
+        266.036
+      ],
+      "global_position": [
+        151.48000000000002,
+        266.036
+      ],
+      "scale": [
+        1.0,
+        0.9
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {},
+      "component_types": [],
+      "screen_position": [
+        746.48,
+        48.964
+      ],
+      "screen_rect": [
+        746.48,
+        48.964,
+        90.0,
+        90.0
+      ]
+    },
+    {
+      "index": 7,
+      "name": "btnStar",
+      "active": true,
+      "parent_index": 2,
+      "size": [
+        186.0,
+        186.0
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        207.452,
+        -163.255
+      ],
+      "global_position": [
+        259.256,
+        -163.255
+      ],
+      "scale": [
+        0.9914448613738104,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "29FYIk+N1GYaeWH/q1NxQO",
+      "sprite_resource_path": "",
+      "texture_path": "assets/resources/native/71/71561142-4c83-4933-afca-cb7a17f67053.png",
+      "sprite_name": "default_btn_disabled",
+      "sprite_rect": [
+        0,
+        0,
+        40,
+        40
+      ],
+      "sprite_offset": [
+        0,
+        0
+      ],
+      "sprite_original_size": [
+        40,
+        40
+      ],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [
+        12,
+        12,
+        12,
+        12
+      ],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {},
+      "component_types": [
+        "cc.Button"
+      ],
+      "screen_position": [
+        806.256,
+        430.255
+      ],
+      "screen_rect": [
+        806.256,
+        430.255,
+        186.0,
+        186.0
+      ]
+    },
+    {
+      "index": 8,
+      "name": "imgIcon",
+      "active": true,
+      "parent_index": null,
+      "size": [
+        110.0,
+        110.0
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        -7.0,
+        4.0
+      ],
+      "global_position": [
+        -7.0,
+        4.0
+      ],
+      "scale": [
+        0.9914448613738104,
+        0.3
+      ],
+      "rotation_z": 0.3,
+      "sprite_uuid": "21sJ3GWiBPV5rpgr4lbdtp",
+      "sprite_resource_path": "",
+      "texture_path": "assets/resources/native/12/124526e36.png",
+      "sprite_name": "lp_tag_yihuode",
+      "sprite_rect": [
+        360,
+        651,
+        117,
+        30
+      ],
+      "sprite_offset": [
+        0,
+        0
+      ],
+      "sprite_original_size": [
+        117,
+        30
+      ],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {},
+      "component_types": [
+        "cc.Sprite",
+        "db4d2313PhMz4xuKgLRApf2"
+      ],
+      "screen_position": [
+        578.0,
+        301.0
+      ],
+      "screen_rect": [
+        578.0,
+        301.0,
+        110.0,
+        110.0
+      ]
+    },
+    {
+      "index": 9,
+      "name": "nodeHaveProp",
+      "active": true,
+      "parent_index": 2,
+      "size": [
+        80.0,
+        36.0
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        266.444,
+        -218.195
+      ],
+      "global_position": [
+        318.24800000000005,
+        -218.195
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {},
+      "component_types": [],
+      "screen_position": [
+        918.248,
+        560.1949999999999
+      ],
+      "screen_rect": [
+        918.248,
+        560.1949999999999,
+        80.0,
+        36.0
+      ]
+    },
+    {
+      "index": 10,
+      "name": "imgIcon",
+      "active": true,
+      "parent_index": 9,
+      "size": [
+        110.0,
+        110.0
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        76.836,
+        -21.598
+      ],
+      "global_position": [
+        395.08400000000006,
+        -239.793
+      ],
+      "scale": [
+        0.9914448613738104,
+        0.3
+      ],
+      "rotation_z": 0.3,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {},
+      "component_types": [
+        "cc.Sprite",
+        "db4d2313PhMz4xuKgLRApf2"
+      ],
+      "screen_position": [
+        980.0840000000001,
+        544.793
+      ],
+      "screen_rect": [
+        980.0840000000001,
+        544.793,
+        110.0,
+        110.0
+      ]
+    },
+    {
+      "index": 11,
+      "name": "nodeGetProp",
+      "active": true,
+      "parent_index": 2,
+      "size": [
+        400.0,
+        27.72
+      ],
+      "anchor": [
+        1.0,
+        0.5
+      ],
+      "position": [
+        -66.368,
+        -286.381
+      ],
+      "global_position": [
+        -14.563999999999993,
+        -286.381
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "活动期间占卜合成SSR可获得",
+      "label_font_size": 22,
+      "label_line_height": 22,
+      "label_horizontal_align": 2,
+      "label_vertical_align": 1,
+      "widget": {},
+      "component_types": [
+        "cc.Label"
+      ],
+      "screen_position": [
+        225.43600000000004,
+        632.521
+      ],
+      "screen_rect": [
+        225.43600000000004,
+        632.521,
+        400.0,
+        27.72
+      ]
+    },
+    {
+      "index": 12,
+      "name": "imgIcon",
+      "active": true,
+      "parent_index": 11,
+      "size": [
+        110.0,
+        110.0
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        22.449,
+        -1.126
+      ],
+      "global_position": [
+        7.885000000000009,
+        -287.50699999999995
+      ],
+      "scale": [
+        1.0,
+        0.3
+      ],
+      "rotation_z": 0.3,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {},
+      "component_types": [
+        "cc.Sprite",
+        "db4d2313PhMz4xuKgLRApf2"
+      ],
+      "screen_position": [
+        592.885,
+        592.507
+      ],
+      "screen_rect": [
+        592.885,
+        592.507,
+        110.0,
+        110.0
+      ]
+    },
+    {
+      "index": 13,
+      "name": "nodeHasGet",
+      "active": false,
+      "parent_index": 4,
+      "size": [
+        117.0,
+        30.0
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        3.042,
+        -30.281
+      ],
+      "global_position": [
+        -380.49600000000004,
+        -68.195
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {},
+      "component_types": [
+        "cc.Sprite"
+      ],
+      "screen_position": [
+        201.00399999999996,
+        413.195
+      ],
+      "screen_rect": [
+        201.00399999999996,
+        413.195,
+        117.0,
+        30.0
+      ]
+    },
+    {
+      "index": 14,
+      "name": "bg",
+      "active": true,
+      "parent_index": 1,
+      "size": [
+        1358.0,
+        720.0
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        -2.073,
+        -0.894
+      ],
+      "global_position": [
+        -2.073,
+        -0.894
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {},
+      "component_types": [
+        "cc.Sprite"
+      ],
+      "screen_position": [
+        -41.07299999999998,
+        0.8940000000000055
+      ],
+      "screen_rect": [
+        -41.07299999999998,
+        0.8940000000000055,
+        1358.0,
+        720.0
+      ]
+    },
+    {
+      "index": 15,
+      "name": "label",
+      "active": true,
+      "parent_index": 3,
+      "size": [
+        150.0,
+        40.0
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        0.28600000000000003,
+        1.3940000000000001
+      ],
+      "global_position": [
+        0.28600000000000003,
+        1.3940000000000001
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "开始",
+      "label_font_size": 18,
+      "label_line_height": 18,
+      "label_horizontal_align": 1,
+      "label_vertical_align": 1,
+      "widget": {},
+      "component_types": [
+        "cc.Label",
+        "cc.LabelOutline"
+      ],
+      "screen_position": [
+        565.286,
+        338.606
+      ],
+      "screen_rect": [
+        565.286,
+        338.606,
+        150.0,
+        40.0
+      ]
+    },
+    {
+      "index": 16,
+      "name": "nodeNeedProp",
+      "active": true,
+      "parent_index": 3,
+      "size": [
+        80.0,
+        36.0
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        -11.85568,
+        -34.94831
+      ],
+      "global_position": [
+        -11.85568,
+        -34.94831
+      ],
+      "scale": [
+        0.9914448613738104,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {},
+      "component_types": [],
+      "screen_position": [
+        588.14432,
+        376.94831
+      ],
+      "screen_rect": [
+        588.14432,
+        376.94831,
+        80.0,
+        36.0
+      ]
+    },
+    {
+      "index": 17,
+      "name": "txtNeedNum",
+      "active": true,
+      "parent_index": 16,
+      "size": [
+        34.02,
+        27.2
+      ],
+      "anchor": [
+        0.0,
+        0.5
+      ],
+      "position": [
+        5.0,
+        1.0
+      ],
+      "global_position": [
+        -6.8556799999999996,
+        -33.94831
+      ],
+      "scale": [
+        0.9914448613738104,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {},
+      "component_types": [],
+      "screen_position": [
+        633.14432,
+        380.34830999999997
+      ],
+      "screen_rect": [
+        633.14432,
+        380.34830999999997,
+        34.02,
+        27.2
+      ]
+    },
+    {
+      "index": 18,
+      "name": "nodeReward",
+      "active": true,
+      "parent_index": 2,
+      "size": [
+        560.0,
+        560.0
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        -208.658,
+        27.198
+      ],
+      "global_position": [
+        -156.85399999999998,
+        27.198
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {},
+      "component_types": [],
+      "screen_position": [
+        203.14600000000002,
+        52.80200000000002
+      ],
+      "screen_rect": [
+        203.14600000000002,
+        52.80200000000002,
+        560.0,
+        560.0
+      ]
+    },
+    {
+      "index": 19,
+      "name": "nodeMark",
+      "active": true,
+      "parent_index": 18,
+      "size": [
+        175.0,
+        200.0
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        -220.144,
+        -59.358
+      ],
+      "global_position": [
+        -376.998,
+        -32.16
+      ],
+      "scale": [
+        0.9914448613738104,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {},
+      "component_types": [
+        "cc.Mask"
+      ],
+      "screen_position": [
+        175.502,
+        292.15999999999997
+      ],
+      "screen_rect": [
+        175.502,
+        292.15999999999997,
+        175.0,
+        200.0
+      ]
+    },
+    {
+      "index": 20,
+      "name": "txtNumber",
+      "active": true,
+      "parent_index": 6,
+      "size": [
+        51.71,
+        31.72
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        3.0,
+        -30.992
+      ],
+      "global_position": [
+        154.48000000000002,
+        235.044
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "x200",
+      "label_font_size": 22,
+      "label_line_height": 22,
+      "label_horizontal_align": 1,
+      "label_vertical_align": 1,
+      "widget": {},
+      "component_types": [
+        "cc.Label",
+        "cc.LabelOutline"
+      ],
+      "screen_position": [
+        768.625,
+        109.09599999999999
+      ],
+      "screen_rect": [
+        768.625,
+        109.09599999999999,
+        51.71,
+        31.72
+      ]
+    },
+    {
+      "index": 21,
+      "name": "nodeHasGet",
+      "active": false,
+      "parent_index": 6,
+      "size": [
+        117.0,
+        30.0
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        3.042,
+        -30.281
+      ],
+      "global_position": [
+        154.52200000000002,
+        235.755
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {},
+      "component_types": [
+        "cc.Sprite"
+      ],
+      "screen_position": [
+        736.022,
+        109.245
+      ],
+      "screen_rect": [
+        736.022,
+        109.245,
+        117.0,
+        30.0
+      ]
+    },
+    {
+      "index": 22,
+      "name": "New Label",
+      "active": true,
+      "parent_index": 21,
+      "size": [
+        62.0,
+        27.2
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        0.0,
+        0.0
+      ],
+      "global_position": [
+        154.52200000000002,
+        235.755
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 0.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "已获取",
+      "label_font_size": 20,
+      "label_line_height": 20,
+      "label_horizontal_align": 1,
+      "label_vertical_align": 1,
+      "widget": {},
+      "component_types": [
+        "cc.Label",
+        "cc.LabelOutline"
+      ],
+      "screen_position": [
+        763.522,
+        110.64500000000001
+      ],
+      "screen_rect": [
+        763.522,
+        110.64500000000001,
+        62.0,
+        27.2
+      ]
+    },
+    {
+      "index": 23,
+      "name": "txtCur",
+      "active": true,
+      "parent_index": 9,
+      "size": [
+        73.81,
+        29.72
+      ],
+      "anchor": [
+        0.0,
+        0.5
+      ],
+      "position": [
+        -9.167,
+        4.593
+      ],
+      "global_position": [
+        309.0810000000001,
+        -213.602
+      ],
+      "scale": [
+        0.9914448613738104,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "现拥有:",
+      "label_font_size": 22,
+      "label_line_height": 22,
+      "label_horizontal_align": 1,
+      "label_vertical_align": 1,
+      "widget": {},
+      "component_types": [
+        "cc.Label",
+        "cc.LabelOutline"
+      ],
+      "screen_position": [
+        949.0810000000001,
+        558.742
+      ],
+      "screen_rect": [
+        949.0810000000001,
+        558.742,
+        73.81,
+        29.72
+      ]
+    },
+    {
+      "index": 24,
+      "name": "txtNeedNum",
+      "active": true,
+      "parent_index": 9,
+      "size": [
+        39.22,
+        31.72
+      ],
+      "anchor": [
+        0.0,
+        0.5
+      ],
+      "position": [
+        91.836,
+        -24.598
+      ],
+      "global_position": [
+        410.08400000000006,
+        -242.793
+      ],
+      "scale": [
+        0.9914448613738104,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {},
+      "component_types": [],
+      "screen_position": [
+        1050.084,
+        586.933
+      ],
+      "screen_rect": [
+        1050.084,
+        586.933,
+        39.22,
+        31.72
+      ]
+    },
+    {
+      "index": 25,
+      "name": "imgIcon",
+      "active": true,
+      "parent_index": 4,
+      "size": [
+        110.0,
+        110.0
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        0.0,
+        0.0
+      ],
+      "global_position": [
+        -383.538,
+        -37.914
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 0.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {},
+      "component_types": [
+        "cc.Sprite"
+      ],
+      "screen_position": [
+        201.462,
+        342.914
+      ],
+      "screen_rect": [
+        201.462,
+        342.914,
+        110.0,
+        110.0
+      ]
+    },
+    {
+      "index": 26,
+      "name": "txtNumber",
+      "active": true,
+      "parent_index": 4,
+      "size": [
+        51.71,
+        31.72
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        3.0,
+        -30.992
+      ],
+      "global_position": [
+        -380.538,
+        -68.906
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {},
+      "component_types": [],
+      "screen_position": [
+        233.607,
+        413.046
+      ],
+      "screen_rect": [
+        233.607,
+        413.046,
+        51.71,
+        31.72
+      ]
+    },
+    {
+      "index": 27,
+      "name": "New Label",
+      "active": true,
+      "parent_index": 13,
+      "size": [
+        62.0,
+        27.2
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        0.0,
+        0.0
+      ],
+      "global_position": [
+        -380.49600000000004,
+        -68.195
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 0.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "已获取",
+      "label_font_size": 20,
+      "label_line_height": 20,
+      "label_horizontal_align": 1,
+      "label_vertical_align": 1,
+      "widget": {},
+      "component_types": [
+        "cc.Label",
+        "cc.LabelOutline"
+      ],
+      "screen_position": [
+        228.50399999999996,
+        414.59499999999997
+      ],
+      "screen_rect": [
+        228.50399999999996,
+        414.59499999999997,
+        62.0,
+        27.2
+      ]
+    },
+    {
+      "index": 29,
+      "name": "nodeTurn",
+      "active": true,
+      "parent_index": 19,
+      "size": [
+        80.0,
+        36.0
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        0.0,
+        0.0
+      ],
+      "global_position": [
+        -376.998,
+        -32.16
+      ],
+      "scale": [
+        0.9914448613738104,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {},
+      "component_types": [],
+      "screen_position": [
+        223.002,
+        374.15999999999997
+      ],
+      "screen_rect": [
+        223.002,
+        374.15999999999997,
+        80.0,
+        36.0
+      ]
+    },
+    {
+      "index": 30,
+      "name": "nodeRewardView",
+      "active": true,
+      "parent_index": 5,
+      "size": [
+        560.0,
+        560.0
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        1.5701,
+        -0.42355
+      ],
+      "global_position": [
+        221.7151,
+        59.76245
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {},
+      "component_types": [],
+      "screen_position": [
+        581.7151,
+        20.23755
+      ],
+      "screen_rect": [
+        581.7151,
+        20.23755,
+        560.0,
+        560.0
+      ]
+    },
+    {
+      "index": 31,
+      "name": "imgIcon",
+      "active": true,
+      "parent_index": 6,
+      "size": [
+        110.0,
+        110.0
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        0.0,
+        0.0
+      ],
+      "global_position": [
+        151.48000000000002,
+        266.036
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 0.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {},
+      "component_types": [
+        "cc.Sprite"
+      ],
+      "screen_position": [
+        736.48,
+        38.964
+      ],
+      "screen_rect": [
+        736.48,
+        38.964,
+        110.0,
+        110.0
+      ]
+    },
+    {
+      "index": 33,
+      "name": "txtNeedNum",
+      "active": true,
+      "parent_index": 11,
+      "size": [
+        35.22,
+        27.72
+      ],
+      "anchor": [
+        0.0,
+        0.5
+      ],
+      "position": [
+        37.449,
+        -0.126
+      ],
+      "global_position": [
+        22.885000000000005,
+        -286.50699999999995
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {},
+      "component_types": [],
+      "screen_position": [
+        662.885,
+        632.6469999999999
+      ],
+      "screen_rect": [
+        662.885,
+        632.6469999999999,
+        35.22,
+        27.72
+      ]
+    },
+    {
+      "index": 36,
+      "name": "txtGridName",
+      "active": true,
+      "parent_index": 4,
+      "size": [
+        0.0,
+        47.88
+      ],
+      "anchor": [
+        0.0,
+        0.5
+      ],
+      "position": [
+        76.335,
+        14.759
+      ],
+      "global_position": [
+        -307.20300000000003,
+        -23.155
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {},
+      "component_types": [],
+      "screen_position": [
+        332.79699999999997,
+        359.215
+      ],
+      "screen_rect": [
+        332.79699999999997,
+        359.215,
+        0.0,
+        47.88
+      ]
+    },
+    {
+      "index": 38,
+      "name": "txtDes",
+      "active": true,
+      "parent_index": 4,
+      "size": [
+        200.3,
+        22.68
+      ],
+      "anchor": [
+        0.0,
+        0.5
+      ],
+      "position": [
+        76.335,
+        -22.408
+      ],
+      "global_position": [
+        -307.20300000000003,
+        -60.322
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {},
+      "component_types": [],
+      "screen_position": [
+        332.79699999999997,
+        408.982
+      ],
+      "screen_rect": [
+        332.79699999999997,
+        408.982,
+        200.3,
+        22.68
+      ]
+    },
+    {
+      "index": 40,
+      "name": "lp_image_jueseshou",
+      "active": true,
+      "parent_index": 1,
+      "size": [
+        159.0,
+        102.0
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        88.627,
+        -15.378
+      ],
+      "global_position": [
+        88.627,
+        -15.378
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {},
+      "component_types": [
+        "cc.Sprite"
+      ],
+      "screen_position": [
+        649.127,
+        324.378
+      ],
+      "screen_rect": [
+        649.127,
+        324.378,
+        159.0,
+        102.0
+      ]
+    }
+  ],
+  "component_bindings": [
+    {
+      "owner_index": 1,
+      "owner_name": "ActivityAuguryPre",
+      "component": "71a7b8hKaNAt7tdz6XU9PMJ",
+      "fields": {
+        "btnStar": {
+          "index": 7,
+          "name": "btnStar"
+        },
+        "nodeTurn": {
+          "index": 29,
+          "name": "nodeTurn"
+        },
+        "nodeRewardClone": {
+          "index": 6,
+          "name": "nodeRewardClone"
+        },
+        "txtDes": {
+          "index": 38,
+          "name": "txtDes"
+        },
+        "bg": {
+          "index": 14,
+          "name": "bg"
+        }
+      },
+      "raw_refs": {
+        "node": -18,
+        "btnStar": -17,
+        "nodeTurn": -16,
+        "nodeRewardClone": -15,
+        "nodeRewardChildren": -14,
+        "txtDes": -13,
+        "txtNeedPropCnt": -12,
+        "imgNeedProp": -11,
+        "txtHavaPropCnt": -10,
+        "imgHavaProp": -9,
+        "txtGetPropCnt": -8,
+        "imgGetProp": -7,
+        "imgSelectProp": -6,
+        "txtSelectProp": -5,
+        "txtSelectPropCnt": -4,
+        "nodeSelectHasGet": -3,
+        "bg": -2
+      },
+      "unresolved_fields": {
+        "nodeRewardChildren": -14,
+        "txtNeedPropCnt": -12,
+        "imgNeedProp": -11,
+        "txtHavaPropCnt": -10,
+        "imgHavaProp": -9,
+        "txtGetPropCnt": -8,
+        "imgGetProp": -7,
+        "imgSelectProp": -6,
+        "txtSelectProp": -5,
+        "txtSelectPropCnt": -4,
+        "nodeSelectHasGet": -3
+      }
+    },
+    {
+      "owner_index": 5,
+      "owner_name": "imgTurn",
+      "component": "e285bStulNHzI7HFtTnSxbf",
+      "fields": {},
+      "raw_refs": {
+        "node": -38
+      }
+    },
+    {
+      "owner_index": 8,
+      "owner_name": "imgIcon",
+      "component": "db4d2313PhMz4xuKgLRApf2",
+      "fields": {},
+      "raw_refs": {
+        "node": -45
+      }
+    },
+    {
+      "owner_index": 10,
+      "owner_name": "imgIcon",
+      "component": "db4d2313PhMz4xuKgLRApf2",
+      "fields": {},
+      "raw_refs": {
+        "node": -50
+      }
+    },
+    {
+      "owner_index": 12,
+      "owner_name": "imgIcon",
+      "component": "db4d2313PhMz4xuKgLRApf2",
+      "fields": {},
+      "raw_refs": {
+        "node": -55
+      }
+    }
+  ]
+}

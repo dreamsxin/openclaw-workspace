@@ -175,10 +175,31 @@
     "texture_nodes": 15
   },
   {
+    "label": "抽卡英雄展示",
+    "prefab": "Prefab/DrawCard/HeroShowPre",
+    "layout": "data/prefab_layouts/HeroShowPre.json",
+    "nodes": 153,
+    "texture_nodes": 7
+  },
+  {
+    "label": "抽卡奖励预览",
+    "prefab": "Prefab/DrawCard/DrawRewardPreviewPre",
+    "layout": "data/prefab_layouts/DrawRewardPreviewPre.json",
+    "nodes": 12,
+    "texture_nodes": 0
+  },
+  {
     "label": "战斗",
     "prefab": "Prefab/Battle/battle",
     "layout": "data/prefab_layouts/battle.json",
     "nodes": 43,
+    "texture_nodes": 0
+  },
+  {
+    "label": "活动面板",
+    "prefab": "Prefab/ActivityPanel/ActivityPre",
+    "layout": "data/prefab_layouts/ActivityPre.json",
+    "nodes": 14,
     "texture_nodes": 0
   },
   {
@@ -243,5 +264,75 @@
     "layout": "data/prefab_layouts/SkyCityPre.json",
     "nodes": 46,
     "texture_nodes": 6
+  },
+  {
+    "label": "通行证",
+    "prefab": "Prefab/PassPrefab/BigPassPanel",
+    "layout": "data/prefab_layouts/BigPassPanel.json",
+    "nodes": 15,
+    "texture_nodes": 1
+  },
+  {
+    "label": "爵位",
+    "prefab": "Prefab/PassPrefab/KnighthoodPanel",
+    "layout": "data/prefab_layouts/KnighthoodPanel.json",
+    "nodes": 69,
+    "texture_nodes": 6
+  },
+  {
+    "label": "锻造",
+    "prefab": "Prefab/ForgePanel/ForgePre",
+    "layout": "data/prefab_layouts/ForgePre.json",
+    "nodes": 23,
+    "texture_nodes": 3
+  },
+  {
+    "label": "占卜",
+    "prefab": "Prefab/ActivityPanel/changzhuactivity/ActivityAuguryPre",
+    "layout": "data/prefab_layouts/ActivityAuguryPre.json",
+    "nodes": 34,
+    "texture_nodes": 3
+  },
+  {
+    "label": "寻星",
+    "prefab": "Prefab/FindTreasurePanel/FindTreasurePre",
+    "layout": "data/prefab_layouts/FindTreasurePre.json",
+    "nodes": 221,
+    "texture_nodes": 10
+  },
+  {
+    "label": "福利",
+    "prefab": "Prefab/Welfare/WelfarePre",
+    "layout": "data/prefab_layouts/WelfarePre.json",
+    "nodes": 61,
+    "texture_nodes": 5
+  },
+  {
+    "label": "首充",
+    "prefab": "Prefab/FirstRechargePanel/firstRechargePre",
+    "layout": "data/prefab_layouts/firstRechargePre.json",
+    "nodes": 383,
+    "texture_nodes": 8
+  },
+  {
+    "label": "升星计划",
+    "prefab": "Prefab/HeroXZPrefab/StarUpPre",
+    "layout": "data/prefab_layouts/StarUpPre.json",
+    "nodes": 13,
+    "texture_nodes": 1
+  },
+  {
+    "label": "活动预告",
+    "prefab": "Prefab/ActivityForecastPanel/ActivityForecastPre",
+    "layout": "data/prefab_layouts/ActivityForecastPre.json",
+    "nodes": 19,
+    "texture_nodes": 1
+  },
+  {
+    "label": "学院塔",
+    "prefab": "Prefab/MaoxianPanel/BraveManTriedPassInfoPre",
+    "layout": "data/prefab_layouts/BraveManTriedPassInfoPre.json",
+    "nodes": 24,
+    "texture_nodes": 2
   }
 ]

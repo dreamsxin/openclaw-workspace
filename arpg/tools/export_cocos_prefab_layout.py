@@ -48,7 +48,10 @@ PREFABS = [
     ("背包", "Prefab/BagPanel/BagPre"),
     ("背包格子", "Prefab/BagPanel/GridBoxItemPre"),
     ("抽卡", "Prefab/DrawCard/drawCardPre"),
+    ("抽卡英雄展示", "Prefab/DrawCard/HeroShowPre"),
+    ("抽卡奖励预览", "Prefab/DrawCard/DrawRewardPreviewPre"),
     ("战斗", "Prefab/Battle/battle"),
+    ("活动面板", "Prefab/ActivityPanel/ActivityPre"),
     ("活动抽卡", "Prefab/ActivityPanel/DrawCardActivity/DrawCardActivityPre"),
     ("活动抽卡-登录领取", "Prefab/ActivityPanel/DrawCardActivity/13002"),
     ("活动抽卡-循环礼包", "Prefab/ActivityPanel/DrawCardActivity/13003"),
@@ -58,6 +61,16 @@ PREFABS = [
     ("公会", "Prefab/Guild/GuildMainPre"),
     ("竞技", "Prefab/JingjiPrefab/JingjiPre"),
     ("天空城", "Prefab/SkyCityPanel/SkyCityPre"),
+    ("通行证", "Prefab/PassPrefab/BigPassPanel"),
+    ("爵位", "Prefab/PassPrefab/KnighthoodPanel"),
+    ("锻造", "Prefab/ForgePanel/ForgePre"),
+    ("占卜", "Prefab/ActivityPanel/changzhuactivity/ActivityAuguryPre"),
+    ("寻星", "Prefab/FindTreasurePanel/FindTreasurePre"),
+    ("福利", "Prefab/Welfare/WelfarePre"),
+    ("首充", "Prefab/FirstRechargePanel/firstRechargePre"),
+    ("升星计划", "Prefab/HeroXZPrefab/StarUpPre"),
+    ("活动预告", "Prefab/ActivityForecastPanel/ActivityForecastPre"),
+    ("学院塔", "Prefab/MaoxianPanel/BraveManTriedPassInfoPre"),
 ]
 
 
