@@ -79,9 +79,9 @@ const HEROES := [
 		"size": Vector2(410, 640),
 		"spine": HERO_105004_SPINE,
 		"animation": "idle",
-		"spine_origin_position": Vector2(640, 360),
-		"spine_prefab_offset": Vector2(-68, 333),
-		"spine_origin_scale": Vector2(1.0, 0.95),
+		"spine_target": Rect2(Vector2(350, 48), Vector2(560, 668)),
+		"spine_scale_bias": 1.28,
+		"spine_offset": Vector2(-18, -78),
 	},
 	{
 		"name": "SuLa_LH",
