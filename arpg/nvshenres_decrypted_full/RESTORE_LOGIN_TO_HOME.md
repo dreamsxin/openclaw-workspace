@@ -254,6 +254,7 @@ assets/main/index.js
 - `original_shop_panel.gd` 已按 `ShopPanel.setData()` 手工复刻本地商店：主类型页签、右侧商店类型、两列商品、货币条、刷新条和购买弹窗；本地商品图标使用 `data/equipment_icon_index.json` 的真实装备 SpriteFrame，商品卡布局参考 `GoodsItemPre`，购买确认框参考 `ShopBuyEquitPre`。
 - 商店页回归参数：`--shop-open-buy <index>` 可启动时打开购买确认框，`--capture-shop-panel <png>` 可截图。
 - 新增 `tools/inspect_prefab_layout.py`，用于快速打印 `ShopPre` 这类 layout 的贴图/文本节点和 `component_bindings`，后续定位 UI 字段不需要反复写临时 PowerShell。
+- 截图和日志统一输出到 `debug_outputs/`，不要再写到工程根目录；该目录已在 `.gitignore` 中忽略。
 
 主屏剩余缺口：
 
@@ -297,6 +298,8 @@ D:\work\openclaw-workspace\arpg\tools\Godot_v4.6.2-stable_win64_console.exe --pa
 ```powershell
 $godot = "D:\work\openclaw-workspace\arpg\tools\Godot_v4.6.2-stable_win64_console.exe"
 $proj = "D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full"
+$debug = Join-Path $proj "debug_outputs"
+New-Item -ItemType Directory -Force -Path $debug | Out-Null
 & $godot --path $proj --scene "res://scenes/cocos_prefab_preview.tscn" --quit-after 100 -- --prefab-layout "活动抽卡-抽数任务" --capture-prefab-preview "$proj\prefab_activity_13004_runtime_check.png" *> "$proj\prefab_activity_13004_runtime_check.log"
 ```
 
@@ -566,26 +569,26 @@ $proj = "D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full"
 截图回归参数：
 
 ```powershell
-& $godot --path $proj --scene "res://scenes/original_loading.tscn" --quit-after 100 -- --capture-loading "$proj\loading_check.png" *> "$proj\loading_check.log"
-& $godot --path $proj --scene "res://scenes/original_login.tscn" --quit-after 100 -- --capture-login "$proj\login_check.png" *> "$proj\login_check.log"
-& $godot --path $proj --scene "res://scenes/original_server_select.tscn" --quit-after 100 -- --capture-server-select "$proj\server_check.png" *> "$proj\server_check.log"
-& $godot --path $proj --scene "res://scenes/original_home_screen.tscn" --quit-after 100 -- --capture-home-screen "$proj\home_check.png" *> "$proj\home_check.log"
+& $godot --path $proj --scene "res://scenes/original_loading.tscn" --quit-after 100 -- --capture-loading "$debug\loading_check.png" *> "$debug\loading_check.log"
+& $godot --path $proj --scene "res://scenes/original_login.tscn" --quit-after 100 -- --capture-login "$debug\login_check.png" *> "$debug\login_check.log"
+& $godot --path $proj --scene "res://scenes/original_server_select.tscn" --quit-after 100 -- --capture-server-select "$debug\server_check.png" *> "$debug\server_check.log"
+& $godot --path $proj --scene "res://scenes/original_home_screen.tscn" --quit-after 100 -- --capture-home-screen "$debug\home_check.png" *> "$debug\home_check.log"
 ```
 
 功能界面 prefab 预览：
 
 ```powershell
-& $godot --path $proj --scene "res://scenes/cocos_prefab_preview.tscn" --quit-after 100 -- --prefab-layout "英雄" --capture-prefab-preview "$proj\prefab_hero.png" *> "$proj\prefab_hero.log"
-& $godot --path $proj --scene "res://scenes/cocos_prefab_preview.tscn" --quit-after 100 -- --prefab-layout "背包" --capture-prefab-preview "$proj\prefab_bag.png" *> "$proj\prefab_bag.log"
-& $godot --path $proj --scene "res://scenes/cocos_prefab_preview.tscn" --quit-after 100 -- --prefab-layout "抽卡" --capture-prefab-preview "$proj\prefab_draw.png" *> "$proj\prefab_draw.log"
-& $godot --path $proj --scene "res://scenes/cocos_prefab_preview.tscn" --quit-after 100 -- --prefab-layout "公会" --capture-prefab-preview "$proj\prefab_guild.png" *> "$proj\prefab_guild.log"
+& $godot --path $proj --scene "res://scenes/cocos_prefab_preview.tscn" --quit-after 100 -- --prefab-layout "英雄" --capture-prefab-preview "$debug\prefab_hero.png" *> "$debug\prefab_hero.log"
+& $godot --path $proj --scene "res://scenes/cocos_prefab_preview.tscn" --quit-after 100 -- --prefab-layout "背包" --capture-prefab-preview "$debug\prefab_bag.png" *> "$debug\prefab_bag.log"
+& $godot --path $proj --scene "res://scenes/cocos_prefab_preview.tscn" --quit-after 100 -- --prefab-layout "抽卡" --capture-prefab-preview "$debug\prefab_draw.png" *> "$debug\prefab_draw.log"
+& $godot --path $proj --scene "res://scenes/cocos_prefab_preview.tscn" --quit-after 100 -- --prefab-layout "公会" --capture-prefab-preview "$debug\prefab_guild.png" *> "$debug\prefab_guild.log"
 ```
 
 Spine 查看器：
 
 ```powershell
 & $godot --path $proj --scene "res://scenes/spine_character_viewer.tscn"
-& $godot --path $proj --scene "res://scenes/spine_character_viewer.tscn" --quit-after 100 -- --spine-path "res://data/spine_runtime/105004.json" --spine-animation show --capture-spine-viewer "$proj\spine_105004_show.png" *> "$proj\spine_105004_show.log"
+& $godot --path $proj --scene "res://scenes/spine_character_viewer.tscn" --quit-after 100 -- --spine-path "res://data/spine_runtime/105004.json" --spine-animation show --capture-spine-viewer "$debug\spine_105004_show.png" *> "$debug\spine_105004_show.log"
 ```
 
 ## 界面还原实现说明
@@ -675,9 +678,11 @@ Godot 4.6.2 命令注意：
 ```powershell
 $godot = "D:\work\openclaw-workspace\arpg\tools\Godot_v4.6.2-stable_win64_console.exe"
 $proj = "D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full"
-$out = "D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\home_check.png"
-$log = "D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\godot_check.log"
-$godotLog = "D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\godot_engine.log"
+$debug = Join-Path $proj "debug_outputs"
+New-Item -ItemType Directory -Force -Path $debug | Out-Null
+$out = Join-Path $debug "home_check.png"
+$log = Join-Path $debug "godot_check.log"
+$godotLog = Join-Path $debug "godot_engine.log"
 & $godot --path $proj --scene "res://scenes/original_home_screen.tscn" --quit-after 80 --log-file $godotLog -- --capture-home-screen $out *> $log
 ```
 
@@ -695,7 +700,7 @@ Spine 查看器：
 也可以直接指定 runtime JSON：
 
 ```powershell
-& $godot --path $proj --scene "res://scenes/spine_character_viewer.tscn" --quit-after 80 -- --spine-path "res://data/spine_runtime/YiKaLuoSi.json" --spine-animation attack --capture-spine-viewer "D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\spine_attack.png" *> $log
+& $godot --path $proj --scene "res://scenes/spine_character_viewer.tscn" --quit-after 80 -- --spine-path "res://data/spine_runtime/YiKaLuoSi.json" --spine-animation attack --capture-spine-viewer "$debug\spine_attack.png" *> $log
 ```
 
 资源浏览器：
@@ -707,12 +712,12 @@ Spine 查看器：
 主要 prefab 预览：
 
 ```powershell
-& $godot --path $proj --scene "res://scenes/cocos_prefab_preview.tscn" --quit-after 100 -- --prefab-layout "公会" --capture-prefab-preview "D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\prefab_guild.png" *> $log
-& $godot --path $proj --scene "res://scenes/cocos_prefab_preview.tscn" --quit-after 100 -- --prefab-layout "英雄" --capture-prefab-preview "D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\prefab_hero.png" *> $log
-& $godot --path $proj --scene "res://scenes/cocos_prefab_preview.tscn" --quit-after 100 -- --prefab-layout "天空城" --capture-prefab-preview "D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\prefab_skycity.png" *> $log
-& $godot --path $proj --scene "res://scenes/cocos_prefab_preview.tscn" --quit-after 100 -- --prefab-layout "竞技" --capture-prefab-preview "D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\prefab_jingji.png" *> $log
-& $godot --path $proj --scene "res://scenes/cocos_prefab_preview.tscn" --quit-after 100 -- --prefab-layout "战斗" --capture-prefab-preview "D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\prefab_battle.png" *> $log
-& $godot --path $proj --scene "res://scenes/cocos_prefab_preview.tscn" --quit-after 100 -- --prefab-layout "活动抽卡" --capture-prefab-preview "D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\prefab_draw_activity.png" *> $log
+& $godot --path $proj --scene "res://scenes/cocos_prefab_preview.tscn" --quit-after 100 -- --prefab-layout "公会" --capture-prefab-preview "$debug\prefab_guild.png" *> $log
+& $godot --path $proj --scene "res://scenes/cocos_prefab_preview.tscn" --quit-after 100 -- --prefab-layout "英雄" --capture-prefab-preview "$debug\prefab_hero.png" *> $log
+& $godot --path $proj --scene "res://scenes/cocos_prefab_preview.tscn" --quit-after 100 -- --prefab-layout "天空城" --capture-prefab-preview "$debug\prefab_skycity.png" *> $log
+& $godot --path $proj --scene "res://scenes/cocos_prefab_preview.tscn" --quit-after 100 -- --prefab-layout "竞技" --capture-prefab-preview "$debug\prefab_jingji.png" *> $log
+& $godot --path $proj --scene "res://scenes/cocos_prefab_preview.tscn" --quit-after 100 -- --prefab-layout "战斗" --capture-prefab-preview "$debug\prefab_battle.png" *> $log
+& $godot --path $proj --scene "res://scenes/cocos_prefab_preview.tscn" --quit-after 100 -- --prefab-layout "活动抽卡" --capture-prefab-preview "$debug\prefab_draw_activity.png" *> $log
 ```
 
 - `背包`：使用 `GridBoxItemPre` + `image/equipment` mock 数据。
@@ -782,7 +787,7 @@ Prefab 节点名用途推断：
 局部 slot 调试：
 
 ```powershell
-& $godot --path $proj --scene "res://scenes/spine_character_viewer.tscn" --quit-after 80 -- --spine-path "res://data/spine_runtime/YiKaLuoSi.json" --spine-animation idle --debug-slots "YiKaLuoSi_zuodatui,YiKaLuoSi_zuojiao,YiKaLuoSi_youdatui,YiKaLuoSi_youjiao" --capture-spine-viewer "D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full\spine_legs.png" *> $log
+& $godot --path $proj --scene "res://scenes/spine_character_viewer.tscn" --quit-after 80 -- --spine-path "res://data/spine_runtime/YiKaLuoSi.json" --spine-animation idle --debug-slots "YiKaLuoSi_zuodatui,YiKaLuoSi_zuojiao,YiKaLuoSi_youdatui,YiKaLuoSi_youjiao" --capture-spine-viewer "$debug\spine_legs.png" *> $log
 ```
 
 YiKaLuoSi 当前还原记录：

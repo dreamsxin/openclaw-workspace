@@ -119,6 +119,7 @@ Godot 当前工程已接入项目内轻量 Spine runtime，用于本地预览角
 - `RESTORE_LOGIN_TO_HOME.md`：登录页 -> 选服页 -> 主页面的专项还原梳理。
 - `SOURCE_DIRECTORY_GUIDE.md`：原始目录、解密目录、Cocos bundle、反编译源码和工具脚本的作用索引。
 - `tools/inspect_prefab_layout.py`：检查导出的 prefab layout、贴图节点、文本节点、Mask/ScrollView 和脚本字段绑定。
+- `debug_outputs/`：本地截图、Godot stdout/stderr 日志和临时回归输出目录。该目录默认被 git 忽略，只保留 `.gitkeep`。
 
 当前统计：
 

@@ -138,3 +138,12 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Godot restoration debug outputs
+/arpg/nvshenres_decrypted_full/debug_outputs/*
+!/arpg/nvshenres_decrypted_full/debug_outputs/.gitkeep
+/arpg/nvshenres_decrypted_full/*.log
+/arpg/nvshenres_decrypted_full/*_check.png
+/arpg/nvshenres_decrypted_full/*_test.png
+/arpg/nvshenres_decrypted_full/*_debug.png
+/arpg/nvshenres_decrypted_full/*_regression.png
