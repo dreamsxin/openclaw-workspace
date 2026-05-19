@@ -32,6 +32,9 @@ var server_label: Label
 var server_popup: Control
 var server_status_icon: TextureRect
 var notice_overlay: Control
+var privacy_overlay: Control
+var privacy_toggle_icon: TextureRect
+var privacy_checked := true
 var connect_overlay: Control
 var connect_label: Label
 var connect_elapsed := 0.0
@@ -196,6 +199,7 @@ func _build_ui() -> void:
 	_add_privacy_row()
 	_build_server_popup()
 	_build_notice_overlay()
+	_build_privacy_overlay()
 	_build_connect_overlay()
 
 	_layout_design_root()
@@ -249,14 +253,14 @@ func _add_icon_button(bounds: Rect2, rect: Rect2i, tooltip: String, callback: Ca
 func _add_privacy_row() -> void:
 	var rich_rect := _layout_rect("richtext", Rect2(Vector2(832.036, 578.608), Vector2(440, 27.72)))
 	var toggle_rect := Rect2(rich_rect.position - Vector2(34, 1), Vector2(30, 30))
-	var toggle := TextureRect.new()
-	toggle.position = toggle_rect.position
-	toggle.size = toggle_rect.size
-	toggle.texture = _load_texture_region(UI_ATLAS_PATH, TOGGLE_OFF_RECT)
-	toggle.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	toggle.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	toggle.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	design_root.add_child(toggle)
+	privacy_toggle_icon = TextureRect.new()
+	privacy_toggle_icon.position = toggle_rect.position
+	privacy_toggle_icon.size = toggle_rect.size
+	privacy_toggle_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	privacy_toggle_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	privacy_toggle_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	design_root.add_child(privacy_toggle_icon)
+	_update_privacy_toggle()
 	var privacy := RichTextLabel.new()
 	privacy.position = rich_rect.position
 	privacy.size = rich_rect.size + Vector2(10, 8)
@@ -269,6 +273,15 @@ func _add_privacy_row() -> void:
 	privacy.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
 	privacy.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	design_root.add_child(privacy)
+
+	var privacy_hit := Button.new()
+	privacy_hit.text = ""
+	privacy_hit.flat = true
+	privacy_hit.position = toggle_rect.position
+	privacy_hit.size = Vector2(rich_rect.size.x + 44, max(rich_rect.size.y, toggle_rect.size.y))
+	privacy_hit.tooltip_text = "查看隐私协议"
+	privacy_hit.pressed.connect(_show_privacy_overlay)
+	design_root.add_child(privacy_hit)
 
 func _build_server_popup() -> void:
 	server_popup = Control.new()
@@ -410,6 +423,75 @@ func _build_notice_overlay() -> void:
 	var close_tip := _add_label(notice_overlay, "点击空白处关闭", close_tip_rect.position, close_tip_rect.size, 18, Color(0.86, 0.82, 0.68))
 	close_tip.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
+func _build_privacy_overlay() -> void:
+	privacy_overlay = Control.new()
+	privacy_overlay.visible = false
+	privacy_overlay.position = Vector2.ZERO
+	privacy_overlay.size = DESIGN_SIZE
+	privacy_overlay.z_index = 65
+	design_root.add_child(privacy_overlay)
+
+	var dim := ColorRect.new()
+	dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	dim.color = Color(0.0, 0.0, 0.0, 0.58)
+	privacy_overlay.add_child(dim)
+
+	var panel_rect := Rect2(Vector2(282.0, 74.0), Vector2(716.0, 574.0))
+	var panel := PanelContainer.new()
+	panel.position = panel_rect.position
+	panel.size = panel_rect.size
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.90, 0.88, 0.80, 0.98)
+	style.border_color = Color(0.44, 0.36, 0.24, 1.0)
+	style.set_border_width_all(3)
+	style.corner_radius_top_left = 6
+	style.corner_radius_top_right = 6
+	style.corner_radius_bottom_left = 6
+	style.corner_radius_bottom_right = 6
+	panel.add_theme_stylebox_override("panel", style)
+	privacy_overlay.add_child(panel)
+
+	var title := _add_label(privacy_overlay, "用户协议与隐私政策", Vector2(468, 100), Vector2(344, 42), 26, Color(0.32, 0.25, 0.15))
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+
+	var scroll := ScrollContainer.new()
+	scroll.position = Vector2(330, 158)
+	scroll.size = Vector2(620, 346)
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	privacy_overlay.add_child(scroll)
+
+	var body := RichTextLabel.new()
+	body.custom_minimum_size = Vector2(592, 700)
+	body.bbcode_enabled = true
+	body.fit_content = true
+	body.scroll_active = false
+	body.add_theme_font_size_override("normal_font_size", 20)
+	body.add_theme_color_override("default_color", Color(0.24, 0.22, 0.19))
+	body.add_theme_stylebox_override("normal", StyleBoxEmpty.new())
+	body.text = "[b]隐私政策摘要[/b]\n\n本地 Demo 不会连接真实服务器，也不会上传账号、设备、网络或支付信息。\n\n原始游戏中该面板由 `useprivacyPanel` 打开 `Prefab/loading/useprivacyPre`，正文来自 `configs/useprivacy`，拒绝会取消登录页勾选，同意会勾选并关闭面板。\n\n当前实现保留这个交互关系，用于离线检查登录流程和 UI 层级。后续可清洗真实 TextAsset 后替换本文案。\n\n[b]用户协议摘要[/b]\n\n1. 本 Demo 只用于资源和界面还原验证。\n2. 所有服务器列表、公告、账号状态均为本地 mock。\n3. 点击同意后只更新本地勾选状态。"
+	scroll.add_child(body)
+
+	var reject := Button.new()
+	reject.text = "拒绝"
+	reject.position = Vector2(404, 548)
+	reject.size = Vector2(160, 56)
+	reject.pressed.connect(func(): _set_privacy_checked(false))
+	privacy_overlay.add_child(reject)
+
+	var agree := Button.new()
+	agree.text = "同意"
+	agree.position = Vector2(716, 548)
+	agree.size = Vector2(160, 56)
+	agree.pressed.connect(func(): _set_privacy_checked(true))
+	privacy_overlay.add_child(agree)
+
+	var close := Button.new()
+	close.text = "X"
+	close.position = Vector2(952, 86)
+	close.size = Vector2(34, 34)
+	close.pressed.connect(_hide_privacy_overlay)
+	privacy_overlay.add_child(close)
+
 func _build_connect_overlay() -> void:
 	connect_overlay = Control.new()
 	connect_overlay.visible = false
@@ -528,6 +610,8 @@ func _apply_startup_args() -> void:
 		_show_server_popup()
 	if "--open-notice" in args:
 		_show_local_notice()
+	if "--open-privacy" in args:
+		_show_privacy_overlay()
 	if "--connect-overlay" in args or "--start-game" in args:
 		_show_connect_overlay()
 
@@ -540,6 +624,29 @@ func _show_local_notice() -> void:
 func _hide_local_notice() -> void:
 	if notice_overlay:
 		notice_overlay.visible = false
+
+func _show_privacy_overlay() -> void:
+	if server_popup:
+		server_popup.visible = false
+	if notice_overlay:
+		notice_overlay.visible = false
+	if privacy_overlay:
+		privacy_overlay.visible = true
+
+func _hide_privacy_overlay() -> void:
+	if privacy_overlay:
+		privacy_overlay.visible = false
+
+func _set_privacy_checked(value: bool) -> void:
+	privacy_checked = value
+	_update_privacy_toggle()
+	_hide_privacy_overlay()
+
+func _update_privacy_toggle() -> void:
+	if not privacy_toggle_icon:
+		return
+	privacy_toggle_icon.texture = _load_texture_region(UI_ATLAS_PATH, TOGGLE_OFF_RECT)
+	privacy_toggle_icon.modulate = Color(0.58, 1.0, 0.64, 1.0) if privacy_checked else Color.WHITE
 
 func _on_start_game() -> void:
 	if selected_server_status == "maintain":
@@ -556,6 +663,8 @@ func _show_connect_overlay() -> void:
 		server_popup.visible = false
 	if notice_overlay:
 		notice_overlay.visible = false
+	if privacy_overlay:
+		privacy_overlay.visible = false
 	if connect_overlay:
 		connect_overlay.visible = true
 	if connect_label:
