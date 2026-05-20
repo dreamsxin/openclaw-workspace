@@ -614,11 +614,11 @@ func _refresh_detail() -> void:
 	elif selected_tab == 1:
 		_add_equipment_tab(root)
 	elif selected_tab == 2:
-		_add_star_tab(root, 338)
+		_add_star_tab(root)
 	elif selected_tab == 3:
 		_add_will_tab(root)
 	else:
-		_add_skin_tab(root, 54)
+		_add_skin_tab(root)
 
 func _refresh_detail_background() -> void:
 	if detail_frame == null:
@@ -749,9 +749,14 @@ func _add_equipment_tab(root: Control, y_base := 126) -> void:
 	_add_action_button(root, "一键穿戴", _detail_local(Vector2(609.622, 549.632)), Vector2(200, 60), Callable(), "image/common/cm_btn_LvSe0")
 
 func _add_star_tab(root: Control, y_base := 126) -> void:
-	_add_label(root, "当前星级  SSR 3 星", Vector2(0, y_base), Vector2(238, 30), 19, Color(0.42, 0.36, 0.16))
-	_add_progress(root, Vector2(0, y_base + 52), Vector2(236, 20), 0.42, "碎片 42/100")
-	_add_action_button(root, "升星", Vector2(0, y_base + 120), Vector2(130, 42))
+	y_base = y_base
+	var title := _add_label(root, "升星数据查询中", _detail_local(Vector2(864, 240)), Vector2(270, 34), 24, Color(0.45, 0.36, 0.18))
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var tip := _add_label(root, "源码 tab3Click 只发送 CG_HERO_JUEXING_QUERY，服务端返回后再打开升星内容。", _detail_local(Vector2(842, 286)), Vector2(314, 86), 17, Color(0.46, 0.48, 0.62))
+	tip.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	tip.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_add_progress(root, _detail_local(Vector2(872, 386)), Vector2(240, 20), 0.42, "碎片 42/100")
+	_add_action_button(root, "请求升星", _detail_local(Vector2(895, 458)), Vector2(200, 60), Callable(), "image/common/cm_btn_LvSe0")
 
 func _add_will_tab(root: Control, y_base := 126) -> void:
 	y_base = y_base
@@ -777,15 +782,40 @@ func _add_will_tab(root: Control, y_base := 126) -> void:
 	_add_action_button(root, "?", _detail_local(Vector2(768.66, 107.244)), Vector2(54, 54))
 
 func _add_skin_tab(root: Control, y_base := 126) -> void:
+	y_base = y_base
 	var hero: Dictionary = _current_hero()
 	var skins := _skin_body_ids(hero)
 	var body_id := _current_body_id(hero)
-	_add_label(root, "衣装预览", Vector2(0, y_base), Vector2(238, 30), 21, Color(0.42, 0.36, 0.16))
-	_add_label(root, "body: %s  (%d/%d)" % [body_id, selected_skin + 1, skins.size()], Vector2(0, y_base + 40), Vector2(238, 28), 16, Color(0.42, 0.46, 0.64))
-	_add_action_button(root, "下个衣装", Vector2(0, y_base + 88), Vector2(108, 38), _next_skin)
-	_add_action_button(root, "播放展示", Vector2(122, y_base + 88), Vector2(108, 38), func(): _play_hero_voice("7-1"))
-	_add_action_button(root, "全屏预览", Vector2(0, y_base + 142), Vector2(108, 38), _toggle_full_preview)
-	_add_action_button(root, "前往获取", Vector2(122, y_base + 142), Vector2(108, 38), func(): _play_hero_voice("10"))
+	if skins.size() <= 1 and _texture_for_named_resource("image/skin/showImg/%s" % body_id) == null:
+		var no_skin := _add_label(root, "敬请期待", _detail_local(Vector2(920.292, 292.112)), Vector2(160, 50), 18, Color(0.56, 0.57, 0.68))
+		no_skin.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		no_skin.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		return
+	var skin_image := _add_named_image_to(root, "image/skin/showImg/%s" % body_id, _detail_local(Vector2(863.775, 95.155)), Vector2(169, 360))
+	if skin_image:
+		skin_image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	var name_label := _add_label(root, "%s  %s" % [hero.get("name", hero.get("id", "")), body_id], _detail_local(Vector2(858, 386)), Vector2(184, 32), 20, Color(0.45, 0.36, 0.18))
+	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var attrs := [
+		["攻击:", "+100"],
+		["生命:", "+1500"],
+		["防御:", "+80"],
+		["速度:", "+12"],
+	]
+	var attr_positions := [
+		Vector2(802.221, 469.77),
+		Vector2(1007.809, 469.77),
+		Vector2(802.221, 499.77),
+		Vector2(1007.809, 499.77),
+	]
+	for i in attrs.size():
+		var pos := _detail_local(attr_positions[i])
+		_add_label(root, attrs[i][0], pos, Vector2(72, 26), 16, Color(0.45, 0.48, 0.62))
+		_add_label(root, attrs[i][1], pos + Vector2(72, 0), Vector2(58, 26), 16, Color(0.74, 0.34, 0.56))
+	var primary_text := "前往获取" if selected_skin == 0 else "穿戴衣装"
+	_add_action_button(root, primary_text, _detail_local(Vector2(881.292, 537.333)), Vector2(238, 66), func(): _play_hero_voice("10"), "image/common/cm_btn_LvSe0")
+	_add_action_button(root, "展示", _detail_local(Vector2(1008.432, 90.563)), Vector2(38, 38), func(): _play_hero_voice("7-1"))
+	_add_action_button(root, ">", _detail_local(Vector2(1124.513, 309)), Vector2(41, 78), _next_skin)
 
 func _add_progress(parent: Control, position: Vector2, size: Vector2, value: float, text: String) -> void:
 	var bg := ColorRect.new()

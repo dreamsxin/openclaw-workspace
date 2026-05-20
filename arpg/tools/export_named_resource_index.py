@@ -29,6 +29,7 @@ PREFIXES = [
     "image/guildFlag/",
     "image/heroBook/",
     "image/head/",
+    "image/skin/showImg/",
     "image/skill/",
     "map/worldMap/",
 ]
