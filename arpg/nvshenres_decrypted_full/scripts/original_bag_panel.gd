@@ -19,7 +19,7 @@ const ITEM_NAMES := [
 ]
 
 var design_root: Control
-var item_grid: GridContainer
+var item_rows: VBoxContainer
 var detail_root: Control
 var list_panel: Control
 var tab_buttons: Array[Button] = []
@@ -133,12 +133,10 @@ func _build_main_panel() -> void:
 	scroll.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	list_panel.add_child(scroll)
 
-	item_grid = GridContainer.new()
-	item_grid.columns = 8
-	item_grid.add_theme_constant_override("h_separation", 10)
-	item_grid.add_theme_constant_override("v_separation", 10)
-	item_grid.custom_minimum_size = Vector2(950, 560)
-	scroll.add_child(item_grid)
+	item_rows = VBoxContainer.new()
+	item_rows.add_theme_constant_override("separation", 10)
+	item_rows.custom_minimum_size = Vector2(950, 560)
+	scroll.add_child(item_rows)
 
 func _build_tabs() -> void:
 	for i in TABS.size():
@@ -177,16 +175,46 @@ func _add_action_button(parent: Container, text: String, callback := Callable())
 	return button
 
 func _refresh_items() -> void:
-	for child in item_grid.get_children():
+	for child in item_rows.get_children():
 		child.queue_free()
-	for i in 20:
-		var button := Button.new()
-		button.custom_minimum_size = Vector2(110, 110)
-		button.text = ""
-		button.pressed.connect(_select_item.bind(i))
-		item_grid.add_child(button)
-		_draw_item(button, i)
+	var item_count := _item_count_for_tab()
+	var row_count := maxi(int(ceil(float(item_count) / 8.0)), 4)
+	for row_index in row_count:
+		var row := HBoxContainer.new()
+		row.custom_minimum_size = Vector2(950, 102)
+		row.add_theme_constant_override("separation", 10)
+		item_rows.add_child(row)
+		for column_index in 8:
+			var item_index := row_index * 8 + column_index
+			var slot := Button.new()
+			slot.custom_minimum_size = Vector2(110, 96)
+			slot.text = ""
+			slot.disabled = item_index >= item_count
+			if item_index < item_count:
+				slot.pressed.connect(_select_item.bind(item_index))
+				_draw_item(slot, item_index)
+			else:
+				_draw_empty_slot(slot)
+			row.add_child(slot)
 	_update_tabs()
+
+func _item_count_for_tab() -> int:
+	if selected_tab == 0:
+		return 18
+	if selected_tab == 2:
+		return 23
+	if selected_tab == 3:
+		return 12
+	if selected_tab == 4:
+		return 9
+	return 20
+
+func _draw_empty_slot(parent: Control) -> void:
+	var bg := ColorRect.new()
+	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	bg.color = Color(0.03, 0.035, 0.055, 0.38)
+	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	parent.add_child(bg)
 
 func _draw_item(parent: Control, index: int) -> void:
 	var bg := ColorRect.new()
@@ -197,7 +225,7 @@ func _draw_item(parent: Control, index: int) -> void:
 
 	var icon_box := ColorRect.new()
 	icon_box.position = Vector2.ZERO
-	icon_box.size = Vector2(110, 110)
+	icon_box.size = Vector2(110, 96)
 	icon_box.color = Color(0.12, 0.1, 0.16, 0.95)
 	icon_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	parent.add_child(icon_box)
@@ -213,8 +241,8 @@ func _draw_item(parent: Control, index: int) -> void:
 
 	var name := Label.new()
 	name.text = ITEM_NAMES[(index + selected_tab * 3) % ITEM_NAMES.size()]
-	name.position = Vector2(3, 84)
-	name.size = Vector2(104, 22)
+	name.position = Vector2(3, 72)
+	name.size = Vector2(104, 21)
 	name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	name.clip_text = true
 	name.add_theme_font_size_override("font_size", 16)
@@ -223,7 +251,7 @@ func _draw_item(parent: Control, index: int) -> void:
 
 	var count := Label.new()
 	count.text = "x%d" % ((index + 1) * (selected_tab + 2))
-	count.position = Vector2(58, 62)
+	count.position = Vector2(58, 56)
 	count.size = Vector2(48, 22)
 	count.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	count.add_theme_font_size_override("font_size", 15)
