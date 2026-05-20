@@ -10,12 +10,11 @@ const BG_PATH := "res://assets/resources/native/ac/ac082229-4446-4cfe-bbaf-5e984
 const ATLAS_18A := "res://assets/resources/native/18/18b29ae48.png"
 const ATLAS_14 := "res://assets/resources/native/14/14d2fafcf.png"
 const ATLAS_C8 := "res://assets/resources/native/c8/c8384043-da3b-41dd-95e5-2ce3d2028977.png"
-const CAMP_TAB_POS := Vector2(392, 4)
-const HERO_CONTENT_POS := Vector2(175, 82)
-const HERO_CONTENT_SIZE := Vector2(836, 492)
-const HERO_SCROLL_POS := Vector2(32, 10)
-const HERO_SCROLL_SIZE := Vector2(728, 430)
-const HERO_CARD_SIZE := Vector2(86, 96)
+const HERO_CONTENT_POS := Vector2(109, 102)
+const HERO_CONTENT_SIZE := Vector2(900, 432)
+const HERO_SCROLL_POS := Vector2(96, 0)
+const HERO_SCROLL_SIZE := Vector2(784, 426)
+const HERO_CARD_SIZE := Vector2(92, 104)
 
 const CAMP_TABS := [
 	{"name": "全部", "id": 0, "path": "image/comHeroGrid/cm_icon_ZhenYing0"},
@@ -143,19 +142,30 @@ func _build_top_bar() -> void:
 	design_root.add_child(home_icon)
 
 func _build_camp_tabs() -> void:
-	var panel := HBoxContainer.new()
-	panel.position = CAMP_TAB_POS
-	panel.size = Vector2(310, 60)
-	panel.add_theme_constant_override("separation", 14)
-	design_root.add_child(panel)
-
+	var positions := [
+		Vector2(335.0, 12.214),
+		Vector2(410.424, 11.714),
+		Vector2(483.413, 11.714),
+		Vector2(560.754, 11.714),
+		Vector2(634.799, 11.214),
+		Vector2(710.357, 11.714),
+	]
+	var sizes := [
+		Vector2(46, 56),
+		Vector2(45, 57),
+		Vector2(45, 57),
+		Vector2(45, 57),
+		Vector2(45, 58),
+		Vector2(45, 57),
+	]
 	for i in CAMP_TABS.size():
 		var button := Button.new()
 		button.text = ""
-		button.custom_minimum_size = Vector2(40, 54)
+		button.position = positions[i]
+		button.size = sizes[i]
 		button.tooltip_text = str(CAMP_TABS[i].name)
 		button.pressed.connect(_select_camp.bind(int(CAMP_TABS[i].id)))
-		panel.add_child(button)
+		design_root.add_child(button)
 		camp_buttons.append(button)
 
 func _build_grid_panel() -> void:
@@ -204,18 +214,18 @@ func _build_side_tabs() -> void:
 	design_root.add_child(panel)
 
 	var tab_positions := [
-		Vector2(1084, 18),
-		Vector2(1084, 106),
-		Vector2(1084, 194),
-		Vector2(1084, 282),
-		Vector2(1084, 370),
-		Vector2(1084, 458),
+		Vector2(1072.787, 17.118),
+		Vector2(1072.787, 105.118),
+		Vector2(1072.787, 193.118),
+		Vector2(1072.787, 281.118),
+		Vector2(1072.787, 369.118),
+		Vector2(1072.787, 458.118),
 	]
 	for i in SIDE_TABS.size():
 		var button := Button.new()
-		button.text = SIDE_TABS[i]
+		button.text = ""
 		button.position = tab_positions[i]
-		button.size = Vector2(150, 62)
+		button.size = Vector2(198, 72)
 		button.add_theme_font_size_override("font_size", 20)
 		button.pressed.connect(_select_side_tab.bind(i))
 		panel.add_child(button)
@@ -280,20 +290,38 @@ func _refresh_camp_tabs() -> void:
 		bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		button.add_child(bg)
 		if i == 0:
-			var all_label := _add_label(button, "ALL", Vector2(0, 11), Vector2(40, 24), 15, Color(0.95, 0.96, 1.0))
+			var all_label := _add_label(button, "ALL", Vector2(0, 13), Vector2(button.size.x, 24), 15, Color(0.95, 0.96, 1.0))
 			all_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 			all_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		else:
-			_add_named_image_to(button, str(CAMP_TABS[i].path), Vector2(0, 0), Vector2(40, 50))
+			_add_named_image_to(button, str(CAMP_TABS[i].path), Vector2(0, 0), button.size)
 
 func _refresh_side_tabs() -> void:
 	for i in side_buttons.size():
 		var button := side_buttons[i]
 		button.disabled = i == selected_side_tab
-		if i == selected_side_tab:
-			button.modulate = Color(1.0, 0.86, 0.46, 1.0)
-		else:
-			button.modulate = Color(0.86, 0.88, 0.96, 1.0)
+		for child in button.get_children():
+			child.queue_free()
+		_apply_side_tab_style(button, i == selected_side_tab)
+		var color := Color(0.22, 0.20, 0.31) if i == selected_side_tab else Color(0.80, 0.82, 0.90)
+		var label := _add_label(button, SIDE_TABS[i], Vector2(42, 17), Vector2(110, 32), 24, color)
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+
+func _apply_side_tab_style(button: Button, selected: bool) -> void:
+	var base := StyleBoxFlat.new()
+	base.bg_color = Color(0.88, 0.86, 0.80, 0.92) if selected else Color(0.12, 0.13, 0.20, 0.82)
+	base.border_color = Color(0.92, 0.84, 0.58, 0.88) if selected else Color(0.38, 0.40, 0.52, 0.64)
+	base.set_border_width_all(2)
+	base.set_corner_radius_all(2)
+	button.add_theme_stylebox_override("normal", base)
+	button.add_theme_stylebox_override("disabled", base)
+	var hover := base.duplicate()
+	hover.bg_color = Color(0.20, 0.20, 0.30, 0.92)
+	button.add_theme_stylebox_override("hover", hover)
+	var pressed := base.duplicate()
+	pressed.bg_color = Color(0.78, 0.72, 0.58, 0.96)
+	button.add_theme_stylebox_override("pressed", pressed)
 
 func _refresh_grid() -> void:
 	for child in grid.get_children():
@@ -307,8 +335,8 @@ func _refresh_grid() -> void:
 		hero_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 		hero_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
 		grid.columns = 7
-		grid.add_theme_constant_override("h_separation", 12)
-		grid.add_theme_constant_override("v_separation", 14)
+		grid.add_theme_constant_override("h_separation", 10)
+		grid.add_theme_constant_override("v_separation", 12)
 		for hero in filtered:
 			_add_hero_card(hero)
 	elif selected_side_tab == 1:
@@ -325,9 +353,8 @@ func _refresh_grid() -> void:
 		grid.columns = 4
 		_add_shared_level_cards(filtered)
 	elif selected_side_tab == 3:
-		grid.columns = 5
-		for hero in filtered:
-			_add_soul_card(hero)
+		grid.columns = 1
+		_add_prefab_route_card("英魂殿", "源码 btnYingHun 调用 openHeroPalacePanel()，不是 HeroListPanel 内嵌页。", "英魂殿")
 	elif selected_side_tab == 4:
 		grid.columns = 3
 		_add_formation_cards(filtered)
@@ -355,20 +382,20 @@ func _add_hero_card(hero: Dictionary) -> void:
 	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	card.add_child(bg)
 
-	_add_named_image_to(card, "image/comHeroGrid/cm_frame_TouXiangDi5", Vector2(0, 0), Vector2(86, 86))
-	_add_named_image_to(card, "image/head/%s" % hero_id, Vector2(7, 7), Vector2(72, 72))
-	_add_named_image_to(card, "image/comHeroGrid/cm_frame_TouXiangKuang6", Vector2(0, 0), Vector2(86, 86))
-	_add_named_image_to(card, _camp_icon_path(hero_camp), Vector2(0, 0), Vector2(22, 28))
-	var lv := _add_label(card, hero_level, Vector2(52, 1), Vector2(32, 17), 13, Color(0.72, 1.0, 0.92))
+	_add_named_image_to(card, "image/comHeroGrid/cm_frame_TouXiangDi5", Vector2(0, 0), Vector2(92, 92))
+	_add_named_image_to(card, "image/head/%s" % hero_id, Vector2(6, 6), Vector2(80, 80))
+	_add_named_image_to(card, "image/comHeroGrid/cm_frame_TouXiangKuang6", Vector2(0, 0), Vector2(92, 92))
+	_add_named_image_to(card, _camp_icon_path(hero_camp), Vector2(0, -7), Vector2(32, 40))
+	var lv := _add_label(card, hero_level, Vector2(58, 0), Vector2(32, 18), 13, Color(0.72, 1.0, 0.92))
 	lv.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	_add_quality_label(card, hero_quality, Vector2(0, 66), Vector2(42, 20))
+	_add_quality_label(card, hero_quality, Vector2(0, 70), Vector2(44, 20))
 	var stars := int(hero.get("stars", 5))
 	for i in stars:
-		_add_named_image_to(card, "image/comHeroGrid/cm_icon_XingXing1_1", Vector2(37 + i * 9, 75), Vector2(13, 13))
+		_add_named_image_to(card, "image/comHeroGrid/cm_icon_XingXing1_1", Vector2(41 + i * 9, 81), Vector2(13, 13))
 	if bool(hero.get("combat", false)):
-		_add_status_badge(card, "上阵", Vector2(56, 34), Color(0.16, 0.42, 0.78, 0.88))
+		_add_status_badge(card, "上阵", Vector2(48, 36), Color(0.16, 0.42, 0.78, 0.88))
 	elif bool(hero.get("assist", false)):
-		_add_status_badge(card, "助战", Vector2(56, 34), Color(0.78, 0.56, 0.22, 0.88))
+		_add_status_badge(card, "助战", Vector2(48, 36), Color(0.78, 0.56, 0.22, 0.88))
 	if bool(hero.get("red", false)):
 		_add_named_image_to(card, "image/common/cm_icon_HongDian", Vector2(68, -4), Vector2(20, 20))
 	if not hero_owned:
@@ -378,7 +405,21 @@ func _add_hero_card(hero: Dictionary) -> void:
 		lock.color = Color(0, 0, 0, 0.36)
 		lock.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		card.add_child(lock)
-		_add_label(card, "未获", Vector2(22, 34), Vector2(44, 20), 14, Color(0.9, 0.9, 0.95)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_add_label(card, "未获", Vector2(24, 36), Vector2(44, 20), 14, Color(0.9, 0.9, 0.95)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+
+func _add_prefab_route_card(title: String, message: String, target_layout: String) -> void:
+	var card := Button.new()
+	card.text = ""
+	card.custom_minimum_size = Vector2(520, 160)
+	card.pressed.connect(func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": target_layout}))
+	grid.add_child(card)
+	var bg := ColorRect.new()
+	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	bg.color = Color(0.04, 0.05, 0.08, 0.88)
+	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	card.add_child(bg)
+	_add_label(card, title, Vector2(24, 26), Vector2(460, 34), 28, Color(1.0, 0.86, 0.52))
+	_add_label(card, message, Vector2(24, 76), Vector2(470, 56), 17, Color(0.86, 0.92, 1.0))
 
 func _add_book_card(hero: Dictionary) -> void:
 	var hero_id := str(hero.get("id", ""))
@@ -521,6 +562,9 @@ func _select_camp(camp: int) -> void:
 	_refresh()
 
 func _select_side_tab(index: int) -> void:
+	if index == 3:
+		Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "英魂殿"})
+		return
 	selected_side_tab = index
 	if selected_side_tab == 0:
 		selected_camp = 0
