@@ -158,20 +158,21 @@ func _build_reward_progress() -> void:
 
 func _build_summon_controls() -> void:
 	var panel := Control.new()
-	panel.position = Vector2(96, 534)
-	panel.size = Vector2(360, 132)
+	panel.position = Vector2.ZERO
+	panel.size = DESIGN_SIZE
 	design_root.add_child(panel)
 
-	_add_label(panel, "召唤积分  360", Vector2(8, 0), Vector2(250, 28), 18, Color(1.0, 0.88, 0.52))
-	_add_summon_button(panel, "召唤1次\n1000", Vector2(0, 46), 1)
-	_add_summon_button(panel, "召唤10次\n9000", Vector2(142, 46), 10)
+	_add_label(panel, "召唤积分  360", Vector2(56.384, 351), Vector2(300, 34), 18, Color(1.0, 0.88, 0.52), HORIZONTAL_ALIGNMENT_CENTER)
+	_add_summon_button(panel, "召唤1次\n1000", Vector2(55, 423), 1)
+	_add_summon_button(panel, "召唤10次\n9000", Vector2(55, 519), 10)
 
 func _add_summon_button(parent: Control, text: String, position: Vector2, amount: int) -> void:
 	var button := Button.new()
 	button.text = text
 	button.position = position
-	button.size = Vector2(126, 62)
-	button.add_theme_font_size_override("font_size", 17)
+	button.size = Vector2(238, 66)
+	button.add_theme_font_size_override("font_size", 20)
+	button.add_theme_color_override("font_color", Color(1.0, 0.96, 0.78))
 	button.pressed.connect(_summon.bind(amount))
 	parent.add_child(button)
 
