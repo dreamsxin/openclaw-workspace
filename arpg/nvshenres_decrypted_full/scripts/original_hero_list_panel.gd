@@ -13,10 +13,9 @@ const ATLAS_14 := "res://assets/resources/native/14/14d2fafcf.png"
 const ATLAS_C8 := "res://assets/resources/native/c8/c8384043-da3b-41dd-95e5-2ce3d2028977.png"
 const ATLAS_1A := "res://assets/resources/native/1a/1a7921f32.png"
 const ATLAS_1F := "res://assets/resources/native/1f/1f6b547b4.png"
+const HERO_LIST_LAYOUT_PATH := "res://data/prefab_layouts/HeroListPre.json"
 const HERO_CONTENT_POS := Vector2(109, 101.552)
 const HERO_CONTENT_SIZE := Vector2(900, 568)
-const HERO_SCROLL_POS := Vector2.ZERO
-const HERO_SCROLL_SIZE := Vector2(900, 568)
 const HERO_CARD_SIZE := Vector2(110, 110)
 
 const CAMP_TABS := [
@@ -56,6 +55,7 @@ var embedded_prefab_layer: Control
 var named_resources: Dictionary = {}
 var hero_catalog: Array = []
 var hero_spine_index: Dictionary = {}
+var layout_nodes: Dictionary = {}
 var camp_buttons: Array[Button] = []
 var side_buttons: Array[Button] = []
 var selected_camp := 0
@@ -65,6 +65,7 @@ func _ready() -> void:
 	_load_named_resources()
 	_load_hero_catalog()
 	_load_hero_spine_index()
+	layout_nodes = _load_layout_index(HERO_LIST_LAYOUT_PATH)
 	_build_ui()
 	_apply_cmdline_args()
 	_capture_if_requested()
@@ -184,20 +185,24 @@ func _build_grid_panel() -> void:
 	grid_panel_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	panel.add_child(grid_panel_bg)
 
-	count_label = _add_label(design_root, "", Vector2(844, 12), Vector2(132, 30), 17, Color(0.88, 0.92, 1.0))
+	var count_rect := _layout_rect("lblHeroCount", Rect2(Vector2(812.827, 6.8), Vector2(79.52, 50.4)))
+	count_label = _add_label(design_root, "", count_rect.position, count_rect.size, 17, Color(0.88, 0.92, 1.0))
 	count_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	var add_button := _add_action_button(design_root, "+", Vector2(980, 10), Vector2(28, 28), func(): _set_detail_text("本地 Demo：英雄容量入口。"))
+	var bag_add_rect := _layout_rect("btn", Rect2(Vector2(891.239, 2.0), Vector2(80, 60)))
+	var add_button := _add_action_button(design_root, "+", bag_add_rect.position + Vector2(45, 8), Vector2(28, 28), func(): _set_detail_text("本地 Demo：英雄容量入口。"))
 	add_button.add_theme_font_size_override("font_size", 22)
 
 	hero_scroll = ScrollContainer.new()
-	hero_scroll.position = HERO_SCROLL_POS
-	hero_scroll.size = HERO_SCROLL_SIZE
+	hero_scroll.position = Vector2.ZERO
+	hero_scroll.size = HERO_CONTENT_SIZE
 	hero_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	hero_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
 	hero_scroll.mouse_filter = Control.MOUSE_FILTER_PASS
 	panel.add_child(hero_scroll)
 
 	grid = GridContainer.new()
+	var content_rect := _layout_rect("content", Rect2(Vector2(190, 360), Vector2(900, 175)))
+	grid.position = content_rect.position - HERO_CONTENT_POS
 	grid.columns = 7
 	grid.add_theme_constant_override("h_separation", 12)
 	grid.add_theme_constant_override("v_separation", 14)
@@ -212,7 +217,8 @@ func _build_grid_panel() -> void:
 
 	var help := Button.new()
 	help.text = "?"
-	help.position = Vector2(830, -8)
+	var help_rect := _layout_rect("help", Rect2(Vector2(972.539, 70.689), Vector2(54, 54)))
+	help.position = help_rect.position - HERO_CONTENT_POS
 	help.size = Vector2(36, 36)
 	help.rotation = deg_to_rad(-45)
 	help.add_theme_font_size_override("font_size", 22)
@@ -253,7 +259,8 @@ func _build_bottom_actions() -> void:
 	detail_label = _add_label(bottom, "点击英雄卡片进入 HeroMainPre 培养页；图鉴卡片进入 HeroBookDetailPre。", Vector2(170, 646), Vector2(640, 26), 16, Color(0.78, 0.90, 1.0))
 	detail_label.visible = false
 	_build_bottom_nav(bottom)
-	_add_action_button(bottom, "arrange", Vector2(1188, 512), Vector2(56, 44), func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "布阵"}))
+	var arrange_rect := _layout_rect("btnBuZhen", Rect2(Vector2(1198.036, 576.62), Vector2(56, 62)))
+	_add_action_button(bottom, "arrange", arrange_rect.position, arrange_rect.size, func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "布阵"}))
 
 func _build_bottom_nav(parent: Control) -> void:
 	var items := [
@@ -354,20 +361,24 @@ func _refresh_grid() -> void:
 	count_label.text = "%d/235" % filtered.size()
 	count_label.visible = selected_side_tab in [0, 1]
 	if selected_side_tab == 0:
-		hero_scroll.position = HERO_SCROLL_POS
-		hero_scroll.size = HERO_SCROLL_SIZE
+		hero_scroll.position = Vector2.ZERO
+		hero_scroll.size = HERO_CONTENT_SIZE
 		hero_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 		hero_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+		var content_rect := _layout_rect("content", Rect2(Vector2(190, 360), Vector2(900, 175)))
+		grid.position = content_rect.position - HERO_CONTENT_POS
 		grid.columns = 7
 		grid.add_theme_constant_override("h_separation", 12)
 		grid.add_theme_constant_override("v_separation", 12)
 		for hero in filtered:
 			_add_hero_card(hero)
 	elif selected_side_tab == 1:
-		hero_scroll.position = Vector2(10, 12)
-		hero_scroll.size = Vector2(860, 432)
+		var book_scroll_rect := _layout_rect("scrollView2", Rect2(Vector2(75.352, 93), Vector2(920, 568)))
+		hero_scroll.position = book_scroll_rect.position - HERO_CONTENT_POS
+		hero_scroll.size = book_scroll_rect.size
 		hero_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
 		hero_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+		grid.position = Vector2.ZERO
 		grid.columns = max(filtered.size(), 1)
 		grid.add_theme_constant_override("h_separation", 14)
 		grid.add_theme_constant_override("v_separation", 8)
@@ -740,6 +751,30 @@ func _load_hero_spine_index() -> void:
 	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(HERO_SPINE_INDEX_PATH))
 	if typeof(parsed) == TYPE_DICTIONARY:
 		hero_spine_index = parsed.get("heroes", {})
+
+func _load_layout_index(path: String) -> Dictionary:
+	var index := {}
+	if not FileAccess.file_exists(path):
+		return index
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
+	if typeof(parsed) != TYPE_DICTIONARY:
+		return index
+	for node in parsed.get("nodes", []):
+		if typeof(node) != TYPE_DICTIONARY:
+			continue
+		var name := str(node.get("name", ""))
+		if name != "" and not index.has(name):
+			index[name] = node
+	return index
+
+func _layout_rect(name: String, fallback: Rect2) -> Rect2:
+	if not layout_nodes.has(name):
+		return fallback
+	var node: Dictionary = layout_nodes[name]
+	var rect: Array = node.get("screen_rect", [])
+	if rect.size() >= 4:
+		return Rect2(Vector2(float(rect[0]), float(rect[1])), Vector2(float(rect[2]), float(rect[3])))
+	return fallback
 
 func _add_label(parent: Control, text: String, position: Vector2, size: Vector2, font_size: int, color: Color) -> Label:
 	var label := Label.new()

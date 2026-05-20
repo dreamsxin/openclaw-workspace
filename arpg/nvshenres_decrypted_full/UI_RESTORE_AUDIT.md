@@ -138,6 +138,7 @@
 - 2026-05-20 `pfLoginPanelPre` 的公告层需要注意重复节点名：`lbl01` 在选服弹层和公告弹层各有一个，不能只按名字取第一个。公告关闭提示应取节点 index 118，screen rect 为 `[556.879,652.596,154,27.72]`；`tmptxt` 的 screen rect `[315,-390,650,1575.28]` 是 RichText 内容高度，不是 ScrollView 可视窗口。Godot 已给选服页脚本补充按 index 查询布局的 helper，并把公告框/标题/关闭提示改为读取 prefab 导出坐标。
 - 2026-05-20 `nodeSv/svBg/xinxibg_baise` 的 SpriteFrame UUID 出现在 `assets/resources/import/fc/fc3b94c3-c07b-4eb2-826e-2ad5d962c9e7.json` 的 prefab 局部依赖里，但不在全局 `assets/resources/config.json` 的 `uuids/paths` 中，当前 `config_index` 无法直接按逻辑路径反查。尝试用 `image/com/login/G-diban` 替代会导致选服弹窗严重拉伸错位，已回退为稳定手工底板；服务器条目、状态 tag 和坐标仍保留原始布局/资源。后续若要完全还原 `svBg`，需要增强 prefab import 解包器，按局部依赖表解析 SpriteFrame import/native。
 - 2026-05-20 隐私行按源码职责拆分：`cheks` 小框负责勾选/取消，`ysTxt/richtext` 文字负责打开 `useprivacyPre`。Godot 已把命中区拆成小框切换和文字打开协议，不再整行点击都弹协议。
+- 2026-05-20 英雄列表继续按源码核对：`HeroListPanel.initScrollView()` 写 `lblHeroCount`，英雄背包列表使用 `scrollview/view/content/item`，首个 `HeroGrid` item 的导出 screen rect 是 `[190,375,110,110]`，因此 Godot 的 `GridContainer` 不能从 ScrollView 原点开始排，要用 `content.screen_rect - scrollview.screen_rect` 作为偏移。图鉴页使用独立 `scrollView2/view2/content2`，不是复用英雄背包滚动区域；`btnBuZhen` 坐标应取 `[1198.036,576.62,56,62]`。
 - 主屏底部导航保留 `daohangPre` 的坐标；对 SpriteFrame 指向横条/极薄切片的图标，已回退到之前可显示的 atlas 近似资源。
 - 登录页、选服页、主屏已开始从 `data/prefab_layouts/*.json` 的 `screen_rect` 读取位置和尺寸；手工脚本只保留已验证可显示的贴图选择。
 - 主屏右侧九入口、底部导航、广告入口、左侧快捷栏、头像/名字/战力条已改为读取 `MainPre/daohangPre` 节点坐标，点击热区同步使用同一来源。
