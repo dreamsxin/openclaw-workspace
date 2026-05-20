@@ -533,8 +533,10 @@ func _add_left_quick_buttons() -> void:
 		{"label": "好友", "node": "zjm_btn_HaoYou", "atlas": ATLAS_1A, "rect": Rect2i(260, 3, 60, 54)},
 		{"label": "邮件", "node": "zjm_btn_YouJian", "atlas": ATLAS_1A, "rect": Rect2i(326, 3, 60, 55)},
 		{"label": "排行", "node": "zjm_btn_PaiHang", "atlas": ATLAS_1A, "rect": Rect2i(458, 3, 60, 55)},
-		{"label": "新闻", "node": "zjm_btn_XinWen", "atlas": ATLAS_1A, "rect": Rect2i(392, 3, 60, 55)},
+		{"label": "客服", "node": "zjm_btn_XinWen", "atlas": ATLAS_1A, "rect": Rect2i(392, 3, 60, 55)},
 		{"label": "战报", "node": "zjm_btn_ZhanBao", "atlas": ATLAS_1A, "rect": Rect2i(524, 3, 60, 55)},
+		{"label": "绑定平台", "node": "zjm_btn_bind", "atlas": ATLAS_1F, "rect": Rect2i(747, 551, 34, 34)},
+		{"label": "Discord活动", "node": "discordBtn", "atlas": ATLAS_1F, "rect": Rect2i(720, 984, 34, 34)},
 	]
 	for item in entries:
 		var rect := _rect_or_fallback(str(item.node), _cocos_center_to_screen(Vector2(-601.954, 226.0)), Vector2(58, 58))
@@ -549,18 +551,23 @@ func _add_event_grid() -> void:
 		{"label": "王者争霸", "node": "zjm_icon_wangzhe", "atlas": ATLAS_1A, "rect": Rect2i(605, 69, 80, 71)},
 		{"label": "公会战", "node": "zjm_icon_ghz", "atlas": ATLAS_1A, "rect": Rect2i(861, 3, 80, 69)},
 		{"label": "天梯", "node": "zjm_icon_tianti", "atlas": ATLAS_1F, "rect": Rect2i(864, 929, 80, 71), "rotated": true},
-		{"label": "礼包", "node": "zjm_icon_libao", "occurrence": 2, "atlas": ATLAS_1F, "rect": Rect2i(781, 348, 80, 80)},
+		{"label": "礼包", "node": "zjm_icon_libao", "occurrence": 1, "atlas": ATLAS_1F, "rect": Rect2i(781, 348, 80, 80)},
+		{"label": "通行证", "node": "zjm_icon_pass", "atlas": ATLAS_1F, "rect": Rect2i(864, 757, 80, 73), "rotated": true},
 		{"label": "限时", "node": "zjm_icon_xianshihuodong", "atlas": ATLAS_1A, "rect": Rect2i(519, 69, 80, 71)},
+		{"label": "升阶礼包", "node": "zjm_icon_elevate", "atlas": ATLAS_1A, "rect": Rect2i(347, 64, 80, 71)},
 		{"label": "皮肤", "node": "zjm_icon_skin", "atlas": ATLAS_1A, "rect": Rect2i(360, 141, 80, 80)},
-		{"label": "竞技", "node": "zjm_icon_pvp", "atlas": ATLAS_1F, "rect": Rect2i(945, 688, 80, 75), "rotated": true},
+		{"label": "组队竞技", "node": "zjm_icon_pvp", "atlas": ATLAS_1F, "rect": Rect2i(945, 688, 80, 75), "rotated": true},
 		{"label": "升星", "node": "zjm_icon_star", "atlas": ATLAS_1A, "rect": Rect2i(261, 64, 80, 71)},
 		{"label": "首充", "node": "zjm_icon_first", "atlas": ATLAS_1A, "rect": Rect2i(3, 120, 80, 80)},
 		{"label": "特惠", "node": "zjm_icon_thank", "atlas": ATLAS_1A, "rect": Rect2i(446, 146, 80, 80)},
-		{"label": "广告", "node": "zjm_icon_daily", "atlas": ATLAS_1F, "rect": Rect2i(864, 843, 72, 80)},
+		{"label": "每日礼包", "node": "zjm_icon_daily", "atlas": ATLAS_1F, "rect": Rect2i(864, 843, 72, 80)},
 		{"label": "召唤卡", "node": "zjm_icon_zhaohuanactivity", "atlas": ATLAS_1A, "rect": Rect2i(608, 247, 131, 123)},
 		{"label": "竟榜抽奖", "node": "zjm_icon_pvpActivity", "atlas": ATLAS_1F, "rect": Rect2i(943, 774, 80, 78), "rotated": true},
 		{"label": "食铁神兽", "node": "zjm_icon_stssActivity", "atlas": ATLAS_1A, "rect": Rect2i(89, 62, 80, 71)},
 		{"label": "预注册", "node": "zjm_icon_prereg", "atlas": ATLAS_1F, "rect": Rect2i(547, 602, 131, 119)},
+		{"label": "活动预告", "node": "zjm_btn_forecast", "atlas": ATLAS_1A, "rect": Rect2i(446, 146, 80, 80)},
+		{"label": "广告奖励", "node": "advertisingbtn", "atlas": ATLAS_1F, "rect": Rect2i(864, 843, 72, 80)},
+		{"label": "次元魔战", "node": "zjm_icon_cymz", "atlas": ATLAS_1A, "rect": Rect2i(89, 62, 80, 71)},
 	]
 	for item in entries:
 		var atlas := str(item.get("atlas", ""))
@@ -595,15 +602,15 @@ func _add_ad_banner() -> void:
 	hit.text = ""
 	hit.flat = true
 	hit.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	hit.tooltip_text = "活动预览"
-	hit.pressed.connect(_open_prefab_layout.bind("活动抽卡"))
+	hit.tooltip_text = "活动预告"
+	hit.pressed.connect(_open_prefab_layout.bind("活动预告"))
 	box.add_child(hit)
 
 	_add_red_dot(box, Vector2(306, 16), Vector2(24, 24))
 
 func _add_right_ribbons() -> void:
 	var entries := [
-		{"label": "通行证", "node": "zjm_btn_rukou0", "occurrence": 0, "icon_node": "zjm_icon_baoju", "bg": Rect2i(639, 292, 364, 50), "bg_offset": Vector2(-10.5, 0), "icon": Rect2i(864, 757, 80, 73), "icon_atlas": ATLAS_1F, "icon_rotated": true, "prefer_manual_icon": true},
+		{"label": "宝具", "node": "zjm_btn_rukou0", "occurrence": 0, "icon_node": "zjm_icon_baoju", "bg": Rect2i(639, 292, 364, 50), "bg_offset": Vector2(-10.5, 0), "icon": Rect2i(864, 757, 80, 73), "icon_atlas": ATLAS_1F, "icon_rotated": true, "prefer_manual_icon": true},
 		{"label": "仓库", "node": "zjm_btn_rukou0", "occurrence": 1, "icon_node": "zjm_icon_cangku", "bg": Rect2i(639, 292, 364, 50), "bg_offset": Vector2(-10.5, 0), "icon": Rect2i(747, 551, 34, 34), "icon_atlas": ATLAS_1F},
 		{"label": "竞技", "node": "zjm_btn_rukou1", "occurrence": 0, "icon_node": "zjm_icon_jingji", "bg": Rect2i(675, 65, 341, 56), "bg_offset": Vector2(1, 0), "icon": Rect2i(667, 551, 34, 34), "icon_atlas": ATLAS_1F},
 		{"label": "学院", "node": "zjm_btn_rukou1", "occurrence": 1, "icon_node": "zjm_icon_xueyuan", "bg": Rect2i(675, 65, 341, 56), "bg_offset": Vector2(1, 0), "icon": Rect2i(3, 3, 34, 34), "icon_atlas": ATLAS_1A},
@@ -687,8 +694,8 @@ func _add_bottom_nav() -> void:
 		{"label": "城镇", "node": "cm_tab_ChengZhen1", "hit": "btn1", "path": "res://assets/resources/native/87/8715b80b-6cbc-4b88-bf7d-8c2ab401db4e.png"},
 		{"label": "英雄", "node": "cm_tab_YingXiong1", "hit": "btn2", "path": "res://assets/resources/native/9a/9a9cb544-24ba-41c7-8cab-41a43a9e9c33.png", "entry": "英雄"},
 		{"label": "召唤", "node": "cm_tab_ZhaoHuan", "hit": "btn3", "atlas": ATLAS_1A, "rect": NAV_SLOT3_RECT, "entry": "召唤", "force_atlas": true},
-		{"label": "战斗", "node": "cm_tab_ChuJi1", "hit": "btn4", "atlas": ATLAS_1A, "rect": Rect2i(159, 345, 150, 145), "layout": "战斗"},
-		{"label": "冒险", "node": "cm_tab_FuBen", "hit": "btn5", "atlas": ATLAS_1A, "rect": Rect2i(879, 276, 134, 133), "layout": "冒险地图顶部"},
+		{"label": "冒险", "node": "cm_tab_ChuJi1", "hit": "btn4", "atlas": ATLAS_1A, "rect": Rect2i(159, 345, 150, 145), "layout": "挂机主线"},
+		{"label": "副本", "node": "cm_tab_FuBen", "hit": "btn5", "atlas": ATLAS_1A, "rect": Rect2i(879, 276, 134, 133), "layout": "冒险地图顶部"},
 		{"label": "公会", "node": "cm_tab_GongHui1", "hit": "btn6", "atlas": ATLAS_1A, "rect": Rect2i(345, 232, 119, 126), "rotated": true, "layout": "公会"},
 	]
 	for item in entries:
@@ -888,28 +895,44 @@ func _open_home_entry(label: String) -> void:
 		Navigation.go(SHOP_PANEL_SCENE)
 		return
 	var layout_map := {
-		"广告": "活动抽卡",
+		"广告": "广告奖励",
+		"好友": "好友",
+		"邮件": "邮件",
+		"排行": "排行",
+		"客服": "客服",
+		"新闻": "客服",
+		"战报": "战报",
+		"任务": "任务",
+		"绑定平台": "绑定平台",
+		"Discord活动": "Discord活动",
 		"活动": "活动面板",
 		"福利": "福利",
-		"新服": "活动面板",
-		"开服": "活动面板",
-		"礼包": "福利",
-		"限时": "活动面板",
-		"皮肤": "英雄详情",
+		"新服": "开服战神",
+		"开服": "开服战神",
+		"礼包": "礼包",
+		"限时": "限时礼包",
+		"皮肤": "皮肤商店",
 		"升星": "升星计划",
 		"首充": "首充",
-		"特惠": "福利",
-		"打工": "学院塔",
-		"王者争霸": "竞技",
-		"公会战": "公会",
-		"天梯": "竞技",
-		"召唤卡": "活动抽卡",
-		"竟榜抽奖": "活动面板",
-		"食铁神兽": "活动面板",
-		"预注册": "活动面板",
+		"特惠": "特惠活动",
+		"每日礼包": "每日礼包",
+		"打工": "打工",
+		"王者争霸": "王者争霸",
+		"公会战": "公会战",
+		"天梯": "天梯",
+		"组队竞技": "组队竞技",
+		"召唤卡": "召唤卡",
+		"竟榜抽奖": "竟榜抽奖",
+		"食铁神兽": "食铁神兽",
+		"预注册": "预注册",
+		"升阶礼包": "升阶礼包",
+		"活动预告": "活动预告",
+		"广告奖励": "广告奖励",
+		"次元魔战": "次元魔战",
+		"宝具": "宝具",
 		"通行证": "通行证",
 		"竞技": "竞技",
-		"学院": "学院塔",
+		"学院": "学院",
 		"英魂": "英魂殿",
 		"锻造": "锻造",
 		"占卜": "占卜",
@@ -917,9 +940,9 @@ func _open_home_entry(label: String) -> void:
 		"公会": "公会",
 		"商会": "商店",
 		"商店": "商店",
-		"战斗": "战斗",
+		"战斗": "挂机主线",
 		"初级": "战斗",
-		"冒险": "冒险地图顶部",
+		"冒险": "挂机主线",
 		"副本": "冒险地图顶部",
 	}
 	if layout_map.has(label):

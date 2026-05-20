@@ -40,7 +40,7 @@
 | 仓库入口 | `BagPanel.preUrl="Prefab/BagPanel/BagPre"`；格子/出售/获取途径等为子面板 | `BagPre` + `GridBoxItemPre` + `BagSellEquipPre` 等 | `original_bag_panel.tscn` | 有独立手工页；分类/格子/详情可用，真实格子与子面板还未完全还原。 |
 | 商会入口 | `ShopPanel` 使用 `Prefab/Shop/ShopPre`；商品、页签、购买确认分别是子 prefab | `ShopPre` + `ShopItemPre` + `GoodsItemPre` + `ShopBuyEquitPre` | `original_shop_panel.tscn` | 有独立手工页；商品、页签、购买弹窗可用，仍需按 prefab 精排。 |
 | 活动入口 | `ActivityPanel.preUrl="Prefab/ActivityPanel/ActivityPre"`；`ActivityType.prefabArray` 决定首充、占卜、基金、限时礼包等子 prefab；也可 `openByPanelId()` | `ActivityPre` + `ActivityFirstRechargePre` + `ActivityAuguryPre` + 活动子 prefab | 主屏打开 prefab 预览 | 入口已覆盖，但大部分还不是独立手工页。 |
-| 右侧系统入口 | `MainUIPanel.rightNodeArr` 包含 `baoju/cangku/jingji/teach/yingHunDian/duanZao/xunbao/xunxing/shop/lihui`；`onShow()` 分别绑定 `openTreasurePanel/openBag/openjingjiPanel/openTeachListPanel/openHeroPalacePanel/openduanZao/openXunbaoPanel/openZhuanPan/openShop` | 通行证、仓库、竞技、学院、英魂、锻造、占卜、寻星、商会等 prefab | 独立页或 prefab 预览 | 仓库、商会有独立页；英魂已修正为 `HeroPalacePre` 预览，不再误进召唤；通行证、学院、锻造、占卜、寻星目前是 prefab 预览覆盖。 |
+| 右侧系统入口 | `MainUIPanel.rightNodeArr` 包含 `baoju/cangku/jingji/teach/yingHunDian/duanZao/xunbao/xunxing/shop/lihui`；`onShow()` 分别绑定 `openTreasurePanel/openBag/openjingjiPanel/openTeachListPanel/openHeroPalacePanel/openduanZao/openXunbaoPanel/openZhuanPan/openShop` | 宝具、仓库、竞技、学院、英魂、锻造、占卜、寻星、商会等 prefab | 独立页或 prefab 预览 | 仓库、商会有独立页；宝具/学院/英魂/锻造/占卜/寻星已改为源码对应 prefab 预览；主屏单独的通行证节点仍走 `BigPassPanel`。 |
 
 ## 主屏入口覆盖
 
@@ -49,17 +49,48 @@
 | 英雄 | `scenes/original_hero_list_panel.tscn` | 独立手工英雄列表，点击进入英雄详情。 |
 | 仓库 | `scenes/original_bag_panel.tscn` | 独立手工仓库页。 |
 | 召唤 | `scenes/original_draw_card_panel.tscn` | 底部 `btn3 -> openZhaohuanPanel()`，独立手工抽卡页。 |
+| 宝具 | `Prefab/TreasurePanel/TreasurePre` | 主屏右侧 `baoju -> openTreasurePanel()`，已导出 `TreasurePre.json`，当前进入原始 prefab 预览。 |
+| 跨服PVP | `Prefab/KuafuPvpPane/KuafuPvpPre` | 源码存在 `MainUIPanel.openkuafuPanel() -> PanelManager.openKuafuPvpPanel()` 和 `KuafuPvpUIPanel.preUrl`，但当前 `MainPre` 没有命中可见的跨服入口节点，也没有 `MainCom` 字段绑定；先导出 prefab 供独立预览，不强行放到主屏。 |
 | 英魂 | `Prefab/HeroPalace/HeroPalacePre` | 主屏右侧 `yingHunDian -> openHeroPalacePanel()`，已导出 `HeroPalacePre.json`，当前进入原始 prefab 预览。 |
 | 商会 / 商店 | `scenes/original_shop_panel.tscn` | 独立手工商店页。 |
-| 通行证 | `Prefab/PassPrefab/BigPassPanel` | 已导出 `BigPassPanel.json`，当前进入原始 prefab 预览。 |
-| 学院 | `Prefab/MaoxianPanel/BraveManTriedPassInfoPre` | 已导出 `BraveManTriedPassInfoPre.json`，当前进入原始 prefab 预览。 |
+| 通行证 | `Prefab/PassPrefab/BigPassPanel` | 主屏 `pass` 运行期活动节点，不是右侧九入口第一项；已导出 `BigPassPanel.json`，当前进入原始 prefab 预览。 |
+| 学院 | `Prefab/TeachPlace/TeachListPre` | 主屏右侧 `teach -> openTeachListPanel()`，已导出 `TeachListPre.json`。`BraveManTriedPassInfoPre` 属于学院塔/试炼信息，不是主屏右侧学院入口。 |
 | 锻造 | `Prefab/ForgePanel/ForgePre` | 已导出 `ForgePre.json`，当前进入原始 prefab 预览。 |
-| 占卜 | `Prefab/ActivityPanel/changzhuactivity/ActivityAuguryPre` | 已导出 `ActivityAuguryPre.json`，当前进入原始 prefab 预览。 |
-| 寻星 | `Prefab/FindTreasurePanel/FindTreasurePre` | 已导出 `FindTreasurePre.json`，当前进入原始 prefab 预览。 |
+| 占卜 | `Prefab/zhanbu/zhanbuPre` | 主屏右侧 `xunbao -> openZhanbu()`，已导出 `zhanbuPre.json`。活动面板里的占卜活动另保留为 `活动占卜` / `ActivityAuguryPre`。 |
+| 寻星 | `Prefab/FindTreasurePanel/FindTreasurePre` | 主屏右侧 `xunxing -> openXunbao()`，已导出 `FindTreasurePre.json`。 |
 | 活动 / 开服 / 限时 | `Prefab/ActivityPanel/ActivityPre` | 已导出 `ActivityPre.json`，当前进入原始 prefab 预览。 |
 | 福利 / 礼包 / 特惠 | `Prefab/Welfare/WelfarePre` | 已导出 `WelfarePre.json`，当前进入原始 prefab 预览。 |
 | 首充 | `Prefab/FirstRechargePanel/firstRechargePre` | 已导出 `firstRechargePre.json`，当前进入原始 prefab 预览。 |
 | 升星 | `Prefab/HeroXZPrefab/StarUpPre` | 已导出 `StarUpPre.json`，当前进入原始 prefab 预览。 |
+| 打工 | `Prefab/TaskPanel/ActivityYiwuPre` | 左侧活动矩阵 `dagong -> opendagong()`，源码走 `PanelManager.open(PANEL_ID_3610)` 并请求 `CG_HERO_GROWUP_TASK_QUERY/REWARD_QUERY`；已导出 `ActivityYiwuPre/ActivityYiwuTapPre/HitWorkPre`。 |
+| 每日礼包 | `Prefab/DailyGift/DailyGiftPre` | `daily -> openDailyGift() -> PANEL_ID_3200`，不是广告入口。已导出 `DailyGiftPre.json`，主屏活动矩阵显示名从“广告”改为“每日礼包”。 |
+| 礼包 | `Prefab/Gift/GiftPre` | `openlibao -> PANEL_ID_6000 -> GiftPanel.open()`，已导出 `GiftPre.json`，不再误指向福利页。 |
+| 特惠 | `Prefab/ActivityPanel/guoqingactivity/GuoqingActivity` | `thank -> openThank() -> PANEL_ID_5000`，`PanelManager.getPanelById()` 返回 `guoqingPre` 模块；catalog 中真实 prefab 路径是 `GuoqingActivity`。 |
+| 限时 | `Prefab/ActivityPanel/jueduiactivity/ActivityXianShiLiHePre` | `xianshi -> openxianshi()` 只在 `hongDianYunYingList` 中存在 `PANEL_ID_7010/7021` 时打开，两个 ID 共用限时礼包面板。 |
+| 皮肤 | `Prefab/SkinShopPanel/SkinShopPre` | `openSkinShop() -> PANEL_ID_2014`，已导出 `SkinShopPre.json`；不应跳到英雄详情页。 |
+| 新服/开服 | `Prefab/ActivityPanel/kaifuactivity/zhanshencomePre` | `openkaifu() -> openActivityPanel(TYPE_3)`；`ActivityType.prefabArray` 中 TYPE_3 的第一个子 prefab 是 `zhanshencomePre`，当前用它作为开服活动入口预览。 |
+| 超级钜惠 | `Prefab/ActivityPanel/JuHuiActivity/JuHuiActivityPre` | `juhui -> openJuHui() -> PANEL_ID_7101`，已导出 `JuHuiActivityPre.json`。 |
+| 召唤卡 | `Prefab/ActivityPanel/ZhaoHuanActivity/ZhaoHuanActivityPre` | `openZhaoHuanActivity() -> PANEL_ID_14200`，已导出 `ZhaoHuanActivityPre.json`。 |
+| 组队竞技 | `Prefab/JingjiPrefab/team/teamPre` | 左侧 `pvp -> openJingjiZuDui()`，和右侧系统“竞技”不是同一个入口；已导出 `teamPre.json`。 |
+| 天梯 | `Prefab/JingjiPrefab/tianti/tiantiPre` | `openTianti() -> PANEL_ID_3402`，已导出 `tiantiPre.json`。 |
+| 王者争霸 | `Prefab/JingjiPrefab/wangzhe/wangzhePre` | `openwangzhe() -> PANEL_ID_1803`，已导出 `wangzhePre.json`。 |
+| 公会战 | `Prefab/Guild/GuildWar/GuildWarHallPre` | `openGuildWarPanel()` 对应公会战大厅，已导出 `GuildWarHallPre.json`。 |
+| 竟榜抽奖 | `Prefab/pvpActivityPanel/pvpActivityPanel` | `openPvpActivity()` 进入 PVP 活动面板，已导出 `pvpActivityPanel.json`。 |
+| 食铁神兽 | `Prefab/stssActivityPrefab/oldgodsgraceentrancePre` | `openstssActivity()` 进入食铁神兽活动入口，已导出 `oldgodsgraceentrancePre.json`。 |
+| 预注册 | `Prefab/ActivityPanel/PreRegAvtivity/PreRegAvtivityPre` | `openPreregActivity() -> PANEL_ID_15000`，活动状态由 `PANEL_ID_15000` 红点包控制。 |
+| 升阶礼包 | `Prefab/ElevatePanel/ElevatePre` | `openElevateGift() -> PANEL_ID_14400`，活动状态由 `PANEL_ID_14400` 红点包控制。 |
+| 广告奖励 | `Prefab/payPanel/AdvertisingPre` | `openAdvertisingPanel() -> PANEL_ID_14000`，这是运行时广告活动入口，不是 `daily` 每日礼包。 |
+| 绑定平台 | `Prefab/payPanel/BindPre` | `bind -> bindCount()`，配合 `CG_GET_BIND_PALTFORM_QUERY/REWARD` 查询 SDK 绑定状态；当前只做 prefab 预览入口。 |
+| Discord活动 | `Prefab/ActivityPanel/discordActivity/discordActivityPre` | `discordBtn -> openDiscord()` / `DiscordActivityPanel`，主屏源码初始化后默认 `discordBtn.active=false`。 |
+| 次元魔战 | `Prefab/MozhuPanel/moZhuPre` | `cymz/btncymz -> openCymz() -> PANEL_ID_2801`，活动状态由 `PANEL_ID_2801` 控制；原始 `zjm_icon_cymz` 默认 `active=false`。 |
+| 战斗返回提示 | `MainPre` 内部节点 | `jingJiBattle/TianTiBattle/cymzBattle` 是竞技、天梯、次元魔战战斗状态提示节点，源码由 `setJingJiBattle/setTianTiBattle/setMozhuBattle` 切换 active；它们默认隐藏，不是普通主屏入口。 |
+| 好友 | `Prefab/FriendPanel/FriendPanel` | 左侧快捷 `haoyou -> openhaoyouPanel() -> openFriendPanel()`，已导出 `FriendPanel.json`。 |
+| 邮件 | `Prefab/EmailPanel/EmailPre` | 左侧快捷 `email -> openyoujianPanel() -> openEmailPanel()`，已导出 `EmailPre.json`。 |
+| 排行 | `Prefab/rank/RankListPanel` | 左侧快捷 `rank -> openpaihangPanel() -> openRankList()`，已导出 `RankListPanel.json`。 |
+| 战报 | `Prefab/WarReport/WarReportPanel` | 左侧快捷 `zhanbao -> openzhanbaoPanel() -> openWarReport(0)`，已导出 `WarReportPanel.json`。 |
+| 任务 | `Prefab/TaskPanel/TaskPre` | 左侧快捷 `task -> opentaskPanel() -> openTask()`，已导出 `TaskPre.json`。 |
+| 客服 | `Prefab/UserInfo/KeFuPanel` | 左侧快捷 `kefu -> openKeFuPanel()`，已导出 `KeFuPanel.json`；Godot 原先显示为“新闻”的节点已按源码改为“客服”。 |
+| 活动预告 | `Prefab/ActivityForecastPanel/ActivityForecastPre` | `forecast -> openActivityForecastPanel()`，并且主屏广告横幅当前也进入活动预告 prefab 预览。 |
 
 ## 已修正问题
 
@@ -91,8 +122,17 @@
 - 主屏底部导航保留 `daohangPre` 的坐标；对 SpriteFrame 指向横条/极薄切片的图标，已回退到之前可显示的 atlas 近似资源。
 - 登录页、选服页、主屏已开始从 `data/prefab_layouts/*.json` 的 `screen_rect` 读取位置和尺寸；手工脚本只保留已验证可显示的贴图选择。
 - 主屏右侧九入口、底部导航、广告入口、左侧快捷栏、头像/名字/战力条已改为读取 `MainPre/daohangPre` 节点坐标，点击热区同步使用同一来源。
-- 主屏右侧/活动入口已补全可点击目标：英魂、通行证、学院、锻造、占卜、寻星、活动、福利、首充、升星、新服、召唤卡、预注册等没有独立手工页时会打开对应原始 prefab 预览。
+- 主屏右侧/活动入口已补全可点击目标：宝具、英魂、通行证、学院、锻造、占卜、寻星、活动、福利、首充、升星、新服、召唤卡、预注册等没有独立手工页时会打开对应原始 prefab 预览。
 - 2026-05-20 主屏右侧入口源码复核：`MainUIPanel.onfrist()` 的 `rightNodeArr` 顺序为 `baoju/cangku/jingji/teach/yingHunDian/duanZao/xunbao/xunxing/shop/lihui`，`onShow()` 中 `yingHunDian` 绑定 `openHeroPalacePanel()`，不是抽卡。Godot 已把右侧“英魂”从 `original_draw_card_panel.tscn` 改为 `英魂殿` prefab 预览；`tools/export_cocos_prefab_layout.py` 同步补入 `("英魂殿", "Prefab/HeroPalace/HeroPalacePre")`，导出 `data/prefab_layouts/HeroPalacePre.json`。
+- 2026-05-20 主屏右侧入口第二轮源码复核：`MainPre.json` 右侧 label 文本为“宝具、仓库、竞技、学院、英魂、锻造、占卜、寻星、商会”，另有独立 `pass` 节点显示“通行证”。源码中 `baoju -> openTreasurePanel()`，`teach -> openTeachListPanel()`，`xunbao -> openZhanbu()`，`xunxing -> openXunbao()`。Godot 已把第一项从“通行证”改回“宝具”，学院改为 `TeachListPre`，占卜改为 `zhanbuPre`，寻星保留 `FindTreasurePre`。注意左侧活动“打工”不是学院入口，它走 `opendagong() -> PANEL_ID_3610`，当前映射到 `ActivityYiwuPre`。
+- 2026-05-20 主屏左侧活动矩阵源码复核：`daily -> openDailyGift(PANEL_ID_3200)`，所以 `zjm_icon_daily` 显示名应是“每日礼包”，不能当广告；`thank -> PANEL_ID_5000` 对应 `guoqingPre/GuoqingActivity`；`juhui -> PANEL_ID_7101` 对应 `JuHuiActivityPre`；`pvp -> openJingjiZuDui()` 对应 `JingjiPrefab/team/teamPre`，和右侧“竞技”分开；`openTianti/openwangzhe/openGuildWar/openZhaoHuanActivity/openPvpActivity/openstssActivity` 分别对应 `tiantiPre/wangzhePre/GuildWarHallPre/ZhaoHuanActivityPre/pvpActivityPanel/oldgodsgraceentrancePre`。Godot 已把这些入口从泛用“活动面板/福利/竞技”改为真实 prefab 预览。
+- 2026-05-20 主屏左侧活动矩阵第三轮：`openSkinShop() -> PANEL_ID_2014 -> SkinShopPre`，所以“皮肤”不应进入英雄详情；`openPreregActivity() -> PANEL_ID_15000 -> PreRegAvtivityPre`，`openElevateGift() -> PANEL_ID_14400 -> ElevatePre`；`openxianshi()` 只处理 `PANEL_ID_7010/7021`，源码 `YunyingHandler.GC_YUNYING_GROUP_LIST` 中这两个 ID 都进入 `ActivityXianShiLiHePre`；`openkaifu() -> openActivityPanel(TYPE_3)`，TYPE_3 子 prefab 包括 `zhanshencomePre/ActivityQiTianPre/MengXinFuLi/ZhanLiChongCi`，当前主入口先映射到 `zhanshencomePre`。
+- 2026-05-20 主屏左侧快捷按钮源码复核：`haoyou/email/rank/zhanbao/task/kefu/forecast` 分别绑定 `openFriendPanel/openEmailPanel/openRankList/openWarReport(0)/openTask/KeFuPanel.open/ActivityForecastPanel.open`。Godot 已给这些按钮补真实 prefab 预览目标。`zjm_btn_XinWen` 在本地旧实现里写成“新闻”，但源码对应的是 `kefu` 节点和 `openKeFuPanel()`，因此显示名改为“客服”。主屏广告横幅不再跳“活动抽卡”，改为打开“活动预告”预览；运行时广告活动节点仍单独映射到 `AdvertisingPre`。
+- 2026-05-20 `MainCom` 字段补查：`forecast` 对应 `zjm_btn_forecast`，`advertising` 对应 `advertisingbtn`，`elevate` 对应 `zjm_icon_elevate`，`btncymz/cymz` 对应 `zjm_icon_cymz`/次元魔战活动。Godot 已补 `活动预告`、`广告奖励`、`升阶礼包` 和 `次元魔战` 的入口映射；其中 `zjm_icon_cymz` 继续尊重原始 `active=false`，不会无条件显示。
+- 2026-05-20 `openkuafuPanel()` 源码补查：`MainUIPanel` 有跨服 PVP 打开方法，`PanelManager.openKuafuPvpPanel()` 对应 `Prefab/KuafuPvpPane/KuafuPvpPre`。但 `MainPre.json` 未找到跨服可见节点或字段绑定，所以当前只导出 `跨服PVP` prefab 作为预览资源，不放入主屏入口矩阵。
+- 2026-05-20 战斗状态节点补查：`MainPre` 的 `jingJiBattle/TianTiBattle/cymzBattle` 均默认隐藏，源码由 `setJingJiBattle/setTianTiBattle/setMozhuBattle` 在竞技、天梯、次元魔战战斗流程中临时显示。它们是返回/状态提示，不是菜单按钮。
+- 2026-05-20 `MainCom` 绑定/社区入口补查：`bind -> bindCount()` 使用 `payPanel/BindPre`，并由 `CG_GET_BIND_PALTFORM_QUERY(2)` 控制显示；`discordBtn -> openDiscord()` 会请求 `CG_GET_BIND_PALTFORM_REWARD(2)` 并打开 Discord 链接，另有 `DiscordActivityPanel.preUrl="Prefab/ActivityPanel/discordActivity/discordActivityPre"`。Godot 已补 `绑定平台` 和 `Discord活动` prefab 预览，但保持原始显隐状态，`discordBtn` 默认隐藏。
+- 2026-05-20 主屏活动显隐规则补查：`MainUIPanel.onfrist()` 会先把 `libao/fuli/huodong/kaifu/ghz/skin/wangzhe/dagong/tianti/cymz/pass` 全部隐藏，后续 `YunyingHandler` 根据 panelId 再打开。`PANEL_ID_10000` 打开 `pass`，`PANEL_ID_6000` 打开顶部 `libaoBtn`，而 `MainCom.onShow()` 还同时给活动矩阵里的 `libao` 和顶部 `libaoBtn` 都绑定 `openlibao()`。Godot 已把“礼包”明确指向活动矩阵实例 `zjm_icon_libao` 的第二个 occurrence，并补出 `zjm_icon_pass -> 通行证` 入口。
 - 主屏活动矩阵不能完全照搬 `screen_rect`：原节点挂在可滚动/偏移父容器下，第一列导出后落在屏幕外侧。当前按 prefab 网格间距保留，但对 x 小于左侧快捷栏右边界的节点做最小 x 钳制，避免压住左侧快捷按钮。
 - 主城默认 `105004` 应照 `Prefab/HerolhPrefab/105004` 的 Skeleton 子节点坐标 `(-68,-333)` 和 scale `(1,0.95)` 放到 `MainPre.herolh` 全屏容器下；如果武器或头发遮住按钮，优先修 Godot/Cocos 层级映射，不要为了避让按钮改角色尺寸和坐标。当前主屏 UI 层已显式高于 Spine slot 子节点。
 - 已确认 `assets/resources/config.json` 是完整 Cocos 资源路径表，`paths` 里记录逻辑路径、类型和 UUID 下标，`uuids` 里记录压缩 UUID。现有 `data/named_resource_index.json` 只有一部分路径，不能作为完整资源索引。
@@ -113,8 +153,8 @@
 - `daohangPre` 底栏真实节点尺寸：`btn1..btn6` 热区均为 `120x120`；图标节点 screen_rect 分别是城镇 `[115.645,585.329,152,141]`、英雄 `[284.102,583.476,150,142]`、召唤逻辑位 `[481.599,591.329,125,123]`、冒险 `[645.211,582.972,150,145]`、副本 `[842.368,589.329,134,133]`、公会 `[1027.648,592.829,119,126]`；底栏背景 `cm_menu_BeiJing` 是 `[-493,540.552,2266,181]`，中央光 `cm_menu_TaiYangGuang` 是 `[451.254,601.201,340,97]`。主屏应按这些 1280x720 坐标落位，不要再按截图比例二次压缩。
 - `daohangPre.json` 里 `cm_menu_BeiJing` 的 `texture_path/sprite_name` 会被解析成 `cm_menu_TaiYangGuang`，这是导出器解析错误。真实底栏背景必须从 `config.json` 查 `image/com/mainpanel/cm_menu_BeiJing`：SpriteFrame UUID `8c4e3857-d4f4-43d8-a7bc-04d1327e2a77`，Texture2D/native 为 `assets/resources/native/f5/f58085bc-21e6-40ed-a4cf-b55f6b0cc8f9.png`，rect `[0,0,2266,181]`。Godot 侧已改为手工指定该 native，不能再直接信 `daohangPre` 的贴图字段。
 - `DaohangPanel.init()` 会把 `taiyang` 和 `DaoHangGuang` 的 x 对齐到 `btn1.x`，默认选中城镇。当前 Godot 将 `cm_menu_TaiYangGuang` 单独绘制并对齐 `btn1`，透明度降低，避免选中光误停在中间并遮住主城角色脚部。
-- `DaohangPanel.changeTabPanel()` 源码底栏路由：`btn1 -> openchengzhen()`，`btn2 -> openHeroPanel()`，`btn3 -> openZhaohuanPanel()`，`btn4 -> openchujiPanel()`，`btn5 -> openmaoxianPanel()`，`btn6 -> opengonghuiPanel()`。本地 Demo 对应为：城镇留在主屏、英雄列表、抽卡、战斗预览、冒险地图预览、公会预览；`btn5` 不应再误指向天空城。
-- 2026-05-20 底栏文本/路由同步修正：`original_home_screen.gd` 中 `btn4` 显示为“战斗”并打开 `战斗` 预览，`btn5` 显示为“冒险”并打开 `冒险地图顶部`，同时保留“副本”作为旧文案别名指向冒险地图。
+- `DaohangPanel.changeTabPanel()` 源码底栏路由：`btn1 -> openchengzhen()`，`btn2 -> openHeroPanel()`，`btn3 -> openZhaohuanPanel()`，`btn4 -> openchujiPanel()`，`btn5 -> openmaoxianPanel()`，`btn6 -> opengonghuiPanel()`。本地 Demo 对应为：城镇留在主屏、英雄列表、抽卡、主线/挂机预览、副本冒险地图预览、公会预览；`btn5` 不应再误指向天空城。
+- 2026-05-20 底栏文本/路由二次修正：`openchujiPanel()` 不是直接打开 `Prefab/Battle/battle`，而是主线/挂机入口，源码会 `CG_BATTLE_QUERY()` 并由 `GuajiContro/guajiPanel` 进入 `Prefab/guajiPanel/guajiPrefab`；`openmaoxianPanel()` 才打开 `MaoxianMapPreTop/MaoxianMapPreBotton`。Godot 已把 `btn4` 显示为“冒险”并打开 `挂机主线` 预览，把 `btn5` 显示为“副本”并打开 `冒险地图顶部`。
 - 已补导出 `Prefab/MaoxianPanel/MaoxianMapPreTop` 和 `Prefab/MaoxianPanel/MaoxianMapPreBotton`，manifest 标签为“冒险地图顶部/冒险地图底部”。后续要继续还原 `openMaoxianUIPanel()` 时，应从这两个 prefab 与 `MaoxianMapTopPanel/MaoxianMapBottonPanel` 源码开始，而不是用 `SkyCityPre` 代替。
 - `MaoxianMapTopPanel.preUrl="Prefab/MaoxianPanel/MaoxianMapPreTop"`，进入冒险地图时默认打开顶部地图；`MaoxianMapBottonPanel.preUrl="Prefab/MaoxianPanel/MaoxianMapPreBotton"` 是下半区地图。`MaoxianMoveCom.touchEnd()` 根据滑动方向在两个 Panel 间切换：顶部向上滑打开底部，底部向下滑回顶部。
 - 冒险地图 prefab 的 `mapBox1/mapBox2/bg` 是大地图容器或空节点，真正可见地图由其子节点 Sprite 和 label 组成；不要再用手写 mock 覆盖。当前 `cocos_prefab_preview.gd` 对“冒险地图顶部/底部”启用 clean prefab preview：隐藏工具栏/右侧说明/灰色占位框，只显示导出的真实贴图和文本。
@@ -122,7 +162,7 @@
 - 2026-05-20 已修 `tools/export_cocos_prefab_layout.py`：当 prefab 位于 `Prefab/MaoxianPanel/*` 且节点本身 SpriteFrame 解析不到 texture 时，按 `image/com/MaoxianPanel/<node_name>` 反查 `assets/resources/config.json`。同时对 `hongdian/tip` 兜底到 `image/common/cm_icon_HongDian`，`suo` 兜底到 `image/common/cm_icon_SuoDing`，`xsyd_frame9_lihuiming` 兜底到 `image/com/guide/xsyd_frame9_lihuiming`。
 - 冒险地图贴图补齐结果：`MaoxianMapPreTop` 从 7 个 texture 节点提升到 35 个，仅剩 `tab1` 未映射；`MaoxianMapPreBotton` 从 7 个 texture 节点提升到 45 个，仅剩 `tab1/double` 这类运行状态节点未映射。`screenshots/codex_runtime/maoxian_fuller_top.png` 和 `maoxian_fuller_bottom.png` 可作为当前视觉基线。
 - 主屏 SHOP 不是文字按钮，资源在 `image/com/mainpanel/cm_icon_Shop`，对应 atlas `assets/resources/native/1a/1a7921f32.png` 的 `[163,3,91,53]`。
-- 已把 `HeroPalacePre`、`BigPassPanel`、`KnighthoodPanel`、`ForgePre`、`ActivityAuguryPre`、`FindTreasurePre`、`WelfarePre`、`firstRechargePre`、`StarUpPre`、`ActivityPre`、`ActivityForecastPre`、`BraveManTriedPassInfoPre`、`HeroShowPre`、`DrawRewardPreviewPre`、`useprivacyPre`、`shilingPre` 加入 `data/prefab_layouts`。这些页面还未全部手工实现，但可以从主屏或预览器打开查看原始布局。
+- 已把 `TreasurePre`、`TeachListPre`、`zhanbuPre`、`ActivityYiwuPre`、`ActivityYiwuTapPre`、`HitWorkPre`、`DailyGiftPre`、`GiftPre`、`GuoqingActivity`、`ActivityXianShiLiHePre`、`ActivityTeHuiLiHePre`、`zhanshencomePre`、`JuHuiActivityPre`、`ZhaoHuanActivityPre`、`pvpActivityPanel`、`oldgodsgraceentrancePre`、`PreRegAvtivityPre`、`ElevatePre`、`AdvertisingPre`、`BindPre`、`discordActivityPre`、`moZhuPre`、`FriendPanel`、`EmailPre`、`RankListPanel`、`WarReportPanel`、`TaskPre`、`KeFuPanel`、`GuildWarHallPre`、`teamPre`、`tiantiPre`、`wangzhePre`、`SkinShopPre`、`HeroPalacePre`、`BigPassPanel`、`KnighthoodPanel`、`ForgePre`、`ActivityAuguryPre`、`FindTreasurePre`、`WelfarePre`、`firstRechargePre`、`StarUpPre`、`ActivityPre`、`ActivityForecastPre`、`BraveManTriedPassInfoPre`、`HeroShowPre`、`DrawRewardPreviewPre`、`useprivacyPre`、`shilingPre` 加入 `data/prefab_layouts`。这些页面还未全部手工实现，但可以从主屏或预览器打开查看原始布局。
 - `HeroPalacePre` 当前预览会在 Godot 日志中报 `assets/resources/native/1d/1d9c822a-b0c7-4347-a697-1017eac7c334.png` 非 PNG/加载失败；预览仍能生成。后续需要回到资源解密/真实格式分析，确认该 native 是否仍是加密图片或需要格式转换。
 
 ## 资源替换规则
@@ -148,7 +188,7 @@
 
 已能一一走通的主流程：启动加载 -> 登录 -> 选服 -> 主城 -> 英雄列表/英雄详情、仓库、召唤、商会。
 
-已能从主屏打开但仍是 prefab 预览覆盖的入口：通行证、学院、锻造、占卜、寻星、活动、福利、首充、升星。它们已有原始 prefab layout，可作为下一阶段手工页实现依据。
+已能从主屏打开但仍是 prefab 预览覆盖的入口：宝具、通行证、学院、锻造、占卜、寻星、打工、每日礼包、礼包、特惠活动、限时礼包、超级钜惠、召唤卡、组队竞技、天梯、王者争霸、公会战、竟榜抽奖、食铁神兽、皮肤商店、预注册、升阶礼包、广告奖励、绑定平台、Discord活动、次元魔战、好友、邮件、排行、战报、任务、客服、活动预告、活动、福利、首充、升星。它们已有原始 prefab layout，可作为下一阶段手工页实现依据。
 
 尚未做到一一对应的主要原因：
 

@@ -217,6 +217,41 @@
     "texture_nodes": 0
   },
   {
+    "label": "挂机主线",
+    "prefab": "Prefab/guajiPanel/guajiPrefab",
+    "layout": "data/prefab_layouts/guajiPrefab.json",
+    "nodes": 95,
+    "texture_nodes": 13
+  },
+  {
+    "label": "挂机世界地图",
+    "prefab": "Prefab/guajiPanel/worldMapPre",
+    "layout": "data/prefab_layouts/worldMapPre.json",
+    "nodes": 83,
+    "texture_nodes": 0
+  },
+  {
+    "label": "挂机通关地图",
+    "prefab": "Prefab/guajiPanel/WorldtgMapPre",
+    "layout": "data/prefab_layouts/WorldtgMapPre.json",
+    "nodes": 10,
+    "texture_nodes": 3
+  },
+  {
+    "label": "挂机章节",
+    "prefab": "Prefab/guajiPanel/GuajiZhangjiePre",
+    "layout": "data/prefab_layouts/GuajiZhangjiePre.json",
+    "nodes": 7,
+    "texture_nodes": 1
+  },
+  {
+    "label": "挂机升级",
+    "prefab": "Prefab/guajiPanel/GuajiupPre",
+    "layout": "data/prefab_layouts/GuajiupPre.json",
+    "nodes": 6,
+    "texture_nodes": 1
+  },
+  {
     "label": "活动面板",
     "prefab": "Prefab/ActivityPanel/ActivityPre",
     "layout": "data/prefab_layouts/ActivityPre.json",
@@ -266,6 +301,181 @@
     "texture_nodes": 1
   },
   {
+    "label": "打工",
+    "prefab": "Prefab/TaskPanel/ActivityYiwuPre",
+    "layout": "data/prefab_layouts/ActivityYiwuPre.json",
+    "nodes": 71,
+    "texture_nodes": 4
+  },
+  {
+    "label": "打工页签",
+    "prefab": "Prefab/TaskPanel/ActivityYiwuTapPre",
+    "layout": "data/prefab_layouts/ActivityYiwuTapPre.json",
+    "nodes": 50,
+    "texture_nodes": 3
+  },
+  {
+    "label": "打工任务",
+    "prefab": "Prefab/ActivityPanel/hitworkactivity/HitWorkPre",
+    "layout": "data/prefab_layouts/HitWorkPre.json",
+    "nodes": 101,
+    "texture_nodes": 6
+  },
+  {
+    "label": "每日礼包",
+    "prefab": "Prefab/DailyGift/DailyGiftPre",
+    "layout": "data/prefab_layouts/DailyGiftPre.json",
+    "nodes": 76,
+    "texture_nodes": 3
+  },
+  {
+    "label": "礼包",
+    "prefab": "Prefab/Gift/GiftPre",
+    "layout": "data/prefab_layouts/GiftPre.json",
+    "nodes": 136,
+    "texture_nodes": 5
+  },
+  {
+    "label": "特惠活动",
+    "prefab": "Prefab/ActivityPanel/guoqingactivity/GuoqingActivity",
+    "layout": "data/prefab_layouts/GuoqingActivity.json",
+    "nodes": 175,
+    "texture_nodes": 9
+  },
+  {
+    "label": "限时礼包",
+    "prefab": "Prefab/ActivityPanel/jueduiactivity/ActivityXianShiLiHePre",
+    "layout": "data/prefab_layouts/ActivityXianShiLiHePre.json",
+    "nodes": 11,
+    "texture_nodes": 0
+  },
+  {
+    "label": "特惠礼盒",
+    "prefab": "Prefab/ActivityPanel/jueduiactivity/ActivityTeHuiLiHePre",
+    "layout": "data/prefab_layouts/ActivityTeHuiLiHePre.json",
+    "nodes": 11,
+    "texture_nodes": 0
+  },
+  {
+    "label": "开服战神",
+    "prefab": "Prefab/ActivityPanel/kaifuactivity/zhanshencomePre",
+    "layout": "data/prefab_layouts/zhanshencomePre.json",
+    "nodes": 34,
+    "texture_nodes": 3
+  },
+  {
+    "label": "超级钜惠",
+    "prefab": "Prefab/ActivityPanel/JuHuiActivity/JuHuiActivityPre",
+    "layout": "data/prefab_layouts/JuHuiActivityPre.json",
+    "nodes": 13,
+    "texture_nodes": 3
+  },
+  {
+    "label": "召唤卡",
+    "prefab": "Prefab/ActivityPanel/ZhaoHuanActivity/ZhaoHuanActivityPre",
+    "layout": "data/prefab_layouts/ZhaoHuanActivityPre.json",
+    "nodes": 24,
+    "texture_nodes": 2
+  },
+  {
+    "label": "竟榜抽奖",
+    "prefab": "Prefab/pvpActivityPanel/pvpActivityPanel",
+    "layout": "data/prefab_layouts/pvpActivityPanel.json",
+    "nodes": 100,
+    "texture_nodes": 8
+  },
+  {
+    "label": "食铁神兽",
+    "prefab": "Prefab/stssActivityPrefab/oldgodsgraceentrancePre",
+    "layout": "data/prefab_layouts/oldgodsgraceentrancePre.json",
+    "nodes": 68,
+    "texture_nodes": 4
+  },
+  {
+    "label": "预注册",
+    "prefab": "Prefab/ActivityPanel/PreRegAvtivity/PreRegAvtivityPre",
+    "layout": "data/prefab_layouts/PreRegAvtivityPre.json",
+    "nodes": 272,
+    "texture_nodes": 12
+  },
+  {
+    "label": "升阶礼包",
+    "prefab": "Prefab/ElevatePanel/ElevatePre",
+    "layout": "data/prefab_layouts/ElevatePre.json",
+    "nodes": 16,
+    "texture_nodes": 3
+  },
+  {
+    "label": "广告奖励",
+    "prefab": "Prefab/payPanel/AdvertisingPre",
+    "layout": "data/prefab_layouts/AdvertisingPre.json",
+    "nodes": 40,
+    "texture_nodes": 3
+  },
+  {
+    "label": "绑定平台",
+    "prefab": "Prefab/payPanel/BindPre",
+    "layout": "data/prefab_layouts/BindPre.json",
+    "nodes": 18,
+    "texture_nodes": 3
+  },
+  {
+    "label": "Discord活动",
+    "prefab": "Prefab/ActivityPanel/discordActivity/discordActivityPre",
+    "layout": "data/prefab_layouts/discordActivityPre.json",
+    "nodes": 15,
+    "texture_nodes": 3
+  },
+  {
+    "label": "次元魔战",
+    "prefab": "Prefab/MozhuPanel/moZhuPre",
+    "layout": "data/prefab_layouts/moZhuPre.json",
+    "nodes": 82,
+    "texture_nodes": 7
+  },
+  {
+    "label": "好友",
+    "prefab": "Prefab/FriendPanel/FriendPanel",
+    "layout": "data/prefab_layouts/FriendPanel.json",
+    "nodes": 78,
+    "texture_nodes": 4
+  },
+  {
+    "label": "邮件",
+    "prefab": "Prefab/EmailPanel/EmailPre",
+    "layout": "data/prefab_layouts/EmailPre.json",
+    "nodes": 45,
+    "texture_nodes": 4
+  },
+  {
+    "label": "排行",
+    "prefab": "Prefab/rank/RankListPanel",
+    "layout": "data/prefab_layouts/RankListPanel.json",
+    "nodes": 7,
+    "texture_nodes": 3
+  },
+  {
+    "label": "战报",
+    "prefab": "Prefab/WarReport/WarReportPanel",
+    "layout": "data/prefab_layouts/WarReportPanel.json",
+    "nodes": 67,
+    "texture_nodes": 5
+  },
+  {
+    "label": "任务",
+    "prefab": "Prefab/TaskPanel/TaskPre",
+    "layout": "data/prefab_layouts/TaskPre.json",
+    "nodes": 67,
+    "texture_nodes": 3
+  },
+  {
+    "label": "客服",
+    "prefab": "Prefab/UserInfo/KeFuPanel",
+    "layout": "data/prefab_layouts/KeFuPanel.json",
+    "nodes": 18,
+    "texture_nodes": 0
+  },
+  {
     "label": "公会",
     "prefab": "Prefab/Guild/GuildMainPre",
     "layout": "data/prefab_layouts/GuildMainPre.json",
@@ -273,11 +483,60 @@
     "texture_nodes": 9
   },
   {
+    "label": "公会战",
+    "prefab": "Prefab/Guild/GuildWar/GuildWarHallPre",
+    "layout": "data/prefab_layouts/GuildWarHallPre.json",
+    "nodes": 166,
+    "texture_nodes": 8
+  },
+  {
     "label": "竞技",
     "prefab": "Prefab/JingjiPrefab/JingjiPre",
     "layout": "data/prefab_layouts/JingjiPre.json",
     "nodes": 74,
     "texture_nodes": 0
+  },
+  {
+    "label": "跨服PVP",
+    "prefab": "Prefab/KuafuPvpPane/KuafuPvpPre",
+    "layout": "data/prefab_layouts/KuafuPvpPre.json",
+    "nodes": 6,
+    "texture_nodes": 1
+  },
+  {
+    "label": "组队竞技",
+    "prefab": "Prefab/JingjiPrefab/team/teamPre",
+    "layout": "data/prefab_layouts/teamPre.json",
+    "nodes": 121,
+    "texture_nodes": 9
+  },
+  {
+    "label": "天梯",
+    "prefab": "Prefab/JingjiPrefab/tianti/tiantiPre",
+    "layout": "data/prefab_layouts/tiantiPre.json",
+    "nodes": 112,
+    "texture_nodes": 10
+  },
+  {
+    "label": "王者争霸",
+    "prefab": "Prefab/JingjiPrefab/wangzhe/wangzhePre",
+    "layout": "data/prefab_layouts/wangzhePre.json",
+    "nodes": 755,
+    "texture_nodes": 12
+  },
+  {
+    "label": "宝具",
+    "prefab": "Prefab/TreasurePanel/TreasurePre",
+    "layout": "data/prefab_layouts/TreasurePre.json",
+    "nodes": 218,
+    "texture_nodes": 17
+  },
+  {
+    "label": "学院",
+    "prefab": "Prefab/TeachPlace/TeachListPre",
+    "layout": "data/prefab_layouts/TeachListPre.json",
+    "nodes": 23,
+    "texture_nodes": 8
   },
   {
     "label": "冒险地图顶部",
@@ -299,6 +558,13 @@
     "layout": "data/prefab_layouts/SkyCityPre.json",
     "nodes": 46,
     "texture_nodes": 6
+  },
+  {
+    "label": "皮肤商店",
+    "prefab": "Prefab/SkinShopPanel/SkinShopPre",
+    "layout": "data/prefab_layouts/SkinShopPre.json",
+    "nodes": 51,
+    "texture_nodes": 5
   },
   {
     "label": "通行证",
@@ -323,6 +589,13 @@
   },
   {
     "label": "占卜",
+    "prefab": "Prefab/zhanbu/zhanbuPre",
+    "layout": "data/prefab_layouts/zhanbuPre.json",
+    "nodes": 428,
+    "texture_nodes": 14
+  },
+  {
+    "label": "活动占卜",
     "prefab": "Prefab/ActivityPanel/changzhuactivity/ActivityAuguryPre",
     "layout": "data/prefab_layouts/ActivityAuguryPre.json",
     "nodes": 34,
