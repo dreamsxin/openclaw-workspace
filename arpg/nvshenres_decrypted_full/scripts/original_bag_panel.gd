@@ -23,6 +23,8 @@ var item_grid: GridContainer
 var detail_root: Control
 var list_panel: Control
 var tab_buttons: Array[Button] = []
+var header_actions: Dictionary = {}
+var bottom_actions: Dictionary = {}
 var equipment_icons: Array = []
 var selected_tab := 0
 var selected_item := 0
@@ -115,8 +117,10 @@ func _build_main_panel() -> void:
 	header.size = Vector2(460, 48)
 	header.add_theme_constant_override("separation", 12)
 	list_panel.add_child(header)
-	_add_action_button(header, "神器图鉴")
-	_add_action_button(header, "一键合成")
+	header_actions["sell_equip"] = _add_action_button(header, "出售装备", func(): _open_prefab_layout("背包出售装备"))
+	header_actions["shenqi"] = _add_action_button(header, "神器图鉴", func(): _open_prefab_layout("神器图鉴"))
+	header_actions["synthesis"] = _add_action_button(header, "一键合成", func(): _open_prefab_layout("背包合成提示"))
+	header_actions["grid_box"] = _add_action_button(header, "自选礼包", func(): _open_prefab_layout("背包格子面板"))
 	var count := Label.new()
 	count.text = "容量  1/200"
 	count.custom_minimum_size = Vector2(150, 42)
@@ -159,14 +163,16 @@ func _build_actions() -> void:
 	actions.size = Vector2(330, 46)
 	actions.add_theme_constant_override("separation", 12)
 	design_root.add_child(actions)
-	_add_action_button(actions, "使用")
-	_add_action_button(actions, "出售")
-	_add_action_button(actions, "一键出售")
+	bottom_actions["use"] = _add_action_button(actions, "使用", func(): _open_prefab_layout("背包批量使用"))
+	bottom_actions["sell"] = _add_action_button(actions, "出售", func(): _open_prefab_layout("背包出售物品"))
+	bottom_actions["get"] = _add_action_button(actions, "获取", func(): _open_prefab_layout("背包获取途径"))
 
-func _add_action_button(parent: Container, text: String) -> Button:
+func _add_action_button(parent: Container, text: String, callback := Callable()) -> Button:
 	var button := Button.new()
 	button.text = text
 	button.custom_minimum_size = Vector2(104, 40)
+	if callback.is_valid():
+		button.pressed.connect(callback)
 	parent.add_child(button)
 	return button
 
@@ -241,6 +247,7 @@ func _select_item(index: int) -> void:
 	selected_item = index
 	_refresh_items()
 	_refresh_detail()
+	_open_prefab_layout(_detail_layout_for_tab())
 
 func _refresh_detail() -> void:
 	for child in detail_root.get_children():
@@ -268,6 +275,34 @@ func _refresh_detail() -> void:
 func _update_tabs() -> void:
 	for i in tab_buttons.size():
 		tab_buttons[i].disabled = i == selected_tab
+	if header_actions.has("sell_equip"):
+		header_actions["sell_equip"].visible = selected_tab == 0
+	if header_actions.has("shenqi"):
+		header_actions["shenqi"].visible = selected_tab == 4
+	if header_actions.has("synthesis"):
+		header_actions["synthesis"].visible = selected_tab == 2
+	if header_actions.has("grid_box"):
+		header_actions["grid_box"].visible = selected_tab == 1
+	if bottom_actions.has("use"):
+		bottom_actions["use"].visible = selected_tab in [1, 2]
+	if bottom_actions.has("sell"):
+		bottom_actions["sell"].visible = selected_tab in [0, 1, 3]
+	if bottom_actions.has("get"):
+		bottom_actions["get"].visible = selected_tab in [1, 2, 3, 4]
+
+func _detail_layout_for_tab() -> String:
+	if selected_tab == 0:
+		return "背包出售物品"
+	if selected_tab == 2:
+		return "背包合成提示"
+	if selected_tab == 3:
+		return "背包符文提示"
+	if selected_tab == 4:
+		return "神器图鉴"
+	return "背包获取途径"
+
+func _open_prefab_layout(layout: String) -> void:
+	Navigation.go_with_args(PREFAB_PREVIEW, {"layout": layout})
 
 func _add_label(parent: Control, text: String, position: Vector2, size: Vector2, font_size: int, color: Color) -> void:
 	var label := Label.new()

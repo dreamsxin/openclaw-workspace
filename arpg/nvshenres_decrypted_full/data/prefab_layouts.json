@@ -511,11 +511,88 @@
     "texture_nodes": 8
   },
   {
+    "label": "背包格子面板",
+    "prefab": "Prefab/BagPanel/GridBoxPre",
+    "layout": "data/prefab_layouts/GridBoxPre.json",
+    "nodes": 29,
+    "texture_nodes": 6
+  },
+  {
     "label": "背包格子",
     "prefab": "Prefab/BagPanel/GridBoxItemPre",
     "layout": "data/prefab_layouts/GridBoxItemPre.json",
     "nodes": 6,
     "texture_nodes": 1
+  },
+  {
+    "label": "背包出售装备",
+    "prefab": "Prefab/BagPanel/BagSellEquipPre",
+    "layout": "data/prefab_layouts/BagSellEquipPre.json",
+    "nodes": 25,
+    "texture_nodes": 4
+  },
+  {
+    "label": "背包出售物品",
+    "prefab": "Prefab/BagPanel/sellGridPre",
+    "layout": "data/prefab_layouts/sellGridPre.json",
+    "nodes": 21,
+    "texture_nodes": 5
+  },
+  {
+    "label": "背包批量使用",
+    "prefab": "Prefab/BagPanel/piliangTipsPre",
+    "layout": "data/prefab_layouts/piliangTipsPre.json",
+    "nodes": 26,
+    "texture_nodes": 5
+  },
+  {
+    "label": "背包获取途径",
+    "prefab": "Prefab/BagPanel/huoquTipsPre",
+    "layout": "data/prefab_layouts/huoquTipsPre.json",
+    "nodes": 12,
+    "texture_nodes": 1
+  },
+  {
+    "label": "背包获取途径项",
+    "prefab": "Prefab/BagPanel/huoquItemPre",
+    "layout": "data/prefab_layouts/huoquItemPre.json",
+    "nodes": 8,
+    "texture_nodes": 1
+  },
+  {
+    "label": "背包合成提示",
+    "prefab": "Prefab/BagPanel/hechengTipsPre",
+    "layout": "data/prefab_layouts/hechengTipsPre.json",
+    "nodes": 17,
+    "texture_nodes": 5
+  },
+  {
+    "label": "背包格子提示",
+    "prefab": "Prefab/BagPanel/GridTipsPre",
+    "layout": "data/prefab_layouts/GridTipsPre.json",
+    "nodes": 25,
+    "texture_nodes": 2
+  },
+  {
+    "label": "背包符文提示",
+    "prefab": "Prefab/BagPanel/fuwenTipsPre",
+    "layout": "data/prefab_layouts/fuwenTipsPre.json",
+    "nodes": 57,
+    "texture_nodes": 1
+  },
+  {
+    "label": "背包购买格子",
+    "prefab": "Prefab/BagPanel/buyGridPre",
+    "layout": "data/prefab_layouts/buyGridPre.json",
+    "nodes": 20,
+    "texture_nodes": 3
+  },
+  {
+    "label": "神器图鉴",
+    "prefab": "Prefab/HeroPanel/ShenQiHandBookPre",
+    "layout": "data/prefab_layouts/ShenQiHandBookPre.json",
+    "nodes": 26,
+    "texture_nodes": 4
   },
   {
     "label": "抽卡",
