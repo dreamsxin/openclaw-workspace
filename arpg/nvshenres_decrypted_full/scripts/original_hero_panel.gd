@@ -257,8 +257,8 @@ func _build_side_panel() -> void:
 	var action_tooltips := ["全屏预览", "评论", "分享/锁定"]
 	var action_callbacks := [
 		_toggle_full_preview,
-		func(): _show_local_notice("源码 imgPingLun -> HeroCommentPanel，离线 Demo 已记录评论入口"),
-		func(): _show_local_notice("源码 imgFenXiang/imgSuo -> 分享或锁定，离线 Demo 已模拟")
+		func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "英雄评论"}),
+		_show_share_menu
 	]
 	for i in 3:
 		var icon := Button.new()
@@ -523,6 +523,33 @@ func _show_local_notice(text: String) -> void:
 		if local_notice_overlay:
 			local_notice_overlay.visible = false
 	)
+
+func _show_share_menu() -> void:
+	var menu := PopupPanel.new()
+	menu.exclusive = false
+	menu.size = Vector2(188, 178)
+	var box := VBoxContainer.new()
+	box.position = Vector2(12, 12)
+	box.size = Vector2(164, 154)
+	menu.add_child(box)
+	var title := _add_label(box, "分享", Vector2.ZERO, Vector2(164, 26), 18, Color(0.95, 0.88, 0.62))
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var items := [
+		["跨服频道", "源码 kuaiFuShare -> CHAT_TYPE_MIDDLE"],
+		["世界频道", "源码 worldShare -> CHAT_TYPE_WORLD"],
+		["公会频道", "源码 gongHuiShare -> CHAT_TYPE_UNION"],
+	]
+	for item in items:
+		var btn := Button.new()
+		btn.text = item[0]
+		btn.custom_minimum_size = Vector2(164, 34)
+		btn.pressed.connect(func(message := str(item[1]), popup := menu):
+			popup.queue_free()
+			_show_local_notice(message)
+		)
+		box.add_child(btn)
+	design_root.add_child(menu)
+	menu.popup(Rect2(Vector2(98, 318), menu.size))
 
 func _select_hero(index: int) -> void:
 	selected_hero = index

@@ -198,6 +198,7 @@
 - 2026-05-20 英雄培养按钮补查：`HeroMainPanel.btnUpLv()` 走 `CG_HERO_LEVEL_UP()`，`btnJinJie()` 走 `CG_HERO_UPGRADE_QUERY()` 后打开 `HeroUpLvPanel`/`HeroBreakthroughPanel`，`btnReset()` 打开 `HeroResetPanel`；相关 prefab 是 `HeroUpLvPre`、`HeroBreakthroughPre`、`HeroResetPre`，升级链还会预加载 `HeroGetNewSkillsPre`。已导出这 4 个 prefab，Godot 培养页按钮改为进入对应原始预览。
 - 2026-05-20 英雄装备页入口补查：`updateEquipBox()` 给 `equipBox1..6` 绑定 `equipBoxClick()`，空装备位进入 `HeroEquipChangePanel/HeroEquipChangePre`，符文位 `fuwenIcon1/2` 绑定 `onFuWenGridClick()`，空符文位进入 `SelectFuwenPanel/SelectFuwenPre`，符文刷新面板为 `FuwenRefreshPre`。Godot 装备格点击已接到“英雄装备替换”，符文位点击已接到“符文选择”，并导出 `SelectFuwenPre/FuwenRefreshPre`。
 - 2026-05-20 英雄战意节点入口补查：`HeroMainPanel.initButtonEvent()` 给 `zhanyi0..2` 绑定 `onZhanyiClick()`；源码先判断 `imgLock.active`，锁定时提示 `lblLock`，未锁定时扫描 `this.skills`，已有 `index == t + 1` 则调用 `CG_BINGSHU_LEVELUP_QUERY()` 进入 `HeroWarpathUpPanel`，没有则设置 `HeroWarpathGraspPanel.index = t + 1` 并打开 `HeroWarpathGraspPre`。Godot 战意节点已补透明点击区：锁定显示本地星级提示，解锁空位打开“战意领悟”，并提供“战意升级”预览入口覆盖已学习分支。
+- 2026-05-20 英雄侧栏评论/分享补查：`btnComment()` 根据当前 `dataHero.index` 从 `HeroListControl.dataArr` 找英雄并打开 `HeroCommentPanel/HeroCommentPre`；`btnShare()` 不打开新 prefab，而是激活 `HeroSidePrefab.fenxiangBox`，`kuaiFuShare/worldShare/gongHuiShare` 分别调用聊天分享类型。已导出 `HeroCommentPre`，Godot 侧栏评论按钮接到“英雄评论”预览，分享按钮改为本地三选菜单。同步导出 `SkinShowPre` 为“衣装展示”，用于后续衣装战斗效果预览链。
 
 ## 资源替换规则
 
