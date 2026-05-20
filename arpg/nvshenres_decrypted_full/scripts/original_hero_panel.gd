@@ -889,7 +889,7 @@ func _add_star_tab(root: Control, y_base := 126) -> void:
 		var material_label := _add_label(root, material_data[i][2], _detail_local(material_data[i][1]), Vector2(92, 46), 16, Color(0.36, 0.34, 0.42))
 		material_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		material_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_add_action_button(root, "英魂", _detail_local(Vector2(433.192, 537.997)), Vector2(130, 45), func(): Navigation.go_with_args(PREFAB_PREVIEW, {"prefab": "英魂殿"}), "image/common/cm_btn_LvSe1")
+	_add_action_button(root, "英魂", _detail_local(Vector2(433.192, 537.997)), Vector2(130, 45), func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "英魂殿"}), "image/common/cm_btn_LvSe1")
 	_add_action_button(root, "升星", _detail_local(Vector2(532.181, 548.426)), Vector2(292, 65), _show_star_success, "image/en/HeroPanel/yx_btn_ShengXing")
 
 func _add_will_tab(root: Control, y_base := 126) -> void:
