@@ -652,9 +652,15 @@ func _refresh_side_panel() -> void:
 	var hero: Dictionary = _current_hero()
 	var name_label := side_panel.get_node_or_null("hero_name") as Label
 	if name_label:
+		var name_rect := _mode_layout_rect("lblHeroName", Rect2(Vector2(58.21, 82.272), Vector2(96.0, 30.24)))
+		name_label.position = name_rect.position
+		name_label.size = name_rect.size + Vector2(80, 0)
 		name_label.text = str(hero.get("name", hero.get("id", "")))
 	var job_label := side_panel.get_node_or_null("hero_job") as Label
 	if job_label:
+		var nickname_rect := _mode_nickname_rect()
+		job_label.position = nickname_rect.position
+		job_label.size = nickname_rect.size + Vector2(80, 0)
 		job_label.text = str(hero.get("job", "未知"))
 	if power_label:
 		power_label.text = "⚡ %s" % hero.get("power", "0")
@@ -675,7 +681,8 @@ func _refresh_side_panel() -> void:
 	head_root.name = "dynamic_head"
 	head_root.position = Vector2.ZERO
 	side_panel.add_child(head_root)
-	_add_named_image_to(head_root, "image/head/%s" % hero.get("id", ""), Vector2(25, 83), Vector2(36, 36))
+	var head_position := name_label.position - Vector2(37, -1) if name_label else Vector2(25, 83)
+	_add_named_image_to(head_root, "image/head/%s" % hero.get("id", ""), head_position, Vector2(36, 36))
 	_refresh_head_list()
 
 func _refresh_head_list() -> void:
@@ -1241,6 +1248,20 @@ func _mode_layout_rect(name: String, fallback: Rect2) -> Rect2:
 	var source := book_layout_nodes if detail_mode == "book" else main_layout_nodes
 	return _layout_rect_from(source, name, fallback)
 
+func _mode_nickname_rect() -> Rect2:
+	if detail_mode == "book":
+		return _layout_rect_from(book_layout_nodes, "lblNickname", Rect2(Vector2(61.311, 108.366), Vector2(72.0, 22.68)))
+	return _layout_rect_from(main_layout_nodes, "lblNickName", Rect2(Vector2(58.21, 108.679), Vector2(72.0, 22.68)))
+
+func _hero_display_target(hero: Dictionary) -> Rect2:
+	if detail_mode == "main":
+		var skin_rect := _layout_rect_from(main_layout_nodes, "skinBodyBox", Rect2())
+		if skin_rect.size.x > 0.0 and skin_rect.size.y > 0.0:
+			return Rect2(skin_rect.position + Vector2(20, 20), skin_rect.size - Vector2(40, 40))
+	if hero.has("target"):
+		return hero.get("target", Rect2(Vector2(252, 34), Vector2(526, 626)))
+	return Rect2(Vector2(252, 34), Vector2(526, 626))
+
 func _layout_rect_from(source: Dictionary, name: String, fallback: Rect2) -> Rect2:
 	if not source.has(name):
 		return fallback
@@ -1255,9 +1276,7 @@ func _fit_spine(hero: Dictionary) -> void:
 	var bounds: Rect2 = hero_spine.get_draw_bounds()
 	if bounds.size.x <= 0.0 or bounds.size.y <= 0.0:
 		return
-	var target: Rect2 = hero.get("target", Rect2(Vector2(252, 34), Vector2(526, 626)))
-	if not hero.has("target"):
-		target = Rect2(Vector2(252, 34), Vector2(526, 626))
+	var target := _hero_display_target(hero)
 	if full_preview:
 		target = Rect2(Vector2(300, 28), Vector2(680, 660))
 	var scale_value: float = min(target.size.x / bounds.size.x, target.size.y / bounds.size.y)
