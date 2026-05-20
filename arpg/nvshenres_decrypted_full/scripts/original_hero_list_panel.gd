@@ -253,7 +253,7 @@ func _build_bottom_actions() -> void:
 	detail_label = _add_label(bottom, "点击英雄卡片进入 HeroMainPre 培养页；图鉴卡片进入 HeroBookDetailPre。", Vector2(170, 646), Vector2(640, 26), 16, Color(0.78, 0.90, 1.0))
 	detail_label.visible = false
 	_build_bottom_nav(bottom)
-	_add_action_button(bottom, "arrange", Vector2(1188, 512), Vector2(56, 44), func(): _select_side_tab(4))
+	_add_action_button(bottom, "arrange", Vector2(1188, 512), Vector2(56, 44), func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "布阵"}))
 
 func _build_bottom_nav(parent: Control) -> void:
 	var items := [

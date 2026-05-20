@@ -64,6 +64,7 @@ PREFABS = [
     ("抽卡英雄展示", "Prefab/DrawCard/HeroShowPre"),
     ("抽卡奖励预览", "Prefab/DrawCard/DrawRewardPreviewPre"),
     ("战斗", "Prefab/Battle/battle"),
+    ("布阵", "Prefab/CombatPrefab/CombatFormPre"),
     ("挂机主线", "Prefab/guajiPanel/guajiPrefab"),
     ("挂机世界地图", "Prefab/guajiPanel/worldMapPre"),
     ("挂机世界地图关卡", "Prefab/guajiPanel/worldMapItemPre"),
