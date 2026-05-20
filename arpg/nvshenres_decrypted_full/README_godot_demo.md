@@ -97,6 +97,7 @@ Godot 当前工程已接入项目内轻量 Spine runtime，用于本地预览角
 - 独立商店页按 `ShopPanel.setData()` 的运行逻辑手工实现：顶部货币条、基础/战斗商城主页签、右侧商店类型、两列商品列表、刷新条和本地购买弹窗；商品图标从 `data/equipment_icon_index.json` 读取真实 SpriteFrame，商品卡尺寸和主要元素坐标参考 `GoodsItemPre`，购买确认框参考 `ShopBuyEquitPre`。
 - 商店页已继续接入子 prefab 的真实 SpriteFrame：`ShopItemPre` 的右侧页签图标，`GoodsItemPre` 的折扣/稀有标签，`ShopBuyEquitPre` 的购买确认背景、标题线、加减按钮、滑条和绿色确认按钮。按钮文字不要直接放在 `Button.text` 上被子贴图覆盖，当前改为 SpriteFrame 底图 + 独立 `Label`。
 - 商店页坐标依据：`ShopPre.goodsScrollView` 是 `[269.456,64.114,834,662]`，内部 `view` 是 `[336.456,179.775,700,550]`，所以 Godot 商品滚动区使用 `panel=(269.456,64.114)`、`scroll=(67,115.661)`、两列 `350x120` 且列间距为 0；`mainTypeNode/MainItemPre1/2` 对应主页签 `x=312.671/547.888,y=86.602,w=150,h=40`；`shopTypeScrollView` 是 `[1069,138.388,250,480]`，`ShopItemPre` 单项 `180x64`，源码 `showShopData()` 每项向下间隔 `height+30`；`freeRefresh/chargeRefresh` 原始按钮宽约 `196x54`，运行时根据 `refreshType` 切换显示。
+- 商店顶部货币条继续按 `MoneyItemPre` 收敛：根节点 `172x36`，背景使用 `image/common/cm_frame_HuoBi2`，SpriteFrame 位于 `assets/resources/native/15/15a1d9111.png` rect `[106,400,179,36]` 且 `rotated=true`；加号使用 `cm_btn_JiaHao`。右侧商店分类增加选中高亮，不再只依赖 Godot disabled 状态。
 - 主城右侧九个入口已修复可点击性：可视斜条继续按原始布局旋转显示，点击使用独立顶层矩形命中层，并在 `_input` 中按设计坐标分发，避免旋转 Control 和角色 hit 区截获鼠标事件；红点也移到图标右上角，避免遮住入口图标。
 - 主城底部导航也使用独立命中层和 `_input` 坐标兜底；底部“英雄”按钮已验证不会再被主城角色 Spine/角色点击区挡住，回归参数为 `--home-click-at 359,654 --capture-hero-list <png>`。
 - 主屏入口回归命令示例：

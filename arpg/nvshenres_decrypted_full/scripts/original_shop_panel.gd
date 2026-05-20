@@ -9,6 +9,8 @@ const MONEY_DIAMOND := "image/equipment/102"
 const SHOP_TAG_ATLAS := "res://assets/resources/native/18/184257350.png"
 const SHOP_TAG_DISCOUNT_RECT := Rect2i(327, 770, 88, 22)
 const SHOP_TAG_RARE_RECT := Rect2i(238, 738, 109, 26)
+const MONEY_ITEM_BG_ATLAS := "res://assets/resources/native/15/15a1d9111.png"
+const MONEY_ITEM_BG_RECT := Rect2i(106, 400, 179, 36)
 const COMMON_DISABLED_ATLAS := "res://assets/resources/native/71/71561142-4c83-4933-afca-cb7a17f67053.png"
 const COMMON_DISABLED_RECT := Rect2i(0, 0, 40, 40)
 const DIALOG_BG_ATLAS := "res://assets/resources/native/e8/e851e89b-faa2-4484-bea6-5c01dd9f06e2.png"
@@ -136,26 +138,21 @@ func _build_money_bar() -> void:
 
 func _add_money_item(parent: Container, icon_name: String, value: String) -> void:
 	var box := Control.new()
-	box.custom_minimum_size = Vector2(194, 42)
+	box.custom_minimum_size = Vector2(179, 42)
 	parent.add_child(box)
-	var bg := ColorRect.new()
-	bg.position = Vector2(18, 4)
-	bg.size = Vector2(164, 34)
-	bg.color = Color(0.025, 0.028, 0.04, 0.76)
-	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	box.add_child(bg)
+	_add_sprite_frame_image(box, MONEY_ITEM_BG_ATLAS, MONEY_ITEM_BG_RECT, Vector2.ZERO, Vector2(179, 36), true, Vector2i(179, 36), Vector2.ZERO, TextureRect.STRETCH_SCALE)
 	var icon := TextureRect.new()
-	icon.position = Vector2(0, -4)
-	icon.size = Vector2(52, 52)
+	icon.position = Vector2(5, 2)
+	icon.size = Vector2(36, 36)
 	icon.texture = _texture_for_named_resource(icon_name)
 	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	box.add_child(icon)
-	_add_label(box, value, Vector2(58, 7), Vector2(88, 28), 18, Color(0.96, 0.9, 0.72), HORIZONTAL_ALIGNMENT_RIGHT)
+	_add_label(box, value, Vector2(46, 5), Vector2(90, 28), 18, Color(0.96, 0.9, 0.72), HORIZONTAL_ALIGNMENT_RIGHT)
 	var plus := Button.new()
 	plus.text = ""
-	plus.position = Vector2(152, 7)
+	plus.position = Vector2(144, 4)
 	plus.size = Vector2(30, 28)
 	box.add_child(plus)
 	_add_sprite_frame_image(plus, PLUS_ATLAS, PLUS_RECT, Vector2(3, 2), Vector2(24, 24), false, Vector2i(24, 24), Vector2.ZERO, TextureRect.STRETCH_KEEP_ASPECT_CENTERED)
@@ -301,8 +298,9 @@ func _refresh_shop_type_tabs() -> void:
 		button.pressed.connect(_select_shop_type.bind(int(item.type)))
 		shop_type_box.add_child(button)
 		shop_type_buttons.append(button)
-		_add_shop_type_button_content(button, item)
-		if selected_shop_type == int(item.type):
+		var selected := selected_shop_type == int(item.type)
+		_add_shop_type_button_content(button, item, selected)
+		if selected:
 			button.disabled = true
 
 func _refresh_main_type_tabs() -> void:
@@ -444,7 +442,13 @@ func _add_count_button(parent: Control, text: String, position: Vector2, callbac
 		button.move_child(button.get_child(button.get_child_count() - 1), 0)
 	_add_center_label(button, text, 18 if text != "MAX" else 14, Color(0.95, 1.0, 0.92))
 
-func _add_shop_type_button_content(button: Button, item: Dictionary) -> void:
+func _add_shop_type_button_content(button: Button, item: Dictionary, selected := false) -> void:
+	if selected:
+		var selected_bg := ColorRect.new()
+		selected_bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		selected_bg.color = Color(0.78, 0.68, 0.46, 0.22)
+		selected_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		button.add_child(selected_bg)
 	_add_sprite_frame_image(button, SHOP_TAG_ATLAS, SHOP_SEPARATOR_RECT, Vector2(0, 8), Vector2(4, 48), false, Vector2i(2, 46), Vector2.ZERO, TextureRect.STRETCH_SCALE)
 	var icon := TextureRect.new()
 	icon.position = Vector2(12, 2)
@@ -454,7 +458,7 @@ func _add_shop_type_button_content(button: Button, item: Dictionary) -> void:
 	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	button.add_child(icon)
-	_add_label(button, str(item.label), Vector2(70, 13), Vector2(96, 34), 21, Color(0.92, 0.88, 0.76), HORIZONTAL_ALIGNMENT_CENTER)
+	_add_label(button, str(item.label), Vector2(70, 13), Vector2(96, 34), 21, Color(1.0, 0.9, 0.58) if selected else Color(0.92, 0.88, 0.76), HORIZONTAL_ALIGNMENT_CENTER)
 
 func _close_buy_dialog() -> void:
 	if buy_dialog:
