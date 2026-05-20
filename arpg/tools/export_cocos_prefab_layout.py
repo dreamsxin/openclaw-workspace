@@ -47,6 +47,8 @@ PREFABS = [
     ("英雄新技能", "Prefab/HeroPanel/HeroGetNewSkillsPre"),
     ("英雄装备子页", "Prefab/HeroPanel/zhuangbeiBox"),
     ("英雄装备替换", "Prefab/HeroPanel/HeroEquipChangePre"),
+    ("符文选择", "Prefab/FuWen/SelectFuwenPre"),
+    ("符文刷新", "Prefab/FuWen/FuwenRefreshPre"),
     ("英雄升星子页", "Prefab/HeroPanel/shengxingBox"),
     ("英雄升星弹窗", "Prefab/HeroPanel/HeroUpgradeStarPre"),
     ("英雄战意子页", "Prefab/HeroPanel/zhanyiBox"),

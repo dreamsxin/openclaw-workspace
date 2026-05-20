@@ -832,6 +832,12 @@ func _add_equipment_tab(root: Control, y_base := 126) -> void:
 		slot.position = pos
 		slot.size = Vector2(94, 94)
 		root.add_child(slot)
+		var slot_hit := Button.new()
+		slot_hit.text = ""
+		slot_hit.flat = true
+		slot_hit.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		slot_hit.pressed.connect(func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "英雄装备替换"}))
+		slot.add_child(slot_hit)
 		var slot_bg := ColorRect.new()
 		slot_bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 		slot_bg.color = Color(0.03, 0.035, 0.055, 0.72)
@@ -856,6 +862,12 @@ func _add_equipment_tab(root: Control, y_base := 126) -> void:
 		frame.position = _detail_local(item[1])
 		frame.size = Vector2(88, 87)
 		root.add_child(frame)
+		var frame_hit := Button.new()
+		frame_hit.text = ""
+		frame_hit.flat = true
+		frame_hit.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		frame_hit.pressed.connect(func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "符文选择"}))
+		frame.add_child(frame_hit)
 		_add_named_image_to(frame, "image/en/HeroPanel/yx_frame_ZBBai", Vector2.ZERO, frame.size)
 		if bool(item[3]):
 			_add_named_image_to(frame, "image/en/HeroPanel/yx_frame_JiNeng", Vector2(19, 18), Vector2(50, 50))

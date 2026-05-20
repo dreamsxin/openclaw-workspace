@@ -196,6 +196,7 @@
 - 2026-05-20 英雄列表页签补查：`HeroListPanel.showTab()` 中 `menuType=3/4/5` 并不会跳出英雄列表，而是分别把 `HeroLevelSharedPre`、`HeroNormalarrayPre`、`HeroStarPre` 实例化到 `heroLevelShared/normalarrayNode/starNode`；只有 `btnYingHun` 调 `openHeroPalacePanel()` 打开独立英魂殿。Godot 英雄列表已改为在列表内容区嵌入这三个导出 prefab，英魂页签继续进入 `HeroPalacePre` 预览。
 - 2026-05-20 英雄列表 `arrange/btnBuZhen` 补查：`btnBuZhen.on(... openBuZhen)` 设置 `CombatControl._formation = CmbFormation.FSZ` 后调用 `PanelManager.openBuzhen(... TYPE_COMBAT_TYPE1 ...)`，不是右侧 `btnNormalarray/changeTab4` 法阵页签。已导出 `Prefab/CombatPrefab/CombatFormPre` 为“布阵”，Godot 右下 `arrange` 改为打开布阵预览。
 - 2026-05-20 英雄培养按钮补查：`HeroMainPanel.btnUpLv()` 走 `CG_HERO_LEVEL_UP()`，`btnJinJie()` 走 `CG_HERO_UPGRADE_QUERY()` 后打开 `HeroUpLvPanel`/`HeroBreakthroughPanel`，`btnReset()` 打开 `HeroResetPanel`；相关 prefab 是 `HeroUpLvPre`、`HeroBreakthroughPre`、`HeroResetPre`，升级链还会预加载 `HeroGetNewSkillsPre`。已导出这 4 个 prefab，Godot 培养页按钮改为进入对应原始预览。
+- 2026-05-20 英雄装备页入口补查：`updateEquipBox()` 给 `equipBox1..6` 绑定 `equipBoxClick()`，空装备位进入 `HeroEquipChangePanel/HeroEquipChangePre`，符文位 `fuwenIcon1/2` 绑定 `onFuWenGridClick()`，空符文位进入 `SelectFuwenPanel/SelectFuwenPre`，符文刷新面板为 `FuwenRefreshPre`。Godot 装备格点击已接到“英雄装备替换”，符文位点击已接到“符文选择”，并导出 `SelectFuwenPre/FuwenRefreshPre`。
 
 ## 资源替换规则
 

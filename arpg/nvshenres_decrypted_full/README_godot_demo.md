@@ -204,6 +204,7 @@ Godot 当前工程已接入项目内轻量 Spine runtime，用于本地预览角
 - `HeroListPanel.showTab()` 的 3/4/5 页签是列表内嵌子 prefab：共鸣 `HeroLevelSharedPre`、法阵 `HeroNormalarrayPre`、星辉 `HeroStarPre`；英魂按钮是独立 `openHeroPalacePanel()`。Godot 英雄列表复用 `cocos_prefab_layer.gd` 在内容区嵌入这三个 layout，便于继续按源码收敛。
 - 英雄列表右下 `arrange` 是 `btnBuZhen/openBuZhen()` 布阵入口，走 `CombatFormPre`，不要混同为右侧“法阵”页签；法阵页签是 `btnNormalarray/changeTab4()`。
 - 英雄详情培养页的升级链已拆清：`btnUpLv -> HeroUpLvPre`，`btnJinJie -> HeroBreakthroughPre`，`btnReset -> HeroResetPre`，获得新技能弹窗为 `HeroGetNewSkillsPre`。这些都已导出，手工页按钮应优先打开真实 prefab 预览，不再只做文字提示。
+- 英雄详情装备页入口：`equipBox1..6 -> HeroEquipChangePre`，`fuwenIcon1/2 -> SelectFuwenPre`，符文刷新为 `FuwenRefreshPre`。锁定提示仍按本地状态显示，但可点击入口应保留源码链路。
 - `image/common/cm_tab1_on/off` 已通过 `tools/export_named_resource_index.py` 的 `image/common/cm_tab*` 前缀进入 `named_resource_index`，右侧页签使用原始 SpriteFrame；如果其他 common 资源缺失，优先扩展索引前缀而不是在界面脚本里写死替代图。
 - 英雄详情源码入口已拆分：`HeroMainPanel.preUrl="Prefab/HeroPanel/HeroMainPre"` 是英雄背包列表点击后的培养/装备/升星页；`HeroBookDetailPanel.preUrl="Prefab/HeroPanel/HeroBookDetailPre"` 是图鉴单卡和 `GC_HERO_BOOK_SINGLE_QUERY()` 打开的图鉴详情。Godot 详情页使用 `--hero-mode main|book` 或 `Navigation` 的 `mode` 参数区分两种入口，当前主视觉仍共用一套手工布局，后续继续分别按两个 prefab 精修。
 - `HeroMainPre` 的五个功能页签来自 `tab01..tab05`，导出坐标为 `x=608` 的中间竖列，资源由源码 `HeroMainPanel.hideTabOn()/showTab()` 指向 `image/common/cm_tab2_off/on`。Godot `main` 模式已按这些坐标和资源重排，不再使用旧版屏幕最右侧大页签。
