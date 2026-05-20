@@ -807,6 +807,7 @@ func _add_skill_column(root: Control, position: Vector2) -> void:
 		slot.position = position + Vector2(0, i * 84.574)
 		slot.size = Vector2(80, 72)
 		slot.tooltip_text = "技能 %d" % (i + 1)
+		slot.pressed.connect(func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "英雄技能提示"}))
 		root.add_child(slot)
 		var bg := ColorRect.new()
 		bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -864,7 +865,12 @@ func _add_equipment_tab(root: Control, y_base := 126) -> void:
 		slot_hit.text = ""
 		slot_hit.flat = true
 		slot_hit.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		slot_hit.pressed.connect(func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "英雄装备替换"}))
+		var layout := "英雄装备替换"
+		if i == 4:
+			layout = "英雄水晶提示" if hero_level >= 40 else "英雄水晶获取"
+		elif i == 5:
+			layout = "英雄神器"
+		slot_hit.pressed.connect(func(target_layout := layout): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": target_layout}))
 		slot.add_child(slot_hit)
 		var slot_bg := ColorRect.new()
 		slot_bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -894,7 +900,7 @@ func _add_equipment_tab(root: Control, y_base := 126) -> void:
 		frame_hit.text = ""
 		frame_hit.flat = true
 		frame_hit.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		frame_hit.pressed.connect(func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "符文选择"}))
+		frame_hit.pressed.connect(func(unlocked := bool(item[3])): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "符文选择" if unlocked else "符文刷新"}))
 		frame.add_child(frame_hit)
 		_add_named_image_to(frame, "image/en/HeroPanel/yx_frame_ZBBai", Vector2.ZERO, frame.size)
 		if bool(item[3]):
