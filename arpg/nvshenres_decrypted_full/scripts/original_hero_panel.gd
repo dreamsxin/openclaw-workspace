@@ -630,6 +630,8 @@ func _refresh_detail_background() -> void:
 				resource_path = "image/en/HeroPanel/yx_img_PeiYang"
 			1:
 				resource_path = "image/en/HeroPanel/yx_img_ZhuangBei"
+			2:
+				resource_path = "image/en/HeroPanel/yx_img_ShengXing"
 			3:
 				resource_path = "image/en/HeroPanel/yx_img_ZhanYi"
 			4:
@@ -750,13 +752,48 @@ func _add_equipment_tab(root: Control, y_base := 126) -> void:
 
 func _add_star_tab(root: Control, y_base := 126) -> void:
 	y_base = y_base
-	var title := _add_label(root, "升星数据查询中", _detail_local(Vector2(864, 240)), Vector2(270, 34), 24, Color(0.45, 0.36, 0.18))
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	var tip := _add_label(root, "源码 tab3Click 只发送 CG_HERO_JUEXING_QUERY，服务端返回后再打开升星内容。", _detail_local(Vector2(842, 286)), Vector2(314, 86), 17, Color(0.46, 0.48, 0.62))
-	tip.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	tip.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_add_progress(root, _detail_local(Vector2(872, 386)), Vector2(240, 20), 0.42, "碎片 42/100")
-	_add_action_button(root, "请求升星", _detail_local(Vector2(895, 458)), Vector2(200, 60), Callable(), "image/common/cm_btn_LvSe0")
+	var hero: Dictionary = _current_hero()
+	var labels := [
+		["等级上限", "+50", Vector2(568.115, 123.48), Vector2(667.453, 124.477)],
+		["攻        击", "+40%", Vector2(582.312, 147.565), Vector2(685.859, 149.606)],
+		["生       命", "+40%", Vector2(598.862, 173.228), Vector2(699.429, 174.233)],
+	]
+	for item in labels:
+		_add_label(root, item[0], _detail_local(item[2]), Vector2(120, 26), 17, Color(0.42, 0.45, 0.62))
+		_add_label(root, item[1], _detail_local(item[3]), Vector2(74, 26), 17, Color(0.70, 0.30, 0.52))
+	var skill_tip := _add_label(root, "提升1级", _detail_local(Vector2(702.848, 233.291)), Vector2(100, 24), 16, Color(0.45, 0.48, 0.62))
+	skill_tip.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_add_named_image_to(root, "image/common/cm_frame_JiNeng1", _detail_local(Vector2(654.191, 344.174)), Vector2(30, 30))
+	_add_label(root, "3", _detail_local(Vector2(677.728, 230.716)), Vector2(24, 30), 17, Color(0.95, 0.90, 0.64))
+	_add_label(root, "当前星级", _detail_local(Vector2(410, 336)), Vector2(120, 26), 17, Color(0.42, 0.45, 0.62))
+	_add_label(root, "%s  ->  %s" % [hero.get("stars", 5), int(hero.get("stars", 5)) + 1], _detail_local(Vector2(466, 366)), Vector2(160, 34), 25, Color(0.95, 0.82, 0.42))
+	var material_data := [
+		["heroBox1", Vector2(741.172, 501.184), "5星英雄\n(1/1)"],
+		["heroBox2", Vector2(635.408, 502.814), "5星英雄\n(0/1)"],
+		["heroBox3", Vector2(741.172, 369.755), "同阵营英雄\n(0/1)"],
+		["heroBox4", Vector2(634.331, 369.781), "进阶材料\n(42/100)"],
+	]
+	var icon_positions := [
+		Vector2(648, 405),
+		Vector2(512, 405),
+		Vector2(648, 230),
+		Vector2(512, 230),
+	]
+	for i in material_data.size():
+		var slot := Control.new()
+		slot.position = _detail_local(icon_positions[i])
+		slot.size = Vector2(74, 74)
+		root.add_child(slot)
+		if i < 3:
+			_add_head_icon(slot, hero, Vector2.ZERO, Vector2(74, 74))
+		else:
+			_add_named_image_to(slot, "image/en/HeroPanel/yx_frame_JiNeng", Vector2.ZERO, Vector2(74, 74))
+			_add_named_image_to(slot, "image/en/HeroPanel/yx_icon_zhuangbei4", Vector2(14, 14), Vector2(46, 46))
+		var material_label := _add_label(root, material_data[i][2], _detail_local(material_data[i][1]), Vector2(92, 46), 16, Color(0.36, 0.34, 0.42))
+		material_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		material_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_add_action_button(root, "英魂", _detail_local(Vector2(433.192, 537.997)), Vector2(130, 45), func(): Navigation.go_with_args(PREFAB_PREVIEW, {"prefab": "英魂殿"}), "image/common/cm_btn_LvSe1")
+	_add_action_button(root, "升星", _detail_local(Vector2(532.181, 548.426)), Vector2(292, 65), Callable(), "image/en/HeroPanel/yx_btn_ShengXing")
 
 func _add_will_tab(root: Control, y_base := 126) -> void:
 	y_base = y_base
