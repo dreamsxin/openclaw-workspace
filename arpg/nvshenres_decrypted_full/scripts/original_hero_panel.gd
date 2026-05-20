@@ -861,22 +861,39 @@ func _add_star_tab(root: Control, y_base := 126) -> void:
 func _add_will_tab(root: Control, y_base := 126) -> void:
 	y_base = y_base
 	var hero: Dictionary = _current_hero()
+	var star := int(hero.get("stars", 5))
 	_add_named_image_to(root, "image/en/HeroPanel/yxzy_pic_ZhanYiDi", _detail_local(Vector2(506, 142)), Vector2(300, 360))
-	var nodes := [
-		["战意一", Vector2(503.242, 325.047), Vector2(134, 134)],
-		["战意二", Vector2(659.462, 302.698), Vector2(134, 134)],
-		["战意三", Vector2(590.068, 154.132), Vector2(102, 166)],
-	]
-	for item in nodes:
+	var nodes := []
+	if star < 13:
+		nodes = [
+			["战意一", Vector2(503.622, 325.047), Vector2(134, 134), 180.0, "9星解锁", Vector2(15, 24), Vector2(18, 83)],
+			["战意二", Vector2(646.622, 185.632), Vector2(134, 134), 0.0, "10星解锁", Vector2(15, 3), Vector2(13, 81)],
+		]
+	else:
+		nodes = [
+			["战意一", Vector2(490.622, 303.632), Vector2(134, 134), 165.0, "9星解锁", Vector2(15, 24), Vector2(18, 83)],
+			["战意二", Vector2(659.622, 304.632), Vector2(134, 134), -75.0, "10星解锁", Vector2(27, 15), Vector2(82, 12)],
+			["战意三", Vector2(590.068, 154.132), Vector2(102, 166), 0.0, "13星解锁", Vector2(0, 21), Vector2(0, 97)],
+		]
+	for i in nodes.size():
+		var item = nodes[i]
 		var node := Control.new()
 		node.position = _detail_local(item[1])
 		node.size = item[2]
+		node.rotation_degrees = item[3]
 		root.add_child(node)
 		_add_named_image_to(node, "image/en/HeroPanel/yx_frame_ZhanYi", Vector2.ZERO, node.size)
-		_add_head_icon(node, hero, Vector2((node.size.x - 72) * 0.5, 18), Vector2(72, 72))
-		var name_label := _add_label(node, str(item[0]), Vector2(0, node.size.y - 48), Vector2(node.size.x, 24), 16, Color(0.98, 0.91, 0.64))
+		var head_box := Control.new()
+		head_box.position = item[5]
+		head_box.size = Vector2(72, 72)
+		head_box.rotation_degrees = -node.rotation_degrees
+		node.add_child(head_box)
+		_add_head_icon(head_box, hero, Vector2.ZERO, Vector2(72, 72))
+		var name_label := _add_label(node, str(item[0]), item[6], Vector2(86, 24), 16, Color(0.98, 0.91, 0.64))
+		name_label.rotation_degrees = -node.rotation_degrees
 		name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		var lock_label := _add_label(node, "100级解锁", Vector2(-30, node.size.y - 22), Vector2(node.size.x + 60, 24), 15, Color(0.78, 0.76, 0.86))
+		var lock_label := _add_label(node, item[4], Vector2(-8, node.size.y - 30), Vector2(node.size.x + 28, 24), 15, Color(0.78, 0.76, 0.86))
+		lock_label.rotation_degrees = -node.rotation_degrees
 		lock_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_add_action_button(root, "战意预览", _detail_local(Vector2(497.613, 547.874)), Vector2(300, 60), Callable(), "image/common/cm_btn_LvSe0")
 	_add_action_button(root, "?", _detail_local(Vector2(768.66, 107.244)), Vector2(54, 54))
