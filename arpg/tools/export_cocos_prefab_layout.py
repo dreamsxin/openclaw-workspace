@@ -41,6 +41,8 @@ PREFABS = [
     ("英雄", "Prefab/HeroPanel/HeroMainPre"),
     ("英雄详情", "Prefab/HeroPanel/HeroBookDetailPre"),
     ("英雄页签", "Prefab/HeroPanel/HeroTabPre"),
+    ("英雄装备子页", "Prefab/HeroPanel/zhuangbeiBox"),
+    ("英雄战意子页", "Prefab/HeroPanel/zhanyiBox"),
     ("英雄列表", "Prefab/HeroListPanel/HeroListPre"),
     ("英雄列表卡片", "Prefab/comPrefab/HeroGridPre"),
     ("英雄图鉴卡片", "Prefab/HeroListPanel/HeroBookItemPre"),

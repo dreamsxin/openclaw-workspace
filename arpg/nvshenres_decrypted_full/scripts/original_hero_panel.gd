@@ -601,7 +601,7 @@ func _refresh_detail() -> void:
 
 	if detail_mode == "book":
 		_add_detail_summary(root, hero, Vector2.ZERO, 238)
-	else:
+	elif selected_tab == 0:
 		_add_hero_main_summary(root, hero)
 
 	if detail_mode == "book":
@@ -612,13 +612,13 @@ func _refresh_detail() -> void:
 	elif selected_tab == 0:
 		_add_culture_tab(root, hero, 442, true)
 	elif selected_tab == 1:
-		_add_equipment_tab(root, 338)
+		_add_equipment_tab(root)
 	elif selected_tab == 2:
 		_add_star_tab(root, 338)
 	elif selected_tab == 3:
-		_add_will_tab(root, 338)
+		_add_will_tab(root)
 	else:
-		_add_skin_tab(root, 338)
+		_add_skin_tab(root, 54)
 
 func _refresh_detail_background() -> void:
 	if detail_frame == null:
@@ -704,23 +704,49 @@ func _add_culture_tab(root: Control, hero: Dictionary, y_base := 126, source_lay
 	_add_action_button(root, "升2级", Vector2(6, y_base + 52), Vector2(102, 42))
 	_add_action_button(root, "进阶", Vector2(124, y_base + 52), Vector2(102, 42))
 
+func _detail_local(screen_position: Vector2) -> Vector2:
+	return screen_position - detail_panel.position
+
 func _add_equipment_tab(root: Control, y_base := 126) -> void:
-	var equips := ["yx_icon_zhuangbei0", "yx_icon_zhuangbei1", "yx_icon_zhuangbei2", "yx_icon_zhuangbei3", "yx_icon_zhuangbei4", "yx_icon_zhuangbei5"]
+	y_base = y_base
+	var equips := [
+		["武器", "yx_icon_zhuangbei0", Vector2(483.916, 157.163), "yx_frame_ZBHong"],
+		["衣服", "yx_icon_zhuangbei1", Vector2(506.403, 260.246), "yx_frame_ZBCheng"],
+		["护手", "yx_icon_zhuangbei2", Vector2(505.447, 365.441), "yx_frame_ZBLan"],
+		["鞋子", "yx_icon_zhuangbei3", Vector2(483.827, 467.857), "yx_frame_ZBLv"],
+		["纹章", "yx_icon_zhuangbei4", Vector2(588.697, 95.551), "yx_frame_ZBZi"],
+		["神器", "yx_icon_zhuangbei5", Vector2(739.29, 96.919), "yx_frame_ZBHong"],
+	]
 	for i in equips.size():
-		var pos := Vector2((i % 3) * 76, y_base + int(i / 3) * 76)
+		var pos := _detail_local(equips[i][2])
 		var slot := Control.new()
 		slot.position = pos
-		slot.size = Vector2(72, 72)
+		slot.size = Vector2(94, 94)
 		root.add_child(slot)
 		var slot_bg := ColorRect.new()
 		slot_bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 		slot_bg.color = Color(0.03, 0.035, 0.055, 0.72)
 		slot_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		slot.add_child(slot_bg)
-		_add_named_image_to(slot, "image/en/HeroPanel/yx_frame_ZBCheng", Vector2(0, 0), Vector2(72, 72))
-		_add_named_image_to(slot, "image/en/HeroPanel/%s" % equips[i], Vector2(13, 13), Vector2(46, 46))
-	_add_action_button(root, "一键装备", Vector2(0, y_base + 166), Vector2(112, 42))
-	_add_action_button(root, "强化", Vector2(126, y_base + 166), Vector2(104, 42))
+		_add_named_image_to(slot, "image/en/HeroPanel/%s" % equips[i][3], Vector2(0, 0), slot.size)
+		_add_named_image_to(slot, "image/en/HeroPanel/%s" % equips[i][1], Vector2(18, 18), Vector2(58, 58))
+		var name_label := _add_label(slot, str(equips[i][0]), Vector2(0, 70), Vector2(94, 22), 15, Color(0.96, 0.90, 0.68))
+		name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var fuwen := [
+		["符文", Vector2(667.622, 223.132), "100级解锁"],
+		["神器", Vector2(667.622, 394.132), "七星解锁"],
+	]
+	for item in fuwen:
+		var frame := Control.new()
+		frame.position = _detail_local(item[1])
+		frame.size = Vector2(88, 87)
+		root.add_child(frame)
+		_add_named_image_to(frame, "image/en/HeroPanel/yx_frame_ZBBai", Vector2.ZERO, frame.size)
+		var title := _add_label(frame, str(item[0]), Vector2(0, 21), Vector2(88, 22), 16, Color(0.75, 0.72, 0.82))
+		title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		var lock := _add_label(frame, str(item[2]), Vector2(-56, 92), Vector2(200, 26), 16, Color(0.72, 0.70, 0.78))
+		lock.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_add_action_button(root, "一键穿戴", _detail_local(Vector2(609.622, 549.632)), Vector2(200, 60), Callable(), "image/common/cm_btn_LvSe0")
 
 func _add_star_tab(root: Control, y_base := 126) -> void:
 	_add_label(root, "当前星级  SSR 3 星", Vector2(0, y_base), Vector2(238, 30), 19, Color(0.42, 0.36, 0.16))
@@ -728,9 +754,27 @@ func _add_star_tab(root: Control, y_base := 126) -> void:
 	_add_action_button(root, "升星", Vector2(0, y_base + 120), Vector2(130, 42))
 
 func _add_will_tab(root: Control, y_base := 126) -> void:
-	for i in 4:
-		_add_label(root, ["攻击 +100", "生命 +2200", "防御 +80", "速度 +12"][i], Vector2(0, y_base + i * 36), Vector2(238, 28), 18, Color(0.42, 0.46, 0.64))
-	_add_action_button(root, "激活战意", Vector2(0, y_base + 166), Vector2(150, 42))
+	y_base = y_base
+	var hero: Dictionary = _current_hero()
+	_add_named_image_to(root, "image/en/HeroPanel/yxzy_pic_ZhanYiDi", _detail_local(Vector2(506, 142)), Vector2(300, 360))
+	var nodes := [
+		["战意一", Vector2(503.242, 325.047), Vector2(134, 134)],
+		["战意二", Vector2(659.462, 302.698), Vector2(134, 134)],
+		["战意三", Vector2(590.068, 154.132), Vector2(102, 166)],
+	]
+	for item in nodes:
+		var node := Control.new()
+		node.position = _detail_local(item[1])
+		node.size = item[2]
+		root.add_child(node)
+		_add_named_image_to(node, "image/en/HeroPanel/yx_frame_ZhanYi", Vector2.ZERO, node.size)
+		_add_head_icon(node, hero, Vector2((node.size.x - 72) * 0.5, 18), Vector2(72, 72))
+		var name_label := _add_label(node, str(item[0]), Vector2(0, node.size.y - 48), Vector2(node.size.x, 24), 16, Color(0.98, 0.91, 0.64))
+		name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		var lock_label := _add_label(node, "100级解锁", Vector2(-30, node.size.y - 22), Vector2(node.size.x + 60, 24), 15, Color(0.78, 0.76, 0.86))
+		lock_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_add_action_button(root, "战意预览", _detail_local(Vector2(497.613, 547.874)), Vector2(300, 60), Callable(), "image/common/cm_btn_LvSe0")
+	_add_action_button(root, "?", _detail_local(Vector2(768.66, 107.244)), Vector2(54, 54))
 
 func _add_skin_tab(root: Control, y_base := 126) -> void:
 	var hero: Dictionary = _current_hero()
