@@ -667,15 +667,15 @@ func _add_ad_banner() -> void:
 
 func _add_right_ribbons() -> void:
 	var entries := [
-		{"label": "宝具", "node": "zjm_btn_rukou0", "occurrence": 0, "icon_node": "zjm_icon_baoju", "bg": Rect2i(639, 292, 364, 50), "bg_offset": Vector2(-10.5, 0), "icon": Rect2i(864, 757, 80, 73), "icon_atlas": ATLAS_1F, "icon_rotated": true, "prefer_manual_icon": true},
-		{"label": "仓库", "node": "zjm_btn_rukou0", "occurrence": 1, "icon_node": "zjm_icon_cangku", "bg": Rect2i(639, 292, 364, 50), "bg_offset": Vector2(-10.5, 0), "icon": Rect2i(747, 551, 34, 34), "icon_atlas": ATLAS_1F},
-		{"label": "竞技", "node": "zjm_btn_rukou1", "occurrence": 0, "icon_node": "zjm_icon_jingji", "bg": Rect2i(675, 65, 341, 56), "bg_offset": Vector2(1, 0), "icon": Rect2i(667, 551, 34, 34), "icon_atlas": ATLAS_1F},
-		{"label": "学院", "node": "zjm_btn_rukou1", "occurrence": 1, "icon_node": "zjm_icon_xueyuan", "bg": Rect2i(675, 65, 341, 56), "bg_offset": Vector2(1, 0), "icon": Rect2i(3, 3, 34, 34), "icon_atlas": ATLAS_1A},
-		{"label": "英魂", "node": "zjm_btn_rukou2", "occurrence": 0, "icon_node": "zjm_icon_zhaohuan", "icon_occurrence": 0, "bg": Rect2i(675, 230, 336, 56), "bg_offset": Vector2(3.5, 0), "icon": Rect2i(83, 3, 34, 34), "icon_atlas": ATLAS_1A, "prefer_manual_icon": true},
-		{"label": "锻造", "node": "zjm_btn_rukou3", "occurrence": 0, "icon_node": "zjm_icon_zhaohuan", "icon_occurrence": 1, "bg": Rect2i(675, 3, 342, 56), "bg_offset": Vector2(0.5, 0), "icon": Rect2i(720, 984, 34, 34), "icon_atlas": ATLAS_1F, "prefer_manual_icon": true},
-		{"label": "占卜", "node": "zjm_btn_rukou4", "occurrence": 0, "icon_node": "zjm_icon_zhaohuan", "icon_occurrence": 2, "bg": Rect2i(684, 591, 387, 58), "bg_offset": Vector2(-22, 0), "bg_rotated": true, "icon": Rect2i(3, 225, 100, 95), "icon_atlas": ATLAS_1A, "prefer_manual_icon": true},
-		{"label": "寻星", "node": "zjm_btn_rukou4", "occurrence": 1, "icon_node": "zjm_icon_zhaohuan", "icon_occurrence": 3, "bg": Rect2i(684, 591, 387, 58), "bg_offset": Vector2(-22, 0), "bg_rotated": true, "icon": Rect2i(43, 3, 34, 34), "icon_atlas": ATLAS_1A, "prefer_manual_icon": true},
-		{"label": "商会", "node": "zjm_btn_rukou5", "occurrence": 0, "icon_node": "zjm_icon_zhaohuan", "icon_occurrence": 4, "bg": Rect2i(675, 3, 342, 56), "bg_offset": Vector2(0.5, 0), "icon": Rect2i(547, 551, 34, 34), "icon_atlas": ATLAS_1F, "prefer_manual_icon": true},
+		{"label": "宝具", "node": "zjm_btn_rukou0", "occurrence": 0, "icon_node": "zjm_icon_baoju", "bg_resource": "image/com/mainpanel/zjm_btn_rukou0", "icon_resource": "image/com/mainpanel/zjm_icon_baoju"},
+		{"label": "仓库", "node": "zjm_btn_rukou0", "occurrence": 1, "icon_node": "zjm_icon_cangku", "bg_resource": "image/com/mainpanel/zjm_btn_rukou0", "icon_resource": "image/com/mainpanel/zjm_icon_cangku"},
+		{"label": "竞技", "node": "zjm_btn_rukou1", "occurrence": 0, "icon_node": "zjm_icon_jingji", "bg_resource": "image/com/mainpanel/zjm_btn_rukou1", "icon_resource": "image/com/mainpanel/zjm_icon_jingji"},
+		{"label": "学院", "node": "zjm_btn_rukou1", "occurrence": 1, "icon_node": "zjm_icon_xueyuan", "bg_resource": "image/com/mainpanel/zjm_btn_rukou1", "icon_resource": "image/com/mainpanel/zjm_icon_xueyuan"},
+		{"label": "英魂", "node": "zjm_btn_rukou2", "occurrence": 0, "bg_resource": "image/com/mainpanel/zjm_btn_rukou2", "icon_resource": "image/com/mainpanel/zjm_icon_yinghun"},
+		{"label": "锻造", "node": "zjm_btn_rukou3", "occurrence": 0, "bg_resource": "image/com/mainpanel/zjm_btn_rukou3", "icon_resource": "image/com/mainpanel/zjm_icon_duanzao"},
+		{"label": "占卜", "node": "zjm_btn_rukou4", "occurrence": 0, "bg_resource": "image/com/mainpanel/zjm_btn_rukou4", "icon_resource": "image/com/mainpanel/zjm_icon_zhanbu", "icon_size": Vector2(42, 40)},
+		{"label": "寻星", "node": "zjm_btn_rukou4", "occurrence": 1, "bg_resource": "image/com/mainpanel/zjm_btn_rukou4", "icon_resource": "image/com/mainpanel/zjm_icon_xunxing"},
+		{"label": "商会", "node": "zjm_btn_rukou5", "occurrence": 0, "bg_resource": "image/com/mainpanel/zjm_btn_rukou3", "icon_resource": "image/com/mainpanel/zjm_icon_shanghui"},
 	]
 	for item in entries:
 		var rect := _layout_rect(str(item.node), int(item.get("occurrence", 0)))
@@ -693,7 +693,9 @@ func _add_ribbon_button(source_rect: Rect2, item: Dictionary) -> void:
 	var bg := TextureRect.new()
 	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	var bg_node := _layout_node(str(item.node), int(item.get("occurrence", 0)))
-	bg.texture = _load_node_texture_from_layout(bg_node)
+	bg.texture = _load_sprite_frame_by_path(str(item.get("bg_resource", "")))
+	if bg.texture == null:
+		bg.texture = _load_node_texture_from_layout(bg_node)
 	if bg.texture == null:
 		bg.texture = _load_texture_region(ATLAS_1F, item.bg, bool(item.get("bg_rotated", false)), Vector2i(431, 58), item.get("bg_offset", Vector2.ZERO))
 	bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
@@ -705,8 +707,13 @@ func _add_ribbon_button(source_rect: Rect2, item: Dictionary) -> void:
 	var icon_rect := _layout_rect(str(item.get("icon_node", "")), int(item.get("icon_occurrence", 0)))
 	icon.position = icon_rect.position - source_rect.position if icon_rect.size.x > 0.0 else Vector2(11, 1)
 	icon.size = icon_rect.size if icon_rect.size.x > 0.0 else Vector2(32, 32)
+	if item.has("icon_size"):
+		icon.size = item.icon_size
+	if icon_rect.size.x <= 0.0:
+		icon.position = Vector2(source_rect.size.x * 0.42 - icon.size.x * 0.5, source_rect.size.y * 0.5 - icon.size.y * 0.5)
 	var icon_node := _layout_node(str(item.get("icon_node", "")), int(item.get("icon_occurrence", 0)))
-	if not bool(item.get("prefer_manual_icon", false)):
+	icon.texture = _load_sprite_frame_by_path(str(item.get("icon_resource", "")))
+	if icon.texture == null:
 		icon.texture = _load_node_texture_from_layout(icon_node)
 	if icon.texture == null:
 		icon.texture = _load_texture_region(str(item.icon_atlas), item.icon, bool(item.get("icon_rotated", false)))
