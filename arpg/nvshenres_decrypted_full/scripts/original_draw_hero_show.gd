@@ -16,6 +16,8 @@ var voice_index: Dictionary = {}
 var hero_spine: Node2D
 var hero_image: TextureRect
 var voice_player: AudioStreamPlayer
+var share_box: Control
+var speak_box: Control
 var hero_id := "105004"
 var hero_index := 0
 var hero_data: Dictionary = {}
@@ -50,9 +52,9 @@ func _build_ui() -> void:
 	design_root.add_child(bg)
 
 	var glow := ColorRect.new()
-	glow.position = Vector2(220, 72)
-	glow.size = Vector2(620, 560)
-	glow.color = Color(0.24, 0.18, 0.09, 0.22)
+	glow.position = Vector2(0, 0)
+	glow.size = Vector2(1280, 720)
+	glow.color = Color(0.22, 0.17, 0.08, 0.18)
 	glow.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	design_root.add_child(glow)
 
@@ -62,7 +64,10 @@ func _build_ui() -> void:
 	_build_top_bar()
 	_build_hero_stage()
 	_build_info_panel()
+	_build_skill_strip()
 	_build_action_buttons()
+	_build_share_box()
+	_build_speak_box()
 	_layout_design_root()
 	_play_hero_voice("5")
 
@@ -86,60 +91,118 @@ func _build_top_bar() -> void:
 	_add_top_button(top, "召唤", func(): Navigation.go(DRAW_SCENE))
 	_add_top_button(top, "Prefab", func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "抽卡英雄展示"}))
 
+	var close := Button.new()
+	close.text = "<"
+	close.position = Vector2(12, 11)
+	close.size = Vector2(65, 48)
+	close.pressed.connect(func(): Navigation.go(DRAW_SCENE))
+	design_root.add_child(close)
+
 func _build_hero_stage() -> void:
 	var stage := Control.new()
-	stage.position = Vector2(180, 52)
-	stage.size = Vector2(660, 626)
+	stage.position = Vector2(210, 16)
+	stage.size = Vector2(760, 680)
 	design_root.add_child(stage)
 
 	hero_spine = SimpleSpinePlayerScript.new()
 	stage.add_child(hero_spine)
 	var runtime := _hero_runtime_path(hero_id)
 	if runtime != "" and FileAccess.file_exists(runtime) and hero_spine.load_spine(runtime, "show"):
-		_fit_spine_to_rect(hero_spine, Rect2(Vector2(80, 20), Vector2(520, 590)), 0.78)
+		_fit_spine_to_rect(hero_spine, Rect2(Vector2(52, 0), Vector2(640, 660)), 0.92)
 	else:
 		hero_spine.queue_free()
 		hero_spine = null
-		hero_image = _add_named_image(stage, "image/heroBook/%s" % hero_id, Vector2(150, 34), Vector2(360, 540))
+		hero_image = _add_named_image(stage, "image/heroBook/%s" % hero_id, Vector2(154, 30), Vector2(450, 600))
 		if hero_image.texture == null:
-			_add_named_image(stage, "image/head/%s" % hero_id, Vector2(260, 184), Vector2(160, 160))
+			_add_named_image(stage, "image/head/%s" % hero_id, Vector2(300, 214), Vector2(160, 160))
 
 func _build_info_panel() -> void:
 	var panel := Control.new()
-	panel.position = Vector2(820, 102)
-	panel.size = Vector2(360, 430)
+	panel.position = Vector2(69, 438)
+	panel.size = Vector2(449, 190)
 	design_root.add_child(panel)
 
 	var bg := ColorRect.new()
 	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	bg.color = Color(0.92, 0.88, 0.76, 0.9)
+	bg.color = Color(0.08, 0.06, 0.08, 0.68)
 	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	panel.add_child(bg)
 
-	_add_label(panel, str(hero_data.get("name", hero_id)), Vector2(28, 28), Vector2(290, 38), 28, Color(0.24, 0.18, 0.12), HORIZONTAL_ALIGNMENT_CENTER)
-	_add_label(panel, str(hero_data.get("quality", "SSR")), Vector2(36, 80), Vector2(110, 54), 42, Color(0.95, 0.62, 0.18))
-	_add_label(panel, "阵营 %s  职业 %s" % [str(hero_data.get("camp", "-")), str(hero_data.get("job", "未知"))], Vector2(36, 148), Vector2(270, 28), 18, Color(0.22, 0.24, 0.32))
-	_add_label(panel, "战力  %s" % str(hero_data.get("power", "3000000")), Vector2(36, 194), Vector2(270, 30), 22, Color(0.32, 0.2, 0.14))
-	_add_label(panel, "等级  %s" % str(hero_data.get("level", "120")), Vector2(36, 236), Vector2(270, 28), 18, Color(0.22, 0.24, 0.32))
-	_add_label(panel, "星级  %s" % _stars(int(hero_data.get("stars", hero_data.get("grade", 5)))), Vector2(36, 274), Vector2(270, 30), 20, Color(0.76, 0.32, 0.54))
-	_add_label(panel, "HeroShowPanel.setData() 会根据星级切换高稀有 showModelBox 或普通 showLHBox。当前本地页优先播放立绘 Spine show 动作。", Vector2(36, 326), Vector2(288, 78), 16, Color(0.22, 0.24, 0.32))
+	_add_label(panel, str(hero_data.get("quality", "SSR")), Vector2(28, 10), Vector2(130, 54), 44, Color(1.0, 0.68, 0.18))
+	_add_label(panel, str(hero_data.get("name", hero_id)), Vector2(160, 92), Vector2(110, 36), 24, Color(1.0, 0.92, 0.78), HORIZONTAL_ALIGNMENT_CENTER)
+	_add_label(panel, str(hero_data.get("nick", hero_data.get("job", "英雄标签"))), Vector2(156, 58), Vector2(160, 28), 18, Color(0.88, 0.78, 0.62), HORIZONTAL_ALIGNMENT_CENTER)
+	_add_label(panel, _stars(int(hero_data.get("stars", hero_data.get("grade", 5)))), Vector2(136, 130), Vector2(230, 42), 28, Color(1.0, 0.45, 0.78))
 
 func _build_action_buttons() -> void:
-	var actions := HBoxContainer.new()
-	actions.position = Vector2(792, 574)
-	actions.size = Vector2(410, 54)
-	actions.add_theme_constant_override("separation", 12)
-	design_root.add_child(actions)
-	_add_action_button(actions, "分享", func(): _play_hero_voice("2"))
-	_add_action_button(actions, "评论", func(): _play_hero_voice("3"))
-	_add_action_button(actions, "再召唤", func(): Navigation.go(DRAW_SCENE))
+	_add_screen_button("分享", Rect2(Vector2(1202, 118), Vector2(49, 49)), func(): _toggle_share_box())
+	_add_screen_button("评论", Rect2(Vector2(1202, 192), Vector2(49, 49)), func(): _show_speak("世界频道评论预览"))
+	_add_screen_button("再召1次", Rect2(Vector2(525, 597), Vector2(300, 66)), func(): Navigation.go_with_args(DRAW_SCENE, {"draw_count": 1}))
+	_add_screen_button("再召10次", Rect2(Vector2(904, 597), Vector2(300, 66)), func(): Navigation.go_with_args(DRAW_SCENE, {"draw_count": 10}))
 
-func _add_action_button(parent: Container, text: String, callback: Callable) -> void:
+func _build_skill_strip() -> void:
+	var positions := [Vector2(68, 650), Vector2(160, 650), Vector2(251, 650), Vector2(344, 650)]
+	for i in positions.size():
+		var slot := Control.new()
+		slot.position = positions[i]
+		slot.size = Vector2(64, 64)
+		design_root.add_child(slot)
+		var bg := ColorRect.new()
+		bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		bg.color = Color(0.05, 0.07, 0.12, 0.78)
+		bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		slot.add_child(bg)
+		_add_label(slot, str(i + 1), Vector2(46, 36), Vector2(18, 24), 17, Color(0.95, 0.9, 0.7), HORIZONTAL_ALIGNMENT_CENTER)
+
+func _build_share_box() -> void:
+	share_box = Control.new()
+	share_box.visible = false
+	share_box.position = Vector2(1002, 114)
+	share_box.size = Vector2(180, 146)
+	design_root.add_child(share_box)
+	var bg := ColorRect.new()
+	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	bg.color = Color(0.06, 0.07, 0.13, 0.88)
+	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	share_box.add_child(bg)
+	_add_screen_button("世界频道", Rect2(Vector2(12, 34), Vector2(154, 42)), func(): _show_speak("已模拟分享到世界频道"), share_box)
+	_add_screen_button("公会频道", Rect2(Vector2(12, 92), Vector2(154, 42)), func(): _show_speak("已模拟分享到公会频道"), share_box)
+
+func _build_speak_box() -> void:
+	speak_box = Control.new()
+	speak_box.visible = false
+	speak_box.position = Vector2(525, 417)
+	speak_box.size = Vector2(264, 121)
+	design_root.add_child(speak_box)
+	var bg := ColorRect.new()
+	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	bg.color = Color(0.04, 0.04, 0.06, 0.78)
+	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	speak_box.add_child(bg)
+	_add_label(speak_box, "", Vector2(18, 38), Vector2(230, 42), 19, Color(0.95, 0.92, 0.82), HORIZONTAL_ALIGNMENT_CENTER).name = "lblSpeak"
+
+func _toggle_share_box() -> void:
+	share_box.visible = not share_box.visible
+	_play_hero_voice("2")
+
+func _show_speak(text: String) -> void:
+	share_box.visible = false
+	speak_box.visible = true
+	var label := speak_box.get_node_or_null("lblSpeak") as Label
+	if label:
+		label.text = text
+	_play_hero_voice("3")
+
+func _add_screen_button(text: String, rect: Rect2, callback: Callable, parent: Control = null) -> Button:
 	var button := Button.new()
 	button.text = text
-	button.custom_minimum_size = Vector2(120, 44)
+	button.position = rect.position
+	button.size = rect.size
 	button.pressed.connect(callback)
-	parent.add_child(button)
+	if parent:
+		parent.add_child(button)
+	else:
+		design_root.add_child(button)
+	return button
 
 func _add_top_button(parent: Container, text: String, callback: Callable) -> void:
 	var button := Button.new()
