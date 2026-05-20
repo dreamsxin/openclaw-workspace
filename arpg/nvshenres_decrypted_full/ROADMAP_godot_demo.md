@@ -409,14 +409,14 @@ RESTORE_LOGIN_TO_HOME.md
   - `tools/export_cocos_prefab_layout.py` 已新增导出 `Prefab/loading/useprivacyPre` 和 `Prefab/loading/shilingPre`，生成 `data/prefab_layouts/useprivacyPre.json`、`data/prefab_layouts/shilingPre.json`。
   - `original_server_select.gd` 已按 `useprivacyPanel` 补本地隐私协议浮层；同意/拒绝会更新选服页勾选状态。当前已使用 `useprivacyPre.json` 的 panel/title/scroll/button 坐标，后续清洗 `configs/useprivacy` 替换摘要正文。
   - `original_server_select.gd` 已按 `shilingPanel` 补本地适龄提示浮层；当前已使用 `shilingPre.json` 的 panel/title/button 坐标。ScrollView content 原点导出仍不完整，正文区域在 Godot 里有局部内边距修正；后续继续完善导出器。
-  - `original_home_screen.gd` 底部导航已改为 `daohangPre.json` 的真实六个图标资源/坐标，第三个入口改为仓库。
+  - `original_home_screen.gd` 底部导航已改为 `daohangPre.json` 的真实六个图标资源/坐标，第三个入口按源码和 prefab 保持为召唤。
   - 已用 Godot `--headless --scene ... --quit-after` 验证加载、登录、选服、主屏均能启动；日志仅剩直接 `Image.load()` 的本地 demo 警告。
 - 资源显示问题修正：
   - 已读取 `UI_ANALYSIS_REPORT.md` 和 `coordinate_issues_analysis.md`。结论是不能仅凭 `texture_path` 直接替换资源，必须检查实际图片尺寸并处理 `sprite_rect/originalSize/rotated`。
   - `LoginPre` / `pfLoginPanelPre` 中部分看似真实的 `bg/logo/wenziDi` native 文件实际只有 `40x40`，直接铺全屏会空白或严重失真；登录静态人物也不在两个 prefab 内，而是源码预加载链路旁的 `uispine/denglu/bg`。该 native 扩展名是 `.jpg` 但文件头是 PNG，Godot 使用 `converted/png/a84d3470-bde7-4589-9b33-65a957c34507.png`。
   - 选服页服务器状态标签要按 SpriteFrame 所在 atlas 加载：`dl_tag_huobao` 在 `1d1cac610.png`，`dl_tag_xinfu/dl_tag_weihu` 在 `1430d496a.png`。
   - `LoadingPre` 有两种运行状态：首次启动显示进度条/扫光/百分比；连接服务器时 `isFist=1`，只显示 `alert`。还原点击开始流程时要用后者，不能直接套启动加载页。
-  - `daohangPre` 的部分导航 SpriteFrame 指向横条或极薄切片，直接当图标使用会不显示；主屏底部导航保留 prefab 坐标，但对冒险/副本/公会暂回退到可显示 atlas 近似图标。
+  - `daohangPre` 的底栏文字来自各图标节点下的 `dt1`，主屏已改为按 `dt1.screen_rect` 叠加文字；图标由对应 `cm_tab_*` 节点加载，不再用手工 atlas fallback 重新排版。
   - 下一轮要优先落实 `coordinate_issues_analysis.md` 的 P0/P2：导出统一 `screen_rect` 并在 Godot 侧统一使用，避免继续出现三套坐标转换。
 - `original_hero_panel.gd` 已开始按原版结构重排：
   - 左侧改为英雄名、头像、星级、小型英雄头像竖列和传记/衣装/锁定小按钮。

@@ -45,6 +45,14 @@ const NAV_SELECTED_LIGHT_ALPHA := 0.34
 const HERO_105004_SPINE := "res://data/spine_runtime/105004.json"
 const HERO_SULA_SPINE := "res://data/spine_runtime/SuLa_LH.json"
 const HERO_YOUDUOLA_SPINE := "res://data/spine_runtime/YouDuoLa_LH.json"
+const NAV_TEXT_NODES := {
+	"cm_tab_ChengZhen1": "城镇",
+	"cm_tab_YingXiong1": "英雄",
+	"cm_tab_ZhaoHuan": "召唤",
+	"cm_tab_ChuJi1": "冒险",
+	"cm_tab_FuBen": "副本",
+	"cm_tab_GongHui1": "公会",
+}
 
 const BACKGROUNDS := [
 	{
@@ -336,6 +344,21 @@ func _layout_node(name: String, occurrence := 0, source := "main") -> Dictionary
 		return {}
 	occurrence = clampi(occurrence, 0, list.size() - 1)
 	return list[occurrence]
+
+func _first_layout_child(parent_index: int, child_name: String, source := "main") -> Dictionary:
+	if parent_index < 0:
+		return {}
+	var indexes := main_nodes_by_index if source == "main" else nav_nodes_by_index
+	for node in indexes.values():
+		if typeof(node) != TYPE_DICTIONARY:
+			continue
+		var raw_parent_index = node.get("parent_index", -999999)
+		var node_parent_index := -999999
+		if typeof(raw_parent_index) == TYPE_INT or typeof(raw_parent_index) == TYPE_FLOAT:
+			node_parent_index = int(raw_parent_index)
+		if node_parent_index == parent_index and str(node.get("name", "")) == child_name:
+			return node
+	return {}
 
 func _node_screen_rect(node: Dictionary) -> Rect2:
 	var rect: Array = node.get("screen_rect", [])
@@ -691,12 +714,12 @@ func _add_bottom_nav() -> void:
 	_add_nav_selected_light()
 
 	var entries := [
-		{"label": "城镇", "node": "cm_tab_ChengZhen1", "hit": "btn1", "path": "res://assets/resources/native/87/8715b80b-6cbc-4b88-bf7d-8c2ab401db4e.png"},
-		{"label": "英雄", "node": "cm_tab_YingXiong1", "hit": "btn2", "path": "res://assets/resources/native/9a/9a9cb544-24ba-41c7-8cab-41a43a9e9c33.png", "entry": "英雄"},
-		{"label": "召唤", "node": "cm_tab_ZhaoHuan", "hit": "btn3", "atlas": ATLAS_1A, "rect": NAV_SLOT3_RECT, "entry": "召唤", "force_atlas": true},
-		{"label": "冒险", "node": "cm_tab_ChuJi1", "hit": "btn4", "atlas": ATLAS_1A, "rect": Rect2i(159, 345, 150, 145), "layout": "挂机主线"},
-		{"label": "副本", "node": "cm_tab_FuBen", "hit": "btn5", "atlas": ATLAS_1A, "rect": Rect2i(879, 276, 134, 133), "layout": "冒险地图顶部"},
-		{"label": "公会", "node": "cm_tab_GongHui1", "hit": "btn6", "atlas": ATLAS_1A, "rect": Rect2i(345, 232, 119, 126), "rotated": true, "layout": "公会"},
+		{"label": "城镇", "node": "cm_tab_ChengZhen1", "hit": "btn1"},
+		{"label": "英雄", "node": "cm_tab_YingXiong1", "hit": "btn2", "entry": "英雄"},
+		{"label": "召唤", "node": "cm_tab_ZhaoHuan", "hit": "btn3", "entry": "召唤"},
+		{"label": "冒险", "node": "cm_tab_ChuJi1", "hit": "btn4", "layout": "挂机主线"},
+		{"label": "副本", "node": "cm_tab_FuBen", "hit": "btn5", "layout": "冒险地图顶部"},
+		{"label": "公会", "node": "cm_tab_GongHui1", "hit": "btn6", "layout": "公会"},
 	]
 	for item in entries:
 		var box := Control.new()
@@ -710,36 +733,13 @@ func _add_bottom_nav() -> void:
 
 		var image := TextureRect.new()
 		var icon_node := _layout_node(str(item.node), 0, "nav")
-		if not bool(item.get("force_atlas", false)):
-			image.texture = _load_node_texture_from_layout(icon_node)
-		if image.texture != null and not bool(item.get("force_atlas", false)):
-			pass
-		elif item.has("path"):
-			image.texture = _load_texture(str(item.path))
-		else:
-			image.texture = _load_texture_region(str(item.atlas), item.rect, bool(item.get("rotated", false)))
+		image.texture = _load_node_texture_from_layout(icon_node)
 		image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		if item.has("draw_size"):
-			image.size = item.draw_size
-			image.position = (box.size - image.size) * 0.5 + item.get("draw_offset", Vector2.ZERO)
-			image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		else:
-			image.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-			image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		image.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		image.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		box.add_child(image)
-
-		var text := Label.new()
-		text.text = str(item.label)
-		text.position = Vector2(0, box.size.y - 37)
-		text.size = Vector2(box.size.x, 28)
-		text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		text.add_theme_font_size_override("font_size", 18)
-		text.add_theme_color_override("font_shadow_color", Color(0.12, 0.08, 0.02, 0.85))
-		text.add_theme_constant_override("shadow_offset_x", 1)
-		text.add_theme_constant_override("shadow_offset_y", 1)
-		text.add_theme_color_override("font_color", Color(0.98, 0.93, 0.76))
-		box.add_child(text)
+		_add_nav_text(str(item.node), str(item.label))
 
 		var hit := Button.new()
 		hit.text = ""
@@ -766,6 +766,33 @@ func _add_bottom_nav() -> void:
 
 		if bool(item.get("show_red_dot", false)):
 			_add_red_dot(box, Vector2(box.size.x - 18, 28), Vector2(24, 24))
+
+func _add_nav_text(node_name: String, fallback: String) -> void:
+	var parent := _layout_node(node_name, 0, "nav")
+	var parent_index := int(parent.get("index", -1))
+	var text_node := _first_layout_child(parent_index, "dt1", "nav")
+	var text_rect := _node_screen_rect(text_node) if not text_node.is_empty() else Rect2()
+	if text_rect.size.x <= 0.0:
+		var icon_rect := _layout_rect(node_name, 0, "nav")
+		text_rect = Rect2(icon_rect.position + Vector2((icon_rect.size.x - 44) * 0.5, icon_rect.size.y - 52), Vector2(44, 28))
+	var text := Label.new()
+	if NAV_TEXT_NODES.has(node_name):
+		fallback = str(NAV_TEXT_NODES[node_name])
+	text.text = str(text_node.get("label_text", fallback))
+	if text.text == "":
+		text.text = fallback
+	text.position = text_rect.position
+	text.size = text_rect.size
+	text.z_index = 20
+	text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	text.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	text.add_theme_font_size_override("font_size", 18)
+	text.add_theme_color_override("font_shadow_color", Color(0.12, 0.08, 0.02, 0.85))
+	text.add_theme_constant_override("shadow_offset_x", 1)
+	text.add_theme_constant_override("shadow_offset_y", 1)
+	text.add_theme_color_override("font_color", Color(0.98, 0.93, 0.76))
+	text.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	prefab_layer.add_child(text)
 
 func _add_nav_background() -> void:
 	var layout_rect := _layout_rect("cm_menu_BeiJing", 0, "nav")
