@@ -45,6 +45,7 @@ PREFABS = [
     ("英雄列表卡片", "Prefab/comPrefab/HeroGridPre"),
     ("英雄图鉴卡片", "Prefab/HeroListPanel/HeroBookItemPre"),
     ("英雄等级共享", "Prefab/HeroListPanel/HeroLevelSharedPre"),
+    ("英魂殿", "Prefab/HeroPalace/HeroPalacePre"),
     ("英雄阵容", "Prefab/HeroXZPrefab/HeroNormalarrayPre"),
     ("英雄升星", "Prefab/HeroXZPrefab/HeroStarPre"),
     ("背包", "Prefab/BagPanel/BagPre"),
@@ -62,6 +63,8 @@ PREFABS = [
     ("活动抽卡页签", "Prefab/ActivityPanel/DrawCardActivity/DrawCardActivityToggle"),
     ("公会", "Prefab/Guild/GuildMainPre"),
     ("竞技", "Prefab/JingjiPrefab/JingjiPre"),
+    ("冒险地图顶部", "Prefab/MaoxianPanel/MaoxianMapPreTop"),
+    ("冒险地图底部", "Prefab/MaoxianPanel/MaoxianMapPreBotton"),
     ("天空城", "Prefab/SkyCityPanel/SkyCityPre"),
     ("通行证", "Prefab/PassPrefab/BigPassPanel"),
     ("爵位", "Prefab/PassPrefab/KnighthoodPanel"),
@@ -532,6 +535,20 @@ def infer_resource_paths(prefab_path: str, node_name: str) -> list[str]:
             paths.append(f"image/com/mainpanel/{node_name}")
     if "login" in prefab_path.lower():
         paths.append(f"image/com/login/{node_name}")
+    if "maoxianpanel" in prefab_path.lower():
+        paths.append(f"image/com/MaoxianPanel/{node_name}")
+        if node_name == "hongdian":
+            paths.append("image/common/cm_icon_HongDian")
+            paths.append("image/com/mainpanel/cm_icon_HongDian")
+            paths.append("image/com/MaoxianPanel/hongdian")
+        if node_name == "suo":
+            paths.append("image/common/cm_icon_SuoDing")
+            paths.append("image/com/MaoxianPanel/suo")
+        if node_name == "tip":
+            paths.append("image/common/cm_icon_HongDian")
+            paths.append("image/com/mainpanel/cm_icon_HongDian")
+        if node_name == "xsyd_frame9_lihuiming":
+            paths.append("image/com/guide/xsyd_frame9_lihuiming")
     paths.append(node_name)
     deduped = []
     for path in paths:

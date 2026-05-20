@@ -2,10 +2,10 @@ extends Control
 
 const MAIN_CITY := "res://scenes/original_home_screen.tscn"
 const LOGIN_SCENE := "res://scenes/original_login.tscn"
-const PREFAB_PREVIEW := "res://scenes/cocos_prefab_preview.tscn"
 const LAYOUT_PATH := "res://data/prefab_layouts/pfLoginPanelPre.json"
 const AGE_LAYOUT_PATH := "res://data/prefab_layouts/shilingPre.json"
 const PRIVACY_LAYOUT_PATH := "res://data/prefab_layouts/useprivacyPre.json"
+const LOGIN_RESOURCE_INDEX := "res://data/config_index/by_path_prefix/image__com__login.json"
 const BG_PATH := "res://converted/png/a84d3470-bde7-4589-9b33-65a957c34507.png"
 const LOGIN_ATLAS_PATH := "res://assets/resources/native/1d/1d1cac610.png"
 const UI_ATLAS_PATH := "res://assets/resources/native/14/1430d496a.png"
@@ -30,6 +30,7 @@ var design_root: Control
 var layout_nodes: Dictionary = {}
 var age_layout_nodes: Dictionary = {}
 var privacy_layout_nodes: Dictionary = {}
+var login_resources: Dictionary = {}
 var selected_server_name := "本地演示服"
 var selected_server_status := "hot"
 var server_label: Label
@@ -50,6 +51,7 @@ func _ready() -> void:
 	layout_nodes = _load_layout_index(LAYOUT_PATH)
 	age_layout_nodes = _load_layout_index(AGE_LAYOUT_PATH)
 	privacy_layout_nodes = _load_layout_index(PRIVACY_LAYOUT_PATH)
+	login_resources = _load_login_resource_index()
 	_build_ui()
 	_apply_startup_args()
 	_capture_if_requested()
@@ -86,33 +88,22 @@ func _build_ui() -> void:
 	var bottom_rect := Rect2(Vector2(-147.5, 607.0), Vector2(1575, 113))
 	bottom.position = bottom_rect.position
 	bottom.size = bottom_rect.size
-	bottom.texture = _load_texture_region(UI_ATLAS_PATH, BOTTOM_RECT, true)
+	bottom.texture = _login_texture("image/com/login/dl_frame_wenzi")
 	bottom.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	bottom.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 	bottom.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	design_root.add_child(bottom)
 
-	var top_bar := HBoxContainer.new()
-	top_bar.position = Vector2(920, 16)
-	top_bar.size = Vector2(344, 38)
-	top_bar.alignment = BoxContainer.ALIGNMENT_END
-	design_root.add_child(top_bar)
-	Navigation.add_buttons(top_bar)
-	var prefab := Button.new()
-	prefab.text = "原始选服"
-	prefab.pressed.connect(func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "登录选服"}))
-	top_bar.add_child(prefab)
-
-	_add_icon_button(_layout_rect("btnGG", Rect2(Vector2(1168, 103.559), Vector2(58, 58))), ICON_NOTICE_RECT, "公告", func(): _show_local_notice())
-	_add_icon_button(_layout_rect("btnSwitchAcount", Rect2(Vector2(1168, 179.559), Vector2(58, 58))), ICON_ACCOUNT_RECT, "切换账号", func(): _show_account_overlay())
-	_add_icon_button(_layout_rect("btnDiscord", Rect2(Vector2(1168, 262.559), Vector2(58, 58))), ICON_NOTICE_RECT, "discord", func(): _show_local_notice())
-	_add_icon_button(_layout_rect("btnFacebook", Rect2(Vector2(1168, 344.559), Vector2(58, 58))), ICON_NOTICE_RECT, "facebook", func(): _show_local_notice())
+	_add_icon_button(_layout_rect("btnGG", Rect2(Vector2(1168, 103.559), Vector2(58, 58))), "image/com/login/dl_icon_gonggao", "公告", func(): _show_local_notice())
+	_add_icon_button(_layout_rect("btnSwitchAcount", Rect2(Vector2(1168, 179.559), Vector2(58, 58))), "image/com/login/dl_icon_acount", "切换账号", func(): _show_account_overlay())
+	_add_icon_button(_layout_rect("btnDiscord", Rect2(Vector2(1168, 262.559), Vector2(58, 58))), "image/com/login/dl_icon_xieyi", "discord", func(): _show_local_notice())
+	_add_icon_button(_layout_rect("btnFacebook", Rect2(Vector2(1168, 344.559), Vector2(58, 58))), "image/com/login/dl_icon_yonghu", "facebook", func(): _show_local_notice())
 
 	var floating_bg_rect := _layout_rect("xuanfu_bg", Rect2(Vector2(903.073, 436.971), Vector2(247, 47)))
 	var floating_bg := NinePatchRect.new()
 	floating_bg.position = floating_bg_rect.position
 	floating_bg.size = floating_bg_rect.size
-	floating_bg.texture = _load_texture_region(UI_ATLAS_PATH, SERVER_FLOAT_BG_RECT)
+	floating_bg.texture = _login_texture("image/com/login/btn_fuwuqibg")
 	floating_bg.patch_margin_left = 15
 	floating_bg.patch_margin_top = 15
 	floating_bg.patch_margin_right = 13
@@ -128,7 +119,7 @@ func _build_ui() -> void:
 
 	var server_bg := NinePatchRect.new()
 	server_bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	server_bg.texture = _load_texture_region(LOGIN_ATLAS_PATH, SERVER_BOX_RECT)
+	server_bg.texture = _login_texture("image/com/login/dl_frame9_fuwuqi")
 	server_bg.patch_margin_left = 10
 	server_bg.patch_margin_top = 10
 	server_bg.patch_margin_right = 10
@@ -158,7 +149,7 @@ func _build_ui() -> void:
 	var switch_icon := TextureRect.new()
 	switch_icon.position = Vector2(212, 8)
 	switch_icon.size = Vector2(30, 24)
-	switch_icon.texture = _load_texture_region(UI_ATLAS_PATH, SWITCH_ICON_RECT)
+	switch_icon.texture = _login_texture("image/com/login/dl_icon_qiehuan")
 	switch_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	switch_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	switch_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -180,7 +171,7 @@ func _build_ui() -> void:
 
 	var start_image := TextureRect.new()
 	start_image.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	start_image.texture = _load_texture_region(LOGIN_BUTTON_SHEET, START_BUTTON_RECT)
+	start_image.texture = _login_texture("image/com/login/dl_btn_jinruyouxi")
 	start_image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	start_image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	start_image.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -193,7 +184,8 @@ func _build_ui() -> void:
 	start_hit.tooltip_text = "进入主城"
 	start_hit.pressed.connect(_on_start_game)
 	start_box.add_child(start_hit)
-	_add_label(start_box, "进入游戏", Vector2.ZERO, start_box.size, 24, Color(1.0, 0.96, 0.74)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var start_label := _add_label(start_box, "进入游戏", Vector2(195, 25), Vector2(160, 50), 18, Color(1.0, 0.96, 0.75))
+	start_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 	var banhao_rect := _layout_rect("lblBanhao", Rect2(Vector2(408.02, 637.166), Vector2(466.67, 56.5)))
 	var banhao := _add_label(design_root, "批许文号：新广出审[2017]6390号  ISBN：978-7-7979-9552-8\n著作权人：长沙骁之翼网络有限公司    出版单位：长沙骁之翼有限公司", banhao_rect.position, banhao_rect.size, 13, Color(0.86, 0.86, 0.9))
@@ -237,6 +229,23 @@ func _load_layout_index(path: String) -> Dictionary:
 			index[name] = node
 	return index
 
+func _load_login_resource_index() -> Dictionary:
+	var index := {}
+	if not FileAccess.file_exists(LOGIN_RESOURCE_INDEX):
+		return index
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(LOGIN_RESOURCE_INDEX))
+	if typeof(parsed) != TYPE_ARRAY:
+		return index
+	for item in parsed:
+		if typeof(item) != TYPE_DICTIONARY:
+			continue
+		var path := str(item.get("path", ""))
+		if path == "":
+			continue
+		if not index.has(path):
+			index[path] = item
+	return index
+
 func _layout_rect(name: String, fallback: Rect2) -> Rect2:
 	return _rect_from_layout(layout_nodes, name, fallback)
 
@@ -249,7 +258,7 @@ func _rect_from_layout(source: Dictionary, name: String, fallback: Rect2) -> Rec
 		return Rect2(Vector2(float(rect[0]), float(rect[1])), Vector2(float(rect[2]), float(rect[3])))
 	return fallback
 
-func _add_icon_button(bounds: Rect2, rect: Rect2i, tooltip: String, callback: Callable) -> void:
+func _add_icon_button(bounds: Rect2, resource_path: String, tooltip: String, callback: Callable) -> void:
 	var box := Control.new()
 	box.position = bounds.position
 	box.size = bounds.size
@@ -257,7 +266,7 @@ func _add_icon_button(bounds: Rect2, rect: Rect2i, tooltip: String, callback: Ca
 
 	var image := TextureRect.new()
 	image.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	image.texture = _load_texture_region(UI_ATLAS_PATH, rect)
+	image.texture = _login_texture(resource_path)
 	image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	image.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -290,18 +299,27 @@ func _add_privacy_row() -> void:
 	privacy.bbcode_enabled = true
 	privacy.fit_content = true
 	privacy.scroll_active = false
-	privacy.text = "[color=#e5e8ff]我已阅读并同意[/color][color=#8fd7ff]《用户协议》[/color][color=#e5e8ff]和[/color][color=#8fd7ff]《隐私政策》[/color]"
-	privacy.add_theme_font_size_override("normal_font_size", 15)
+	privacy.text = "[color=#e5e8ff]我已详细阅读并同意[/color][color=#7dc8a4]《用户协议和隐私政策》[/color]"
+	privacy.add_theme_font_size_override("normal_font_size", 16)
 	privacy.add_theme_stylebox_override("normal", StyleBoxEmpty.new())
 	privacy.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
 	privacy.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	design_root.add_child(privacy)
 
+	var toggle_hit := Button.new()
+	toggle_hit.text = ""
+	toggle_hit.flat = true
+	toggle_hit.position = toggle_rect.position
+	toggle_hit.size = toggle_rect.size
+	toggle_hit.tooltip_text = "切换同意状态"
+	toggle_hit.pressed.connect(func(): _set_privacy_checked(not privacy_checked, false))
+	design_root.add_child(toggle_hit)
+
 	var privacy_hit := Button.new()
 	privacy_hit.text = ""
 	privacy_hit.flat = true
-	privacy_hit.position = toggle_rect.position
-	privacy_hit.size = Vector2(rich_rect.size.x + 44, max(rich_rect.size.y, toggle_rect.size.y))
+	privacy_hit.position = rich_rect.position
+	privacy_hit.size = Vector2(rich_rect.size.x + 10, max(rich_rect.size.y, toggle_rect.size.y))
 	privacy_hit.tooltip_text = "查看隐私协议"
 	privacy_hit.pressed.connect(_show_privacy_overlay)
 	design_root.add_child(privacy_hit)
@@ -353,6 +371,7 @@ func _build_server_popup() -> void:
 		var tab := Button.new()
 		tab.text = label
 		tab.custom_minimum_size = Vector2(tab_box.size.x, 48)
+		tab.add_theme_font_size_override("font_size", 18)
 		tab_box.add_child(tab)
 
 	var list_rect := _layout_rect("scrollserver", Rect2(Vector2(283.866, 201.0), Vector2(742.0, 401.0)))
@@ -375,13 +394,11 @@ func _build_server_popup() -> void:
 	for server in servers:
 		_add_server_list_item(list, str(server.id), str(server.name), str(server.status))
 
-	var tip := _add_label(server_popup, "本地 Demo 不连接服务器，选择项只用于界面展示。", Vector2(panel_rect.position.x + 285, panel_rect.position.y + 454), Vector2(420, 26), 15, Color(0.78, 0.8, 0.9))
-	tip.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-
 	var close := Button.new()
 	close.text = "关闭"
 	close.position = Vector2(panel_rect.position.x + panel_rect.size.x - 118, panel_rect.position.y + 18)
 	close.size = Vector2(82, 34)
+	close.add_theme_font_size_override("font_size", 18)
 	close.pressed.connect(_hide_server_popup)
 	server_popup.add_child(close)
 
@@ -522,18 +539,15 @@ func _build_notice_overlay() -> void:
 	notice_overlay.add_child(close_area)
 
 	var panel_rect := Rect2(Vector2(224.0, 33.968), Vector2(832.0, 603.0))
-	var panel := PanelContainer.new()
+	var panel := NinePatchRect.new()
 	panel.position = panel_rect.position
 	panel.size = panel_rect.size
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.91, 0.88, 0.78, 0.98)
-	style.border_color = Color(0.46, 0.37, 0.23, 1.0)
-	style.set_border_width_all(3)
-	style.corner_radius_top_left = 6
-	style.corner_radius_top_right = 6
-	style.corner_radius_bottom_left = 6
-	style.corner_radius_bottom_right = 6
-	panel.add_theme_stylebox_override("panel", style)
+	panel.texture = _login_texture("image/com/login/gg_frame_gonggao")
+	panel.patch_margin_left = 236
+	panel.patch_margin_top = 188
+	panel.patch_margin_right = 211
+	panel.patch_margin_bottom = 188
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	notice_overlay.add_child(panel)
 
 	var title_rect := Rect2(Vector2(609.964, 70.934), Vector2(72.0, 45.36))
@@ -548,19 +562,20 @@ func _build_notice_overlay() -> void:
 	notice_overlay.add_child(scroll)
 
 	var body := RichTextLabel.new()
-	body.custom_minimum_size = Vector2(scroll_rect.size.x - 28, 760)
-	body.bbcode_enabled = true
+	body.custom_minimum_size = Vector2(scroll_rect.size.x - 28, 980)
+	body.bbcode_enabled = false
 	body.fit_content = true
 	body.scroll_active = false
-	body.add_theme_font_size_override("normal_font_size", 22)
+	body.add_theme_font_size_override("normal_font_size", 21)
 	body.add_theme_color_override("default_color", Color(0.25, 0.23, 0.2))
 	body.add_theme_stylebox_override("normal", StyleBoxEmpty.new())
-	body.text = "[center][b]本地资源还原公告[/b][/center]\n\n欢迎进入 Maiden Academy 本地 Demo。\n\n当前版本用于离线检查已解密资源、界面布局、Spine 动画和主流程跳转，不会连接真实服务器。\n\n已还原流程：启动加载、登录调试页、平台选服页、连接服务器提示、主城、英雄列表、英雄详情、召唤、仓库和商会。\n\n后续会继续按原始 prefab 和源码入口补齐公告、隐私协议、活动页、系统入口和英雄详情子功能。"
+	body.text = _notice_template_text()
 	scroll.add_child(body)
 
-	var close_tip_rect := Rect2(Vector2(556.879, 652.596), Vector2(154.0, 27.72))
+	var close_tip_rect := Rect2(Vector2(556.879, 606.0), Vector2(154.0, 27.72))
 	var close_tip := _add_label(notice_overlay, "点击空白处关闭", close_tip_rect.position, close_tip_rect.size, 18, Color(0.86, 0.82, 0.68))
 	close_tip.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	close_tip.z_index = 2
 
 func _build_privacy_overlay() -> void:
 	privacy_overlay = Control.new()
@@ -691,7 +706,7 @@ func _add_server_list_item(parent: Control, server_id: String, server_name: Stri
 
 	var bg := NinePatchRect.new()
 	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	bg.texture = _load_texture_region(LOGIN_ATLAS_PATH, SERVER_BOX_RECT)
+	bg.texture = _login_texture("image/com/login/dl_frame9_fuwuqi")
 	bg.patch_margin_left = 10
 	bg.patch_margin_top = 10
 	bg.patch_margin_right = 10
@@ -699,7 +714,7 @@ func _add_server_list_item(parent: Control, server_id: String, server_name: Stri
 	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	row.add_child(bg)
 
-	var id_label := _add_label(row, server_id, Vector2(16, 7), Vector2(76, 40), 18, Color(0.88, 0.9, 1.0))
+	var id_label := _add_label(row, server_id, Vector2(16, 7), Vector2(76, 40), 18, Color(0.90, 0.92, 1.0))
 	id_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	var name_label := _add_label(row, server_name, Vector2(96, 7), Vector2(150, 40), 18, Color(1.0, 0.96, 0.78))
 	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
@@ -736,27 +751,36 @@ func _update_selected_server_visual() -> void:
 func _server_tag_texture(status: String) -> Texture2D:
 	match status:
 		"new":
-			return _load_texture_region(UI_ATLAS_PATH, SERVER_TAG_NEW_RECT)
+			return _login_texture("image/com/login/dl_tag_xinfu")
 		"maintain":
-			return _load_texture_region(UI_ATLAS_PATH, SERVER_TAG_MAINTAIN_RECT)
+			return _login_texture("image/com/login/dl_tag_weihu")
 		_:
-			return _load_texture_region(LOGIN_ATLAS_PATH, SERVER_TAG_HOT_RECT)
+			return _login_texture("image/com/login/dl_tag_huobao")
 
 func _apply_startup_args() -> void:
 	var args := OS.get_cmdline_args()
 	args.append_array(OS.get_cmdline_user_args())
+	var overlay_requested := false
 	if "--open-server-list" in args:
 		_show_server_popup()
+		overlay_requested = true
 	if "--open-account" in args:
 		_show_account_overlay()
+		overlay_requested = true
 	if "--open-age" in args:
 		_show_age_overlay()
+		overlay_requested = true
 	if "--open-notice" in args:
 		_show_local_notice()
+		overlay_requested = true
 	if "--open-privacy" in args:
 		_show_privacy_overlay()
+		overlay_requested = true
 	if "--connect-overlay" in args or "--start-game" in args:
 		_show_connect_overlay()
+		overlay_requested = true
+	if not overlay_requested and not "--no-auto-notice" in args:
+		_show_local_notice()
 
 func _show_local_notice() -> void:
 	if server_popup:
@@ -818,16 +842,29 @@ func _hide_privacy_overlay() -> void:
 	if privacy_overlay:
 		privacy_overlay.visible = false
 
-func _set_privacy_checked(value: bool) -> void:
+func _set_privacy_checked(value: bool, close_overlay: bool = true) -> void:
 	privacy_checked = value
 	_update_privacy_toggle()
-	_hide_privacy_overlay()
+	if close_overlay:
+		_hide_privacy_overlay()
 
 func _update_privacy_toggle() -> void:
 	if not privacy_toggle_icon:
 		return
 	privacy_toggle_icon.texture = _load_texture_region(UI_ATLAS_PATH, TOGGLE_OFF_RECT)
-	privacy_toggle_icon.modulate = Color(0.58, 1.0, 0.64, 1.0) if privacy_checked else Color.WHITE
+	privacy_toggle_icon.modulate = Color.WHITE
+	if privacy_checked and privacy_toggle_icon.get_child_count() == 0:
+		var mark := Label.new()
+		mark.text = "✓"
+		mark.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		mark.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		mark.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		mark.add_theme_font_size_override("font_size", 24)
+		mark.add_theme_color_override("font_color", Color(0.42, 0.92, 0.52))
+		mark.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		privacy_toggle_icon.add_child(mark)
+	if privacy_toggle_icon.get_child_count() > 0:
+		privacy_toggle_icon.get_child(0).visible = privacy_checked
 
 func _on_start_game() -> void:
 	if selected_server_status == "maintain":
@@ -875,6 +912,24 @@ func _load_texture(path: String) -> Texture2D:
 		return null
 	return ImageTexture.create_from_image(image)
 
+func _login_texture(resource_path: String) -> Texture2D:
+	if not login_resources.has(resource_path):
+		return null
+	var item: Dictionary = login_resources[resource_path]
+	var frame: Dictionary = item.get("sprite_frame", item)
+	var native_path := str(frame.get("texture_native", item.get("native", "")))
+	if native_path == "":
+		return null
+	var godot_path := "res://" + native_path
+	var rect_data: Variant = frame.get("rect")
+	if typeof(rect_data) != TYPE_ARRAY or rect_data.size() < 4:
+		return _load_texture(godot_path)
+	var rect := Rect2i(
+		Vector2i(int(rect_data[0]), int(rect_data[1])),
+		Vector2i(int(rect_data[2]), int(rect_data[3]))
+	)
+	return _load_texture_region(godot_path, rect, bool(frame.get("rotated", false)))
+
 func _load_texture_region(path: String, region: Rect2i, rotated: bool = false) -> Texture2D:
 	var image := Image.new()
 	if image.load(path) != OK:
@@ -887,6 +942,13 @@ func _load_texture_region(path: String, region: Rect2i, rotated: bool = false) -
 		if rotated:
 			image.rotate_90(COUNTERCLOCKWISE)
 	return ImageTexture.create_from_image(image)
+
+func _notice_template_text() -> String:
+	var node: Dictionary = layout_nodes.get("tmptxt", {})
+	var text := str(node.get("text", ""))
+	if text != "":
+		return text
+	return "[紧急公告] 玩家数据恢复处理进程通知\n\n亲爱的玩家们，\n\n4天前，由于我们合作的第三方云服务器发生严重故障导致部分玩家账号数据丢失。\n对此，我们深表歉意。目前数据恢复工作已启动，但因数据量庞大且需手动核对迁移，预计短期内难以完成。\n\n为了尽可能减轻大家的损失，并弥补时间成本，现提供以下补偿方案：\n1. 我们邀请您前往新服务器创建账号。\n2. 对于已消费玩家：消费总额不超过 30 美元，补偿 50 美元代金券；消费总额超过 30 美元，补偿 50 美元代金券加 1.5 倍消费金额的代金券。\n3. 对于未消费玩家：补偿 30 美元代金券。\n\n我们深知这些补偿无法完全弥补大家的损失，但希望能减轻一些困扰。\n如有任何疑虑或建议，欢迎通过下方表单与我们反馈。\n\n填写表单!\nMaiden Academy开发组"
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_RESIZED and design_root:

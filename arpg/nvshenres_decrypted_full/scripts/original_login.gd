@@ -1,7 +1,5 @@
 extends Control
 
-const PREFAB_PREVIEW := "res://scenes/cocos_prefab_preview.tscn"
-const RESOURCE_BROWSER := "res://scenes/resource_browser.tscn"
 const SERVER_SELECT := "res://scenes/original_server_select.tscn"
 const LAYOUT_PATH := "res://data/prefab_layouts/LoginPre.json"
 const BG_PATH := "res://converted/png/a84d3470-bde7-4589-9b33-65a957c34507.png"
@@ -87,24 +85,6 @@ func _build_ui() -> void:
 	for item in side_items:
 		var rect := _layout_rect(str(item.node), Rect2(item.pos, Vector2(58, 58)))
 		_add_side_button(rect.position, rect.size, SIDE_ICON_RECTS.get(str(item.node), Rect2i()), item.label)
-
-	var top_bar := HBoxContainer.new()
-	top_bar.position = Vector2(876, 16)
-	top_bar.size = Vector2(388, 38)
-	top_bar.alignment = BoxContainer.ALIGNMENT_END
-	design_root.add_child(top_bar)
-
-	Navigation.add_buttons(top_bar)
-
-	var preview := Button.new()
-	preview.text = "原始界面预览"
-	preview.pressed.connect(func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "登录面板"}))
-	top_bar.add_child(preview)
-
-	var resources := Button.new()
-	resources.text = "资源浏览"
-	resources.pressed.connect(func(): Navigation.go(RESOURCE_BROWSER))
-	top_bar.add_child(resources)
 
 	var version_rect := _layout_rect("vesion", Rect2(Vector2(610.938, 678.55), Vector2(120, 18.9)))
 	var version := _add_label(design_root, "资源版本号:v1.0.0", version_rect.position - Vector2(30, 0), Vector2(180, version_rect.size.y), 13, Color(0.88, 0.9, 0.95))

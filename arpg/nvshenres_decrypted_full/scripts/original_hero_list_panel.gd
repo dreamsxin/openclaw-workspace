@@ -10,6 +10,12 @@ const BG_PATH := "res://assets/resources/native/ac/ac082229-4446-4cfe-bbaf-5e984
 const ATLAS_18A := "res://assets/resources/native/18/18b29ae48.png"
 const ATLAS_14 := "res://assets/resources/native/14/14d2fafcf.png"
 const ATLAS_C8 := "res://assets/resources/native/c8/c8384043-da3b-41dd-95e5-2ce3d2028977.png"
+const CAMP_TAB_POS := Vector2(392, 4)
+const HERO_CONTENT_POS := Vector2(175, 82)
+const HERO_CONTENT_SIZE := Vector2(836, 492)
+const HERO_SCROLL_POS := Vector2(32, 10)
+const HERO_SCROLL_SIZE := Vector2(728, 430)
+const HERO_CARD_SIZE := Vector2(86, 96)
 
 const CAMP_TABS := [
 	{"name": "全部", "id": 0, "path": "image/comHeroGrid/cm_icon_ZhenYing0"},
@@ -20,7 +26,7 @@ const CAMP_TABS := [
 	{"name": "暗", "id": 5, "path": "image/comHeroGrid/cm_icon_ZhenYing5"},
 ]
 
-const SIDE_TABS := ["英雄", "图鉴", "共享", "英魂", "阵容", "升星"]
+const SIDE_TABS := ["英雄", "图鉴", "共鸣", "英魂", "法阵", "星辉"]
 const QUALITY_ORDER := {"SSS": 0, "SSR": 1, "SR": 2, "R": 3, "N": 4}
 
 const HEROES := [
@@ -41,6 +47,9 @@ var grid: GridContainer
 var count_label: Label
 var title_label: Label
 var detail_label: Label
+var preview_panel: Control
+var grid_panel_bg: ColorRect
+var hero_scroll: ScrollContainer
 var named_resources: Dictionary = {}
 var hero_catalog: Array = []
 var hero_spine_index: Dictionary = {}
@@ -98,16 +107,18 @@ func _build_top_bar() -> void:
 	var top := HBoxContainer.new()
 	top.anchor_left = 1.0
 	top.anchor_right = 1.0
-	top.offset_left = -760
+	top.offset_left = -360
 	top.offset_top = 8
 	top.offset_right = -12
 	top.offset_bottom = 42
 	top.alignment = BoxContainer.ALIGNMENT_END
 	top.add_theme_constant_override("separation", 6)
+	top.visible = false
 	add_child(top)
 
 	title_label = Label.new()
 	title_label.text = "HeroListPre"
+	title_label.visible = false
 	title_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	top.add_child(title_label)
 	Navigation.add_buttons(top)
@@ -115,17 +126,33 @@ func _build_top_bar() -> void:
 	_add_top_button(top, "详情", func(): Navigation.go(HERO_DETAIL_SCENE))
 	_add_top_button(top, "Prefab", func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "英雄列表"}))
 
+	var back_icon := Button.new()
+	back_icon.text = "<"
+	back_icon.position = Vector2(46, 18)
+	back_icon.size = Vector2(42, 34)
+	back_icon.add_theme_font_size_override("font_size", 22)
+	back_icon.pressed.connect(func(): Navigation.go(HOME_SCENE))
+	design_root.add_child(back_icon)
+
+	var home_icon := Button.new()
+	home_icon.text = "⌂"
+	home_icon.position = Vector2(116, 16)
+	home_icon.size = Vector2(52, 38)
+	home_icon.add_theme_font_size_override("font_size", 20)
+	home_icon.pressed.connect(func(): Navigation.go(HOME_SCENE))
+	design_root.add_child(home_icon)
+
 func _build_camp_tabs() -> void:
 	var panel := HBoxContainer.new()
-	panel.position = Vector2(122, 58)
-	panel.size = Vector2(526, 100)
-	panel.add_theme_constant_override("separation", 16)
+	panel.position = CAMP_TAB_POS
+	panel.size = Vector2(310, 60)
+	panel.add_theme_constant_override("separation", 14)
 	design_root.add_child(panel)
 
 	for i in CAMP_TABS.size():
 		var button := Button.new()
 		button.text = ""
-		button.custom_minimum_size = Vector2(64, 76)
+		button.custom_minimum_size = Vector2(40, 54)
 		button.tooltip_text = str(CAMP_TABS[i].name)
 		button.pressed.connect(_select_camp.bind(int(CAMP_TABS[i].id)))
 		panel.add_child(button)
@@ -133,48 +160,62 @@ func _build_camp_tabs() -> void:
 
 func _build_grid_panel() -> void:
 	var panel := Control.new()
-	panel.position = Vector2(116, 128)
-	panel.size = Vector2(900, 492)
+	panel.position = HERO_CONTENT_POS
+	panel.size = HERO_CONTENT_SIZE
 	design_root.add_child(panel)
 
-	var bg := ColorRect.new()
-	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	bg.color = Color(0.025, 0.03, 0.055, 0.70)
-	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	panel.add_child(bg)
+	grid_panel_bg = ColorRect.new()
+	grid_panel_bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	grid_panel_bg.color = Color(0.025, 0.035, 0.065, 0.18)
+	grid_panel_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	panel.add_child(grid_panel_bg)
 
-	var header := Control.new()
-	header.position = Vector2(0, 0)
-	header.size = Vector2(900, 52)
-	panel.add_child(header)
-	_add_label(header, "英雄列表", Vector2(18, 8), Vector2(220, 34), 24, Color(1.0, 0.86, 0.48))
-	count_label = _add_label(header, "", Vector2(620, 10), Vector2(160, 28), 18, Color(0.86, 0.93, 1.0))
+	count_label = _add_label(design_root, "", Vector2(844, 12), Vector2(132, 30), 17, Color(0.88, 0.92, 1.0))
 	count_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	_add_action_button(header, "一键布阵", Vector2(790, 7), Vector2(92, 36), func(): _set_detail_text("本地 Demo：布阵入口已记录，后续接 HeroNormalarrayPre。"))
+	var add_button := _add_action_button(design_root, "+", Vector2(980, 10), Vector2(28, 28), func(): _set_detail_text("本地 Demo：英雄容量入口。"))
+	add_button.add_theme_font_size_override("font_size", 22)
 
-	var scroll := ScrollContainer.new()
-	scroll.position = Vector2(18, 58)
-	scroll.size = Vector2(864, 414)
-	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	panel.add_child(scroll)
+	hero_scroll = ScrollContainer.new()
+	hero_scroll.position = HERO_SCROLL_POS
+	hero_scroll.size = HERO_SCROLL_SIZE
+	hero_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	hero_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+	panel.add_child(hero_scroll)
 
 	grid = GridContainer.new()
-	grid.columns = 5
-	grid.add_theme_constant_override("h_separation", 16)
-	grid.add_theme_constant_override("v_separation", 18)
-	scroll.add_child(grid)
+	grid.columns = 7
+	grid.add_theme_constant_override("h_separation", 12)
+	grid.add_theme_constant_override("v_separation", 14)
+	hero_scroll.add_child(grid)
+
+	var help := Button.new()
+	help.text = "?"
+	help.position = Vector2(830, -8)
+	help.size = Vector2(36, 36)
+	help.rotation = deg_to_rad(-45)
+	help.add_theme_font_size_override("font_size", 22)
+	help.pressed.connect(func(): _set_detail_text("本地 Demo：英雄列表帮助入口。"))
+	panel.add_child(help)
 
 func _build_side_tabs() -> void:
-	var panel := VBoxContainer.new()
-	panel.position = Vector2(1072, 86)
-	panel.size = Vector2(198, 520)
-	panel.add_theme_constant_override("separation", 16)
+	var panel := Control.new()
+	panel.position = Vector2.ZERO
+	panel.size = DESIGN_SIZE
 	design_root.add_child(panel)
 
+	var tab_positions := [
+		Vector2(1084, 18),
+		Vector2(1084, 106),
+		Vector2(1084, 194),
+		Vector2(1084, 282),
+		Vector2(1084, 370),
+		Vector2(1084, 458),
+	]
 	for i in SIDE_TABS.size():
 		var button := Button.new()
 		button.text = SIDE_TABS[i]
-		button.custom_minimum_size = Vector2(166, 58)
+		button.position = tab_positions[i]
+		button.size = Vector2(150, 62)
 		button.add_theme_font_size_override("font_size", 20)
 		button.pressed.connect(_select_side_tab.bind(i))
 		panel.add_child(button)
@@ -182,12 +223,39 @@ func _build_side_tabs() -> void:
 
 func _build_bottom_actions() -> void:
 	var bottom := Control.new()
-	bottom.position = Vector2(144, 636)
-	bottom.size = Vector2(880, 56)
+	bottom.position = Vector2(0, 0)
+	bottom.size = DESIGN_SIZE
 	design_root.add_child(bottom)
-	detail_label = _add_label(bottom, "点击英雄卡片进入 HeroBookDetailPre 详情页。", Vector2(0, 8), Vector2(590, 34), 18, Color(0.78, 0.90, 1.0))
-	_add_action_button(bottom, "英雄图鉴", Vector2(616, 8), Vector2(116, 38), func(): _select_side_tab(1))
-	_add_action_button(bottom, "共享等级", Vector2(748, 8), Vector2(116, 38), func(): _select_side_tab(2))
+	detail_label = _add_label(bottom, "点击英雄卡片进入 HeroBookDetailPre 详情页。", Vector2(170, 646), Vector2(540, 26), 16, Color(0.78, 0.90, 1.0))
+	detail_label.visible = false
+	_build_bottom_nav(bottom)
+	_add_action_button(bottom, "arrange", Vector2(1188, 512), Vector2(56, 44), func(): _select_side_tab(4))
+
+func _build_bottom_nav(parent: Control) -> void:
+	var labels := ["城镇", "英雄", "召唤", "冒险", "副本", "公会"]
+	var targets := [
+		func(): Navigation.go(HOME_SCENE),
+		func(): _select_side_tab(0),
+		func(): Navigation.go("res://scenes/original_draw_card_panel.tscn"),
+		func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "冒险地图顶部"}),
+		func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "冒险地图底部"}),
+		func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "公会"}),
+	]
+	var centers := [260, 420, 580, 740, 900, 1060]
+	for i in labels.size():
+		var button := Button.new()
+		button.text = labels[i]
+		button.position = Vector2(centers[i] - 58, 632)
+		button.size = Vector2(116, 62)
+		button.add_theme_font_size_override("font_size", 16)
+		button.pressed.connect(targets[i])
+		parent.add_child(button)
+		var glow := ColorRect.new()
+		glow.position = Vector2(centers[i] - 46, 620)
+		glow.size = Vector2(92, 4)
+		glow.color = Color(0.95, 0.80, 0.44, 0.75 if i == 1 else 0.25)
+		glow.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		parent.add_child(glow)
 
 func _refresh() -> void:
 	_refresh_camp_tabs()
@@ -199,6 +267,7 @@ func _refresh() -> void:
 func _refresh_camp_tabs() -> void:
 	for i in camp_buttons.size():
 		var button := camp_buttons[i]
+		button.visible = _is_camp_filter_visible(i)
 		for child in button.get_children():
 			child.queue_free()
 		button.disabled = int(CAMP_TABS[i].id) == selected_camp
@@ -210,8 +279,12 @@ func _refresh_camp_tabs() -> void:
 		bg.color = bg_color
 		bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		button.add_child(bg)
-		_add_named_image_to(button, str(CAMP_TABS[i].path), Vector2(12, 8), Vector2(40, 40))
-		_add_label(button, str(CAMP_TABS[i].name), Vector2(0, 48), Vector2(64, 24), 15, Color(0.96, 0.90, 0.70)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		if i == 0:
+			var all_label := _add_label(button, "ALL", Vector2(0, 11), Vector2(40, 24), 15, Color(0.95, 0.96, 1.0))
+			all_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			all_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		else:
+			_add_named_image_to(button, str(CAMP_TABS[i].path), Vector2(0, 0), Vector2(40, 50))
 
 func _refresh_side_tabs() -> void:
 	for i in side_buttons.size():
@@ -226,13 +299,26 @@ func _refresh_grid() -> void:
 	for child in grid.get_children():
 		child.queue_free()
 	var filtered := _filtered_heroes()
-	count_label.text = "%d/%d" % [filtered.size(), _all_heroes().size()]
+	count_label.text = "%d/235" % filtered.size()
+	count_label.visible = selected_side_tab in [0, 1]
 	if selected_side_tab == 0:
-		grid.columns = 5
+		hero_scroll.position = HERO_SCROLL_POS
+		hero_scroll.size = HERO_SCROLL_SIZE
+		hero_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+		hero_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+		grid.columns = 7
+		grid.add_theme_constant_override("h_separation", 12)
+		grid.add_theme_constant_override("v_separation", 14)
 		for hero in filtered:
 			_add_hero_card(hero)
 	elif selected_side_tab == 1:
-		grid.columns = 6
+		hero_scroll.position = Vector2(10, 12)
+		hero_scroll.size = Vector2(860, 432)
+		hero_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+		hero_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+		grid.columns = max(filtered.size(), 1)
+		grid.add_theme_constant_override("h_separation", 14)
+		grid.add_theme_constant_override("v_separation", 8)
 		for hero in filtered:
 			_add_book_card(hero)
 	elif selected_side_tab == 2:
@@ -253,14 +339,12 @@ func _add_hero_card(hero: Dictionary) -> void:
 	var hero_id := str(hero.get("id", ""))
 	var hero_name := str(hero.get("name", hero_id))
 	var hero_level := str(hero.get("level", "1"))
-	var hero_job := str(hero.get("job", "未知"))
-	var hero_power := str(hero.get("power", "0"))
 	var hero_camp := int(hero.get("camp", 0))
 	var hero_quality := str(hero.get("quality", "SSR"))
 	var hero_owned := bool(hero.get("owned", true))
 	var card := Button.new()
 	card.text = ""
-	card.custom_minimum_size = Vector2(152, 206)
+	card.custom_minimum_size = HERO_CARD_SIZE
 	card.tooltip_text = "%s %s Lv.%s" % [hero_quality, hero_name, hero_level]
 	card.pressed.connect(_open_hero_detail.bind(hero))
 	grid.add_child(card)
@@ -271,23 +355,22 @@ func _add_hero_card(hero: Dictionary) -> void:
 	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	card.add_child(bg)
 
-	_add_named_image_to(card, "image/comHeroGrid/cm_frame_TouXiangDi5", Vector2(22, 10), Vector2(108, 108))
-	_add_named_image_to(card, "image/head/%s" % hero_id, Vector2(35, 22), Vector2(82, 82))
-	_add_named_image_to(card, "image/comHeroGrid/cm_frame_TouXiangKuang6", Vector2(22, 10), Vector2(108, 108))
-	_add_named_image_to(card, _quality_tag_path(hero_quality), Vector2(20, 8), Vector2(42, 26))
-	_add_quality_label(card, hero_quality, Vector2(17, 8), Vector2(48, 24))
-	_add_named_image_to(card, _camp_icon_path(hero_camp), Vector2(105, 18), Vector2(30, 30))
-	for i in int(hero.get("stars", 5)):
-		_add_named_image_to(card, "image/comHeroGrid/cm_icon_XingXing1_1", Vector2(22 + i * 22, 108), Vector2(20, 20))
+	_add_named_image_to(card, "image/comHeroGrid/cm_frame_TouXiangDi5", Vector2(0, 0), Vector2(86, 86))
+	_add_named_image_to(card, "image/head/%s" % hero_id, Vector2(7, 7), Vector2(72, 72))
+	_add_named_image_to(card, "image/comHeroGrid/cm_frame_TouXiangKuang6", Vector2(0, 0), Vector2(86, 86))
+	_add_named_image_to(card, _camp_icon_path(hero_camp), Vector2(0, 0), Vector2(22, 28))
+	var lv := _add_label(card, hero_level, Vector2(52, 1), Vector2(32, 17), 13, Color(0.72, 1.0, 0.92))
+	lv.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	_add_quality_label(card, hero_quality, Vector2(0, 66), Vector2(42, 20))
+	var stars := int(hero.get("stars", 5))
+	for i in stars:
+		_add_named_image_to(card, "image/comHeroGrid/cm_icon_XingXing1_1", Vector2(37 + i * 9, 75), Vector2(13, 13))
 	if bool(hero.get("combat", false)):
-		_add_status_badge(card, "上阵", Vector2(10, 72), Color(0.16, 0.42, 0.78, 0.88))
+		_add_status_badge(card, "上阵", Vector2(56, 34), Color(0.16, 0.42, 0.78, 0.88))
 	elif bool(hero.get("assist", false)):
-		_add_status_badge(card, "助战", Vector2(10, 72), Color(0.30, 0.48, 0.18, 0.88))
+		_add_status_badge(card, "助战", Vector2(56, 34), Color(0.78, 0.56, 0.22, 0.88))
 	if bool(hero.get("red", false)):
-		_add_named_image_to(card, "image/common/cm_icon_HongDian", Vector2(118, 4), Vector2(26, 26))
-	_add_label(card, hero_name, Vector2(10, 130), Vector2(132, 26), 18, Color(1.0, 0.86, 0.52)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_add_label(card, "%s  Lv.%s" % [hero_job, hero_level], Vector2(10, 156), Vector2(132, 22), 14, Color(0.78, 0.90, 1.0)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_add_label(card, "战力 %s" % hero_power, Vector2(8, 178), Vector2(136, 22), 13, Color(0.96, 0.94, 0.78)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_add_named_image_to(card, "image/common/cm_icon_HongDian", Vector2(68, -4), Vector2(20, 20))
 	if not hero_owned:
 		var lock := ColorRect.new()
 		lock.position = Vector2(0, 0)
@@ -295,7 +378,7 @@ func _add_hero_card(hero: Dictionary) -> void:
 		lock.color = Color(0, 0, 0, 0.36)
 		lock.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		card.add_child(lock)
-		_add_label(card, "未获得", Vector2(36, 76), Vector2(80, 28), 18, Color(0.9, 0.9, 0.95)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_add_label(card, "未获", Vector2(22, 34), Vector2(44, 20), 14, Color(0.9, 0.9, 0.95)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 func _add_book_card(hero: Dictionary) -> void:
 	var hero_id := str(hero.get("id", ""))
@@ -304,18 +387,19 @@ func _add_book_card(hero: Dictionary) -> void:
 	var hero_quality := str(hero.get("quality", "SSR"))
 	var card := Button.new()
 	card.text = ""
-	card.custom_minimum_size = Vector2(126, 332)
+	card.custom_minimum_size = Vector2(108, 374)
 	card.tooltip_text = "%s %s 图鉴" % [hero_quality, hero_name]
 	card.pressed.connect(_open_hero_detail.bind(hero))
 	grid.add_child(card)
-	_add_named_image_to(card, "image/common/cm_frame_kadicheng", Vector2(9, 4), Vector2(108, 328))
-	var book_image := _add_named_image_to(card, "image/heroBook/%s" % hero_id, Vector2(13, 20), Vector2(100, 236))
+	_add_named_image_to(card, "image/common/cm_frame_kadicheng", Vector2(0, 0), Vector2(108, 328))
+	var book_image := _add_named_image_to(card, "image/heroBook/%s" % hero_id, Vector2(2, 16), Vector2(104, 302))
 	if book_image == null:
-		_add_named_image_to(card, "image/head/%s" % hero_id, Vector2(23, 44), Vector2(80, 80))
-	_add_named_image_to(card, _camp_icon_path(hero_camp), Vector2(82, 16), Vector2(28, 28))
-	_add_quality_label(card, hero_quality, Vector2(8, 16), Vector2(48, 24))
-	_add_label(card, hero_name, Vector2(10, 262), Vector2(106, 26), 16, Color(1.0, 0.86, 0.52)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_add_label(card, "%s  星级 %s" % [hero_quality, hero.get("stars", 3)], Vector2(16, 290), Vector2(94, 22), 14, Color(0.90, 0.92, 1.0)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_add_named_image_to(card, "image/head/%s" % hero_id, Vector2(14, 112), Vector2(80, 80))
+	_add_named_image_to(card, _camp_icon_path(hero_camp), Vector2(4, 10), Vector2(38, 48))
+	_add_quality_label(card, hero_quality, Vector2(0, 58), Vector2(58, 26))
+	_add_named_image_to(card, "image/com/HeroListPanel/yxtj_Frame_XinXiDi", Vector2(-2, 270), Vector2(112, 46))
+	_add_label(card, hero_name, Vector2(4, 276), Vector2(100, 24), 16, Color(1.0, 0.86, 0.52)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_add_label(card, "星级 %s" % hero.get("stars", 3), Vector2(7, 322), Vector2(94, 20), 13, Color(0.90, 0.92, 1.0)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	if not bool(hero.get("owned", true)):
 		var shade := ColorRect.new()
 		shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -431,21 +515,34 @@ func _add_progress(parent: Control, position: Vector2, size: Vector2, value: flo
 	parent.add_child(fill)
 
 func _select_camp(camp: int) -> void:
+	if selected_side_tab == 1 and camp == 0:
+		camp = 1
 	selected_camp = camp
 	_refresh()
 
 func _select_side_tab(index: int) -> void:
 	selected_side_tab = index
+	if selected_side_tab == 0:
+		selected_camp = 0
+	elif selected_side_tab == 1 and selected_camp == 0:
+		selected_camp = 1
 	_refresh()
 	var messages := [
 		"英雄列表：点击任意英雄进入 HeroBookDetailPre。",
 		"图鉴页：已按 HeroBookItemPre 的竖卡结构重建，后续补全立绘和收集状态。",
-		"共享等级：已按 HeroLevelSharedPre 的共享槽位做本地 mock。",
-		"英魂页：本地显示碎片进度，后续继续追 YingHun 入口资源。",
-		"阵容页：已按 HeroNormalarrayPre 的星座阵容做本地 mock。",
-		"升星页：已按 HeroStarPre 的材料/转换结构做本地 mock。",
+		"共鸣页：已按 HeroLevelSharedPre 的共享槽位做本地 mock。",
+		"英魂入口：源码里 btnYingHun 打开 HeroPalacePanel，本地先显示碎片进度占位。",
+		"法阵页：已按 HeroNormalarrayPre 的星座阵容做本地 mock。",
+		"星辉页：已按 HeroStarPre 的材料/转换结构做本地 mock。",
 	]
 	_set_detail_text(messages[index])
+
+func _is_camp_filter_visible(index: int) -> bool:
+	if selected_side_tab == 0:
+		return true
+	if selected_side_tab == 1:
+		return index != 0
+	return false
 
 func _open_hero_detail(hero: Dictionary) -> void:
 	Navigation.go_with_args(HERO_DETAIL_SCENE, {"hero_id": str(hero.get("id", ""))})

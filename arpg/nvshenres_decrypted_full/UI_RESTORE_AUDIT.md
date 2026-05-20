@@ -6,20 +6,21 @@
 
 启动链路：
 
-1. `original_loading.tscn` -> `original_login.tscn`
-2. `original_login.tscn` -> `original_server_select.tscn`
-3. `original_server_select.tscn` -> `original_home_screen.tscn`
+1. `original_loading.tscn` -> `original_server_select.tscn`
+2. `original_server_select.tscn` 默认展示 `PFLoginPanel` 公告，可用 `--no-auto-notice` 查看选服主体。
+3. 点击开始后显示 `LoadingPre.isFist=1` 的连接服务器提示，再进入 `original_home_screen.tscn`。
+4. `original_login.tscn` 只保留为 `LoginPre` debug/直连页，不属于正式非 debug 启动链路。
 4. 主屏底部/右侧入口进入英雄列表、抽卡、仓库、商会等本地页面。
 
 ## 页面映射
 
 | Godot 场景 | 手工脚本 | 原始 prefab | 源码入口模块 | 当前状态 | 下一步 |
 | --- | --- | --- | --- | --- | --- |
-| `scenes/original_loading.tscn` | `scripts/original_loading.gd` | `Prefab/loading/LoadingPre` | 启动加载逻辑 / `LoadingPanelNode` | 已按 `LoadingPre.json` 收敛：底部 1018 宽进度条、进度文字、连接服务器文案、`dl_progressbar1_jiazai` 指针和 `uispine/denglu/loading_jindutiao` 扫光动效已接入；中部 `ani` 引用的压缩 UUID 是 `5cVkzAe5tNQY7WMdd9nXao`，解码为 `5c564cc0-7b9b-4d41-8ed6-31d77d9d76a8`，但当前解密工程缺少对应 import 文件，暂不能导出 Spine runtime。 | 后续从原始包或补解密资源里找回 `5c564cc0-7b9b-4d41-8ed6-31d77d9d76a8.json`。 |
-| `scenes/original_login.tscn` | `scripts/original_login.gd` | `Prefab/login/LoginPre` | `LoginPanel` | `LoginPanel` 是调试/账号直连页，不是正式启动选服页；已按 `LoginPre.json` 补回四个调试输入框 `tbg1~tbg4`、版本号、右侧协议/用户/公告按钮。`logo` 节点在 prefab 中 `_active=false`，当前不再强行显示。背景改用 `uispine/denglu/bg`，这是带静态登录人物的整张背景。 | 后续补 `LoginCom` 中文本输入、公告/用户弹窗和版本号真实值。 |
-| `scenes/original_server_select.tscn` | `scripts/original_server_select.gd` | `Prefab/login/pfLoginPanelPre` | `PFLoginPanel` | `PFLoginPanel` 是正式登录/选服入口；已按 `pfLoginPanelPre.json` 和 `PFLoginCom` 补回服务器浮框、`txtServer`、开始按钮、右侧公告/切换账号/Discord/Facebook、版号/适龄提示、隐私勾选与协议文案。背景改用 `uispine/denglu/bg`。服务器框/切换箭头/火爆/新服/维护标签来自 `image/com/login` SpriteFrame。已新增本地服务器列表弹层，参考 `nodeSv/svBg/scrollTab/scrollserver` 坐标；公告按钮已按 `nodeGG/gonggao_bg/scrollview/tmptxt` 坐标显示本地 mock 公告层；切换账号已按 `nodeAlert/cm_frame_TanChuang2/richtext/取消/确定` 补确认框；隐私协议和适龄提示已导出 `useprivacyPre/shilingPre` layout，并按导出 panel/title/scroll/button 坐标重排。点击开始游戏会按源码显示 `LoadingPre` 的 `isFist=1` 连接 alert 模式，再进入主城。 | 后续补选中勾选 SpriteFrame、真实隐私/适龄正文清洗、服务器列表 ScrollView 真实滚动/分组数据。 |
-| `scenes/original_home_screen.tscn` | `scripts/original_home_screen.gd` | `Prefab/mainpanel/MainPre` + `Prefab/mainpanel/daohangPre` | `MainUIPanel` / `DaohangPanel` | 主屏已用 `MainPre.json` 叠加节点和 105004 Spine；105004 继续按 `Prefab/HerolhPrefab/105004` 的 Skeleton 子节点坐标、scale 放置，遮挡问题改由主 UI 层级处理；底部导航保留 `daohangPre` 坐标；右侧九入口继续用 `MainPre` 的 `zjm_btn_rukou*` 坐标，图标已按 `image/com/mainpanel` 中的真实 `zjm_icon_yinghun/duanzao/zhanbu/xunxing/shanghui` 等 SpriteFrame 修正；左侧活动矩阵补入 `zjm_icon_xinfu/gonghuizhan/shengxingjihua/zhaohuantehui/yuzhuche` 等资源；头像/名字/战力条改用 `daohangPre` 坐标和 SpriteFrame；顶部 SHOP 改用 `cm_icon_Shop`，货币条按 `MoneyItemPre` 与 `image/common/cm_frame_HuoBi*`、`sj-jinbi/sj-zuanshi` 重组。 | 继续按 `MainPre.json` 修底部广告和默认角色位置。 |
-| `scenes/original_hero_list_panel.tscn` | `scripts/original_hero_list_panel.gd` | `Prefab/HeroListPanel/HeroListPre` | `HeroListPanel` | 英雄列表展示有 Spine 的英雄，点击进入详情；Prefab 按钮已指向“英雄列表”。 | 替换卡片为 `HeroGridPre/HeroBookItemPre` 的真实资源和布局。 |
+| `scenes/original_loading.tscn` | `scripts/original_loading.gd` | `Prefab/loading/LoadingPre` | 启动加载逻辑 / `LoadingPanelNode` | 已按 `GameWorld.load()/loadingComplete()` 重新确认：普通启动 `isFist=0`，显示底部 1018 宽进度条、`t1/t3` 和加载动画，不显示中部“正在连接服务器”；加载完成后进入 `PFLoginPanel/pfLoginPanelPre`，不是 `LoginPre`。连接服务器时才走 `isFist=1` alert 模式。 | 后续补 `LoadingPre.ani` 缺失 Spine runtime，并把连接服务器 alert 模式独立复核。 |
+| `scenes/original_login.tscn` | `scripts/original_login.gd` | `Prefab/login/LoginPre` | `LoginPanel` | `LoginPanel` 是 debug/直连登录页，只在 `Global.isDebug != 0` 时由 `GameWorld.showSeverPanel()` 打开；正式玩家启动不会先看到它。当前保留四个直连输入框、版本号、右侧协议/用户/公告按钮，并移除本地调试导航。 | 后续按 `LoginPre.bg/logo/textbg` 的真实资源链重新核查背景，不再把它作为正式登录页优化优先级。 |
+| `scenes/original_server_select.tscn` | `scripts/original_server_select.gd` | `Prefab/login/pfLoginPanelPre` | `PFLoginPanel` | `PFLoginPanel` 是正式登录/选服入口；`PFLoginPanel.onShow()` 会 `loginCom.onShow()`、设置版本号、勾选隐私 toggle、绑定隐私/适龄入口，并调用 `loginCom.onBtnGGClick()` 拉公告。当前主启动链已改为 `LoadingPre -> pfLoginPanelPre`；默认会打开公告层，也可用 `--no-auto-notice` 截主界面主体。 | 后续把公告层从本地说明改为按 `nodeGG/tmptxt` 和真实公告资源/文本清洗显示，并继续精修选服按钮资源。 |
+| `scenes/original_home_screen.tscn` | `scripts/original_home_screen.gd` | `Prefab/mainpanel/MainPre` + `Prefab/mainpanel/daohangPre` | `MainUIPanel` / `DaohangPanel` | 主屏已用 `MainPre.json` 叠加节点和 105004 Spine；105004 继续按 `Prefab/HerolhPrefab/105004` 的 Skeleton 子节点坐标、scale 放置，遮挡问题改由主 UI 层级处理；底部导航保留 `daohangPre` 坐标，并按 `cm_menu_BeiJing/cm_menu_TaiYangGuang` 绘制底栏光效；`DaohangPanel.creatMoney()` 只创建金币、钻石两个 `MoneyItem`，Godot 已按 `moneyBox` 顶部容器坐标修正，不再显示第三条货币；右侧九入口继续用 `MainPre` 的 `zjm_btn_rukou*` 坐标，图标已按 `image/com/mainpanel` 中的真实 `zjm_icon_yinghun/duanzao/zhanbu/xunxing/shanghui` 等 SpriteFrame 修正；左侧活动矩阵补入 `zjm_icon_xinfu/gonghuizhan/shengxingjihua/zhaohuantehui/yuzhuche` 等资源；头像/名字/战力条改用 `daohangPre` 坐标和 SpriteFrame；顶部 SHOP 改用 `cm_icon_Shop`。 | 继续按 `MainPre.json` 修默认角色与右侧入口层级细节。 |
+| `scenes/original_hero_list_panel.tscn` | `scripts/original_hero_list_panel.gd` | `Prefab/HeroListPanel/HeroListPre` | `HeroListPanel` | 已按源码逐段修正右侧入口：`btnHero/btnBook/btnShared/btnYingHun/btnNormalarray/btnStar` 对应“英雄、图鉴、共鸣、英魂、法阵、星辉”；英魂是 `openYinghun()` 入口，不是 `showTab` 普通页。英雄页显示全部阵营筛选，图鉴页隐藏“全部”并默认水阵营，共鸣/英魂/法阵/星辉隐藏阵营和容量条。 | 继续把英魂入口切到独立 `HeroPalacePanel` 手工页，并把共鸣/法阵/星辉从 mock 收敛到对应子 prefab。 |
 | `scenes/original_hero_panel.tscn` | `scripts/original_hero_panel.gd` | `Prefab/HeroPanel/HeroBookDetailPre` + `Prefab/mainpanel/daohangPre` | `HeroBookDetailPanel` / `DaohangPanel` | 已切换文案和预览入口到 `HeroBookDetailPre`，角色 Spine、语音、衣装、全屏预览可用。 | 用 `HeroBookDetailPre.json` 精确重排左上品质、右侧白纸面板、技能/装备列和页签。 |
 | `scenes/original_draw_card_panel.tscn` | `scripts/original_draw_card_panel.gd` | `Prefab/DrawCard/drawCardPre` | `DrawMainPanel` | 抽卡页有页签和部分 `ZhaoHuan_*` Spine。 | 继续追 `HeroShowPre`、十连展示、抽卡特效和活动抽卡入口。 |
 | `scenes/original_shop_panel.tscn` | `scripts/original_shop_panel.gd` | `Prefab/Shop/ShopPre` | `ShopPanel` | 商会可从主屏进入，已有商品网格和购买弹窗。 | 按 `ShopPre/GoodsItemPre/ShopItemPre` 重排主类型、子类型、刷新节点和货币条。 |
@@ -39,7 +40,7 @@
 | 仓库入口 | `BagPanel.preUrl="Prefab/BagPanel/BagPre"`；格子/出售/获取途径等为子面板 | `BagPre` + `GridBoxItemPre` + `BagSellEquipPre` 等 | `original_bag_panel.tscn` | 有独立手工页；分类/格子/详情可用，真实格子与子面板还未完全还原。 |
 | 商会入口 | `ShopPanel` 使用 `Prefab/Shop/ShopPre`；商品、页签、购买确认分别是子 prefab | `ShopPre` + `ShopItemPre` + `GoodsItemPre` + `ShopBuyEquitPre` | `original_shop_panel.tscn` | 有独立手工页；商品、页签、购买弹窗可用，仍需按 prefab 精排。 |
 | 活动入口 | `ActivityPanel.preUrl="Prefab/ActivityPanel/ActivityPre"`；`ActivityType.prefabArray` 决定首充、占卜、基金、限时礼包等子 prefab；也可 `openByPanelId()` | `ActivityPre` + `ActivityFirstRechargePre` + `ActivityAuguryPre` + 活动子 prefab | 主屏打开 prefab 预览 | 入口已覆盖，但大部分还不是独立手工页。 |
-| 右侧系统入口 | `MainUIPanel.rightNodeArr` 包含 `baoju/cangku/jingji/teach/yingHunDian/duanZao/xunbao/xunxing/shop/lihui` | 通行证、仓库、竞技、学院、英魂、锻造、占卜、寻星、商会等 prefab | 独立页或 prefab 预览 | 仓库、召唤、商会有独立页；通行证、学院、锻造、占卜、寻星目前是 prefab 预览覆盖。 |
+| 右侧系统入口 | `MainUIPanel.rightNodeArr` 包含 `baoju/cangku/jingji/teach/yingHunDian/duanZao/xunbao/xunxing/shop/lihui`；`onShow()` 分别绑定 `openTreasurePanel/openBag/openjingjiPanel/openTeachListPanel/openHeroPalacePanel/openduanZao/openXunbaoPanel/openZhuanPan/openShop` | 通行证、仓库、竞技、学院、英魂、锻造、占卜、寻星、商会等 prefab | 独立页或 prefab 预览 | 仓库、商会有独立页；英魂已修正为 `HeroPalacePre` 预览，不再误进召唤；通行证、学院、锻造、占卜、寻星目前是 prefab 预览覆盖。 |
 
 ## 主屏入口覆盖
 
@@ -47,7 +48,8 @@
 | --- | --- | --- |
 | 英雄 | `scenes/original_hero_list_panel.tscn` | 独立手工英雄列表，点击进入英雄详情。 |
 | 仓库 | `scenes/original_bag_panel.tscn` | 独立手工仓库页。 |
-| 召唤 / 英魂 | `scenes/original_draw_card_panel.tscn` | 独立手工抽卡页。 |
+| 召唤 | `scenes/original_draw_card_panel.tscn` | 底部 `btn3 -> openZhaohuanPanel()`，独立手工抽卡页。 |
+| 英魂 | `Prefab/HeroPalace/HeroPalacePre` | 主屏右侧 `yingHunDian -> openHeroPalacePanel()`，已导出 `HeroPalacePre.json`，当前进入原始 prefab 预览。 |
 | 商会 / 商店 | `scenes/original_shop_panel.tscn` | 独立手工商店页。 |
 | 通行证 | `Prefab/PassPrefab/BigPassPanel` | 已导出 `BigPassPanel.json`，当前进入原始 prefab 预览。 |
 | 学院 | `Prefab/MaoxianPanel/BraveManTriedPassInfoPre` | 已导出 `BraveManTriedPassInfoPre.json`，当前进入原始 prefab 预览。 |
@@ -64,6 +66,12 @@
 - 英雄详情页不再把截图主体误标为 `HeroMainPre`，改为 `HeroBookDetailPre`。
 - 英雄列表页的 Prefab 按钮改为打开 `HeroListPre`。
 - 英雄详情页的 Prefab 按钮改为打开 `HeroBookDetailPre`。
+- 2026-05-20 英雄列表按 `HeroListPre.json` 重新收敛：阵营按钮参考 `btnTypeAll/btnType1...` 的顶部坐标，英雄内容区参考 `content` 的 `[190,360,900,175]` 下半区横向滚动布局，卡片比例参考 `HeroGridPre` 的 `imgKuamg 110x110`。
+- 2026-05-20 英雄列表源码/prefab 复核：`classes-source\sources` 未直接命中 UI 名称，英雄 UI 的可靠线索在 `assets/main/index.js` 的 `HeroListControl/HeroListPanelCom/HeroListPanel`、`assets/resources/config.json` 拆出的 `Prefab__HeroListPanel.json` 与 `data/prefab_layouts/HeroListPre.json`。源码字段声明顺序是 `btnHero/btnBook/btnShared/btnYingHun/btnNormalarray/btnStar`；事件绑定是 `btnShared -> changeTab3()`，`btnYingHun -> openYinghun()`，所以本地页签行为顺序按“英雄、图鉴、共鸣、英魂、法阵、星辉”处理。Prefab 文本节点顺序不能单独作为行为依据。
+- 2026-05-20 英雄列表第二轮：新增左侧 `image/com/HeroListPanel/bg01/yxtj_Frame_JueSeDi/yxtj_Frame_XinXiDi` 预览区；英雄卡从 152x206 改为接近 `HeroGridPre` 的 110 头像卡；图鉴页从短卡改为 `HeroBookItemPre` 的 108x374 竖卡并优先加载 `image/heroBook/<id>`。
+- 2026-05-20 英雄列表源码逐段结论：`initScrollView()` 使用 `HeroListControl.onHeroSortByHeroDataArr(TYPE_COMBAT_TYPE1)`，按 `campType` 过滤后写入 `gridList.numItems`，容量显示为过滤数量 `/ capNum`；`initScrollView2()` 使用 `dataBookMap[campType]`，只展示当前阵营图鉴并按 `heros.grade` 降序；`showTab()` 中英雄页 `btnTypeAll.active=true`，图鉴页 `btnTypeAll.active=false` 并默认 `campType=1`，共鸣/法阵/星辉关闭阵营筛选和容量条。Godot 已按这些规则更新。
+- 2026-05-20 英雄详情按 `HeroBookDetailPre.json` 和原截图重新收敛：右侧白色信息板改为 `leftImg` 的 `[797,86,404,527]` 尺寸，装备/技能列保留在左侧深色条，正文从白板右半开始排布；直接参数 `--hero-id 105004 --capture-hero-panel` 可回归截图。
+- 2026-05-20 英雄详情第二轮：左上名字/职业/品质/星级改为截图式手工布局；`ft_zhanli` 按 prefab 坐标移到 `x≈381,y≈576` 并提高层级，避免被角色 Spine 或底部导航遮挡；左侧三个功能按钮保留命中区和 tooltip，资源未命中时只显示低调底框，不再显示调试文字。
 - 英雄详情底部“召唤”跳转修正为 `res://scenes/original_draw_card_panel.tscn`。
 - 登录页“原始界面预览”按钮改为直接打开 `LoginPre` 对应的“登录面板”。
 - 加载页按 `LoadingPre` 重排底部进度条和连接服务器文案。
@@ -76,11 +84,16 @@
 - 适龄提示源码为 `shilingPanel.preUrl="Prefab/loading/shilingPre"`，`onShow()` 将 `configManage.shilingTxt` 写入 `t1`，点击 `btn` 关闭。当前已导出 `data/prefab_layouts/shilingPre.json` 并用于 Godot 面板的 panel/title/button 坐标；ScrollView 的 content 原点导出仍不完整，Godot 对正文区域做了局部内边距修正。
 - `PFLoginPanel.getLastSever()` / `getAllSever()` 原本走 `game/getServerList.php` 网络请求。离线 Demo 不能连真实服务器，因此选服页用本地 mock 数据复原 `nodeSv` 弹层；点击服务器条打开列表，选择服务器只更新展示名称和状态标签，不改变网络连接逻辑。
 - 点击开始游戏的原始链路不是直接进主城，也不是显示首次启动完整进度条：`PFLoginCom.onStartGame()` -> `PFLoginPanel.onStartGame()` -> `GameWorld.connect()`，其中 `GameWorld.connect()` 设置 `LoadingPanelNode.isFist=1`，打开 `Prefab/loading/LoadingPre`，添加 `FackProgressCom` 并 `show("正在连接服务器")`。`LoadingPanelNode.onShow()` 在 `isFist=1` 时隐藏 `dl_progressbg1_jiazai/expMask/ani/t3`，只显示 `alert`；连接成功后 `GameWorld.onConnect()` 把提示改为“正在登录服务器”。Godot 当前在选服页内叠加这个 alert 模式并延迟进入主城。`LoadingPre.alert` 里的中间 `ani` 与启动加载中部动画共用缺失 SkeletonData，当前只能用本地转动占位，不应当再按普通图片排查。
+- 2026-05-20 选服页资源修正：`image__com__login.json` 的 `rect/texture_native/rotated/capInsets` 在 `sprite_frame` 子对象里，不能只读顶层字段。`original_server_select.gd` 已新增 `LOGIN_RESOURCE_INDEX` 和 `_login_texture()`，服务器框、右侧图标、状态 tag、开始按钮、公告框都改为按 `image/com/login/*` 逻辑路径加载。注意 `image/com/login/dl_bg` 有多条同名资源，不能简单按路径取第一条；当前 `PFLoginPanel` 主体背景继续用确认可见的 `uispine/denglu/bg` 静态人物背景，启动加载页单独使用 `LoadingPre` 的加载背景。
+- 2026-05-20 `pfLoginPanelPre` 原始 import 中保留了公告 `tmptxt` 的 RichText 正文，简化后的 `data/prefab_layouts/pfLoginPanelPre.json` 未导出该字符串。Godot 公告层已改用这段原始公告的纯文本版，并继续使用 `image/com/login/gg_frame_gonggao` 作为真实公告框。
+- 2026-05-20 `nodeSv/svBg/xinxibg_baise` 的 SpriteFrame UUID 出现在 `assets/resources/import/fc/fc3b94c3-c07b-4eb2-826e-2ad5d962c9e7.json` 的 prefab 局部依赖里，但不在全局 `assets/resources/config.json` 的 `uuids/paths` 中，当前 `config_index` 无法直接按逻辑路径反查。尝试用 `image/com/login/G-diban` 替代会导致选服弹窗严重拉伸错位，已回退为稳定手工底板；服务器条目、状态 tag 和坐标仍保留原始布局/资源。后续若要完全还原 `svBg`，需要增强 prefab import 解包器，按局部依赖表解析 SpriteFrame import/native。
+- 2026-05-20 隐私行按源码职责拆分：`cheks` 小框负责勾选/取消，`ysTxt/richtext` 文字负责打开 `useprivacyPre`。Godot 已把命中区拆成小框切换和文字打开协议，不再整行点击都弹协议。
 - 主屏底部导航保留 `daohangPre` 的坐标；对 SpriteFrame 指向横条/极薄切片的图标，已回退到之前可显示的 atlas 近似资源。
 - 登录页、选服页、主屏已开始从 `data/prefab_layouts/*.json` 的 `screen_rect` 读取位置和尺寸；手工脚本只保留已验证可显示的贴图选择。
 - 主屏右侧九入口、底部导航、广告入口、左侧快捷栏、头像/名字/战力条已改为读取 `MainPre/daohangPre` 节点坐标，点击热区同步使用同一来源。
-- 主屏右侧/活动入口已补全可点击目标：通行证、学院、锻造、占卜、寻星、活动、福利、首充、升星、新服、召唤卡、预注册等没有独立手工页时会打开对应原始 prefab 预览。
-- 主屏活动矩阵不能完全照搬 `screen_rect`：原节点挂在可滚动/偏移父容器下，第一列导出后落在屏幕外侧。当前按 prefab 网格间距保留，但对可见区整体右移 `100px`，避免和左侧快捷栏重叠。
+- 主屏右侧/活动入口已补全可点击目标：英魂、通行证、学院、锻造、占卜、寻星、活动、福利、首充、升星、新服、召唤卡、预注册等没有独立手工页时会打开对应原始 prefab 预览。
+- 2026-05-20 主屏右侧入口源码复核：`MainUIPanel.onfrist()` 的 `rightNodeArr` 顺序为 `baoju/cangku/jingji/teach/yingHunDian/duanZao/xunbao/xunxing/shop/lihui`，`onShow()` 中 `yingHunDian` 绑定 `openHeroPalacePanel()`，不是抽卡。Godot 已把右侧“英魂”从 `original_draw_card_panel.tscn` 改为 `英魂殿` prefab 预览；`tools/export_cocos_prefab_layout.py` 同步补入 `("英魂殿", "Prefab/HeroPalace/HeroPalacePre")`，导出 `data/prefab_layouts/HeroPalacePre.json`。
+- 主屏活动矩阵不能完全照搬 `screen_rect`：原节点挂在可滚动/偏移父容器下，第一列导出后落在屏幕外侧。当前按 prefab 网格间距保留，但对 x 小于左侧快捷栏右边界的节点做最小 x 钳制，避免压住左侧快捷按钮。
 - 主城默认 `105004` 应照 `Prefab/HerolhPrefab/105004` 的 Skeleton 子节点坐标 `(-68,-333)` 和 scale `(1,0.95)` 放到 `MainPre.herolh` 全屏容器下；如果武器或头发遮住按钮，优先修 Godot/Cocos 层级映射，不要为了避让按钮改角色尺寸和坐标。当前主屏 UI 层已显式高于 Spine slot 子节点。
 - 已确认 `assets/resources/config.json` 是完整 Cocos 资源路径表，`paths` 里记录逻辑路径、类型和 UUID 下标，`uuids` 里记录压缩 UUID。现有 `data/named_resource_index.json` 只有一部分路径，不能作为完整资源索引。
 - 已新增 `tools/export_cocos_config_index.py`，可把 `assets/resources/config.json` 拆到 `data/config_index`。当前统计 resources bundle 共 17141 条路径资源，其中 `cc.SpriteFrame=8139`、`cc.Texture2D=4744`、`cc.Prefab=1007`、`sp.SkeletonData=993`、`cc.AudioClip=1061`。
@@ -88,12 +101,29 @@
 - `texture_path` 为空不一定代表资源不存在。很多 prefab 节点没有直接挂 `_spriteFrame`，但节点名与 `config.json` 的 `image/com/<模块>/<节点名>` 路径一致，例如 `zjm_btn_rukou0`、`zjm_icon_baoju`、`cm_icon_ChengZhen`。
 - `texture_path` 不为空也不一定可信。若导出节点名和 SpriteFrame 名明显不一致，优先用节点名到 `data/config_index/by_path_prefix/image__com__<模块>.json` 回查。例如主屏 `zjm_icon_zhaohuan` 在右侧多处被 layout 复用，但真实入口图标应按功能改为 `zjm_icon_yinghun`、`zjm_icon_duanzao`、`zjm_icon_zhanbu`、`zjm_icon_xunxing`、`zjm_icon_shanghui`。
 - 手工页图标选择优先级：`screen_rect` 取坐标；资源先用同名 `image/com/<模块>/<node_name>`；若 prefab 子节点引用了错误/重复图标，再用功能名映射到 config 里确认的 SpriteFrame；最后才使用旧的手工 atlas fallback。
-- 活动矩阵属于滚动/偏移容器，`screen_rect` 只能作为网格相对位置依据，不能完全照搬第一列导出坐标。当前主屏对活动矩阵整体右移 `100px`，这是为了贴近原图可见区并避免压住左侧快捷栏。
+- 活动矩阵属于滚动/偏移容器，`screen_rect` 只能作为网格相对位置依据，不能完全照搬第一列导出坐标。当前主屏把小于 `x=88` 的活动入口钳制到可见区，避免压住左侧快捷栏；同时尊重 `MainPre` 的 `active=false` 默认状态，`zjm_icon_pvpActivity` / `zjm_icon_stssActivity` 等运行期活动必须等源码中的剩余时间或服务器活动状态打开，否则会无条件叠到主角区域。
+- 右侧九入口的 `screen_rect` 已经包含父节点旋转/缩放后的最终画布位置；手工实现不要再对入口容器额外 `rotation=-8`。背景、图标、label、红点都应以导出的子节点坐标为准，当前已去掉二次旋转和默认红点。
 - `tools/export_cocos_prefab_layout.py` 已新增 `config.json` 兜底解析：当 prefab 引用缺失时，会按资源路径推断 SpriteFrame UUID，再解析 import/native/rect/originalSize/offset/rotated/capInsets。
 - 底部导航 `cm_tab_ZhaoHuan` 没有 `image/com/mainpanel/cm_icon_ZhaoHuan`，当前确认源码中 `btn3` 是召唤入口，静态替代资源使用 `image/com/mainpanel/zjm_icon_zhaohuan`；动态抽卡资源在 `uispine/ZhaoHuan*`，属于抽卡页效果，不是底栏静态图标。
-- `daohangPre` 的 `moneyBox` 是运行时空容器，没有静态货币子节点。主屏货币条应参考 `Prefab/comPrefab/MoneyItemPre` 的背景 `cm_frame_HuoBi2`，再按通用资源 `image/common/cm_frame_HuoBi1/2/3`、`cm_icon_HuoBi1/2`、`sj-jinbi`、`sj-zuanshi` 组合。
+- `daohangPre` 的 `moneyBox` 是运行时空容器，没有静态货币子节点。源码 `DaohangPanel.creatMoney()` 只实例化两个 `MoneyItem`：钻石 `x=521`、金币 `x=319`，再挂到 `moneyBox` 下；这些 x 是 `moneyBox` 局部坐标，不要再用 Cocos 全屏原点转换。Godot 主屏为了贴合截图把两个货币条放在顶部右侧，但数量仍保持两个。
+- 顶部 SHOP 和货币条都来自 `daohangPre` 运行时组合，不是 `MainPre` 静态节点。当前 Godot 维持两个货币条并向右收拢，避免与 `cm_icon_Shop` 重叠；后续如果补真实 `MoneyItemPre` 实例布局，应统一由 `moneyBox` 局部坐标计算。
+- `daohangCom` 中底部动画节点仍按旧名字取 `cm_icon_CangKu/MaoXian/MoShou`，而 `DaohangPanel.changeTabPanel()` 的逻辑把 `btn3` 改成召唤；`IconTs/cm_tab_ZhaoHuan` 绑定的是 `image/com/mainpanel/zjm_icon_zhaohuan`，只有 `34x34`，更像右侧入口小图。底部第 3 格应优先保持同系列 `cm_icon_*` 视觉资源，所以当前 Godot 使用 `image/com/mainpanel/cm_icon_CangKu` 作为静态图，点击逻辑仍是召唤。后续接 `sp1~sp6` 选中动画时，仍需按源码按钮序号而不是节点名映射。
+- 底部导航当前核对结果：`btn1` 城镇 `cm_tab_ChengZhen1` -> `cm_icon_ChengZhen` `[787,551,152,141]`；`btn2` 英雄 `cm_tab_YingXiong1` -> `cm_icon_YingXiong` `[3,334,150,142]`；`btn3` 召唤逻辑 -> 同系列静态图 `cm_icon_CangKu` `[477,242,125,123]`；`btn4` 冒险 `cm_tab_ChuJi1` -> `cm_icon_ChuJi` `[159,345,150,145]`；`btn5` 副本 `cm_tab_FuBen` -> `cm_icon_FuBen` `[879,276,134,133]`；`btn6` 公会 `cm_tab_GongHui1` -> `cm_icon_GongHui` `[345,232,119,126] rotated=true`。点击热区继续以 `btn1..btn6` 的 prefab `screen_rect` 为准。
+- 游戏源码设计画布是 `1280x720`：`Global.STAGE_WIGTH=1280`、`STAGE_HEIGHT=720`，Godot `project.godot` 也设置为 `1280x720`。当前遮挡问题主要来自滚动容器导出的活动矩阵和手工层级，而不是横屏宽高比设置错误。
+- `daohangPre` 底栏真实节点尺寸：`btn1..btn6` 热区均为 `120x120`；图标节点 screen_rect 分别是城镇 `[115.645,585.329,152,141]`、英雄 `[284.102,583.476,150,142]`、召唤逻辑位 `[481.599,591.329,125,123]`、冒险 `[645.211,582.972,150,145]`、副本 `[842.368,589.329,134,133]`、公会 `[1027.648,592.829,119,126]`；底栏背景 `cm_menu_BeiJing` 是 `[-493,540.552,2266,181]`，中央光 `cm_menu_TaiYangGuang` 是 `[451.254,601.201,340,97]`。主屏应按这些 1280x720 坐标落位，不要再按截图比例二次压缩。
+- `daohangPre.json` 里 `cm_menu_BeiJing` 的 `texture_path/sprite_name` 会被解析成 `cm_menu_TaiYangGuang`，这是导出器解析错误。真实底栏背景必须从 `config.json` 查 `image/com/mainpanel/cm_menu_BeiJing`：SpriteFrame UUID `8c4e3857-d4f4-43d8-a7bc-04d1327e2a77`，Texture2D/native 为 `assets/resources/native/f5/f58085bc-21e6-40ed-a4cf-b55f6b0cc8f9.png`，rect `[0,0,2266,181]`。Godot 侧已改为手工指定该 native，不能再直接信 `daohangPre` 的贴图字段。
+- `DaohangPanel.init()` 会把 `taiyang` 和 `DaoHangGuang` 的 x 对齐到 `btn1.x`，默认选中城镇。当前 Godot 将 `cm_menu_TaiYangGuang` 单独绘制并对齐 `btn1`，透明度降低，避免选中光误停在中间并遮住主城角色脚部。
+- `DaohangPanel.changeTabPanel()` 源码底栏路由：`btn1 -> openchengzhen()`，`btn2 -> openHeroPanel()`，`btn3 -> openZhaohuanPanel()`，`btn4 -> openchujiPanel()`，`btn5 -> openmaoxianPanel()`，`btn6 -> opengonghuiPanel()`。本地 Demo 对应为：城镇留在主屏、英雄列表、抽卡、战斗预览、冒险地图预览、公会预览；`btn5` 不应再误指向天空城。
+- 2026-05-20 底栏文本/路由同步修正：`original_home_screen.gd` 中 `btn4` 显示为“战斗”并打开 `战斗` 预览，`btn5` 显示为“冒险”并打开 `冒险地图顶部`，同时保留“副本”作为旧文案别名指向冒险地图。
+- 已补导出 `Prefab/MaoxianPanel/MaoxianMapPreTop` 和 `Prefab/MaoxianPanel/MaoxianMapPreBotton`，manifest 标签为“冒险地图顶部/冒险地图底部”。后续要继续还原 `openMaoxianUIPanel()` 时，应从这两个 prefab 与 `MaoxianMapTopPanel/MaoxianMapBottonPanel` 源码开始，而不是用 `SkyCityPre` 代替。
+- `MaoxianMapTopPanel.preUrl="Prefab/MaoxianPanel/MaoxianMapPreTop"`，进入冒险地图时默认打开顶部地图；`MaoxianMapBottonPanel.preUrl="Prefab/MaoxianPanel/MaoxianMapPreBotton"` 是下半区地图。`MaoxianMoveCom.touchEnd()` 根据滑动方向在两个 Panel 间切换：顶部向上滑打开底部，底部向下滑回顶部。
+- 冒险地图 prefab 的 `mapBox1/mapBox2/bg` 是大地图容器或空节点，真正可见地图由其子节点 Sprite 和 label 组成；不要再用手写 mock 覆盖。当前 `cocos_prefab_preview.gd` 对“冒险地图顶部/底部”启用 clean prefab preview：隐藏工具栏/右侧说明/灰色占位框，只显示导出的真实贴图和文本。
+- 冒险地图截图中的灰色区域不是工具栏遮挡，而是部分 Cocos SpriteFrame/动态节点仍未映射完整，且原始地图通过 1280x720 面板承载 1575x3072 大图和上下两段滚动视图。下一步若要精确显示，应继续修导出器的缺失 SpriteFrame 和 Scroll/Mask 初始偏移，而不是恢复旧的 `_add_maoxian_map_mock()`。
+- 2026-05-20 已修 `tools/export_cocos_prefab_layout.py`：当 prefab 位于 `Prefab/MaoxianPanel/*` 且节点本身 SpriteFrame 解析不到 texture 时，按 `image/com/MaoxianPanel/<node_name>` 反查 `assets/resources/config.json`。同时对 `hongdian/tip` 兜底到 `image/common/cm_icon_HongDian`，`suo` 兜底到 `image/common/cm_icon_SuoDing`，`xsyd_frame9_lihuiming` 兜底到 `image/com/guide/xsyd_frame9_lihuiming`。
+- 冒险地图贴图补齐结果：`MaoxianMapPreTop` 从 7 个 texture 节点提升到 35 个，仅剩 `tab1` 未映射；`MaoxianMapPreBotton` 从 7 个 texture 节点提升到 45 个，仅剩 `tab1/double` 这类运行状态节点未映射。`screenshots/codex_runtime/maoxian_fuller_top.png` 和 `maoxian_fuller_bottom.png` 可作为当前视觉基线。
 - 主屏 SHOP 不是文字按钮，资源在 `image/com/mainpanel/cm_icon_Shop`，对应 atlas `assets/resources/native/1a/1a7921f32.png` 的 `[163,3,91,53]`。
-- 已把 `BigPassPanel`、`KnighthoodPanel`、`ForgePre`、`ActivityAuguryPre`、`FindTreasurePre`、`WelfarePre`、`firstRechargePre`、`StarUpPre`、`ActivityPre`、`ActivityForecastPre`、`BraveManTriedPassInfoPre`、`HeroShowPre`、`DrawRewardPreviewPre`、`useprivacyPre`、`shilingPre` 加入 `data/prefab_layouts`。这些页面还未全部手工实现，但可以从主屏或预览器打开查看原始布局。
+- 已把 `HeroPalacePre`、`BigPassPanel`、`KnighthoodPanel`、`ForgePre`、`ActivityAuguryPre`、`FindTreasurePre`、`WelfarePre`、`firstRechargePre`、`StarUpPre`、`ActivityPre`、`ActivityForecastPre`、`BraveManTriedPassInfoPre`、`HeroShowPre`、`DrawRewardPreviewPre`、`useprivacyPre`、`shilingPre` 加入 `data/prefab_layouts`。这些页面还未全部手工实现，但可以从主屏或预览器打开查看原始布局。
+- `HeroPalacePre` 当前预览会在 Godot 日志中报 `assets/resources/native/1d/1d9c822a-b0c7-4347-a697-1017eac7c334.png` 非 PNG/加载失败；预览仍能生成。后续需要回到资源解密/真实格式分析，确认该 native 是否仍是加密图片或需要格式转换。
 
 ## 资源替换规则
 

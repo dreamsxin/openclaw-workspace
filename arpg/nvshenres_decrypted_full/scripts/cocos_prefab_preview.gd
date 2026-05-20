@@ -11,8 +11,11 @@ const PREFAB_NODE_HINTS_PATH := "res://data/prefab_node_name_hints.json"
 const HERO_105004_SPINE := "res://data/spine_runtime/105004.json"
 const SimpleSpinePlayerScript := preload("res://scripts/simple_spine_player.gd")
 
+var root_container: VBoxContainer
+var top_bar: HBoxContainer
 var canvas: Control
 var detail: Label
+var layout_buttons: HFlowContainer
 var title: Label
 var current_layout := "登录选服"
 var texture_map: Dictionary = {}
@@ -40,42 +43,42 @@ func _ready() -> void:
 	_capture_if_requested()
 
 func _build_ui() -> void:
-	var root := VBoxContainer.new()
-	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	root.offset_left = 12
-	root.offset_top = 10
-	root.offset_right = -12
-	root.offset_bottom = -10
-	add_child(root)
+	root_container = VBoxContainer.new()
+	root_container.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	root_container.offset_left = 12
+	root_container.offset_top = 10
+	root_container.offset_right = -12
+	root_container.offset_bottom = -10
+	add_child(root_container)
 
-	var top := HBoxContainer.new()
-	root.add_child(top)
+	top_bar = HBoxContainer.new()
+	root_container.add_child(top_bar)
 
 	title = Label.new()
 	title.text = "原始 Cocos Prefab 预览"
 	title.add_theme_font_size_override("font_size", 24)
 	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	top.add_child(title)
+	top_bar.add_child(title)
 
-	Navigation.add_buttons(top)
+	Navigation.add_buttons(top_bar)
 
 	var enter := Button.new()
 	enter.text = "进入本地 Demo"
 	enter.pressed.connect(func(): Navigation.go(MAIN_DEMO))
-	top.add_child(enter)
+	top_bar.add_child(enter)
 
 	var resources := Button.new()
 	resources.text = "资源浏览"
 	resources.pressed.connect(func(): Navigation.go(RESOURCE_BROWSER))
-	top.add_child(resources)
+	top_bar.add_child(resources)
 
 	var back := Button.new()
 	back.text = "手工 Demo"
 	back.pressed.connect(func(): Navigation.go(MAIN_DEMO))
-	top.add_child(back)
+	top_bar.add_child(back)
 
-	var layout_buttons := HFlowContainer.new()
-	root.add_child(layout_buttons)
+	layout_buttons = HFlowContainer.new()
+	root_container.add_child(layout_buttons)
 
 	for layout_name in layouts.keys():
 		var btn := Button.new()
@@ -85,7 +88,7 @@ func _build_ui() -> void:
 
 	var body := HBoxContainer.new()
 	body.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	root.add_child(body)
+	root_container.add_child(body)
 
 	canvas = Control.new()
 	canvas.custom_minimum_size = Vector2(880, 620)
@@ -101,6 +104,10 @@ func _build_ui() -> void:
 
 func _load_layout(layout_name: String) -> void:
 	if not layouts.has(layout_name):
+		if title:
+			title.text = "原始 Cocos Prefab 预览 - 缺少布局：%s" % layout_name
+		if detail:
+			detail.text = "未在 data/prefab_layouts.json 中找到该布局。请先把对应 prefab 加入 tools/export_cocos_prefab_layout.py 的 PREFABS 列表并重新导出。"
 		return
 	current_layout = layout_name
 	for child in canvas.get_children():
@@ -113,6 +120,7 @@ func _load_layout(layout_name: String) -> void:
 	var stats: Dictionary = layout_stats.get(layout_name, {})
 	title.text = "原始 Cocos Prefab 预览 - %s" % layout_name
 	detail.text = _layout_detail_text(parsed, nodes, stats)
+	_apply_prefab_preview_mode()
 	_index_prefab_nodes(nodes)
 	_build_prefab_mask_clips(nodes)
 	_build_inferred_scrollview_masks(nodes)
@@ -120,6 +128,26 @@ func _load_layout(layout_name: String) -> void:
 	for node in _sorted_nodes(nodes):
 		_add_node_rect(node)
 	_add_layout_mock()
+
+func _apply_prefab_preview_mode() -> void:
+	var clean := _is_clean_prefab_preview_layout()
+	top_bar.visible = not clean
+	detail.visible = not clean
+	layout_buttons.visible = not clean
+	if clean:
+		root_container.offset_left = 0
+		root_container.offset_top = 0
+		root_container.offset_right = 0
+		root_container.offset_bottom = 0
+		canvas.custom_minimum_size = Vector2(1280, 720)
+		canvas.size = get_viewport_rect().size
+	else:
+		root_container.offset_left = 12
+		root_container.offset_top = 10
+		root_container.offset_right = -12
+		root_container.offset_bottom = -10
+		canvas.custom_minimum_size = Vector2(880, 620)
+		canvas.size = Vector2.ZERO
 
 func _add_node_rect(node: Dictionary) -> void:
 	if _should_skip_node(node):
@@ -130,11 +158,14 @@ func _add_node_rect(node: Dictionary) -> void:
 	var size := Vector2(float(size_arr[0]), float(size_arr[1]))
 	var rect_bounds := _prefab_node_rect(node)
 	var name := str(node.get("name", ""))
+	var label_text := _node_label_text(node)
 	var rect: Control
 	var manual_texture_path := _texture_for_node(name) if _is_login_layout() else ""
 	var texture_path := manual_texture_path
 	if texture_path == "":
 		texture_path = str(node.get("texture_path", ""))
+	if _is_clean_prefab_preview_layout() and texture_path == "" and label_text == "":
+		return
 	if texture_path != "":
 		var tex := _load_node_texture("res://" + texture_path, node, manual_texture_path == "")
 		if _is_sliced_sprite(node):
@@ -165,7 +196,10 @@ func _add_node_rect(node: Dictionary) -> void:
 	if target_parent != canvas:
 		parent_origin = target_parent.position
 	rect.position = rect_bounds.position - parent_origin
-	rect.size = Vector2(max(size.x, 48.0), max(size.y, 28.0))
+	if _is_clean_prefab_preview_layout():
+		rect.size = Vector2(max(size.x, 1.0), max(size.y, 1.0))
+	else:
+		rect.size = Vector2(max(size.x, 48.0), max(size.y, 28.0))
 	rect.scale = _node_scale(node)
 	rect.tooltip_text = JSON.stringify(node, "\t")
 	target_parent.add_child(rect)
@@ -179,10 +213,9 @@ func _add_node_rect(node: Dictionary) -> void:
 		hit.pressed.connect(_load_layout.bind("主城"))
 		rect.add_child(hit)
 
-	var label_text := _node_label_text(node)
 	if label_text != "":
 		_add_text_label(rect, node, label_text)
-	elif texture_path == "" or not _is_login_layout():
+	elif not _is_clean_prefab_preview_layout() and (texture_path == "" or not _is_login_layout()):
 		var label := Label.new()
 		label.text = name
 		label.clip_text = true
@@ -803,6 +836,74 @@ func _add_sky_city_action_button(position: Vector2, text: String) -> void:
 	button.text = text
 	button.add_theme_font_size_override("font_size", 21)
 	canvas.add_child(button)
+
+func _add_maoxian_map_mock() -> void:
+	var center := _canvas_center()
+	_add_named_image("image/com/MaoxianPanel/mxbg1", center + Vector2(-542, -270), Vector2(980, 520), TextureRect.STRETCH_KEEP_ASPECT_COVERED).modulate = Color(1, 1, 1, 0.72)
+	_add_named_image("image/com/MaoxianPanel/BG01", center + Vector2(-610, -272), Vector2(1120, 560), TextureRect.STRETCH_KEEP_ASPECT_COVERED).modulate = Color(1, 1, 1, 0.28)
+	var stages := [
+		{"title": "1-1", "pos": Vector2(-470, 80), "res": "image/com/MaoxianPanel/1-2"},
+		{"title": "1-4", "pos": Vector2(-286, -18), "res": "image/com/MaoxianPanel/1-4"},
+		{"title": "1-7", "pos": Vector2(-92, 66), "res": "image/com/MaoxianPanel/1-7"},
+		{"title": "2-3", "pos": Vector2(92, -28), "res": "image/com/MaoxianPanel/2-3"},
+		{"title": "2-7", "pos": Vector2(280, 72), "res": "image/com/MaoxianPanel/2-7"},
+		{"title": "3-2", "pos": Vector2(452, -20), "res": "image/com/MaoxianPanel/3-2"},
+	]
+	for i in stages.size():
+		_add_maoxian_stage(center + stages[i].pos, str(stages[i].title), str(stages[i].res), i <= 3)
+	_add_maoxian_side_panel(center + Vector2(-620, -214))
+	_add_maoxian_bottom_panel(center + Vector2(-468, 232))
+
+func _add_maoxian_stage(position: Vector2, title_text: String, resource_path: String, unlocked: bool) -> void:
+	var button := Button.new()
+	button.position = position
+	button.size = Vector2(120, 104)
+	button.text = ""
+	button.tooltip_text = title_text
+	canvas.add_child(button)
+	_add_named_image_to(button, resource_path, Vector2(10, 0), Vector2(100, 74), TextureRect.STRETCH_KEEP_ASPECT_CENTERED).modulate = Color(1, 1, 1, 1.0 if unlocked else 0.48)
+	var label := Label.new()
+	label.text = title_text
+	label.position = Vector2(10, 72)
+	label.size = Vector2(100, 26)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.add_theme_font_size_override("font_size", 17)
+	label.add_theme_color_override("font_color", Color(1.0, 0.9, 0.58) if unlocked else Color(0.65, 0.66, 0.72))
+	button.add_child(label)
+
+func _add_maoxian_side_panel(position: Vector2) -> void:
+	var panel := PanelContainer.new()
+	panel.position = position
+	panel.size = Vector2(190, 430)
+	panel.modulate = Color(0.07, 0.08, 0.12, 0.66)
+	canvas.add_child(panel)
+	for i in 5:
+		var btn := Button.new()
+		btn.position = Vector2(18, 22 + i * 78)
+		btn.size = Vector2(154, 58)
+		btn.text = ["主线", "魔塔", "试炼", "支援", "奖励"][i]
+		btn.add_theme_font_size_override("font_size", 19)
+		panel.add_child(btn)
+
+func _add_maoxian_bottom_panel(position: Vector2) -> void:
+	var panel := PanelContainer.new()
+	panel.position = position
+	panel.size = Vector2(936, 74)
+	panel.modulate = Color(0.04, 0.05, 0.08, 0.7)
+	canvas.add_child(panel)
+	var info := Label.new()
+	info.text = "冒险地图  当前章节 1-4  推荐战力 3027113"
+	info.position = Vector2(28, 16)
+	info.size = Vector2(560, 36)
+	info.add_theme_font_size_override("font_size", 21)
+	info.add_theme_color_override("font_color", Color(0.92, 0.95, 1.0))
+	panel.add_child(info)
+	var fight := Button.new()
+	fight.position = Vector2(720, 12)
+	fight.size = Vector2(174, 50)
+	fight.text = "开始战斗"
+	fight.add_theme_font_size_override("font_size", 21)
+	panel.add_child(fight)
 
 func _add_jingji_mock() -> void:
 	var center := _canvas_center()
@@ -1642,6 +1743,9 @@ func _uses_runtime_mock_overlay() -> bool:
 		"英雄", "背包", "抽卡", "公会", "天空城", "竞技", "战斗",
 		"活动抽卡", "活动抽卡-登录领取", "活动抽卡-循环礼包", "活动抽卡-抽数任务", "活动抽卡-许愿礼包",
 	]
+
+func _is_clean_prefab_preview_layout() -> bool:
+	return current_layout in ["冒险地图顶部", "冒险地图底部"]
 
 func _canvas_center() -> Vector2:
 	if canvas.size.x > 0.0 and canvas.size.y > 0.0:

@@ -17,10 +17,12 @@ D:\work\openclaw-workspace\arpg\tools\Godot_v4.6.2-stable_win64_console.exe --pa
 ## 当前入口
 
 - `scenes/original_loading.tscn`：默认启动场景。
-- 登录流程：启动加载页 -> 登录页 -> 选服页 -> 原始主城页。
-- 原始 Cocos 启动入口是 `assets/src/settings.js` 的 `Scene/updataScene.fire`，随后 `GameWorld` 打开 `LoadingPanelNode`、预加载 `pfLoginPanelPre/MainPre/daohangPre` 等公共资源，再走 `PFLoginPanel` 选服/开始游戏。当前 Godot 流程是离线简化版，缺少热更新、公告、隐私/适龄提示、真实服务器请求和连接握手。
+- 登录流程：启动加载页 -> 正式选服页 -> 连接服务器提示 -> 原始主城页；`LoginPre` 只作为 debug 直连页保留。
+- 原始 Cocos 启动入口是 `assets/src/settings.js` 的 `Scene/updataScene.fire`，随后 `GameWorld.init()` 调用 `LoadingPanelNode.open()`。`loadingComplete()` 预加载 `Prefab/login/pfLoginPanelPre/MainPre/daohangPre` 等公共资源；非 debug 模式进入 `PFLoginPanel.getLastSever()`，debug 模式才进入 `LoginPanel.showProgess()`。当前 Godot 主流程已按此改为 `LoadingPre -> pfLoginPanelPre`，缺少真实服务器请求和连接握手。
 - 主城页保留了导航按钮，可进入资源浏览器、Prefab 预览器和旧的浮岛主城预览。
 - 主城底部导航第三个入口已按原始 `daohangPre.btn3/cm_tab_ZhaoHuan` 修正为“召唤”，点击进入本地抽卡页；仓库入口保留在右侧入口条。
+- `DaohangPanel.changeTabPanel()` 的底栏源码路由已核对：`btn4` 是初级战斗/主线战斗入口，`btn5` 是冒险地图 `openMaoxianUIPanel()`，不是天空城；当前已补导出 `MaoxianMapPreTop/MaoxianMapPreBotton`，并把 Godot 底栏显示/路由修正为“战斗”->战斗预览、“冒险”->冒险地图顶部预览。
+- `MainUIPanel.onShow()` 的右侧入口绑定已核对：`yingHunDian` 调用 `openHeroPalacePanel()`，不是召唤。当前主屏右侧“英魂”进入 `英魂殿` prefab 预览；`HeroPalacePre` 已加入 `tools/export_cocos_prefab_layout.py` 并导出为 `data/prefab_layouts/HeroPalacePre.json`。
 - 资源浏览器支持图片、音频、文本、Prefab、Scene、Spine 索引查看。
 
 ## 已确认的主城资源链
@@ -76,6 +78,7 @@ Godot 当前工程已接入项目内轻量 Spine runtime，用于本地预览角
 
 - `DaohangPanel.creatMoney()` 运行时实例化两个 `MoneyItemPre`：`money2` 金币 x=319，`money1` 钻石 x=521，父节点是 `moneyBox`。
 - `MoneyItemPre.btnAdd` 使用 `image/common/cm_btn_JiaHao`，SpriteFrame 为 `assets/resources/native/15/15a1d9111.png` rect `[996,828,24,24]`。
+- `daohangPre` 的底栏背景节点 `cm_menu_BeiJing` 在导出 JSON 中被错误映射成太阳光 SpriteFrame。真实背景来自 `config.json` 的 `image/com/mainpanel/cm_menu_BeiJing`，native 是 `assets/resources/native/f5/f58085bc-21e6-40ed-a4cf-b55f6b0cc8f9.png`；选中光 `cm_menu_TaiYangGuang` 需要按 `DaohangPanel.init()` 对齐到 `btn1`。
 
 主屏商会/商店入口记录：
 
@@ -90,6 +93,12 @@ Godot 当前工程已接入项目内轻量 Spine runtime，用于本地预览角
 - 商店页已继续接入子 prefab 的真实 SpriteFrame：`ShopItemPre` 的右侧页签图标，`GoodsItemPre` 的折扣/稀有标签，`ShopBuyEquitPre` 的购买确认背景、标题线、加减按钮、滑条和绿色确认按钮。按钮文字不要直接放在 `Button.text` 上被子贴图覆盖，当前改为 SpriteFrame 底图 + 独立 `Label`。
 - 主城右侧九个入口已修复可点击性：可视斜条继续按原始布局旋转显示，点击使用独立顶层矩形命中层，并在 `_input` 中按设计坐标分发，避免旋转 Control 和角色 hit 区截获鼠标事件；红点也移到图标右上角，避免遮住入口图标。
 - 主城底部导航也使用独立命中层和 `_input` 坐标兜底；底部“英雄”按钮已验证不会再被主城角色 Spine/角色点击区挡住，回归参数为 `--home-click-at 359,654 --capture-hero-list <png>`。
+- 主屏入口回归命令示例：
+  - 主屏截图：`D:\work\openclaw-workspace\arpg\tools\Godot_v4.6.2-stable_win64_console.exe --path D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full --scene res://scenes/original_home_screen.tscn --resolution 1280x720 --log-file logs/codex_runtime/home.log --quit-after 80 -- --capture-home-screen screenshots/codex_runtime/home.png`
+  - 打开右侧英魂：`D:\work\openclaw-workspace\arpg\tools\Godot_v4.6.2-stable_win64_console.exe --path D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full --scene res://scenes/original_home_screen.tscn --resolution 1280x720 --log-file logs/codex_runtime/home_yinghun.log --quit-after 100 -- --home-open-entry 英魂`
+  - 单独预览英魂殿：`D:\work\openclaw-workspace\arpg\tools\Godot_v4.6.2-stable_win64_console.exe --path D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full --scene res://scenes/cocos_prefab_preview.tscn --resolution 1280x720 --log-file logs/codex_runtime/prefab_heropalace.log --quit-after 80 -- --prefab-layout 英魂殿 --capture-prefab-preview screenshots/codex_runtime/prefab_heropalace.png`
+- PowerShell 重定向日志时不要写 `$log.stdout`，这会被解析成变量属性。应使用独立变量，例如 `$stdout = "$log.stdout"; & $godot ... *> $stdout; Select-String -Path $log,$stdout -Pattern 'SCRIPT ERROR|Parse Error|ERROR'`。
+- `HeroPalacePre` 当前预览会提示 `assets/resources/native/1d/1d9c822a-b0c7-4347-a697-1017eac7c334.png` 不是 PNG；这说明该资源仍需回到解密/格式识别链路处理，不是入口路由错误。
 - 商店页可用 `--shop-open-buy <index>` 启动参数直接打开购买确认框，配合 `--capture-shop-panel` 做回归截图。
 
 ## Prefab 还原注意事项
@@ -117,7 +126,11 @@ Godot 当前工程已接入项目内轻量 Spine runtime，用于本地预览角
 - `data/config_index/by_path_prefix/*.json`：按常用路径前缀拆分的索引；主城优先查 `image__com__mainpanel.json` 和 `Prefab__mainpanel.json`。
 - `data/prefabs.csv`：原始 prefab 清单。
 - `data/prefab_layouts.json`：已导出的核心 prefab 布局清单。
+- `data/prefab_layouts/LoadingPre.json`：完整启动加载页 prefab。`LoadingPanelNode.isFist=0` 是普通启动加载，显示 `dl_progressbg1_jiazai/expMask/ani/t3`；`isFist=1` 是连接服务器 alert 模式，隐藏进度条和 `ani/t3`，显示 `alert`。
+- `data/prefab_layouts/LoginPre.json`：debug 直连登录页 prefab，源码 `LoginPanel.preUrl="Prefab/login/LoginPre"`。它有四个输入框 `tbg1~tbg4`，用于 IP、端口、账号、密码，不是正式玩家选服页。
+- `data/prefab_layouts/pfLoginPanelPre.json`：正式平台登录/选服页 prefab，源码 `PFLoginPanel.preUrl="Prefab/login/pfLoginPanelPre"`。`PFLoginCom` 绑定 `txtServer/btnSelect/btnStart/nodeSv/nodeGG/nodeAlert/cheks/ysTxt/shilingBtn` 等；`PFLoginPanel.onShow()` 会触发公告，截图主体可加 `--no-auto-notice`。
 - `data/prefab_layouts/MoneyItemPre.json`：资源条 prefab，主城顶部金币/钻石条使用。
+- `data/prefab_layouts/MaoxianMapPreTop.json`、`data/prefab_layouts/MaoxianMapPreBotton.json`：冒险地图上下两层 prefab，主屏底栏 `btn5` / `openMaoxianUIPanel()` 的还原入口。
 - `data/prefab_layouts/ShopPre.json`：商会/黑市商店 prefab，主屏 `openShop()` 的目标。
 - `data/prefab_layouts/GoodsItemPre.json`：商店商品卡 prefab，含 `GoodsItemCom` 的 `discount/rare/fight/prize/limit/selectBtn` 绑定。
 - `data/prefab_layouts/HeroMainPre.json`：英雄主界面 prefab，独立英雄页的中心 Spine、右侧信息面板和功能页签布局参考。
@@ -131,6 +144,11 @@ Godot 当前工程已接入项目内轻量 Spine runtime，用于本地预览角
 - `data/prefab_layouts/HeroTabPre.json`：英雄页签 prefab，确认 `cm_tab2_on/off` 页签资源。
 - `data/prefab_layouts/HeroListPre.json`：完整英雄列表页 prefab。当前 Godot 已新增独立 `original_hero_list_panel.tscn`，主屏“英雄”先打开列表，点击英雄后进入 `HeroBookDetailPre` 风格详情页。
 - `data/prefab_layouts/HeroGridPre.json`、`HeroBookItemPre.json`、`HeroLevelSharedPre.json`、`HeroNormalarrayPre.json`、`HeroStarPre.json`：英雄列表页的卡片、图鉴、共享等级、阵容和升星子 prefab 布局参考。
+- 英雄列表当前按 `HeroListPre.content` 和源码 `HeroListPanel` 实现。关键源码在 `assets/main/index.js` 的 `HeroListPanelCom/HeroListPanel` 段：`btnHero -> changeTab1(menuType=1)`、`btnBook -> changeTab2(menuType=2)`、`btnShared -> changeTab3(menuType=3)`、`btnYingHun -> openYinghun()`、`btnNormalarray -> changeTab4(menuType=4)`、`btnStar -> changeTab5(menuType=5)`。因此右侧视觉/行为顺序按源码修正为“英雄、图鉴、共鸣、英魂、法阵、星辉”，其中英魂不是普通 `showTab` 页，而是打开 `HeroPalacePanel` 的入口，本地 Demo 暂以碎片进度占位。
+- 英雄列表源码布局规则：`initScrollView()` 负责英雄背包列表，先按 `HeroListControl.onHeroSortByHeroDataArr()` 排序，再按 `campType` 过滤，最后设置 `gridList.numItems` 和 `lblHeroCount=t.length/capNum`；`initScrollView2()` 负责图鉴，读取 `dataBookMap[campType]`，按 `heros.grade` 降序生成 `HeroBookItemPre`。`showTab()` 中英雄页显示全部阵营按钮，图鉴页隐藏 `btnTypeAll` 并默认 `campType=1`，共鸣/法阵/星辉隐藏阵营筛选和容量条。
+- `HeroGridPre` 的根尺寸是 `110x110`，当前英雄列表卡片按此比例缩到 `122x154`，头像框/头像/星级/等级都围绕 110 头像区排布；`HeroBookItemPre` 的根尺寸是 `108x374`，图鉴页优先加载 `image/heroBook/<id>` 长图，缺图时回退头像。
+- 英雄详情当前按 `HeroBookDetailPre.leftImg` 的右侧大白板实现：信息板 `x=797,y=86,w=404,h=527`，左侧装备/技能列与右侧正文分开；详情页回归参数是 `--hero-id <id> --capture-hero-panel <png>`。
+- 英雄详情左侧信息采用“prefab 坐标 + 截图修正”：名字/职业仍参考 `lblHeroName/lblNickname`，品质和星级按截图手工排版；`ft_zhanli` 使用 `HeroBookDetailPre` 的 `[380.823,579.262,104.17,40]` 一带作为文字位置，底框使用 `[235.823,574.262,394,38]`。
 - 英雄列表/详情页回归参数：`--hero-list-open-id <id>` 可从列表按 id 打开详情；`--hero-list-click-at 200,260` 可模拟点击首个卡片；`--hero-id <id>` 可直接指定详情页英雄。图鉴页优先使用 `image/heroBook/<id>` 长图。
 - 英雄详情页新增衣装、全屏预览和语音回归：`--hero-full-preview` 隐藏其他 UI 只显示角色，`--hero-click-once` 模拟点击角色并播放 `sound/cv/<hero>/<soundId>`。语音索引由 `tools/export_hero_voice_index.py` 生成到 `data/hero_voice_index.json`，MP3 拷贝在 `assets/hero_voice/**`。
 - `data/prefab_restore_inventory.csv`：整理后的 prefab 还原清单。
@@ -141,6 +159,14 @@ Godot 当前工程已接入项目内轻量 Spine runtime，用于本地预览角
 - `tools/inspect_prefab_layout.py`：检查导出的 prefab layout、贴图节点、文本节点、Mask/ScrollView 和脚本字段绑定。
 - `tools/export_cocos_config_index.py`：重新拆分 `assets/resources/config.json` 到 `data/config_index`，用于反查资源逻辑路径、UUID、native 文件和 SpriteFrame 裁剪信息。
 - `debug_outputs/`：本地截图、Godot stdout/stderr 日志和临时回归输出目录。该目录默认被 git 忽略，只保留 `.gitkeep`。
+
+冒险地图入口结论：
+
+- 底栏 `btn5` 源码路由是 `DaohangPanel.changeTabPanel()` -> `openmaoxianPanel()`，不是天空城。
+- `MaoxianMapTopPanel.preUrl="Prefab/MaoxianPanel/MaoxianMapPreTop"`，默认打开顶部地图；`MaoxianMapBottonPanel.preUrl="Prefab/MaoxianPanel/MaoxianMapPreBotton"` 是下半区地图。
+- `MaoxianMoveCom.touchEnd()` 根据滑动方向切换 Top/Bottom：顶部向上滑打开底部，底部向下滑回顶部。
+- `cocos_prefab_preview.gd` 对“冒险地图顶部/底部”使用 clean prefab preview：隐藏预览器工具栏、说明栏和无贴图灰色占位，只显示导出的真实 Sprite/Label。灰色空洞代表仍有 SpriteFrame/动态节点未映射，后续应修导出器或 Scroll/Mask 初始偏移，不再用手写 mock 覆盖。
+- 导出器已对 `Prefab/MaoxianPanel/*` 增加同模块节点名反查：`image/com/MaoxianPanel/<node_name>`。这解决了 `1-1/1-5/2-6/BG01/BG02/mxbg1/mx_frame_biaotidi*` 等地图主体贴图缺失问题。当前 `MaoxianMapPreTop` 为 35 个贴图节点，`MaoxianMapPreBotton` 为 45 个贴图节点；剩余缺失主要是 `tab1/double` 运行状态控件。
 
 当前统计：
 

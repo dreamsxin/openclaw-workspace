@@ -1,6 +1,6 @@
 extends Control
 
-const LOGIN_SCENE := "res://scenes/original_login.tscn"
+const LOGIN_SCENE := "res://scenes/original_server_select.tscn"
 const SimpleSpinePlayerScript := preload("res://scripts/simple_spine_player.gd")
 const LOADING_BG := "res://assets/resources/native/75/750b6077-9d0c-4446-9e4c-3c3ae2fb6ee5.png"
 const PROGRESS_ATLAS := "res://assets/resources/native/14/1430d496a.png"
@@ -53,16 +53,6 @@ func _build_ui() -> void:
 	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	design_root.add_child(bg)
 
-	status_label = Label.new()
-	status_label.text = "正在连接服务器"
-	status_label.position = Vector2(552, 494)
-	status_label.size = Vector2(176, 32)
-	status_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	status_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	status_label.add_theme_font_size_override("font_size", 25)
-	status_label.add_theme_color_override("font_color", Color(0.98, 0.92, 0.74))
-	design_root.add_child(status_label)
-
 	var progress_bg := TextureRect.new()
 	progress_bg.position = Vector2(PROGRESS_POS.x, PROGRESS_TRACK_Y)
 	progress_bg.size = Vector2(PROGRESS_SIZE.x, 8)
@@ -106,7 +96,7 @@ func _build_ui() -> void:
 		progress_spark.scale = Vector2(1.0, 1.0)
 
 	var loading_text := Label.new()
-	loading_text.text = "增加加载公共资源，请稍候..."
+	loading_text.text = "正在加载公共资源:"
 	loading_text.position = Vector2(138, 664)
 	loading_text.size = Vector2(300, 28)
 	loading_text.add_theme_font_size_override("font_size", 18)
@@ -165,6 +155,7 @@ func _layout_design_root() -> void:
 
 func _capture_if_requested() -> void:
 	var args := OS.get_cmdline_args()
+	args.append_array(OS.get_cmdline_user_args())
 	if not "--capture-loading" in args:
 		return
 	for i in 6:
