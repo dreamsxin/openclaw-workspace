@@ -247,8 +247,97 @@ func _add_layout_mock() -> void:
 		_add_draw_activity_task_runtime_mock()
 	elif current_layout == "活动抽卡-许愿礼包":
 		_add_draw_activity_wish_gift_runtime_mock()
+	elif current_layout == "挂机主线":
+		_add_guaji_runtime_mock()
 	elif current_layout == "挂机世界地图":
 		_add_world_map_runtime_mock()
+	elif current_layout == "冒险地图顶部":
+		_add_maoxian_top_runtime_mock()
+
+func _add_maoxian_top_runtime_mock() -> void:
+	var panel := PanelContainer.new()
+	panel.position = Vector2(824, 86)
+	panel.size = Vector2(410, 210)
+	panel.z_index = 120
+	panel.self_modulate = Color(0.04, 0.05, 0.08, 0.74)
+	canvas.add_child(panel)
+
+	var title_label := Label.new()
+	title_label.text = "MaoxianMapTopPanel 入口"
+	title_label.position = Vector2(16, 12)
+	title_label.size = Vector2(360, 28)
+	title_label.add_theme_font_size_override("font_size", 20)
+	title_label.add_theme_color_override("font_color", Color(0.96, 0.88, 0.58))
+	panel.add_child(title_label)
+
+	var entries := [
+		{"text": "荣耀之路", "layout": "失落神庙"},
+		{"text": "命运", "layout": "天空城"},
+		{"text": "遗迹探险", "layout": "遗迹探险"},
+		{"text": "冰龙巢穴", "layout": "冰龙巢穴"},
+		{"text": "切到底部地图", "layout": "冒险地图底部"},
+		{"text": "副本列表", "layout": "冒险副本"},
+	]
+	for i in entries.size():
+		var button := Button.new()
+		button.text = str(entries[i].text)
+		button.position = Vector2(18 + (i % 2) * 188, 56 + int(i / 2) * 48)
+		button.size = Vector2(172, 38)
+		button.tooltip_text = "%s -> %s" % [str(entries[i].text), str(entries[i].layout)]
+		button.pressed.connect(_load_layout.bind(str(entries[i].layout)))
+		panel.add_child(button)
+
+func _add_guaji_runtime_mock() -> void:
+	var center := _canvas_center()
+	var panel := PanelContainer.new()
+	panel.position = center + Vector2(-320, -205)
+	panel.size = Vector2(520, 300)
+	panel.z_index = 90
+	panel.self_modulate = Color(0.04, 0.05, 0.08, 0.72)
+	canvas.add_child(panel)
+
+	var title_label := Label.new()
+	title_label.text = "guajiPanel 运行时绑定"
+	title_label.position = Vector2(18, 14)
+	title_label.size = Vector2(360, 30)
+	title_label.add_theme_font_size_override("font_size", 22)
+	title_label.add_theme_color_override("font_color", Color(0.96, 0.88, 0.58))
+	panel.add_child(title_label)
+
+	var info := Label.new()
+	info.text = "openchujiPanel() -> CG_BATTLE_QUERY() -> guajiPrefab\n地图、关卡、挂机收益、通关奖励由 GuajiContro 数据刷新。"
+	info.position = Vector2(18, 50)
+	info.size = Vector2(480, 54)
+	info.add_theme_font_size_override("font_size", 15)
+	info.add_theme_color_override("font_color", Color(0.78, 0.88, 0.98))
+	panel.add_child(info)
+
+	var actions := [
+		{"text": "小地图", "layout": "挂机世界地图"},
+		{"text": "战斗", "layout": "战斗"},
+		{"text": "扫荡", "layout": "挂机通关地图"},
+		{"text": "章节", "layout": "挂机章节"},
+		{"text": "升级", "layout": "挂机升级"},
+		{"text": "排行", "layout": "排行"},
+		{"text": "战报", "layout": "战报"},
+		{"text": "任务", "layout": "任务"},
+	]
+	for i in actions.size():
+		var button := Button.new()
+		button.text = str(actions[i].text)
+		button.position = Vector2(24 + (i % 4) * 120, 124 + int(i / 4) * 58)
+		button.size = Vector2(104, 42)
+		button.tooltip_text = "%s -> %s" % [str(actions[i].text), str(actions[i].layout)]
+		button.pressed.connect(_load_layout.bind(str(actions[i].layout)))
+		panel.add_child(button)
+
+	var reward := Label.new()
+	reward.text = "通关奖励：通关第100关  (100/200)  点击领取\n挂机收益：将星石 / 在线奖励 / 悬赏进度"
+	reward.position = Vector2(24, 246)
+	reward.size = Vector2(470, 44)
+	reward.add_theme_font_size_override("font_size", 14)
+	reward.add_theme_color_override("font_color", Color(0.92, 0.92, 0.78))
+	panel.add_child(reward)
 
 func _add_world_map_runtime_mock() -> void:
 	var center := _canvas_center()
