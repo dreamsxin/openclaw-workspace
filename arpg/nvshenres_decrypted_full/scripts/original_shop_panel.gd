@@ -110,9 +110,9 @@ func _build_top_bar() -> void:
 	top.anchor_left = 1.0
 	top.anchor_right = 1.0
 	top.offset_left = -690
-	top.offset_top = 8
+	top.offset_top = 676
 	top.offset_right = -12
-	top.offset_bottom = 42
+	top.offset_bottom = 710
 	top.alignment = BoxContainer.ALIGNMENT_END
 	top.add_theme_constant_override("separation", 6)
 	add_child(top)
@@ -127,9 +127,9 @@ func _build_top_bar() -> void:
 
 func _build_money_bar() -> void:
 	var money := HBoxContainer.new()
-	money.position = Vector2(472, 16)
-	money.size = Vector2(430, 48)
-	money.add_theme_constant_override("separation", 18)
+	money.position = Vector2(800, 12)
+	money.size = Vector2(408, 48)
+	money.add_theme_constant_override("separation", 6)
 	design_root.add_child(money)
 	_add_money_item(money, MONEY_GOLD, "2.25M")
 	_add_money_item(money, MONEY_DIAMOND, "878")
@@ -162,64 +162,65 @@ func _add_money_item(parent: Container, icon_name: String, value: String) -> voi
 
 func _build_main_type_tabs() -> void:
 	var box := HBoxContainer.new()
-	box.position = Vector2(246, 80)
-	box.size = Vector2(460, 60)
-	box.add_theme_constant_override("separation", 16)
+	box.position = Vector2(312.671, 86.602)
+	box.size = Vector2(386, 48)
+	box.add_theme_constant_override("separation", 85)
 	design_root.add_child(box)
 	for item in MAIN_TYPES:
 		var button := Button.new()
 		button.text = str(item.label)
-		button.custom_minimum_size = Vector2(196, 54)
-		button.add_theme_font_size_override("font_size", 22)
+		button.custom_minimum_size = Vector2(150, 40)
+		button.add_theme_font_size_override("font_size", 20)
 		button.pressed.connect(_select_main_type.bind(int(item.type)))
 		box.add_child(button)
 		main_type_buttons.append(button)
 
 func _build_goods_area() -> void:
 	var panel := Control.new()
-	panel.position = Vector2(76, 132)
-	panel.size = Vector2(854, 520)
+	panel.position = Vector2(269.456, 64.114)
+	panel.size = Vector2(834, 662)
 	design_root.add_child(panel)
 	var panel_bg := ColorRect.new()
 	panel_bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	panel_bg.color = Color(0.035, 0.04, 0.065, 0.78)
+	panel_bg.color = Color(0.035, 0.04, 0.065, 0.54)
 	panel_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	panel.add_child(panel_bg)
 
 	var scroll := ScrollContainer.new()
-	scroll.position = Vector2(24, 20)
-	scroll.size = Vector2(806, 482)
+	scroll.position = Vector2(67.0, 115.661)
+	scroll.size = Vector2(700, 550)
 	panel.add_child(scroll)
 
 	goods_grid = GridContainer.new()
 	goods_grid.columns = 2
-	goods_grid.add_theme_constant_override("h_separation", 26)
-	goods_grid.add_theme_constant_override("v_separation", 18)
+	goods_grid.add_theme_constant_override("h_separation", 0)
+	goods_grid.add_theme_constant_override("v_separation", 0)
+	goods_grid.custom_minimum_size = Vector2(700, 800)
 	scroll.add_child(goods_grid)
 
 func _build_shop_type_tabs() -> void:
 	shop_type_box = VBoxContainer.new()
-	shop_type_box.position = Vector2(986, 122)
-	shop_type_box.size = Vector2(226, 486)
-	shop_type_box.add_theme_constant_override("separation", 16)
+	shop_type_box.position = Vector2(1069, 138.388)
+	shop_type_box.size = Vector2(250, 480)
+	shop_type_box.add_theme_constant_override("separation", 30)
 	design_root.add_child(shop_type_box)
 
 func _build_refresh_bar() -> void:
 	var bar := Control.new()
-	bar.position = Vector2(190, 660)
-	bar.size = Vector2(850, 46)
+	bar.position = Vector2(760, 64)
+	bar.size = Vector2(330, 70)
 	design_root.add_child(bar)
 	var bg := ColorRect.new()
 	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	bg.color = Color(0.03, 0.035, 0.05, 0.76)
+	bg.color = Color(0.03, 0.035, 0.05, 0.46)
 	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	bar.add_child(bg)
-	_add_label(bar, "免费刷新(1/3)", Vector2(24, 8), Vector2(150, 30), 18, Color(0.9, 0.92, 1.0))
-	_add_label(bar, "下次刷新  01:26:34", Vector2(262, 8), Vector2(250, 30), 18, Color(0.74, 0.9, 1.0), HORIZONTAL_ALIGNMENT_CENTER)
+	_add_label(bar, "01:26:34", Vector2(8, 9), Vector2(92, 28), 18, Color(0.74, 0.9, 1.0), HORIZONTAL_ALIGNMENT_CENTER)
+	_add_label(bar, "免费(1/3)", Vector2(112, 13), Vector2(98, 24), 16, Color(0.9, 0.92, 1.0), HORIZONTAL_ALIGNMENT_CENTER)
 	var refresh := Button.new()
 	refresh.text = "刷新"
-	refresh.position = Vector2(674, 6)
-	refresh.size = Vector2(116, 34)
+	refresh.position = Vector2(118, 7)
+	refresh.size = Vector2(196, 54)
 	bar.add_child(refresh)
 
 func _refresh_goods() -> void:
@@ -294,7 +295,7 @@ func _refresh_shop_type_tabs() -> void:
 		if int(item.main_type) != selected_main_type:
 			continue
 		var button := Button.new()
-		button.custom_minimum_size = Vector2(226, 64)
+		button.custom_minimum_size = Vector2(180, 64)
 		button.text = ""
 		button.add_theme_font_size_override("font_size", 21)
 		button.pressed.connect(_select_shop_type.bind(int(item.type)))
@@ -446,14 +447,14 @@ func _add_count_button(parent: Control, text: String, position: Vector2, callbac
 func _add_shop_type_button_content(button: Button, item: Dictionary) -> void:
 	_add_sprite_frame_image(button, SHOP_TAG_ATLAS, SHOP_SEPARATOR_RECT, Vector2(0, 8), Vector2(4, 48), false, Vector2i(2, 46), Vector2.ZERO, TextureRect.STRETCH_SCALE)
 	var icon := TextureRect.new()
-	icon.position = Vector2(14, 2)
+	icon.position = Vector2(12, 2)
 	icon.size = Vector2(58, 58)
 	icon.texture = _texture_for_named_resource(str(item.icon))
 	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	button.add_child(icon)
-	_add_label(button, str(item.label), Vector2(74, 13), Vector2(124, 34), 21, Color(0.92, 0.88, 0.76), HORIZONTAL_ALIGNMENT_CENTER)
+	_add_label(button, str(item.label), Vector2(70, 13), Vector2(96, 34), 21, Color(0.92, 0.88, 0.76), HORIZONTAL_ALIGNMENT_CENTER)
 
 func _close_buy_dialog() -> void:
 	if buy_dialog:

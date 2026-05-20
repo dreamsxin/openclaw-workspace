@@ -92,6 +92,7 @@ Godot 当前工程已接入项目内轻量 Spine runtime，用于本地预览角
 - 已新增 `scenes/original_shop_panel.tscn` 和 `scripts/original_shop_panel.gd`。主屏顶部 `SHOP` 和右侧 `商会` 入口现在进入独立商店页；Prefab 按钮仍可回看原始 `ShopPre` 布局。
 - 独立商店页按 `ShopPanel.setData()` 的运行逻辑手工实现：顶部货币条、基础/战斗商城主页签、右侧商店类型、两列商品列表、刷新条和本地购买弹窗；商品图标从 `data/equipment_icon_index.json` 读取真实 SpriteFrame，商品卡尺寸和主要元素坐标参考 `GoodsItemPre`，购买确认框参考 `ShopBuyEquitPre`。
 - 商店页已继续接入子 prefab 的真实 SpriteFrame：`ShopItemPre` 的右侧页签图标，`GoodsItemPre` 的折扣/稀有标签，`ShopBuyEquitPre` 的购买确认背景、标题线、加减按钮、滑条和绿色确认按钮。按钮文字不要直接放在 `Button.text` 上被子贴图覆盖，当前改为 SpriteFrame 底图 + 独立 `Label`。
+- 商店页坐标依据：`ShopPre.goodsScrollView` 是 `[269.456,64.114,834,662]`，内部 `view` 是 `[336.456,179.775,700,550]`，所以 Godot 商品滚动区使用 `panel=(269.456,64.114)`、`scroll=(67,115.661)`、两列 `350x120` 且列间距为 0；`mainTypeNode/MainItemPre1/2` 对应主页签 `x=312.671/547.888,y=86.602,w=150,h=40`；`shopTypeScrollView` 是 `[1069,138.388,250,480]`，`ShopItemPre` 单项 `180x64`，源码 `showShopData()` 每项向下间隔 `height+30`；`freeRefresh/chargeRefresh` 原始按钮宽约 `196x54`，运行时根据 `refreshType` 切换显示。
 - 主城右侧九个入口已修复可点击性：可视斜条继续按原始布局旋转显示，点击使用独立顶层矩形命中层，并在 `_input` 中按设计坐标分发，避免旋转 Control 和角色 hit 区截获鼠标事件；红点也移到图标右上角，避免遮住入口图标。
 - 主城底部导航也使用独立命中层和 `_input` 坐标兜底；底部“英雄”按钮已验证不会再被主城角色 Spine/角色点击区挡住，回归参数为 `--home-click-at 359,654 --capture-hero-list <png>`。
 - 主屏入口回归命令示例：
@@ -180,6 +181,7 @@ Godot 当前工程已接入项目内轻量 Spine runtime，用于本地预览角
 - `data/prefab_layouts/SkinShopPre.json`：左侧活动矩阵“皮肤”，源码 `openSkinShop() -> PANEL_ID_2014`。
 - `data/prefab_layouts/ShopPre.json`：商会/黑市商店 prefab，主屏 `openShop()` 的目标。
 - `data/prefab_layouts/GoodsItemPre.json`：商店商品卡 prefab，含 `GoodsItemCom` 的 `discount/rare/fight/prize/limit/selectBtn` 绑定。
+- `data/prefab_layouts/ShopItemPre.json`：商店右侧分类页签 prefab；源码 `ShopPanel.showShopData()` 会按 `-(height+30)` 纵向排布。
 - `data/prefab_layouts/HeroMainPre.json`：英雄主界面 prefab，独立英雄页的中心 Spine、右侧信息面板和功能页签布局参考。
 - `data/prefab_layouts/HeroBookDetailPre.json`：截图里的英雄详情/图鉴详情页主体 prefab。源码入口是 `HeroBookDetailPanel.preUrl="Prefab/HeroPanel/HeroBookDetailPre"`，包含 `heroBodyBox/skinBodyBox/rightBox/skinBox/infoToggle/skinToggle/btnChaKan/btnLingqu/btnPingLun` 等字段绑定。
 - `data/hero_resource_inventory.json`：英雄资源完整清单，来自 `config.json`、`named_resource_index.json` 和反编译源码字段链。

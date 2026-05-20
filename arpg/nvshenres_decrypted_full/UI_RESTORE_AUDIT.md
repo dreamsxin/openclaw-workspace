@@ -23,7 +23,7 @@
 | `scenes/original_hero_list_panel.tscn` | `scripts/original_hero_list_panel.gd` | `Prefab/HeroListPanel/HeroListPre` | `HeroListPanel` | 已按源码逐段修正右侧入口：`btnHero/btnBook/btnShared/btnYingHun/btnNormalarray/btnStar` 对应“英雄、图鉴、共鸣、英魂、法阵、星辉”；英雄/图鉴保留手工列表，`btnShared/btnYingHun/btnNormalarray/btnStar` 已切到 `HeroLevelSharedPre/HeroPalacePre/HeroNormalarrayPre/HeroStarPre` 原始 prefab 预览。 | 后续把共鸣、英魂、法阵、星辉各自做成独立手工页；继续精修英雄/图鉴卡片细节。 |
 | `scenes/original_hero_panel.tscn` | `scripts/original_hero_panel.gd` | `Prefab/HeroPanel/HeroBookDetailPre` + `Prefab/mainpanel/daohangPre` | `HeroBookDetailPanel` / `DaohangPanel` | 已切换文案和预览入口到 `HeroBookDetailPre`，角色 Spine、语音、衣装、全屏预览可用。 | 用 `HeroBookDetailPre.json` 精确重排左上品质、右侧白纸面板、技能/装备列和页签。 |
 | `scenes/original_draw_card_panel.tscn` | `scripts/original_draw_card_panel.gd` | `Prefab/DrawCard/drawCardPre` | `DrawMainPanel` | 抽卡页有页签和部分 `ZhaoHuan_*` Spine。 | 继续追 `HeroShowPre`、十连展示、抽卡特效和活动抽卡入口。 |
-| `scenes/original_shop_panel.tscn` | `scripts/original_shop_panel.gd` | `Prefab/Shop/ShopPre` | `ShopPanel` | 商会可从主屏进入，已有商品网格和购买弹窗。 | 按 `ShopPre/GoodsItemPre/ShopItemPre` 重排主类型、子类型、刷新节点和货币条。 |
+| `scenes/original_shop_panel.tscn` | `scripts/original_shop_panel.gd` | `Prefab/Shop/ShopPre` | `ShopPanel` | 商会可从主屏进入；商品滚动区、主页签、右侧类型、刷新条和货币条已按 `ShopPre/GoodsItemPre/ShopItemPre` 的 1280x720 坐标重排，购买弹窗继续参考 `ShopBuyEquitPre`。 | 继续补 `ShopItemPre` 选中态底图、`MoneyItemPre` 运行时实例和真实服务器商品数据。 |
 | `scenes/original_bag_panel.tscn` | `scripts/original_bag_panel.gd` | `Prefab/BagPanel/BagPre` | `BagPanel` | 仓库可从主屏进入，已有分类和格子。 | 按 `BagPre/GridBoxItemPre` 替换真实格子、背包页签、合成/神器入口。 |
 
 ## 原始界面关联关系
@@ -38,7 +38,7 @@
 | 英雄入口 | 主屏 `DaohangPanel` 打开 `HeroListPanel`；`HeroListPanel.preUrl="Prefab/HeroListPanel/HeroListPre"`；点击英雄后 `HeroMainPanel` 或 `HeroBookDetailPanel` | `HeroListPre`、`HeroGridPre`、`HeroBookItemPre`、`HeroMainPre`、`HeroBookDetailPre` | `original_hero_list_panel.tscn` -> `original_hero_panel.tscn` | 流程对应；列表/详情是手工版，已支持有 Spine 的英雄、详情动画、语音、衣装/全屏预览；布局未完全贴合原始 prefab。 |
 | 抽卡入口 | `DrawMainPanel` 使用 `Prefab/DrawCard/drawCardPre`；抽卡展示另有 `HeroShowPre`、奖励预览 `DrawRewardPreviewPre` | `drawCardPre` + `HeroShowPre` + `DrawRewardPreviewPre` + `uispine/ZhaoHuan*` | `original_draw_card_panel.tscn` | 有独立手工页；卡池 Spine 和结果预览已实现，`HeroShowPre` 十连展示还未独立还原。 |
 | 仓库入口 | `BagPanel.preUrl="Prefab/BagPanel/BagPre"`；格子/出售/获取途径等为子面板 | `BagPre` + `GridBoxItemPre` + `BagSellEquipPre` 等 | `original_bag_panel.tscn` | 有独立手工页；分类/格子/详情可用，真实格子与子面板还未完全还原。 |
-| 商会入口 | `ShopPanel` 使用 `Prefab/Shop/ShopPre`；商品、页签、购买确认分别是子 prefab | `ShopPre` + `ShopItemPre` + `GoodsItemPre` + `ShopBuyEquitPre` | `original_shop_panel.tscn` | 有独立手工页；商品、页签、购买弹窗可用，仍需按 prefab 精排。 |
+| 商会入口 | `ShopPanel` 使用 `Prefab/Shop/ShopPre`；商品、页签、购买确认分别是子 prefab | `ShopPre` + `ShopItemPre` + `GoodsItemPre` + `ShopBuyEquitPre` | `original_shop_panel.tscn` | 有独立手工页；商品、页签、购买弹窗可用，主体布局已按 prefab 坐标收敛。 |
 | 活动入口 | `ActivityPanel.preUrl="Prefab/ActivityPanel/ActivityPre"`；`ActivityType.prefabArray` 决定首充、占卜、基金、限时礼包等子 prefab；也可 `openByPanelId()` | `ActivityPre` + `ActivityFirstRechargePre` + `ActivityAuguryPre` + 活动子 prefab | 主屏打开 prefab 预览 | 入口已覆盖，但大部分还不是独立手工页。 |
 | 右侧系统入口 | `MainUIPanel.rightNodeArr` 包含 `baoju/cangku/jingji/teach/yingHunDian/duanZao/xunbao/xunxing/shop/lihui`；`onShow()` 分别绑定 `openTreasurePanel/openBag/openjingjiPanel/openTeachListPanel/openHeroPalacePanel/openduanZao/openXunbaoPanel/openZhuanPan/openShop` | 宝具、仓库、竞技、学院、英魂、锻造、占卜、寻星、商会等 prefab | 独立页或 prefab 预览 | 仓库、商会有独立页；宝具/学院/英魂/锻造/占卜/寻星已改为源码对应 prefab 预览；主屏单独的通行证节点仍走 `BigPassPanel`。 |
 
