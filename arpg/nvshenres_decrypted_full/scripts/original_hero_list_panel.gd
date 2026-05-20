@@ -353,17 +353,17 @@ func _refresh_grid() -> void:
 		for hero in filtered:
 			_add_book_card(hero)
 	elif selected_side_tab == 2:
-		grid.columns = 4
-		_add_shared_level_cards(filtered)
+		grid.columns = 1
+		_add_prefab_route_card("共鸣", "源码 changeTab3() 懒加载 HeroLevelSharedPre。", "英雄等级共享")
 	elif selected_side_tab == 3:
 		grid.columns = 1
 		_add_prefab_route_card("英魂殿", "源码 btnYingHun 调用 openHeroPalacePanel()，不是 HeroListPanel 内嵌页。", "英魂殿")
 	elif selected_side_tab == 4:
-		grid.columns = 3
-		_add_formation_cards(filtered)
+		grid.columns = 1
+		_add_prefab_route_card("法阵", "源码 changeTab4() 懒加载 HeroNormalarrayPre。", "英雄阵容")
 	else:
-		grid.columns = 4
-		_add_star_material_cards()
+		grid.columns = 1
+		_add_prefab_route_card("星辉", "源码 changeTab5() 懒加载 HeroStarPre。", "英雄升星")
 
 func _add_hero_card(hero: Dictionary) -> void:
 	var hero_id := str(hero.get("id", ""))
@@ -452,89 +452,6 @@ func _add_book_card(hero: Dictionary) -> void:
 		card.add_child(shade)
 		_add_label(card, "未解锁", Vector2(23, 140), Vector2(80, 30), 18, Color(0.92, 0.92, 0.95)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
-func _add_shared_level_cards(heroes: Array) -> void:
-	for i in 8:
-		var card := Button.new()
-		card.text = ""
-		card.custom_minimum_size = Vector2(198, 174)
-		grid.add_child(card)
-		var bg := ColorRect.new()
-		bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		bg.color = Color(0.04, 0.05, 0.08, 0.88)
-		bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		card.add_child(bg)
-		if i < min(heroes.size(), 4):
-			var hero: Dictionary = heroes[i]
-			var hero_id := str(hero.get("id", ""))
-			_add_named_image_to(card, "image/comHeroGrid/cm_frame_TouXiangDi5", Vector2(44, 18), Vector2(110, 110))
-			_add_named_image_to(card, "image/head/%s" % hero_id, Vector2(57, 31), Vector2(84, 84))
-			_add_label(card, "%s  Lv.%s" % [hero.get("name", hero_id), hero.get("level", "1")], Vector2(10, 134), Vector2(178, 26), 16, Color(1.0, 0.86, 0.52)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		else:
-			_add_label(card, "+", Vector2(0, 42), Vector2(198, 54), 42, Color(0.75, 0.86, 1.0)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-			_add_label(card, "添加共享英雄", Vector2(0, 112), Vector2(198, 26), 16, Color(0.86, 0.92, 1.0)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-
-func _add_soul_card(hero: Dictionary) -> void:
-	var hero_id := str(hero.get("id", ""))
-	var hero_name := str(hero.get("name", hero_id))
-	var card := Button.new()
-	card.text = ""
-	card.custom_minimum_size = Vector2(152, 168)
-	grid.add_child(card)
-	var bg := ColorRect.new()
-	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	bg.color = Color(0.05, 0.04, 0.08, 0.90)
-	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	card.add_child(bg)
-	_add_named_image_to(card, "image/comHeroGrid/cm_frame_TouXiangDi4", Vector2(36, 12), Vector2(80, 80))
-	_add_named_image_to(card, "image/head/%s" % hero_id, Vector2(46, 22), Vector2(60, 60))
-	_add_label(card, "%s英魂" % hero_name, Vector2(8, 100), Vector2(136, 24), 16, Color(1.0, 0.86, 0.52)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_add_progress(card, Vector2(18, 132), Vector2(116, 12), 0.42 if bool(hero.get("owned", true)) else 0.18)
-	_add_label(card, "42/100", Vector2(20, 144), Vector2(112, 20), 13, Color(0.86, 0.92, 1.0)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-
-func _add_formation_cards(heroes: Array) -> void:
-	if heroes.is_empty():
-		return
-	for i in 6:
-		var card := Button.new()
-		card.text = ""
-		card.custom_minimum_size = Vector2(260, 132)
-		grid.add_child(card)
-		var bg := ColorRect.new()
-		bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		bg.color = Color(0.035, 0.05, 0.075, 0.90)
-		bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		card.add_child(bg)
-		_add_label(card, ["白羊座", "金牛座", "双子座", "巨蟹座", "狮子座", "处女座"][i], Vector2(18, 12), Vector2(120, 26), 18, Color(1.0, 0.86, 0.52))
-		_add_label(card, "阵容等级 %d" % [30, 24, 20, 16, 12, 8][i], Vector2(18, 42), Vector2(130, 24), 15, Color(0.84, 0.92, 1.0))
-		for j in 3:
-			var hero: Dictionary = heroes[(i + j) % max(heroes.size(), 1)]
-			_add_named_image_to(card, "image/comHeroGrid/cm_frame_TouXiangDi3", Vector2(154 + j * 32, 18), Vector2(30, 30))
-			_add_named_image_to(card, "image/head/%s" % hero.get("id", ""), Vector2(158 + j * 32, 22), Vector2(22, 22))
-		_add_label(card, "攻击 +%d%%  生命 +%d%%" % [8 + i, 12 + i], Vector2(18, 82), Vector2(220, 24), 14, Color(0.88, 0.95, 0.78))
-
-func _add_star_material_cards() -> void:
-	var items := [
-		["四象星辉", "120/200", 0.60],
-		["四象魔尘", "80/160", 0.50],
-		["水相魔尘", "46/100", 0.46],
-		["升星石", "300/500", 0.60],
-		["英雄碎片", "42/100", 0.42],
-		["转换预览", "预计获得 x80", 0.80],
-	]
-	for item in items:
-		var card := Button.new()
-		card.text = ""
-		card.custom_minimum_size = Vector2(198, 150)
-		grid.add_child(card)
-		var bg := ColorRect.new()
-		bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		bg.color = Color(0.05, 0.045, 0.07, 0.90)
-		bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		card.add_child(bg)
-		_add_label(card, str(item[0]), Vector2(12, 16), Vector2(174, 28), 18, Color(1.0, 0.86, 0.52)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		_add_progress(card, Vector2(24, 70), Vector2(150, 14), float(item[2]))
-		_add_label(card, str(item[1]), Vector2(20, 96), Vector2(158, 24), 15, Color(0.86, 0.92, 1.0)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-
 func _add_status_badge(parent: Control, text: String, position: Vector2, color: Color) -> void:
 	var badge := ColorRect.new()
 	badge.position = position
@@ -565,8 +482,14 @@ func _select_camp(camp: int) -> void:
 	_refresh()
 
 func _select_side_tab(index: int) -> void:
-	if index == 3:
-		Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "英魂殿"})
+	var prefab_tabs := {
+		2: "英雄等级共享",
+		3: "英魂殿",
+		4: "英雄阵容",
+		5: "英雄升星",
+	}
+	if prefab_tabs.has(index):
+		Navigation.go_with_args(PREFAB_PREVIEW, {"layout": str(prefab_tabs[index])})
 		return
 	selected_side_tab = index
 	if selected_side_tab == 0:
@@ -577,10 +500,10 @@ func _select_side_tab(index: int) -> void:
 	var messages := [
 		"英雄列表：点击任意英雄进入 HeroBookDetailPre。",
 		"图鉴页：已按 HeroBookItemPre 的竖卡结构重建，后续补全立绘和收集状态。",
-		"共鸣页：已按 HeroLevelSharedPre 的共享槽位做本地 mock。",
-		"英魂入口：源码里 btnYingHun 打开 HeroPalacePanel，本地先显示碎片进度占位。",
-		"法阵页：已按 HeroNormalarrayPre 的星座阵容做本地 mock。",
-		"星辉页：已按 HeroStarPre 的材料/转换结构做本地 mock。",
+		"共鸣页：源码 changeTab3() 懒加载 HeroLevelSharedPre。",
+		"英魂入口：源码 btnYingHun 打开 HeroPalacePanel。",
+		"法阵页：源码 changeTab4() 懒加载 HeroNormalarrayPre。",
+		"星辉页：源码 changeTab5() 懒加载 HeroStarPre。",
 	]
 	_set_detail_text(messages[index])
 
