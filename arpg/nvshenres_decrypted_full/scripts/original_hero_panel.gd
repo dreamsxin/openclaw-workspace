@@ -15,6 +15,13 @@ const HERO_TAB_ON_ATLAS := "res://assets/resources/native/15/15a1d9111.png"
 const HERO_TAB_ON_RECT := Rect2i(530, 950, 64, 100)
 const HERO_TAB_OFF_ATLAS := "res://assets/resources/native/18/18b29ae48.png"
 const HERO_TAB_OFF_RECT := Rect2i(104, 349, 57, 100)
+const HERO_MAIN_TAB_SIZES := [
+	Vector2(64, 100),
+	Vector2(57, 120),
+	Vector2(57, 100),
+	Vector2(57, 100),
+	Vector2(57, 100),
+]
 const HERO_BOOK_TAG_TEX := "res://assets/resources/native/08/089f225e-78e8-428c-aeec-39bb5b669f43.png"
 const HERO_105004_SPINE := "res://data/spine_runtime/105004.json"
 const HERO_SULA_SPINE := "res://data/spine_runtime/SuLa_LH.json"
@@ -538,9 +545,9 @@ func _refresh_tabs() -> void:
 		tab_panel.size = Vector2(64, 200)
 		tab_panel.add_theme_constant_override("separation", 0)
 	else:
-		tab_panel.position = Vector2(1178, 65)
-		tab_panel.size = Vector2(88, 500)
-		tab_panel.add_theme_constant_override("separation", 14)
+		tab_panel.position = Vector2(608, 95.099)
+		tab_panel.size = Vector2(64, 522)
+		tab_panel.add_theme_constant_override("separation", 0)
 	for i in tab_buttons.size():
 		var button := tab_buttons[i]
 		for child in button.get_children():
@@ -548,15 +555,19 @@ func _refresh_tabs() -> void:
 		button.visible = i < labels.size()
 		if not button.visible:
 			continue
-		button.custom_minimum_size = Vector2(64, 100) if detail_mode == "book" else Vector2(88, 84)
+		var tab_size: Vector2 = Vector2(64, 100) if detail_mode == "book" else HERO_MAIN_TAB_SIZES[i]
+		button.custom_minimum_size = tab_size
 		button.disabled = i == selected_tab
+		var tab_resource := "image/common/cm_tab2_on" if i == selected_tab else "image/common/cm_tab2_off"
+		var tab_image := _add_named_image_to(button, tab_resource, Vector2.ZERO, tab_size)
+		if tab_image != null:
+			tab_image.stretch_mode = TextureRect.STRETCH_SCALE
 		if i == selected_tab:
-			var pos := Vector2.ZERO if detail_mode == "book" else Vector2(12, -8)
-			_add_sprite_frame_image(button, HERO_TAB_ON_ATLAS, HERO_TAB_ON_RECT, pos, Vector2(64, 100), true, Vector2i(64, 100), Vector2.ZERO, TextureRect.STRETCH_SCALE)
-		else:
-			var off_pos := Vector2(4, 0) if detail_mode == "book" else Vector2(16, -8)
-			_add_sprite_frame_image(button, HERO_TAB_OFF_ATLAS, HERO_TAB_OFF_RECT, off_pos, Vector2(57, 100), false, Vector2i(57, 100), Vector2.ZERO, TextureRect.STRETCH_SCALE)
-		var label_rect := Rect2(Vector2(-28, 12), Vector2(120, 62)) if detail_mode == "book" else Rect2(Vector2(-16, 12), Vector2(120, 62))
+			if tab_image == null:
+				_add_sprite_frame_image(button, HERO_TAB_ON_ATLAS, HERO_TAB_ON_RECT, Vector2.ZERO, tab_size, true, Vector2i(64, 100), Vector2.ZERO, TextureRect.STRETCH_SCALE)
+		elif tab_image == null:
+			_add_sprite_frame_image(button, HERO_TAB_OFF_ATLAS, HERO_TAB_OFF_RECT, Vector2.ZERO, tab_size, false, Vector2i(57, 100), Vector2.ZERO, TextureRect.STRETCH_SCALE)
+		var label_rect := Rect2(Vector2(-28, 12), Vector2(120, 62)) if detail_mode == "book" else Rect2(Vector2(-70, 11), Vector2(200, 78))
 		var tab_label := _add_label(button, labels[i], label_rect.position, label_rect.size, 18, Color(0.92, 0.9, 0.82))
 		tab_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		tab_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
@@ -1036,10 +1047,23 @@ func _capture_if_requested() -> void:
 		return
 	await get_tree().process_frame
 	await get_tree().process_frame
+	if DisplayServer.get_name().contains("headless"):
+		push_warning("Skipping hero panel capture in headless mode.")
+		get_tree().quit()
+		return
 	var index := args.find("--capture-hero-panel")
 	var output_path := "user://hero_panel.png"
 	if index >= 0 and index + 1 < args.size():
 		output_path = args[index + 1]
-	var image := get_viewport().get_texture().get_image()
+	var viewport_texture := get_viewport().get_texture()
+	if viewport_texture == null:
+		push_warning("Skipping hero panel capture because the viewport texture is unavailable.")
+		get_tree().quit()
+		return
+	var image := viewport_texture.get_image()
+	if image == null:
+		push_warning("Skipping hero panel capture because the viewport image is unavailable.")
+		get_tree().quit()
+		return
 	image.save_png(output_path)
 	get_tree().quit()
