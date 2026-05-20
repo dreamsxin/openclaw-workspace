@@ -7,6 +7,7 @@ const HERO_CATALOG_PATH := "res://data/hero_catalog.json"
 const HERO_SPINE_INDEX_PATH := "res://data/hero_spine_runtime_index.json"
 const HERO_VOICE_INDEX_PATH := "res://data/hero_voice_index.json"
 const SimpleSpinePlayerScript := preload("res://scripts/simple_spine_player.gd")
+const AudioUtils := preload("res://scripts/audio_utils.gd")
 
 var design_root: Control
 var named_resources: Dictionary = {}
@@ -231,13 +232,7 @@ func _play_hero_voice(sound_id: String) -> void:
 	var hero_voice: Dictionary = voice_index.get(hero_id, {})
 	var entry: Dictionary = hero_voice.get(sound_id, {})
 	var path := str(entry.get("path", ""))
-	if path == "" or not FileAccess.file_exists(path):
-		return
-	var stream := AudioStreamMP3.load_from_file(path)
-	if stream:
-		voice_player.stop()
-		voice_player.stream = stream
-		voice_player.play()
+	AudioUtils.play_mp3(voice_player, path)
 
 func _stars(count: int) -> String:
 	var result := ""

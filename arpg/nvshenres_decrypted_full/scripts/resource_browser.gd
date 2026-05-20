@@ -1,5 +1,7 @@
 extends Control
 
+const AudioUtils := preload("res://scripts/audio_utils.gd")
+
 const CATALOG_PATH := "res://data/catalog.json"
 const SPINE_INDEX_PATH := "res://data/spine_preview_index.json"
 const SPINE_VIEWER := "res://scenes/spine_character_viewer.tscn"
@@ -162,10 +164,7 @@ func _on_item_selected(index: int) -> void:
 			preview.texture = ImageTexture.create_from_image(image)
 	elif current_kind == "audio":
 		var audio_path: String = str(item.get("godot_path", ""))
-		var stream := AudioStreamMP3.load_from_file(audio_path)
-		if stream != null:
-			audio_player.stream = stream
-			audio_player.play()
+		AudioUtils.play_mp3(audio_player, audio_path)
 	elif current_kind == "text":
 		preview.visible = false
 		text_preview.visible = true

@@ -5,6 +5,7 @@ const PREFAB_PREVIEW := "res://scenes/cocos_prefab_preview.tscn"
 const SPINE_VIEWER := "res://scenes/spine_character_viewer.tscn"
 const DESIGN_SIZE := Vector2(1280, 720)
 const SimpleSpinePlayerScript := preload("res://scripts/simple_spine_player.gd")
+const AudioUtils := preload("res://scripts/audio_utils.gd")
 
 const BG_PATH := "res://assets/resources/native/ac/ac082229-4446-4cfe-bbaf-5e9849e208c3.png"
 const ATLAS_18A := "res://assets/resources/native/18/18b29ae48.png"
@@ -1282,19 +1283,7 @@ func _play_hero_voice(sound_id: String) -> void:
 	if entry.is_empty():
 		return
 	var path := str(entry.get("path", ""))
-	var stream := _load_mp3_stream(path)
-	if stream:
-		voice_player.stop()
-		voice_player.stream = stream
-		voice_player.play()
-
-func _load_mp3_stream(path: String) -> AudioStreamMP3:
-	var file := FileAccess.open(path, FileAccess.READ)
-	if file == null:
-		return null
-	var stream := AudioStreamMP3.new()
-	stream.data = file.get_buffer(file.get_length())
-	return stream
+	AudioUtils.play_mp3(voice_player, path)
 
 func _current_animation_name(hero: Dictionary) -> String:
 	var animations := _animation_names(hero)
