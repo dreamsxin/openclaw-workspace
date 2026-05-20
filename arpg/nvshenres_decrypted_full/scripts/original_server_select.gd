@@ -25,9 +25,11 @@ const TOGGLE_OFF_RECT := Rect2i(451, 524, 30, 30)
 const ALERT_ATLAS_PATH := "res://assets/resources/native/1d/1d816a710.png"
 const ALERT_FRAME_RECT := Rect2i(65, 644, 603, 369)
 const DESIGN_SIZE := Vector2(1280, 720)
+const NOTICE_CLOSE_TIP_NODE_INDEX := 118
 
 var design_root: Control
 var layout_nodes: Dictionary = {}
+var layout_nodes_by_index: Dictionary = {}
 var age_layout_nodes: Dictionary = {}
 var privacy_layout_nodes: Dictionary = {}
 var login_resources: Dictionary = {}
@@ -49,6 +51,7 @@ var connect_running := false
 
 func _ready() -> void:
 	layout_nodes = _load_layout_index(LAYOUT_PATH)
+	layout_nodes_by_index = _load_layout_index_by_node_index(LAYOUT_PATH)
 	age_layout_nodes = _load_layout_index(AGE_LAYOUT_PATH)
 	privacy_layout_nodes = _load_layout_index(PRIVACY_LAYOUT_PATH)
 	login_resources = _load_login_resource_index()
@@ -229,6 +232,21 @@ func _load_layout_index(path: String) -> Dictionary:
 			index[name] = node
 	return index
 
+func _load_layout_index_by_node_index(path: String) -> Dictionary:
+	var index := {}
+	if not FileAccess.file_exists(path):
+		return index
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
+	if typeof(parsed) != TYPE_DICTIONARY:
+		return index
+	for node in parsed.get("nodes", []):
+		if typeof(node) != TYPE_DICTIONARY:
+			continue
+		var node_index := int(node.get("index", -1))
+		if node_index >= 0:
+			index[node_index] = node
+	return index
+
 func _load_login_resource_index() -> Dictionary:
 	var index := {}
 	if not FileAccess.file_exists(LOGIN_RESOURCE_INDEX):
@@ -249,10 +267,17 @@ func _load_login_resource_index() -> Dictionary:
 func _layout_rect(name: String, fallback: Rect2) -> Rect2:
 	return _rect_from_layout(layout_nodes, name, fallback)
 
+func _layout_rect_by_index(node_index: int, fallback: Rect2) -> Rect2:
+	if not layout_nodes_by_index.has(node_index):
+		return fallback
+	return _rect_from_node(layout_nodes_by_index[node_index], fallback)
+
 func _rect_from_layout(source: Dictionary, name: String, fallback: Rect2) -> Rect2:
 	if not source.has(name):
 		return fallback
-	var node: Dictionary = source[name]
+	return _rect_from_node(source[name], fallback)
+
+func _rect_from_node(node: Dictionary, fallback: Rect2) -> Rect2:
 	var rect: Array = node.get("screen_rect", [])
 	if rect.size() >= 4:
 		return Rect2(Vector2(float(rect[0]), float(rect[1])), Vector2(float(rect[2]), float(rect[3])))
@@ -538,7 +563,7 @@ func _build_notice_overlay() -> void:
 	close_area.pressed.connect(_hide_local_notice)
 	notice_overlay.add_child(close_area)
 
-	var panel_rect := Rect2(Vector2(224.0, 33.968), Vector2(832.0, 603.0))
+	var panel_rect := _layout_rect("gonggao_bg", Rect2(Vector2(224.0, 33.968), Vector2(832.0, 603.0)))
 	var panel := NinePatchRect.new()
 	panel.position = panel_rect.position
 	panel.size = panel_rect.size
@@ -550,7 +575,7 @@ func _build_notice_overlay() -> void:
 	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	notice_overlay.add_child(panel)
 
-	var title_rect := Rect2(Vector2(609.964, 70.934), Vector2(72.0, 45.36))
+	var title_rect := _layout_rect("txt_1", Rect2(Vector2(609.964, 70.934), Vector2(72.0, 45.36)))
 	var title := _add_label(notice_overlay, "公告", title_rect.position - Vector2(34, 0), title_rect.size + Vector2(68, 0), 28, Color(0.33, 0.26, 0.16))
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
@@ -572,7 +597,7 @@ func _build_notice_overlay() -> void:
 	body.text = _notice_template_text()
 	scroll.add_child(body)
 
-	var close_tip_rect := Rect2(Vector2(556.879, 606.0), Vector2(154.0, 27.72))
+	var close_tip_rect := _layout_rect_by_index(NOTICE_CLOSE_TIP_NODE_INDEX, Rect2(Vector2(556.879, 652.596), Vector2(154.0, 27.72)))
 	var close_tip := _add_label(notice_overlay, "点击空白处关闭", close_tip_rect.position, close_tip_rect.size, 18, Color(0.86, 0.82, 0.68))
 	close_tip.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	close_tip.z_index = 2
@@ -945,7 +970,7 @@ func _load_texture_region(path: String, region: Rect2i, rotated: bool = false) -
 
 func _notice_template_text() -> String:
 	var node: Dictionary = layout_nodes.get("tmptxt", {})
-	var text := str(node.get("text", ""))
+	var text := str(node.get("text", node.get("label_text", "")))
 	if text != "":
 		return text
 	return "[紧急公告] 玩家数据恢复处理进程通知\n\n亲爱的玩家们，\n\n4天前，由于我们合作的第三方云服务器发生严重故障导致部分玩家账号数据丢失。\n对此，我们深表歉意。目前数据恢复工作已启动，但因数据量庞大且需手动核对迁移，预计短期内难以完成。\n\n为了尽可能减轻大家的损失，并弥补时间成本，现提供以下补偿方案：\n1. 我们邀请您前往新服务器创建账号。\n2. 对于已消费玩家：消费总额不超过 30 美元，补偿 50 美元代金券；消费总额超过 30 美元，补偿 50 美元代金券加 1.5 倍消费金额的代金券。\n3. 对于未消费玩家：补偿 30 美元代金券。\n\n我们深知这些补偿无法完全弥补大家的损失，但希望能减轻一些困扰。\n如有任何疑虑或建议，欢迎通过下方表单与我们反馈。\n\n填写表单!\nMaiden Academy开发组"

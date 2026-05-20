@@ -136,6 +136,7 @@ Godot 当前工程已接入项目内轻量 Spine runtime，用于本地预览角
 - `data/prefab_layouts/LoadingPre.json`：完整启动加载页 prefab。`LoadingPanelNode.isFist=0` 是普通启动加载，显示 `dl_progressbg1_jiazai/expMask/ani/t3`；`isFist=1` 是连接服务器 alert 模式，隐藏进度条和 `ani/t3`，显示 `alert`。
 - `data/prefab_layouts/LoginPre.json`：debug 直连登录页 prefab，源码 `LoginPanel.preUrl="Prefab/login/LoginPre"`。它有四个输入框 `tbg1~tbg4`，用于 IP、端口、账号、密码，不是正式玩家选服页。
 - `data/prefab_layouts/pfLoginPanelPre.json`：正式平台登录/选服页 prefab，源码 `PFLoginPanel.preUrl="Prefab/login/pfLoginPanelPre"`。`PFLoginCom` 绑定 `txtServer/btnSelect/btnStart/nodeSv/nodeGG/nodeAlert/cheks/ysTxt/shilingBtn` 等；`PFLoginPanel.onShow()` 会触发公告，截图主体可加 `--no-auto-notice`。
+- `pfLoginPanelPre` 的导出节点名不唯一，分析坐标时不要只按 `name` 取第一项。公告层的关闭提示是 `lbl01` index 118，选服弹层另有一个同名 `lbl01`；`tmptxt` 是 RichText 内容节点，导出的超高 `screen_rect` 表示内容高度，不等于公告 ScrollView 可视区域。
 - `data/prefab_layouts/MoneyItemPre.json`：资源条 prefab，主城顶部金币/钻石条使用。
 - `data/prefab_layouts/MaoxianMapPreTop.json`、`data/prefab_layouts/MaoxianMapPreBotton.json`：冒险地图上下两层 prefab，主屏底栏 `btn5` / `openMaoxianUIPanel()` 的还原入口。
 - `data/prefab_layouts/FuBenPre.json`、`fubenItemPrefab.json`：冒险地图内部副本列表和条目。顶部地图运行时入口已按源码标出：荣耀之路->失落神庙，命运->天空城，遗迹探险->`yjTreasurePre`，冰龙巢穴->冰龙引导/副本。
