@@ -23,6 +23,7 @@ D:\work\openclaw-workspace\arpg\tools\Godot_v4.6.2-stable_win64_console.exe --pa
 - 主城底部导航第三个入口已按原始 `daohangPre.btn3/cm_tab_ZhaoHuan` 修正为“召唤”，点击进入本地抽卡页；仓库入口保留在右侧入口条。
 - `DaohangPanel.changeTabPanel()` 的底栏源码路由已核对：`btn4` 是 `openchujiPanel()` 主线/挂机入口，`btn5` 是 `openmaoxianPanel()` 冒险副本地图，二者不是同一个页面。Godot 底栏现在按原始资源名区分为“冒险”->`Prefab/guajiPanel/guajiPrefab` 预览，“副本”->`MaoxianMapPreTop` 预览。
 - `MainUIPanel.onShow()` 的右侧入口绑定已核对：`yingHunDian` 调用 `openHeroPalacePanel()`，不是召唤。当前主屏右侧“英魂”进入 `英魂殿` prefab 预览；`HeroPalacePre` 已加入 `tools/export_cocos_prefab_layout.py` 并导出为 `data/prefab_layouts/HeroPalacePre.json`。
+- `HeroPalacePanel` 不是单一静态页：源码 `clickPaginationButtonCallback()` 会在合成、英雄分解、碎片分解、重生、回退、置换间切换并懒加载 `HeroPalaceSynthesizePre`、`HeroPalaceHeroDecomposePre`、`HeroPalaceHeroShardDecomposePre`、`HeroPaleceRebirthPre`、`HeroPaleceGoBackPre`、`HeroPalaceReplacementPre`，还会打开材料选择、分解预览、回退确认、置换成功等弹层。Godot `英魂殿` 预览器已增加运行时页签 overlay，所有这些子 prefab 已可直接预览。
 - 主屏右侧九入口按源码和 `MainPre.json` 文本修正为：宝具、仓库、竞技、学院、英魂、锻造、占卜、寻星、商会。`pass/通行证` 是另一个运行期活动入口，不是右侧第一项；`xunbao` 打开 `zhanbuPre`，`xunxing` 才打开 `FindTreasurePre`。
 - 仓库页源码复核：`BagPanel.preUrl="Prefab/BagPanel/BagPre"`，构造时 `selectIndex=2`，`onfrist()` 给 `com.tab.children[0..4]` 绑定五个页签；`btn_item()` 按装备、道具、碎片、符文、神器切换，并用 `ceil(itemarr.length / 8)` 设置虚拟列表行数。`BagPre.scrollview` 是 `[134.226,71.222,996,560]`，`GridBoxItemPre` 物品框是 `110x110`，导出的占位格横向从 `x=165` 开始每 `120` 像素一个，所以 Godot 仓库页使用 8 列 `110x110` 格子，右侧页签使用 `button1..5` 的原始 y 坐标。
 - 资源浏览器支持图片、音频、文本、Prefab、Scene、Spine 索引查看。

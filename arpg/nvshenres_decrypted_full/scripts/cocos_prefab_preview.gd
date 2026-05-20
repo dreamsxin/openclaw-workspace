@@ -247,6 +247,8 @@ func _add_layout_mock() -> void:
 		_add_draw_activity_task_runtime_mock()
 	elif current_layout == "活动抽卡-许愿礼包":
 		_add_draw_activity_wish_gift_runtime_mock()
+	elif current_layout == "英魂殿":
+		_add_hero_palace_runtime_mock()
 	elif current_layout == "挂机主线":
 		_add_guaji_runtime_mock()
 	elif current_layout == "挂机世界地图":
@@ -283,6 +285,45 @@ func _add_maoxian_top_runtime_mock() -> void:
 		button.text = str(entries[i].text)
 		button.position = Vector2(18 + (i % 2) * 188, 56 + int(i / 2) * 48)
 		button.size = Vector2(172, 38)
+		button.tooltip_text = "%s -> %s" % [str(entries[i].text), str(entries[i].layout)]
+		button.pressed.connect(_load_layout.bind(str(entries[i].layout)))
+		panel.add_child(button)
+
+func _add_hero_palace_runtime_mock() -> void:
+	var panel := PanelContainer.new()
+	panel.position = Vector2(824, 78)
+	panel.size = Vector2(410, 354)
+	panel.z_index = 120
+	panel.self_modulate = Color(0.04, 0.05, 0.08, 0.76)
+	canvas.add_child(panel)
+
+	var title_label := Label.new()
+	title_label.text = "HeroPalacePanel 运行时页签"
+	title_label.position = Vector2(16, 12)
+	title_label.size = Vector2(360, 28)
+	title_label.add_theme_font_size_override("font_size", 20)
+	title_label.add_theme_color_override("font_color", Color(0.96, 0.88, 0.58))
+	panel.add_child(title_label)
+
+	var entries := [
+		{"text": "合成", "layout": "英魂合成"},
+		{"text": "英雄分解", "layout": "英魂英雄分解"},
+		{"text": "碎片分解", "layout": "英魂碎片分解"},
+		{"text": "重生", "layout": "英魂重生"},
+		{"text": "回退", "layout": "英魂回退"},
+		{"text": "置换", "layout": "英魂置换"},
+		{"text": "选择材料", "layout": "英魂选择材料"},
+		{"text": "英雄详情", "layout": "英魂详情"},
+		{"text": "分解预览", "layout": "英魂英雄分解预览"},
+		{"text": "碎片预览", "layout": "英魂碎片分解预览"},
+		{"text": "回退确认", "layout": "英魂回退确认"},
+		{"text": "置换成功", "layout": "英魂置换成功"},
+	]
+	for i in entries.size():
+		var button := Button.new()
+		button.text = str(entries[i].text)
+		button.position = Vector2(18 + (i % 2) * 188, 54 + int(i / 2) * 46)
+		button.size = Vector2(172, 36)
 		button.tooltip_text = "%s -> %s" % [str(entries[i].text), str(entries[i].layout)]
 		button.pressed.connect(_load_layout.bind(str(entries[i].layout)))
 		panel.add_child(button)
