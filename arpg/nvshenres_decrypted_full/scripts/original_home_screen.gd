@@ -572,17 +572,19 @@ func _add_layout_image(name: String, occurrence := 0, source := "main", stretch_
 
 func _add_left_quick_buttons() -> void:
 	var entries := [
-		{"label": "好友", "node": "zjm_btn_HaoYou", "atlas": ATLAS_1A, "rect": Rect2i(260, 3, 60, 54)},
-		{"label": "邮件", "node": "zjm_btn_YouJian", "atlas": ATLAS_1A, "rect": Rect2i(326, 3, 60, 55)},
-		{"label": "排行", "node": "zjm_btn_PaiHang", "atlas": ATLAS_1A, "rect": Rect2i(458, 3, 60, 55)},
-		{"label": "客服", "node": "zjm_btn_XinWen", "atlas": ATLAS_1A, "rect": Rect2i(392, 3, 60, 55)},
-		{"label": "战报", "node": "zjm_btn_ZhanBao", "atlas": ATLAS_1A, "rect": Rect2i(524, 3, 60, 55)},
-		{"label": "绑定平台", "node": "zjm_btn_bind", "atlas": ATLAS_1F, "rect": Rect2i(747, 551, 34, 34)},
-		{"label": "Discord活动", "node": "discordBtn", "atlas": ATLAS_1F, "rect": Rect2i(720, 984, 34, 34)},
+		{"label": "好友", "node": "zjm_btn_HaoYou", "resource": "image/com/mainpanel/zjm_btn_HaoYou"},
+		{"label": "邮件", "node": "zjm_btn_YouJian", "resource": "image/com/mainpanel/zjm_btn_YouJian"},
+		{"label": "排行", "node": "zjm_btn_PaiHang", "resource": "image/com/mainpanel/zjm_btn_PaiHang"},
+		{"label": "客服", "node": "zjm_btn_XinWen", "resource": "image/com/mainpanel/zjm_btn_XinWen"},
+		{"label": "战报", "node": "zjm_btn_ZhanBao", "resource": "image/com/mainpanel/zjm_btn_ZhanBao"},
+		{"label": "绑定平台", "node": "zjm_btn_bind", "resource": "image/com/mainpanel/zjm_icon_bind"},
+		{"label": "Discord活动", "node": "discordBtn", "resource": "image/com/mainpanel/zjm_icon_discord", "visible": false},
 	]
 	for item in entries:
+		if not bool(item.get("visible", true)):
+			continue
 		var rect := _rect_or_fallback(str(item.node), _cocos_center_to_screen(Vector2(-601.954, 226.0)), Vector2(58, 58))
-		_add_icon_button(_rect_center(rect), rect.size, item.label, item.atlas, item.rect)
+		_add_icon_button(_rect_center(rect), rect.size, item.label, str(item.get("atlas", "")), item.get("rect", Rect2i()), false, str(item.get("resource", "")))
 
 func _add_event_grid() -> void:
 	var entries := [
@@ -876,7 +878,7 @@ func _add_chat_panel() -> void:
 	hit.pressed.connect(_open_home_entry.bind("聊天"))
 	panel.add_child(hit)
 
-func _add_icon_button(center: Vector2, size: Vector2, text: String, atlas_path: String, rect: Rect2i) -> void:
+func _add_icon_button(center: Vector2, size: Vector2, text: String, atlas_path: String, rect: Rect2i, rotated := false, resource_path := "") -> void:
 	var box := Control.new()
 	box.position = center - size * 0.5
 	box.size = size
@@ -884,7 +886,9 @@ func _add_icon_button(center: Vector2, size: Vector2, text: String, atlas_path: 
 
 	var image := TextureRect.new()
 	image.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	image.texture = _load_texture_region(atlas_path, rect)
+	image.texture = _load_sprite_frame_by_path(resource_path)
+	if image.texture == null and atlas_path != "":
+		image.texture = _load_texture_region(atlas_path, rect, rotated)
 	image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	image.mouse_filter = Control.MOUSE_FILTER_IGNORE
