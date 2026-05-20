@@ -17,6 +17,7 @@ PREFIXES = [
     "image/com/DrawCard/",
     "image/com/FuBen/",
     "image/com/Guild/",
+    "image/com/HeroPalace/",
     "image/com/Jingji/",
     "image/com/map/",
     "image/com/pvpActivity/",

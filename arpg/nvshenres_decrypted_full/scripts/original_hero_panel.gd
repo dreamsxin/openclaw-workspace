@@ -62,6 +62,7 @@ var full_preview_exit_button: Button
 var tab_buttons: Array[Button] = []
 var prev_button: Button
 var next_button: Button
+var star_success_overlay: Control
 var left_info_actions: Array[Button] = []
 var quality_text_label: Label
 var named_resources: Dictionary = {}
@@ -128,6 +129,7 @@ func _build_ui() -> void:
 	_build_tabs()
 	_build_detail_panel()
 	_build_bottom_nav()
+	_build_star_success_overlay()
 	_build_full_preview_exit()
 	_layout_design_root()
 	_apply_hero()
@@ -423,6 +425,67 @@ func _build_full_preview_exit() -> void:
 	full_preview_exit_button.visible = false
 	full_preview_exit_button.pressed.connect(_toggle_full_preview)
 	design_root.add_child(full_preview_exit_button)
+
+func _build_star_success_overlay() -> void:
+	star_success_overlay = Control.new()
+	star_success_overlay.visible = false
+	star_success_overlay.position = Vector2.ZERO
+	star_success_overlay.size = DESIGN_SIZE
+	star_success_overlay.z_index = 90
+	design_root.add_child(star_success_overlay)
+	var dim := ColorRect.new()
+	dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	dim.color = Color(0, 0, 0, 0.62)
+	dim.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	star_success_overlay.add_child(dim)
+	var close_area := Button.new()
+	close_area.text = ""
+	close_area.flat = true
+	close_area.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	close_area.pressed.connect(_hide_star_success)
+	star_success_overlay.add_child(close_area)
+	var panel := Control.new()
+	panel.name = "HeroUpgradeStarPrePreview"
+	panel.position = Vector2.ZERO
+	panel.size = DESIGN_SIZE
+	star_success_overlay.add_child(panel)
+	var content_bg := ColorRect.new()
+	content_bg.position = Vector2(411.963, 266.733)
+	content_bg.size = Vector2(483, 155)
+	content_bg.color = Color(0.96, 0.93, 0.86, 0.94)
+	content_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	panel.add_child(content_bg)
+	var title := _add_label(panel, "升星成功", Vector2(564, 77.168), Vector2(144, 46), 30, Color(1.0, 0.80, 0.32))
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_add_named_image_to(panel, "image/com/HeroPalace/yhd_image_jiantou", Vector2(527, 179.296), Vector2(226, 66))
+	var rows := [
+		["战力", "4371", "+50", "4842", 266.541],
+		["生命", "419", "+40%", "501", 298.159],
+		["攻击", "267", "+50%", "264", 330.159],
+		["防御", "4561", "+20", "5789", 362.159],
+		["速度", "665", "+321", "234", 394.159],
+	]
+	for row in rows:
+		_add_label(panel, row[0], Vector2(456.578, row[4]), Vector2(52, 28), 18, Color(0.40, 0.42, 0.56))
+		_add_label(panel, row[1], Vector2(596.526, row[4]), Vector2(58, 28), 18, Color(0.40, 0.42, 0.56))
+		_add_label(panel, row[2], Vector2(666.041, row[4]), Vector2(72, 28), 18, Color(0.74, 0.32, 0.54))
+		_add_label(panel, row[3], Vector2(763.028, row[4]), Vector2(66, 28), 18, Color(0.40, 0.42, 0.56))
+	var skill_tip := _add_label(panel, "下列技能提升1级", Vector2(492.391, 411.629), Vector2(296, 50), 20, Color(0.55, 0.36, 0.18))
+	skill_tip.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var close := Button.new()
+	close.text = "确定"
+	close.position = Vector2(575, 486)
+	close.size = Vector2(130, 44)
+	close.pressed.connect(_hide_star_success)
+	panel.add_child(close)
+
+func _show_star_success() -> void:
+	if star_success_overlay:
+		star_success_overlay.visible = true
+
+func _hide_star_success() -> void:
+	if star_success_overlay:
+		star_success_overlay.visible = false
 
 func _select_hero(index: int) -> void:
 	selected_hero = index
@@ -793,7 +856,7 @@ func _add_star_tab(root: Control, y_base := 126) -> void:
 		material_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		material_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_add_action_button(root, "英魂", _detail_local(Vector2(433.192, 537.997)), Vector2(130, 45), func(): Navigation.go_with_args(PREFAB_PREVIEW, {"prefab": "英魂殿"}), "image/common/cm_btn_LvSe1")
-	_add_action_button(root, "升星", _detail_local(Vector2(532.181, 548.426)), Vector2(292, 65), Callable(), "image/en/HeroPanel/yx_btn_ShengXing")
+	_add_action_button(root, "升星", _detail_local(Vector2(532.181, 548.426)), Vector2(292, 65), _show_star_success, "image/en/HeroPanel/yx_btn_ShengXing")
 
 func _add_will_tab(root: Control, y_base := 126) -> void:
 	y_base = y_base
