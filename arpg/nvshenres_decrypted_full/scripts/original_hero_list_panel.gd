@@ -381,8 +381,18 @@ func _refresh_grid() -> void:
 		_add_prefab_route_card("英魂殿", "源码 btnYingHun 调用 openHeroPalacePanel()，不是 HeroListPanel 内嵌页。", "英魂殿")
 	elif selected_side_tab == 4:
 		_show_embedded_prefab("res://data/prefab_layouts/HeroNormalarrayPre.json", "法阵页：源码 changeTab4() 懒加载 HeroNormalarrayPre。")
+		_add_xz_routes([
+			["阵容克制", "HeroFormationrestraintPanel：法阵克制说明。", "英雄阵容克制"],
+			["布阵", "HeroListPanel.openBuZhen() 进入 CombatFormPre。", "布阵"],
+		])
 	else:
 		_show_embedded_prefab("res://data/prefab_layouts/HeroStarPre.json", "星辉页：源码 changeTab5() 懒加载 HeroStarPre。")
+		_add_xz_routes([
+			["星位", "StaritemPre：星位节点组件。", "英雄星位"],
+			["星位技能", "StarSkillPre：星辉技能说明。", "英雄星位技能"],
+			["星位升级", "StarUpPre：升星计划/星位升级弹层。", "英雄星位升级"],
+			["技能升级", "skillUpPre：星辉技能升级弹层。", "英雄星位技能升级"],
+		])
 
 func _clear_embedded_prefab() -> void:
 	if embedded_prefab_layer == null:
@@ -486,6 +496,24 @@ func _add_resonance_routes() -> void:
 		button.add_child(bg)
 		_add_label(button, str(item[0]), Vector2(10, 5), Vector2(216, 18), 16, Color(1.0, 0.88, 0.54))
 		_add_label(button, str(item[1]), Vector2(10, 23), Vector2(216, 16), 12, Color(0.80, 0.88, 1.0))
+
+func _add_xz_routes(routes: Array) -> void:
+	for i in routes.size():
+		var item = routes[i]
+		var button := Button.new()
+		button.text = ""
+		button.position = Vector2(600, 48 + i * 56)
+		button.size = Vector2(236, 46)
+		button.tooltip_text = "%s -> %s" % [item[0], item[2]]
+		button.pressed.connect(func(layout := str(item[2])): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": layout}))
+		embedded_prefab_layer.add_child(button)
+		var bg := ColorRect.new()
+		bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		bg.color = Color(0.05, 0.06, 0.10, 0.86)
+		bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		button.add_child(bg)
+		_add_label(button, str(item[0]), Vector2(10, 5), Vector2(216, 18), 16, Color(1.0, 0.88, 0.54))
+		_add_label(button, str(item[1]), Vector2(10, 24), Vector2(216, 16), 12, Color(0.80, 0.88, 1.0))
 
 func _add_book_card(hero: Dictionary) -> void:
 	var hero_id := str(hero.get("id", ""))

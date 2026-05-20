@@ -462,11 +462,46 @@
     "texture_nodes": 8
   },
   {
+    "label": "英雄阵容克制",
+    "prefab": "Prefab/HeroXZPrefab/HeroFormationrestraintPre",
+    "layout": "data/prefab_layouts/HeroFormationrestraintPre.json",
+    "nodes": 19,
+    "texture_nodes": 4
+  },
+  {
     "label": "英雄升星",
     "prefab": "Prefab/HeroXZPrefab/HeroStarPre",
     "layout": "data/prefab_layouts/HeroStarPre.json",
     "nodes": 30,
     "texture_nodes": 2
+  },
+  {
+    "label": "英雄星位",
+    "prefab": "Prefab/HeroXZPrefab/StaritemPre",
+    "layout": "data/prefab_layouts/StaritemPre.json",
+    "nodes": 4,
+    "texture_nodes": 1
+  },
+  {
+    "label": "英雄星位技能",
+    "prefab": "Prefab/HeroXZPrefab/StarSkillPre",
+    "layout": "data/prefab_layouts/StarSkillPre.json",
+    "nodes": 37,
+    "texture_nodes": 6
+  },
+  {
+    "label": "英雄星位升级",
+    "prefab": "Prefab/HeroXZPrefab/StarUpPre",
+    "layout": "data/prefab_layouts/StarUpPre.json",
+    "nodes": 13,
+    "texture_nodes": 1
+  },
+  {
+    "label": "英雄星位技能升级",
+    "prefab": "Prefab/HeroXZPrefab/skillUpPre",
+    "layout": "data/prefab_layouts/skillUpPre.json",
+    "nodes": 44,
+    "texture_nodes": 6
   },
   {
     "label": "背包",

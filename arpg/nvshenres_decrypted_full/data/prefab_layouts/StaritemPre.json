@@ -1,0 +1,321 @@
+{
+  "prefab": "Prefab/HeroXZPrefab/StaritemPre",
+  "import": "assets/resources/import/1b/1b76a07e-195f-45e0-8034-cc5b5a525e38.json",
+  "origin_mode": "center",
+  "nodes": [
+    {
+      "index": 2,
+      "name": "Imgstar",
+      "active": true,
+      "parent_index": null,
+      "size": [
+        103.0,
+        103.0
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        0.0,
+        0.0
+      ],
+      "global_position": [
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 0.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {},
+      "component_types": [
+        "cc.Sprite",
+        "db4d2313PhMz4xuKgLRApf2",
+        "6df27hx7oxFTJEzZhN4r1N+"
+      ],
+      "screen_position": [
+        588.5,
+        308.5
+      ],
+      "screen_rect": [
+        588.5,
+        308.5,
+        103.0,
+        103.0
+      ]
+    },
+    {
+      "index": 3,
+      "name": "root",
+      "active": true,
+      "parent_index": 1,
+      "size": [
+        110.0,
+        110.0
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        0.0,
+        0.0
+      ],
+      "global_position": [
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 0.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {},
+      "component_types": [],
+      "screen_position": [
+        585.0,
+        305.0
+      ],
+      "screen_rect": [
+        585.0,
+        305.0,
+        110.0,
+        110.0
+      ]
+    },
+    {
+      "index": 4,
+      "name": "img_select_kuang",
+      "active": false,
+      "parent_index": 1,
+      "size": [
+        158.0,
+        158.0
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        0.0,
+        0.0
+      ],
+      "global_position": [
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 0.0,
+      "sprite_uuid": "cbhK5qQrlFl5fsVsNEHOko",
+      "sprite_resource_path": "",
+      "texture_path": "assets/resources/native/14/14d2fafcf.png",
+      "sprite_name": "cm_select_WuPing",
+      "sprite_rect": [
+        818,
+        361,
+        158,
+        158
+      ],
+      "sprite_offset": [
+        0,
+        0
+      ],
+      "sprite_original_size": [
+        158,
+        158
+      ],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [
+        40,
+        40,
+        40,
+        40
+      ],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {},
+      "component_types": [
+        "cc.Sprite"
+      ],
+      "screen_position": [
+        561.0,
+        281.0
+      ],
+      "screen_rect": [
+        561.0,
+        281.0,
+        158.0,
+        158.0
+      ]
+    },
+    {
+      "index": 5,
+      "name": "img_select_bqkuang",
+      "active": false,
+      "parent_index": 1,
+      "size": [
+        136.0,
+        142.0
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "position": [
+        0.0,
+        -4.0
+      ],
+      "global_position": [
+        0.0,
+        -4.0
+      ],
+      "scale": [
+        1.0,
+        1.1
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {},
+      "component_types": [
+        "cc.Sprite"
+      ],
+      "screen_position": [
+        572.0,
+        293.0
+      ],
+      "screen_rect": [
+        572.0,
+        293.0,
+        136.0,
+        142.0
+      ]
+    }
+  ],
+  "component_bindings": [
+    {
+      "owner_index": 2,
+      "owner_name": "Imgstar",
+      "component": "db4d2313PhMz4xuKgLRApf2",
+      "fields": {},
+      "raw_refs": {
+        "node": -6
+      }
+    },
+    {
+      "owner_index": 2,
+      "owner_name": "Imgstar",
+      "component": "6df27hx7oxFTJEzZhN4r1N+",
+      "fields": {},
+      "raw_refs": {
+        "node": -7,
+        "m0": 3,
+        "m1": 4
+      },
+      "unresolved_fields": {
+        "m0": 3,
+        "m1": 4
+      }
+    }
+  ]
+}

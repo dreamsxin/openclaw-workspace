@@ -203,6 +203,7 @@
 - 2026-05-20 英雄技能/神器/水晶链路补查：培养页 `upSkillBox()/setSkillData()` 通过 `SkillGrid` 显示主动/被动技能，技能详情面板为 `HeroSkillTips`；装备页 `equipBox5` 对应水晶，空且未激活时走 `CG_SHUIJING_JIHUO()`，已有时 `PanelManager.openShuiJingGridTip()`；`equipBox6` 对应神器体系，核心面板为 `HeroShenQiPre/HeroShenQiUpgradePre`。已导出 `HeroSkillTips`、`HeroShenQiPre`、`HeroShenQiUpgradePre`、`HeroGetShuiJingPre`、`HeroShuiJingUpLevelPre`、`HeroShuiJingChangePre`、`HeroShuiJingResetPre`、`HeroShuiJingTipsPre`，Godot 技能格和装备第 5/6 位已接到对应预览入口。
 - 2026-05-20 英雄共鸣子面板补查：`HeroLevelSharedItemCom` 的槽位事件会触发添加、锁定、英雄信息、移除和 CD 操作；相关弹层/面板是 `HeroLevelSharedHeroInfoPre`、`HeroLevelSharedRemovePre`、`HeroLevelSharedSuccessPre`、`AlertHeroLevelSharedPre`。已导出这 4 个 prefab，Godot 共鸣页在 `HeroLevelSharedPre` 内嵌 layout 右侧补了快捷预览入口。
 - 2026-05-20 英魂殿子面板补查：`HeroPalacePanel.clickPaginationButtonCallback()` 根据按钮名切换 `synthesizeButton/heroDecomposeButton/heroShardDecomposeButton/rebirthButton/goBackButton/replacementButton`，懒加载 `HeroPalaceSynthesizePre`、`HeroPalaceHeroDecomposePre`、`HeroPalaceHeroShardDecomposePre`、`HeroPaleceRebirthPre`、`HeroPaleceGoBackPre`、`HeroPalaceReplacementPre`；相关弹层还有材料选择、分解预览、碎片预览、回退确认、置换成功和英魂详情。已导出这些 prefab，并在 `英魂殿` 预览器 overlay 中增加快捷入口。
+- 2026-05-20 法阵/星辉子面板补查：英雄列表 `changeTab4/changeTab5` 懒加载 `HeroNormalarrayPre/HeroStarPre`，相关子 prefab 还包括阵容克制 `HeroFormationrestraintPre`，星辉节点/技能/升级 `StaritemPre`、`StarSkillPre`、`StarUpPre`、`skillUpPre`。已导出这些 prefab，Godot 法阵/星辉页内嵌 layout 右侧已补快捷预览入口。
 
 ## 资源替换规则
 
