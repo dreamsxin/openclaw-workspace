@@ -90,6 +90,12 @@
 | 战报 | `Prefab/WarReport/WarReportPanel` | 左侧快捷 `zhanbao -> openzhanbaoPanel() -> openWarReport(0)`，已导出 `WarReportPanel.json`。 |
 | 任务 | `Prefab/TaskPanel/TaskPre` | 左侧快捷 `task -> opentaskPanel() -> openTask()`，已导出 `TaskPre.json`。 |
 | 客服 | `Prefab/UserInfo/KeFuPanel` | 左侧快捷 `kefu -> openKeFuPanel()`，已导出 `KeFuPanel.json`；Godot 原先显示为“新闻”的节点已按源码改为“客服”。 |
+| 公会首领 | `Prefab/Guild/GuildBoss/GuildBossPre` | `GuildMainPanel.openBoss()`，由 `btnBoss.parent` 触发，进入公会首领面板。 |
+| 公会红包 | `Prefab/Guild/GuildRedBag/GuildRedBagPre` | `GuildMainPanel.openRedbao()`，由 `btnRedbao` 触发；源码启动后默认 `btnRedbao.active=false`，本地预览保留入口方便检查。 |
+| 公会科技 | `Prefab/Guild/GuildScience/GuildSciencePre` | `GuildMainPanel.openskill()`，由 `btnSkill.parent` 触发。 |
+| 公会详情 | `Prefab/Guild/GuildXiangqingPre` | `GuildMainPanel.openDetail()`，进入详情后关闭当前公会主面板。 |
+| 公会任务 | `Prefab/Guild/GuildTaskPre` | `GuildMainPanel.openTask()` 先请求 `CG_UNION_LIVENESS_QUERY()`，回包后打开任务面板；本地直接预览 prefab。 |
+| 公会捐献 | `Prefab/Guild/Guilddonation/GuilddonationPre` | `GuildMainPanel.openDonate()` 先请求 `CG_UNION_DONATE_QUERY()`，回包后打开捐献面板；本地直接预览 prefab。 |
 | 活动预告 | `Prefab/ActivityForecastPanel/ActivityForecastPre` | `forecast -> openActivityForecastPanel()`，并且主屏广告横幅当前也进入活动预告 prefab 预览。 |
 
 ## 已修正问题
@@ -154,6 +160,7 @@
 - `daohangPre.json` 里 `cm_menu_BeiJing` 的 `texture_path/sprite_name` 会被解析成 `cm_menu_TaiYangGuang`，这是导出器解析错误。真实底栏背景必须从 `config.json` 查 `image/com/mainpanel/cm_menu_BeiJing`：SpriteFrame UUID `8c4e3857-d4f4-43d8-a7bc-04d1327e2a77`，Texture2D/native 为 `assets/resources/native/f5/f58085bc-21e6-40ed-a4cf-b55f6b0cc8f9.png`，rect `[0,0,2266,181]`。Godot 侧已改为手工指定该 native，不能再直接信 `daohangPre` 的贴图字段。
 - `DaohangPanel.init()` 会把 `taiyang` 和 `DaoHangGuang` 的 x 对齐到 `btn1.x`，默认选中城镇。当前 Godot 将 `cm_menu_TaiYangGuang` 单独绘制并对齐 `btn1`，透明度降低，避免选中光误停在中间并遮住主城角色脚部。
 - `DaohangPanel.changeTabPanel()` 源码底栏路由：`btn1 -> openchengzhen()`，`btn2 -> openHeroPanel()`，`btn3 -> openZhaohuanPanel()`，`btn4 -> openchujiPanel()`，`btn5 -> openmaoxianPanel()`，`btn6 -> opengonghuiPanel()`。本地 Demo 对应为：城镇留在主屏、英雄列表、抽卡、主线/挂机预览、副本冒险地图预览、公会预览；`btn5` 不应再误指向天空城。
+- 2026-05-20 公会主界面源码复核：`GuildMainPanel.onShow()` 绑定 `btnBoss/btnRedbao/btnSkill/btnDetail/btnBattle/btnShop/btnTask/btnDonate`，分别进入公会首领、红包、科技、详情、公会战、公会商店、任务、捐献；`bossBattle/gongHuiBattle` 是战斗恢复提示节点，默认隐藏，不是普通入口。Godot 公会预览已按这条源码链补齐点击路由。
 - 2026-05-20 底栏文本/路由二次修正：`openchujiPanel()` 不是直接打开 `Prefab/Battle/battle`，而是主线/挂机入口，源码会 `CG_BATTLE_QUERY()` 并由 `GuajiContro/guajiPanel` 进入 `Prefab/guajiPanel/guajiPrefab`；`openmaoxianPanel()` 才打开 `MaoxianMapPreTop/MaoxianMapPreBotton`。Godot 已把 `btn4` 显示为“冒险”并打开 `挂机主线` 预览，把 `btn5` 显示为“副本”并打开 `冒险地图顶部`。
 - 2026-05-20 挂机世界地图源码补查：`WorldMapPanel.preUrl="Prefab/guajiPanel/worldMapPre"`，但真实地图图片不在 prefab 静态节点中，而是在 `uilist` 中动态预加载 `map/worldMap/map/images/world_01..world_45` 和 `worldMapItemPre`。因此 `worldMapPre` 导出后贴图很少是正常现象；`cocos_prefab_preview.gd` 已对“挂机世界地图”额外绘制这些动态地图缩略图。
 - 2026-05-20 挂机主线入口补查：`guajiPanel.onShow()` 绑定 `saodang/zhandoubtn/guajiTimebtn/tgBox/tgReword/rank/zhanbao/task/minmapbg/longBtn/cardBtn/right/tisheng/lineReward/tongguanyl`。本地预览已为“挂机主线”补运行时入口层，明确小地图、战斗、扫荡、章节、升级、排行、战报、任务等源码目标；`original_home_screen.gd` 的“初级”旧别名也改为 `挂机主线`。

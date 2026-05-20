@@ -837,14 +837,18 @@ func _add_guild_mock() -> void:
 	_add_guild_info_panel(center + Vector2(-405, -200))
 	_add_guild_flag(center + Vector2(-75, -130))
 	var entries := [
-		{"text": "公会首领", "res": "image/com/Guild/gh_frame_rukoudi1"},
-		{"text": "公会科技", "res": "image/com/Guild/gh_frame_rukoudi2"},
-		{"text": "成员管理", "res": "image/com/Guild/gh_frame_rukoudi3"},
-		{"text": "公会战", "res": "image/com/Guild/gh_frame_rukoudi4"},
+		{"text": "公会首领", "layout": "公会首领", "res": "image/com/Guild/gh_frame_rukoudi1"},
+		{"text": "公会红包", "layout": "公会红包", "res": "image/com/Guild/gh_frame_rukoudi2"},
+		{"text": "公会科技", "layout": "公会科技", "res": "image/com/Guild/gh_frame_rukoudi3"},
+		{"text": "公会详情", "layout": "公会详情", "res": "image/com/Guild/gh_frame_rukoudi4"},
+		{"text": "公会战", "layout": "公会战", "res": "image/com/Guild/gh_frame_rukoudi1"},
+		{"text": "公会商店", "layout": "商店", "res": "image/com/Guild/gh_frame_rukoudi2"},
+		{"text": "公会任务", "layout": "公会任务", "res": "image/com/Guild/gh_frame_rukoudi3"},
+		{"text": "公会捐献", "layout": "公会捐献", "res": "image/com/Guild/gh_frame_rukoudi4"},
 	]
 	for i in entries.size():
-		var pos := center + Vector2(135 + (i % 2) * 175, -95 + int(i / 2) * 135)
-		_add_guild_entry(pos, str(entries[i].text), str(entries[i].res))
+		var pos := center + Vector2(80 + (i % 4) * 140, -104 + int(i / 4) * 126)
+		_add_guild_entry(pos, str(entries[i].text), str(entries[i].layout), str(entries[i].res))
 
 func _add_guild_info_panel(origin: Vector2) -> void:
 	var panel := PanelContainer.new()
@@ -883,18 +887,19 @@ func _add_guild_flag(origin: Vector2) -> void:
 	label.add_theme_color_override("font_color", Color(1.0, 0.9, 0.58))
 	flag_bg.add_child(label)
 
-func _add_guild_entry(position: Vector2, text: String, resource_path: String) -> void:
+func _add_guild_entry(position: Vector2, text: String, target_layout: String, resource_path: String) -> void:
 	var button := Button.new()
 	button.position = position
-	button.size = Vector2(150, 92)
+	button.size = Vector2(128, 90)
 	button.text = ""
 	button.tooltip_text = text
+	button.pressed.connect(_load_layout.bind(target_layout))
 	canvas.add_child(button)
-	_add_named_image_to(button, resource_path, Vector2(8, 4), Vector2(134, 64), TextureRect.STRETCH_KEEP_ASPECT_CENTERED)
+	_add_named_image_to(button, resource_path, Vector2(6, 4), Vector2(116, 62), TextureRect.STRETCH_KEEP_ASPECT_CENTERED)
 	var label := Label.new()
 	label.text = text
 	label.position = Vector2(0, 62)
-	label.size = Vector2(150, 28)
+	label.size = Vector2(128, 28)
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.add_theme_font_size_override("font_size", 18)
 	label.add_theme_color_override("font_color", Color(0.98, 0.91, 0.68))

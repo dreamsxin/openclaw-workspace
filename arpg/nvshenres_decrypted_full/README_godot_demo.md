@@ -166,7 +166,13 @@ Godot 当前工程已接入项目内轻量 Spine runtime，用于本地预览角
 - `data/prefab_layouts/WarReportPanel.json`：左侧快捷“战报”，源码 `openzhanbaoPanel() -> openWarReport(0)`。
 - `data/prefab_layouts/TaskPre.json`：左侧快捷“任务”，源码 `opentaskPanel() -> openTask()`。
 - `data/prefab_layouts/KeFuPanel.json`：左侧快捷“客服”，源码 `openKeFuPanel()`；Godot 原先显示成“新闻”的节点已按源码改名。
+- `data/prefab_layouts/GuildBossPre.json`：公会主界面“公会首领”，源码 `GuildMainPanel.openBoss()`。
+- `data/prefab_layouts/GuildRedBagPre.json`：公会主界面“公会红包”，源码 `GuildMainPanel.openRedbao()`；原始主界面默认隐藏红包按钮。
+- `data/prefab_layouts/GuildSciencePre.json`：公会主界面“公会科技”，源码 `GuildMainPanel.openskill()`。
+- `data/prefab_layouts/GuildXiangqingPre.json`：公会主界面“公会详情”，源码 `GuildMainPanel.openDetail()`。
 - `data/prefab_layouts/GuildWarHallPre.json`：左侧活动矩阵“公会战”，源码 `openGuildWarPanel()`。
+- `data/prefab_layouts/GuildTaskPre.json`：公会主界面“公会任务”，源码 `GuildMainPanel.openTask()`，原游戏等待 `CG_UNION_LIVENESS_QUERY()` 回包后展示。
+- `data/prefab_layouts/GuilddonationPre.json`：公会主界面“公会捐献”，源码 `GuildMainPanel.openDonate()`，原游戏等待 `CG_UNION_DONATE_QUERY()` 回包后展示。
 - `data/prefab_layouts/teamPre.json`：左侧活动矩阵“组队竞技”，源码 `openPvp() -> openJingjiZuDui()`；右侧“竞技”仍对应 `JingjiPre`。
 - `data/prefab_layouts/KuafuPvpPre.json`：跨服 PVP 面板，源码 `openkuafuPanel() -> openKuafuPvpPanel()`。当前 `MainPre` 未找到可见跨服入口或 `MainCom` 字段绑定，只作为独立 prefab 预览资源。
 - `data/prefab_layouts/tiantiPre.json`：左侧活动矩阵“天梯”，源码 `openTianti() -> PANEL_ID_3402`。
