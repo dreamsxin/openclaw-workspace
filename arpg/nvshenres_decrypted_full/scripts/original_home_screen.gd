@@ -42,6 +42,8 @@ const MONEY_DIAMOND_RECT := Rect2i(358, 781, 54, 41)
 const MONEY_PURPLE_RECT := Rect2i(236, 742, 32, 36)
 const MONEY_ADD_RECT := Rect2i(996, 828, 24, 24)
 const MAIN_EVENT_GRID_MIN_X := 88.0
+const MAIN_EVENT_GRID_COLUMNS := 5
+const MAIN_EVENT_GRID_CELL := Vector2(104, 98)
 const NAV_SELECTED_LIGHT_ALPHA := 0.34
 const HERO_105004_SPINE := "res://data/spine_runtime/105004.json"
 const HERO_SULA_SPINE := "res://data/spine_runtime/SuLa_LH.json"
@@ -615,12 +617,25 @@ func _add_event_grid() -> void:
 		var layout_node := _layout_node(str(item.node), int(item.get("occurrence", 0)))
 		if not layout_node.is_empty() and not bool(layout_node.get("active", true)) and not bool(item.get("force_show", false)):
 			continue
-		var layout_rect := _node_screen_rect(layout_node) if not layout_node.is_empty() else Rect2()
-		if layout_rect.size.x > 0.0:
-			layout_rect.position.x = maxf(layout_rect.position.x, MAIN_EVENT_GRID_MIN_X)
-		var center := _rect_center(layout_rect) if layout_rect.size.x > 0.0 else _cocos_center_to_screen(Vector2(-510.0, 213.773))
-		var size := layout_rect.size if layout_rect.size.x > 0.0 else Vector2(80, 80)
+		var size := Vector2(80, 80)
+		var layout_rect := _event_grid_rect_for(entries.find(item), layout_node)
+		var center := _rect_center(layout_rect)
 		_add_event_button(center, str(item.label), atlas, rect, bool(item.get("rotated", false)), size, str(item.get("resource", "")), str(item.get("fallback_resource", "")))
+
+func _event_grid_rect_for(index: int, layout_node: Dictionary) -> Rect2:
+	var parent_rect := _layout_rect("huodong")
+	var base_position := Vector2(MAIN_EVENT_GRID_MIN_X, 106.227)
+	if parent_rect.size.x > 0.0:
+		base_position = parent_rect.position + Vector2(98.0, 0.0)
+	var row := index / MAIN_EVENT_GRID_COLUMNS
+	var column := index % MAIN_EVENT_GRID_COLUMNS
+	var position := base_position + Vector2(float(column) * MAIN_EVENT_GRID_CELL.x, float(row) * MAIN_EVENT_GRID_CELL.y)
+	var size := Vector2(80, 80)
+	if not layout_node.is_empty():
+		var source_rect := _node_screen_rect(layout_node)
+		if source_rect.size.x > 0.0 and source_rect.size.y > 0.0:
+			size = source_rect.size
+	return Rect2(position, size)
 
 func _add_ad_banner() -> void:
 	var layout_rect := _layout_rect("zjm_image_GuanGao1")
