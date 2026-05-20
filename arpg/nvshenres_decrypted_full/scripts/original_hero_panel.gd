@@ -63,6 +63,8 @@ var tab_buttons: Array[Button] = []
 var prev_button: Button
 var next_button: Button
 var star_success_overlay: Control
+var local_notice_overlay: Control
+var local_notice_label: Label
 var left_info_actions: Array[Button] = []
 var quality_text_label: Label
 var named_resources: Dictionary = {}
@@ -130,6 +132,7 @@ func _build_ui() -> void:
 	_build_detail_panel()
 	_build_bottom_nav()
 	_build_star_success_overlay()
+	_build_local_notice_overlay()
 	_build_full_preview_exit()
 	_layout_design_root()
 	_apply_hero()
@@ -487,6 +490,34 @@ func _hide_star_success() -> void:
 	if star_success_overlay:
 		star_success_overlay.visible = false
 
+func _build_local_notice_overlay() -> void:
+	local_notice_overlay = Control.new()
+	local_notice_overlay.visible = false
+	local_notice_overlay.position = Vector2.ZERO
+	local_notice_overlay.size = DESIGN_SIZE
+	local_notice_overlay.z_index = 95
+	local_notice_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	design_root.add_child(local_notice_overlay)
+	var panel := ColorRect.new()
+	panel.position = Vector2(402, 315)
+	panel.size = Vector2(476, 72)
+	panel.color = Color(0.035, 0.04, 0.065, 0.90)
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	local_notice_overlay.add_child(panel)
+	local_notice_label = _add_label(local_notice_overlay, "", Vector2(430, 335), Vector2(420, 34), 18, Color(0.96, 0.92, 0.76))
+	local_notice_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	local_notice_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+
+func _show_local_notice(text: String) -> void:
+	if local_notice_overlay == null:
+		return
+	local_notice_label.text = text
+	local_notice_overlay.visible = true
+	get_tree().create_timer(1.4).timeout.connect(func():
+		if local_notice_overlay:
+			local_notice_overlay.visible = false
+	)
+
 func _select_hero(index: int) -> void:
 	selected_hero = index
 	selected_animation = 0
@@ -730,6 +761,7 @@ func _add_hero_main_summary(root: Control, hero: Dictionary) -> void:
 	detail_button.position = Vector2(329, 202)
 	detail_button.size = Vector2(54, 54)
 	detail_button.tooltip_text = "属性详情"
+	detail_button.pressed.connect(func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "英雄属性详情"}))
 	root.add_child(detail_button)
 	_add_named_image_to(detail_button, "image/common/cm_btn_XiangQing", Vector2.ZERO, detail_button.size)
 
@@ -763,11 +795,11 @@ func _add_book_info(root: Control, hero: Dictionary, y_base := 126) -> void:
 func _add_culture_tab(root: Control, hero: Dictionary, y_base := 126, source_layout := false) -> void:
 	if source_layout:
 		_add_label(root, "等级已达上限！！！", Vector2(112, y_base - 54), Vector2(275, 28), 18, Color(0.70, 0.46, 0.18)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		_add_action_button(root, "升2级", Vector2(112, y_base), Vector2(275, 60), Callable(), "image/common/cm_btn_LvSe0")
+		_add_action_button(root, "升2级", Vector2(112, y_base), Vector2(275, 60), func(): _show_local_notice("源码调用 CG_HERO_UPLV，离线 Demo 已模拟升级"), "image/common/cm_btn_LvSe0")
 		return
 	_add_label(root, "等级已达上限！！！", Vector2(0, y_base), Vector2(238, 28), 18, Color(0.70, 0.46, 0.18)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_add_action_button(root, "升2级", Vector2(6, y_base + 52), Vector2(102, 42))
-	_add_action_button(root, "进阶", Vector2(124, y_base + 52), Vector2(102, 42))
+	_add_action_button(root, "升2级", Vector2(6, y_base + 52), Vector2(102, 42), func(): _show_local_notice("源码调用 CG_HERO_UPLV，离线 Demo 已模拟升级"))
+	_add_action_button(root, "进阶", Vector2(124, y_base + 52), Vector2(102, 42), func(): _show_local_notice("源码调用突破面板，离线 Demo 暂以提示代替"))
 
 func _detail_local(screen_position: Vector2) -> Vector2:
 	return screen_position - detail_panel.position
@@ -825,7 +857,7 @@ func _add_equipment_tab(root: Control, y_base := 126) -> void:
 			title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 			var lock := _add_label(frame, str(item[2]), Vector2(-56, 92), Vector2(200, 26), 16, Color(0.72, 0.70, 0.78))
 			lock.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	var btn := _add_action_button(root, "一键穿戴", _detail_local(Vector2(609.622, 549.632)), Vector2(200, 60), Callable(), "image/common/cm_btn_LvSe0")
+	var btn := _add_action_button(root, "一键穿戴", _detail_local(Vector2(609.622, 549.632)), Vector2(200, 60), func(): _show_local_notice("源码 btnQuickPut 走服务器，离线 Demo 已模拟穿戴"), "image/common/cm_btn_LvSe0")
 	_add_red_dot(btn, Vector2(154, 2))
 
 func _add_red_dot(parent: Control, position: Vector2) -> void:
@@ -929,8 +961,8 @@ func _add_will_tab(root: Control, y_base := 126) -> void:
 		var lock_label := _add_label(node, item[4], Vector2(-8, node.size.y - 30), Vector2(node.size.x + 28, 24), 15, Color(0.78, 0.76, 0.86))
 		lock_label.rotation_degrees = -node.rotation_degrees
 		lock_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_add_action_button(root, "战意预览", _detail_local(Vector2(497.613, 547.874)), Vector2(300, 60), Callable(), "image/common/cm_btn_LvSe0")
-	_add_action_button(root, "?", _detail_local(Vector2(768.66, 107.244)), Vector2(54, 54))
+	_add_action_button(root, "战意预览", _detail_local(Vector2(497.613, 547.874)), Vector2(300, 60), func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "战意预览"}), "image/common/cm_btn_LvSe0")
+	_add_action_button(root, "?", _detail_local(Vector2(768.66, 107.244)), Vector2(54, 54), func(): _show_local_notice("源码 HelpManeger.HELP_MISC_58：战意规则帮助"))
 
 func _add_skin_tab(root: Control, y_base := 126) -> void:
 	y_base = y_base

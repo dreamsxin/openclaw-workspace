@@ -191,6 +191,7 @@
 - 2026-05-20 升星成功弹窗补查：`HeroUpgradeStarPre` 的可视字段包括 `content`、标题“升星成功”、`yhd_image_jiantou`、五行属性变化和技能提升提示。`yhd_image_jiantou` 真实资源路径在 `image/com/HeroPalace/yhd_image_jiantou`，已把 `image/com/HeroPalace/` 加入 `tools/export_named_resource_index.py`。Godot 现在点击升星按钮会打开本地成功弹层，按 `HeroUpgradeStarPre.json` 坐标显示属性变化并支持点击空白或“确定”关闭。
 - 2026-05-20 战意页星级分支补查：`HeroMainPanel.setZhanyiBox()` 在 `dataHero.star < 13` 时隐藏 `zhanyi2`，`zhanyi1` 使用局部 `(434,119)`、`zhanyi0` 使用局部 `(291,-21)` 并旋转 180 度；`star >= 13` 时显示 `zhanyi2`，`zhanyi1` 旋转 -75 度，`zhanyi0` 旋转 165 度。Godot 战意页已按星级切换双节点/三节点布局，并把锁定文案从“100级解锁”改成星级解锁语义。
 - 2026-05-20 装备页状态补查：`updateEquipBox()` 重置 6 个装备位，`equipBox5` 根据 `dynamicData.lv < 40` 显示 `suo/lock_open`，`equipBox6.needLv` 文案为“敬请期待”；`checkFuwengOpen()` 里 `fuwenIcon1` 用 100 级解锁，`fuwenIcon2` 用 7 星解锁；`updateEquitHongDian()` 同时控制装备格、符文格和 `btnChuanDai` 红点。Godot 装备页已补锁定暗层、符文解锁状态和本地红点。
+- 2026-05-20 英雄详情交互链补查：`btn_xianQing -> PanelManager.openHeroAttrTipsPanel() -> Prefab/HeroPanel/HeroAttrTips`，`btnChuanDai -> HeroMainPanel.btnQuickPut()` 走服务器快速穿戴，`btnYuLan -> ForgeWarspiritPanel.open()` 且设置 `isWarpath=true`，战意帮助按钮调用 `HelpManeger.HELP_MISC_58`。`tools/export_cocos_prefab_layout.py` 已新增并导出 `HeroAttrTips`、`HeroEquipChangePre`、`HeroWarpathGraspPre`、`HeroWarpathUpPanel`、`ForgeWarspiritPanel`、`HeroWarpathPreviewPanel`；Godot 详情页把属性详情和战意预览接到 prefab 预览器，把服务器动作映射为本地离线提示。
 
 ## 资源替换规则
 

@@ -133,6 +133,13 @@
     "texture_nodes": 8
   },
   {
+    "label": "英雄装备替换",
+    "prefab": "Prefab/HeroPanel/HeroEquipChangePre",
+    "layout": "data/prefab_layouts/HeroEquipChangePre.json",
+    "nodes": 12,
+    "texture_nodes": 1
+  },
+  {
     "label": "英雄升星子页",
     "prefab": "Prefab/HeroPanel/shengxingBox",
     "layout": "data/prefab_layouts/shengxingBox.json",
@@ -152,6 +159,41 @@
     "layout": "data/prefab_layouts/zhanyiBox.json",
     "nodes": 27,
     "texture_nodes": 1
+  },
+  {
+    "label": "英雄属性详情",
+    "prefab": "Prefab/HeroPanel/HeroAttrTips",
+    "layout": "data/prefab_layouts/HeroAttrTips.json",
+    "nodes": 49,
+    "texture_nodes": 1
+  },
+  {
+    "label": "战意领悟",
+    "prefab": "Prefab/HeroPanel/HeroWarpathGraspPre",
+    "layout": "data/prefab_layouts/HeroWarpathGraspPre.json",
+    "nodes": 18,
+    "texture_nodes": 2
+  },
+  {
+    "label": "战意升级",
+    "prefab": "Prefab/HeroPanel/HeroWarpathUpPanel",
+    "layout": "data/prefab_layouts/HeroWarpathUpPanel.json",
+    "nodes": 34,
+    "texture_nodes": 4
+  },
+  {
+    "label": "战意预览",
+    "prefab": "Prefab/ForgePanel/ForgeWarspiritPanel",
+    "layout": "data/prefab_layouts/ForgeWarspiritPanel.json",
+    "nodes": 17,
+    "texture_nodes": 1
+  },
+  {
+    "label": "战意预览面板",
+    "prefab": "Prefab/HeroPanel/HeroWarpathPreviewPanel",
+    "layout": "data/prefab_layouts/HeroWarpathPreviewPanel.json",
+    "nodes": 22,
+    "texture_nodes": 2
   },
   {
     "label": "英雄列表",
