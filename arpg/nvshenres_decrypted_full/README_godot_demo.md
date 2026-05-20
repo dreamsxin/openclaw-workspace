@@ -192,16 +192,17 @@ Godot 当前工程已接入项目内轻量 Spine runtime，用于本地预览角
 - `data/prefab_source_inventory.json/.csv/.md`：从 `prefabs.csv`、反编译源码 `preUrl/url` 和已有文档线索交叉生成的完整 prefab 索引。当前统计为 1018 个 prefab、492 个源码直接引用入口、129 个文档已知候选。
 - `tools/export_prefab_source_inventory.py`：重新生成完整 prefab 资源索引的工具。下一步手工还原界面时，优先查看 `data/prefab_source_inventory.md` 的“源码高频入口”和“已知还原候选”。
 - `data/prefab_layouts/HeroTabPre.json`：英雄页签 prefab，确认 `cm_tab2_on/off` 页签资源。
-- `data/prefab_layouts/HeroListPre.json`：完整英雄列表页 prefab。当前 Godot 已新增独立 `original_hero_list_panel.tscn`，主屏“英雄”先打开列表，点击英雄后进入 `HeroBookDetailPre` 风格详情页。
+- `data/prefab_layouts/HeroListPre.json`：完整英雄列表页 prefab。当前 Godot 已新增独立 `original_hero_list_panel.tscn`，主屏“英雄”先打开列表；英雄背包卡点击进入 `HeroMainPre` 培养页模式，图鉴卡点击进入 `HeroBookDetailPre` 图鉴详情模式。
 - `data/prefab_layouts/HeroGridPre.json`、`HeroBookItemPre.json`、`HeroLevelSharedPre.json`、`HeroNormalarrayPre.json`、`HeroStarPre.json`：英雄列表页的卡片、图鉴、共享等级、阵容和升星子 prefab 布局参考。
 - 英雄列表当前按 `HeroListPre.content` 和源码 `HeroListPanel` 实现。关键源码在 `assets/main/index.js` 的 `HeroListPanelCom/HeroListPanel` 段：`btnHero -> changeTab1(menuType=1)`、`btnBook -> changeTab2(menuType=2)`、`btnShared -> changeTab3(menuType=3)`、`btnYingHun -> openYinghun()`、`btnNormalarray -> changeTab4(menuType=4)`、`btnStar -> changeTab5(menuType=5)`。因此右侧视觉/行为顺序按源码修正为“英雄、图鉴、共鸣、英魂、法阵、星辉”，其中英魂不是普通 `showTab` 页，而是打开 `HeroPalacePanel` 的入口，本地 Demo 已改为跳转 `英魂殿/HeroPalacePre` prefab 预览。
 - 英雄列表源码布局规则：`initScrollView()` 负责英雄背包列表，先按 `HeroListControl.onHeroSortByHeroDataArr()` 排序，再按 `campType` 过滤，最后设置 `gridList.numItems` 和 `lblHeroCount=t.length/capNum`；`initScrollView2()` 负责图鉴，读取 `dataBookMap[campType]`，按 `heros.grade` 降序生成 `HeroBookItemPre`。`showTab()` 中英雄页显示全部阵营按钮，图鉴页隐藏 `btnTypeAll` 并默认 `campType=1`，共鸣/法阵/星辉隐藏阵营筛选和容量条。
 - 共鸣、法阵、星辉不是英雄列表内的本地假卡片：源码 `changeTab3/changeTab4/changeTab5` 会懒加载 `HeroLevelSharedPre/HeroNormalarrayPre/HeroStarPre`。当前 Godot 点击这些右侧页签直接进入 `英雄等级共享/英雄阵容/英雄升星` prefab 预览。
 - `HeroGridPre` 的根尺寸是 `110x110`，当前英雄列表卡片按 92 头像区和 7 列密度排布，兼顾原截图 7 列可视数量和 `HeroGridPre` 头像/阵营/星级层级；`HeroBookItemPre` 的根尺寸是 `108x374`，图鉴页优先加载 `image/heroBook/<id>` 长图，缺图时回退头像。
 - `image/common/cm_tab1_on/off` 已通过 `tools/export_named_resource_index.py` 的 `image/common/cm_tab*` 前缀进入 `named_resource_index`，右侧页签使用原始 SpriteFrame；如果其他 common 资源缺失，优先扩展索引前缀而不是在界面脚本里写死替代图。
-- 英雄详情当前按 `HeroBookDetailPre.leftImg` 的右侧大白板实现：信息板 `x=797,y=86,w=404,h=527`，左侧装备/技能列与右侧正文分开；详情页回归参数是 `--hero-id <id> --capture-hero-panel <png>`。
+- 英雄详情源码入口已拆分：`HeroMainPanel.preUrl="Prefab/HeroPanel/HeroMainPre"` 是英雄背包列表点击后的培养/装备/升星页；`HeroBookDetailPanel.preUrl="Prefab/HeroPanel/HeroBookDetailPre"` 是图鉴单卡和 `GC_HERO_BOOK_SINGLE_QUERY()` 打开的图鉴详情。Godot 详情页使用 `--hero-mode main|book` 或 `Navigation` 的 `mode` 参数区分两种入口，当前主视觉仍共用一套手工布局，后续继续分别按两个 prefab 精修。
+- 英雄详情当前右侧信息板参考 `HeroMainPre/HeroBookDetailPre` 的白板区域：`x=797,y=86,w=404,h=527`，左侧装备/技能列与右侧正文分开；详情页回归参数是 `--hero-id <id> --hero-mode main|book --capture-hero-panel <png>`。
 - 英雄详情左侧信息采用“prefab 坐标 + 截图修正”：名字/职业仍参考 `lblHeroName/lblNickname`，品质和星级按截图手工排版；`ft_zhanli` 使用 `HeroBookDetailPre` 的 `[380.823,579.262,104.17,40]` 一带作为文字位置，底框使用 `[235.823,574.262,394,38]`。
-- 英雄列表/详情页回归参数：`--hero-list-open-id <id>` 可从列表按 id 打开详情；`--hero-list-click-at 200,260` 可模拟点击首个卡片；`--hero-id <id>` 可直接指定详情页英雄。图鉴页优先使用 `image/heroBook/<id>` 长图。
+- 英雄列表/详情页回归参数：`--hero-list-open-id <id>` 可从列表按 id 打开详情，默认进入 `HeroMainPre` 模式；`--hero-list-click-at 200,260` 可模拟点击首个卡片；`--hero-id <id> --hero-mode main|book` 可直接指定详情页英雄和入口模式。图鉴页优先使用 `image/heroBook/<id>` 长图。
 - 英雄详情页新增衣装、全屏预览和语音回归：`--hero-full-preview` 隐藏其他 UI 只显示角色，`--hero-click-once` 模拟点击角色并播放 `sound/cv/<hero>/<soundId>`。语音索引由 `tools/export_hero_voice_index.py` 生成到 `data/hero_voice_index.json`，MP3 拷贝在 `assets/hero_voice/**`。
 - `data/prefab_restore_inventory.csv`：整理后的 prefab 还原清单。
 - `data/prefab_restore_inventory.md`：按分类和优先级整理的 prefab 清单。

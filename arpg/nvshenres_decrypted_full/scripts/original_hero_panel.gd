@@ -66,6 +66,7 @@ var selected_animation := 0
 var selected_skin := 0
 var voice_cursor := 0
 var full_preview := false
+var detail_mode := "main"
 
 func _ready() -> void:
 	_load_named_resources()
@@ -443,7 +444,7 @@ func _refresh_all() -> void:
 func _apply_hero() -> void:
 	var hero: Dictionary = _current_hero()
 	var body_id := _current_body_id(hero)
-	title_label.text = "HeroBookDetailPre | %s | %s | body %s" % [hero.get("name", hero.get("id", "")), _current_animation_name(hero), body_id]
+	title_label.text = "%s | %s | %s | body %s" % [_source_prefab_name(), hero.get("name", hero.get("id", "")), _current_animation_name(hero), body_id]
 	var spine_path := _spine_path_for_body(body_id, hero)
 	if spine_path != "" and body_id == str(hero.get("id", "")):
 		hero_image.visible = false
@@ -529,6 +530,7 @@ func _refresh_head_list() -> void:
 		_add_head_icon(button, hero, Vector2(2, 2), Vector2(60, 60))
 
 func _refresh_tabs() -> void:
+	var labels := _tab_labels()
 	for i in tab_buttons.size():
 		var button := tab_buttons[i]
 		for child in button.get_children():
@@ -538,7 +540,7 @@ func _refresh_tabs() -> void:
 			_add_sprite_frame_image(button, HERO_TAB_ON_ATLAS, HERO_TAB_ON_RECT, Vector2(12, -8), Vector2(64, 100), true, Vector2i(64, 100), Vector2.ZERO, TextureRect.STRETCH_SCALE)
 		else:
 			_add_sprite_frame_image(button, HERO_TAB_OFF_ATLAS, HERO_TAB_OFF_RECT, Vector2(16, -8), Vector2(57, 100), false, Vector2i(57, 100), Vector2.ZERO, TextureRect.STRETCH_SCALE)
-		var tab_label := _add_label(button, ["培养", "装备", "升星", "战意", "衣装"][i], Vector2(-16, 12), Vector2(120, 62), 18, Color(0.92, 0.9, 0.82))
+		var tab_label := _add_label(button, labels[i], Vector2(-16, 12), Vector2(120, 62), 18, Color(0.92, 0.9, 0.82))
 		tab_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		tab_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 
@@ -571,7 +573,9 @@ func _refresh_detail() -> void:
 		root.add_child(gem)
 	_add_progress(root, Vector2(0, 304), Vector2(236, 20), 1.0, "等级  %s" % hero.get("level", "1"))
 
-	if selected_tab == 0:
+	if detail_mode == "book":
+		_add_book_info(root, hero, 344)
+	elif selected_tab == 0:
 		_add_culture_tab(root, hero, 344)
 	elif selected_tab == 1:
 		_add_equipment_tab(root, 344)
@@ -581,6 +585,14 @@ func _refresh_detail() -> void:
 		_add_will_tab(root, 344)
 	else:
 		_add_skin_tab(root, 344)
+
+func _add_book_info(root: Control, hero: Dictionary, y_base := 126) -> void:
+	_add_label(root, "图鉴详情", Vector2(0, y_base), Vector2(238, 28), 20, Color(0.42, 0.36, 0.16)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_add_label(root, "源码 HeroBookDetailPanel 由图鉴单卡或单英雄查询打开。", Vector2(0, y_base + 40), Vector2(238, 52), 15, Color(0.42, 0.46, 0.64)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_add_action_button(root, "信息", Vector2(0, y_base + 108), Vector2(108, 38), func(): _select_tab(0))
+	_add_action_button(root, "衣装", Vector2(122, y_base + 108), Vector2(108, 38), func(): _select_tab(4))
+	_add_action_button(root, "全屏预览", Vector2(0, y_base + 162), Vector2(108, 38), _toggle_full_preview)
+	_add_action_button(root, "评论", Vector2(122, y_base + 162), Vector2(108, 38), func(): _play_hero_voice("2"))
 
 func _add_culture_tab(root: Control, hero: Dictionary, y_base := 126) -> void:
 	_add_label(root, "等级已达上限！！！", Vector2(0, y_base), Vector2(238, 28), 18, Color(0.70, 0.46, 0.18)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -864,6 +876,9 @@ func _spine_path_for_body(body_id: String, hero: Dictionary) -> String:
 func _apply_cmdline_args() -> void:
 	var args := OS.get_cmdline_args()
 	args.append_array(OS.get_cmdline_user_args())
+	var mode_arg := _cmd_arg_value(args, "--hero-mode")
+	if mode_arg in ["main", "book"]:
+		detail_mode = mode_arg
 	var hero_arg := _cmd_arg_value(args, "--hero-index")
 	if hero_arg.is_valid_int():
 		selected_hero = clampi(int(hero_arg), 0, _all_heroes().size() - 1)
@@ -881,6 +896,9 @@ func _apply_cmdline_args() -> void:
 
 func _apply_navigation_args() -> void:
 	var scene_args := Navigation.consume_scene_args()
+	var mode := str(scene_args.get("mode", ""))
+	if mode in ["main", "book"]:
+		detail_mode = mode
 	var hero_id := str(scene_args.get("hero_id", ""))
 	if hero_id == "":
 		return
@@ -914,6 +932,14 @@ func _current_hero() -> Dictionary:
 		return {}
 	selected_hero = clampi(selected_hero, 0, heroes.size() - 1)
 	return heroes[selected_hero]
+
+func _source_prefab_name() -> String:
+	return "HeroBookDetailPre" if detail_mode == "book" else "HeroMainPre"
+
+func _tab_labels() -> Array[String]:
+	if detail_mode == "book":
+		return ["档案", "技能", "羁绊", "评论", "衣装"]
+	return ["培养", "装备", "升星", "战意", "衣装"]
 
 func _has_spine_runtime(body_id: String) -> bool:
 	return typeof(hero_spine_index.get(body_id, null)) == TYPE_DICTIONARY

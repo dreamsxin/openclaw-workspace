@@ -236,7 +236,7 @@ func _build_bottom_actions() -> void:
 	bottom.position = Vector2(0, 0)
 	bottom.size = DESIGN_SIZE
 	design_root.add_child(bottom)
-	detail_label = _add_label(bottom, "点击英雄卡片进入 HeroBookDetailPre 详情页。", Vector2(170, 646), Vector2(540, 26), 16, Color(0.78, 0.90, 1.0))
+	detail_label = _add_label(bottom, "点击英雄卡片进入 HeroMainPre 培养页；图鉴卡片进入 HeroBookDetailPre。", Vector2(170, 646), Vector2(640, 26), 16, Color(0.78, 0.90, 1.0))
 	detail_label.visible = false
 	_build_bottom_nav(bottom)
 	_add_action_button(bottom, "arrange", Vector2(1188, 512), Vector2(56, 44), func(): _select_side_tab(4))
@@ -376,7 +376,7 @@ func _add_hero_card(hero: Dictionary) -> void:
 	card.text = ""
 	card.custom_minimum_size = HERO_CARD_SIZE
 	card.tooltip_text = "%s %s Lv.%s" % [hero_quality, hero_name, hero_level]
-	card.pressed.connect(_open_hero_detail.bind(hero))
+	card.pressed.connect(_open_hero_detail.bind(hero, "main"))
 	grid.add_child(card)
 
 	var bg := ColorRect.new()
@@ -433,7 +433,7 @@ func _add_book_card(hero: Dictionary) -> void:
 	card.text = ""
 	card.custom_minimum_size = Vector2(108, 374)
 	card.tooltip_text = "%s %s 图鉴" % [hero_quality, hero_name]
-	card.pressed.connect(_open_hero_detail.bind(hero))
+	card.pressed.connect(_open_hero_detail.bind(hero, "book"))
 	grid.add_child(card)
 	_add_named_image_to(card, "image/common/cm_frame_kadicheng", Vector2(0, 0), Vector2(108, 328))
 	var book_image := _add_named_image_to(card, "image/heroBook/%s" % hero_id, Vector2(2, 16), Vector2(104, 302))
@@ -498,7 +498,7 @@ func _select_side_tab(index: int) -> void:
 		selected_camp = 1
 	_refresh()
 	var messages := [
-		"英雄列表：点击任意英雄进入 HeroBookDetailPre。",
+		"英雄列表：点击任意英雄进入 HeroMainPre 培养页。",
 		"图鉴页：已按 HeroBookItemPre 的竖卡结构重建，后续补全立绘和收集状态。",
 		"共鸣页：源码 changeTab3() 懒加载 HeroLevelSharedPre。",
 		"英魂入口：源码 btnYingHun 打开 HeroPalacePanel。",
@@ -514,13 +514,13 @@ func _is_camp_filter_visible(index: int) -> bool:
 		return index != 0
 	return false
 
-func _open_hero_detail(hero: Dictionary) -> void:
-	Navigation.go_with_args(HERO_DETAIL_SCENE, {"hero_id": str(hero.get("id", ""))})
+func _open_hero_detail(hero: Dictionary, mode := "main") -> void:
+	Navigation.go_with_args(HERO_DETAIL_SCENE, {"hero_id": str(hero.get("id", "")), "mode": mode})
 
 func _open_hero_id(hero_id: String) -> void:
 	for hero in _all_heroes():
 		if str(hero.get("id", "")) == hero_id:
-			_open_hero_detail(hero)
+			_open_hero_detail(hero, "main")
 			return
 
 func _filtered_heroes() -> Array:
@@ -723,7 +723,7 @@ func _apply_cmdline_args() -> void:
 		var filtered := _filtered_heroes()
 		var index := clampi(int(open_index), 0, max(filtered.size() - 1, 0))
 		if not filtered.is_empty():
-			call_deferred("_open_hero_detail", filtered[index])
+			call_deferred("_open_hero_detail", filtered[index], "main")
 	var click_arg := _cmd_arg_value(args, "--hero-list-click-at")
 	if click_arg != "":
 		call_deferred("_click_at_from_arg", click_arg)
