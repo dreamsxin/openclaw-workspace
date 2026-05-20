@@ -56,6 +56,7 @@ PREFABS = [
     ("战斗", "Prefab/Battle/battle"),
     ("挂机主线", "Prefab/guajiPanel/guajiPrefab"),
     ("挂机世界地图", "Prefab/guajiPanel/worldMapPre"),
+    ("挂机世界地图关卡", "Prefab/guajiPanel/worldMapItemPre"),
     ("挂机通关地图", "Prefab/guajiPanel/WorldtgMapPre"),
     ("挂机章节", "Prefab/guajiPanel/GuajiZhangjiePre"),
     ("挂机升级", "Prefab/guajiPanel/GuajiupPre"),

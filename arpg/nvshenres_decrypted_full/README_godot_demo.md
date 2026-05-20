@@ -133,7 +133,7 @@ Godot 当前工程已接入项目内轻量 Spine runtime，用于本地预览角
 - `data/prefab_layouts/MoneyItemPre.json`：资源条 prefab，主城顶部金币/钻石条使用。
 - `data/prefab_layouts/MaoxianMapPreTop.json`、`data/prefab_layouts/MaoxianMapPreBotton.json`：冒险地图上下两层 prefab，主屏底栏 `btn5` / `openMaoxianUIPanel()` 的还原入口。
 - `data/prefab_layouts/guajiPrefab.json`：底栏 `btn4/openchujiPanel()` 对应的主线/挂机面板主体。源码会先 `CG_BATTLE_QUERY()`，再由挂机控制器打开 `guajiPanel`，不是直接进入 `Prefab/Battle/battle`。
-- `data/prefab_layouts/worldMapPre.json`、`WorldtgMapPre.json`、`GuajiZhangjiePre.json`、`GuajiupPre.json`：挂机主线相关子界面，用于后续还原章节地图、通关地图、章节选择和升级面板。
+- `data/prefab_layouts/worldMapPre.json`、`worldMapItemPre.json`、`WorldtgMapPre.json`、`GuajiZhangjiePre.json`、`GuajiupPre.json`：挂机主线相关子界面，用于后续还原章节地图、通关地图、章节选择和升级面板。`worldMapPre` 本体只保存框架，真实世界地图图片由源码 `WorldMapPanel.uilist` 动态加载 `map/worldMap/map/images/world_01..world_45`；Prefab 预览器已为“挂机世界地图”补一层动态资源缩略预览。
 - `data/prefab_layouts/TreasurePre.json`：主屏右侧“宝具”入口，源码 `baoju -> openTreasurePanel()`。
 - `data/prefab_layouts/TeachListPre.json`：主屏右侧“学院”入口，源码 `teach -> openTeachListPanel()`。`BraveManTriedPassInfoPre` 是学院塔/试炼信息页，不是右侧学院入口。
 - `data/prefab_layouts/zhanbuPre.json`：主屏右侧“占卜”入口，源码 `xunbao -> openZhanbu()`。

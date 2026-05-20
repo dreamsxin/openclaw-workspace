@@ -247,6 +247,55 @@ func _add_layout_mock() -> void:
 		_add_draw_activity_task_runtime_mock()
 	elif current_layout == "活动抽卡-许愿礼包":
 		_add_draw_activity_wish_gift_runtime_mock()
+	elif current_layout == "挂机世界地图":
+		_add_world_map_runtime_mock()
+
+func _add_world_map_runtime_mock() -> void:
+	var center := _canvas_center()
+	var panel := PanelContainer.new()
+	panel.position = center + Vector2(-530, -250)
+	panel.size = Vector2(820, 500)
+	panel.z_index = 80
+	panel.self_modulate = Color(0.03, 0.04, 0.07, 0.74)
+	canvas.add_child(panel)
+
+	var title_label := Label.new()
+	title_label.text = "WorldMapPanel 动态地图资源"
+	title_label.position = Vector2(18, 12)
+	title_label.size = Vector2(420, 30)
+	title_label.add_theme_font_size_override("font_size", 22)
+	title_label.add_theme_color_override("font_color", Color(0.96, 0.89, 0.62))
+	panel.add_child(title_label)
+
+	var note := Label.new()
+	note.text = "源码 uilist 加载 map/worldMap/map/images/world_01..world_45；worldMapPre 只保存框架和按钮。"
+	note.position = Vector2(18, 42)
+	note.size = Vector2(760, 26)
+	note.add_theme_font_size_override("font_size", 14)
+	note.add_theme_color_override("font_color", Color(0.75, 0.86, 0.96))
+	panel.add_child(note)
+
+	var cell := Vector2(104, 72)
+	var gap := Vector2(8, 8)
+	for i in range(45):
+		var col := i % 7
+		var row := int(i / 7)
+		var slot := PanelContainer.new()
+		slot.position = Vector2(18 + col * (cell.x + gap.x), 78 + row * (cell.y + gap.y))
+		slot.size = cell
+		slot.self_modulate = Color(0.08, 0.09, 0.12, 0.82)
+		panel.add_child(slot)
+		var resource_path := "map/worldMap/map/images/world_%02d" % (i + 1)
+		var image := _add_named_image_to(slot, resource_path, Vector2(2, 2), cell - Vector2(4, 18), TextureRect.STRETCH_KEEP_ASPECT_COVERED)
+		image.tooltip_text = resource_path
+		var label := Label.new()
+		label.text = "%02d" % (i + 1)
+		label.position = Vector2(4, cell.y - 18)
+		label.size = Vector2(cell.x - 8, 16)
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		label.add_theme_font_size_override("font_size", 12)
+		label.add_theme_color_override("font_color", Color(0.92, 0.94, 0.98))
+		slot.add_child(label)
 
 func _add_hero_panel_mock() -> void:
 	var player: Node2D = SimpleSpinePlayerScript.new()
