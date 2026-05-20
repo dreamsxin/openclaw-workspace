@@ -801,11 +801,13 @@ func _add_book_info(root: Control, hero: Dictionary, y_base := 126) -> void:
 func _add_culture_tab(root: Control, hero: Dictionary, y_base := 126, source_layout := false) -> void:
 	if source_layout:
 		_add_label(root, "等级已达上限！！！", Vector2(112, y_base - 54), Vector2(275, 28), 18, Color(0.70, 0.46, 0.18)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		_add_action_button(root, "升2级", Vector2(112, y_base), Vector2(275, 60), func(): _show_local_notice("源码调用 CG_HERO_UPLV，离线 Demo 已模拟升级"), "image/common/cm_btn_LvSe0")
+		_add_action_button(root, "升2级", Vector2(112, y_base), Vector2(275, 60), func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "英雄升级"}), "image/common/cm_btn_LvSe0")
+		_add_action_button(root, "进阶", Vector2(112, y_base + 72), Vector2(132, 42), func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "英雄突破"}))
+		_add_action_button(root, "重置", Vector2(255, y_base + 72), Vector2(132, 42), func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "英雄重置"}))
 		return
 	_add_label(root, "等级已达上限！！！", Vector2(0, y_base), Vector2(238, 28), 18, Color(0.70, 0.46, 0.18)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_add_action_button(root, "升2级", Vector2(6, y_base + 52), Vector2(102, 42), func(): _show_local_notice("源码调用 CG_HERO_UPLV，离线 Demo 已模拟升级"))
-	_add_action_button(root, "进阶", Vector2(124, y_base + 52), Vector2(102, 42), func(): _show_local_notice("源码调用突破面板，离线 Demo 暂以提示代替"))
+	_add_action_button(root, "升2级", Vector2(6, y_base + 52), Vector2(102, 42), func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "英雄升级"}))
+	_add_action_button(root, "进阶", Vector2(124, y_base + 52), Vector2(102, 42), func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "英雄突破"}))
 
 func _detail_local(screen_position: Vector2) -> Vector2:
 	return screen_position - detail_panel.position

@@ -195,6 +195,7 @@
 - 2026-05-20 英雄详情左侧功能按钮补查：`HeroMainPanel.initButtonEvent()` 将 `HeroSidePrefab.imgSuo/imgPingLun/imgFenXiang` 分别绑定到锁定、评论、分享；`btnChaKan()` 进入隐藏 UI 的查看模式。Godot 左侧三个按钮已改为“全屏预览 / 评论 / 分享或锁定”，不再是只有 tooltip 的死按钮。
 - 2026-05-20 英雄列表页签补查：`HeroListPanel.showTab()` 中 `menuType=3/4/5` 并不会跳出英雄列表，而是分别把 `HeroLevelSharedPre`、`HeroNormalarrayPre`、`HeroStarPre` 实例化到 `heroLevelShared/normalarrayNode/starNode`；只有 `btnYingHun` 调 `openHeroPalacePanel()` 打开独立英魂殿。Godot 英雄列表已改为在列表内容区嵌入这三个导出 prefab，英魂页签继续进入 `HeroPalacePre` 预览。
 - 2026-05-20 英雄列表 `arrange/btnBuZhen` 补查：`btnBuZhen.on(... openBuZhen)` 设置 `CombatControl._formation = CmbFormation.FSZ` 后调用 `PanelManager.openBuzhen(... TYPE_COMBAT_TYPE1 ...)`，不是右侧 `btnNormalarray/changeTab4` 法阵页签。已导出 `Prefab/CombatPrefab/CombatFormPre` 为“布阵”，Godot 右下 `arrange` 改为打开布阵预览。
+- 2026-05-20 英雄培养按钮补查：`HeroMainPanel.btnUpLv()` 走 `CG_HERO_LEVEL_UP()`，`btnJinJie()` 走 `CG_HERO_UPGRADE_QUERY()` 后打开 `HeroUpLvPanel`/`HeroBreakthroughPanel`，`btnReset()` 打开 `HeroResetPanel`；相关 prefab 是 `HeroUpLvPre`、`HeroBreakthroughPre`、`HeroResetPre`，升级链还会预加载 `HeroGetNewSkillsPre`。已导出这 4 个 prefab，Godot 培养页按钮改为进入对应原始预览。
 
 ## 资源替换规则
 
