@@ -774,6 +774,10 @@ func _detail_local(screen_position: Vector2) -> Vector2:
 
 func _add_equipment_tab(root: Control, y_base := 126) -> void:
 	y_base = y_base
+	var hero: Dictionary = _current_hero()
+	var level_text := str(hero.get("level", "1")).split("/")[0]
+	var hero_level := int(level_text)
+	var hero_star := int(hero.get("stars", 5))
 	var equips := [
 		["武器", "yx_icon_zhuangbei0", Vector2(483.916, 157.163), "yx_frame_ZBHong"],
 		["衣服", "yx_icon_zhuangbei1", Vector2(506.403, 260.246), "yx_frame_ZBCheng"],
@@ -797,9 +801,15 @@ func _add_equipment_tab(root: Control, y_base := 126) -> void:
 		_add_named_image_to(slot, "image/en/HeroPanel/%s" % equips[i][1], Vector2(18, 18), Vector2(58, 58))
 		var name_label := _add_label(slot, str(equips[i][0]), Vector2(0, 70), Vector2(94, 22), 15, Color(0.96, 0.90, 0.68))
 		name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		if i < 4:
+			_add_red_dot(slot, Vector2(68, 0))
+		if i == 4 and hero_level < 40:
+			_add_lock_overlay(slot, "40级")
+		elif i == 5:
+			_add_lock_overlay(slot, "敬请期待")
 	var fuwen := [
-		["符文", Vector2(667.622, 223.132), "100级解锁"],
-		["神器", Vector2(667.622, 394.132), "七星解锁"],
+		["符文", Vector2(667.622, 223.132), "100级解锁", hero_level >= 100],
+		["神器", Vector2(667.622, 394.132), "七星解锁", hero_star >= 7],
 	]
 	for item in fuwen:
 		var frame := Control.new()
@@ -807,11 +817,35 @@ func _add_equipment_tab(root: Control, y_base := 126) -> void:
 		frame.size = Vector2(88, 87)
 		root.add_child(frame)
 		_add_named_image_to(frame, "image/en/HeroPanel/yx_frame_ZBBai", Vector2.ZERO, frame.size)
-		var title := _add_label(frame, str(item[0]), Vector2(0, 21), Vector2(88, 22), 16, Color(0.75, 0.72, 0.82))
-		title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		var lock := _add_label(frame, str(item[2]), Vector2(-56, 92), Vector2(200, 26), 16, Color(0.72, 0.70, 0.78))
-		lock.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_add_action_button(root, "一键穿戴", _detail_local(Vector2(609.622, 549.632)), Vector2(200, 60), Callable(), "image/common/cm_btn_LvSe0")
+		if bool(item[3]):
+			_add_named_image_to(frame, "image/en/HeroPanel/yx_frame_JiNeng", Vector2(19, 18), Vector2(50, 50))
+			_add_red_dot(frame, Vector2(62, 3))
+		else:
+			var title := _add_label(frame, "锁", Vector2(0, 18), Vector2(88, 28), 18, Color(0.75, 0.72, 0.82))
+			title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			var lock := _add_label(frame, str(item[2]), Vector2(-56, 92), Vector2(200, 26), 16, Color(0.72, 0.70, 0.78))
+			lock.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var btn := _add_action_button(root, "一键穿戴", _detail_local(Vector2(609.622, 549.632)), Vector2(200, 60), Callable(), "image/common/cm_btn_LvSe0")
+	_add_red_dot(btn, Vector2(154, 2))
+
+func _add_red_dot(parent: Control, position: Vector2) -> void:
+	var dot := ColorRect.new()
+	dot.position = position
+	dot.size = Vector2(18, 18)
+	dot.color = Color(0.86, 0.04, 0.10, 1.0)
+	dot.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	parent.add_child(dot)
+	var mark := _add_label(parent, "!", position - Vector2(1, 4), Vector2(20, 22), 14, Color.WHITE)
+	mark.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+
+func _add_lock_overlay(parent: Control, text: String) -> void:
+	var shade := ColorRect.new()
+	shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	shade.color = Color(0, 0, 0, 0.56)
+	shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	parent.add_child(shade)
+	var label := _add_label(parent, text, Vector2(0, 34), Vector2(parent.size.x, 24), 15, Color(0.90, 0.88, 0.78))
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 func _add_star_tab(root: Control, y_base := 126) -> void:
 	y_base = y_base

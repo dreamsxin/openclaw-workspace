@@ -187,6 +187,7 @@
 - 2026-05-20 英雄详情衣装/升星补查：`HeroMainPanel.showTab()` 的 tab3 先调用 `HeroControl.CG_HERO_JUEXING_QUERY()`，`HeroControl.GC_HERO_JUEXING_QUERY()` 返回后由 `HeroMainPanel.initUpStarUI()/updateUpStarData()` 加载 `Prefab/HeroPanel/shengxingBox`；执行升星后的成功弹窗才是 `Prefab/HeroPanel/HeroUpgradeStarPre`。Godot 已导出 `shengxingBox.json` / `HeroUpgradeStarPre.json`，主详情页升星 tab 使用 `yx_img_ShengXing` 背景，并按 `shengxingBox` 的属性提升、材料位、英魂按钮和升星按钮坐标绘制。tab5 直接激活 `HeroMainPre.skinBox` 并调用 `CG_SKIN_HERO()`，`setSkinData()` 使用 `image/skin/showImg/<body>`、`skinInfo/name/attrNode/getBtn/wearBtn/takeBtn/playBtn/btnNext/noSkin`，Godot 已把 `image/skin/showImg/` 加入 `named_resource_index` 并按导出的 `skinBox` 坐标恢复衣装页主体。
 - 2026-05-20 升星成功弹窗补查：`HeroUpgradeStarPre` 的可视字段包括 `content`、标题“升星成功”、`yhd_image_jiantou`、五行属性变化和技能提升提示。`yhd_image_jiantou` 真实资源路径在 `image/com/HeroPalace/yhd_image_jiantou`，已把 `image/com/HeroPalace/` 加入 `tools/export_named_resource_index.py`。Godot 现在点击升星按钮会打开本地成功弹层，按 `HeroUpgradeStarPre.json` 坐标显示属性变化并支持点击空白或“确定”关闭。
 - 2026-05-20 战意页星级分支补查：`HeroMainPanel.setZhanyiBox()` 在 `dataHero.star < 13` 时隐藏 `zhanyi2`，`zhanyi1` 使用局部 `(434,119)`、`zhanyi0` 使用局部 `(291,-21)` 并旋转 180 度；`star >= 13` 时显示 `zhanyi2`，`zhanyi1` 旋转 -75 度，`zhanyi0` 旋转 165 度。Godot 战意页已按星级切换双节点/三节点布局，并把锁定文案从“100级解锁”改成星级解锁语义。
+- 2026-05-20 装备页状态补查：`updateEquipBox()` 重置 6 个装备位，`equipBox5` 根据 `dynamicData.lv < 40` 显示 `suo/lock_open`，`equipBox6.needLv` 文案为“敬请期待”；`checkFuwengOpen()` 里 `fuwenIcon1` 用 100 级解锁，`fuwenIcon2` 用 7 星解锁；`updateEquitHongDian()` 同时控制装备格、符文格和 `btnChuanDai` 红点。Godot 装备页已补锁定暗层、符文解锁状态和本地红点。
 
 ## 资源替换规则
 
