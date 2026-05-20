@@ -20,6 +20,7 @@ var voice_player: AudioStreamPlayer
 var share_box: Control
 var speak_box: Control
 var hero_id := "105004"
+var skin_body := ""
 var hero_index := 0
 var hero_data: Dictionary = {}
 
@@ -85,7 +86,7 @@ func _build_top_bar() -> void:
 	add_child(top)
 
 	var title := Label.new()
-	title.text = "HeroShowPre | 抽卡英雄展示"
+	title.text = "HeroShowPre | 衣装展示" if skin_body != "" else "HeroShowPre | 抽卡英雄展示"
 	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	top.add_child(title)
 	Navigation.add_buttons(top)
@@ -108,12 +109,15 @@ func _build_hero_stage() -> void:
 	hero_spine = SimpleSpinePlayerScript.new()
 	stage.add_child(hero_spine)
 	var runtime := _hero_runtime_path(hero_id)
-	if runtime != "" and FileAccess.file_exists(runtime) and hero_spine.load_spine(runtime, "show"):
+	if skin_body == "" and runtime != "" and FileAccess.file_exists(runtime) and hero_spine.load_spine(runtime, "show"):
 		_fit_spine_to_rect(hero_spine, Rect2(Vector2(52, 0), Vector2(640, 660)), 0.92)
 	else:
 		hero_spine.queue_free()
 		hero_spine = null
-		hero_image = _add_named_image(stage, "image/heroBook/%s" % hero_id, Vector2(154, 30), Vector2(450, 600))
+		var body_id := skin_body if skin_body != "" else hero_id
+		hero_image = _add_named_image(stage, "image/skin/showImg/%s" % body_id, Vector2(106, 24), Vector2(560, 628))
+		if hero_image.texture == null:
+			hero_image = _add_named_image(stage, "image/heroBook/%s" % body_id, Vector2(154, 30), Vector2(450, 600))
 		if hero_image.texture == null:
 			_add_named_image(stage, "image/head/%s" % hero_id, Vector2(300, 214), Vector2(160, 160))
 
@@ -305,12 +309,16 @@ func _load_voice_index() -> void:
 func _apply_args() -> void:
 	var args := Navigation.consume_scene_args()
 	hero_id = str(args.get("hero_id", hero_id))
+	skin_body = str(args.get("skin_body", skin_body))
 	hero_index = int(args.get("hero_show_index", 0))
 	var cmd_args := OS.get_cmdline_args()
 	cmd_args.append_array(OS.get_cmdline_user_args())
 	var cmd_hero := _cmd_arg_value(cmd_args, "--hero-id")
 	if cmd_hero != "":
 		hero_id = cmd_hero
+	var cmd_skin := _cmd_arg_value(cmd_args, "--skin-body")
+	if cmd_skin != "":
+		skin_body = cmd_skin
 	var cmd_index := _cmd_arg_value(cmd_args, "--hero-show-index")
 	if cmd_index.is_valid_int():
 		hero_index = int(cmd_index)

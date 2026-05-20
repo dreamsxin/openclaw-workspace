@@ -38,10 +38,10 @@ const HERO_TOUCH_SOUNDS := ["1", "2", "3", "5"]
 
 const HEROES := [
 	{"id": "105004", "name": "伊卡洛斯", "job": "灵师", "camp": 4, "stars": 5, "spine": HERO_105004_SPINE, "power": "3027113", "level": "120/360", "attrs": ["攻击 120360", "生命 568420", "防御 42310", "速度 1785"], "target": Rect2(Vector2(330, 88), Vector2(430, 600))},
-	{"id": "205008", "name": "苏拉", "job": "战士", "camp": 2, "stars": 5, "spine": HERO_SULA_SPINE, "power": "2864100", "level": "108/300", "attrs": ["攻击 104820", "生命 612500", "防御 48990", "速度 1620"], "target": Rect2(Vector2(330, 80), Vector2(430, 610))},
+	{"id": "205008", "name": "苏拉", "job": "战士", "camp": 2, "stars": 5, "spine": HERO_SULA_SPINE, "power": "2864100", "level": "108/300", "attrs": ["攻击 104820", "生命 612500", "防御 48990", "速度 1620"], "target": Rect2(Vector2(330, 80), Vector2(430, 610)), "skins": ["2050081"]},
 	{"id": "305006", "name": "尤朵拉", "job": "射手", "camp": 1, "stars": 5, "spine": HERO_YOUDUOLA_SPINE, "power": "2719800", "level": "104/300", "attrs": ["攻击 132500", "生命 438200", "防御 36210", "速度 1915"], "target": Rect2(Vector2(330, 80), Vector2(430, 610))},
-	{"id": "405007", "name": "拉瑞欧", "job": "守护", "camp": 3, "stars": 5, "power": "2339000", "level": "96/260", "attrs": ["攻击 82420", "生命 690000", "防御 62410", "速度 1210"]},
-	{"id": "505004", "name": "诺萨", "job": "刺客", "camp": 5, "stars": 5, "power": "2188000", "level": "92/260", "attrs": ["攻击 96800", "生命 402600", "防御 34200", "速度 1840"]},
+	{"id": "405007", "name": "拉瑞欧", "job": "守护", "camp": 3, "stars": 5, "power": "2339000", "level": "96/260", "attrs": ["攻击 82420", "生命 690000", "防御 62410", "速度 1210"], "skins": ["4050071"]},
+	{"id": "505004", "name": "诺萨", "job": "刺客", "camp": 5, "stars": 5, "power": "2188000", "level": "92/260", "attrs": ["攻击 96800", "生命 402600", "防御 34200", "速度 1840"], "skins": ["5050041"]},
 	{"id": "204002", "name": "艾琳", "job": "辅助", "camp": 1, "stars": 5, "power": "2013000", "level": "88/240", "attrs": ["攻击 68400", "生命 520800", "防御 41800", "速度 1505"]},
 	{"id": "104002", "name": "莉莉", "job": "法师", "camp": 2, "stars": 5, "power": "1884000", "level": "84/240", "attrs": ["攻击 91200", "生命 376000", "防御 30200", "速度 1710"]},
 	{"id": "504002", "name": "奥斯曼", "job": "守护", "camp": 5, "stars": 3, "power": "1722000", "level": "80/220", "attrs": ["攻击 63400", "生命 602000", "防御 55200", "速度 1180"]},
@@ -619,7 +619,7 @@ func _apply_mode_layout() -> void:
 
 func _apply_hero() -> void:
 	var hero: Dictionary = _current_hero()
-	var body_id := _current_body_id(hero)
+	var body_id := _preview_body_id(hero)
 	title_label.text = "%s | %s | %s | body %s" % [_source_prefab_name(), hero.get("name", hero.get("id", "")), _current_animation_name(hero), body_id]
 	var spine_path := _spine_path_for_body(body_id, hero)
 	if spine_path != "" and body_id == str(hero.get("id", "")):
@@ -1128,7 +1128,7 @@ func _add_skin_tab(root: Control, y_base := 126) -> void:
 	var primary_rect := _skin_layout_rect(primary_button_name, Rect2(Vector2(881.292, 537.333), Vector2(238, 66)))
 	_add_action_button(root, primary_text, _detail_local(primary_rect.position), primary_rect.size, primary_action, "image/common/cm_btn_LvSe0")
 	var play_rect := _skin_layout_rect("playBtn", Rect2(Vector2(1008.432, 90.563), Vector2(38, 38)))
-	_add_action_button(root, "展示", _detail_local(play_rect.position), play_rect.size, func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "衣装展示"}))
+	_add_action_button(root, "展示", _detail_local(play_rect.position), play_rect.size, _preview_current_skin)
 	var next_rect := _skin_layout_rect("skinNext", Rect2(Vector2(1124.513, 309), Vector2(41, 78)))
 	_add_action_button(root, ">", _detail_local(next_rect.position), next_rect.size, _next_skin)
 
@@ -1364,10 +1364,24 @@ func _current_body_id(hero: Dictionary) -> String:
 	selected_skin = clampi(selected_skin, 0, max(skins.size() - 1, 0))
 	return skins[selected_skin]
 
+func _preview_body_id(hero: Dictionary) -> String:
+	if selected_tab == 4:
+		return _current_body_id(hero)
+	return str(equipped_skin_by_hero.get(str(hero.get("id", "")), str(hero.get("id", ""))))
+
 func _next_skin() -> void:
 	var skins := _skin_body_ids(_current_hero())
 	selected_skin = wrapi(selected_skin + 1, 0, max(skins.size(), 1))
 	_refresh_all()
+
+func _preview_current_skin() -> void:
+	var hero := _current_hero()
+	var body_id := _current_body_id(hero)
+	Navigation.go_with_args("res://scenes/original_draw_hero_show.tscn", {
+		"hero_id": str(hero.get("id", "")),
+		"skin_body": body_id,
+		"source": "hero_skin",
+	})
 
 func _wear_current_skin() -> void:
 	var hero := _current_hero()
@@ -1455,6 +1469,9 @@ func _apply_cmdline_args() -> void:
 	var tab_arg := _cmd_arg_value(args, "--hero-tab")
 	if tab_arg.is_valid_int():
 		selected_tab = clampi(int(tab_arg), 0, 4)
+	var skin_arg := _cmd_arg_value(args, "--skin-body")
+	if skin_arg != "":
+		_select_skin_body(skin_arg)
 	_refresh_all()
 	if "--hero-full-preview" in args:
 		call_deferred("_toggle_full_preview")
@@ -1473,7 +1490,21 @@ func _apply_navigation_args() -> void:
 	for i in heroes.size():
 		if str(heroes[i].get("id", "")) == hero_id:
 			_select_hero(i)
+			var tab_value: Variant = scene_args.get("tab", null)
+			if tab_value != null:
+				selected_tab = clampi(int(tab_value), 0, 4)
+			var skin_body := str(scene_args.get("skin_body", ""))
+			if skin_body != "":
+				_select_skin_body(skin_body)
+			_refresh_all()
 			return
+
+func _select_skin_body(body_id: String) -> void:
+	var skins := _skin_body_ids(_current_hero())
+	var index := skins.find(body_id)
+	if index >= 0:
+		selected_tab = 4
+		selected_skin = index
 
 func _select_hero_id(hero_id: String) -> void:
 	var heroes := _all_heroes()
