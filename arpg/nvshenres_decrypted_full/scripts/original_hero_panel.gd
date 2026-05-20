@@ -408,7 +408,11 @@ func _build_bottom_nav() -> void:
 		nav.add_child(button)
 		var icon_size: Vector2 = items[i][3]
 		_add_sprite_frame_image(button, str(items[i][1]), items[i][2], Vector2((104 - icon_size.x) * 0.5, 0), icon_size)
-		_add_label(button, str(items[i][0]), Vector2(0, 49), Vector2(104, 28), 16, Color(1.0, 0.88, 0.54)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		var text := _add_label(button, str(items[i][0]), Vector2(0, 25), Vector2(104, 28), 18, Color(0.98, 0.93, 0.76))
+		text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		text.add_theme_color_override("font_shadow_color", Color(0.12, 0.08, 0.02, 0.85))
+		text.add_theme_constant_override("shadow_offset_x", 1)
+		text.add_theme_constant_override("shadow_offset_y", 1)
 
 func _build_full_preview_exit() -> void:
 	full_preview_exit_button = Button.new()

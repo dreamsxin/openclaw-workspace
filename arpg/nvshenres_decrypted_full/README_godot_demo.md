@@ -198,6 +198,7 @@ Godot 当前工程已接入项目内轻量 Spine runtime，用于本地预览角
 - 英雄列表源码布局规则：`initScrollView()` 负责英雄背包列表，先按 `HeroListControl.onHeroSortByHeroDataArr()` 排序，再按 `campType` 过滤，最后设置 `gridList.numItems` 和 `lblHeroCount=t.length/capNum`；`initScrollView2()` 负责图鉴，读取 `dataBookMap[campType]`，按 `heros.grade` 降序生成 `HeroBookItemPre`。`showTab()` 中英雄页显示全部阵营按钮，图鉴页隐藏 `btnTypeAll` 并默认 `campType=1`，共鸣/法阵/星辉隐藏阵营筛选和容量条。
 - 共鸣、法阵、星辉不是英雄列表内的本地假卡片：源码 `changeTab3/changeTab4/changeTab5` 会懒加载 `HeroLevelSharedPre/HeroNormalarrayPre/HeroStarPre`。当前 Godot 点击这些右侧页签直接进入 `英雄等级共享/英雄阵容/英雄升星` prefab 预览。
 - 英雄列表点击卡片进入详情依赖 `Navigation.go_with_args(HERO_DETAIL_SCENE, {"hero_id": id, "mode": "main|book"})`。注意列表里的右侧页签层和底部导航层是全屏父容器，必须设置为 `MOUSE_FILTER_IGNORE`，否则会挡住卡片点击；卡片同时绑定 `pressed` 和 `gui_input` 鼠标释放作为保险。
+- 底部导航文字要覆盖在图标/按钮下半部，而不是排在图标下面。主屏、英雄列表和英雄详情页都按 `daohangPre` 的视觉规则使用图标主体、`y≈25` 的文字叠加和阴影。
 - `HeroGridPre` 的根尺寸是 `110x110`，当前英雄列表卡片按 92 头像区和 7 列密度排布，兼顾原截图 7 列可视数量和 `HeroGridPre` 头像/阵营/星级层级；`HeroBookItemPre` 的根尺寸是 `108x374`，图鉴页优先加载 `image/heroBook/<id>` 长图，缺图时回退头像。
 - `image/common/cm_tab1_on/off` 已通过 `tools/export_named_resource_index.py` 的 `image/common/cm_tab*` 前缀进入 `named_resource_index`，右侧页签使用原始 SpriteFrame；如果其他 common 资源缺失，优先扩展索引前缀而不是在界面脚本里写死替代图。
 - 英雄详情源码入口已拆分：`HeroMainPanel.preUrl="Prefab/HeroPanel/HeroMainPre"` 是英雄背包列表点击后的培养/装备/升星页；`HeroBookDetailPanel.preUrl="Prefab/HeroPanel/HeroBookDetailPre"` 是图鉴单卡和 `GC_HERO_BOOK_SINGLE_QUERY()` 打开的图鉴详情。Godot 详情页使用 `--hero-mode main|book` 或 `Navigation` 的 `mode` 参数区分两种入口，当前主视觉仍共用一套手工布局，后续继续分别按两个 prefab 精修。

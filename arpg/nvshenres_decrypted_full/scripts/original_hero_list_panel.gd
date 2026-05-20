@@ -10,6 +10,8 @@ const BG_PATH := "res://assets/resources/native/ac/ac082229-4446-4cfe-bbaf-5e984
 const ATLAS_18A := "res://assets/resources/native/18/18b29ae48.png"
 const ATLAS_14 := "res://assets/resources/native/14/14d2fafcf.png"
 const ATLAS_C8 := "res://assets/resources/native/c8/c8384043-da3b-41dd-95e5-2ce3d2028977.png"
+const ATLAS_1A := "res://assets/resources/native/1a/1a7921f32.png"
+const ATLAS_1F := "res://assets/resources/native/1f/1f6b547b4.png"
 const HERO_CONTENT_POS := Vector2(109, 102)
 const HERO_CONTENT_SIZE := Vector2(900, 432)
 const HERO_SCROLL_POS := Vector2(96, 0)
@@ -245,24 +247,29 @@ func _build_bottom_actions() -> void:
 	_add_action_button(bottom, "arrange", Vector2(1188, 512), Vector2(56, 44), func(): _select_side_tab(4))
 
 func _build_bottom_nav(parent: Control) -> void:
-	var labels := ["城镇", "英雄", "召唤", "冒险", "副本", "公会"]
-	var targets := [
-		func(): Navigation.go(HOME_SCENE),
-		func(): _select_side_tab(0),
-		func(): Navigation.go("res://scenes/original_draw_card_panel.tscn"),
-		func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "冒险地图顶部"}),
-		func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "冒险地图底部"}),
-		func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "公会"}),
+	var items := [
+		{"label": "城镇", "atlas": ATLAS_1F, "rect": Rect2i(787, 551, 152, 141), "size": Vector2(54, 48), "callback": func(): Navigation.go(HOME_SCENE)},
+		{"label": "英雄", "atlas": ATLAS_1A, "rect": Rect2i(3, 334, 150, 142), "size": Vector2(54, 48), "callback": func(): _select_side_tab(0)},
+		{"label": "召唤", "atlas": ATLAS_1A, "rect": Rect2i(940, 89, 80, 80), "size": Vector2(50, 50), "callback": func(): Navigation.go("res://scenes/original_draw_card_panel.tscn")},
+		{"label": "冒险", "atlas": ATLAS_1A, "rect": Rect2i(159, 345, 150, 145), "size": Vector2(54, 50), "callback": func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "冒险地图顶部"})},
+		{"label": "副本", "atlas": ATLAS_1A, "rect": Rect2i(879, 276, 134, 133), "size": Vector2(52, 50), "callback": func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "冒险地图底部"})},
+		{"label": "公会", "atlas": ATLAS_1A, "rect": Rect2i(345, 232, 119, 126), "size": Vector2(50, 50), "callback": func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "公会"})},
 	]
 	var centers := [260, 420, 580, 740, 900, 1060]
-	for i in labels.size():
+	for i in items.size():
 		var button := Button.new()
-		button.text = labels[i]
+		button.text = ""
 		button.position = Vector2(centers[i] - 58, 632)
 		button.size = Vector2(116, 62)
-		button.add_theme_font_size_override("font_size", 16)
-		button.pressed.connect(targets[i])
+		button.pressed.connect(items[i].callback)
 		parent.add_child(button)
+		var icon_size: Vector2 = items[i].size
+		_add_sprite_frame_image(button, str(items[i].atlas), items[i].rect, Vector2((button.size.x - icon_size.x) * 0.5, 0), icon_size)
+		var text := _add_label(button, str(items[i].label), Vector2(0, 25), Vector2(button.size.x, 28), 18, Color(0.98, 0.93, 0.76))
+		text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		text.add_theme_color_override("font_shadow_color", Color(0.12, 0.08, 0.02, 0.85))
+		text.add_theme_constant_override("shadow_offset_x", 1)
+		text.add_theme_constant_override("shadow_offset_y", 1)
 		var glow := ColorRect.new()
 		glow.position = Vector2(centers[i] - 46, 620)
 		glow.size = Vector2(92, 4)
@@ -604,6 +611,17 @@ func _add_named_image_to(parent: Control, resource_name: String, position: Vecto
 	image.position = position
 	image.size = size
 	image.texture = texture
+	image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	image.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	parent.add_child(image)
+	return image
+
+func _add_sprite_frame_image(parent: Control, atlas_path: String, rect: Rect2i, position: Vector2, size: Vector2, rotated := false) -> TextureRect:
+	var image := TextureRect.new()
+	image.position = position
+	image.size = size
+	image.texture = _load_texture_region(atlas_path, rect, rotated)
 	image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	image.mouse_filter = Control.MOUSE_FILTER_IGNORE
