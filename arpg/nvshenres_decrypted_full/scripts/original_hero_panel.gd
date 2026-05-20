@@ -580,26 +580,22 @@ func _refresh_detail() -> void:
 	var hero: Dictionary = _current_hero()
 	var root := Control.new()
 	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	root.offset_left = 130
-	root.offset_top = 22
-	root.offset_right = -18
-	root.offset_bottom = -20
+	if detail_mode == "book":
+		root.offset_left = 130
+		root.offset_top = 22
+		root.offset_right = -18
+		root.offset_bottom = -20
+	else:
+		root.offset_left = 0
+		root.offset_top = 0
+		root.offset_right = 0
+		root.offset_bottom = 0
 	detail_panel.add_child(root)
 
-	_add_label(root, str(hero.get("job", "灵师")), Vector2(18, 0), Vector2(190, 30), 21, Color(0.28, 0.30, 0.45)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_add_label(root, "高输出  物理伤害", Vector2(0, 32), Vector2(238, 26), 16, Color(0.45, 0.48, 0.62)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	var attrs: Array = hero.get("attrs", _generated_attrs(hero))
-	for i in min(attrs.size(), 4):
-		_add_label(root, str(attrs[i]), Vector2(0, 76 + i * 35), Vector2(228, 28), 18, Color(0.42, 0.46, 0.64))
-	_add_label(root, "品阶", Vector2(0, 238), Vector2(64, 24), 16, Color(0.45, 0.48, 0.62))
-	for i in 6:
-		var gem := ColorRect.new()
-		gem.position = Vector2(62 + i * 20, 244)
-		gem.size = Vector2(12, 12)
-		gem.rotation = 0.785398
-		gem.color = Color(0.72, 0.24, 0.62, 1.0) if i < int(hero.get("stars", 5)) else Color(0.72, 0.72, 0.78, 0.8)
-		root.add_child(gem)
-	_add_progress(root, Vector2(0, 304), Vector2(236, 20), 1.0, "等级  %s" % hero.get("level", "1"))
+	if detail_mode == "book":
+		_add_detail_summary(root, hero, Vector2.ZERO, 238)
+	else:
+		_add_hero_main_summary(root, hero)
 
 	if detail_mode == "book":
 		if selected_tab == 1:
@@ -607,15 +603,62 @@ func _refresh_detail() -> void:
 		else:
 			_add_book_info(root, hero, 344)
 	elif selected_tab == 0:
-		_add_culture_tab(root, hero, 344)
+		_add_culture_tab(root, hero, 442, true)
 	elif selected_tab == 1:
-		_add_equipment_tab(root, 344)
+		_add_equipment_tab(root, 338)
 	elif selected_tab == 2:
-		_add_star_tab(root, 344)
+		_add_star_tab(root, 338)
 	elif selected_tab == 3:
-		_add_will_tab(root, 344)
+		_add_will_tab(root, 338)
 	else:
-		_add_skin_tab(root, 344)
+		_add_skin_tab(root, 338)
+
+func _add_detail_summary(root: Control, hero: Dictionary, position: Vector2, width: float) -> void:
+	_add_label(root, str(hero.get("job", "灵师")), position + Vector2(18, 0), Vector2(width - 48, 30), 21, Color(0.28, 0.30, 0.45)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_add_label(root, "高输出  物理伤害", position + Vector2(0, 32), Vector2(width, 26), 16, Color(0.45, 0.48, 0.62)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var attrs: Array = hero.get("attrs", _generated_attrs(hero))
+	for i in min(attrs.size(), 4):
+		_add_label(root, str(attrs[i]), position + Vector2(0, 76 + i * 35), Vector2(width - 10, 28), 18, Color(0.42, 0.46, 0.64))
+	_add_label(root, "品阶", position + Vector2(0, 238), Vector2(64, 24), 16, Color(0.45, 0.48, 0.62))
+	for i in 6:
+		var gem := ColorRect.new()
+		gem.position = position + Vector2(62 + i * 20, 244)
+		gem.size = Vector2(12, 12)
+		gem.rotation = 0.785398
+		gem.color = Color(0.72, 0.24, 0.62, 1.0) if i < int(hero.get("stars", 5)) else Color(0.72, 0.72, 0.78, 0.8)
+		root.add_child(gem)
+	_add_progress(root, position + Vector2(0, 304), Vector2(width - 2, 20), 1.0, "等级  %s" % hero.get("level", "1"))
+
+func _add_hero_main_summary(root: Control, hero: Dictionary) -> void:
+	_add_skill_column(root, Vector2(0, 90))
+	_add_detail_summary(root, hero, Vector2(132, 20), 238)
+	var detail_button := Button.new()
+	detail_button.text = ""
+	detail_button.position = Vector2(329, 202)
+	detail_button.size = Vector2(54, 54)
+	detail_button.tooltip_text = "属性详情"
+	root.add_child(detail_button)
+	_add_named_image_to(detail_button, "image/common/cm_btn_XiangQing", Vector2.ZERO, detail_button.size)
+
+func _add_skill_column(root: Control, position: Vector2) -> void:
+	var skill_icons := ["11021", "20931", "3010", "42031"]
+	for i in skill_icons.size():
+		var slot := Button.new()
+		slot.text = ""
+		slot.position = position + Vector2(0, i * 84.574)
+		slot.size = Vector2(80, 72)
+		slot.tooltip_text = "技能 %d" % (i + 1)
+		root.add_child(slot)
+		var bg := ColorRect.new()
+		bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		bg.color = Color(0.03, 0.035, 0.055, 0.66)
+		bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		slot.add_child(bg)
+		_add_named_image_to(slot, "image/common/cm_frame_JiNeng1", Vector2(3, 0), Vector2(64, 64))
+		var icon := _add_named_image_to(slot, "image/skill/%s" % skill_icons[i], Vector2(9, 7), Vector2(50, 50))
+		if icon:
+			icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		_add_label(slot, str([3, 3, 2, 2][i]), Vector2(48, 44), Vector2(22, 20), 14, Color(1.0, 0.9, 0.55)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 func _add_book_info(root: Control, hero: Dictionary, y_base := 126) -> void:
 	_add_label(root, "图鉴详情", Vector2(0, y_base), Vector2(238, 28), 20, Color(0.42, 0.36, 0.16)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -624,7 +667,11 @@ func _add_book_info(root: Control, hero: Dictionary, y_base := 126) -> void:
 	_add_action_button(root, "全屏预览", Vector2(0, y_base + 108), Vector2(108, 38), _toggle_full_preview)
 	_add_action_button(root, "评论", Vector2(122, y_base + 108), Vector2(108, 38), func(): _play_hero_voice("2"))
 
-func _add_culture_tab(root: Control, hero: Dictionary, y_base := 126) -> void:
+func _add_culture_tab(root: Control, hero: Dictionary, y_base := 126, source_layout := false) -> void:
+	if source_layout:
+		_add_label(root, "等级已达上限！！！", Vector2(112, y_base - 54), Vector2(275, 28), 18, Color(0.70, 0.46, 0.18)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_add_action_button(root, "升2级", Vector2(112, y_base), Vector2(275, 60), Callable(), "image/common/cm_btn_LvSe0")
+		return
 	_add_label(root, "等级已达上限！！！", Vector2(0, y_base), Vector2(238, 28), 18, Color(0.70, 0.46, 0.18)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_add_action_button(root, "升2级", Vector2(6, y_base + 52), Vector2(102, 42))
 	_add_action_button(root, "进阶", Vector2(124, y_base + 52), Vector2(102, 42))
@@ -681,7 +728,7 @@ func _add_progress(parent: Control, position: Vector2, size: Vector2, value: flo
 	parent.add_child(fill)
 	_add_label(parent, text, position + Vector2(0, -28), Vector2(size.x, 24), 16, Color(0.96, 0.9, 0.68))
 
-func _add_action_button(parent: Control, text: String, position: Vector2, size: Vector2, callback := Callable()) -> Button:
+func _add_action_button(parent: Control, text: String, position: Vector2, size: Vector2, callback := Callable(), image_path := "image/common/cm_btn_LvSe1") -> Button:
 	var button := Button.new()
 	button.text = ""
 	button.position = position
@@ -689,7 +736,7 @@ func _add_action_button(parent: Control, text: String, position: Vector2, size: 
 	if callback.is_valid():
 		button.pressed.connect(callback)
 	parent.add_child(button)
-	_add_named_image_to(button, "image/common/cm_btn_LvSe1", Vector2.ZERO, size)
+	_add_named_image_to(button, image_path, Vector2.ZERO, size)
 	_add_label(button, text, Vector2.ZERO, size, 18, Color(0.95, 1.0, 0.92)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	return button
 

@@ -201,6 +201,7 @@ Godot 当前工程已接入项目内轻量 Spine runtime，用于本地预览角
 - `image/common/cm_tab1_on/off` 已通过 `tools/export_named_resource_index.py` 的 `image/common/cm_tab*` 前缀进入 `named_resource_index`，右侧页签使用原始 SpriteFrame；如果其他 common 资源缺失，优先扩展索引前缀而不是在界面脚本里写死替代图。
 - 英雄详情源码入口已拆分：`HeroMainPanel.preUrl="Prefab/HeroPanel/HeroMainPre"` 是英雄背包列表点击后的培养/装备/升星页；`HeroBookDetailPanel.preUrl="Prefab/HeroPanel/HeroBookDetailPre"` 是图鉴单卡和 `GC_HERO_BOOK_SINGLE_QUERY()` 打开的图鉴详情。Godot 详情页使用 `--hero-mode main|book` 或 `Navigation` 的 `mode` 参数区分两种入口，当前主视觉仍共用一套手工布局，后续继续分别按两个 prefab 精修。
 - `HeroMainPre` 的五个功能页签来自 `tab01..tab05`，导出坐标为 `x=608` 的中间竖列，资源由源码 `HeroMainPanel.hideTabOn()/showTab()` 指向 `image/common/cm_tab2_off/on`。Godot `main` 模式已按这些坐标和资源重排，不再使用旧版屏幕最右侧大页签。
+- `HeroMainPre` 右侧内容区需要使用白板局部坐标，而不是复用图鉴详情偏移：`jinengBox1..4` 对应白板内 `x≈0,y≈90/174/259/348`，`btn_xianQing` 对应 `x≈329,y≈202`，`btnUpLv` 对应 `x≈112,y≈442`。当前 Godot `main` 培养页已按这组坐标放置技能列、详情按钮和升级按钮。
 - `HeroBookDetailPre` 只有 `infoToggle/skinToggle` 两个主要切换，不应复用 `HeroMainPre` 的五个功能页签。Godot 图鉴模式已按导出坐标把页签收敛到 `toggleInfo=[608,260,64,100]` 和 `toggleSkin=[608,360,64,100]`，显示为“档案/衣装”两态。
 - 英雄详情当前右侧信息板参考 `HeroMainPre/HeroBookDetailPre` 的白板区域：`x=797,y=86,w=404,h=527`，左侧装备/技能列与右侧正文分开；详情页回归参数是 `--hero-id <id> --hero-mode main|book --capture-hero-panel <png>`。
 - 英雄详情左侧信息采用“prefab 坐标 + 截图修正”：名字/职业仍参考 `lblHeroName/lblNickname`，品质和星级按截图手工排版；`ft_zhanli` 使用 `HeroBookDetailPre` 的 `[380.823,579.262,104.17,40]` 一带作为文字位置，底框使用 `[235.823,574.262,394,38]`。
