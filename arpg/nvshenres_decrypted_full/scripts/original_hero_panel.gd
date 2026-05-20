@@ -75,6 +75,7 @@ var selected_hero := 0
 var selected_tab := 0
 var selected_animation := 0
 var selected_skin := 0
+var equipped_skin_by_hero: Dictionary = {}
 var voice_cursor := 0
 var full_preview := false
 var detail_mode := "main"
@@ -1056,9 +1057,18 @@ func _add_skin_tab(root: Control, y_base := 126) -> void:
 		var pos := _detail_local(attr_positions[i])
 		_add_label(root, attrs[i][0], pos, Vector2(72, 26), 16, Color(0.45, 0.48, 0.62))
 		_add_label(root, attrs[i][1], pos + Vector2(72, 0), Vector2(58, 26), 16, Color(0.74, 0.34, 0.56))
-	var primary_text := "前往获取" if selected_skin == 0 else "穿戴衣装"
-	_add_action_button(root, primary_text, _detail_local(Vector2(881.292, 537.333)), Vector2(238, 66), func(): _play_hero_voice("10"), "image/common/cm_btn_LvSe0")
-	_add_action_button(root, "展示", _detail_local(Vector2(1008.432, 90.563)), Vector2(38, 38), func(): _play_hero_voice("7-1"))
+	var equipped_skin := str(equipped_skin_by_hero.get(str(hero.get("id", "")), str(hero.get("id", ""))))
+	var primary_text := "前往获取"
+	var primary_action := func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "皮肤商店"})
+	if selected_skin > 0:
+		if body_id == equipped_skin:
+			primary_text = "卸下衣装"
+			primary_action = func(): _take_off_skin()
+		else:
+			primary_text = "穿戴衣装"
+			primary_action = func(): _wear_current_skin()
+	_add_action_button(root, primary_text, _detail_local(Vector2(881.292, 537.333)), Vector2(238, 66), primary_action, "image/common/cm_btn_LvSe0")
+	_add_action_button(root, "展示", _detail_local(Vector2(1008.432, 90.563)), Vector2(38, 38), func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "衣装展示"}))
 	_add_action_button(root, ">", _detail_local(Vector2(1124.513, 309)), Vector2(41, 78), _next_skin)
 
 func _add_progress(parent: Control, position: Vector2, size: Vector2, value: float, text: String) -> void:
@@ -1224,6 +1234,19 @@ func _current_body_id(hero: Dictionary) -> String:
 func _next_skin() -> void:
 	var skins := _skin_body_ids(_current_hero())
 	selected_skin = wrapi(selected_skin + 1, 0, max(skins.size(), 1))
+	_refresh_all()
+
+func _wear_current_skin() -> void:
+	var hero := _current_hero()
+	var body_id := _current_body_id(hero)
+	equipped_skin_by_hero[str(hero.get("id", ""))] = body_id
+	_show_local_notice("源码 wearSkin -> CG_SKIN_ON：已本地穿戴 %s" % body_id)
+	_refresh_all()
+
+func _take_off_skin() -> void:
+	var hero := _current_hero()
+	equipped_skin_by_hero[str(hero.get("id", ""))] = str(hero.get("id", ""))
+	_show_local_notice("源码 takeSkin -> CG_SKIN_OFF：已本地卸下衣装")
 	_refresh_all()
 
 func _toggle_full_preview() -> void:
