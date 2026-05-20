@@ -13,6 +13,7 @@ const ATLAS_14 := "res://assets/resources/native/14/14d2fafcf.png"
 const ATLAS_C8 := "res://assets/resources/native/c8/c8384043-da3b-41dd-95e5-2ce3d2028977.png"
 const ATLAS_1A := "res://assets/resources/native/1a/1a7921f32.png"
 const ATLAS_1F := "res://assets/resources/native/1f/1f6b547b4.png"
+const NAV_SUMMON_RECT := Rect2i(477, 242, 125, 123)
 const HERO_LIST_LAYOUT_PATH := "res://data/prefab_layouts/HeroListPre.json"
 const HERO_CONTENT_POS := Vector2(109, 101.552)
 const HERO_CONTENT_SIZE := Vector2(900, 568)
@@ -266,7 +267,7 @@ func _build_bottom_nav(parent: Control) -> void:
 	var items := [
 		{"label": "城镇", "atlas": ATLAS_1F, "rect": Rect2i(787, 551, 152, 141), "size": Vector2(54, 48), "callback": func(): Navigation.go(HOME_SCENE)},
 		{"label": "英雄", "atlas": ATLAS_1A, "rect": Rect2i(3, 334, 150, 142), "size": Vector2(54, 48), "callback": func(): _select_side_tab(0)},
-		{"label": "召唤", "atlas": ATLAS_1F, "rect": Rect2i(707, 551, 34, 34), "size": Vector2(50, 50), "callback": func(): Navigation.go("res://scenes/original_draw_card_panel.tscn")},
+		{"label": "召唤", "atlas": ATLAS_1A, "rect": NAV_SUMMON_RECT, "size": Vector2(54, 50), "callback": func(): Navigation.go("res://scenes/original_draw_card_panel.tscn")},
 		{"label": "冒险", "atlas": ATLAS_1A, "rect": Rect2i(159, 345, 150, 145), "size": Vector2(54, 50), "callback": func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "冒险地图顶部"})},
 		{"label": "副本", "atlas": ATLAS_1A, "rect": Rect2i(879, 276, 134, 133), "size": Vector2(52, 50), "callback": func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "冒险地图底部"})},
 		{"label": "公会", "atlas": ATLAS_1A, "rect": Rect2i(345, 232, 119, 126), "size": Vector2(50, 50), "rotated": true, "callback": func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "公会"})},

@@ -755,12 +755,12 @@ func _add_bottom_nav() -> void:
 	_add_nav_selected_light()
 
 	var entries := [
-		{"label": "城镇", "node": "cm_tab_ChengZhen1", "hit": "btn1"},
-		{"label": "英雄", "node": "cm_tab_YingXiong1", "hit": "btn2", "entry": "英雄"},
-		{"label": "召唤", "node": "cm_tab_ZhaoHuan", "hit": "btn3", "entry": "召唤"},
-		{"label": "冒险", "node": "cm_tab_ChuJi1", "hit": "btn4", "layout": "挂机主线"},
-		{"label": "副本", "node": "cm_tab_FuBen", "hit": "btn5", "layout": "冒险地图顶部"},
-		{"label": "公会", "node": "cm_tab_GongHui1", "hit": "btn6", "layout": "公会"},
+		{"label": "城镇", "node": "cm_tab_ChengZhen1", "hit": "btn1", "resource": "image/com/mainpanel/cm_icon_ChengZhen"},
+		{"label": "英雄", "node": "cm_tab_YingXiong1", "hit": "btn2", "entry": "英雄", "resource": "image/com/mainpanel/cm_icon_YingXiong"},
+		{"label": "召唤", "node": "cm_tab_ZhaoHuan", "hit": "btn3", "entry": "召唤", "fallback_atlas": ATLAS_1A, "fallback_rect": NAV_SLOT3_RECT},
+		{"label": "冒险", "node": "cm_tab_ChuJi1", "hit": "btn4", "layout": "挂机主线", "resource": "image/com/mainpanel/cm_icon_ChuJi"},
+		{"label": "副本", "node": "cm_tab_FuBen", "hit": "btn5", "layout": "冒险地图顶部", "resource": "image/com/mainpanel/cm_icon_FuBen"},
+		{"label": "公会", "node": "cm_tab_GongHui1", "hit": "btn6", "layout": "公会", "resource": "image/com/mainpanel/cm_icon_GongHui"},
 	]
 	for item in entries:
 		var box := Control.new()
@@ -774,7 +774,7 @@ func _add_bottom_nav() -> void:
 
 		var image := TextureRect.new()
 		var icon_node := _layout_node(str(item.node), 0, "nav")
-		image.texture = _load_node_texture_from_layout(icon_node)
+		image.texture = _load_nav_icon_texture(item, icon_node)
 		image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		image.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 		image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
@@ -807,6 +807,15 @@ func _add_bottom_nav() -> void:
 
 		if bool(item.get("show_red_dot", false)):
 			_add_red_dot(box, Vector2(box.size.x - 18, 28), Vector2(24, 24))
+
+func _load_nav_icon_texture(item: Dictionary, icon_node: Dictionary) -> Texture2D:
+	var resource_path := str(item.get("resource", ""))
+	var texture := _load_sprite_frame_by_path(resource_path)
+	if texture != null:
+		return texture
+	if item.has("fallback_atlas") and item.has("fallback_rect"):
+		return _load_texture_region(str(item.fallback_atlas), item.fallback_rect)
+	return _load_node_texture_from_layout(icon_node)
 
 func _add_nav_text(node_name: String, fallback: String) -> void:
 	var parent := _layout_node(node_name, 0, "nav")

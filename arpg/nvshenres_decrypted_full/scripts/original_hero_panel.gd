@@ -12,6 +12,7 @@ const ATLAS_18A := "res://assets/resources/native/18/18b29ae48.png"
 const ATLAS_1A := "res://assets/resources/native/1a/1a7921f32.png"
 const ATLAS_1F := "res://assets/resources/native/1f/1f6b547b4.png"
 const ATLAS_15 := "res://assets/resources/native/15/15a1d9111.png"
+const NAV_SUMMON_RECT := Rect2i(477, 242, 125, 123)
 const HERO_TAB_ON_ATLAS := "res://assets/resources/native/15/15a1d9111.png"
 const HERO_TAB_ON_RECT := Rect2i(530, 950, 64, 100)
 const HERO_TAB_OFF_ATLAS := "res://assets/resources/native/18/18b29ae48.png"
@@ -415,7 +416,7 @@ func _build_bottom_nav() -> void:
 	var items := [
 		["城镇", ATLAS_1F, Rect2i(787, 551, 152, 141), Vector2(54, 48), HOME_SCENE],
 		["英雄", ATLAS_1A, Rect2i(3, 334, 150, 142), Vector2(54, 48), ""],
-		["召唤", ATLAS_1A, Rect2i(940, 89, 80, 80), Vector2(50, 50), "res://scenes/original_draw_card_panel.tscn"],
+		["召唤", ATLAS_1A, NAV_SUMMON_RECT, Vector2(54, 50), "res://scenes/original_draw_card_panel.tscn"],
 		["冒险", ATLAS_1A, Rect2i(159, 345, 150, 145), Vector2(54, 50), ""],
 		["副本", ATLAS_1A, Rect2i(879, 276, 134, 133), Vector2(52, 50), ""],
 		["公会", ATLAS_1A, Rect2i(345, 232, 119, 126), Vector2(50, 50), ""],
