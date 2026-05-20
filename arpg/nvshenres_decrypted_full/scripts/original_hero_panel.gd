@@ -30,6 +30,8 @@ const HERO_YOUDUOLA_SPINE := "res://data/spine_runtime/YouDuoLa_LH.json"
 const HERO_VOICE_INDEX_PATH := "res://data/hero_voice_index.json"
 const HERO_CATALOG_PATH := "res://data/hero_catalog.json"
 const HERO_SPINE_INDEX_PATH := "res://data/hero_spine_runtime_index.json"
+const HERO_MAIN_LAYOUT_PATH := "res://data/prefab_layouts/HeroMainPre.json"
+const HERO_BOOK_LAYOUT_PATH := "res://data/prefab_layouts/HeroBookDetailPre.json"
 const HERO_TOUCH_SOUNDS := ["1", "2", "3", "5"]
 
 const HEROES := [
@@ -69,6 +71,8 @@ var local_notice_label: Label
 var left_info_actions: Array[Button] = []
 var quality_text_label: Label
 var named_resources: Dictionary = {}
+var main_layout_nodes: Dictionary = {}
+var book_layout_nodes: Dictionary = {}
 var voice_index: Dictionary = {}
 var hero_spine_index: Dictionary = {}
 var hero_catalog: Array = []
@@ -83,6 +87,8 @@ var detail_mode := "main"
 
 func _ready() -> void:
 	_load_named_resources()
+	main_layout_nodes = _load_layout_index(HERO_MAIN_LAYOUT_PATH)
+	book_layout_nodes = _load_layout_index(HERO_BOOK_LAYOUT_PATH)
 	_load_voice_index()
 	_load_hero_spine_index()
 	_load_hero_catalog()
@@ -580,10 +586,25 @@ func _next_hero() -> void:
 	_refresh_all()
 
 func _refresh_all() -> void:
+	_apply_mode_layout()
 	_apply_hero()
 	_refresh_side_panel()
 	_refresh_tabs()
 	_refresh_detail()
+
+func _apply_mode_layout() -> void:
+	var pre_rect := _mode_layout_rect("btnPre", Rect2(Vector2(119.5, 311.0), Vector2(41.0, 78.0)))
+	var next_rect := _mode_layout_rect("btnNext", Rect2(Vector2(710.5, 311.0), Vector2(41.0, 78.0)))
+	var power_rect := _mode_layout_rect("ft_zhanli", Rect2(Vector2(380.823, 579.262), Vector2(104.17, 40.0)))
+	if prev_button:
+		prev_button.position = pre_rect.position
+		prev_button.size = pre_rect.size
+	if next_button:
+		next_button.position = next_rect.position
+		next_button.size = next_rect.size
+	if power_label:
+		power_label.position = power_rect.position
+		power_label.size = power_rect.size + Vector2(90, 0)
 
 func _apply_hero() -> void:
 	var hero: Dictionary = _current_hero()
@@ -1200,6 +1221,34 @@ func _add_label(parent: Control, text: String, position: Vector2, size: Vector2,
 	label.add_theme_constant_override("shadow_offset_y", 2)
 	parent.add_child(label)
 	return label
+
+func _load_layout_index(path: String) -> Dictionary:
+	var index := {}
+	if not FileAccess.file_exists(path):
+		return index
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
+	if typeof(parsed) != TYPE_DICTIONARY:
+		return index
+	for node in parsed.get("nodes", []):
+		if typeof(node) != TYPE_DICTIONARY:
+			continue
+		var name := str(node.get("name", ""))
+		if name != "" and not index.has(name):
+			index[name] = node
+	return index
+
+func _mode_layout_rect(name: String, fallback: Rect2) -> Rect2:
+	var source := book_layout_nodes if detail_mode == "book" else main_layout_nodes
+	return _layout_rect_from(source, name, fallback)
+
+func _layout_rect_from(source: Dictionary, name: String, fallback: Rect2) -> Rect2:
+	if not source.has(name):
+		return fallback
+	var node: Dictionary = source[name]
+	var rect: Array = node.get("screen_rect", [])
+	if rect.size() >= 4:
+		return Rect2(Vector2(float(rect[0]), float(rect[1])), Vector2(float(rect[2]), float(rect[3])))
+	return fallback
 
 func _fit_spine(hero: Dictionary) -> void:
 	hero_spine.update_preview_pose(0.0)
