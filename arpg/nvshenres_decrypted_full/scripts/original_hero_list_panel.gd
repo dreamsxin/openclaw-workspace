@@ -12,11 +12,11 @@ const ATLAS_14 := "res://assets/resources/native/14/14d2fafcf.png"
 const ATLAS_C8 := "res://assets/resources/native/c8/c8384043-da3b-41dd-95e5-2ce3d2028977.png"
 const ATLAS_1A := "res://assets/resources/native/1a/1a7921f32.png"
 const ATLAS_1F := "res://assets/resources/native/1f/1f6b547b4.png"
-const HERO_CONTENT_POS := Vector2(109, 102)
-const HERO_CONTENT_SIZE := Vector2(900, 432)
-const HERO_SCROLL_POS := Vector2(96, 0)
-const HERO_SCROLL_SIZE := Vector2(784, 426)
-const HERO_CARD_SIZE := Vector2(92, 104)
+const HERO_CONTENT_POS := Vector2(109, 101.552)
+const HERO_CONTENT_SIZE := Vector2(900, 568)
+const HERO_SCROLL_POS := Vector2.ZERO
+const HERO_SCROLL_SIZE := Vector2(900, 568)
+const HERO_CARD_SIZE := Vector2(110, 110)
 
 const CAMP_TABS := [
 	{"name": "全部", "id": 0, "path": "image/comHeroGrid/cm_icon_ZhenYing0"},
@@ -250,10 +250,10 @@ func _build_bottom_nav(parent: Control) -> void:
 	var items := [
 		{"label": "城镇", "atlas": ATLAS_1F, "rect": Rect2i(787, 551, 152, 141), "size": Vector2(54, 48), "callback": func(): Navigation.go(HOME_SCENE)},
 		{"label": "英雄", "atlas": ATLAS_1A, "rect": Rect2i(3, 334, 150, 142), "size": Vector2(54, 48), "callback": func(): _select_side_tab(0)},
-		{"label": "召唤", "atlas": ATLAS_1A, "rect": Rect2i(940, 89, 80, 80), "size": Vector2(50, 50), "callback": func(): Navigation.go("res://scenes/original_draw_card_panel.tscn")},
+		{"label": "召唤", "atlas": ATLAS_1F, "rect": Rect2i(707, 551, 34, 34), "size": Vector2(50, 50), "callback": func(): Navigation.go("res://scenes/original_draw_card_panel.tscn")},
 		{"label": "冒险", "atlas": ATLAS_1A, "rect": Rect2i(159, 345, 150, 145), "size": Vector2(54, 50), "callback": func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "冒险地图顶部"})},
 		{"label": "副本", "atlas": ATLAS_1A, "rect": Rect2i(879, 276, 134, 133), "size": Vector2(52, 50), "callback": func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "冒险地图底部"})},
-		{"label": "公会", "atlas": ATLAS_1A, "rect": Rect2i(345, 232, 119, 126), "size": Vector2(50, 50), "callback": func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "公会"})},
+		{"label": "公会", "atlas": ATLAS_1A, "rect": Rect2i(345, 232, 119, 126), "size": Vector2(50, 50), "rotated": true, "callback": func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "公会"})},
 	]
 	var centers := [260, 420, 580, 740, 900, 1060]
 	for i in items.size():
@@ -264,7 +264,7 @@ func _build_bottom_nav(parent: Control) -> void:
 		button.pressed.connect(items[i].callback)
 		parent.add_child(button)
 		var icon_size: Vector2 = items[i].size
-		_add_sprite_frame_image(button, str(items[i].atlas), items[i].rect, Vector2((button.size.x - icon_size.x) * 0.5, 0), icon_size)
+		_add_sprite_frame_image(button, str(items[i].atlas), items[i].rect, Vector2((button.size.x - icon_size.x) * 0.5, 0), icon_size, bool(items[i].get("rotated", false)))
 		var text := _add_label(button, str(items[i].label), Vector2(0, 25), Vector2(button.size.x, 28), 18, Color(0.98, 0.93, 0.76))
 		text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		text.add_theme_color_override("font_shadow_color", Color(0.12, 0.08, 0.02, 0.85))
@@ -348,7 +348,7 @@ func _refresh_grid() -> void:
 		hero_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 		hero_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
 		grid.columns = 7
-		grid.add_theme_constant_override("h_separation", 10)
+		grid.add_theme_constant_override("h_separation", 12)
 		grid.add_theme_constant_override("v_separation", 12)
 		for hero in filtered:
 			_add_hero_card(hero)
@@ -396,22 +396,22 @@ func _add_hero_card(hero: Dictionary) -> void:
 	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	card.add_child(bg)
 
-	_add_named_image_to(card, "image/comHeroGrid/cm_frame_TouXiangDi5", Vector2(0, 0), Vector2(92, 92))
-	_add_named_image_to(card, "image/head/%s" % hero_id, Vector2(6, 6), Vector2(80, 80))
-	_add_named_image_to(card, "image/comHeroGrid/cm_frame_TouXiangKuang6", Vector2(0, 0), Vector2(92, 92))
-	_add_named_image_to(card, _camp_icon_path(hero_camp), Vector2(0, -7), Vector2(32, 40))
-	var lv := _add_label(card, hero_level, Vector2(58, 0), Vector2(32, 18), 13, Color(0.72, 1.0, 0.92))
+	_add_named_image_to(card, "image/comHeroGrid/cm_frame_TouXiangDi5", Vector2(0, 0), Vector2(110, 110))
+	_add_named_image_to(card, "image/head/%s" % hero_id, Vector2(10, 8), Vector2(90, 90))
+	_add_named_image_to(card, "image/comHeroGrid/cm_frame_TouXiangKuang6", Vector2(0, 0), Vector2(110, 110))
+	_add_named_image_to(card, _camp_icon_path(hero_camp), Vector2(4, -6), Vector2(36, 45))
+	var lv := _add_label(card, hero_level, Vector2(72, 1), Vector2(34, 22), 13, Color(0.72, 1.0, 0.92))
 	lv.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	_add_quality_label(card, hero_quality, Vector2(0, 70), Vector2(44, 20))
+	_add_quality_label(card, hero_quality, Vector2(4, 82), Vector2(39, 24))
 	var stars := int(hero.get("stars", 5))
 	for i in stars:
-		_add_named_image_to(card, "image/comHeroGrid/cm_icon_XingXing1_1", Vector2(41 + i * 9, 81), Vector2(13, 13))
+		_add_named_image_to(card, "image/comHeroGrid/cm_icon_XingXing1_1", Vector2(43 + i * 10, 86), Vector2(15, 15))
 	if bool(hero.get("combat", false)):
-		_add_status_badge(card, "上阵", Vector2(48, 36), Color(0.16, 0.42, 0.78, 0.88))
+		_add_status_badge(card, "上阵", Vector2(54, 43), Color(0.16, 0.42, 0.78, 0.88))
 	elif bool(hero.get("assist", false)):
-		_add_status_badge(card, "助战", Vector2(48, 36), Color(0.78, 0.56, 0.22, 0.88))
+		_add_status_badge(card, "助战", Vector2(54, 43), Color(0.78, 0.56, 0.22, 0.88))
 	if bool(hero.get("red", false)):
-		_add_named_image_to(card, "image/common/cm_icon_HongDian", Vector2(68, -4), Vector2(20, 20))
+		_add_named_image_to(card, "image/common/cm_icon_HongDian", Vector2(82, -4), Vector2(22, 22))
 	if not hero_owned:
 		var lock := ColorRect.new()
 		lock.position = Vector2(0, 0)
@@ -419,7 +419,7 @@ func _add_hero_card(hero: Dictionary) -> void:
 		lock.color = Color(0, 0, 0, 0.36)
 		lock.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		card.add_child(lock)
-		_add_label(card, "未获", Vector2(24, 36), Vector2(44, 20), 14, Color(0.9, 0.9, 0.95)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_add_label(card, "未获", Vector2(33, 43), Vector2(44, 20), 14, Color(0.9, 0.9, 0.95)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 func _add_prefab_route_card(title: String, message: String, target_layout: String) -> void:
 	var card := Button.new()

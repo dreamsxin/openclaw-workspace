@@ -439,7 +439,7 @@ RESTORE_LOGIN_TO_HOME.md
 
 下一步优先级：
 
-1. 继续完善独立 `original_hero_list_panel`：追 `HeroGridCom.setData(...)`、`HeroBookItem.setData(...)` 的真实字段绑定，补 `image/heroBook/<id>` 长图、卡片选中/锁定/红点/上阵/助战状态和 ScrollView 滚动细节。
+1. 继续完善独立 `original_hero_list_panel`：英雄列表已按 `HeroListPre.scrollview/view` 的 `900x568` 可视区和 `HeroGridPre` 的 `110x110` 根尺寸重排；下一步继续追 `HeroGridCom.setData(...)`、`HeroBookItem.setData(...)` 的真实字段绑定，补卡片选中框、死亡/锁定态和 ScrollView 内容偏移。
 2. 继续完善独立 `original_hero_panel`：追 `HeroSidePrefab` 和 `heroContentPrefab` 的真实按钮/页签/职业/阵营资源，细化左右翻页按钮、星级、装备槽和技能格。
 3. 补启动登录流程缺口：继续把 `updataScene.fire` 热更新入口和服务器列表滚动分组 mock 成可检查的独立节点。
 4. 继续完善独立 `original_bag_panel`：追 `GridBoxItemPre` 真实选中框、品质框、背包分类按钮资源、图鉴/合成按钮资源。
