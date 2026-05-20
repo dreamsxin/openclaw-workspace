@@ -190,6 +190,7 @@ func _build_grid_panel() -> void:
 	hero_scroll.size = HERO_SCROLL_SIZE
 	hero_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	hero_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+	hero_scroll.mouse_filter = Control.MOUSE_FILTER_PASS
 	panel.add_child(hero_scroll)
 
 	grid = GridContainer.new()
@@ -211,6 +212,7 @@ func _build_side_tabs() -> void:
 	var panel := Control.new()
 	panel.position = Vector2.ZERO
 	panel.size = DESIGN_SIZE
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	design_root.add_child(panel)
 
 	var tab_positions := [
@@ -235,6 +237,7 @@ func _build_bottom_actions() -> void:
 	var bottom := Control.new()
 	bottom.position = Vector2(0, 0)
 	bottom.size = DESIGN_SIZE
+	bottom.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	design_root.add_child(bottom)
 	detail_label = _add_label(bottom, "点击英雄卡片进入 HeroMainPre 培养页；图鉴卡片进入 HeroBookDetailPre。", Vector2(170, 646), Vector2(640, 26), 16, Color(0.78, 0.90, 1.0))
 	detail_label.visible = false
@@ -377,6 +380,7 @@ func _add_hero_card(hero: Dictionary) -> void:
 	card.custom_minimum_size = HERO_CARD_SIZE
 	card.tooltip_text = "%s %s Lv.%s" % [hero_quality, hero_name, hero_level]
 	card.pressed.connect(_open_hero_detail.bind(hero, "main"))
+	card.gui_input.connect(_on_hero_card_gui_input.bind(hero, "main"))
 	grid.add_child(card)
 
 	var bg := ColorRect.new()
@@ -434,6 +438,7 @@ func _add_book_card(hero: Dictionary) -> void:
 	card.custom_minimum_size = Vector2(108, 374)
 	card.tooltip_text = "%s %s 图鉴" % [hero_quality, hero_name]
 	card.pressed.connect(_open_hero_detail.bind(hero, "book"))
+	card.gui_input.connect(_on_hero_card_gui_input.bind(hero, "book"))
 	grid.add_child(card)
 	_add_named_image_to(card, "image/common/cm_frame_kadicheng", Vector2(0, 0), Vector2(108, 328))
 	var book_image := _add_named_image_to(card, "image/heroBook/%s" % hero_id, Vector2(2, 16), Vector2(104, 302))
@@ -516,6 +521,10 @@ func _is_camp_filter_visible(index: int) -> bool:
 
 func _open_hero_detail(hero: Dictionary, mode := "main") -> void:
 	Navigation.go_with_args(HERO_DETAIL_SCENE, {"hero_id": str(hero.get("id", "")), "mode": mode})
+
+func _on_hero_card_gui_input(event: InputEvent, hero: Dictionary, mode := "main") -> void:
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
+		_open_hero_detail(hero, mode)
 
 func _open_hero_id(hero_id: String) -> void:
 	for hero in _all_heroes():
