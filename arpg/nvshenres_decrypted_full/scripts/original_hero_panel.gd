@@ -253,8 +253,13 @@ func _build_side_panel() -> void:
 	quality_text_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 	var action_positions := [Vector2(58, 314), Vector2(58, 372), Vector2(58, 430)]
-	var action_icons := ["image/common/cm_btn_PingLun", "image/common/cm_btn_ShiZhuang", "image/common/cm_icon_SuoDing"]
-	var action_tooltips := ["全屏预览", "评论/分享", "未解锁功能"]
+	var action_icons := ["image/common/cm_btn_ShiZhuang", "image/common/cm_btn_PingLun", "image/common/cm_btn_FenXiang"]
+	var action_tooltips := ["全屏预览", "评论", "分享/锁定"]
+	var action_callbacks := [
+		_toggle_full_preview,
+		func(): _show_local_notice("源码 imgPingLun -> HeroCommentPanel，离线 Demo 已记录评论入口"),
+		func(): _show_local_notice("源码 imgFenXiang/imgSuo -> 分享或锁定，离线 Demo 已模拟")
+	]
 	for i in 3:
 		var icon := Button.new()
 		icon.position = action_positions[i]
@@ -262,6 +267,7 @@ func _build_side_panel() -> void:
 		icon.text = ""
 		icon.tooltip_text = action_tooltips[i]
 		icon.add_theme_font_size_override("font_size", 12)
+		icon.pressed.connect(action_callbacks[i])
 		side_panel.add_child(icon)
 		left_info_actions.append(icon)
 		if _add_named_image_to(icon, action_icons[i], Vector2(4, 4), icon.size - Vector2(8, 8)) == null:
