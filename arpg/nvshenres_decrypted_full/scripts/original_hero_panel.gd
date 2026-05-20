@@ -1107,15 +1107,18 @@ func _add_skin_tab(root: Control, y_base := 126) -> void:
 		_add_label(root, attrs[i][1], pos + Vector2(72, 0), Vector2(58, 26), 16, Color(0.74, 0.34, 0.56))
 	var equipped_skin := str(equipped_skin_by_hero.get(str(hero.get("id", "")), str(hero.get("id", ""))))
 	var primary_text := "前往获取"
+	var primary_button_name := "getBtn"
 	var primary_action := func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "皮肤商店"})
 	if selected_skin > 0:
 		if body_id == equipped_skin:
 			primary_text = "卸下衣装"
+			primary_button_name = "takeBtn"
 			primary_action = func(): _take_off_skin()
 		else:
 			primary_text = "穿戴衣装"
+			primary_button_name = "wearBtn"
 			primary_action = func(): _wear_current_skin()
-	var primary_rect := _skin_layout_rect("getBtn", Rect2(Vector2(881.292, 537.333), Vector2(238, 66)))
+	var primary_rect := _skin_layout_rect(primary_button_name, Rect2(Vector2(881.292, 537.333), Vector2(238, 66)))
 	_add_action_button(root, primary_text, _detail_local(primary_rect.position), primary_rect.size, primary_action, "image/common/cm_btn_LvSe0")
 	var play_rect := _skin_layout_rect("playBtn", Rect2(Vector2(1008.432, 90.563), Vector2(38, 38)))
 	_add_action_button(root, "展示", _detail_local(play_rect.position), play_rect.size, func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "衣装展示"}))
