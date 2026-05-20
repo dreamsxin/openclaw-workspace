@@ -33,6 +33,8 @@ PREFABS = [
     ("主城导航", "Prefab/mainpanel/daohangPre"),
     ("主城头像", "Prefab/mainpanel/heroHead"),
     ("主城默认角色", "Prefab/HerolhPrefab/105004"),
+    ("聊天", "Prefab/Chat/ChatPanelPre"),
+    ("主城聊天条目", "Prefab/Chat/ChatMainItemPre"),
     ("资源条", "Prefab/comPrefab/MoneyItemPre"),
     ("商店", "Prefab/Shop/ShopPre"),
     ("商店页签", "Prefab/Shop/ShopItemPre"),

@@ -835,6 +835,15 @@ func _add_chat_panel() -> void:
 	text.add_theme_color_override("font_color", Color(0.74, 0.90, 1.0))
 	panel.add_child(text)
 
+	var hit := Button.new()
+	hit.text = ""
+	hit.flat = true
+	hit.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	hit.tooltip_text = "聊天"
+	hit.focus_mode = Control.FOCUS_NONE
+	hit.pressed.connect(_open_home_entry.bind("聊天"))
+	panel.add_child(hit)
+
 func _add_icon_button(center: Vector2, size: Vector2, text: String, atlas_path: String, rect: Rect2i) -> void:
 	var box := Control.new()
 	box.position = center - size * 0.5
@@ -928,6 +937,7 @@ func _open_home_entry(label: String) -> void:
 		"排行": "排行",
 		"客服": "客服",
 		"新闻": "客服",
+		"聊天": "聊天",
 		"战报": "战报",
 		"任务": "任务",
 		"绑定平台": "绑定平台",

@@ -1,0 +1,157 @@
+{
+  "prefab": "Prefab/Chat/ChatMainItemPre",
+  "import": "assets/resources/import/04/04776761-a81c-4a8f-8a9b-b6b55d77e07a.json",
+  "origin_mode": "center",
+  "nodes": [
+    {
+      "index": 1,
+      "name": "ChatMainItemPre",
+      "active": true,
+      "parent_index": null,
+      "size": [
+        340.0,
+        21.42
+      ],
+      "anchor": [
+        0.54,
+        0.35
+      ],
+      "position": [
+        0.0,
+        0.0
+      ],
+      "global_position": [
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 0.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {},
+      "component_types": [
+        "dafd3/UVXtEWph7qJvSvY6g",
+        "cc.Layout"
+      ],
+      "screen_position": [
+        456.4,
+        346.077
+      ],
+      "screen_rect": [
+        456.4,
+        346.077,
+        340.0,
+        21.42
+      ]
+    },
+    {
+      "index": 2,
+      "name": "txtContent",
+      "active": true,
+      "parent_index": 1,
+      "size": [
+        340.0,
+        21.42
+      ],
+      "anchor": [
+        0.0,
+        1.0
+      ],
+      "position": [
+        -185.0,
+        14.0
+      ],
+      "global_position": [
+        -185.0,
+        14.0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ],
+      "rotation_z": 1.0,
+      "sprite_uuid": "",
+      "sprite_resource_path": "",
+      "texture_path": "",
+      "sprite_name": "",
+      "sprite_rect": [],
+      "sprite_offset": [],
+      "sprite_original_size": [],
+      "sprite_rotated": false,
+      "sprite_cap_insets": [],
+      "sprite_type": 0,
+      "sprite_type_name": "simple",
+      "sprite_size_mode": 0,
+      "sprite_size_mode_name": "custom",
+      "sprite_fill_type": 0,
+      "sprite_fill_start": 0.0,
+      "sprite_fill_range": 0.0,
+      "sprite_fill_center": [],
+      "sprite_trimmed_mode": true,
+      "skeleton_uuid": "",
+      "skeleton_name": "",
+      "skeleton_textures": [],
+      "skeleton_animations": [],
+      "label_text": "",
+      "label_font_size": 0,
+      "label_line_height": 0,
+      "label_horizontal_align": 0,
+      "label_vertical_align": 0,
+      "widget": {},
+      "component_types": [],
+      "screen_position": [
+        455.0,
+        346.0
+      ],
+      "screen_rect": [
+        455.0,
+        346.0,
+        340.0,
+        21.42
+      ]
+    }
+  ],
+  "component_bindings": [
+    {
+      "owner_index": 1,
+      "owner_name": "ChatMainItemPre",
+      "component": "dafd3/UVXtEWph7qJvSvY6g",
+      "fields": {},
+      "raw_refs": {
+        "node": -3,
+        "text": -2
+      },
+      "unresolved_fields": {
+        "text": -2
+      }
+    }
+  ]
+}
