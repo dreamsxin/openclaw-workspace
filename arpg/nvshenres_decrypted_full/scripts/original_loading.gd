@@ -2,7 +2,9 @@ extends Control
 
 const LOGIN_SCENE := "res://scenes/original_server_select.tscn"
 const SimpleSpinePlayerScript := preload("res://scripts/simple_spine_player.gd")
+const AudioUtils := preload("res://scripts/audio_utils.gd")
 const LOADING_BG := "res://assets/resources/native/75/750b6077-9d0c-4446-9e4c-3c3ae2fb6ee5.png"
+const LOADING_BGM := "res://assets/resources/native/d6/d67e8f53-c2d7-4d01-a4b0-269ce67ca973.mp3"
 const PROGRESS_ATLAS := "res://assets/resources/native/14/1430d496a.png"
 const PROGRESS_FILL_RECT := Rect2i(3, 3, 1018, 10)
 const PROGRESS_BG_RECT := Rect2i(134, 1000, 30, 8)
@@ -20,9 +22,13 @@ var progress_cursor: TextureRect
 var progress_spark: Node2D
 var progress_label: Label
 var status_label: Label
+var bgm_player: AudioStreamPlayer
 var percent := 0.0
 
 func _ready() -> void:
+	bgm_player = AudioStreamPlayer.new()
+	add_child(bgm_player)
+	AudioUtils.play_mp3(bgm_player, LOADING_BGM, true)
 	_build_ui()
 	_capture_if_requested()
 

@@ -16,7 +16,7 @@ D:\work\openclaw-workspace\arpg\tools\Godot_v4.6.2-stable_win64_console.exe --pa
 
 ## 当前入口
 
-- `scenes/original_loading.tscn`：默认启动场景。
+- `scenes/original_loading.tscn`：默认启动场景，背景音乐使用 `sound/bgm/loading`，对应 native `assets/resources/native/d6/d67e8f53-c2d7-4d01-a4b0-269ce67ca973.mp3`。
 - 登录流程：启动加载页 -> 正式选服页 -> 连接服务器提示 -> 原始主城页；`LoginPre` 只作为 debug 直连页保留。
 - 原始 Cocos 启动入口是 `assets/src/settings.js` 的 `Scene/updataScene.fire`，随后 `GameWorld.init()` 调用 `LoadingPanelNode.open()`。`loadingComplete()` 预加载 `Prefab/login/pfLoginPanelPre/MainPre/daohangPre` 等公共资源；非 debug 模式进入 `PFLoginPanel.getLastSever()`，debug 模式才进入 `LoginPanel.showProgess()`。当前 Godot 主流程已按此改为 `LoadingPre -> pfLoginPanelPre`，缺少真实服务器请求和连接握手。
 - 主城页保留了导航按钮，可进入资源浏览器、Prefab 预览器和旧的浮岛主城预览。
@@ -230,6 +230,7 @@ Godot 当前工程已接入项目内轻量 Spine runtime，用于本地预览角
 - 英雄详情页新增衣装、全屏预览和语音回归：`--hero-full-preview` 隐藏其他 UI 只显示角色，`--hero-click-once` 模拟点击角色并播放 `sound/cv/<hero>/<soundId>`。语音索引在 `data/hero_voice_index.json`，MP3 拷贝在 `assets/hero_voice/**`；全量 AudioClip 路径分析见 `tools/analyze_audio_index.py`。
 - MP3 资源来自 `data/config_index/by_type/cc.AudioClip.json`，原始逻辑路径不是 native UUID，而是 `sound/<分类>/<名称>`。当前 `tools/analyze_audio_index.py` 会生成 `data/audio_index_summary.json`：共 1061 个 AudioClip，其中 `sound/cv=759`、`sound/skill=233`、`sound/UI=60`、`sound/bgm=8`、`sound/story=1`。英雄语音通常是 `sound/cv/<hero_id>/<sound_id>`，多数英雄有 11 条，编号包含 `1..5`、`7-1/7-2`、`8-1/8-2`、`9`、`10`。
 - Godot 音频播放统一走 `scripts/audio_utils.gd`：用 `FileAccess` 读 MP3 字节填入 `AudioStreamMP3.data`，再交给 `AudioStreamPlayer` 播放。英雄详情页、抽卡英雄展示页和资源浏览器均已改用该工具，避免 `AudioStreamMP3.load_from_file()` 在导入状态不一致时行为不同。
+- `scripts/audio_utils.gd` 支持 `loop=true`，用于 BGM；普通英雄语音和 UI 音效使用默认非循环播放。当前加载页已接入 `sound/bgm/loading` 循环播放。
 - `data/prefab_restore_inventory.csv`：整理后的 prefab 还原清单。
 - `data/prefab_restore_inventory.md`：按分类和优先级整理的 prefab 清单。
 - `data/spine_preview_index.json`：Spine 预览索引。
