@@ -52,6 +52,7 @@ var power_label: Label
 var top_bar: HBoxContainer
 var title_label: Label
 var detail_panel: Control
+var detail_frame: TextureRect
 var equipment_panel: Control
 var tab_panel: Control
 var side_panel: Control
@@ -368,6 +369,7 @@ func _build_detail_panel() -> void:
 	var frame_bg := _add_named_image_to(detail_panel, "image/en/HeroPanel/yx_frame_BaiBan", Vector2.ZERO, detail_panel.size)
 	if frame_bg:
 		frame_bg.name = "panel_frame"
+		detail_frame = frame_bg
 	var shade := ColorRect.new()
 	shade.name = "panel_bg"
 	shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -573,6 +575,7 @@ func _refresh_tabs() -> void:
 		tab_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 
 func _refresh_detail() -> void:
+	_refresh_detail_background()
 	for child in detail_panel.get_children():
 		if child.name == "panel_bg" or child.name == "panel_frame":
 			continue
@@ -612,6 +615,27 @@ func _refresh_detail() -> void:
 		_add_will_tab(root, 338)
 	else:
 		_add_skin_tab(root, 338)
+
+func _refresh_detail_background() -> void:
+	if detail_frame == null:
+		return
+	var resource_path := "image/en/HeroPanel/yx_frame_BaiBan"
+	if detail_mode == "main":
+		match selected_tab:
+			0:
+				resource_path = "image/en/HeroPanel/yx_img_PeiYang"
+			1:
+				resource_path = "image/en/HeroPanel/yx_img_ZhuangBei"
+			3:
+				resource_path = "image/en/HeroPanel/yx_img_ZhanYi"
+			4:
+				resource_path = "image/en/HeroPanel/yx_skin_bg"
+			_:
+				resource_path = "image/en/HeroPanel/yx_frame_BaiBan"
+	var texture := _texture_for_named_resource(resource_path)
+	if texture != null:
+		detail_frame.texture = texture
+		detail_frame.stretch_mode = TextureRect.STRETCH_SCALE
 
 func _add_detail_summary(root: Control, hero: Dictionary, position: Vector2, width: float) -> void:
 	_add_label(root, str(hero.get("job", "灵师")), position + Vector2(18, 0), Vector2(width - 48, 30), 21, Color(0.28, 0.30, 0.45)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
