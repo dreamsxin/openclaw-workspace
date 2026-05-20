@@ -26,7 +26,7 @@ var tab_buttons: Array[Button] = []
 var header_actions: Dictionary = {}
 var bottom_actions: Dictionary = {}
 var equipment_icons: Array = []
-var selected_tab := 0
+var selected_tab := 1
 var selected_item := 0
 
 func _ready() -> void:
