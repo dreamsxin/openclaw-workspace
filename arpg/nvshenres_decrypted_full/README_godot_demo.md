@@ -99,7 +99,7 @@ Godot 当前工程已接入项目内轻量 Spine runtime，用于本地预览角
   - 打开右侧英魂：`D:\work\openclaw-workspace\arpg\tools\Godot_v4.6.2-stable_win64_console.exe --path D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full --scene res://scenes/original_home_screen.tscn --resolution 1280x720 --log-file logs/codex_runtime/home_yinghun.log --quit-after 100 -- --home-open-entry 英魂`
   - 单独预览英魂殿：`D:\work\openclaw-workspace\arpg\tools\Godot_v4.6.2-stable_win64_console.exe --path D:\work\openclaw-workspace\arpg\nvshenres_decrypted_full --scene res://scenes/cocos_prefab_preview.tscn --resolution 1280x720 --log-file logs/codex_runtime/prefab_heropalace.log --quit-after 80 -- --prefab-layout 英魂殿 --capture-prefab-preview screenshots/codex_runtime/prefab_heropalace.png`
 - PowerShell 重定向日志时不要写 `$log.stdout`，这会被解析成变量属性。应使用独立变量，例如 `$stdout = "$log.stdout"; & $godot ... *> $stdout; Select-String -Path $log,$stdout -Pattern 'SCRIPT ERROR|Parse Error|ERROR'`。
-- `HeroPalacePre` 当前预览会提示 `assets/resources/native/1d/1d9c822a-b0c7-4347-a697-1017eac7c334.png` 不是 PNG；这说明该资源仍需回到解密/格式识别链路处理，不是入口路由错误。
+- `HeroPalacePre` 的 `assets/resources/native/1d/1d9c822a-b0c7-4347-a697-1017eac7c334.png` 文件头不是 PNG；预览器现在优先查找 `converted/png|jpg|jpeg` 同名文件，实际加载 `converted/jpg/1d9c822a-b0c7-4347-a697-1017eac7c334.jpg`，避免 Godot 回归日志出现 `ERR_FILE_CORRUPT`。
 - 商店页可用 `--shop-open-buy <index>` 启动参数直接打开购买确认框，配合 `--capture-shop-panel` 做回归截图。
 
 ## Prefab 还原注意事项
@@ -194,7 +194,7 @@ Godot 当前工程已接入项目内轻量 Spine runtime，用于本地预览角
 - 英雄列表当前按 `HeroListPre.content` 和源码 `HeroListPanel` 实现。关键源码在 `assets/main/index.js` 的 `HeroListPanelCom/HeroListPanel` 段：`btnHero -> changeTab1(menuType=1)`、`btnBook -> changeTab2(menuType=2)`、`btnShared -> changeTab3(menuType=3)`、`btnYingHun -> openYinghun()`、`btnNormalarray -> changeTab4(menuType=4)`、`btnStar -> changeTab5(menuType=5)`。因此右侧视觉/行为顺序按源码修正为“英雄、图鉴、共鸣、英魂、法阵、星辉”，其中英魂不是普通 `showTab` 页，而是打开 `HeroPalacePanel` 的入口，本地 Demo 已改为跳转 `英魂殿/HeroPalacePre` prefab 预览。
 - 英雄列表源码布局规则：`initScrollView()` 负责英雄背包列表，先按 `HeroListControl.onHeroSortByHeroDataArr()` 排序，再按 `campType` 过滤，最后设置 `gridList.numItems` 和 `lblHeroCount=t.length/capNum`；`initScrollView2()` 负责图鉴，读取 `dataBookMap[campType]`，按 `heros.grade` 降序生成 `HeroBookItemPre`。`showTab()` 中英雄页显示全部阵营按钮，图鉴页隐藏 `btnTypeAll` 并默认 `campType=1`，共鸣/法阵/星辉隐藏阵营筛选和容量条。
 - `HeroGridPre` 的根尺寸是 `110x110`，当前英雄列表卡片按 92 头像区和 7 列密度排布，兼顾原截图 7 列可视数量和 `HeroGridPre` 头像/阵营/星级层级；`HeroBookItemPre` 的根尺寸是 `108x374`，图鉴页优先加载 `image/heroBook/<id>` 长图，缺图时回退头像。
-- `image/common/cm_tab1_on/off` 在 `config_index` 中存在但未进入 `named_resource_index`，右侧页签暂用源码尺寸的手工 StyleBox。`HeroPalacePre` 回归时发现 `assets/resources/native/1d/1d9c822a-b0c7-4347-a697-1017eac7c334.png` 在 Godot 中报 `ERR_FILE_CORRUPT`，后续资源索引/转换工具需要处理这类 common/损坏 native 资源。
+- `image/common/cm_tab1_on/off` 已通过 `tools/export_named_resource_index.py` 的 `image/common/cm_tab*` 前缀进入 `named_resource_index`，右侧页签使用原始 SpriteFrame；如果其他 common 资源缺失，优先扩展索引前缀而不是在界面脚本里写死替代图。
 - 英雄详情当前按 `HeroBookDetailPre.leftImg` 的右侧大白板实现：信息板 `x=797,y=86,w=404,h=527`，左侧装备/技能列与右侧正文分开；详情页回归参数是 `--hero-id <id> --capture-hero-panel <png>`。
 - 英雄详情左侧信息采用“prefab 坐标 + 截图修正”：名字/职业仍参考 `lblHeroName/lblNickname`，品质和星级按截图手工排版；`ft_zhanli` 使用 `HeroBookDetailPre` 的 `[380.823,579.262,104.17,40]` 一带作为文字位置，底框使用 `[235.823,574.262,394,38]`。
 - 英雄列表/详情页回归参数：`--hero-list-open-id <id>` 可从列表按 id 打开详情；`--hero-list-click-at 200,260` 可模拟点击首个卡片；`--hero-id <id>` 可直接指定详情页英雄。图鉴页优先使用 `image/heroBook/<id>` 长图。

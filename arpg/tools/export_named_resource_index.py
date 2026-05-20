@@ -23,6 +23,7 @@ PREFIXES = [
     "image/com/skyCity/",
     "image/comHeroGrid/",
     "image/common/cm_btn",
+    "image/common/cm_tab",
     "image/common/gh_",
     "image/en/HeroPanel/",
     "image/guildFlag/",

@@ -302,7 +302,10 @@ func _refresh_side_tabs() -> void:
 		button.disabled = i == selected_side_tab
 		for child in button.get_children():
 			child.queue_free()
-		_apply_side_tab_style(button, i == selected_side_tab)
+		var tab_path := "image/common/cm_tab1_on" if i == selected_side_tab else "image/common/cm_tab1_off"
+		var tab_image := _add_named_image_to(button, tab_path, Vector2.ZERO, button.size)
+		if tab_image == null:
+			_apply_side_tab_style(button, i == selected_side_tab)
 		var color := Color(0.22, 0.20, 0.31) if i == selected_side_tab else Color(0.80, 0.82, 0.90)
 		var label := _add_label(button, SIDE_TABS[i], Vector2(42, 17), Vector2(110, 32), 24, color)
 		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER

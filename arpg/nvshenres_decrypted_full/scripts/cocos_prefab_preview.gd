@@ -2074,14 +2074,22 @@ func _requested_layout() -> String:
 
 func _load_texture(path: String) -> Texture2D:
 	var image := Image.new()
-	if image.load(path) != OK:
-		return null
+	var load_path := _preferred_texture_path(path)
+	if image.load(load_path) != OK:
+		if load_path == path:
+			return null
+		if image.load(path) != OK:
+			return null
 	return ImageTexture.create_from_image(image)
 
 func _load_node_texture(path: String, node: Dictionary, crop_sprite: bool = true) -> Texture2D:
 	var image := Image.new()
-	if image.load(path) != OK:
-		return null
+	var load_path := _preferred_texture_path(path)
+	if image.load(load_path) != OK:
+		if load_path == path:
+			return null
+		if image.load(path) != OK:
+			return null
 	var sprite_rect: Array = node.get("sprite_rect", [])
 	if crop_sprite and sprite_rect.size() == 4:
 		var crop := Rect2i(
@@ -2094,6 +2102,20 @@ func _load_node_texture(path: String, node: Dictionary, crop_sprite: bool = true
 		var offset := _arr_to_vec2(node.get("sprite_offset", []))
 		return _make_sprite_frame_texture(image, crop, bool(node.get("sprite_rotated", false)), original_size, offset)
 	return ImageTexture.create_from_image(image)
+
+func _preferred_texture_path(path: String) -> String:
+	var fallback_path := _converted_texture_path(path)
+	if fallback_path != "":
+		return fallback_path
+	return path
+
+func _converted_texture_path(path: String) -> String:
+	var file_name := path.get_file().get_basename()
+	for extension in ["png", "jpg", "jpeg"]:
+		var candidate := "res://converted/%s/%s.%s" % [extension, file_name, extension]
+		if FileAccess.file_exists(candidate):
+			return candidate
+	return ""
 
 func _make_sprite_frame_texture(atlas: Image, region: Rect2i, rotated := false, original_size := Vector2i.ZERO, offset := Vector2.ZERO) -> Texture2D:
 	var crop := region
