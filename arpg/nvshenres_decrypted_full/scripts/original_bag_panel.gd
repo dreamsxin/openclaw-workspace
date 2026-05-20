@@ -4,6 +4,13 @@ const HOME_SCENE := "res://scenes/original_home_screen.tscn"
 const PREFAB_PREVIEW := "res://scenes/cocos_prefab_preview.tscn"
 const DESIGN_SIZE := Vector2(1280, 720)
 const BG_PATH := "res://assets/resources/native/ac/ac082229-4446-4cfe-bbaf-5e9849e208c3.png"
+const TAB_POSITIONS := [
+	Vector2(1082, 74),
+	Vector2(1082, 159),
+	Vector2(1082, 245),
+	Vector2(1082, 331),
+	Vector2(1082, 415.567),
+]
 
 const TABS := ["装备", "道具", "碎片", "符文", "神器"]
 const ITEM_NAMES := [
@@ -14,6 +21,7 @@ const ITEM_NAMES := [
 var design_root: Control
 var item_grid: GridContainer
 var detail_root: Control
+var list_panel: Control
 var tab_buttons: Array[Button] = []
 var equipment_icons: Array = []
 var selected_tab := 0
@@ -68,9 +76,9 @@ func _build_top_bar() -> void:
 	top.anchor_left = 1.0
 	top.anchor_right = 1.0
 	top.offset_left = -680
-	top.offset_top = 8
+	top.offset_top = 676
 	top.offset_right = -12
-	top.offset_bottom = 42
+	top.offset_bottom = 710
 	top.alignment = BoxContainer.ALIGNMENT_END
 	top.add_theme_constant_override("separation", 6)
 	add_child(top)
@@ -91,56 +99,52 @@ func _add_top_button(parent: HBoxContainer, text: String, callback: Callable) ->
 	parent.add_child(button)
 
 func _build_main_panel() -> void:
-	var panel := Control.new()
-	panel.position = Vector2(54, 82)
-	panel.size = Vector2(812, 550)
-	design_root.add_child(panel)
+	list_panel = Control.new()
+	list_panel.position = Vector2(134.226, 71.222)
+	list_panel.size = Vector2(996, 560)
+	design_root.add_child(list_panel)
 
 	var panel_bg := ColorRect.new()
 	panel_bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	panel_bg.color = Color(0.04, 0.045, 0.07, 0.76)
 	panel_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	panel.add_child(panel_bg)
+	list_panel.add_child(panel_bg)
 
 	var header := HBoxContainer.new()
-	header.position = Vector2(18, 12)
-	header.size = Vector2(760, 48)
+	header.position = Vector2(154, -44)
+	header.size = Vector2(460, 48)
 	header.add_theme_constant_override("separation", 12)
-	panel.add_child(header)
+	list_panel.add_child(header)
 	_add_action_button(header, "神器图鉴")
 	_add_action_button(header, "一键合成")
 	var count := Label.new()
 	count.text = "容量  1/200"
-	count.custom_minimum_size = Vector2(180, 42)
+	count.custom_minimum_size = Vector2(150, 42)
 	count.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	count.add_theme_font_size_override("font_size", 18)
 	count.add_theme_color_override("font_color", Color(0.78, 0.9, 1.0))
 	header.add_child(count)
 
 	var scroll := ScrollContainer.new()
-	scroll.position = Vector2(18, 74)
-	scroll.size = Vector2(760, 448)
-	panel.add_child(scroll)
+	scroll.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	list_panel.add_child(scroll)
 
 	item_grid = GridContainer.new()
-	item_grid.columns = 5
+	item_grid.columns = 8
 	item_grid.add_theme_constant_override("h_separation", 10)
 	item_grid.add_theme_constant_override("v_separation", 10)
+	item_grid.custom_minimum_size = Vector2(950, 560)
 	scroll.add_child(item_grid)
 
 func _build_tabs() -> void:
-	var box := VBoxContainer.new()
-	box.position = Vector2(916, 96)
-	box.size = Vector2(198, 400)
-	box.add_theme_constant_override("separation", 18)
-	design_root.add_child(box)
 	for i in TABS.size():
 		var button := Button.new()
 		button.text = TABS[i]
-		button.custom_minimum_size = Vector2(198, 62)
+		button.position = TAB_POSITIONS[i]
+		button.size = Vector2(198, 62)
 		button.add_theme_font_size_override("font_size", 22)
 		button.pressed.connect(_select_tab.bind(i))
-		box.add_child(button)
+		design_root.add_child(button)
 		tab_buttons.append(button)
 
 func _build_detail_panel() -> void:
@@ -151,7 +155,7 @@ func _build_detail_panel() -> void:
 
 func _build_actions() -> void:
 	var actions := HBoxContainer.new()
-	actions.position = Vector2(880, 650)
+	actions.position = Vector2(874, 652)
 	actions.size = Vector2(330, 46)
 	actions.add_theme_constant_override("separation", 12)
 	design_root.add_child(actions)
@@ -171,7 +175,7 @@ func _refresh_items() -> void:
 		child.queue_free()
 	for i in 20:
 		var button := Button.new()
-		button.custom_minimum_size = Vector2(138, 122)
+		button.custom_minimum_size = Vector2(110, 110)
 		button.text = ""
 		button.pressed.connect(_select_item.bind(i))
 		item_grid.add_child(button)
@@ -186,15 +190,15 @@ func _draw_item(parent: Control, index: int) -> void:
 	parent.add_child(bg)
 
 	var icon_box := ColorRect.new()
-	icon_box.position = Vector2(25, 8)
-	icon_box.size = Vector2(88, 88)
+	icon_box.position = Vector2.ZERO
+	icon_box.size = Vector2(110, 110)
 	icon_box.color = Color(0.12, 0.1, 0.16, 0.95)
 	icon_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	parent.add_child(icon_box)
 
 	var icon := TextureRect.new()
-	icon.position = Vector2(34, 17)
-	icon.size = Vector2(70, 70)
+	icon.position = Vector2(14, 12)
+	icon.size = Vector2(82, 82)
 	icon.texture = _load_indexed_texture(_equipment_icon(index + selected_tab * 5))
 	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
@@ -203,8 +207,8 @@ func _draw_item(parent: Control, index: int) -> void:
 
 	var name := Label.new()
 	name.text = ITEM_NAMES[(index + selected_tab * 3) % ITEM_NAMES.size()]
-	name.position = Vector2(5, 94)
-	name.size = Vector2(128, 24)
+	name.position = Vector2(3, 84)
+	name.size = Vector2(104, 22)
 	name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	name.clip_text = true
 	name.add_theme_font_size_override("font_size", 16)
@@ -213,7 +217,7 @@ func _draw_item(parent: Control, index: int) -> void:
 
 	var count := Label.new()
 	count.text = "x%d" % ((index + 1) * (selected_tab + 2))
-	count.position = Vector2(84, 70)
+	count.position = Vector2(58, 62)
 	count.size = Vector2(48, 22)
 	count.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	count.add_theme_font_size_override("font_size", 15)
