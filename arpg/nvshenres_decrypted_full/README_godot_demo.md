@@ -220,6 +220,7 @@ Godot 当前工程已接入项目内轻量 Spine runtime，用于本地预览角
 - 英雄详情当前右侧信息板参考 `HeroMainPre/HeroBookDetailPre` 的白板区域：`x=797,y=86,w=404,h=527`，左侧装备/技能列与右侧正文分开；详情页回归参数是 `--hero-id <id> --hero-mode main|book --capture-hero-panel <png>`。
 - 英雄详情左侧信息采用“prefab 坐标 + 截图修正”：名字/职业仍参考 `lblHeroName/lblNickname`，品质和星级按截图手工排版；`ft_zhanli` 使用 `HeroBookDetailPre` 的 `[380.823,579.262,104.17,40]` 一带作为文字位置，底框使用 `[235.823,574.262,394,38]`。
 - 英雄列表/详情页回归参数：`--hero-list-open-id <id>` 可从列表按 id 打开详情，默认进入 `HeroMainPre` 模式；`--hero-list-click-at 200,260` 可模拟点击首个卡片；`--hero-id <id> --hero-mode main|book` 可直接指定详情页英雄和入口模式。图鉴页优先使用 `image/heroBook/<id>` 长图。
+- 共鸣页子链路继续按源码补齐：`HeroListPanel.changeTab3()` 懒加载 `HeroLevelSharedPre`，槽位组件 `HeroLevelSharedItemCom` 还会打开 `HeroLevelSharedHeroInfoPre`、`HeroLevelSharedRemovePre`、`HeroLevelSharedSuccessPre`、`AlertHeroLevelSharedPre`。Godot 共鸣页已在内嵌原始 layout 右侧补这些预览入口，后续可逐个手工化。
 - 英雄详情页新增衣装、全屏预览和语音回归：`--hero-full-preview` 隐藏其他 UI 只显示角色，`--hero-click-once` 模拟点击角色并播放 `sound/cv/<hero>/<soundId>`。语音索引由 `tools/export_hero_voice_index.py` 生成到 `data/hero_voice_index.json`，MP3 拷贝在 `assets/hero_voice/**`。
 - `data/prefab_restore_inventory.csv`：整理后的 prefab 还原清单。
 - `data/prefab_restore_inventory.md`：按分类和优先级整理的 prefab 清单。

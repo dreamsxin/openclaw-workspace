@@ -375,6 +375,7 @@ func _refresh_grid() -> void:
 			_add_book_card(hero)
 	elif selected_side_tab == 2:
 		_show_embedded_prefab("res://data/prefab_layouts/HeroLevelSharedPre.json", "共鸣页：源码 changeTab3() 懒加载 HeroLevelSharedPre。")
+		_add_resonance_routes()
 	elif selected_side_tab == 3:
 		grid.columns = 1
 		_add_prefab_route_card("英魂殿", "源码 btnYingHun 调用 openHeroPalacePanel()，不是 HeroListPanel 内嵌页。", "英魂殿")
@@ -461,6 +462,30 @@ func _add_prefab_route_card(title: String, message: String, target_layout: Strin
 	card.add_child(bg)
 	_add_label(card, title, Vector2(24, 26), Vector2(460, 34), 28, Color(1.0, 0.86, 0.52))
 	_add_label(card, message, Vector2(24, 76), Vector2(470, 56), 17, Color(0.86, 0.92, 1.0))
+
+func _add_resonance_routes() -> void:
+	var routes := [
+		["共鸣英雄信息", "HeroLevelSharedHeroInfoPanel：共鸣位英雄详情。", "英雄共鸣信息"],
+		["共鸣移除", "HeroLevelSharedRemovePanel：移除共鸣英雄确认。", "英雄共鸣移除"],
+		["共鸣成功", "HeroLevelSharedSuccessPanel：加入/升级成功反馈。", "英雄共鸣成功"],
+		["共鸣确认", "AlertHeroLevelSharedPanel：等级共享操作确认。", "英雄共鸣确认"],
+	]
+	for i in routes.size():
+		var item = routes[i]
+		var button := Button.new()
+		button.text = ""
+		button.position = Vector2(600, 42 + i * 54)
+		button.size = Vector2(236, 44)
+		button.tooltip_text = "%s -> %s" % [item[0], item[2]]
+		button.pressed.connect(func(layout := str(item[2])): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": layout}))
+		embedded_prefab_layer.add_child(button)
+		var bg := ColorRect.new()
+		bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		bg.color = Color(0.05, 0.06, 0.10, 0.86)
+		bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		button.add_child(bg)
+		_add_label(button, str(item[0]), Vector2(10, 5), Vector2(216, 18), 16, Color(1.0, 0.88, 0.54))
+		_add_label(button, str(item[1]), Vector2(10, 23), Vector2(216, 16), 12, Color(0.80, 0.88, 1.0))
 
 func _add_book_card(hero: Dictionary) -> void:
 	var hero_id := str(hero.get("id", ""))
