@@ -2,6 +2,7 @@ extends Control
 
 const HOME_SCENE := "res://scenes/original_home_screen.tscn"
 const PREFAB_PREVIEW := "res://scenes/cocos_prefab_preview.tscn"
+const HERO_SHOW_SCENE := "res://scenes/original_draw_hero_show.tscn"
 const DESIGN_SIZE := Vector2(1280, 720)
 const SimpleSpinePlayerScript := preload("res://scripts/simple_spine_player.gd")
 
@@ -320,7 +321,7 @@ func _refresh_hero_ui_box() -> void:
 		slot.text = ""
 		slot.position = _hero_result_position(i)
 		slot.size = Vector2(92, 124)
-		slot.pressed.connect(_open_hero_show.bind(i))
+		slot.pressed.connect(_open_hero_show.bind(i, hero_id))
 		hero_ui_list.add_child(slot)
 		_add_named_image(slot, "image/comHeroGrid/cm_frame_TouXiangDi5", Vector2(0, 0), Vector2(92, 92))
 		_add_named_image(slot, "image/head/%s" % hero_id, Vector2(9, 9), Vector2(74, 74))
@@ -335,8 +336,8 @@ func _hero_result_position(index: int) -> Vector2:
 	var pos: Vector2 = cocos_positions[index % cocos_positions.size()]
 	return Vector2(pos.x - 96.0, 82.0 - pos.y * 0.35)
 
-func _open_hero_show(index: int) -> void:
-	Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "抽卡英雄展示", "hero-show-index": str(index)})
+func _open_hero_show(index: int, id: String) -> void:
+	Navigation.go_with_args(HERO_SHOW_SCENE, {"hero_show_index": index, "hero_id": id})
 
 func _close_result_mode() -> void:
 	result_mode = false
