@@ -418,6 +418,8 @@ func _select_hero(index: int) -> void:
 	_refresh_all()
 
 func _select_tab(index: int) -> void:
+	if detail_mode == "book":
+		index = 1 if index == 4 else clampi(index, 0, 1)
 	selected_tab = index
 	if selected_tab != 4:
 		selected_skin = 0
@@ -531,16 +533,31 @@ func _refresh_head_list() -> void:
 
 func _refresh_tabs() -> void:
 	var labels := _tab_labels()
+	if detail_mode == "book":
+		tab_panel.position = Vector2(608, 260)
+		tab_panel.size = Vector2(64, 200)
+		tab_panel.add_theme_constant_override("separation", 0)
+	else:
+		tab_panel.position = Vector2(1178, 65)
+		tab_panel.size = Vector2(88, 500)
+		tab_panel.add_theme_constant_override("separation", 14)
 	for i in tab_buttons.size():
 		var button := tab_buttons[i]
 		for child in button.get_children():
 			child.queue_free()
+		button.visible = i < labels.size()
+		if not button.visible:
+			continue
+		button.custom_minimum_size = Vector2(64, 100) if detail_mode == "book" else Vector2(88, 84)
 		button.disabled = i == selected_tab
 		if i == selected_tab:
-			_add_sprite_frame_image(button, HERO_TAB_ON_ATLAS, HERO_TAB_ON_RECT, Vector2(12, -8), Vector2(64, 100), true, Vector2i(64, 100), Vector2.ZERO, TextureRect.STRETCH_SCALE)
+			var pos := Vector2.ZERO if detail_mode == "book" else Vector2(12, -8)
+			_add_sprite_frame_image(button, HERO_TAB_ON_ATLAS, HERO_TAB_ON_RECT, pos, Vector2(64, 100), true, Vector2i(64, 100), Vector2.ZERO, TextureRect.STRETCH_SCALE)
 		else:
-			_add_sprite_frame_image(button, HERO_TAB_OFF_ATLAS, HERO_TAB_OFF_RECT, Vector2(16, -8), Vector2(57, 100), false, Vector2i(57, 100), Vector2.ZERO, TextureRect.STRETCH_SCALE)
-		var tab_label := _add_label(button, labels[i], Vector2(-16, 12), Vector2(120, 62), 18, Color(0.92, 0.9, 0.82))
+			var off_pos := Vector2(4, 0) if detail_mode == "book" else Vector2(16, -8)
+			_add_sprite_frame_image(button, HERO_TAB_OFF_ATLAS, HERO_TAB_OFF_RECT, off_pos, Vector2(57, 100), false, Vector2i(57, 100), Vector2.ZERO, TextureRect.STRETCH_SCALE)
+		var label_rect := Rect2(Vector2(-28, 12), Vector2(120, 62)) if detail_mode == "book" else Rect2(Vector2(-16, 12), Vector2(120, 62))
+		var tab_label := _add_label(button, labels[i], label_rect.position, label_rect.size, 18, Color(0.92, 0.9, 0.82))
 		tab_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		tab_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 
@@ -574,7 +591,10 @@ func _refresh_detail() -> void:
 	_add_progress(root, Vector2(0, 304), Vector2(236, 20), 1.0, "等级  %s" % hero.get("level", "1"))
 
 	if detail_mode == "book":
-		_add_book_info(root, hero, 344)
+		if selected_tab == 1:
+			_add_skin_tab(root, 344)
+		else:
+			_add_book_info(root, hero, 344)
 	elif selected_tab == 0:
 		_add_culture_tab(root, hero, 344)
 	elif selected_tab == 1:
@@ -588,11 +608,10 @@ func _refresh_detail() -> void:
 
 func _add_book_info(root: Control, hero: Dictionary, y_base := 126) -> void:
 	_add_label(root, "图鉴详情", Vector2(0, y_base), Vector2(238, 28), 20, Color(0.42, 0.36, 0.16)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_add_label(root, "源码 HeroBookDetailPanel 由图鉴单卡或单英雄查询打开。", Vector2(0, y_base + 40), Vector2(238, 52), 15, Color(0.42, 0.46, 0.64)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_add_action_button(root, "信息", Vector2(0, y_base + 108), Vector2(108, 38), func(): _select_tab(0))
-	_add_action_button(root, "衣装", Vector2(122, y_base + 108), Vector2(108, 38), func(): _select_tab(4))
-	_add_action_button(root, "全屏预览", Vector2(0, y_base + 162), Vector2(108, 38), _toggle_full_preview)
-	_add_action_button(root, "评论", Vector2(122, y_base + 162), Vector2(108, 38), func(): _play_hero_voice("2"))
+	_add_label(root, "HeroBookDetailPanel", Vector2(0, y_base + 34), Vector2(238, 24), 15, Color(0.42, 0.46, 0.64)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_add_label(root, "图鉴单卡 / 单英雄查询入口", Vector2(0, y_base + 60), Vector2(238, 24), 15, Color(0.42, 0.46, 0.64)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_add_action_button(root, "全屏预览", Vector2(0, y_base + 108), Vector2(108, 38), _toggle_full_preview)
+	_add_action_button(root, "评论", Vector2(122, y_base + 108), Vector2(108, 38), func(): _play_hero_voice("2"))
 
 func _add_culture_tab(root: Control, hero: Dictionary, y_base := 126) -> void:
 	_add_label(root, "等级已达上限！！！", Vector2(0, y_base), Vector2(238, 28), 18, Color(0.70, 0.46, 0.18)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -938,7 +957,7 @@ func _source_prefab_name() -> String:
 
 func _tab_labels() -> Array[String]:
 	if detail_mode == "book":
-		return ["档案", "技能", "羁绊", "评论", "衣装"]
+		return ["档案", "衣装"]
 	return ["培养", "装备", "升星", "战意", "衣装"]
 
 func _has_spine_runtime(body_id: String) -> bool:
