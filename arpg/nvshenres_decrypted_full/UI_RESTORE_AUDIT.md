@@ -197,6 +197,7 @@
 - 2026-05-20 英雄列表 `arrange/btnBuZhen` 补查：`btnBuZhen.on(... openBuZhen)` 设置 `CombatControl._formation = CmbFormation.FSZ` 后调用 `PanelManager.openBuzhen(... TYPE_COMBAT_TYPE1 ...)`，不是右侧 `btnNormalarray/changeTab4` 法阵页签。已导出 `Prefab/CombatPrefab/CombatFormPre` 为“布阵”，Godot 右下 `arrange` 改为打开布阵预览。
 - 2026-05-20 英雄培养按钮补查：`HeroMainPanel.btnUpLv()` 走 `CG_HERO_LEVEL_UP()`，`btnJinJie()` 走 `CG_HERO_UPGRADE_QUERY()` 后打开 `HeroUpLvPanel`/`HeroBreakthroughPanel`，`btnReset()` 打开 `HeroResetPanel`；相关 prefab 是 `HeroUpLvPre`、`HeroBreakthroughPre`、`HeroResetPre`，升级链还会预加载 `HeroGetNewSkillsPre`。已导出这 4 个 prefab，Godot 培养页按钮改为进入对应原始预览。
 - 2026-05-20 英雄装备页入口补查：`updateEquipBox()` 给 `equipBox1..6` 绑定 `equipBoxClick()`，空装备位进入 `HeroEquipChangePanel/HeroEquipChangePre`，符文位 `fuwenIcon1/2` 绑定 `onFuWenGridClick()`，空符文位进入 `SelectFuwenPanel/SelectFuwenPre`，符文刷新面板为 `FuwenRefreshPre`。Godot 装备格点击已接到“英雄装备替换”，符文位点击已接到“符文选择”，并导出 `SelectFuwenPre/FuwenRefreshPre`。
+- 2026-05-20 英雄战意节点入口补查：`HeroMainPanel.initButtonEvent()` 给 `zhanyi0..2` 绑定 `onZhanyiClick()`；源码先判断 `imgLock.active`，锁定时提示 `lblLock`，未锁定时扫描 `this.skills`，已有 `index == t + 1` 则调用 `CG_BINGSHU_LEVELUP_QUERY()` 进入 `HeroWarpathUpPanel`，没有则设置 `HeroWarpathGraspPanel.index = t + 1` 并打开 `HeroWarpathGraspPre`。Godot 战意节点已补透明点击区：锁定显示本地星级提示，解锁空位打开“战意领悟”，并提供“战意升级”预览入口覆盖已学习分支。
 
 ## 资源替换规则
 

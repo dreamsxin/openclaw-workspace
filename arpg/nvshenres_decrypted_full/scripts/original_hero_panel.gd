@@ -968,6 +968,19 @@ func _add_will_tab(root: Control, y_base := 126) -> void:
 		node.size = item[2]
 		node.rotation_degrees = item[3]
 		root.add_child(node)
+		var unlock_star := 9 + i
+		var node_hit := Button.new()
+		node_hit.text = ""
+		node_hit.flat = true
+		node_hit.tooltip_text = "战意"
+		node_hit.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		node_hit.pressed.connect(func(required_star := unlock_star, layout := "战意领悟"):
+			if star < required_star:
+				_show_local_notice("%d星解锁" % required_star)
+			else:
+				Navigation.go_with_args(PREFAB_PREVIEW, {"layout": layout})
+		)
+		node.add_child(node_hit)
 		_add_named_image_to(node, "image/en/HeroPanel/yx_frame_ZhanYi", Vector2.ZERO, node.size)
 		var head_box := Control.new()
 		head_box.position = item[5]
@@ -982,6 +995,7 @@ func _add_will_tab(root: Control, y_base := 126) -> void:
 		lock_label.rotation_degrees = -node.rotation_degrees
 		lock_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_add_action_button(root, "战意预览", _detail_local(Vector2(497.613, 547.874)), Vector2(300, 60), func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "战意预览"}), "image/common/cm_btn_LvSe0")
+	_add_action_button(root, "战意升级", _detail_local(Vector2(664.613, 547.874)), Vector2(132, 48), func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "战意升级"}), "image/common/cm_btn_LvSe1")
 	_add_action_button(root, "?", _detail_local(Vector2(768.66, 107.244)), Vector2(54, 54), func(): _show_local_notice("源码 HelpManeger.HELP_MISC_58：战意规则帮助"))
 
 func _add_skin_tab(root: Control, y_base := 126) -> void:
