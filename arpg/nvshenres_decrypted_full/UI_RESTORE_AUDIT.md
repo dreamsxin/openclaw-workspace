@@ -193,6 +193,7 @@
 - 2026-05-20 装备页状态补查：`updateEquipBox()` 重置 6 个装备位，`equipBox5` 根据 `dynamicData.lv < 40` 显示 `suo/lock_open`，`equipBox6.needLv` 文案为“敬请期待”；`checkFuwengOpen()` 里 `fuwenIcon1` 用 100 级解锁，`fuwenIcon2` 用 7 星解锁；`updateEquitHongDian()` 同时控制装备格、符文格和 `btnChuanDai` 红点。Godot 装备页已补锁定暗层、符文解锁状态和本地红点。
 - 2026-05-20 英雄详情交互链补查：`btn_xianQing -> PanelManager.openHeroAttrTipsPanel() -> Prefab/HeroPanel/HeroAttrTips`，`btnChuanDai -> HeroMainPanel.btnQuickPut()` 走服务器快速穿戴，`btnYuLan -> ForgeWarspiritPanel.open()` 且设置 `isWarpath=true`，战意帮助按钮调用 `HelpManeger.HELP_MISC_58`。`tools/export_cocos_prefab_layout.py` 已新增并导出 `HeroAttrTips`、`HeroEquipChangePre`、`HeroWarpathGraspPre`、`HeroWarpathUpPanel`、`ForgeWarspiritPanel`、`HeroWarpathPreviewPanel`；Godot 详情页把属性详情和战意预览接到 prefab 预览器，把服务器动作映射为本地离线提示。
 - 2026-05-20 英雄详情左侧功能按钮补查：`HeroMainPanel.initButtonEvent()` 将 `HeroSidePrefab.imgSuo/imgPingLun/imgFenXiang` 分别绑定到锁定、评论、分享；`btnChaKan()` 进入隐藏 UI 的查看模式。Godot 左侧三个按钮已改为“全屏预览 / 评论 / 分享或锁定”，不再是只有 tooltip 的死按钮。
+- 2026-05-20 英雄列表页签补查：`HeroListPanel.showTab()` 中 `menuType=3/4/5` 并不会跳出英雄列表，而是分别把 `HeroLevelSharedPre`、`HeroNormalarrayPre`、`HeroStarPre` 实例化到 `heroLevelShared/normalarrayNode/starNode`；只有 `btnYingHun` 调 `openHeroPalacePanel()` 打开独立英魂殿。Godot 英雄列表已改为在列表内容区嵌入这三个导出 prefab，英魂页签继续进入 `HeroPalacePre` 预览。
 
 ## 资源替换规则
 

@@ -5,6 +5,7 @@ const HERO_DETAIL_SCENE := "res://scenes/original_hero_panel.tscn"
 const PREFAB_PREVIEW := "res://scenes/cocos_prefab_preview.tscn"
 const HERO_CATALOG_PATH := "res://data/hero_catalog.json"
 const HERO_SPINE_INDEX_PATH := "res://data/hero_spine_runtime_index.json"
+const CocosPrefabLayerScript := preload("res://scripts/cocos_prefab_layer.gd")
 const DESIGN_SIZE := Vector2(1280, 720)
 const BG_PATH := "res://assets/resources/native/ac/ac082229-4446-4cfe-bbaf-5e9849e208c3.png"
 const ATLAS_18A := "res://assets/resources/native/18/18b29ae48.png"
@@ -51,6 +52,7 @@ var detail_label: Label
 var preview_panel: Control
 var grid_panel_bg: ColorRect
 var hero_scroll: ScrollContainer
+var embedded_prefab_layer: Control
 var named_resources: Dictionary = {}
 var hero_catalog: Array = []
 var hero_spine_index: Dictionary = {}
@@ -201,6 +203,13 @@ func _build_grid_panel() -> void:
 	grid.add_theme_constant_override("v_separation", 14)
 	hero_scroll.add_child(grid)
 
+	embedded_prefab_layer = Control.new()
+	embedded_prefab_layer.position = Vector2.ZERO
+	embedded_prefab_layer.size = HERO_CONTENT_SIZE
+	embedded_prefab_layer.visible = false
+	embedded_prefab_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	panel.add_child(embedded_prefab_layer)
+
 	var help := Button.new()
 	help.text = "?"
 	help.position = Vector2(830, -8)
@@ -337,8 +346,10 @@ func _apply_side_tab_style(button: Button, selected: bool) -> void:
 	button.add_theme_stylebox_override("pressed", pressed)
 
 func _refresh_grid() -> void:
+	_clear_embedded_prefab()
 	for child in grid.get_children():
 		child.queue_free()
+	hero_scroll.visible = true
 	var filtered := _filtered_heroes()
 	count_label.text = "%d/235" % filtered.size()
 	count_label.visible = selected_side_tab in [0, 1]
@@ -363,17 +374,33 @@ func _refresh_grid() -> void:
 		for hero in filtered:
 			_add_book_card(hero)
 	elif selected_side_tab == 2:
-		grid.columns = 1
-		_add_prefab_route_card("共鸣", "源码 changeTab3() 懒加载 HeroLevelSharedPre。", "英雄等级共享")
+		_show_embedded_prefab("res://data/prefab_layouts/HeroLevelSharedPre.json", "共鸣页：源码 changeTab3() 懒加载 HeroLevelSharedPre。")
 	elif selected_side_tab == 3:
 		grid.columns = 1
 		_add_prefab_route_card("英魂殿", "源码 btnYingHun 调用 openHeroPalacePanel()，不是 HeroListPanel 内嵌页。", "英魂殿")
 	elif selected_side_tab == 4:
-		grid.columns = 1
-		_add_prefab_route_card("法阵", "源码 changeTab4() 懒加载 HeroNormalarrayPre。", "英雄阵容")
+		_show_embedded_prefab("res://data/prefab_layouts/HeroNormalarrayPre.json", "法阵页：源码 changeTab4() 懒加载 HeroNormalarrayPre。")
 	else:
-		grid.columns = 1
-		_add_prefab_route_card("星辉", "源码 changeTab5() 懒加载 HeroStarPre。", "英雄升星")
+		_show_embedded_prefab("res://data/prefab_layouts/HeroStarPre.json", "星辉页：源码 changeTab5() 懒加载 HeroStarPre。")
+
+func _clear_embedded_prefab() -> void:
+	if embedded_prefab_layer == null:
+		return
+	embedded_prefab_layer.visible = false
+	for child in embedded_prefab_layer.get_children():
+		child.queue_free()
+
+func _show_embedded_prefab(layout_path: String, message: String) -> void:
+	hero_scroll.visible = false
+	grid.columns = 1
+	embedded_prefab_layer.visible = true
+	var layer = CocosPrefabLayerScript.new()
+	layer.layout_path = layout_path
+	layer.draw_placeholders = true
+	layer.scale = Vector2(0.70, 0.70)
+	layer.position = Vector2(-32, -24)
+	embedded_prefab_layer.add_child(layer)
+	_set_detail_text(message)
 
 func _add_hero_card(hero: Dictionary) -> void:
 	var hero_id := str(hero.get("id", ""))
@@ -495,10 +522,7 @@ func _select_camp(camp: int) -> void:
 
 func _select_side_tab(index: int) -> void:
 	var prefab_tabs := {
-		2: "英雄等级共享",
 		3: "英魂殿",
-		4: "英雄阵容",
-		5: "英雄升星",
 	}
 	if prefab_tabs.has(index):
 		Navigation.go_with_args(PREFAB_PREVIEW, {"layout": str(prefab_tabs[index])})
