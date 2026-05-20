@@ -73,6 +73,8 @@ var quality_text_label: Label
 var named_resources: Dictionary = {}
 var main_layout_nodes: Dictionary = {}
 var book_layout_nodes: Dictionary = {}
+var main_layout_node_list: Array = []
+var book_layout_node_list: Array = []
 var voice_index: Dictionary = {}
 var hero_spine_index: Dictionary = {}
 var hero_catalog: Array = []
@@ -89,6 +91,8 @@ func _ready() -> void:
 	_load_named_resources()
 	main_layout_nodes = _load_layout_index(HERO_MAIN_LAYOUT_PATH)
 	book_layout_nodes = _load_layout_index(HERO_BOOK_LAYOUT_PATH)
+	main_layout_node_list = _load_layout_nodes(HERO_MAIN_LAYOUT_PATH)
+	book_layout_node_list = _load_layout_nodes(HERO_BOOK_LAYOUT_PATH)
 	_load_voice_index()
 	_load_hero_spine_index()
 	_load_hero_catalog()
@@ -1073,14 +1077,17 @@ func _add_skin_tab(root: Control, y_base := 126) -> void:
 	var skins := _skin_body_ids(hero)
 	var body_id := _current_body_id(hero)
 	if skins.size() <= 1 and _texture_for_named_resource("image/skin/showImg/%s" % body_id) == null:
-		var no_skin := _add_label(root, "敬请期待", _detail_local(Vector2(920.292, 292.112)), Vector2(160, 50), 18, Color(0.56, 0.57, 0.68))
+		var no_skin_rect := _skin_layout_rect("noSkin", Rect2(Vector2(920.292, 292.112), Vector2(160, 50.4)))
+		var no_skin := _add_label(root, "敬请期待", _detail_local(no_skin_rect.position), no_skin_rect.size, 18, Color(0.56, 0.57, 0.68))
 		no_skin.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		no_skin.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		return
-	var skin_image := _add_named_image_to(root, "image/skin/showImg/%s" % body_id, _detail_local(Vector2(863.775, 95.155)), Vector2(169, 360))
+	var skin_img_rect := _skin_layout_rect("skinImg", Rect2(Vector2(863.775, 95.155), Vector2(169, 360)))
+	var skin_image := _add_named_image_to(root, "image/skin/showImg/%s" % body_id, _detail_local(skin_img_rect.position), skin_img_rect.size)
 	if skin_image:
 		skin_image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	var name_label := _add_label(root, "%s  %s" % [hero.get("name", hero.get("id", "")), body_id], _detail_local(Vector2(858, 386)), Vector2(184, 32), 20, Color(0.45, 0.36, 0.18))
+	var name_rect := _skin_layout_rect("skinName", Rect2(Vector2(858, 386), Vector2(184, 32)))
+	var name_label := _add_label(root, "%s  %s" % [hero.get("name", hero.get("id", "")), body_id], _detail_local(name_rect.position), name_rect.size, 20, Color(0.45, 0.36, 0.18))
 	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	var attrs := [
 		["攻击:", "+100"],
@@ -1108,9 +1115,12 @@ func _add_skin_tab(root: Control, y_base := 126) -> void:
 		else:
 			primary_text = "穿戴衣装"
 			primary_action = func(): _wear_current_skin()
-	_add_action_button(root, primary_text, _detail_local(Vector2(881.292, 537.333)), Vector2(238, 66), primary_action, "image/common/cm_btn_LvSe0")
-	_add_action_button(root, "展示", _detail_local(Vector2(1008.432, 90.563)), Vector2(38, 38), func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "衣装展示"}))
-	_add_action_button(root, ">", _detail_local(Vector2(1124.513, 309)), Vector2(41, 78), _next_skin)
+	var primary_rect := _skin_layout_rect("getBtn", Rect2(Vector2(881.292, 537.333), Vector2(238, 66)))
+	_add_action_button(root, primary_text, _detail_local(primary_rect.position), primary_rect.size, primary_action, "image/common/cm_btn_LvSe0")
+	var play_rect := _skin_layout_rect("playBtn", Rect2(Vector2(1008.432, 90.563), Vector2(38, 38)))
+	_add_action_button(root, "展示", _detail_local(play_rect.position), play_rect.size, func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "衣装展示"}))
+	var next_rect := _skin_layout_rect("skinNext", Rect2(Vector2(1124.513, 309), Vector2(41, 78)))
+	_add_action_button(root, ">", _detail_local(next_rect.position), next_rect.size, _next_skin)
 
 func _add_progress(parent: Control, position: Vector2, size: Vector2, value: float, text: String) -> void:
 	var bg := ColorRect.new()
@@ -1250,6 +1260,15 @@ func _load_layout_index(path: String) -> Dictionary:
 			index[name] = node
 	return index
 
+func _load_layout_nodes(path: String) -> Array:
+	if not FileAccess.file_exists(path):
+		return []
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
+	if typeof(parsed) != TYPE_DICTIONARY:
+		return []
+	var nodes: Array = parsed.get("nodes", [])
+	return nodes
+
 func _mode_layout_rect(name: String, fallback: Rect2) -> Rect2:
 	var source := book_layout_nodes if detail_mode == "book" else main_layout_nodes
 	return _layout_rect_from(source, name, fallback)
@@ -1267,6 +1286,29 @@ func _hero_display_target(hero: Dictionary) -> Rect2:
 	if hero.has("target"):
 		return hero.get("target", Rect2(Vector2(252, 34), Vector2(526, 626)))
 	return Rect2(Vector2(252, 34), Vector2(526, 626))
+
+func _skin_layout_rect(name: String, fallback: Rect2) -> Rect2:
+	var source := book_layout_nodes if detail_mode == "book" else main_layout_nodes
+	var nodes := book_layout_node_list if detail_mode == "book" else main_layout_node_list
+	match name:
+		"skinName":
+			var name_fallback := Rect2(Vector2(946.571, 393.911), Vector2(184, 30.0)) if detail_mode == "book" else Rect2(Vector2(948.594, 389.185), Vector2(184, 30.24))
+			return _layout_rect_by_parent(nodes, "name", 11 if detail_mode == "book" else 7, name_fallback)
+		"skinNext":
+			return _layout_rect_by_parent(nodes, "btnNext", 7 if detail_mode == "book" else 37, fallback)
+		_:
+			return _layout_rect_from(source, name, fallback)
+
+func _layout_rect_by_parent(nodes: Array, name: String, parent_index: int, fallback: Rect2) -> Rect2:
+	for node in nodes:
+		if typeof(node) != TYPE_DICTIONARY:
+			continue
+		if str(node.get("name", "")) != name or int(node.get("parent_index", -9999)) != parent_index:
+			continue
+		var rect: Array = node.get("screen_rect", [])
+		if rect.size() >= 4:
+			return Rect2(Vector2(float(rect[0]), float(rect[1])), Vector2(float(rect[2]), float(rect[3])))
+	return fallback
 
 func _layout_rect_from(source: Dictionary, name: String, fallback: Rect2) -> Rect2:
 	if not source.has(name):
