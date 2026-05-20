@@ -744,11 +744,17 @@ func _refresh_detail() -> void:
 	var hero: Dictionary = _current_hero()
 	var root := Control.new()
 	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	if detail_mode == "book":
-		root.offset_left = 130
-		root.offset_top = 22
-		root.offset_right = -18
-		root.offset_bottom = -20
+	if detail_mode == "book" and selected_tab == 0:
+		var scroll_rect := _mode_layout_rect("scrollview", Rect2(Vector2(897.27, 177.157), Vector2(300, 420)))
+		var local_scroll := Rect2(scroll_rect.position - detail_panel.position, scroll_rect.size)
+		root.position = local_scroll.position
+		root.size = local_scroll.size
+		root.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	elif detail_mode == "book":
+		root.offset_left = 0
+		root.offset_top = 0
+		root.offset_right = 0
+		root.offset_bottom = 0
 	else:
 		root.offset_left = 0
 		root.offset_top = 0
@@ -757,7 +763,7 @@ func _refresh_detail() -> void:
 	detail_panel.add_child(root)
 
 	if detail_mode == "book":
-		_add_detail_summary(root, hero, Vector2.ZERO, 238)
+		_add_detail_summary(root, hero, Vector2(0, 0), 292)
 	elif selected_tab == 0:
 		_add_hero_main_summary(root, hero)
 
@@ -765,7 +771,7 @@ func _refresh_detail() -> void:
 		if selected_tab == 1:
 			_add_skin_tab(root, 344)
 		else:
-			_add_book_info(root, hero, 344)
+			_add_book_info(root, hero, 318)
 	elif selected_tab == 0:
 		_add_culture_tab(root, hero, 442, true)
 	elif selected_tab == 1:
