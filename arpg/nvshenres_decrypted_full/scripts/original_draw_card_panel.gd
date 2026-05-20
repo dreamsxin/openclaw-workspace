@@ -18,6 +18,8 @@ var design_root: Control
 var named_resources: Dictionary = {}
 var tab_buttons: Array[Button] = []
 var hero_result_root: Control
+var hero_ui_box: Control
+var hero_ui_list: Control
 var reward_root: Control
 var info_label: Label
 var progress_fill: ColorRect
@@ -28,6 +30,7 @@ var summon_effect: Node2D
 var selected_tab := 1
 var summon_count := 11
 var pool_spine_key := ""
+var result_mode := false
 
 func _ready() -> void:
 	_load_named_resources()
@@ -65,6 +68,7 @@ func _build_ui() -> void:
 	_build_reward_progress()
 	_build_summon_controls()
 	_build_result_preview()
+	_build_hero_ui_box()
 	_build_tabs()
 	_build_exchange_panel()
 	_layout_design_root()
@@ -183,6 +187,49 @@ func _build_result_preview() -> void:
 	hero_result_root.add_child(bg)
 	_add_label(hero_result_root, "召唤结果预览", Vector2(0, 8), Vector2(382, 28), 20, Color(1.0, 0.88, 0.52), HORIZONTAL_ALIGNMENT_CENTER)
 
+func _build_hero_ui_box() -> void:
+	hero_ui_box = Control.new()
+	hero_ui_box.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	hero_ui_box.visible = false
+	design_root.add_child(hero_ui_box)
+
+	var dim := ColorRect.new()
+	dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	dim.color = Color(0.0, 0.0, 0.0, 0.62)
+	dim.mouse_filter = Control.MOUSE_FILTER_STOP
+	hero_ui_box.add_child(dim)
+
+	_add_label(hero_ui_box, "HeroUiBox | 召唤结果", Vector2(0, 58), Vector2(1280, 42), 28, Color(1.0, 0.86, 0.48), HORIZONTAL_ALIGNMENT_CENTER)
+	_add_label(hero_ui_box, "点击头像打开 HeroShowPre 单英雄展示", Vector2(0, 102), Vector2(1280, 26), 17, Color(0.78, 0.88, 1.0), HORIZONTAL_ALIGNMENT_CENTER)
+
+	hero_ui_list = Control.new()
+	hero_ui_list.position = Vector2(145, 196)
+	hero_ui_list.size = Vector2(990, 178)
+	hero_ui_box.add_child(hero_ui_list)
+
+	var back := Button.new()
+	back.text = "返回召唤"
+	back.position = Vector2(52, 34)
+	back.size = Vector2(118, 38)
+	back.pressed.connect(_close_result_mode)
+	hero_ui_box.add_child(back)
+
+	var call1 := Button.new()
+	call1.text = "再召唤1次"
+	call1.position = Vector2(460, 586)
+	call1.size = Vector2(132, 52)
+	call1.pressed.connect(func(): _summon(1))
+	hero_ui_box.add_child(call1)
+
+	var call10 := Button.new()
+	call10.text = "再召唤10次"
+	call10.position = Vector2(688, 586)
+	call10.size = Vector2(142, 52)
+	call10.pressed.connect(func(): _summon(10))
+	hero_ui_box.add_child(call10)
+
+	_refresh_hero_ui_box()
+
 func _build_tabs() -> void:
 	var tab_bg := _add_named_image(design_root, "image/com/DrawCard/zh_tab_di", Vector2(1016, 0), Vector2(245, 720))
 	if tab_bg:
@@ -215,14 +262,20 @@ func _build_exchange_panel() -> void:
 
 func _select_tab(index: int) -> void:
 	selected_tab = index
+	result_mode = false
 	_refresh_tabs()
 	_refresh_pool_spine()
 	_refresh_results()
+	_refresh_hero_ui_box()
+	_update_result_mode()
 
 func _summon(amount: int) -> void:
 	summon_count += amount
+	result_mode = true
 	_refresh_progress()
 	_refresh_results()
+	_refresh_hero_ui_box()
+	_update_result_mode()
 	_play_summon_effect()
 
 func _refresh_tabs() -> void:
@@ -253,6 +306,45 @@ func _refresh_results() -> void:
 		_add_named_image(hero_result_root, "image/head/%s" % hero_id, Vector2(x + 6, 58), Vector2(44, 44))
 		_add_named_image(hero_result_root, "image/comHeroGrid/cm_tag_SSR1", Vector2(x, 52), Vector2(30, 18))
 	info_label.text = "%s卡池：10连招募必出5星SR或SSR英雄" % str(TABS[selected_tab].label)
+
+func _refresh_hero_ui_box() -> void:
+	if hero_ui_list == null:
+		return
+	for child in hero_ui_list.get_children():
+		child.queue_free()
+	var count := 10
+	var offset := selected_tab * 2 + summon_count
+	for i in count:
+		var hero_id: String = str(HERO_IDS[(offset + i) % HERO_IDS.size()])
+		var slot := Button.new()
+		slot.text = ""
+		slot.position = _hero_result_position(i)
+		slot.size = Vector2(92, 124)
+		slot.pressed.connect(_open_hero_show.bind(i))
+		hero_ui_list.add_child(slot)
+		_add_named_image(slot, "image/comHeroGrid/cm_frame_TouXiangDi5", Vector2(0, 0), Vector2(92, 92))
+		_add_named_image(slot, "image/head/%s" % hero_id, Vector2(9, 9), Vector2(74, 74))
+		_add_named_image(slot, "image/comHeroGrid/cm_tag_SSR1", Vector2(0, 0), Vector2(46, 24))
+		_add_label(slot, "HeroBookItem%d" % i, Vector2(-10, 96), Vector2(112, 24), 14, Color(0.92, 0.9, 0.72), HORIZONTAL_ALIGNMENT_CENTER)
+
+func _hero_result_position(index: int) -> Vector2:
+	var cocos_positions := [
+		Vector2(159.47, -100.66), Vector2(239.5, -65), Vector2(328.2, -35), Vector2(424, -15), Vector2(510, -8.85),
+		Vector2(606, -8.5), Vector2(696, -14.8), Vector2(787, -34.7), Vector2(878.4, -64.8), Vector2(968, -99),
+	]
+	var pos: Vector2 = cocos_positions[index % cocos_positions.size()]
+	return Vector2(pos.x - 96.0, 82.0 - pos.y * 0.35)
+
+func _open_hero_show(index: int) -> void:
+	Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "抽卡英雄展示", "hero-show-index": str(index)})
+
+func _close_result_mode() -> void:
+	result_mode = false
+	_update_result_mode()
+
+func _update_result_mode() -> void:
+	if hero_ui_box:
+		hero_ui_box.visible = result_mode
 
 func _refresh_pool_spine() -> void:
 	if pool_stage == null:

@@ -187,6 +187,7 @@ Godot 当前工程已接入项目内轻量 Spine runtime，用于本地预览角
 - `data/prefab_layouts/ShopPre.json`：商会/黑市商店 prefab，主屏 `openShop()` 的目标。
 - `data/prefab_layouts/GoodsItemPre.json`：商店商品卡 prefab，含 `GoodsItemCom` 的 `discount/rare/fight/prize/limit/selectBtn` 绑定。
 - `data/prefab_layouts/ShopItemPre.json`：商店右侧分类页签 prefab；源码 `ShopPanel.showShopData()` 会按 `-(height+30)` 纵向排布。
+- 抽卡结果链路：`DrawMainPanel.preUrl="Prefab/DrawCard/drawCardPre"`，预加载 `Prefab/HeroListPanel/HeroBookItemPre` 和 `Prefab/DrawCard/HeroShowPre`；`onDrawCardOpResult()` 先显示 `drawCardPre.HeroUiBox`，把十连结果用 `HeroBookItemPre` 按 `bookPosArr` 放进 `heroListBox`，点击单个结果才进入 `HeroShowPanel.preUrl="Prefab/DrawCard/HeroShowPre"`。Godot 抽卡页已补 `HeroUiBox` 结果 overlay、继续召唤按钮和点击头像打开 `HeroShowPre` 预览。
 - `data/prefab_layouts/HeroMainPre.json`：英雄主界面 prefab，独立英雄页的中心 Spine、右侧信息面板和功能页签布局参考。
 - `data/prefab_layouts/HeroBookDetailPre.json`：截图里的英雄详情/图鉴详情页主体 prefab。源码入口是 `HeroBookDetailPanel.preUrl="Prefab/HeroPanel/HeroBookDetailPre"`，包含 `heroBodyBox/skinBodyBox/rightBox/skinBox/infoToggle/skinToggle/btnChaKan/btnLingqu/btnPingLun` 等字段绑定。
 - `data/hero_resource_inventory.json`：英雄资源完整清单，来自 `config.json`、`named_resource_index.json` 和反编译源码字段链。
