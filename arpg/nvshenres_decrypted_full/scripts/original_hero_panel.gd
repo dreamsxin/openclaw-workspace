@@ -13,6 +13,7 @@ const ATLAS_1A := "res://assets/resources/native/1a/1a7921f32.png"
 const ATLAS_1F := "res://assets/resources/native/1f/1f6b547b4.png"
 const ATLAS_15 := "res://assets/resources/native/15/15a1d9111.png"
 const NAV_SUMMON_RECT := Rect2i(477, 242, 125, 123)
+const NAV_BG_TEXTURE := "res://assets/resources/native/f5/f58085bc-21e6-40ed-a4cf-b55f6b0cc8f9.png"
 const HERO_TAB_ON_ATLAS := "res://assets/resources/native/15/15a1d9111.png"
 const HERO_TAB_ON_RECT := Rect2i(530, 950, 64, 100)
 const HERO_TAB_OFF_ATLAS := "res://assets/resources/native/18/18b29ae48.png"
@@ -403,36 +404,41 @@ func _build_detail_panel() -> void:
 
 func _build_bottom_nav() -> void:
 	var nav := Control.new()
-	nav.position = Vector2(216, 506)
-	nav.size = Vector2(850, 90)
+	nav.position = Vector2.ZERO
+	nav.size = DESIGN_SIZE
 	nav.z_index = 35
 	design_root.add_child(nav)
-	var line := ColorRect.new()
-	line.position = Vector2(0, 31)
-	line.size = Vector2(850, 2)
-	line.color = Color(0.9, 0.76, 0.42, 0.65)
-	line.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	nav.add_child(line)
+	var bg := TextureRect.new()
+	bg.position = Vector2(-493, 540.552)
+	bg.size = Vector2(2266, 181)
+	bg.texture = _load_texture(NAV_BG_TEXTURE)
+	bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	bg.stretch_mode = TextureRect.STRETCH_SCALE
+	bg.modulate = Color(1, 1, 1, 0.78)
+	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	nav.add_child(bg)
 	var items := [
-		["城镇", ATLAS_1F, Rect2i(787, 551, 152, 141), Vector2(54, 48), HOME_SCENE],
-		["英雄", ATLAS_1A, Rect2i(3, 334, 150, 142), Vector2(54, 48), ""],
-		["召唤", ATLAS_1A, NAV_SUMMON_RECT, Vector2(54, 50), "res://scenes/original_draw_card_panel.tscn"],
-		["冒险", ATLAS_1A, Rect2i(159, 345, 150, 145), Vector2(54, 50), ""],
-		["副本", ATLAS_1A, Rect2i(879, 276, 134, 133), Vector2(52, 50), ""],
-		["公会", ATLAS_1A, Rect2i(345, 232, 119, 126), Vector2(50, 50), ""],
+		{"label": "城镇", "atlas": ATLAS_1F, "rect": Rect2i(787, 551, 152, 141), "screen": Rect2(Vector2(115.645, 585.329), Vector2(152, 141)), "hit": Rect2(Vector2(68.78, 532.771), Vector2(120, 120)), "scene": HOME_SCENE},
+		{"label": "英雄", "atlas": ATLAS_1A, "rect": Rect2i(3, 334, 150, 142), "screen": Rect2(Vector2(284.102, 583.476), Vector2(150, 142)), "hit": Rect2(Vector2(239.581, 535.51), Vector2(120, 120)), "scene": ""},
+		{"label": "召唤", "atlas": ATLAS_1A, "rect": NAV_SUMMON_RECT, "screen": Rect2(Vector2(481.599, 591.329), Vector2(125, 123)), "hit": Rect2(Vector2(416.306, 533.768), Vector2(120, 120)), "scene": "res://scenes/original_draw_card_panel.tscn"},
+		{"label": "冒险", "atlas": ATLAS_1A, "rect": Rect2i(159, 345, 150, 145), "screen": Rect2(Vector2(645.211, 582.972), Vector2(150, 145)), "hit": Rect2(Vector2(603.78, 535.192), Vector2(120, 120)), "scene": ""},
+		{"label": "副本", "atlas": ATLAS_1A, "rect": Rect2i(879, 276, 134, 133), "screen": Rect2(Vector2(842.368, 589.329), Vector2(134, 133)), "hit": Rect2(Vector2(789.342, 537.51), Vector2(120, 120)), "scene": ""},
+		{"label": "公会", "atlas": ATLAS_1A, "rect": Rect2i(345, 232, 119, 126), "screen": Rect2(Vector2(1027.648, 592.829), Vector2(119, 126)), "hit": Rect2(Vector2(968.54, 539.026), Vector2(120, 120)), "scene": "", "rotated": true},
 	]
 	for i in items.size():
-		var x := 20 + i * 142
 		var button := Button.new()
 		button.text = ""
-		button.position = Vector2(x, 0)
-		button.size = Vector2(104, 82)
-		if str(items[i][4]) != "":
-			button.pressed.connect(func(path := str(items[i][4])): Navigation.go(path))
+		var hit_rect: Rect2 = items[i].hit
+		button.position = hit_rect.position
+		button.size = hit_rect.size
+		button.flat = true
+		button.focus_mode = Control.FOCUS_NONE
+		if str(items[i].scene) != "":
+			button.pressed.connect(func(path := str(items[i].scene)): Navigation.go(path))
 		nav.add_child(button)
-		var icon_size: Vector2 = items[i][3]
-		_add_sprite_frame_image(button, str(items[i][1]), items[i][2], Vector2((104 - icon_size.x) * 0.5, 0), icon_size)
-		var text := _add_label(button, str(items[i][0]), Vector2(0, 25), Vector2(104, 28), 18, Color(0.98, 0.93, 0.76))
+		var icon_rect: Rect2 = items[i].screen
+		_add_sprite_frame_image(button, str(items[i].atlas), items[i].rect, icon_rect.position - hit_rect.position, icon_rect.size, bool(items[i].get("rotated", false)))
+		var text := _add_label(button, str(items[i].label), Vector2((button.size.x - 44) * 0.5, 82), Vector2(44, 28), 18, Color(0.98, 0.93, 0.76))
 		text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		text.add_theme_color_override("font_shadow_color", Color(0.12, 0.08, 0.02, 0.85))
 		text.add_theme_constant_override("shadow_offset_x", 1)

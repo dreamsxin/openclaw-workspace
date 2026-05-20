@@ -14,6 +14,7 @@ const ATLAS_C8 := "res://assets/resources/native/c8/c8384043-da3b-41dd-95e5-2ce3
 const ATLAS_1A := "res://assets/resources/native/1a/1a7921f32.png"
 const ATLAS_1F := "res://assets/resources/native/1f/1f6b547b4.png"
 const NAV_SUMMON_RECT := Rect2i(477, 242, 125, 123)
+const NAV_BG_TEXTURE := "res://assets/resources/native/f5/f58085bc-21e6-40ed-a4cf-b55f6b0cc8f9.png"
 const HERO_LIST_LAYOUT_PATH := "res://data/prefab_layouts/HeroListPre.json"
 const HERO_CONTENT_POS := Vector2(109, 101.552)
 const HERO_CONTENT_SIZE := Vector2(900, 568)
@@ -264,35 +265,41 @@ func _build_bottom_actions() -> void:
 	_add_action_button(bottom, "arrange", arrange_rect.position, arrange_rect.size, func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "布阵"}))
 
 func _build_bottom_nav(parent: Control) -> void:
+	var bg := TextureRect.new()
+	bg.position = Vector2(-493, 540.552)
+	bg.size = Vector2(2266, 181)
+	bg.texture = _load_texture(NAV_BG_TEXTURE)
+	bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	bg.stretch_mode = TextureRect.STRETCH_SCALE
+	bg.modulate = Color(1, 1, 1, 0.78)
+	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	parent.add_child(bg)
+
 	var items := [
-		{"label": "城镇", "atlas": ATLAS_1F, "rect": Rect2i(787, 551, 152, 141), "size": Vector2(54, 48), "callback": func(): Navigation.go(HOME_SCENE)},
-		{"label": "英雄", "atlas": ATLAS_1A, "rect": Rect2i(3, 334, 150, 142), "size": Vector2(54, 48), "callback": func(): _select_side_tab(0)},
-		{"label": "召唤", "atlas": ATLAS_1A, "rect": NAV_SUMMON_RECT, "size": Vector2(54, 50), "callback": func(): Navigation.go("res://scenes/original_draw_card_panel.tscn")},
-		{"label": "冒险", "atlas": ATLAS_1A, "rect": Rect2i(159, 345, 150, 145), "size": Vector2(54, 50), "callback": func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "冒险地图顶部"})},
-		{"label": "副本", "atlas": ATLAS_1A, "rect": Rect2i(879, 276, 134, 133), "size": Vector2(52, 50), "callback": func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "冒险地图底部"})},
-		{"label": "公会", "atlas": ATLAS_1A, "rect": Rect2i(345, 232, 119, 126), "size": Vector2(50, 50), "rotated": true, "callback": func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "公会"})},
+		{"label": "城镇", "atlas": ATLAS_1F, "rect": Rect2i(787, 551, 152, 141), "screen": Rect2(Vector2(115.645, 585.329), Vector2(152, 141)), "hit": Rect2(Vector2(68.78, 532.771), Vector2(120, 120)), "callback": func(): Navigation.go(HOME_SCENE)},
+		{"label": "英雄", "atlas": ATLAS_1A, "rect": Rect2i(3, 334, 150, 142), "screen": Rect2(Vector2(284.102, 583.476), Vector2(150, 142)), "hit": Rect2(Vector2(239.581, 535.51), Vector2(120, 120)), "callback": func(): _select_side_tab(0)},
+		{"label": "召唤", "atlas": ATLAS_1A, "rect": NAV_SUMMON_RECT, "screen": Rect2(Vector2(481.599, 591.329), Vector2(125, 123)), "hit": Rect2(Vector2(416.306, 533.768), Vector2(120, 120)), "callback": func(): Navigation.go("res://scenes/original_draw_card_panel.tscn")},
+		{"label": "冒险", "atlas": ATLAS_1A, "rect": Rect2i(159, 345, 150, 145), "screen": Rect2(Vector2(645.211, 582.972), Vector2(150, 145)), "hit": Rect2(Vector2(603.78, 535.192), Vector2(120, 120)), "callback": func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "冒险地图顶部"})},
+		{"label": "副本", "atlas": ATLAS_1A, "rect": Rect2i(879, 276, 134, 133), "screen": Rect2(Vector2(842.368, 589.329), Vector2(134, 133)), "hit": Rect2(Vector2(789.342, 537.51), Vector2(120, 120)), "callback": func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "冒险地图底部"})},
+		{"label": "公会", "atlas": ATLAS_1A, "rect": Rect2i(345, 232, 119, 126), "screen": Rect2(Vector2(1027.648, 592.829), Vector2(119, 126)), "hit": Rect2(Vector2(968.54, 539.026), Vector2(120, 120)), "rotated": true, "callback": func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "公会"})},
 	]
-	var centers := [260, 420, 580, 740, 900, 1060]
 	for i in items.size():
 		var button := Button.new()
 		button.text = ""
-		button.position = Vector2(centers[i] - 58, 632)
-		button.size = Vector2(116, 62)
+		var hit_rect: Rect2 = items[i].hit
+		button.position = hit_rect.position
+		button.size = hit_rect.size
+		button.flat = true
+		button.focus_mode = Control.FOCUS_NONE
 		button.pressed.connect(items[i].callback)
 		parent.add_child(button)
-		var icon_size: Vector2 = items[i].size
-		_add_sprite_frame_image(button, str(items[i].atlas), items[i].rect, Vector2((button.size.x - icon_size.x) * 0.5, 0), icon_size, bool(items[i].get("rotated", false)))
-		var text := _add_label(button, str(items[i].label), Vector2(0, 25), Vector2(button.size.x, 28), 18, Color(0.98, 0.93, 0.76))
+		var icon_rect: Rect2 = items[i].screen
+		_add_sprite_frame_image(button, str(items[i].atlas), items[i].rect, icon_rect.position - hit_rect.position, icon_rect.size, bool(items[i].get("rotated", false)))
+		var text := _add_label(button, str(items[i].label), Vector2((button.size.x - 44) * 0.5, 82), Vector2(44, 28), 18, Color(0.98, 0.93, 0.76))
 		text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		text.add_theme_color_override("font_shadow_color", Color(0.12, 0.08, 0.02, 0.85))
 		text.add_theme_constant_override("shadow_offset_x", 1)
 		text.add_theme_constant_override("shadow_offset_y", 1)
-		var glow := ColorRect.new()
-		glow.position = Vector2(centers[i] - 46, 620)
-		glow.size = Vector2(92, 4)
-		glow.color = Color(0.95, 0.80, 0.44, 0.75 if i == 1 else 0.25)
-		glow.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		parent.add_child(glow)
 
 func _refresh() -> void:
 	_refresh_camp_tabs()
