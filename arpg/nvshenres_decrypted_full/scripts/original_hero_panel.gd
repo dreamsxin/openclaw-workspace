@@ -730,11 +730,11 @@ func _refresh_head_list() -> void:
 func _refresh_tabs() -> void:
 	var labels := _tab_labels()
 	if detail_mode == "book":
-		tab_panel.position = Vector2(608, 260)
+		tab_panel.position = Vector2(1112, 248)
 		tab_panel.size = Vector2(64, 200)
 		tab_panel.add_theme_constant_override("separation", 0)
 	else:
-		tab_panel.position = Vector2(608, 95.099)
+		tab_panel.position = Vector2(1120, 78)
 		tab_panel.size = Vector2(64, 522)
 		tab_panel.add_theme_constant_override("separation", 0)
 	for i in tab_buttons.size():
