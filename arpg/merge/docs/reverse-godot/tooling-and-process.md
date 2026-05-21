@@ -645,6 +645,7 @@ Operator: Codex
 Changes:
 
 - Added `run-godot.bat`.
+- Added `run-game.bat` for restored startup mode.
 - Added producer AP cost and cooldown state in `MergeBoardModel`.
 - Cooldown state is included in save/load data.
 
@@ -652,6 +653,7 @@ Run:
 
 ```powershell
 .\run-godot.bat
+.\run-game.bat
 ```
 
 Validation:

@@ -46,8 +46,10 @@ var ui_layout_meta_label: Label
 var ui_layout_preview: Control
 var loading_reference_screen: Control
 var loading_reference_visible := false
+var restored_startup_mode := false
 
 func _ready() -> void:
+	restored_startup_mode = OS.get_cmdline_user_args().has("--restored-startup")
 	catalog.load_from_file("res://data/blocks.json")
 	catalog.load_rules("res://data/block_rules.json")
 	_load_character_data()
@@ -270,8 +272,11 @@ func _build_ui_layout_panel() -> void:
 
 func _build_loading_reference_screen() -> void:
 	loading_reference_screen = LoadingReferenceScreenScript.new()
-	loading_reference_screen.position = Vector2(320, 24)
-	loading_reference_screen.size = Vector2(650, 672)
+	if restored_startup_mode:
+		loading_reference_screen.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	else:
+		loading_reference_screen.position = Vector2(320, 24)
+		loading_reference_screen.size = Vector2(650, 672)
 	loading_reference_screen.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	loading_reference_screen.visible = loading_reference_visible
 	add_child(loading_reference_screen)
