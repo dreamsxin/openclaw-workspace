@@ -74,7 +74,7 @@ func _draw() -> void:
 	var origin := (size - viewport_size) * 0.5
 	var screen_rect := Rect2(origin, viewport_size)
 	_draw_game_backdrop(screen_rect)
-	_draw_recovered_panel("Request", Color(0.12, 0.16, 0.17, 0.24), Color(0.74, 0.84, 0.78, 0.34), reference_size, scale_factor, origin)
+	_draw_request_operation_strip(screen_rect)
 	_draw_top_wallet(screen_rect)
 	_draw_bottom_operation_bar(screen_rect)
 
@@ -129,6 +129,68 @@ func _draw_recovered_panel(suffix: String, fill: Color, stroke: Color, reference
 	if rect.size.x * rect.size.y < size.x * size.y * 0.42:
 		draw_rect(rect, fill, true)
 	draw_rect(rect, stroke, false, 1.5)
+
+func _draw_request_operation_strip(screen_rect: Rect2) -> void:
+	var layout := _request_layout(screen_rect)
+	var strip_rect: Rect2 = layout.get("strip", Rect2())
+	if strip_rect.size == Vector2.ZERO:
+		return
+	draw_rect(strip_rect, Color(0.09, 0.07, 0.045, 0.62), true)
+	draw_rect(strip_rect, Color(0.78, 0.58, 0.34, 0.42), false, 1.0)
+	_draw_request_card(layout.get("quest", Rect2()))
+	var rewards: Array = layout.get("rewards", [])
+	var reward_payloads := _request_reward_payloads()
+	for index in range(rewards.size()):
+		var payload: Dictionary = reward_payloads[index] if index < reward_payloads.size() else {}
+		_draw_reward_slot(rewards[index], payload)
+	_draw_skill_cards(layout.get("skills", []))
+
+func _draw_request_card(card_rect: Rect2) -> void:
+	if card_rect.size == Vector2.ZERO:
+		return
+	draw_rect(card_rect, Color(0.18, 0.12, 0.07, 0.92), true)
+	draw_rect(card_rect, Color(0.95, 0.74, 0.42, 0.8), false, 1.2)
+	var icon_rect := Rect2(card_rect.position + Vector2(8, 8), Vector2(minf(42.0, card_rect.size.x * 0.36), minf(42.0, card_rect.size.y - 16.0)))
+	var payloads := _request_reward_payloads()
+	var first_payload: Dictionary = payloads[0] if not payloads.is_empty() else selected
+	if not first_payload.is_empty():
+		var texture: Texture2D = load(String(first_payload.get("sprite", "")))
+		if texture != null:
+			draw_texture_rect(texture, icon_rect, false, Color(1, 1, 1, 0.96))
+		else:
+			draw_rect(icon_rect, Color(0.34, 0.25, 0.16, 0.94), true)
+	else:
+		draw_rect(icon_rect, Color(0.34, 0.25, 0.16, 0.94), true)
+		draw_string(ThemeDB.fallback_font, icon_rect.position + Vector2(0, icon_rect.size.y * 0.58), "?", HORIZONTAL_ALIGNMENT_CENTER, icon_rect.size.x, 16, Color(0.9, 0.8, 0.62, 0.86))
+	var title := "Request"
+	var detail := "Need block"
+	if not first_payload.is_empty():
+		title = String(first_payload.get("name", first_payload.get("id", "Request")))
+		detail = "Need L%s block" % first_payload.get("level", "?")
+	draw_string(ThemeDB.fallback_font, card_rect.position + Vector2(icon_rect.size.x + 16, 26), title, HORIZONTAL_ALIGNMENT_LEFT, card_rect.size.x - icon_rect.size.x - 24, 13, Color(1, 0.94, 0.74, 0.96))
+	draw_string(ThemeDB.fallback_font, card_rect.position + Vector2(icon_rect.size.x + 16, 44), detail, HORIZONTAL_ALIGNMENT_LEFT, card_rect.size.x - icon_rect.size.x - 24, 10, Color(0.86, 0.76, 0.58, 0.88))
+
+func _draw_reward_slot(slot_rect: Rect2, payload: Dictionary) -> void:
+	if slot_rect.size == Vector2.ZERO:
+		return
+	draw_rect(slot_rect, Color(0.16, 0.11, 0.07, 0.9), true)
+	draw_rect(slot_rect, Color(0.86, 0.66, 0.38, 0.64), false, 1.0)
+	if payload.is_empty():
+		draw_circle(slot_rect.position + slot_rect.size * 0.5, slot_rect.size.x * 0.18, Color(0.52, 0.42, 0.28, 0.78))
+		return
+	var texture: Texture2D = load(String(payload.get("sprite", "")))
+	if texture != null:
+		draw_texture_rect(texture, slot_rect.grow(-5.0), false, Color(1, 1, 1, 0.96))
+	else:
+		draw_circle(slot_rect.position + slot_rect.size * 0.5, slot_rect.size.x * 0.2, Color(0.82, 0.62, 0.34, 0.86))
+	draw_string(ThemeDB.fallback_font, slot_rect.position + Vector2(0, slot_rect.size.y - 4), "x1", HORIZONTAL_ALIGNMENT_CENTER, slot_rect.size.x, 9, Color(1, 0.92, 0.72, 0.94))
+
+func _draw_skill_cards(skill_rects: Array) -> void:
+	for index in range(skill_rects.size()):
+		var rect: Rect2 = skill_rects[index]
+		draw_rect(rect, Color(0.08, 0.065, 0.052, 0.82), true)
+		draw_rect(rect, Color(0.55, 0.44, 0.3, 0.52), false, 1.0)
+		draw_string(ThemeDB.fallback_font, rect.position + Vector2(0, rect.size.y * 0.58), "S%s" % (index + 1), HORIZONTAL_ALIGNMENT_CENTER, rect.size.x, 9, Color(0.78, 0.68, 0.52, 0.86))
 
 func _draw_bottom_operation_bar(screen_rect: Rect2) -> void:
 	var layout := _operation_layout(screen_rect)
@@ -340,6 +402,41 @@ func _operation_layout(screen_rect: Rect2) -> Dictionary:
 		"gold_open": Rect2(produce_rect.position + Vector2(0.0, -mini_size - 5.0), Vector2(mini_size, mini_size)),
 		"cash": Rect2(use_rect.position + Vector2(0.0, -mini_size - 5.0), Vector2(mini_size, mini_size)),
 	}
+
+func _request_layout(screen_rect: Rect2) -> Dictionary:
+	var scale_factor := screen_rect.size.x / 1080.0
+	var top_offset := maxf(74.0, 148.0 * scale_factor)
+	var strip_height := clampf(176.0 * scale_factor, 86.0, 122.0)
+	var margin_x := maxf(10.0, 20.0 * scale_factor)
+	var strip_rect := Rect2(
+		Vector2(screen_rect.position.x + margin_x, screen_rect.position.y + top_offset),
+		Vector2(screen_rect.size.x - margin_x * 2.0, strip_height)
+	)
+	var quest_size := Vector2(clampf(160.0 * scale_factor, 76.0, 104.0), strip_rect.size.y - 18.0)
+	var quest_rect := Rect2(strip_rect.position + Vector2(10.0, 9.0), quest_size)
+	var reward_size := clampf(150.0 * scale_factor, 50.0, 68.0)
+	var reward_gap := maxf(6.0, 10.0 * scale_factor)
+	var rewards: Array = []
+	var reward_start := quest_rect.end.x + 12.0
+	for index in range(3):
+		rewards.append(Rect2(Vector2(reward_start + float(index) * (reward_size + reward_gap), strip_rect.position.y + 16.0), Vector2(reward_size, reward_size)))
+	var skill_size := clampf(180.0 * scale_factor, 46.0, 62.0)
+	var skills: Array = []
+	var skill_x := strip_rect.end.x - 10.0 - skill_size
+	for index in range(3):
+		skills.push_front(Rect2(Vector2(skill_x - float(index) * (skill_size + 6.0), strip_rect.end.y - skill_size - 12.0), Vector2(skill_size, skill_size)))
+	return {
+		"strip": strip_rect,
+		"quest": quest_rect,
+		"rewards": rewards,
+		"skills": skills,
+	}
+
+func _request_reward_payloads() -> Array:
+	var payloads: Array = []
+	if not selected.is_empty():
+		payloads.append(selected)
+	return payloads
 
 func _largest_rect(rects: Array) -> Rect2:
 	var best := Rect2()

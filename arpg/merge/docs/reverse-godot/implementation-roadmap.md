@@ -237,6 +237,7 @@ Success criteria:
 | T045 | Confirm native startup timings and first scene load chain | pending | Use Ghidra on `GameManager.OnGameStartLoad`, `PlatformLoginManager.CheckPlatformLogin`, `GameManager.CheckNetwork`, `ReloadManager.LoadScene`, and `UIManager.Initialize` |
 | T046 | Add first recovered inventory popup shell | done | `UIInGame` Bag now opens a top-level `UIPopup_Inventory` structural shell with `ProduceInventory` and `NormalInventory` sections; `capture-gameplay.bat` now writes `11-inventory.png` |
 | T047 | Rebuild UIInGame bottom operation bar | done | `InGameReferenceShell` now uses recovered `Bottom` dimensions to draw Bag, Cafe, central `UIBlockInfo`, and first-pass `Btn_BoxOpen`/`Btn_Use`/`Btn_CoolTime` operation buttons; gameplay capture auto-selects a producer before `10-ingame.png` |
+| T048 | Add first UIInGame request strip | done | Recovered `Request/RequestList` evidence now drives a top request strip with quest card, reward slots, and skill placeholders; portrait mode hides leftover debug labels |
 
 ## Tool Acquisition Options
 

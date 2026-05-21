@@ -1555,6 +1555,36 @@ Follow-up:
 - Map the real button sprites and localized labels for `Btn_BoxOpen`, `Btn_Use`, `Btn_CoolTime`, premium open, cash, ad, and crafting variants.
 - Confirm from native runtime code which button variant is shown for each block type, cooldown state, bubble, fabricate/crafting state, and item-use state.
 
+## 2026-05-21 - UIInGame Request Strip First Pass
+
+Inputs:
+- `reverse-output/assets/assetripper-main/ExportedProject/Assets/Resources/prefabs/ui/uiroot/UIInGame.prefab`
+- `godot-project/scripts/ingame_reference_shell.gd`
+- `godot-project/scripts/main.gd`
+
+Commands:
+```powershell
+rg -n "m_Name: Request|m_Name: RequestList|m_Name: SkillInfo|m_Name: Grid_Request|m_Name: EventQuestItem|m_Name: Btn_Prev" .\reverse-output\assets\assetripper-main\ExportedProject\Assets\Resources\prefabs\ui\uiroot\UIInGame.prefab -S
+.\tools\Godot\Godot_console.exe --headless --path .\godot-project --quit-after 18 -- --restored-startup --auto-enter-ingame
+.\capture-gameplay.bat
+```
+
+Findings:
+- `UIInGame/Request` is anchored near the top of the screen with `anchored_position.y = 400`.
+- `Request/RequestList` is a large 1000-high scroll area; its content includes `Grid_Request`, `Grid_QuestList`, `Grid_Reward`, and `EventQuestItem_WorkLog` structures.
+- Quest cards use 160 x 224 item-like panels, reward cells use 150 x 150 block slots, and `SkillInfo` contains memory/skill card slots.
+- Godot now draws a first-pass request strip with a quest card, reward slots, and skill placeholders, using the selected producer/block as temporary request payload until `RequestDataManager` and `Table_Request` are decoded into a real model.
+- Portrait `run-game.bat` hides the leftover selected/status debug labels so the restored UI shell is not overdrawn by prototype text.
+
+Outputs:
+- `godot-project/scripts/ingame_reference_shell.gd`
+- `godot-project/scripts/main.gd`
+- `reverse-output/gameplay-captures/10-ingame.png`
+
+Follow-up:
+- Decode `Table_Request` and `RequestDataManager` enough to replace temporary selected-block request payloads with real request/order rows.
+- Map original request/reward sprites and determine which `Grid_Request*` variant is visible for normal, event, urgent, complete, and dormitory request states.
+
 Recommended next runs:
 
 1. Run Il2CppDumper or Cpp2IL on `libil2cpp.so` and `global-metadata.dat`.

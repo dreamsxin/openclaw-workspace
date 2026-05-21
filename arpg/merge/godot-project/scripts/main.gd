@@ -813,6 +813,10 @@ func _apply_gameplay_layout() -> void:
 		board_origin = Vector2((viewport_size.x - board_size.x) * 0.5, 170)
 		_layout_control(selected_label, Vector2(PORTRAIT_BOARD_MARGIN, 696), Vector2(viewport_size.x - PORTRAIT_BOARD_MARGIN * 2.0, 48), 14)
 		_layout_control(status_label, Vector2(PORTRAIT_BOARD_MARGIN, 746), Vector2(viewport_size.x - PORTRAIT_BOARD_MARGIN * 2.0, 44), 14)
+		if selected_label != null:
+			selected_label.visible = false
+		if status_label != null:
+			status_label.visible = false
 		_layout_control(produce_button, Vector2(PORTRAIT_BOARD_MARGIN, 790), Vector2(150, 40), 0)
 		if produce_button != null:
 			produce_button.visible = false
@@ -823,6 +827,10 @@ func _apply_gameplay_layout() -> void:
 		board_origin = BOARD_ORIGIN
 		_layout_control(selected_label, Vector2(34, 602), Vector2(260, 40), 14)
 		_layout_control(status_label, Vector2(34, 648), Vector2(260, 48), 16)
+		if selected_label != null:
+			selected_label.visible = true
+		if status_label != null:
+			status_label.visible = true
 		_layout_control(produce_button, Vector2(34, 340), Vector2(180, 40), 0)
 		if produce_button != null:
 			produce_button.visible = true
