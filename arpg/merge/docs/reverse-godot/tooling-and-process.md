@@ -1464,6 +1464,37 @@ Outputs:
 Follow-up:
 - Use Ghidra to determine which `OnGameStartLoad` callbacks block UI progress and whether `LoadMenu` directly triggers `ReloadManager.LoadScene` or passes through another manager first.
 
+## 2026-05-21 - Reload Scene Mount Stage
+
+Inputs:
+- `reverse-output/assets/derived/ui_layout/canvas_layout_inventory.csv`
+- `godot-project/scripts/main.gd`
+- `godot-project/scripts/reload_scene_reference_screen.gd`
+
+Commands:
+```powershell
+Get-Content .\reverse-output\assets\derived\ui_layout\canvas_layout_inventory.csv -TotalCount 24
+.\tools\Godot\Godot_console.exe --path .\godot-project --headless --quit-after 11 -- --restored-startup --auto-enter-ingame
+.\capture-gameplay.bat
+.\capture-startup.bat
+.\run-game.bat --headless --quit-after 9
+```
+
+Findings:
+- `Reload.unity` contains the first visible loading scene root: `Canvas`, `CanvasScaler`, `Canvas/SafeArea`, and `Canvas/UILoading`.
+- Recovered `UILoading` child RectTransforms include `Btn_ContactUs`, left/right `Ver` labels, `Loading_Type`, `LogoArea`, `Ch`, and `LoadingBar`.
+- `Canvas/UILoading` is recorded with override sorting and sorting order `10`; support/version controls are sorting order `5`.
+- `run-game.bat` now follows `BootServices -> GameStartLoad -> ReloadScene -> RuntimeCanvas/SafeArea -> UILoading -> UISceneLoading -> UIMaidLobbyLoading -> UIOutGame`.
+
+Outputs:
+- `godot-project/scripts/reload_scene_reference_screen.gd`
+- `reverse-output/startup-captures/03-reloadscene.png`
+- `reverse-output/startup-captures/09-outgame.png`
+- `reverse-output/gameplay-captures/10-ingame.png`
+
+Follow-up:
+- Use native analysis to determine whether `RuntimeCanvas/SafeArea` should be shown before or after `Reload.unity` creation on the exact device build.
+
 Recommended next runs:
 
 1. Run Il2CppDumper or Cpp2IL on `libil2cpp.so` and `global-metadata.dat`.

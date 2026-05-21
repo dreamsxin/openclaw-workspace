@@ -153,7 +153,7 @@ Use the restored startup capture helper after any change to `UILoading`, `UIScen
 It runs:
 
 ```powershell
-.\tools\Godot\Godot_console.exe --path .\godot-project --resolution 540x960 --quit-after 360 -- --restored-startup --startup-capture-dir=D:\work\openclaw-workspace\arpg\merge\reverse-output\startup-captures
+.\tools\Godot\Godot_console.exe --path .\godot-project --resolution 540x960 --quit-after 480 -- --restored-startup --startup-capture-dir=D:\work\openclaw-workspace\arpg\merge\reverse-output\startup-captures
 ```
 
 Expected outputs:
@@ -161,12 +161,13 @@ Expected outputs:
 ```text
 reverse-output/startup-captures/01-bootservices.png
 reverse-output/startup-captures/02-gamestartload.png
-reverse-output/startup-captures/03-runtimecanvas.png
-reverse-output/startup-captures/04-uiloading.png
-reverse-output/startup-captures/05-uisceneloading.png
-reverse-output/startup-captures/06-uisceneloading-late.png
-reverse-output/startup-captures/07-maidlobbyloading.png
-reverse-output/startup-captures/08-outgame.png
+reverse-output/startup-captures/03-reloadscene.png
+reverse-output/startup-captures/04-runtimecanvas.png
+reverse-output/startup-captures/05-uiloading.png
+reverse-output/startup-captures/06-uisceneloading.png
+reverse-output/startup-captures/07-uisceneloading-late.png
+reverse-output/startup-captures/08-maidlobbyloading.png
+reverse-output/startup-captures/09-outgame.png
 ```
 
 Use the gameplay capture helper after any change to `UIOutGame` transitions, `UIInGame`, or portrait gameplay layout:
@@ -175,19 +176,20 @@ Use the gameplay capture helper after any change to `UIOutGame` transitions, `UI
 .\capture-gameplay.bat
 ```
 
-It runs the same restored startup flow with `--auto-enter-ingame` and writes `09-ingame.png` under `reverse-output/gameplay-captures/`.
+It runs the same restored startup flow with `--auto-enter-ingame` and writes `10-ingame.png` under `reverse-output/gameplay-captures/`.
 
 Checks:
 
 - `01-bootservices.png` should show the recovered pre-UI service order: runtime initialize hooks, `GameManager`, high score service, login/network gates, `ReloadManager`, and `UIManager`.
 - `02-gamestartload.png` should show the recovered `GameManager.OnGameStartLoad` operation order before the Reload scene becomes visible.
-- `03-runtimecanvas.png` should show the recovered runtime Canvas/SafeArea bootstrap structure before the first visible loading prefab.
-- `04-uiloading.png` should show the recovered app loading page and bottom progress bar.
-- `05-uisceneloading.png` should show the recovered `kokomi_Loading` Spine character, background, and progress bar.
-- `06-uisceneloading-late.png` should differ from `05-uisceneloading.png`; if the files are visually identical, inspect the baked frame clock and `SceneLoadingReferenceScreen._draw_spine_baked_animation`.
-- `07-maidlobbyloading.png` should show the recovered `UIMaidLobbyLoading` structural transition after scene loading.
-- `08-outgame.png` should show the first `UIOutGame` reference layer after startup: maid layer, dialog box, bottom buttons, and village rebuild progress bar.
-- `09-ingame.png` from `capture-gameplay.bat` should show the first portrait gameplay shell after `UIOutGame/InGameBtn`, with the board centered and bottom actions coming from the recovered `UIInGame` shell instead of standalone debug buttons.
+- `03-reloadscene.png` should show the recovered `Reload.unity` Canvas, CanvasScaler, SafeArea, and `UILoading` mount order.
+- `04-runtimecanvas.png` should show the recovered runtime Canvas/SafeArea bootstrap structure before the first visible loading prefab.
+- `05-uiloading.png` should show the recovered app loading page and bottom progress bar.
+- `06-uisceneloading.png` should show the recovered `kokomi_Loading` Spine character, background, and progress bar.
+- `07-uisceneloading-late.png` should differ from `06-uisceneloading.png`; if the files are visually identical, inspect the baked frame clock and `SceneLoadingReferenceScreen._draw_spine_baked_animation`.
+- `08-maidlobbyloading.png` should show the recovered `UIMaidLobbyLoading` structural transition after scene loading.
+- `09-outgame.png` should show the first `UIOutGame` reference layer after startup: maid layer, dialog box, bottom buttons, and village rebuild progress bar.
+- `10-ingame.png` from `capture-gameplay.bat` should show the first portrait gameplay shell after `UIOutGame/InGameBtn`, with the board centered and bottom actions coming from the recovered `UIInGame` shell instead of standalone debug buttons.
 - The `UIOutGame/InGameBtn` hit region should be clickable in `run-game.bat` and should enter the playable merge-board prototype. For headless validation, run `.\tools\Godot\Godot_console.exe --path .\godot-project --headless --quit-after 6 -- --restored-startup --auto-enter-ingame`.
 - If the second screen shows only the progress bar, first check UV handling. The baked Spine UVs are normalized `0..1`; do not multiply them by texture page size before passing them to Godot `draw_polygon`.
-- If `08-outgame.png` shows disassembled body parts, a Spine atlas page has been incorrectly drawn as a static portrait. Keep the maid area as a placeholder until the reusable Spine renderer is wired for LD maid assets.
+- If `09-outgame.png` shows disassembled body parts, a Spine atlas page has been incorrectly drawn as a static portrait. Keep the maid area as a placeholder until the reusable Spine renderer is wired for LD maid assets.

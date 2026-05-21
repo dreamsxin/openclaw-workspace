@@ -233,7 +233,8 @@ Success criteria:
 | T041 | Add runtime Canvas/SafeArea bootstrap stage | done | `run-game.bat` now begins with a recovered `Game.unity`/`UIManager.prefab` Canvas/SafeArea bootstrap visualization before `UILoading`; captures now include `01-runtimecanvas.png`, `06-outgame.png`, and gameplay `07-ingame.png` |
 | T042 | Add pre-UI boot services startup stage | done | `run-game.bat` now begins with a structural `RuntimeInitializeOnLoad`/`GameManager`/login/network/`ReloadManager` service stage before runtime Canvas bootstrap; captures now include `01-bootservices.png`, `07-outgame.png`, and gameplay `08-ingame.png` |
 | T043 | Add GameManager start-load operation stage | done | `run-game.bat` now inserts a `GameManager.OnGameStartLoad` operation stage between boot services and runtime Canvas bootstrap; captures now include `02-gamestartload.png`, `08-outgame.png`, and gameplay `09-ingame.png` |
-| T044 | Confirm native startup timings and first scene load chain | pending | Use Ghidra on `GameManager.OnGameStartLoad`, `PlatformLoginManager.CheckPlatformLogin`, `GameManager.CheckNetwork`, `ReloadManager.LoadScene`, and `UIManager.Initialize` |
+| T044 | Add Reload scene mount stage | done | `run-game.bat` now inserts a `Reload.unity` Canvas/SafeArea/UILoading mount stage between `GameStartLoad` and runtime Canvas bootstrap; captures now include `03-reloadscene.png`, `09-outgame.png`, and gameplay `10-ingame.png` |
+| T045 | Confirm native startup timings and first scene load chain | pending | Use Ghidra on `GameManager.OnGameStartLoad`, `PlatformLoginManager.CheckPlatformLogin`, `GameManager.CheckNetwork`, `ReloadManager.LoadScene`, and `UIManager.Initialize` |
 
 ## Tool Acquisition Options
 

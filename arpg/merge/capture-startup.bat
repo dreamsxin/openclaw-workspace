@@ -23,7 +23,7 @@ if exist "%CAPTURE_DIR%" (
 )
 
 pushd "%ROOT%" >nul
-"%GODOT%" --path "%PROJECT%" --resolution 540x960 --quit-after 360 %* -- --restored-startup --startup-capture-dir="%CAPTURE_DIR%"
+"%GODOT%" --path "%PROJECT%" --resolution 540x960 --quit-after 480 %* -- --restored-startup --startup-capture-dir="%CAPTURE_DIR%"
 set "EXIT_CODE=%ERRORLEVEL%"
 popd >nul
 
