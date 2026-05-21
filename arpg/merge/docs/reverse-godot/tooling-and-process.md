@@ -1621,6 +1621,38 @@ Follow-up:
 - Use the AssetStudio/AssetRipper sprite inventory to map the original out-game background, home entry, and app navigation sprites before replacing the drawn placeholder shapes.
 - Promote the first visible missing surfaces into dedicated Godot reference shells, starting with `MaidLobby` and maid interaction because those are already exposed by `UIOutGame` hit regions.
 
+## 2026-05-21 - UIMaidLobby Shell First Pass
+
+Inputs:
+- `reverse-output/assets/assetripper-main/ExportedProject/Assets/Resources/prefabs/ui/UIMaidLobby.prefab`
+- `reverse-output/assets/assetripper-main/ExportedProject/Assets/Resources/prefabs/ui/popup/outgame/UIPopup_MaidLobbySelect.prefab`
+- `reverse-output/il2cpp/2026-05-21-101217-il2cppdumper/dump.cs`
+- `godot-project/data/characters/maids.json`
+- `godot-project/scripts/main.gd`
+
+Commands:
+```powershell
+rg -n "UIMaidLobby|UIPopup_MaidLobbySelect|UIOutGame\\$\\$OnClick_MaidLobbyBtn|UIOutGame\\$\\$SetMaidLobby" .\reverse-output -S
+rg -n "m_Name: (BG|White|SpinePos|Gradient|Npc_Dialog|DialogBtn|Text_Dialog)" .\reverse-output\assets\assetripper-main\ExportedProject\Assets\Resources\prefabs\ui\UIMaidLobby.prefab -C 2
+.\tools\Godot\Godot_console.exe --headless --path .\godot-project --quit-after 9 -- --restored-startup --auto-enter-maid-lobby
+```
+
+Findings:
+- `UIMaidLobby.prefab` is a compact target with `BG`, `White`, `SpinePos`, `Gradient`, `Npc_Dialog`, and `DialogBtn`; it is separate from the earlier `UIMaidLobbyLoading` transition screen.
+- IL2CPP exposes `UIMaidLobby.Init`, `UIMaidLobby.OnClick_ShowDialog`, `UIOutGame.OnClick_MaidLobbyBtn`, and `UIOutGame.SetMaidLobby`, which confirms the first home-page Maid button switches to a lobby state rather than directly opening a popup.
+- `UIPopup_MaidLobbySelect.prefab` contains `Panel`, `TextTitle`, `Btn_Close`, and `MaidList`, so maid selection should be the next dedicated shell after the main lobby surface.
+- Godot now routes `UIOutGame/MaidLobbyBtn` into `MaidLobbyReferenceScreen`, draws a first-pass lobby view with a committed maid stand-in, and supports Back/Talk/Select action regions.
+- Added `--auto-enter-maid-lobby` as a headless validation hook. With `--startup-capture-dir`, the automated path writes `10-maidlobby.png`.
+
+Outputs:
+- `godot-project/scripts/maid_lobby_reference_screen.gd`
+- `godot-project/scripts/main.gd`
+
+Follow-up:
+- Build `UIPopup_MaidLobbySelect` from its recovered RectTransforms and wire it to the `Select` region.
+- Replace the `UIMaidLobby` stand-in with the reusable LD maid Spine renderer when T027 is generalized beyond loading-screen Spine.
+- Decode dialog candidates for `UIMaidLobby.OnClick_ShowDialog` and replace the temporary Talk status with a real dialog popup.
+
 Recommended next runs:
 
 1. Run Il2CppDumper or Cpp2IL on `libil2cpp.so` and `global-metadata.dat`.
