@@ -227,6 +227,7 @@ Success criteria:
 | T035 | Wire UIOutGame entry into playable prototype | done | `OutGameReferenceScreen` exposes recovered `InGameBtn`, `MaidLobbyBtn`, and `Btn_ToInteraction` hit regions; `run-game.bat` now reaches clickable out-game and `InGameBtn` transitions into the merge board |
 | T036 | Add restored UIInGame shell for portrait gameplay | done | `InGameReferenceShell` draws recovered `UIInGame` top/request/bottom regions; `run-game.bat` portrait gameplay now centers the 7x7 board and hides desktop debug panels |
 | T037 | Wire first UIInGame action regions | done | `InGameReferenceShell` exposes recovered bottom action hit regions; Produce reuses current producer logic, Bag reports pending inventory restore, and Cafe returns to `UIOutGame` |
+| T038 | Add gameplay capture and portrait action polish | done | `capture-gameplay.bat` records startup plus `05-ingame.png`; portrait `run-game.bat` now hides the legacy debug Produce button so bottom actions are driven by recovered `UIInGame` hit regions |
 
 ## Tool Acquisition Options
 

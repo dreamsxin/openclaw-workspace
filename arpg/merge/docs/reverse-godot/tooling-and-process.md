@@ -1269,6 +1269,34 @@ Follow-up:
 - Replace the Produce fallback region with the exact original button once the correct `UIBlockInfo` action mapping is confirmed from runtime code.
 - Restore the inventory popup/list after request/order and inventory data are mapped.
 
+## 2026-05-21 - Gameplay Capture and Portrait Action Polish
+
+Inputs:
+- `godot-project/scripts/main.gd`
+- `capture-startup.bat`
+- recovered `UIInGame` hit regions in `godot-project/data/ui_layout_reference.json`
+
+Commands:
+```powershell
+.\tools\Godot\Godot_console.exe --path .\godot-project --headless --quit-after 6 -- --restored-startup --auto-enter-ingame
+.\capture-startup.bat
+.\capture-gameplay.bat
+```
+
+Outputs:
+- `capture-gameplay.bat`
+- `reverse-output/gameplay-captures/05-ingame.png`
+
+Findings:
+- `capture-gameplay.bat` records the restored startup flow and automatically enters `UIInGame` for visual regression checks.
+- `main.gd` now captures `05-ingame.png` when the recovered `UIOutGame/InGameBtn` path enters gameplay with `--startup-capture-dir`.
+- Portrait gameplay hides the older standalone Produce debug button so Produce, Bag, and Cafe actions are driven by recovered `UIInGame` shell hit regions.
+- Selection/status labels ignore mouse input, preventing helper text from blocking bottom-shell interaction.
+
+Follow-up:
+- Add exact recovered sprites/textures for `UIInGame` bottom action buttons after sprite GUID mapping is complete.
+- Add `06-inventory.png` once the recovered inventory popup is wired.
+
 Recommended next runs:
 
 1. Run Il2CppDumper or Cpp2IL on `libil2cpp.so` and `global-metadata.dat`.

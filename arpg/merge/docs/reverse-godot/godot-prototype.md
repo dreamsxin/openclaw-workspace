@@ -38,6 +38,12 @@ Capture restored startup screenshots:
 .\capture-startup.bat
 ```
 
+Capture the restored startup flow and automatically enter the first gameplay shell:
+
+```powershell
+.\capture-gameplay.bat
+```
+
 Equivalent direct command:
 
 ```powershell
@@ -154,6 +160,12 @@ reverse-output/startup-captures/03-uisceneloading-late.png
 reverse-output/startup-captures/04-outgame.png
 ```
 
+`capture-gameplay.bat` uses the same startup capture hook plus `--auto-enter-ingame` and writes the gameplay verification set to `reverse-output/gameplay-captures/`, including:
+
+```text
+reverse-output/gameplay-captures/05-ingame.png
+```
+
 Use this whenever loading-screen layout or Spine rendering changes. The direct equivalent is:
 
 ```powershell
@@ -164,7 +176,7 @@ The latest `UISceneLoading` fix was verified with these captures. The baked Spin
 
 `UIOutGame` is currently a structural reconstruction layer rather than a final screen. It uses the recovered `UIOutGame.prefab` RectTransforms for `UIMaidLD`, `Npc_Dialog`, `InGameBtn`, `MaidLobbyBtn`, and `UIVillageReBuild/Fillbar`. `InGameBtn`, `MaidLobbyBtn`, and `Btn_ToInteraction` now have recovered hit regions; only `InGameBtn` is wired to a working scene transition. The maid LD character area is an explicit placeholder because the recovered maid LD assets are Spine atlas pages, not complete static portraits; replacing it requires the reusable Spine character renderer planned under T027.
 
-`UIInGame` now has a first gameplay shell in `run-game.bat` mode. `InGameReferenceShell` reads the recovered `UIInGame` RectTransforms and draws the top wallet bar plus candidate `Request`, `Bottom/UIBlockInfo`, inventory, and lobby regions behind the playable board. In the 540 x 960 portrait window, the 7x7 board is centered and the older desktop debug panels are hidden so the restored path remains playable after `UIOutGame/InGameBtn`. The shell exposes first hit regions for Produce, Bag, and Cafe; Produce calls the current recovered producer logic, Bag reports the pending inventory restore, and Cafe returns to `UIOutGame`.
+`UIInGame` now has a first gameplay shell in `run-game.bat` mode. `InGameReferenceShell` reads the recovered `UIInGame` RectTransforms and draws the top wallet bar plus candidate `Request`, `Bottom/UIBlockInfo`, inventory, and lobby regions behind the playable board. In the 540 x 960 portrait window, the 7x7 board is centered and the older desktop debug panels are hidden so the restored path remains playable after `UIOutGame/InGameBtn`. The legacy standalone Produce button is hidden in portrait mode; Produce, Bag, and Cafe now route through recovered `UIInGame` bottom hit regions. Produce calls the current recovered producer logic, Bag reports the pending inventory restore, and Cafe returns to `UIOutGame`.
 
 Imported character PNGs require Godot import metadata. Regenerate it after adding new copied character images with:
 

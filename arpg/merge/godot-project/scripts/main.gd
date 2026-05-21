@@ -202,6 +202,7 @@ func _build_ui() -> void:
 	selected_label = Label.new()
 	selected_label.position = Vector2(34, 602)
 	selected_label.size = Vector2(260, 40)
+	selected_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	selected_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	selected_label.add_theme_font_size_override("font_size", 14)
 	gameplay_root.add_child(selected_label)
@@ -210,6 +211,7 @@ func _build_ui() -> void:
 	status_label.text = "Ready."
 	status_label.position = Vector2(34, 648)
 	status_label.size = Vector2(260, 48)
+	status_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	status_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	status_label.add_theme_font_size_override("font_size", 16)
 	gameplay_root.add_child(status_label)
@@ -266,7 +268,7 @@ func _process(delta: float) -> void:
 		_maybe_capture_startup_frame("04-outgame", RESTORED_APP_LOADING_SECONDS + RESTORED_SCENE_LOADING_SECONDS)
 		if auto_enter_ingame and not auto_enter_ingame_done:
 			auto_enter_ingame_done = true
-			call_deferred("_enter_gameplay_from_out_game")
+			call_deferred("_auto_enter_gameplay_after_capture")
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_RESIZED:
@@ -532,6 +534,11 @@ func _enter_gameplay_from_out_game() -> void:
 	_set_gameplay_visible(true)
 	_apply_gameplay_layout()
 	_set_status("Entered recovered merge gameplay from UIOutGame/InGameBtn.")
+	_maybe_capture_ingame_frame()
+
+func _auto_enter_gameplay_after_capture() -> void:
+	await RenderingServer.frame_post_draw
+	_enter_gameplay_from_out_game()
 
 func _return_to_out_game_from_ingame() -> void:
 	_set_gameplay_visible(false)
@@ -553,6 +560,8 @@ func _apply_gameplay_layout() -> void:
 		_layout_control(selected_label, Vector2(PORTRAIT_BOARD_MARGIN, 670), Vector2(viewport_size.x - PORTRAIT_BOARD_MARGIN * 2.0, 54), 14)
 		_layout_control(status_label, Vector2(PORTRAIT_BOARD_MARGIN, 726), Vector2(viewport_size.x - PORTRAIT_BOARD_MARGIN * 2.0, 54), 14)
 		_layout_control(produce_button, Vector2(PORTRAIT_BOARD_MARGIN, 790), Vector2(150, 40), 0)
+		if produce_button != null:
+			produce_button.visible = false
 		_hide_desktop_side_panels(true)
 	else:
 		cell_size = CELL_SIZE
@@ -561,6 +570,8 @@ func _apply_gameplay_layout() -> void:
 		_layout_control(selected_label, Vector2(34, 602), Vector2(260, 40), 14)
 		_layout_control(status_label, Vector2(34, 648), Vector2(260, 48), 16)
 		_layout_control(produce_button, Vector2(34, 340), Vector2(180, 40), 0)
+		if produce_button != null:
+			produce_button.visible = true
 		_hide_desktop_side_panels(false)
 	board_layer.position = board_origin
 	block_layer.position = board_origin
@@ -649,6 +660,12 @@ func _maybe_capture_startup_frame(label: String, threshold_seconds: float) -> vo
 		return
 	startup_capture_flags[label] = true
 	call_deferred("_capture_startup_frame", label)
+
+func _maybe_capture_ingame_frame() -> void:
+	if startup_capture_dir.is_empty() or startup_capture_flags.has("05-ingame"):
+		return
+	startup_capture_flags["05-ingame"] = true
+	call_deferred("_capture_startup_frame", "05-ingame")
 
 func _capture_startup_frame(label: String) -> void:
 	await RenderingServer.frame_post_draw
