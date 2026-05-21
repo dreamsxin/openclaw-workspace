@@ -26,6 +26,12 @@ Restored startup mode:
 .\run-game.bat
 ```
 
+Capture restored startup screenshots:
+
+```powershell
+.\capture-startup.bat
+```
+
 Equivalent direct command:
 
 ```powershell
@@ -132,6 +138,22 @@ The selector shows the source RectTransform count and writes the reference resol
 The loading-screen reference layer is shown by default on startup, and the left-side `Loading Ref` button toggles it. `run-game.bat` starts the project in restored startup mode, passes `--restored-startup`, and displays the startup flow full-window in a portrait-oriented 540 x 960 window. Restored startup mode now advances through `UILoading`, then `UISceneLoading`, then enters the current playable prototype.
 
 `UILoading` uses the recovered RectTransforms for the 1080 x 1920 root, background layers, logo area, loading bar, and version-label corners. `UISceneLoading` uses the recovered root/background structure and now draws `SkeletonGraphic (kokomi_Loading)` from official Spine-runtime output. The original `.atlas.txt`, `.skel.bytes`, and texture pages are copied under `godot-project/assets/spine/loading/kokomi_Loading/`; `bake_kokomi_loading_spine.mjs` uses `@esotericsoftware/spine-core@4.2.43` to parse the binary skeleton, apply the `Idle` animation, and write `kokomi_Loading.baked.json` with exact draw order, UVs, triangles, and world vertices for 141 frames at 30 FPS. Godot renders those baked frames directly, with the older `kokomi_Loading.rig.json` path kept only as a fallback.
+
+Startup screenshot capture is built into `scripts/main.gd` behind the user argument `--startup-capture-dir=<path>`. `capture-startup.bat` wraps the full command and writes:
+
+```text
+reverse-output/startup-captures/01-uiloading.png
+reverse-output/startup-captures/02-uisceneloading.png
+reverse-output/startup-captures/03-uisceneloading-late.png
+```
+
+Use this whenever loading-screen layout or Spine rendering changes. The direct equivalent is:
+
+```powershell
+.\tools\Godot\Godot_console.exe --path .\godot-project --resolution 540x960 --quit-after 360 -- --restored-startup --startup-capture-dir=D:\work\openclaw-workspace\arpg\merge\reverse-output\startup-captures
+```
+
+The latest `UISceneLoading` fix was verified with these captures. The baked Spine UVs are normalized `0..1` coordinates, so Godot must pass them directly to `draw_polygon`; multiplying by texture page size makes the second screen render as a blank progress-only view.
 
 Imported character PNGs require Godot import metadata. Regenerate it after adding new copied character images with:
 

@@ -219,7 +219,8 @@ Success criteria:
 | T027 | Implement Spine character render path | in progress | `kokomi_Loading.skel.bytes` is parsed by official `@esotericsoftware/spine-core@4.2.43`; Idle is baked to exact world-vertex frames, rendered through Godot textured polygons with normalized UVs, and verified by startup screenshots; reusable runtime path and Interaction playback still pending |
 | T028 | Inventory original Unity UI prefab layouts | done | 1,137 UI prefabs and 84,034 RectTransforms indexed in `ui-layout-analysis.md` |
 | T029 | Map startup UI flow and Canvas scaling | in progress | startup focus layout details generated and converted into `godot-project/data/ui_layout_reference.json`; CanvasScaler/SafeArea runtime confirmation still pending |
-| T030 | Build first Godot UI layout reference screens | in progress | `run-game.bat` restored startup mode now flows through recovered `UILoading` and `UISceneLoading`; loading fill now uses the root `LoadingBar` rect instead of child-local coordinates; remaining screens still pending |
+| T030 | Build first Godot UI layout reference screens | in progress | `run-game.bat` restored startup mode now flows through recovered `UILoading` and `UISceneLoading`; loading fill uses the root `LoadingBar` rect, `kokomi_Loading` renders with normalized UVs, and `capture-startup.bat` records regression screenshots; remaining screens still pending |
+| T031 | Add repeatable startup visual regression capture | done | `capture-startup.bat`, `--startup-capture-dir=<path>`, and workflow docs for `01-uiloading.png`, `02-uisceneloading.png`, `03-uisceneloading-late.png` |
 
 ## Tool Acquisition Options
 
