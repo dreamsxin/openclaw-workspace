@@ -171,6 +171,7 @@ func _build_ui() -> void:
 	_refresh_selection()
 	_refresh_character_panel()
 	_refresh_ui_layout_panel(false)
+	_show_loading_reference()
 
 func _build_character_panel() -> void:
 	var title := Label.new()
@@ -272,7 +273,7 @@ func _build_loading_reference_screen() -> void:
 	loading_reference_screen.position = Vector2(320, 24)
 	loading_reference_screen.size = Vector2(650, 672)
 	loading_reference_screen.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	loading_reference_screen.visible = false
+	loading_reference_screen.visible = loading_reference_visible
 	add_child(loading_reference_screen)
 
 func _make_currency_label(icon_name: String, pos: Vector2) -> Label:
@@ -334,14 +335,23 @@ func _refresh_ui_layout_panel(write_status: bool) -> void:
 func _toggle_loading_reference() -> void:
 	if loading_reference_screen == null:
 		return
+	loading_reference_visible = not loading_reference_visible
+	_apply_loading_reference_visibility()
+	_set_status("Loading reference %s." % ("shown" if loading_reference_visible else "hidden"))
+
+func _show_loading_reference() -> void:
+	loading_reference_visible = true
+	_apply_loading_reference_visibility()
+
+func _apply_loading_reference_visibility() -> void:
+	if loading_reference_screen == null:
+		return
 	var loading_source := _ui_layout_source_by_name("UILoading")
 	if loading_source.is_empty():
-		_set_status("UILoading reference data is missing.")
+		loading_reference_screen.visible = false
 		return
-	loading_reference_visible = not loading_reference_visible
-	loading_reference_screen.visible = loading_reference_visible
 	loading_reference_screen.call("set_source", loading_source)
-	_set_status("Loading reference %s." % ("shown" if loading_reference_visible else "hidden"))
+	loading_reference_screen.visible = loading_reference_visible
 
 func _ui_layout_source_by_name(source_name: String) -> Dictionary:
 	for source in ui_layout_sources:

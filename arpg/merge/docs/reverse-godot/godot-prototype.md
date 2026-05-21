@@ -123,7 +123,7 @@ Use `Next UI` to cycle through recovered startup/root layout sources:
 
 The selector shows the source RectTransform count and writes the reference resolution plus key node sizes to the status panel. A small portrait wireframe preview draws the first key RectTransforms in the 1080 x 1920 reference space so original layouts can be compared visually while the actual Godot screens are still being rebuilt.
 
-The left-side `Loading Ref` button toggles the first rebuilt loading-screen reference layer. It uses the recovered `UILoading` RectTransforms for the 1080 x 1920 root, background layers, logo area, loading bar, and version-label corners. The current layer now uses recovered PNGs for the background/logo/loading fill where available, while Spine logo renderer behavior is still represented as a static image fallback.
+The loading-screen reference layer is shown by default on startup, and the left-side `Loading Ref` button toggles it. It uses the recovered `UILoading` RectTransforms for the 1080 x 1920 root, background layers, logo area, loading bar, and version-label corners. The current layer now uses recovered PNGs for the background/logo/loading fill where available, while Spine logo renderer behavior is still represented as a static image fallback.
 
 Imported character PNGs require Godot import metadata. Regenerate it after adding new copied character images with:
 
