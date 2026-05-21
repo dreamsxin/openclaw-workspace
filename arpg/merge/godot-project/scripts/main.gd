@@ -726,6 +726,7 @@ func _apply_out_game_reference_visibility() -> void:
 		out_game_reference_screen.visible = false
 		return
 	out_game_reference_screen.call("set_source", out_game_source)
+	out_game_reference_screen.call("set_wallet", board.wallet)
 	out_game_reference_screen.visible = out_game_reference_visible
 
 func _set_gameplay_visible(next_visible: bool) -> void:
@@ -1176,6 +1177,8 @@ func _refresh_wallet() -> void:
 	jewel_label.text = str(board.wallet.get("jewel", 0))
 	if ingame_reference_shell != null:
 		ingame_reference_shell.call("set_wallet", board.wallet)
+	if out_game_reference_screen != null:
+		out_game_reference_screen.call("set_wallet", board.wallet)
 
 func _refresh_board() -> void:
 	if board_layer == null:

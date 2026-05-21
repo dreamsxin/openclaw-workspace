@@ -238,6 +238,8 @@ Success criteria:
 | T046 | Add first recovered inventory popup shell | done | `UIInGame` Bag now opens a top-level `UIPopup_Inventory` structural shell with `ProduceInventory` and `NormalInventory` sections; `capture-gameplay.bat` now writes `11-inventory.png` |
 | T047 | Rebuild UIInGame bottom operation bar | done | `InGameReferenceShell` now uses recovered `Bottom` dimensions to draw Bag, Cafe, central `UIBlockInfo`, and first-pass `Btn_BoxOpen`/`Btn_Use`/`Btn_CoolTime` operation buttons; gameplay capture auto-selects a producer before `10-ingame.png` |
 | T048 | Add first UIInGame request strip | done | Recovered `Request/RequestList` evidence now drives a top request strip with quest card, reward slots, and skill placeholders; portrait mode hides leftover debug labels |
+| T049 | Restore first UIOutGame home shell | done | `OutGameReferenceScreen` now draws a first-pass home screen with top wallet HUD, cafe backdrop, village rebuild progress, maid stand-in/dialog, Merge/Maid entry buttons, and bottom app navigation; only `Merge` is functionally wired |
+| T050 | Rebuild remaining out-game interaction surfaces | pending | Next visible gaps after the first home page: exact original cafe/furniture sprites, reusable LD maid Spine renderer, MaidLobby screen, maid interaction/dialog screen, shop/app popups, mail/settings, request detail, story/memory/collection, and exact asset-backed navigation icons |
 
 ## Tool Acquisition Options
 

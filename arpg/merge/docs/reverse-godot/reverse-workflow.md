@@ -188,7 +188,7 @@ Checks:
 - `06-uisceneloading.png` should show the recovered `kokomi_Loading` Spine character, background, and progress bar.
 - `07-uisceneloading-late.png` should differ from `06-uisceneloading.png`; if the files are visually identical, inspect the baked frame clock and `SceneLoadingReferenceScreen._draw_spine_baked_animation`.
 - `08-maidlobbyloading.png` should show the recovered `UIMaidLobbyLoading` structural transition after scene loading.
-- `09-outgame.png` should show the first `UIOutGame` reference layer after startup: maid layer, dialog box, bottom buttons, and village rebuild progress bar.
+- `09-outgame.png` should show the first `UIOutGame` home shell after startup: top wallet HUD, cafe backdrop, village rebuild progress, maid stand-in/dialog, Merge/Maid entry buttons, and bottom app navigation.
 - `10-ingame.png` from `capture-gameplay.bat` should show the first portrait gameplay shell after `UIOutGame/InGameBtn`, with the board centered, a producer auto-selected for regression, the recovered top `Request/RequestList` strip visible, and the recovered bottom operation bar showing Bag, Cafe, `UIBlockInfo`, `Btn_BoxOpen`, `Btn_Use`, and `Btn_CoolTime` instead of standalone debug buttons.
 - `11-inventory.png` from `capture-gameplay.bat` should show the first-pass `UIPopup_Inventory` shell opened by the recovered Bag hit region, with separate `ProduceInventory` and `NormalInventory` slot sections.
 - The `UIOutGame/InGameBtn` hit region should be clickable in `run-game.bat` and should enter the playable merge-board prototype. For headless validation, run `.\tools\Godot\Godot_console.exe --path .\godot-project --headless --quit-after 6 -- --restored-startup --auto-enter-ingame`.

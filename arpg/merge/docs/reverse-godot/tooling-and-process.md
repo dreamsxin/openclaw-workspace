@@ -1585,6 +1585,42 @@ Follow-up:
 - Decode `Table_Request` and `RequestDataManager` enough to replace temporary selected-block request payloads with real request/order rows.
 - Map original request/reward sprites and determine which `Grid_Request*` variant is visible for normal, event, urgent, complete, and dormitory request states.
 
+## 2026-05-21 - UIOutGame Home Shell First Pass
+
+Inputs:
+- `reverse-output/assets/assetripper-main/ExportedProject/Assets/Resources/prefabs/ui/UIOutGame.prefab`
+- `godot-project/data/ui_layout_reference.json`
+- `godot-project/scripts/out_game_reference_screen.gd`
+- `godot-project/assets/characters/maid_costume/Cos_Maid01_Casual_SD.png`
+- `godot-project/assets/sprites/CURRENCY_AP.png`, `CURRENCY_GOLD.png`, `CURRENCY_JEWEL.png`
+
+Commands:
+```powershell
+rg -n "UIOutGame|UIMaidLD|Npc_Dialog|InGameBtn|MaidLobbyBtn|UIVillageReBuild|FurnitureQuest" .\godot-project .\docs -S
+.\tools\Godot\Godot_console.exe --headless --path .\godot-project --quit-after 9 -- --restored-startup
+.\capture-startup.bat
+```
+
+Findings:
+- The first home page was previously still a structural overlay: visible controls existed, but it did not read as a real out-game home screen.
+- Recovered `UIOutGame` anchors still identify the high-value homepage controls: `UIMaidLD`, `Npc_Dialog`, `InGameBtn`, `MaidLobbyBtn`, `Btn_ToInteraction`, `FurnitureQuest`, and `UIVillageReBuild/Fillbar`.
+- Godot now composes these into a first-pass portrait home shell: top wallet HUD, cafe backdrop, village rebuild progress, maid stand-in/dialog, Merge/Maid entry buttons, and bottom app navigation.
+- `main.gd` now forwards the live wallet model to `OutGameReferenceScreen`, so the first homepage and in-game HUD stay consistent.
+
+Current missing interaction surfaces:
+- Exact original cafe/furniture/background sprites for `UIOutGame`.
+- Reusable LD maid Spine render path for the first homepage.
+- `MaidLobby`, maid interaction/dialog, shop/app popups, mail/settings, request detail, story/memory/collection, and exact asset-backed bottom navigation icons.
+
+Outputs:
+- `godot-project/scripts/out_game_reference_screen.gd`
+- `godot-project/scripts/main.gd`
+- `reverse-output/startup-captures/09-outgame.png`
+
+Follow-up:
+- Use the AssetStudio/AssetRipper sprite inventory to map the original out-game background, home entry, and app navigation sprites before replacing the drawn placeholder shapes.
+- Promote the first visible missing surfaces into dedicated Godot reference shells, starting with `MaidLobby` and maid interaction because those are already exposed by `UIOutGame` hit regions.
+
 Recommended next runs:
 
 1. Run Il2CppDumper or Cpp2IL on `libil2cpp.so` and `global-metadata.dat`.
