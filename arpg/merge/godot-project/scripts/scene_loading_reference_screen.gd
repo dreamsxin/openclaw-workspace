@@ -3,65 +3,8 @@ extends Control
 
 const SPINE_ASSET_DIR := "res://assets/spine/loading/kokomi_Loading/"
 const SPINE_ATLAS_PATH := SPINE_ASSET_DIR + "kokomi_Loading.atlas.txt"
+const SPINE_RIG_PATH := SPINE_ASSET_DIR + "kokomi_Loading.rig.json"
 const SPINE_PAGE_NAMES := ["kokomi_Loading_2.png", "kokomi_Loading.png"]
-const SPINE_DRAW_ORDER := [
-	"Background/Background",
-	"Back_Ribbon_2",
-	"Back_Ribbon_5",
-	"Twintails_L_1",
-	"Twintails_R_2",
-	"Twintails_L_2",
-	"Skirt_Back",
-	"Leg_Thigh_R",
-	"Leg_Thigh_L",
-	"Leg_Calf_R",
-	"Leg_Calf_L",
-	"Leg_Foot_R",
-	"Leg_Foot_L",
-	"Skrit_Frill_Back",
-	"Skirt_Front",
-	"Skirt_Frill_Front",
-	"Chest",
-	"Breast",
-	"Apron_Back",
-	"Apron_Front",
-	"Shoulder_Frill_L_Back",
-	"Shoulder_Frill_R",
-	"Arm_R_Upper",
-	"Arm_R_Lower",
-	"Hand_R",
-	"Sleeves_L_Puff",
-	"Arm_L_Upper",
-	"Arm_L_Lower",
-	"Hand_L",
-	"Neck",
-	"Head",
-	"Ear",
-	"Hairband",
-	"Hairband_Frill",
-	"Hair_Bang_1",
-	"Hair_Bang_2",
-	"Hair_Bang_3",
-	"Side_Hair_L_Upper",
-	"Side_Hair_R_Upper",
-	"Eye_Whites_L",
-	"Eye_Whites_R",
-	"Eye_Iris_L",
-	"Eye_Iris_R",
-	"Eye_Pupil_L",
-	"Eye_Pupil_R",
-	"Eye_Highlights_L_1",
-	"Eye_Highlights_R_1",
-	"Eyelashes_Lower_L",
-	"Eyelashes_Lower_R",
-	"Eyelsahes_Upper_L",
-	"Eyelsahes_Upper_R",
-	"Eyebrow",
-	"Nose",
-	"Mouth",
-	"Cafe_Table",
-	"Dishcloth_Front",
-]
 
 var source: Dictionary = {}
 var progress := 0.0
@@ -69,6 +12,10 @@ var message := "Scene loading..."
 var spine_time := 0.0
 var spine_pages: Dictionary = {}
 var spine_regions: Dictionary = {}
+var spine_rig: Dictionary = {}
+var spine_bones: Dictionary = {}
+var spine_attachments: Array = []
+var spine_draw_order: Array = []
 var spine_assets_ready := false
 
 func _ready() -> void:
@@ -182,6 +129,10 @@ func _vec2(value) -> Vector2:
 func _load_spine_assets() -> void:
 	spine_pages.clear()
 	spine_regions.clear()
+	spine_rig.clear()
+	spine_bones.clear()
+	spine_attachments.clear()
+	spine_draw_order.clear()
 	for page_name in SPINE_PAGE_NAMES:
 		var texture := load(SPINE_ASSET_DIR + page_name)
 		if texture != null:
@@ -224,7 +175,27 @@ func _load_spine_assets() -> void:
 			var region: Dictionary = spine_regions[current_region]
 			region["rotate"] = value
 			spine_regions[current_region] = region
-	spine_assets_ready = spine_regions.has("Head") and spine_regions.has("Cafe_Table")
+	_load_spine_rig()
+	spine_assets_ready = spine_regions.has("Head") and spine_regions.has("Cafe_Table") and not spine_attachments.is_empty()
+
+func _load_spine_rig() -> void:
+	if not FileAccess.file_exists(SPINE_RIG_PATH):
+		return
+	var file := FileAccess.open(SPINE_RIG_PATH, FileAccess.READ)
+	if file == null:
+		return
+	var parsed = JSON.parse_string(file.get_as_text())
+	if typeof(parsed) != TYPE_DICTIONARY:
+		return
+	spine_rig = parsed
+	var bones: Array = spine_rig.get("bones", [])
+	for bone in bones:
+		var bone_name := String(bone.get("name", ""))
+		if bone_name.is_empty():
+			continue
+		spine_bones[bone_name] = bone
+	spine_attachments = spine_rig.get("attachments", [])
+	spine_draw_order = spine_rig.get("draw_order", [])
 
 func _parse_atlas_numbers(value: String) -> Array[float]:
 	var numbers: Array[float] = []
@@ -235,15 +206,14 @@ func _parse_atlas_numbers(value: String) -> Array[float]:
 func _draw_spine_region_animation(target: Rect2) -> void:
 	var rig_origin := target.position + Vector2(target.size.x * 0.5, target.size.y * 0.5)
 	var scale_factor := minf(target.size.x / 1220.0, target.size.y / 1700.0)
-	var breath := sin(spine_time * 2.2)
-	var sway := sin(spine_time * 1.35)
-	var blink := fposmod(spine_time, 3.4) > 3.16
+	var pose := _evaluate_spine_pose()
 
-	for region_name in SPINE_DRAW_ORDER:
-		_draw_spine_region(region_name, target, rig_origin, scale_factor, breath, sway, blink)
+	for attachment in spine_attachments:
+		_draw_spine_attachment(attachment, target, rig_origin, scale_factor, pose)
 	draw_string(ThemeDB.fallback_font, target.position + Vector2(0, target.size.y - 28), "SkeletonGraphic (kokomi_Loading)", HORIZONTAL_ALIGNMENT_CENTER, target.size.x, 16, Color(0.9, 0.98, 1.0, 0.82))
 
-func _draw_spine_region(region_name: String, target: Rect2, rig_origin: Vector2, scale_factor: float, breath: float, sway: float, blink: bool) -> void:
+func _draw_spine_attachment(attachment: Dictionary, target: Rect2, rig_origin: Vector2, scale_factor: float, pose: Dictionary) -> void:
+	var region_name := String(attachment.get("region", ""))
 	if not spine_regions.has(region_name):
 		return
 	var region: Dictionary = spine_regions[region_name]
@@ -258,81 +228,65 @@ func _draw_spine_region(region_name: String, target: Rect2, rig_origin: Vector2,
 	var rotated := String(region.get("rotate", "")) == "90"
 	if rotated:
 		src_size = Vector2(bounds.size.y, bounds.size.x)
-	var dest := Rect2(_spine_region_position(region_name, src_size, rig_origin, scale_factor, breath, sway, blink), src_size * scale_factor)
+	var dest := Rect2(_spine_attachment_position(attachment, src_size, rig_origin, scale_factor, pose), src_size * scale_factor)
 	if region_name == "Background/Background":
 		dest = target.grow(-8.0)
-	if blink and region_name.begins_with("Eye_"):
+	if bool(pose.get("blink", false)) and region_name.begins_with("Eye_"):
 		dest.size.y = maxf(dest.size.y * 0.22, 2.0)
 		dest.position.y += bounds.size.y * scale_factor * 0.36
 
 	draw_texture_rect_region(spine_pages[page_name], dest, bounds, Color(1, 1, 1, 0.98), rotated, true)
 
-func _spine_region_position(region_name: String, src_size: Vector2, rig_origin: Vector2, scale_factor: float, breath: float, sway: float, blink: bool) -> Vector2:
-	var atlas_position := _canonical_spine_position(region_name)
-	var offset := _animated_spine_offset(region_name, breath, sway, blink)
+func _spine_attachment_position(attachment: Dictionary, src_size: Vector2, rig_origin: Vector2, scale_factor: float, pose: Dictionary) -> Vector2:
+	var bone_name := String(attachment.get("bone", "root"))
+	var bone_transform: Dictionary = pose.get("bones", {}).get(bone_name, {"position": Vector2.ZERO})
+	var local_position := _vec2_array(attachment.get("position", [0, 0]))
+	var atlas_position: Vector2 = bone_transform.get("position", Vector2.ZERO) + local_position
 	return Vector2(
-		(rig_origin.x + (atlas_position.x + offset.x) * scale_factor) - src_size.x * scale_factor * 0.5,
-		(rig_origin.y + (atlas_position.y + offset.y) * scale_factor) - src_size.y * scale_factor * 0.5
+		(rig_origin.x + atlas_position.x * scale_factor) - src_size.x * scale_factor * 0.5,
+		(rig_origin.y + atlas_position.y * scale_factor) - src_size.y * scale_factor * 0.5
 	)
 
-func _canonical_spine_position(region_name: String) -> Vector2:
-	if region_name == "Cafe_Table":
-		return Vector2(0, 520)
-	if region_name == "Dishcloth_Front":
-		return Vector2(180, 395)
-	if region_name.begins_with("Leg_Foot_L"):
-		return Vector2(-165, 445)
-	if region_name.begins_with("Leg_Foot_R"):
-		return Vector2(145, 448)
-	if region_name.begins_with("Leg_Calf_L"):
-		return Vector2(-145, 320)
-	if region_name.begins_with("Leg_Calf_R"):
-		return Vector2(120, 325)
-	if region_name.begins_with("Leg_Thigh_L"):
-		return Vector2(-108, 175)
-	if region_name.begins_with("Leg_Thigh_R"):
-		return Vector2(90, 180)
-	if region_name.begins_with("Skirt") or region_name.begins_with("Skrit"):
-		return Vector2(0, 120)
-	if region_name in ["Chest", "Breast", "Apron_Back", "Apron_Front", "Shoulder_Frill_Front"]:
-		return Vector2(0, -75)
-	if region_name.begins_with("Shoulder_Frill_L") or region_name.begins_with("Sleeves_L") or region_name.begins_with("Arm_L") or region_name == "Hand_L":
-		return Vector2(-205, -15)
-	if region_name.begins_with("Shoulder_Frill_R") or region_name.begins_with("Arm_R") or region_name == "Hand_R":
-		return Vector2(210, -5)
-	if region_name == "Neck":
-		return Vector2(0, -235)
-	if region_name == "Head" or region_name == "Ear":
-		return Vector2(0, -330)
-	if region_name.begins_with("Eye_") or region_name.begins_with("Eyel") or region_name.begins_with("Eyels") or region_name in ["Eyebrow", "Mouth", "Mouth_Closed", "Nose", "Nose_Highlights"]:
-		return Vector2(0, -335)
-	if region_name.begins_with("Hair_Bang") or region_name.begins_with("Hairband"):
-		return Vector2(0, -430)
-	if region_name.begins_with("Side_Hair_L") or region_name.begins_with("Twintails_L"):
-		return Vector2(-150, -260)
-	if region_name.begins_with("Side_Hair_R") or region_name.begins_with("Twintails_R"):
-		return Vector2(155, -260)
-	if region_name.begins_with("Back_Ribbon"):
-		return Vector2(0, -180)
-	return Vector2.ZERO
+func _evaluate_spine_pose() -> Dictionary:
+	var animation: Dictionary = spine_rig.get("animations", {}).get("loading_idle", {})
+	var channels: Dictionary = animation.get("bone_channels", {})
+	var global_bones: Dictionary = {}
+	for bone_name in spine_bones.keys():
+		_evaluate_bone_pose(String(bone_name), channels, global_bones)
+	var blink_data: Dictionary = animation.get("blink", {})
+	var blink_period := float(blink_data.get("period", 3.4))
+	var blink_start := float(blink_data.get("start", 3.16))
+	var blink_duration := float(blink_data.get("duration", 0.16))
+	var blink_time := fposmod(spine_time, blink_period)
+	return {
+		"bones": global_bones,
+		"blink": blink_time >= blink_start and blink_time <= blink_start + blink_duration,
+	}
 
-func _animated_spine_offset(region_name: String, breath: float, sway: float, blink: bool) -> Vector2:
-	var offset := Vector2(0, breath * -5.0)
-	if region_name == "Cafe_Table" or region_name.begins_with("Background"):
-		return Vector2.ZERO
-	if region_name.begins_with("Head") or region_name == "Ear":
-		return Vector2(sway * 9.0, breath * -8.0)
-	if region_name.begins_with("Eye_") or region_name.begins_with("Eyel") or region_name.begins_with("Eyels") or region_name in ["Eyebrow", "Mouth", "Mouth_Closed", "Nose", "Nose_Highlights"]:
-		return Vector2(sway * 9.0, breath * -8.0 + (8.0 if blink else 0.0))
-	if region_name.begins_with("Hair") or region_name.begins_with("Side_Hair") or region_name.begins_with("Twintails") or region_name.begins_with("Back_Ribbon"):
-		return Vector2(sway * 18.0, breath * -7.0)
-	if region_name.begins_with("Arm_L") or region_name == "Hand_L" or region_name.begins_with("Sleeves_L"):
-		return Vector2(sway * -8.0, breath * 6.0)
-	if region_name.begins_with("Arm_R") or region_name == "Hand_R":
-		return Vector2(sway * 8.0, breath * 6.0)
-	if region_name.begins_with("Skirt") or region_name.begins_with("Skrit") or region_name.begins_with("Apron"):
-		return Vector2(sway * 5.0, breath * 3.0)
-	return offset
+func _evaluate_bone_pose(bone_name: String, channels: Dictionary, global_bones: Dictionary) -> Dictionary:
+	if global_bones.has(bone_name):
+		return global_bones[bone_name]
+	var bone: Dictionary = spine_bones.get(bone_name, {})
+	var parent_name := String(bone.get("parent", ""))
+	var parent_position := Vector2.ZERO
+	if not parent_name.is_empty():
+		parent_position = _evaluate_bone_pose(parent_name, channels, global_bones).get("position", Vector2.ZERO)
+	var local_position := _vec2_array(bone.get("position", [0, 0]))
+	var channel: Dictionary = channels.get(bone_name, {})
+	var translate := _vec2_array(channel.get("translate", [0, 0]))
+	var frequency := float(channel.get("frequency", 1.0))
+	var phase := float(channel.get("phase", 0.0))
+	var wave := sin(spine_time * frequency + phase)
+	var result := {
+		"position": parent_position + local_position + translate * wave,
+	}
+	global_bones[bone_name] = result
+	return result
+
+func _vec2_array(value) -> Vector2:
+	if typeof(value) == TYPE_ARRAY:
+		return Vector2(float(value[0]) if value.size() > 0 else 0.0, float(value[1]) if value.size() > 1 else 0.0)
+	return Vector2.ZERO
 
 func _draw_spine_fallback(target: Rect2) -> void:
 	var center := target.position + target.size * 0.5

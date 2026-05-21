@@ -1,0 +1,1324 @@
+{
+  "schema": "openclaw-spine-rig-v1",
+  "source": {
+    "atlas": "godot-project/assets/spine/loading/kokomi_Loading/kokomi_Loading.atlas.txt",
+    "skeleton": "godot-project/assets/spine/loading/kokomi_Loading/kokomi_Loading.skel.bytes",
+    "note": "Derived bridge rig for Godot preview until exact Spine binary timeline playback is implemented."
+  },
+  "evidence": {
+    "spine_version": "4.2.43",
+    "string_count": 14163,
+    "bone_name_samples": [
+      {
+        "offset": 1702,
+        "name": "sub_root"
+      },
+      {
+        "offset": 1756,
+        "name": "Pelvis"
+      },
+      {
+        "offset": 1808,
+        "name": "Lower body_H"
+      },
+      {
+        "offset": 1862,
+        "name": "Skirt_H"
+      },
+      {
+        "offset": 1915,
+        "name": "Leg_Thigh_L_H"
+      },
+      {
+        "offset": 1970,
+        "name": "Leg_Thigh_R_H"
+      },
+      {
+        "offset": 2025,
+        "name": "body_1"
+      },
+      {
+        "offset": 2073,
+        "name": "body_2"
+      },
+      {
+        "offset": 2121,
+        "name": "nack"
+      },
+      {
+        "offset": 2167,
+        "name": "Back_Ribbon_H"
+      }
+    ],
+    "region_name_samples": [
+      {
+        "offset": 63,
+        "name": "Apron_Back"
+      },
+      {
+        "offset": 74,
+        "name": "Apron_Front"
+      },
+      {
+        "offset": 86,
+        "name": "Arm_L_Lower"
+      },
+      {
+        "offset": 98,
+        "name": "Arm_L_Upper"
+      },
+      {
+        "offset": 110,
+        "name": "Arm_R_Lower"
+      },
+      {
+        "offset": 122,
+        "name": "Arm_R_Upper"
+      },
+      {
+        "offset": 134,
+        "name": "Background/Background"
+      },
+      {
+        "offset": 170,
+        "name": "Back_Ribbon_2"
+      },
+      {
+        "offset": 212,
+        "name": "Back_Ribbon_5"
+      },
+      {
+        "offset": 292,
+        "name": "Breast"
+      },
+      {
+        "offset": 299,
+        "name": "Cafe_Table"
+      },
+      {
+        "offset": 310,
+        "name": "Chest"
+      },
+      {
+        "offset": 331,
+        "name": "Dishcloth_Front"
+      },
+      {
+        "offset": 347,
+        "name": "Ear"
+      },
+      {
+        "offset": 351,
+        "name": "Eyebrow"
+      },
+      {
+        "offset": 359,
+        "name": "Eyebrow"
+      },
+      {
+        "offset": 399,
+        "name": "Eyelashes_Lower_L"
+      },
+      {
+        "offset": 417,
+        "name": "Eyelashes_Lower_R"
+      },
+      {
+        "offset": 521,
+        "name": "Eyelsahes_Upper_L"
+      },
+      {
+        "offset": 539,
+        "name": "Eyelsahes_Upper_R"
+      },
+      {
+        "offset": 583,
+        "name": "Eye_Highlights_L_1"
+      },
+      {
+        "offset": 640,
+        "name": "Eye_Highlights_R_1"
+      },
+      {
+        "offset": 697,
+        "name": "Eye_Iris_L"
+      },
+      {
+        "offset": 708,
+        "name": "Eye_Iris_R"
+      },
+      {
+        "offset": 719,
+        "name": "Eye_Pupil_L"
+      },
+      {
+        "offset": 731,
+        "name": "Eye_Pupil_R"
+      },
+      {
+        "offset": 743,
+        "name": "Eye_Whites_L"
+      },
+      {
+        "offset": 776,
+        "name": "Eye_Whites_R"
+      },
+      {
+        "offset": 827,
+        "name": "Hairband"
+      },
+      {
+        "offset": 836,
+        "name": "Hairband_Frill"
+      },
+      {
+        "offset": 851,
+        "name": "Hair_Bang_1"
+      },
+      {
+        "offset": 863,
+        "name": "Hair_Bang_2"
+      },
+      {
+        "offset": 875,
+        "name": "Hair_Bang_3"
+      },
+      {
+        "offset": 1069,
+        "name": "Hand_L"
+      },
+      {
+        "offset": 1076,
+        "name": "Hand_R"
+      },
+      {
+        "offset": 1083,
+        "name": "Head"
+      },
+      {
+        "offset": 1088,
+        "name": "Leg_Calf_L"
+      },
+      {
+        "offset": 1099,
+        "name": "Leg_Calf_R"
+      },
+      {
+        "offset": 1110,
+        "name": "Leg_Foot_L"
+      },
+      {
+        "offset": 1121,
+        "name": "Leg_Foot_R"
+      },
+      {
+        "offset": 1132,
+        "name": "Leg_Thigh_L"
+      },
+      {
+        "offset": 1144,
+        "name": "Leg_Thigh_R"
+      },
+      {
+        "offset": 1156,
+        "name": "Mouth"
+      },
+      {
+        "offset": 1175,
+        "name": "Neck"
+      },
+      {
+        "offset": 1180,
+        "name": "Nose"
+      },
+      {
+        "offset": 1222,
+        "name": "Shoulder_Frill_L_Back"
+      },
+      {
+        "offset": 1244,
+        "name": "Shoulder_Frill_R"
+      },
+      {
+        "offset": 1296,
+        "name": "Side_Hair_L_Upper"
+      },
+      {
+        "offset": 1368,
+        "name": "Side_Hair_R_Upper"
+      },
+      {
+        "offset": 1386,
+        "name": "Skirt_Back"
+      },
+      {
+        "offset": 1397,
+        "name": "Skirt_Frill_Front"
+      },
+      {
+        "offset": 1415,
+        "name": "Skirt_Front"
+      },
+      {
+        "offset": 1427,
+        "name": "Skrit_Frill_Back"
+      },
+      {
+        "offset": 1475,
+        "name": "Sleeves_L_Puff"
+      },
+      {
+        "offset": 1515,
+        "name": "Twintails_L_1"
+      },
+      {
+        "offset": 1529,
+        "name": "Twintails_L_2"
+      },
+      {
+        "offset": 1599,
+        "name": "Twintails_R_2"
+      },
+      {
+        "offset": 6233,
+        "name": "Leg_Thigh_L"
+      },
+      {
+        "offset": 7603,
+        "name": "Leg_Thigh_R"
+      },
+      {
+        "offset": 8560,
+        "name": "Eye_Pupil_L"
+      },
+      {
+        "offset": 8737,
+        "name": "Eye_Highlights_L_1"
+      },
+      {
+        "offset": 9423,
+        "name": "Hairband_Frill"
+      },
+      {
+        "offset": 9653,
+        "name": "Twintails_R_2"
+      },
+      {
+        "offset": 12901,
+        "name": "Leg_Foot_R"
+      }
+    ]
+  },
+  "bones": [
+    {
+      "name": "root",
+      "parent": "",
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "background",
+      "parent": "root",
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "name": "table",
+      "parent": "root",
+      "position": [
+        0,
+        520
+      ]
+    },
+    {
+      "name": "pelvis",
+      "parent": "root",
+      "position": [
+        0,
+        120
+      ]
+    },
+    {
+      "name": "lower_body",
+      "parent": "pelvis",
+      "position": [
+        0,
+        45
+      ]
+    },
+    {
+      "name": "torso",
+      "parent": "pelvis",
+      "position": [
+        0,
+        -195
+      ]
+    },
+    {
+      "name": "neck",
+      "parent": "torso",
+      "position": [
+        0,
+        -160
+      ]
+    },
+    {
+      "name": "head",
+      "parent": "neck",
+      "position": [
+        0,
+        -95
+      ]
+    },
+    {
+      "name": "face",
+      "parent": "head",
+      "position": [
+        0,
+        -5
+      ]
+    },
+    {
+      "name": "hair_top",
+      "parent": "head",
+      "position": [
+        0,
+        -100
+      ]
+    },
+    {
+      "name": "hair_left",
+      "parent": "head",
+      "position": [
+        -150,
+        70
+      ]
+    },
+    {
+      "name": "hair_right",
+      "parent": "head",
+      "position": [
+        155,
+        70
+      ]
+    },
+    {
+      "name": "back_ribbon",
+      "parent": "torso",
+      "position": [
+        0,
+        -105
+      ]
+    },
+    {
+      "name": "left_arm",
+      "parent": "torso",
+      "position": [
+        -205,
+        60
+      ]
+    },
+    {
+      "name": "right_arm",
+      "parent": "torso",
+      "position": [
+        210,
+        70
+      ]
+    },
+    {
+      "name": "left_leg",
+      "parent": "lower_body",
+      "position": [
+        -145,
+        160
+      ]
+    },
+    {
+      "name": "right_leg",
+      "parent": "lower_body",
+      "position": [
+        120,
+        165
+      ]
+    },
+    {
+      "name": "left_foot",
+      "parent": "left_leg",
+      "position": [
+        -20,
+        125
+      ]
+    },
+    {
+      "name": "right_foot",
+      "parent": "right_leg",
+      "position": [
+        25,
+        123
+      ]
+    }
+  ],
+  "draw_order": [
+    "Background/Background",
+    "Back_Ribbon_2",
+    "Back_Ribbon_5",
+    "Twintails_L_1",
+    "Twintails_R_2",
+    "Twintails_L_2",
+    "Skirt_Back",
+    "Leg_Thigh_R",
+    "Leg_Thigh_L",
+    "Leg_Calf_R",
+    "Leg_Calf_L",
+    "Leg_Foot_R",
+    "Leg_Foot_L",
+    "Skrit_Frill_Back",
+    "Skirt_Front",
+    "Skirt_Frill_Front",
+    "Chest",
+    "Breast",
+    "Apron_Back",
+    "Apron_Front",
+    "Shoulder_Frill_L_Back",
+    "Shoulder_Frill_R",
+    "Arm_R_Upper",
+    "Arm_R_Lower",
+    "Hand_R",
+    "Sleeves_L_Puff",
+    "Arm_L_Upper",
+    "Arm_L_Lower",
+    "Hand_L",
+    "Neck",
+    "Head",
+    "Ear",
+    "Hairband",
+    "Hairband_Frill",
+    "Hair_Bang_1",
+    "Hair_Bang_2",
+    "Hair_Bang_3",
+    "Side_Hair_L_Upper",
+    "Side_Hair_R_Upper",
+    "Eye_Whites_L",
+    "Eye_Whites_R",
+    "Eye_Iris_L",
+    "Eye_Iris_R",
+    "Eye_Pupil_L",
+    "Eye_Pupil_R",
+    "Eye_Highlights_L_1",
+    "Eye_Highlights_R_1",
+    "Eyelashes_Lower_L",
+    "Eyelashes_Lower_R",
+    "Eyelsahes_Upper_L",
+    "Eyelsahes_Upper_R",
+    "Eyebrow",
+    "Nose",
+    "Mouth",
+    "Cafe_Table",
+    "Dishcloth_Front"
+  ],
+  "attachments": [
+    {
+      "region": "Background/Background",
+      "bone": "background",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Back_Ribbon_2",
+      "bone": "back_ribbon",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Back_Ribbon_5",
+      "bone": "back_ribbon",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Twintails_L_1",
+      "bone": "hair_left",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Twintails_R_2",
+      "bone": "hair_right",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Twintails_L_2",
+      "bone": "hair_left",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Skirt_Back",
+      "bone": "lower_body",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Leg_Thigh_R",
+      "bone": "right_leg",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Leg_Thigh_L",
+      "bone": "left_leg",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Leg_Calf_R",
+      "bone": "right_leg",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Leg_Calf_L",
+      "bone": "left_leg",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Leg_Foot_R",
+      "bone": "right_foot",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Leg_Foot_L",
+      "bone": "left_foot",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Skrit_Frill_Back",
+      "bone": "lower_body",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Skirt_Front",
+      "bone": "lower_body",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Skirt_Frill_Front",
+      "bone": "lower_body",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Chest",
+      "bone": "torso",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Breast",
+      "bone": "torso",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Apron_Back",
+      "bone": "torso",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Apron_Front",
+      "bone": "torso",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Shoulder_Frill_L_Back",
+      "bone": "left_arm",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Shoulder_Frill_R",
+      "bone": "right_arm",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Arm_R_Upper",
+      "bone": "right_arm",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Arm_R_Lower",
+      "bone": "right_arm",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Hand_R",
+      "bone": "right_arm",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Sleeves_L_Puff",
+      "bone": "left_arm",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Arm_L_Upper",
+      "bone": "left_arm",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Arm_L_Lower",
+      "bone": "left_arm",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Hand_L",
+      "bone": "left_arm",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Neck",
+      "bone": "neck",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Head",
+      "bone": "head",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Ear",
+      "bone": "head",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Hairband",
+      "bone": "hair_top",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Hairband_Frill",
+      "bone": "hair_top",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Hair_Bang_1",
+      "bone": "hair_top",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Hair_Bang_2",
+      "bone": "hair_top",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Hair_Bang_3",
+      "bone": "hair_top",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Side_Hair_L_Upper",
+      "bone": "hair_left",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Side_Hair_R_Upper",
+      "bone": "hair_right",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Eye_Whites_L",
+      "bone": "face",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Eye_Whites_R",
+      "bone": "face",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Eye_Iris_L",
+      "bone": "face",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Eye_Iris_R",
+      "bone": "face",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Eye_Pupil_L",
+      "bone": "face",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Eye_Pupil_R",
+      "bone": "face",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Eye_Highlights_L_1",
+      "bone": "face",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Eye_Highlights_R_1",
+      "bone": "face",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Eyelashes_Lower_L",
+      "bone": "face",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Eyelashes_Lower_R",
+      "bone": "face",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Eyelsahes_Upper_L",
+      "bone": "face",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Eyelsahes_Upper_R",
+      "bone": "face",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Eyebrow",
+      "bone": "face",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Nose",
+      "bone": "face",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Mouth",
+      "bone": "face",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Cafe_Table",
+      "bone": "table",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "region": "Dishcloth_Front",
+      "bone": "table",
+      "position": [
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0
+      ]
+    }
+  ],
+  "animations": {
+    "loading_idle": {
+      "duration": 3.4,
+      "bone_channels": {
+        "torso": {
+          "translate": [
+            0,
+            -5
+          ],
+          "frequency": 2.2,
+          "phase": 0.0
+        },
+        "neck": {
+          "translate": [
+            0,
+            -3
+          ],
+          "frequency": 2.2,
+          "phase": 0.1
+        },
+        "head": {
+          "translate": [
+            9,
+            -8
+          ],
+          "rotate_degrees": 1.8,
+          "frequency": 1.35,
+          "phase": 0.0
+        },
+        "face": {
+          "translate": [
+            9,
+            -8
+          ],
+          "rotate_degrees": 1.8,
+          "frequency": 1.35,
+          "phase": 0.0
+        },
+        "hair_top": {
+          "translate": [
+            8,
+            -6
+          ],
+          "rotate_degrees": 1.2,
+          "frequency": 1.35,
+          "phase": 0.2
+        },
+        "hair_left": {
+          "translate": [
+            -18,
+            -7
+          ],
+          "rotate_degrees": -3.8,
+          "frequency": 1.35,
+          "phase": 0.3
+        },
+        "hair_right": {
+          "translate": [
+            18,
+            -7
+          ],
+          "rotate_degrees": 3.8,
+          "frequency": 1.35,
+          "phase": 0.3
+        },
+        "back_ribbon": {
+          "translate": [
+            12,
+            -4
+          ],
+          "rotate_degrees": 2.6,
+          "frequency": 1.35,
+          "phase": 0.4
+        },
+        "left_arm": {
+          "translate": [
+            -8,
+            6
+          ],
+          "rotate_degrees": -2.6,
+          "frequency": 1.35,
+          "phase": 0.25
+        },
+        "right_arm": {
+          "translate": [
+            8,
+            6
+          ],
+          "rotate_degrees": 2.6,
+          "frequency": 1.35,
+          "phase": 0.25
+        },
+        "lower_body": {
+          "translate": [
+            5,
+            3
+          ],
+          "frequency": 1.35,
+          "phase": 0.15
+        },
+        "left_leg": {
+          "translate": [
+            -2,
+            2
+          ],
+          "frequency": 1.35,
+          "phase": 0.15
+        },
+        "right_leg": {
+          "translate": [
+            2,
+            2
+          ],
+          "frequency": 1.35,
+          "phase": 0.15
+        }
+      },
+      "blink": {
+        "period": 3.4,
+        "start": 3.16,
+        "duration": 0.16,
+        "scale_y": 0.22,
+        "offset_y": 8.0
+      }
+    }
+  }
+}

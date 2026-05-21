@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import json
 import shutil
+import subprocess
+import sys
 from pathlib import Path
 
 
@@ -34,6 +36,16 @@ def copy_asset(source_rel: str, target_name: str) -> dict[str, object]:
 
 def main() -> None:
     copied = [copy_asset(source_rel, target_name) for source_rel, target_name in ASSETS]
+    rig_builder = ROOT / "scripts" / "reverse" / "build_kokomi_loading_spine_rig.py"
+    if rig_builder.exists():
+        subprocess.run([sys.executable, str(rig_builder)], check=True)
+        copied.append(
+            {
+                "source": "generated from imported kokomi_Loading Spine evidence",
+                "target": "godot-project/assets/spine/loading/kokomi_Loading/kokomi_Loading.rig.json",
+                "bytes": (TARGET_ROOT / "kokomi_Loading.rig.json").stat().st_size,
+            }
+        )
     MANIFEST_PATH.parent.mkdir(parents=True, exist_ok=True)
     MANIFEST_PATH.write_text(
         json.dumps(

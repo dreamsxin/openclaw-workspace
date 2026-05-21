@@ -1012,6 +1012,7 @@ Inputs:
 Commands:
 ```powershell
 python scripts\reverse\import_godot_spine_loading_assets.py
+python scripts\reverse\build_kokomi_loading_spine_rig.py
 .\tools\Godot\Godot_console.exe --headless --path .\godot-project --import
 .\run-game.bat --headless --quit-after 5
 .\run-godot.bat --headless --quit-after 1
@@ -1022,12 +1023,14 @@ Outputs:
 - `godot-project/assets/spine/loading/kokomi_Loading/kokomi_Loading.skel.bytes`
 - `godot-project/assets/spine/loading/kokomi_Loading/kokomi_Loading.png`
 - `godot-project/assets/spine/loading/kokomi_Loading/kokomi_Loading_2.png`
+- `godot-project/assets/spine/loading/kokomi_Loading/kokomi_Loading.rig.json`
 - `reverse-output/assets/derived/godot_spine_loading_import_manifest.json`
 
 Findings:
 - AssetRipper has the complete `kokomi_Loading` loading Spine evidence set: atlas text, binary skeleton, and both texture pages.
-- `UISceneLoading` can now render a first-pass animated Spine preview by cropping atlas regions and applying time-driven body, hair, arm, eye, skirt, and table offsets.
-- The current Godot path still does not parse the `.skel.bytes` binary timeline; it uses the file as preserved source evidence and uses atlas regions for visible animation.
+- The `.skel.bytes` string table identifies Spine `4.2.43` and includes region names plus bone-name samples such as `sub_root`, `Pelvis`, `Lower body_H`, `Skirt_H`, `body_1`, `body_2`, `nack`, and `Back_Ribbon_H`.
+- `UISceneLoading` now renders through `kokomi_Loading.rig.json`, a generated bridge rig with bones, attachment bindings, draw order, and loading-idle channels. Godot evaluates that rig before cropping atlas regions.
+- The current Godot path still does not parse the exact `.skel.bytes` binary timeline; it uses the file as preserved source evidence and derives a bridge rig for visible skeletal animation.
 
 Follow-up:
 - Decide whether to integrate a Godot Spine runtime or implement a focused `.skel.bytes` parser for exact timeline playback.
