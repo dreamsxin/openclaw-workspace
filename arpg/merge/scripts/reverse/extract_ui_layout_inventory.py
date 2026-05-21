@@ -15,6 +15,8 @@ OUT_DIR = ROOT / "reverse-output/assets/derived/ui_layout"
 CSV_OUTPUT = OUT_DIR / "ui_prefab_layout_inventory.csv"
 JSON_OUTPUT = OUT_DIR / "ui_prefab_layout_inventory.json"
 STARTUP_OUTPUT = OUT_DIR / "startup_ui_candidates.json"
+STARTUP_DETAIL_JSON = OUT_DIR / "startup_ui_layout_details.json"
+STARTUP_DETAIL_CSV = OUT_DIR / "startup_ui_layout_details.csv"
 MD_OUTPUT = ROOT / "docs/reverse-godot/ui-layout-analysis.md"
 
 
@@ -36,6 +38,17 @@ STARTUP_KEYWORDS = [
     "story",
     "intro",
 ]
+
+FOCUS_LAYOUT_NAMES = {
+    "Reload",
+    "Game",
+    "UIManager",
+    "UILoading",
+    "UISceneLoading",
+    "UIMaidLobbyLoading",
+    "UIOutGame",
+    "UIInGame",
+}
 
 
 def parse_vector(body: str, field: str) -> dict:
@@ -69,6 +82,33 @@ def classify_prefab(path: Path) -> str:
 
 
 def parse_prefab(path: Path) -> dict:
+    parsed = parse_layout_file(path)
+    rel = path.relative_to(PROJECT_ROOT).as_posix()
+    rects = parsed["rects"]
+    large_rects = [
+        rect
+        for rect in rects
+        if abs(rect.get("size_delta", {}).get("x", 0)) >= 700
+        or abs(rect.get("size_delta", {}).get("y", 0)) >= 700
+    ]
+    root_rects = [rect for rect in rects if rect.get("parent_rect_id") in ("", "0")]
+    names = [rect["name"] for rect in rects if rect.get("name")]
+    lower_blob = " ".join([path.stem, *names]).lower()
+    return {
+        "path": rel,
+        "name": path.stem,
+        "category": classify_prefab(path),
+        "rect_transform_count": len(rects),
+        "game_object_count": len(parsed["game_objects"]),
+        "root_rects": root_rects[:8],
+        "large_rects": large_rects[:12],
+        "sample_node_names": names[:30],
+        "startup_score": sum(1 for keyword in STARTUP_KEYWORDS if keyword in lower_blob),
+        "startup_keywords": [keyword for keyword in STARTUP_KEYWORDS if keyword in lower_blob],
+    }
+
+
+def parse_layout_file(path: Path) -> dict:
     text = path.read_text(encoding="utf-8", errors="ignore")
     game_objects = {}
     component_to_go = {}
@@ -103,40 +143,54 @@ def parse_prefab(path: Path) -> dict:
             )
     for rect in rects:
         rect["name"] = game_objects.get(rect["game_object_id"], {}).get("name", "")
-    large_rects = [
-        rect
-        for rect in rects
-        if abs(rect.get("size_delta", {}).get("x", 0)) >= 700
-        or abs(rect.get("size_delta", {}).get("y", 0)) >= 700
-    ]
-    root_rects = [rect for rect in rects if rect.get("parent_rect_id") in ("", "0")]
-    rel = path.relative_to(PROJECT_ROOT).as_posix()
-    names = [rect["name"] for rect in rects if rect.get("name")]
-    lower_blob = " ".join([path.stem, *names]).lower()
+    rect_by_id = {rect["file_id"]: rect for rect in rects}
+    children_by_parent = defaultdict(list)
+    for rect in rects:
+        children_by_parent[rect.get("parent_rect_id", "")].append(rect["file_id"])
+    for rect in rects:
+        rect["children_count"] = len(children_by_parent.get(rect["file_id"], []))
+        rect["node_path"] = rect_path(rect, rect_by_id)
+        rect["layout_kind"] = rect_layout_kind(rect)
     return {
-        "path": rel,
-        "name": path.stem,
-        "category": classify_prefab(path),
-        "rect_transform_count": len(rects),
-        "game_object_count": len(game_objects),
-        "root_rects": root_rects[:8],
-        "large_rects": large_rects[:12],
-        "sample_node_names": names[:30],
-        "startup_score": sum(1 for keyword in STARTUP_KEYWORDS if keyword in lower_blob),
-        "startup_keywords": [keyword for keyword in STARTUP_KEYWORDS if keyword in lower_blob],
+        "game_objects": game_objects,
+        "rects": rects,
     }
 
 
+def rect_path(rect: dict, rect_by_id: dict[str, dict]) -> str:
+    names = []
+    seen = set()
+    current = rect
+    while current and current.get("file_id") not in seen:
+        seen.add(current.get("file_id"))
+        names.append(current.get("name") or current.get("file_id", ""))
+        parent_id = current.get("parent_rect_id", "")
+        current = rect_by_id.get(parent_id)
+    return "/".join(reversed([name for name in names if name]))
+
+
+def rect_layout_kind(rect: dict) -> str:
+    anchor_min = rect.get("anchor_min", {})
+    anchor_max = rect.get("anchor_max", {})
+    size = rect.get("size_delta", {})
+    if anchor_min == {"x": 0.0, "y": 0.0} and anchor_max == {"x": 1.0, "y": 1.0}:
+        return "full_stretch"
+    if anchor_min == anchor_max:
+        return "fixed_anchor"
+    if abs(size.get("x", 0)) >= 700 or abs(size.get("y", 0)) >= 700:
+        return "large_panel"
+    return "mixed"
+
+
 def scene_summary(path: Path) -> dict:
-    text = path.read_text(encoding="utf-8", errors="ignore")
-    rect_count = text.count("RectTransform:")
-    names = NAME_RE.findall(text)
+    parsed = parse_layout_file(path)
+    names = [rect["name"] for rect in parsed["rects"] if rect.get("name")]
     rel = path.relative_to(PROJECT_ROOT).as_posix()
     lower_blob = " ".join([path.stem, *names[:200]]).lower()
     return {
         "path": rel,
         "name": path.stem,
-        "rect_transform_count": rect_count,
+        "rect_transform_count": len(parsed["rects"]),
         "sample_node_names": [name.strip() for name in names[:40]],
         "startup_score": sum(1 for keyword in STARTUP_KEYWORDS if keyword in lower_blob),
         "startup_keywords": [keyword for keyword in STARTUP_KEYWORDS if keyword in lower_blob],
@@ -193,6 +247,8 @@ def write_markdown(rows: list[dict], scenes: list[dict], startup: list[dict]) ->
         "- `reverse-output/assets/derived/ui_layout/ui_prefab_layout_inventory.csv`",
         "- `reverse-output/assets/derived/ui_layout/ui_prefab_layout_inventory.json`",
         "- `reverse-output/assets/derived/ui_layout/startup_ui_candidates.json`",
+        "- `reverse-output/assets/derived/ui_layout/startup_ui_layout_details.csv`",
+        "- `reverse-output/assets/derived/ui_layout/startup_ui_layout_details.json`",
         "",
         "## Summary",
         "",
@@ -211,6 +267,38 @@ def write_markdown(rows: list[dict], scenes: list[dict], startup: list[dict]) ->
             f"| `{item['name']}` | {item.get('type', 'prefab')} | `{item['path']}` | "
             f"{item.get('rect_transform_count', 0)} | {', '.join(item.get('startup_keywords', []))} |"
         )
+    focus_names = ["Reload", "Game", "UIManager", "UILoading", "UISceneLoading", "UIMaidLobbyLoading", "UIOutGame", "UIInGame"]
+    focus_rows = [item for item in startup if item["name"] in focus_names]
+    lines.extend(
+        [
+            "",
+            "## Focus Startup Layout Sources",
+            "",
+            "| Name | Type | RectTransforms | Path |",
+            "| --- | --- | ---: | --- |",
+        ]
+    )
+    seen_focus = set()
+    for item in focus_rows:
+        key = (item["type"], item["path"])
+        if key in seen_focus:
+            continue
+        seen_focus.add(key)
+        lines.append(
+            f"| `{item['name']}` | {item.get('type', 'prefab')} | {item.get('rect_transform_count', 0)} | `{item['path']}` |"
+        )
+    lines.extend(
+        [
+            "",
+            "Key recovered layout facts from `startup_ui_layout_details.*`:",
+            "",
+            "- `UILoading` root is a fixed 1080 x 1920 RectTransform.",
+            "- `Reload.unity` contains `Canvas/UILoading` with the same large loading background structure.",
+            "- `UISceneLoading` uses full-stretch root layout plus 2000 x 2000 centered Spine loading character nodes.",
+            "- `UIOutGame` and `UIInGame` use full-stretch roots; their child controls are primarily fixed-anchor panels/buttons.",
+            "- `UIManager.prefab` and `Game.unity` embed the large startup/UI root tree rather than only referencing external prefabs.",
+        ]
+    )
     lines.extend(
         [
             "",
@@ -244,6 +332,99 @@ def write_markdown(rows: list[dict], scenes: list[dict], startup: list[dict]) ->
     MD_OUTPUT.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
+def focus_layout_sources(rows: list[dict], scenes: list[dict]) -> list[dict]:
+    sources = []
+    for row in rows:
+        if row["name"] in FOCUS_LAYOUT_NAMES:
+            sources.append({"type": "prefab", **row})
+    for scene in scenes:
+        if scene["name"] in FOCUS_LAYOUT_NAMES:
+            sources.append({"type": "scene", **scene})
+    return sorted(sources, key=lambda item: (item["type"], item["name"], item["path"]))
+
+
+def summarize_focus_rects(path: Path, limit: int = 120) -> list[dict]:
+    parsed = parse_layout_file(path)
+    rects = parsed["rects"]
+
+    def rank(rect: dict) -> tuple:
+        size = rect.get("size_delta", {})
+        area = abs(size.get("x", 0) * size.get("y", 0))
+        important_name = any(
+            token in rect.get("name", "").lower()
+            for token in ["loading", "lobby", "outgame", "ingame", "canvas", "bg", "dim", "button", "title"]
+        )
+        return (1 if rect.get("parent_rect_id") in ("", "0") else 0, 1 if important_name else 0, area, rect["children_count"])
+
+    selected = sorted(rects, key=rank, reverse=True)[:limit]
+    return [
+        {
+            "node_path": rect["node_path"],
+            "name": rect["name"],
+            "layout_kind": rect["layout_kind"],
+            "anchor_min": rect["anchor_min"],
+            "anchor_max": rect["anchor_max"],
+            "anchored_position": rect["anchored_position"],
+            "size_delta": rect["size_delta"],
+            "pivot": rect["pivot"],
+            "children_count": rect["children_count"],
+        }
+        for rect in selected
+    ]
+
+
+def write_startup_details(rows: list[dict], scenes: list[dict]) -> None:
+    sources = focus_layout_sources(rows, scenes)
+    details = []
+    for source in sources:
+        source_path = PROJECT_ROOT / source["path"]
+        if not source_path.exists():
+            continue
+        details.append(
+            {
+                "type": source["type"],
+                "name": source["name"],
+                "path": source["path"],
+                "rect_transform_count": source["rect_transform_count"],
+                "sample_node_names": source.get("sample_node_names", [])[:30],
+                "key_rects": summarize_focus_rects(source_path),
+            }
+        )
+    STARTUP_DETAIL_JSON.write_text(json.dumps(details, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    with STARTUP_DETAIL_CSV.open("w", encoding="utf-8", newline="") as fh:
+        fieldnames = [
+            "source_type",
+            "source_name",
+            "source_path",
+            "node_path",
+            "layout_kind",
+            "anchor_min",
+            "anchor_max",
+            "anchored_position",
+            "size_delta",
+            "children_count",
+        ]
+        writer = csv.DictWriter(fh, fieldnames=fieldnames)
+        writer.writeheader()
+        for detail in details:
+            for rect in detail["key_rects"]:
+                writer.writerow(
+                    {
+                        "source_type": detail["type"],
+                        "source_name": detail["name"],
+                        "source_path": detail["path"],
+                        "node_path": rect["node_path"],
+                        "layout_kind": rect["layout_kind"],
+                        "anchor_min": json.dumps(rect["anchor_min"], ensure_ascii=False),
+                        "anchor_max": json.dumps(rect["anchor_max"], ensure_ascii=False),
+                        "anchored_position": json.dumps(rect["anchored_position"], ensure_ascii=False),
+                        "size_delta": json.dumps(rect["size_delta"], ensure_ascii=False),
+                        "children_count": rect["children_count"],
+                    }
+                )
+    return details
+
+
 def main() -> None:
     if not UI_ROOT.exists():
         raise FileNotFoundError(UI_ROOT)
@@ -267,10 +448,12 @@ def main() -> None:
     )
     STARTUP_OUTPUT.write_text(json.dumps(startup, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     write_csv(rows)
+    startup_details = write_startup_details(rows, scenes)
     write_markdown(rows, scenes, startup)
     print(f"ui_prefabs={len(rows)}")
     print(f"scenes={len(scenes)}")
     print(f"rect_transforms={sum(row['rect_transform_count'] for row in rows)}")
+    print(f"startup_detail_sources={len(startup_details)}")
     print(CSV_OUTPUT)
     print(MD_OUTPUT)
 

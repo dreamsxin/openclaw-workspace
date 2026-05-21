@@ -218,7 +218,7 @@ Success criteria:
 | T026 | Decode mixed-format character dialog/customer tail lists | in progress | initial tail scan shows row 1400 enters mixed dialog/presentation payload before remaining list boundaries |
 | T027 | Implement Spine character render path | pending | choose Godot Spine runtime or offline first-frame renderer for `.atlas.dat`/`.skel.dat` assets |
 | T028 | Inventory original Unity UI prefab layouts | done | 1,137 UI prefabs and 84,034 RectTransforms indexed in `ui-layout-analysis.md` |
-| T029 | Map startup UI flow and Canvas scaling | in progress | analyze `Reload`, `Game`, `UIManager`, `UISceneLoading`, `UIMaidLobbyLoading`, `UIOutGame`, `UIRoot`, `UICanvasManager` |
+| T029 | Map startup UI flow and Canvas scaling | in progress | startup focus layout details generated for `Reload`, `Game`, `UIManager`, `UILoading`, `UISceneLoading`, `UIMaidLobbyLoading`, `UIOutGame`, `UIInGame`; CanvasScaler still pending |
 | T030 | Build first Godot UI layout reference screens | pending | loading, scene loading, lobby/outgame shell, first in-game HUD |
 
 ## Tool Acquisition Options

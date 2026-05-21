@@ -749,6 +749,8 @@ Outputs:
 - `reverse-output/assets/derived/ui_layout/ui_prefab_layout_inventory.csv`
 - `reverse-output/assets/derived/ui_layout/ui_prefab_layout_inventory.json`
 - `reverse-output/assets/derived/ui_layout/startup_ui_candidates.json`
+- `reverse-output/assets/derived/ui_layout/startup_ui_layout_details.csv`
+- `reverse-output/assets/derived/ui_layout/startup_ui_layout_details.json`
 - `docs/reverse-godot/ui-layout-analysis.md`
 
 Result:
@@ -757,6 +759,8 @@ Result:
 - Scanned 2 Unity scene files.
 - Indexed 84,034 `RectTransform` records.
 - First high-value boot/layout candidates: `Reload`, `Game`, `UIManager`, `UISceneLoading`, `UIMaidLobbyLoading`, `UIOutGame`, `UIInGame`.
+- Generated focused node-path/anchor/size details for 9 startup layout sources, including `UILoading`.
+- Recovered first static layout facts: `UILoading` is 1080 x 1920, `UISceneLoading` uses full-stretch root plus 2000 x 2000 centered Spine loading nodes, and `UIOutGame`/`UIInGame` roots are full-stretch.
 - CanvasScaler reference resolution is still unconfirmed and requires runtime/code follow-up.
 
 ```powershell

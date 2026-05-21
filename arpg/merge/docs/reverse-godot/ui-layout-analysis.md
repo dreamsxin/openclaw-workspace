@@ -12,6 +12,8 @@ This document records the first-pass static UI layout inventory extracted from t
 - `reverse-output/assets/derived/ui_layout/ui_prefab_layout_inventory.csv`
 - `reverse-output/assets/derived/ui_layout/ui_prefab_layout_inventory.json`
 - `reverse-output/assets/derived/ui_layout/startup_ui_candidates.json`
+- `reverse-output/assets/derived/ui_layout/startup_ui_layout_details.csv`
+- `reverse-output/assets/derived/ui_layout/startup_ui_layout_details.json`
 
 ## Summary
 
@@ -25,8 +27,7 @@ This document records the first-pass static UI layout inventory extracted from t
 | Name | Type | Path | RectTransforms | Keywords |
 | --- | --- | --- | ---: | --- |
 | `UIManager` | prefab | `Assets/Resources/prefabs/ui/UIManager.prefab` | 3754 | loading, lobby, outgame, manager, scene, story |
-| `Reload` | scene | `Assets/Scenes/Reload.unity` | 67 | loading, reload, manager |
-| `Game` | scene | `Assets/Scenes/Game.unity` | 3754 | manager, story |
+| `Game` | scene | `Assets/Scenes/Game.unity` | 3754 | lobby, outgame, story |
 | `UIPopup_MaidNote` | prefab | `Assets/Resources/prefabs/ui/popup/outgame/UIPopup_MaidNote.prefab` | 1880 | loading, story |
 | `UIInGame` | prefab | `Assets/Resources/prefabs/ui/uiroot/UIInGame.prefab` | 1351 | lobby, outgame |
 | `UIList_ShopNormal` | prefab | `Assets/Resources/prefabs/ui/listitem/shop/UIList_ShopNormal.prefab` | 958 | loading, story |
@@ -43,12 +44,35 @@ This document records the first-pass static UI layout inventory extracted from t
 | `UISceneLoading` | prefab | `Assets/Resources/prefabs/ui/UISceneLoading.prefab` | 323 | loading, scene |
 | `UIPopup_Debug` | prefab | `Assets/Resources/prefabs/ui/popup/debug/UIPopup_Debug.prefab` | 178 | reload, story |
 | `UIMaidLobbyLoading` | prefab | `Assets/Resources/prefabs/ui/UIMaidLobbyLoading.prefab` | 86 | loading, lobby |
+| `Reload` | scene | `Assets/Scenes/Reload.unity` | 67 | loading, reload |
 | `UIOutGame` | prefab | `Assets/Resources/prefabs/ui/UIOutGame.prefab` | 26 | lobby, outgame |
 | `UIPopup_EventBand` | prefab | `Assets/Resources/prefabs/ui/popup/event/UIPopup_EventBand.prefab` | 5594 | story |
 | `UIPopup_EventCumulativeQuest` | prefab | `Assets/Resources/prefabs/ui/popup/event/UIPopup_EventCumulativeQuest.prefab` | 2220 | story |
 | `UIPopup_MiniGameEvent_VendingMachine` | prefab | `Assets/Resources/prefabs/ui/popup/UIPopup_MiniGameEvent_VendingMachine.prefab` | 1107 | story |
 | `UIPopup_Event_PC_VendingMachine` | prefab | `Assets/Resources/prefabs/ui/popup/UIPopup_Event_PC_VendingMachine.prefab` | 1105 | story |
 | `UIPopup_MiniGameEvent_PuddingJump` | prefab | `Assets/Resources/prefabs/ui/popup/UIPopup_MiniGameEvent_PuddingJump.prefab` | 928 | story |
+
+## Focus Startup Layout Sources
+
+| Name | Type | RectTransforms | Path |
+| --- | --- | ---: | --- |
+| `UIManager` | prefab | 3754 | `Assets/Resources/prefabs/ui/UIManager.prefab` |
+| `Game` | scene | 3754 | `Assets/Scenes/Game.unity` |
+| `UIInGame` | prefab | 1351 | `Assets/Resources/prefabs/ui/uiroot/UIInGame.prefab` |
+| `UISceneLoading` | prefab | 323 | `Assets/Resources/prefabs/ui/UISceneLoading.prefab` |
+| `UIMaidLobbyLoading` | prefab | 86 | `Assets/Resources/prefabs/ui/UIMaidLobbyLoading.prefab` |
+| `Reload` | scene | 67 | `Assets/Scenes/Reload.unity` |
+| `UIOutGame` | prefab | 26 | `Assets/Resources/prefabs/ui/UIOutGame.prefab` |
+| `UILoading` | prefab | 65 | `Assets/Resources/prefabs/ui/UILoading.prefab` |
+| `UIOutGame` | prefab | 3 | `Assets/Resources/prefabs/ui/uiroot/UIOutGame.prefab` |
+
+Key recovered layout facts from `startup_ui_layout_details.*`:
+
+- `UILoading` root is a fixed 1080 x 1920 RectTransform.
+- `Reload.unity` contains `Canvas/UILoading` with the same large loading background structure.
+- `UISceneLoading` uses full-stretch root layout plus 2000 x 2000 centered Spine loading character nodes.
+- `UIOutGame` and `UIInGame` use full-stretch roots; their child controls are primarily fixed-anchor panels/buttons.
+- `UIManager.prefab` and `Game.unity` embed the large startup/UI root tree rather than only referencing external prefabs.
 
 ## Largest UI Prefabs
 
