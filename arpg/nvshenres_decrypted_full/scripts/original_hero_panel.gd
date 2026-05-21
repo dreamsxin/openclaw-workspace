@@ -951,7 +951,9 @@ func _add_equipment_tab(root: Control, y_base := 126) -> void:
 			layout = "英雄水晶提示" if hero_level >= 40 else "英雄水晶获取"
 		elif i == 5:
 			layout = "英雄神器"
-		slot_hit.pressed.connect(func(target_layout := layout): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": target_layout}))
+		slot_hit.pressed.connect(func(slot_index := i + 1, target_layout := layout):
+			_on_equipment_slot_pressed(slot_index, target_layout)
+		)
 		slot.add_child(slot_hit)
 		var slot_bg := ColorRect.new()
 		slot_bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -982,7 +984,9 @@ func _add_equipment_tab(root: Control, y_base := 126) -> void:
 		frame_hit.text = ""
 		frame_hit.flat = true
 		frame_hit.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		frame_hit.pressed.connect(func(unlocked := bool(item[3])): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "符文选择" if unlocked else "符文刷新"}))
+		frame_hit.pressed.connect(func(slot_name := str(item[1]), unlocked := bool(item[3]), lock_text := str(item[2])):
+			_on_fuwen_slot_pressed(slot_name, unlocked, lock_text)
+		)
 		frame.add_child(frame_hit)
 		_add_named_image_to(frame, "image/en/HeroPanel/yx_frame_ZBBai", Vector2.ZERO, frame.size)
 		if bool(item[3]):
@@ -1015,6 +1019,25 @@ func _add_lock_overlay(parent: Control, text: String) -> void:
 	parent.add_child(shade)
 	var label := _add_label(parent, text, Vector2(0, 34), Vector2(parent.size.x, 24), 15, Color(0.90, 0.88, 0.78))
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+
+func _on_equipment_slot_pressed(slot_index: int, target_layout: String) -> void:
+	match slot_index:
+		5:
+			if int(str(_current_hero().get("level", "1")).split("/")[0]) < 40:
+				_show_local_notice("源码 equipBox5 未激活时调用 CG_SHUIJING_JIHUO")
+			else:
+				Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "英雄水晶提示"})
+		6:
+			Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "英雄神器"})
+		_:
+			Navigation.go_with_args(PREFAB_PREVIEW, {"layout": target_layout})
+
+func _on_fuwen_slot_pressed(slot_name: String, unlocked: bool, lock_text: String) -> void:
+	if not unlocked:
+		_show_local_notice(lock_text)
+		return
+	var layout := "符文选择" if slot_name == "fuwenIcon1" else "符文刷新"
+	Navigation.go_with_args(PREFAB_PREVIEW, {"layout": layout})
 
 func _add_star_tab(root: Control, y_base := 126) -> void:
 	y_base = y_base
@@ -1054,6 +1077,14 @@ func _add_star_tab(root: Control, y_base := 126) -> void:
 		slot.position = _detail_local(icon_positions[i])
 		slot.size = Vector2(74, 74)
 		root.add_child(slot)
+		var slot_hit := Button.new()
+		slot_hit.text = ""
+		slot_hit.flat = true
+		slot_hit.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		slot_hit.pressed.connect(func(material_index := i + 1):
+			_on_star_material_pressed(material_index)
+		)
+		slot.add_child(slot_hit)
 		if i < 3:
 			_add_head_icon(slot, hero, Vector2.ZERO, Vector2(74, 74))
 		else:
@@ -1067,6 +1098,15 @@ func _add_star_tab(root: Control, y_base := 126) -> void:
 	var up_rect := _layout_rect_from(star_layout_nodes, "btnUpStar", Rect2(Vector2(532.181, 548.426), Vector2(292, 65)))
 	_add_action_button(root, "英魂", _detail_local(yhd_rect.position), yhd_rect.size, func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "英魂殿"}), "image/common/cm_btn_LvSe1")
 	_add_action_button(root, "升星", _detail_local(up_rect.position), up_rect.size, _show_star_success, "image/en/HeroPanel/yx_btn_ShengXing")
+
+func _on_star_material_pressed(material_index: int) -> void:
+	if material_index <= 3:
+		Navigation.go_with_args(PREFAB_PREVIEW, {
+			"layout": "英雄材料选择",
+			"prefab": "HeroPaleceSelectMaterialsPre",
+		})
+	else:
+		_show_local_notice("源码 needItems 使用 Grid：离线 Demo 显示进阶材料获取入口")
 
 func _add_will_tab(root: Control, y_base := 126) -> void:
 	y_base = y_base
@@ -1116,7 +1156,7 @@ func _add_will_tab(root: Control, y_base := 126) -> void:
 		var name_label := _add_label(node, str(item[0]), item[5], Vector2(86, 24), 16, Color(0.98, 0.91, 0.64))
 		name_label.rotation_degrees = -node.rotation_degrees
 		name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		var lock_label := _add_label(node, item[4], Vector2(-8, node.size.y - 30), Vector2(node.size.x + 28, 24), 15, Color(0.78, 0.76, 0.86))
+		var lock_label := _add_label(node, str(item[3]), Vector2(-8, node.size.y - 30), Vector2(node.size.x + 28, 24), 15, Color(0.78, 0.76, 0.86))
 		lock_label.rotation_degrees = -node.rotation_degrees
 		lock_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_add_action_button(root, "战意预览", _detail_local(Vector2(497.613, 547.874)), Vector2(300, 60), func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "战意预览"}), "image/common/cm_btn_LvSe0")
