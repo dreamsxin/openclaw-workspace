@@ -1347,6 +1347,33 @@ Follow-up:
 - Replace the SD stand-in with the actual `UIMaidLD` Spine pose after LD skeleton baking/rendering is reusable.
 - Continue mapping original `UIInGame` textures so bottom panels/buttons can replace structural color rectangles.
 
+## 2026-05-21 - UIMaidLobbyLoading Startup Stage
+
+Inputs:
+- `godot-project/data/ui_layout_reference.json`
+- `godot-project/scripts/main.gd`
+- `godot-project/scripts/maid_lobby_loading_reference_screen.gd`
+
+Commands:
+```powershell
+.\tools\Godot\Godot_console.exe --path .\godot-project --headless --quit-after 7 -- --restored-startup --auto-enter-ingame
+.\capture-gameplay.bat
+.\capture-startup.bat
+```
+
+Findings:
+- The recovered startup/UI focus list includes `UIMaidLobbyLoading` between scene loading and the first out-game UI target.
+- `UIMaidLobbyLoading` has a 1080 x 1920 inferred reference space, a full-screen `Cover`, and 16 repeated `GameObject/Image_##` slots with `Deco` sub-rects.
+- `run-game.bat` restored startup now follows `UILoading -> UISceneLoading -> UIMaidLobbyLoading -> UIOutGame`.
+
+Outputs:
+- `reverse-output/startup-captures/04-maidlobbyloading.png`
+- `reverse-output/startup-captures/05-outgame.png`
+- `reverse-output/gameplay-captures/06-ingame.png`
+
+Follow-up:
+- Map the original `UIMaidLobbyLoading` image-slot sprites or animations from Unity asset references instead of the current structural color pass.
+
 Recommended next runs:
 
 1. Run Il2CppDumper or Cpp2IL on `libil2cpp.so` and `global-metadata.dat`.

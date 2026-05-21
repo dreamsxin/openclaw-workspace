@@ -5,6 +5,7 @@ const MergeBoardModelScript := preload("res://scripts/models/merge_board_model.g
 const SaveManagerScript := preload("res://scripts/services/save_manager.gd")
 const LoadingReferenceScreenScript := preload("res://scripts/loading_reference_screen.gd")
 const SceneLoadingReferenceScreenScript := preload("res://scripts/scene_loading_reference_screen.gd")
+const MaidLobbyLoadingReferenceScreenScript := preload("res://scripts/maid_lobby_loading_reference_screen.gd")
 const OutGameReferenceScreenScript := preload("res://scripts/out_game_reference_screen.gd")
 const InGameReferenceShellScript := preload("res://scripts/ingame_reference_shell.gd")
 const UILayoutReferencePreviewScript := preload("res://scripts/ui_layout_reference_preview.gd")
@@ -16,6 +17,7 @@ const PORTRAIT_CELL_GAP := 5
 const PORTRAIT_BOARD_MARGIN := 24
 const RESTORED_APP_LOADING_SECONDS := 2.0
 const RESTORED_SCENE_LOADING_SECONDS := 1.7
+const RESTORED_MAID_LOBBY_LOADING_SECONDS := 1.1
 const STARTUP_CAPTURE_ARG := "--startup-capture-dir="
 const AUTO_ENTER_INGAME_ARG := "--auto-enter-ingame"
 const SPRITE_DIR := "res://assets/sprites/"
@@ -56,6 +58,7 @@ var ui_layout_meta_label: Label
 var ui_layout_preview: Control
 var loading_reference_screen: Control
 var scene_loading_reference_screen: Control
+var maid_lobby_loading_reference_screen: Control
 var out_game_reference_screen: Control
 var ingame_reference_shell: Control
 var gameplay_root: Control
@@ -65,6 +68,7 @@ var cell_size := CELL_SIZE
 var cell_gap := CELL_GAP
 var loading_reference_visible := false
 var scene_loading_reference_visible := false
+var maid_lobby_loading_reference_visible := false
 var out_game_reference_visible := false
 var gameplay_visible := true
 var restored_startup_mode := false
@@ -228,6 +232,7 @@ func _build_ui() -> void:
 	_build_ui_layout_panel()
 	_build_loading_reference_screen()
 	_build_scene_loading_reference_screen()
+	_build_maid_lobby_loading_reference_screen()
 	_build_out_game_reference_screen()
 
 	drag_preview = TextureRect.new()
@@ -255,17 +260,27 @@ func _process(delta: float) -> void:
 		_maybe_capture_startup_frame("01-uiloading", 1.0)
 		return
 	var scene_elapsed := restored_startup_elapsed - RESTORED_APP_LOADING_SECONDS
-	var scene_progress := clampf(scene_elapsed / RESTORED_SCENE_LOADING_SECONDS, 0.0, 1.0)
-	if loading_reference_visible:
-		loading_reference_visible = false
-		_apply_loading_reference_visibility()
-		_show_scene_loading_reference()
-	_set_scene_loading_reference_state(scene_progress, _restored_scene_loading_message(scene_progress))
-	_maybe_capture_startup_frame("02-uisceneloading", RESTORED_APP_LOADING_SECONDS + 0.9)
-	_maybe_capture_startup_frame("03-uisceneloading-late", RESTORED_APP_LOADING_SECONDS + 1.45)
-	if scene_progress >= 1.0:
+	if scene_elapsed < RESTORED_SCENE_LOADING_SECONDS:
+		var scene_progress := clampf(scene_elapsed / RESTORED_SCENE_LOADING_SECONDS, 0.0, 1.0)
+		if loading_reference_visible:
+			loading_reference_visible = false
+			_apply_loading_reference_visibility()
+			_show_scene_loading_reference()
+		_set_scene_loading_reference_state(scene_progress, _restored_scene_loading_message(scene_progress))
+		_maybe_capture_startup_frame("02-uisceneloading", RESTORED_APP_LOADING_SECONDS + 0.9)
+		_maybe_capture_startup_frame("03-uisceneloading-late", RESTORED_APP_LOADING_SECONDS + 1.45)
+		return
+	var maid_lobby_elapsed := scene_elapsed - RESTORED_SCENE_LOADING_SECONDS
+	var maid_lobby_progress := clampf(maid_lobby_elapsed / RESTORED_MAID_LOBBY_LOADING_SECONDS, 0.0, 1.0)
+	if scene_loading_reference_visible:
+		scene_loading_reference_visible = false
+		_apply_scene_loading_reference_visibility()
+		_show_maid_lobby_loading_reference()
+	_set_maid_lobby_loading_reference_state(maid_lobby_progress, _restored_maid_lobby_loading_message(maid_lobby_progress))
+	_maybe_capture_startup_frame("04-maidlobbyloading", RESTORED_APP_LOADING_SECONDS + RESTORED_SCENE_LOADING_SECONDS + 0.45)
+	if maid_lobby_progress >= 1.0:
 		_finish_restored_startup()
-		_maybe_capture_startup_frame("04-outgame", RESTORED_APP_LOADING_SECONDS + RESTORED_SCENE_LOADING_SECONDS)
+		_maybe_capture_startup_frame("05-outgame", RESTORED_APP_LOADING_SECONDS + RESTORED_SCENE_LOADING_SECONDS + RESTORED_MAID_LOBBY_LOADING_SECONDS)
 		if auto_enter_ingame and not auto_enter_ingame_done:
 			auto_enter_ingame_done = true
 			call_deferred("_auto_enter_gameplay_after_capture")
@@ -404,6 +419,17 @@ func _build_scene_loading_reference_screen() -> void:
 	scene_loading_reference_screen.visible = scene_loading_reference_visible
 	add_child(scene_loading_reference_screen)
 
+func _build_maid_lobby_loading_reference_screen() -> void:
+	maid_lobby_loading_reference_screen = MaidLobbyLoadingReferenceScreenScript.new()
+	if restored_startup_mode:
+		maid_lobby_loading_reference_screen.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	else:
+		maid_lobby_loading_reference_screen.position = Vector2(320, 24)
+		maid_lobby_loading_reference_screen.size = Vector2(650, 672)
+	maid_lobby_loading_reference_screen.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	maid_lobby_loading_reference_screen.visible = maid_lobby_loading_reference_visible
+	add_child(maid_lobby_loading_reference_screen)
+
 func _build_out_game_reference_screen() -> void:
 	out_game_reference_screen = OutGameReferenceScreenScript.new()
 	if restored_startup_mode:
@@ -521,6 +547,20 @@ func _apply_scene_loading_reference_visibility() -> void:
 		return
 	scene_loading_reference_screen.call("set_source", scene_loading_source)
 	scene_loading_reference_screen.visible = scene_loading_reference_visible
+
+func _show_maid_lobby_loading_reference() -> void:
+	maid_lobby_loading_reference_visible = true
+	_apply_maid_lobby_loading_reference_visibility()
+
+func _apply_maid_lobby_loading_reference_visibility() -> void:
+	if maid_lobby_loading_reference_screen == null:
+		return
+	var maid_lobby_loading_source := _ui_layout_source_by_name("UIMaidLobbyLoading")
+	if maid_lobby_loading_source.is_empty():
+		maid_lobby_loading_reference_screen.visible = false
+		return
+	maid_lobby_loading_reference_screen.call("set_source", maid_lobby_loading_source)
+	maid_lobby_loading_reference_screen.visible = maid_lobby_loading_reference_visible
 
 func _show_out_game_reference() -> void:
 	out_game_reference_visible = true
@@ -640,6 +680,11 @@ func _set_scene_loading_reference_state(progress: float, message: String) -> voi
 		return
 	scene_loading_reference_screen.call("set_loading_state", progress, message)
 
+func _set_maid_lobby_loading_reference_state(progress: float, message: String) -> void:
+	if maid_lobby_loading_reference_screen == null:
+		return
+	maid_lobby_loading_reference_screen.call("set_loading_state", progress, message)
+
 func _restored_app_loading_message(progress: float) -> String:
 	if progress < 0.35:
 		return "Loading assets..."
@@ -656,12 +701,21 @@ func _restored_scene_loading_message(progress: float) -> String:
 		return "Preparing UI..."
 	return "Entering cafe..."
 
+func _restored_maid_lobby_loading_message(progress: float) -> String:
+	if progress < 0.45:
+		return "Opening lobby..."
+	if progress < 0.85:
+		return "Preparing maids..."
+	return "Entering out game..."
+
 func _finish_restored_startup() -> void:
 	restored_startup_finished = true
 	loading_reference_visible = false
 	scene_loading_reference_visible = false
+	maid_lobby_loading_reference_visible = false
 	_apply_loading_reference_visibility()
 	_apply_scene_loading_reference_visibility()
+	_apply_maid_lobby_loading_reference_visibility()
 	_set_gameplay_visible(false)
 	_show_out_game_reference()
 	_set_status("Restored startup complete.")
@@ -675,10 +729,10 @@ func _maybe_capture_startup_frame(label: String, threshold_seconds: float) -> vo
 	call_deferred("_capture_startup_frame", label)
 
 func _maybe_capture_ingame_frame() -> void:
-	if startup_capture_dir.is_empty() or startup_capture_flags.has("05-ingame"):
+	if startup_capture_dir.is_empty() or startup_capture_flags.has("06-ingame"):
 		return
-	startup_capture_flags["05-ingame"] = true
-	call_deferred("_capture_startup_frame", "05-ingame")
+	startup_capture_flags["06-ingame"] = true
+	call_deferred("_capture_startup_frame", "06-ingame")
 
 func _capture_startup_frame(label: String) -> void:
 	await RenderingServer.frame_post_draw

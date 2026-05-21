@@ -229,6 +229,7 @@ Success criteria:
 | T037 | Wire first UIInGame action regions | done | `InGameReferenceShell` exposes recovered bottom action hit regions; Produce reuses current producer logic, Bag reports pending inventory restore, and Cafe returns to `UIOutGame` |
 | T038 | Add gameplay capture and portrait action polish | done | `capture-gameplay.bat` records startup plus `05-ingame.png`; portrait `run-game.bat` now hides the legacy debug Produce button so bottom actions are driven by recovered `UIInGame` hit regions |
 | T039 | Add first real out-game character stand-in and clean portrait shell | done | `UIOutGame` now draws a committed full SD maid PNG stand-in instead of only a sketch placeholder; portrait `UIInGame` hides remaining desktop reference controls and uses committed background/currency sprites in its shell |
+| T040 | Restore UIMaidLobbyLoading into startup order | done | `run-game.bat` restored startup now follows `UILoading -> UISceneLoading -> UIMaidLobbyLoading -> UIOutGame`; captures now include `04-maidlobbyloading.png`, `05-outgame.png`, and gameplay `06-ingame.png` |
 
 ## Tool Acquisition Options
 
