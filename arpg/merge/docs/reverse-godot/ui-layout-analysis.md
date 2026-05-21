@@ -105,6 +105,58 @@ Latest startup recheck:
 - The baked `Idle` data is not static: frame-delta checks show large vertex movement between frames, so missing second-screen motion should be treated as a Godot target-rect or mesh-render path problem, not as a bake-data problem.
 - Screenshot verification confirmed the exact render bug: baked UVs are normalized, and multiplying them by texture page size made the second screen sample the wrong texture coordinates. Godot now passes normalized UVs directly to textured polygons.
 
+## Canvas And SafeArea Inventory
+
+`scripts/reverse/extract_canvas_layout_inventory.py` records Canvas, CanvasScaler, and SafeArea evidence from the startup/UI focus files into:
+
+- `reverse-output/assets/derived/ui_layout/canvas_layout_inventory.json`
+- `reverse-output/assets/derived/ui_layout/canvas_layout_inventory.csv`
+
+Current target set:
+
+- `Assets/Resources/prefabs/ui/BGCanvas.prefab`
+- `Assets/Scenes/Reload.unity`
+- `Assets/Scenes/Game.unity`
+- `Assets/Resources/prefabs/ui/UIManager.prefab`
+- `Assets/Resources/prefabs/ui/UILoading.prefab`
+- `Assets/Resources/prefabs/ui/UISceneLoading.prefab`
+- `Assets/Resources/prefabs/ui/UIMaidLobbyLoading.prefab`
+- `Assets/Resources/prefabs/ui/UIOutGame.prefab`
+- `Assets/Resources/prefabs/ui/uiroot/UIOutGame.prefab`
+- `Assets/Resources/prefabs/ui/uiroot/UIInGame.prefab`
+
+Recovered counts:
+
+- 104 `Canvas` components.
+- 12 `CanvasScaler` components.
+- 8 `SafeArea` MonoBehaviour components.
+- 8 RectTransforms named `SafeArea`.
+- 0 `CanvasScaler` components with serialized `m_UiScaleMode`, `m_ReferenceResolution`, `m_ScreenMatchMode`, or `m_MatchWidthOrHeight` fields present in the AssetRipper YAML.
+
+Important mount points:
+
+- `Reload.unity`: `Canvas` has a `CanvasScaler`; `Canvas/SafeArea` has the project `SafeArea` component.
+- `Game.unity`: `Canvas`, `BGCanvas`, `TouchEffectCanvas`, `UIStory/StoryGroup/StoryObjectCanvas`, and `UIStory/StoryGroup/StoryUICanvas` have `CanvasScaler` components.
+- `Game.unity`: `Canvas/SafeArea`, `BGCanvas/SafeArea`, and `UIStory/StoryGroup/StoryUICanvas/SafeArea` have `SafeArea` components.
+- `UIManager.prefab`: same main runtime canvas topology as `Game.unity`, including `Canvas/SafeArea`, `BGCanvas/SafeArea`, and `UIStory/StoryGroup/StoryUICanvas/SafeArea`.
+- `BGCanvas.prefab`: root `BGCanvas` has a `CanvasScaler`; `BGCanvas/SafeArea` has the project `SafeArea` component.
+
+Script GUID mapping recovered from AssetRipper meta files:
+
+- `CanvasScaler`: `6dfc8ec6aebac6665d9781d273993f23`
+- `SafeArea`: `cedddb77dbd60a683455a2b226c5fd56`
+- `GraphicRaycaster`: `86fe8f3fc59dc06ea6b45a1bbee64682`
+- `Image`: `3cf5a44414476512e00c3e7a2569a919`
+- `TextMeshProUGUI`: `3f96b1d166d19b209697e35b35d65c76`
+- `UIInGameBG`: `ab0e0bb351e7be9b1ef3f8a3fe9811f4`
+
+Interpretation:
+
+- CanvasScaler components are present on the original runtime canvases, but AssetRipper did not recover their serialized reference-resolution fields.
+- The 1080 x 1920 working coordinate system remains evidence-backed by `UILoading` and other root RectTransforms, not by a recovered `CanvasScaler.referenceResolution` value.
+- The exact scale mode and match mode must be confirmed by IL2CPP/native analysis of the runtime CanvasScaler setup or by a more complete Unity export that preserves those fields.
+- Godot should keep using the recovered RectTransform tree for layout reconstruction and treat CanvasScaler policy as a runtime compatibility layer until the missing fields are confirmed.
+
 ## Largest UI Prefabs
 
 | Name | Category | RectTransforms | Large Rects | Path |
@@ -134,10 +186,10 @@ Latest startup recheck:
 
 - This pass reads static serialized prefab and scene YAML only.
 - Runtime-instantiated UI, localization-driven text sizing, safe-area adjustment, and code-driven show/hide states still require IL2CPP/native flow analysis.
-- CanvasScaler reference resolution was not confirmed in this pass; the next step is to inspect `UIRoot`, `UICanvasManager`, and any serialized Canvas scaler components or runtime setup code.
+- CanvasScaler mount points are now confirmed in serialized data, but AssetRipper did not recover their reference resolution or match-mode fields. The next step is native/runtime method analysis around `UIManager.Initialize`, `SafeArea.Awake`, and CanvasScaler setup.
 
 ## Next Steps
 
 1. Map startup flow through `ReloadManager`, `LoginMenuHandler`, `UIRoot`, `UIManager`, `UIPopupManager`, and `UISceneLoading`.
-2. Confirm CanvasScaler and SafeArea behavior from serialized components and IL2CPP `UIManager.Initialize` / `SafeArea` usage.
+2. Confirm CanvasScaler reference resolution and SafeArea anchor updates from IL2CPP/Ghidra method bodies.
 3. Replace remaining loading static fallbacks with Spine output, then convert `UIOutGame` and the first in-game HUD from reference data into actual Godot Control scenes.

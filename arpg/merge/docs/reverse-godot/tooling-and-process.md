@@ -1151,6 +1151,39 @@ Follow-up:
 - Replace the placeholder `UIMaidLD` area with real maid LD Spine playback.
 - Map the original `UIOutGame` background/furniture assets before treating the screen as visually complete.
 
+## 2026-05-21 - Canvas And SafeArea Layout Inventory
+
+Inputs:
+- `reverse-output/assets/assetripper-main/ExportedProject/Assets/Scenes/Reload.unity`
+- `reverse-output/assets/assetripper-main/ExportedProject/Assets/Scenes/Game.unity`
+- `reverse-output/assets/assetripper-main/ExportedProject/Assets/Resources/prefabs/ui/BGCanvas.prefab`
+- `reverse-output/assets/assetripper-main/ExportedProject/Assets/Resources/prefabs/ui/UIManager.prefab`
+- startup UI focus prefabs: `UILoading`, `UISceneLoading`, `UIMaidLobbyLoading`, `UIOutGame`, `uiroot/UIOutGame`, `uiroot/UIInGame`
+
+Commands:
+```powershell
+rg -n "m_UiScaleMode|m_ReferenceResolution|m_ScreenMatchMode|m_MatchWidthOrHeight|m_ScaleFactor|m_ReferencePixelsPerUnit|CanvasScaler" reverse-output/assets/assetripper-main/ExportedProject/Assets -g "*.prefab" -g "*.unity"
+rg -n "CanvasScaler|referenceResolution|matchWidthOrHeight|screenMatchMode|SafeArea|UICanvas|UIRoot" reverse-output/il2cpp sources -g "*.cs"
+python scripts\reverse\extract_canvas_layout_inventory.py
+python -m py_compile scripts\reverse\extract_canvas_layout_inventory.py
+```
+
+Outputs:
+- `scripts/reverse/extract_canvas_layout_inventory.py`
+- `reverse-output/assets/derived/ui_layout/canvas_layout_inventory.json`
+- `reverse-output/assets/derived/ui_layout/canvas_layout_inventory.csv`
+
+Findings:
+- The startup/UI focus set contains 104 `Canvas` components, 12 `CanvasScaler` components, 8 project `SafeArea` components, and 8 RectTransforms named `SafeArea`.
+- `CanvasScaler` is present on `Reload.unity/Canvas`, `Game.unity/Canvas`, `Game.unity/BGCanvas`, `Game.unity/TouchEffectCanvas`, story canvases, and the matching `UIManager.prefab` canvases.
+- `SafeArea` is present on `Canvas/SafeArea`, `BGCanvas/SafeArea`, and `UIStory/StoryGroup/StoryUICanvas/SafeArea`.
+- AssetRipper did not preserve `CanvasScaler` serialized fields such as `m_ReferenceResolution`, `m_ScreenMatchMode`, or `m_MatchWidthOrHeight`; all 12 detected scaler components have no recovered scaler field values.
+- IL2CPP dump confirms classes/properties for `UIManager.UICanvas`, `UIManager.UIBGCanvas`, `UIManager.SafeArea`, project `SafeArea`, and Unity `CanvasScaler`, but method bodies still need Ghidra/native analysis.
+
+Follow-up:
+- Use Ghidra on `UIManager.Initialize` and `SafeArea.Awake` to confirm exact CanvasScaler policy and safe-area anchor mutation.
+- Keep Godot layout reconstruction based on recovered RectTransforms until runtime CanvasScaler values are confirmed.
+
 Recommended next runs:
 
 1. Run Il2CppDumper or Cpp2IL on `libil2cpp.so` and `global-metadata.dat`.

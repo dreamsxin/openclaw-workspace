@@ -218,11 +218,12 @@ Success criteria:
 | T026 | Decode mixed-format character dialog/customer tail lists | in progress | initial tail scan shows row 1400 enters mixed dialog/presentation payload before remaining list boundaries |
 | T027 | Implement Spine character render path | in progress | `kokomi_Loading.skel.bytes` is parsed by official `@esotericsoftware/spine-core@4.2.43`; `Idle` and `Interaction` are baked to exact world-vertex frames, rendered through Godot textured polygons with normalized UVs, and verified by startup screenshots; reusable renderer for other characters still pending |
 | T028 | Inventory original Unity UI prefab layouts | done | 1,137 UI prefabs and 84,034 RectTransforms indexed in `ui-layout-analysis.md` |
-| T029 | Map startup UI flow and Canvas scaling | in progress | startup focus layout details generated and converted into `godot-project/data/ui_layout_reference.json`; CanvasScaler/SafeArea runtime confirmation still pending |
+| T029 | Map startup UI flow and Canvas scaling | in progress | startup focus layout details generated and converted into `godot-project/data/ui_layout_reference.json`; Canvas/SafeArea/CanvasScaler mount points indexed in `canvas_layout_inventory.*`; CanvasScaler reference-resolution fields still require runtime/native confirmation |
 | T030 | Build first Godot UI layout reference screens | in progress | `run-game.bat` restored startup mode now flows through recovered `UILoading` and `UISceneLoading`; loading fill uses the root `LoadingBar` rect, `kokomi_Loading` renders with normalized UVs, and `capture-startup.bat` records regression screenshots; remaining screens still pending |
 | T031 | Add repeatable startup visual regression capture | done | `capture-startup.bat`, `--startup-capture-dir=<path>`, and workflow docs for `01-uiloading.png`, `02-uisceneloading.png`, `03-uisceneloading-late.png` |
 | T032 | Add multi-clip baked Spine playback for loading character | done | `kokomi_Loading.baked.json` schema v2 with `clips.Idle` and `clips.Interaction`; `SceneLoadingReferenceScreen` switches clips during scene loading |
 | T033 | Add first UIOutGame structural reference layer | done | `OutGameReferenceScreen`, `OutGame Ref` toggle, restored-startup `04-outgame.png` capture, and recovered `UIMaidLD`/dialog/buttons/fillbar layout skeleton |
+| T034 | Extract Canvas/SafeArea serialized topology | done | `scripts/reverse/extract_canvas_layout_inventory.py`, `canvas_layout_inventory.json`, and `canvas_layout_inventory.csv`; 104 Canvas, 12 CanvasScaler, and 8 SafeArea components indexed across startup/UI focus files |
 
 ## Tool Acquisition Options
 

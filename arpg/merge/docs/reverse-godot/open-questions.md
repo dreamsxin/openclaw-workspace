@@ -27,7 +27,7 @@ These questions need evidence from IL2CPP dumps, Unity asset exports, or runtime
 
 - Which Unity scenes exist?
 - Which assets are UI versus gameplay versus ads/debug?
-- What is the exact CanvasScaler reference resolution and match mode for runtime UI?
+- What is the exact CanvasScaler reference resolution and match mode for runtime UI? Serialized mount points are known, but AssetRipper did not recover scaler field values.
 - Which UI prefabs are actually instantiated during boot before player control?
 - Are character animations Spine-based?
 - How should the confirmed Maid/NPC/customer systems be scoped for the first Godot vertical slice?
