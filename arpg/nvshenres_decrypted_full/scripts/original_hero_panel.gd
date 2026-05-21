@@ -267,17 +267,17 @@ func _build_side_panel() -> void:
 	quality_text_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 	var action_positions := [Vector2(58, 314), Vector2(58, 372), Vector2(58, 430)]
-	var action_icons := ["image/common/cm_btn_ShiZhuang", "image/common/cm_btn_PingLun", "image/common/cm_btn_FenXiang"]
-	var action_tooltips := ["全屏预览", "评论", "分享/锁定"]
+	var action_icons := ["image/common/cm_btn_chakan", "image/common/cm_btn_FenXiang", "image/en/HeroPanel/yx_switch_suooff"]
+	var action_tooltips := ["查看", "分享", "锁定"]
 	var action_callbacks := [
 		_toggle_full_preview,
-		func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "英雄评论"}),
-		_show_share_menu
+		_show_share_menu,
+		func(): _show_local_notice("源码 btnHeroLock -> CG_HERO_BAG_LOCK：离线 Demo 已模拟锁定")
 	]
 	for i in 3:
 		var icon := Button.new()
 		icon.position = action_positions[i]
-		icon.size = Vector2(42, 42)
+		icon.size = Vector2(54, 54) if i == 2 else Vector2(49, 49)
 		icon.text = ""
 		icon.tooltip_text = action_tooltips[i]
 		icon.add_theme_font_size_override("font_size", 12)
@@ -398,7 +398,7 @@ func _build_detail_panel() -> void:
 	var shade := ColorRect.new()
 	shade.name = "panel_bg"
 	shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	shade.color = Color(0.055, 0.055, 0.065, 0.54)
+	shade.color = Color(0.055, 0.055, 0.065, 0.12)
 	shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	detail_panel.add_child(shade)
 
@@ -835,11 +835,32 @@ func _add_detail_summary(root: Control, hero: Dictionary, position: Vector2, wid
 
 func _add_hero_main_summary(root: Control, hero: Dictionary) -> void:
 	_add_skill_column(root, Vector2(0, 90))
-	_add_detail_summary(root, hero, Vector2(132, 20), 238)
+	var attrs: Array = hero.get("attrs", _generated_attrs(hero))
+	var attr_positions := [
+		_layout_rect_from(main_layout_nodes, "lblGongJiAttr", Rect2(Vector2(970.389, 169.239), Vector2(74, 28))),
+		_layout_rect_from(main_layout_nodes, "lblShengMingAttr", Rect2(Vector2(970.389, 209.803), Vector2(74, 28))),
+		_layout_rect_from(main_layout_nodes, "lblFangYuAttr", Rect2(Vector2(970.389, 249.369), Vector2(74, 28))),
+		_layout_rect_from(main_layout_nodes, "lblSuduAttr", Rect2(Vector2(970.389, 290.761), Vector2(74, 28))),
+	]
+	var attr_names := ["攻击", "生命", "防御", "速度"]
+	for i in attr_positions.size():
+		var rect: Rect2 = attr_positions[i]
+		var value := str(attrs[i]).replace(attr_names[i], "").strip_edges() if i < attrs.size() else ""
+		_add_label(root, value, _detail_local(rect.position), rect.size, 18, Color(0.42, 0.46, 0.64))
+	var title_rect := _layout_rect_from(main_layout_nodes, "lblTitle1", Rect2(Vector2(984.688, 138.878), Vector2(132, 25)))
+	var title := _add_label(root, "%s  物理伤害" % hero.get("job", "灵师"), _detail_local(title_rect.position), title_rect.size + Vector2(40, 0), 16, Color(0.45, 0.48, 0.62))
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var level_rect := _layout_rect_from(main_layout_nodes, "lblLvValue", Rect2(Vector2(984.159, 438.857), Vector2(91, 34)))
+	_add_label(root, str(hero.get("level", "1")), _detail_local(level_rect.position), level_rect.size, 20, Color(0.48, 0.36, 0.60)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var exp_rect := _layout_rect_from(main_layout_nodes, "mask1", Rect2(Vector2(944.414, 393.77), Vector2(170, 32)))
+	_add_progress(root, _detail_local(exp_rect.position), exp_rect.size, 1.0, "经验")
+	var level_progress_rect := _layout_rect_from(main_layout_nodes, "mask2", Rect2(Vector2(942.753, 450.697), Vector2(173, 21)))
+	_add_progress(root, _detail_local(level_progress_rect.position), level_progress_rect.size, 1.0, "等级")
 	var detail_button := Button.new()
 	detail_button.text = ""
-	detail_button.position = Vector2(329, 202)
-	detail_button.size = Vector2(54, 54)
+	var detail_rect := _layout_rect_from(main_layout_nodes, "btn_xianQing", Rect2(Vector2(1125.929, 288.247), Vector2(54, 54)))
+	detail_button.position = _detail_local(detail_rect.position)
+	detail_button.size = detail_rect.size
 	detail_button.tooltip_text = "属性详情"
 	detail_button.pressed.connect(func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "英雄属性详情"}))
 	root.add_child(detail_button)
