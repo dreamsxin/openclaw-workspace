@@ -15,6 +15,8 @@ ASSET_NAMES = [
     "Image_Loading.png",
     "LoadingIcon64.png",
     "Loading_maid_2.png",
+    "kokomi_Loading.png",
+    "kokomi_Loading_2.png",
     "LogoChar.png",
     "MaidCafe_Logo_Kr.png",
     "MaidCafe_Logo_Broken.png",

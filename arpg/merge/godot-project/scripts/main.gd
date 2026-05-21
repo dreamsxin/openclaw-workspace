@@ -4,11 +4,13 @@ const BlockCatalogScript := preload("res://scripts/models/block_catalog.gd")
 const MergeBoardModelScript := preload("res://scripts/models/merge_board_model.gd")
 const SaveManagerScript := preload("res://scripts/services/save_manager.gd")
 const LoadingReferenceScreenScript := preload("res://scripts/loading_reference_screen.gd")
+const SceneLoadingReferenceScreenScript := preload("res://scripts/scene_loading_reference_screen.gd")
 const UILayoutReferencePreviewScript := preload("res://scripts/ui_layout_reference_preview.gd")
 const CELL_SIZE := 78
 const CELL_GAP := 8
 const BOARD_ORIGIN := Vector2(360, 92)
-const RESTORED_STARTUP_SECONDS := 2.5
+const RESTORED_APP_LOADING_SECONDS := 2.0
+const RESTORED_SCENE_LOADING_SECONDS := 1.7
 const SPRITE_DIR := "res://assets/sprites/"
 const CHARACTER_DIR := "res://data/characters/"
 const UI_LAYOUT_REFERENCE := "res://data/ui_layout_reference.json"
@@ -46,7 +48,9 @@ var ui_layout_title_label: Label
 var ui_layout_meta_label: Label
 var ui_layout_preview: Control
 var loading_reference_screen: Control
+var scene_loading_reference_screen: Control
 var loading_reference_visible := false
+var scene_loading_reference_visible := false
 var restored_startup_mode := false
 var restored_startup_elapsed := 0.0
 var restored_startup_finished := false
@@ -166,6 +170,7 @@ func _build_ui() -> void:
 	_build_character_panel()
 	_build_ui_layout_panel()
 	_build_loading_reference_screen()
+	_build_scene_loading_reference_screen()
 
 	drag_preview = TextureRect.new()
 	drag_preview.visible = false
@@ -184,9 +189,18 @@ func _process(delta: float) -> void:
 	if not restored_startup_mode or restored_startup_finished:
 		return
 	restored_startup_elapsed += delta
-	var progress := clampf(restored_startup_elapsed / RESTORED_STARTUP_SECONDS, 0.0, 1.0)
-	_set_loading_reference_state(progress, _restored_loading_message(progress))
-	if progress >= 1.0:
+	if restored_startup_elapsed < RESTORED_APP_LOADING_SECONDS:
+		var app_progress := clampf(restored_startup_elapsed / RESTORED_APP_LOADING_SECONDS, 0.0, 1.0)
+		_set_loading_reference_state(app_progress, _restored_app_loading_message(app_progress))
+		return
+	var scene_elapsed := restored_startup_elapsed - RESTORED_APP_LOADING_SECONDS
+	var scene_progress := clampf(scene_elapsed / RESTORED_SCENE_LOADING_SECONDS, 0.0, 1.0)
+	if loading_reference_visible:
+		loading_reference_visible = false
+		_apply_loading_reference_visibility()
+		_show_scene_loading_reference()
+	_set_scene_loading_reference_state(scene_progress, _restored_scene_loading_message(scene_progress))
+	if scene_progress >= 1.0:
 		_finish_restored_startup()
 
 func _build_character_panel() -> void:
@@ -295,6 +309,17 @@ func _build_loading_reference_screen() -> void:
 	loading_reference_screen.visible = loading_reference_visible
 	add_child(loading_reference_screen)
 
+func _build_scene_loading_reference_screen() -> void:
+	scene_loading_reference_screen = SceneLoadingReferenceScreenScript.new()
+	if restored_startup_mode:
+		scene_loading_reference_screen.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	else:
+		scene_loading_reference_screen.position = Vector2(320, 24)
+		scene_loading_reference_screen.size = Vector2(650, 672)
+	scene_loading_reference_screen.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	scene_loading_reference_screen.visible = scene_loading_reference_visible
+	add_child(scene_loading_reference_screen)
+
 func _make_currency_label(icon_name: String, pos: Vector2) -> Label:
 	var icon := TextureRect.new()
 	icon.texture = load(SPRITE_DIR + icon_name)
@@ -372,12 +397,31 @@ func _apply_loading_reference_visibility() -> void:
 	loading_reference_screen.call("set_source", loading_source)
 	loading_reference_screen.visible = loading_reference_visible
 
+func _show_scene_loading_reference() -> void:
+	scene_loading_reference_visible = true
+	_apply_scene_loading_reference_visibility()
+
+func _apply_scene_loading_reference_visibility() -> void:
+	if scene_loading_reference_screen == null:
+		return
+	var scene_loading_source := _ui_layout_source_by_name("UISceneLoading")
+	if scene_loading_source.is_empty():
+		scene_loading_reference_screen.visible = false
+		return
+	scene_loading_reference_screen.call("set_source", scene_loading_source)
+	scene_loading_reference_screen.visible = scene_loading_reference_visible
+
 func _set_loading_reference_state(progress: float, message: String) -> void:
 	if loading_reference_screen == null:
 		return
 	loading_reference_screen.call("set_loading_state", progress, message)
 
-func _restored_loading_message(progress: float) -> String:
+func _set_scene_loading_reference_state(progress: float, message: String) -> void:
+	if scene_loading_reference_screen == null:
+		return
+	scene_loading_reference_screen.call("set_loading_state", progress, message)
+
+func _restored_app_loading_message(progress: float) -> String:
 	if progress < 0.35:
 		return "Loading assets..."
 	if progress < 0.7:
@@ -386,10 +430,19 @@ func _restored_loading_message(progress: float) -> String:
 		return "Opening..."
 	return "Ready"
 
+func _restored_scene_loading_message(progress: float) -> String:
+	if progress < 0.45:
+		return "Loading scene..."
+	if progress < 0.85:
+		return "Preparing UI..."
+	return "Entering cafe..."
+
 func _finish_restored_startup() -> void:
 	restored_startup_finished = true
 	loading_reference_visible = false
+	scene_loading_reference_visible = false
 	_apply_loading_reference_visibility()
+	_apply_scene_loading_reference_visibility()
 	_set_status("Restored startup complete.")
 
 func _ui_layout_source_by_name(source_name: String) -> Dictionary:

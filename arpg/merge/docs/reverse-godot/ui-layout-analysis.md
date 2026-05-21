@@ -93,6 +93,8 @@ The current Godot prototype reads this file and exposes a small `UI Ref` selecto
 
 `UILoading` is now also represented by a first Godot structural reference layer. It maps the recovered 1080 x 1920 root, `Loading_Type/BG_Base` background stack, `LogoArea`, `LoadingBar`, and `Ver` / `Ver (1)` corner labels into a centered preview panel. First-pass loading PNGs are copied into `godot-project/assets/loading/` and used for the visible background/logo/loading fill where possible. Spine logo renderer behavior still needs a proper runtime or baked-frame replacement.
 
+`UISceneLoading` now has a Godot reference layer in restored startup mode. It maps the recovered full-stretch root and background candidates and uses `kokomi_Loading.png` as a static fallback for the original `SkeletonGraphic (kokomi_Loading)` renderer group.
+
 ## Largest UI Prefabs
 
 | Name | Category | RectTransforms | Large Rects | Path |
@@ -128,4 +130,4 @@ The current Godot prototype reads this file and exposes a small `UI Ref` selecto
 
 1. Map startup flow through `ReloadManager`, `LoginMenuHandler`, `UIRoot`, `UIManager`, `UIPopupManager`, and `UISceneLoading`.
 2. Confirm CanvasScaler and SafeArea behavior from serialized components and IL2CPP `UIManager.Initialize` / `SafeArea` usage.
-3. Replace remaining `UILoading` static fallbacks with Spine logo output, then convert `UISceneLoading`, `UIOutGame`, and the first in-game HUD from reference data into actual Godot Control scenes.
+3. Replace remaining loading static fallbacks with Spine output, then convert `UIOutGame` and the first in-game HUD from reference data into actual Godot Control scenes.
