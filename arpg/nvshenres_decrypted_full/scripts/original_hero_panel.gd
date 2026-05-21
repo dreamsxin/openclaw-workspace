@@ -34,6 +34,9 @@ const HERO_CATALOG_PATH := "res://data/hero_catalog.json"
 const HERO_SPINE_INDEX_PATH := "res://data/hero_spine_runtime_index.json"
 const HERO_MAIN_LAYOUT_PATH := "res://data/prefab_layouts/HeroMainPre.json"
 const HERO_BOOK_LAYOUT_PATH := "res://data/prefab_layouts/HeroBookDetailPre.json"
+const HERO_EQUIP_LAYOUT_PATH := "res://data/prefab_layouts/zhuangbeiBox.json"
+const HERO_STAR_LAYOUT_PATH := "res://data/prefab_layouts/shengxingBox.json"
+const HERO_WILL_LAYOUT_PATH := "res://data/prefab_layouts/zhanyiBox.json"
 const HERO_TOUCH_SOUNDS := ["1", "2", "3", "5"]
 
 const HEROES := [
@@ -75,8 +78,13 @@ var quality_text_label: Label
 var named_resources: Dictionary = {}
 var main_layout_nodes: Dictionary = {}
 var book_layout_nodes: Dictionary = {}
+var equip_layout_nodes: Dictionary = {}
+var star_layout_nodes: Dictionary = {}
+var will_layout_nodes: Dictionary = {}
 var main_layout_node_list: Array = []
 var book_layout_node_list: Array = []
+var star_layout_node_list: Array = []
+var will_layout_node_list: Array = []
 var voice_index: Dictionary = {}
 var hero_spine_index: Dictionary = {}
 var hero_catalog: Array = []
@@ -93,8 +101,13 @@ func _ready() -> void:
 	_load_named_resources()
 	main_layout_nodes = _load_layout_index(HERO_MAIN_LAYOUT_PATH)
 	book_layout_nodes = _load_layout_index(HERO_BOOK_LAYOUT_PATH)
+	equip_layout_nodes = _load_layout_index(HERO_EQUIP_LAYOUT_PATH)
+	star_layout_nodes = _load_layout_index(HERO_STAR_LAYOUT_PATH)
+	will_layout_nodes = _load_layout_index(HERO_WILL_LAYOUT_PATH)
 	main_layout_node_list = _load_layout_nodes(HERO_MAIN_LAYOUT_PATH)
 	book_layout_node_list = _load_layout_nodes(HERO_BOOK_LAYOUT_PATH)
+	star_layout_node_list = _load_layout_nodes(HERO_STAR_LAYOUT_PATH)
+	will_layout_node_list = _load_layout_nodes(HERO_WILL_LAYOUT_PATH)
 	_load_voice_index()
 	_load_hero_spine_index()
 	_load_hero_catalog()
@@ -915,18 +928,19 @@ func _add_equipment_tab(root: Control, y_base := 126) -> void:
 	var hero_level := int(level_text)
 	var hero_star := int(hero.get("stars", 5))
 	var equips := [
-		["武器", "yx_icon_zhuangbei0", Vector2(483.916, 157.163), "yx_frame_ZBHong"],
-		["衣服", "yx_icon_zhuangbei1", Vector2(506.403, 260.246), "yx_frame_ZBCheng"],
-		["护手", "yx_icon_zhuangbei2", Vector2(505.447, 365.441), "yx_frame_ZBLan"],
-		["鞋子", "yx_icon_zhuangbei3", Vector2(483.827, 467.857), "yx_frame_ZBLv"],
-		["纹章", "yx_icon_zhuangbei4", Vector2(588.697, 95.551), "yx_frame_ZBZi"],
-		["神器", "yx_icon_zhuangbei5", Vector2(739.29, 96.919), "yx_frame_ZBHong"],
+		["武器", "equipBox1", "yx_icon_zhuangbei0", "yx_frame_ZBHong"],
+		["衣服", "equipBox2", "yx_icon_zhuangbei1", "yx_frame_ZBCheng"],
+		["护手", "equipBox3", "yx_icon_zhuangbei2", "yx_frame_ZBLan"],
+		["鞋子", "equipBox4", "yx_icon_zhuangbei3", "yx_frame_ZBLv"],
+		["纹章", "equipBox5", "yx_icon_zhuangbei4", "yx_frame_ZBZi"],
+		["神器", "equipBox6", "yx_icon_zhuangbei5", "yx_frame_ZBHong"],
 	]
 	for i in equips.size():
-		var pos := _detail_local(equips[i][2])
+		var slot_rect := _layout_rect_from(equip_layout_nodes, str(equips[i][1]), Rect2(Vector2(483.916, 157.163), Vector2(94, 94)))
+		var pos := _detail_local(slot_rect.position)
 		var slot := Control.new()
 		slot.position = pos
-		slot.size = Vector2(94, 94)
+		slot.size = slot_rect.size
 		root.add_child(slot)
 		var slot_hit := Button.new()
 		slot_hit.text = ""
@@ -945,7 +959,7 @@ func _add_equipment_tab(root: Control, y_base := 126) -> void:
 		slot_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		slot.add_child(slot_bg)
 		_add_named_image_to(slot, "image/en/HeroPanel/%s" % equips[i][3], Vector2(0, 0), slot.size)
-		_add_named_image_to(slot, "image/en/HeroPanel/%s" % equips[i][1], Vector2(18, 18), Vector2(58, 58))
+		_add_named_image_to(slot, "image/en/HeroPanel/%s" % equips[i][2], Vector2(18, 18), Vector2(58, 58))
 		var name_label := _add_label(slot, str(equips[i][0]), Vector2(0, 70), Vector2(94, 22), 15, Color(0.96, 0.90, 0.68))
 		name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		if i < 4:
@@ -955,13 +969,14 @@ func _add_equipment_tab(root: Control, y_base := 126) -> void:
 		elif i == 5:
 			_add_lock_overlay(slot, "敬请期待")
 	var fuwen := [
-		["符文", Vector2(667.622, 223.132), "100级解锁", hero_level >= 100],
-		["神器", Vector2(667.622, 394.132), "七星解锁", hero_star >= 7],
+		["符文", "fuwenIcon1", "100级解锁", hero_level >= 100],
+		["神器", "fuwenIcon2", "七星解锁", hero_star >= 7],
 	]
 	for item in fuwen:
+		var fuwen_rect := _layout_rect_from(equip_layout_nodes, str(item[1]), Rect2(Vector2(667.622, 223.132), Vector2(88, 87)))
 		var frame := Control.new()
-		frame.position = _detail_local(item[1])
-		frame.size = Vector2(88, 87)
+		frame.position = _detail_local(fuwen_rect.position)
+		frame.size = fuwen_rect.size
 		root.add_child(frame)
 		var frame_hit := Button.new()
 		frame_hit.text = ""
@@ -978,7 +993,8 @@ func _add_equipment_tab(root: Control, y_base := 126) -> void:
 			title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 			var lock := _add_label(frame, str(item[2]), Vector2(-56, 92), Vector2(200, 26), 16, Color(0.72, 0.70, 0.78))
 			lock.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	var btn := _add_action_button(root, "一键穿戴", _detail_local(Vector2(609.622, 549.632)), Vector2(200, 60), func(): _show_local_notice("源码 btnQuickPut 走服务器，离线 Demo 已模拟穿戴"), "image/common/cm_btn_LvSe0")
+	var wear_rect := _layout_rect_from(equip_layout_nodes, "btnChuanDai", Rect2(Vector2(609.622, 549.632), Vector2(200, 60)))
+	var btn := _add_action_button(root, "一键穿戴", _detail_local(wear_rect.position), wear_rect.size, func(): _show_local_notice("源码 btnQuickPut 走服务器，离线 Demo 已模拟穿戴"), "image/common/cm_btn_LvSe0")
 	_add_red_dot(btn, Vector2(154, 2))
 
 func _add_red_dot(parent: Control, position: Vector2) -> void:
@@ -1004,17 +1020,21 @@ func _add_star_tab(root: Control, y_base := 126) -> void:
 	y_base = y_base
 	var hero: Dictionary = _current_hero()
 	var labels := [
-		["等级上限", "+50", Vector2(568.115, 123.48), Vector2(667.453, 124.477)],
-		["攻        击", "+40%", Vector2(582.312, 147.565), Vector2(685.859, 149.606)],
-		["生       命", "+40%", Vector2(598.862, 173.228), Vector2(699.429, 174.233)],
+		["等级上限", "+50", "lbl01", 112, "lblVal1"],
+		["攻        击", "+40%", "lbl01", 113, "lblVal2"],
+		["生       命", "+40%", "lbl01", 114, "lblVal3"],
 	]
 	for item in labels:
-		_add_label(root, item[0], _detail_local(item[2]), Vector2(120, 26), 17, Color(0.42, 0.45, 0.62))
-		_add_label(root, item[1], _detail_local(item[3]), Vector2(74, 26), 17, Color(0.70, 0.30, 0.52))
-	var skill_tip := _add_label(root, "提升1级", _detail_local(Vector2(702.848, 233.291)), Vector2(100, 24), 16, Color(0.45, 0.48, 0.62))
+		var label_rect := _layout_rect_by_index(star_layout_node_list, int(item[3]), Rect2(Vector2(568.115, 123.48), Vector2(120, 26)))
+		var value_rect := _layout_rect_from(star_layout_nodes, str(item[4]), Rect2(Vector2(667.453, 124.477), Vector2(74, 26)))
+		_add_label(root, item[0], _detail_local(label_rect.position), label_rect.size, 17, Color(0.42, 0.45, 0.62))
+		_add_label(root, item[1], _detail_local(value_rect.position), value_rect.size, 17, Color(0.70, 0.30, 0.52))
+	var skill_tip_rect := _layout_rect_from(star_layout_nodes, "lblVal4", Rect2(Vector2(702.848, 233.291), Vector2(100, 24)))
+	var skill_tip := _add_label(root, "提升1级", _detail_local(skill_tip_rect.position), skill_tip_rect.size, 16, Color(0.45, 0.48, 0.62))
 	skill_tip.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_add_named_image_to(root, "image/common/cm_frame_JiNeng1", _detail_local(Vector2(654.191, 344.174)), Vector2(30, 30))
-	_add_label(root, "3", _detail_local(Vector2(677.728, 230.716)), Vector2(24, 30), 17, Color(0.95, 0.90, 0.64))
+	var skill_level_rect := _layout_rect_from(star_layout_nodes, "lblJinengLv1", Rect2(Vector2(677.728, 230.716), Vector2(24, 30)))
+	_add_label(root, "3", _detail_local(skill_level_rect.position), skill_level_rect.size, 17, Color(0.95, 0.90, 0.64))
 	_add_label(root, "当前星级", _detail_local(Vector2(410, 336)), Vector2(120, 26), 17, Color(0.42, 0.45, 0.62))
 	_add_label(root, "%s  ->  %s" % [hero.get("stars", 5), int(hero.get("stars", 5)) + 1], _detail_local(Vector2(466, 366)), Vector2(160, 34), 25, Color(0.95, 0.82, 0.42))
 	var material_data := [
@@ -1039,11 +1059,14 @@ func _add_star_tab(root: Control, y_base := 126) -> void:
 		else:
 			_add_named_image_to(slot, "image/en/HeroPanel/yx_frame_JiNeng", Vector2.ZERO, Vector2(74, 74))
 			_add_named_image_to(slot, "image/en/HeroPanel/yx_icon_zhuangbei4", Vector2(14, 14), Vector2(46, 46))
-		var material_label := _add_label(root, material_data[i][2], _detail_local(material_data[i][1]), Vector2(92, 46), 16, Color(0.36, 0.34, 0.42))
+		var word_rect := _layout_rect_from(star_layout_nodes, "lblHeroWord%d" % (i + 1), Rect2(material_data[i][1], Vector2(92, 46)))
+		var material_label := _add_label(root, material_data[i][2], _detail_local(word_rect.position), word_rect.size, 16, Color(0.36, 0.34, 0.42))
 		material_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		material_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_add_action_button(root, "英魂", _detail_local(Vector2(433.192, 537.997)), Vector2(130, 45), func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "英魂殿"}), "image/common/cm_btn_LvSe1")
-	_add_action_button(root, "升星", _detail_local(Vector2(532.181, 548.426)), Vector2(292, 65), _show_star_success, "image/en/HeroPanel/yx_btn_ShengXing")
+	var yhd_rect := _layout_rect_from(star_layout_nodes, "btnYHD", Rect2(Vector2(433.192, 537.997), Vector2(130, 45)))
+	var up_rect := _layout_rect_from(star_layout_nodes, "btnUpStar", Rect2(Vector2(532.181, 548.426), Vector2(292, 65)))
+	_add_action_button(root, "英魂", _detail_local(yhd_rect.position), yhd_rect.size, func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "英魂殿"}), "image/common/cm_btn_LvSe1")
+	_add_action_button(root, "升星", _detail_local(up_rect.position), up_rect.size, _show_star_success, "image/en/HeroPanel/yx_btn_ShengXing")
 
 func _add_will_tab(root: Control, y_base := 126) -> void:
 	y_base = y_base
@@ -1053,21 +1076,22 @@ func _add_will_tab(root: Control, y_base := 126) -> void:
 	var nodes := []
 	if star < 13:
 		nodes = [
-			["战意一", Vector2(503.622, 325.047), Vector2(134, 134), 180.0, "9星解锁", Vector2(15, 24), Vector2(18, 83)],
-			["战意二", Vector2(646.622, 185.632), Vector2(134, 134), 0.0, "10星解锁", Vector2(15, 3), Vector2(13, 81)],
+			["战意一", "zhanyi0", 180.0, "9星解锁", Vector2(15, 24), Vector2(18, 83)],
+			["战意二", "zhanyi1_low", 0.0, "10星解锁", Vector2(15, 3), Vector2(13, 81)],
 		]
 	else:
 		nodes = [
-			["战意一", Vector2(490.622, 303.632), Vector2(134, 134), 165.0, "9星解锁", Vector2(15, 24), Vector2(18, 83)],
-			["战意二", Vector2(659.622, 304.632), Vector2(134, 134), -75.0, "10星解锁", Vector2(27, 15), Vector2(82, 12)],
-			["战意三", Vector2(590.068, 154.132), Vector2(102, 166), 0.0, "13星解锁", Vector2(0, 21), Vector2(0, 97)],
+			["战意一", "zhanyi0_high", 165.0, "9星解锁", Vector2(15, 24), Vector2(18, 83)],
+			["战意二", "zhanyi1", -75.0, "10星解锁", Vector2(27, 15), Vector2(82, 12)],
+			["战意三", "zhanyi2", 0.0, "13星解锁", Vector2(0, 21), Vector2(0, 97)],
 		]
 	for i in nodes.size():
 		var item = nodes[i]
+		var rect := _will_node_rect(str(item[1]))
 		var node := Control.new()
-		node.position = _detail_local(item[1])
-		node.size = item[2]
-		node.rotation_degrees = item[3]
+		node.position = _detail_local(rect.position)
+		node.size = rect.size
+		node.rotation_degrees = item[2]
 		root.add_child(node)
 		var unlock_star := 9 + i
 		var node_hit := Button.new()
@@ -1084,12 +1108,12 @@ func _add_will_tab(root: Control, y_base := 126) -> void:
 		node.add_child(node_hit)
 		_add_named_image_to(node, "image/en/HeroPanel/yx_frame_ZhanYi", Vector2.ZERO, node.size)
 		var head_box := Control.new()
-		head_box.position = item[5]
+		head_box.position = item[4]
 		head_box.size = Vector2(72, 72)
 		head_box.rotation_degrees = -node.rotation_degrees
 		node.add_child(head_box)
 		_add_head_icon(head_box, hero, Vector2.ZERO, Vector2(72, 72))
-		var name_label := _add_label(node, str(item[0]), item[6], Vector2(86, 24), 16, Color(0.98, 0.91, 0.64))
+		var name_label := _add_label(node, str(item[0]), item[5], Vector2(86, 24), 16, Color(0.98, 0.91, 0.64))
 		name_label.rotation_degrees = -node.rotation_degrees
 		name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		var lock_label := _add_label(node, item[4], Vector2(-8, node.size.y - 30), Vector2(node.size.x + 28, 24), 15, Color(0.78, 0.76, 0.86))
@@ -1330,11 +1354,31 @@ func _skin_layout_rect(name: String, fallback: Rect2) -> Rect2:
 		_:
 			return _layout_rect_from(source, name, fallback)
 
+func _will_node_rect(name: String) -> Rect2:
+	match name:
+		"zhanyi0_high":
+			return Rect2(Vector2(490.622, 303.632), Vector2(134, 134))
+		"zhanyi1_low":
+			return Rect2(Vector2(646.622, 185.632), Vector2(134, 134))
+		_:
+			return _layout_rect_from(will_layout_nodes, name, Rect2(Vector2(503.622, 325.047), Vector2(134, 134)))
+
 func _layout_rect_by_parent(nodes: Array, name: String, parent_index: int, fallback: Rect2) -> Rect2:
 	for node in nodes:
 		if typeof(node) != TYPE_DICTIONARY:
 			continue
 		if str(node.get("name", "")) != name or int(node.get("parent_index", -9999)) != parent_index:
+			continue
+		var rect: Array = node.get("screen_rect", [])
+		if rect.size() >= 4:
+			return Rect2(Vector2(float(rect[0]), float(rect[1])), Vector2(float(rect[2]), float(rect[3])))
+	return fallback
+
+func _layout_rect_by_index(nodes: Array, index: int, fallback: Rect2) -> Rect2:
+	for node in nodes:
+		if typeof(node) != TYPE_DICTIONARY:
+			continue
+		if int(node.get("index", -1)) != index:
 			continue
 		var rect: Array = node.get("screen_rect", [])
 		if rect.size() >= 4:
