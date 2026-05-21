@@ -55,6 +55,7 @@ The prototype is intentionally small and data-driven:
 | `godot-project/data/blocks.json` | Recovered block catalog and merge chains from `Table_Block.dat` |
 | `godot-project/data/block_rules.json` | Recovered production, drop, cooldown, and merge-drop rules from `Table_Block` child lists |
 | `godot-project/data/initial_board.json` | Initial board, wallet, locked cells, and block placement |
+| `godot-project/data/ui_layout_reference.json` | Startup UI RectTransform reference data derived from AssetRipper prefabs/scenes |
 
 ## Imported Assets
 
@@ -106,6 +107,20 @@ Character images are classified before use:
 - `spine_atlas_page_no_skel`: has atlas data but no copied skeleton companion yet; shown as incomplete Spine metadata.
 
 The current profile browser does not treat atlas page PNGs as full static portraits.
+
+## UI Layout Reference
+
+The top-right `UI Ref` control reads `godot-project/data/ui_layout_reference.json`.
+
+Use `Next UI` to cycle through recovered startup/root layout sources:
+
+- `UILoading`
+- `UISceneLoading`
+- `UIMaidLobbyLoading`
+- `UIOutGame`
+- `UIInGame`
+
+The selector shows the source RectTransform count and writes the reference resolution plus key node sizes to the status panel. This is a reconstruction aid for matching the original Unity layout while the actual Godot screens are still being rebuilt.
 
 Imported character PNGs require Godot import metadata. Regenerate it after adding new copied character images with:
 

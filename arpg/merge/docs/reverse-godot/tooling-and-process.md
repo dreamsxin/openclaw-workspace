@@ -920,6 +920,32 @@ Validation:
 .\tools\Godot\Godot_console.exe --headless --path .\godot-project --quit-after 2
 ```
 
+### 2026-05-21 Godot UI Layout Reference Build
+
+Command:
+
+```powershell
+python scripts\reverse\build_godot_ui_layout_reference.py
+```
+
+Inputs:
+
+- `reverse-output/assets/derived/ui_layout/startup_ui_layout_details.json`
+
+Outputs:
+
+- `godot-project/data/ui_layout_reference.json`
+
+Result:
+
+- Converted recovered startup/root UI RectTransform details into a compact Godot-readable reference file.
+- Included `UILoading`, `UISceneLoading`, `UIMaidLobbyLoading`, `UIOutGame`, and `UIInGame` sources.
+- Added a prototype `UI Ref` selector so the Godot app can inspect source layout roots while rebuilding actual Control scenes.
+
+Follow-up:
+
+- Confirm CanvasScaler and SafeArea behavior from `UIManager`, `SafeArea`, and serialized Canvas components before treating positions as exact responsive layout.
+
 ## Tool Run Template
 
 Copy this section for every meaningful tool run.

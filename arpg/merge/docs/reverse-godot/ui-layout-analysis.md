@@ -14,6 +14,7 @@ This document records the first-pass static UI layout inventory extracted from t
 - `reverse-output/assets/derived/ui_layout/startup_ui_candidates.json`
 - `reverse-output/assets/derived/ui_layout/startup_ui_layout_details.csv`
 - `reverse-output/assets/derived/ui_layout/startup_ui_layout_details.json`
+- `godot-project/data/ui_layout_reference.json`
 
 ## Summary
 
@@ -74,6 +75,22 @@ Key recovered layout facts from `startup_ui_layout_details.*`:
 - `UIOutGame` and `UIInGame` use full-stretch roots; their child controls are primarily fixed-anchor panels/buttons.
 - `UIManager.prefab` and `Game.unity` embed the large startup/UI root tree rather than only referencing external prefabs.
 
+## Godot Reference Data
+
+`scripts/reverse/build_godot_ui_layout_reference.py` converts the startup layout details into `godot-project/data/ui_layout_reference.json`.
+
+The Godot data currently includes:
+
+- `UILoading`
+- `UISceneLoading`
+- `UIMaidLobbyLoading`
+- both exported `UIOutGame` roots
+- `UIInGame`
+
+This file is intentionally a reference layer, not a final scene export. It preserves Unity RectTransform anchors, pivots, positions, sizes, and source paths so the Godot UI can be rebuilt screen-by-screen while keeping a direct evidence trail back to the original prefabs.
+
+The current Godot prototype reads this file and exposes a small `UI Ref` selector in the top-right control area. Use it to cycle through recovered startup UI roots and show the source resolution plus the first key RectTransform entries in the status panel.
+
 ## Largest UI Prefabs
 
 | Name | Category | RectTransforms | Large Rects | Path |
@@ -108,5 +125,5 @@ Key recovered layout facts from `startup_ui_layout_details.*`:
 ## Next Steps
 
 1. Map startup flow through `ReloadManager`, `LoginMenuHandler`, `UIRoot`, `UIManager`, `UIPopupManager`, and `UISceneLoading`.
-2. Expand the extractor to reconstruct parent/child paths for selected high-value screens.
-3. Build Godot reference layouts for `UILoading`, `UISceneLoading`, `UILobbyUIOn`, `UIOutGame`, and the first in-game HUD.
+2. Confirm CanvasScaler and SafeArea behavior from serialized components and IL2CPP `UIManager.Initialize` / `SafeArea` usage.
+3. Convert `UILoading`, `UISceneLoading`, `UIOutGame`, and the first in-game HUD from reference data into actual Godot Control scenes.

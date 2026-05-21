@@ -1,0 +1,4043 @@
+{
+  "source": "reverse-output/assets/derived/ui_layout/startup_ui_layout_details.json",
+  "generated_for": "godot-project",
+  "notes": [
+    "Coordinates are Unity RectTransform values, not final Godot Control offsets.",
+    "Use reference_resolution as the base portrait-space design reference when rebuilding screens.",
+    "CanvasScaler and SafeArea runtime behavior still need IL2CPP confirmation before exact responsive layout."
+  ],
+  "sources": [
+    {
+      "name": "UILoading",
+      "source_type": "prefab",
+      "source_path": "Assets/Resources/prefabs/ui/UILoading.prefab",
+      "rect_transform_count": 65,
+      "reference_resolution": {
+        "width": 1080,
+        "height": 1920,
+        "basis": "UILoading root RectTransform"
+      },
+      "layout_kind_counts": {
+        "fixed_anchor": 53,
+        "full_stretch": 10,
+        "mixed": 2
+      },
+      "key_rects": [
+        {
+          "node_path": "UILoading/Btn_ContactUs/Btn_Default/Image",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 2.25
+          },
+          "size_delta": {
+            "x": -16.0,
+            "y": -20.5
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 1
+        },
+        {
+          "node_path": "UILoading/LoadingBar/Background",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 10.0,
+            "y": 10.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 1
+        },
+        {
+          "node_path": "UILoading/LoadingBar/Background/Background (1)",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": -10.0,
+            "y": -10.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UILoading/LogoArea",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 6
+        },
+        {
+          "node_path": "UILoading/Btn_ContactUs/Btn_Default",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 3
+        },
+        {
+          "node_path": "UILoading/Loading_Type",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 1
+        },
+        {
+          "node_path": "UILoading/LoadingBar/Handle Slide Area",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": -26.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 1
+        },
+        {
+          "node_path": "UILoading/Loading_Type/BG_Base/HalloweenBG/White",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UILoading/Btn_ContactUs/Btn_Default/Cover",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UILoading/Ver (1)/Image",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UILoading/Loading_Type/BG_Base/HalloweenBG",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchor_max": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchored_position": {
+            "x": 660.0,
+            "y": 300.0
+          },
+          "size_delta": {
+            "x": 3072.0,
+            "y": 2048.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.65
+          },
+          "children_count": 1
+        },
+        {
+          "node_path": "UILoading/Loading_Type/BG_Base",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchor_max": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 2048.0,
+            "y": 2048.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 3
+        },
+        {
+          "node_path": "UILoading/Loading_Type/BG_Base/BG",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchor_max": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 2048.0,
+            "y": 2048.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UILoading/Loading_Type/BG_Base/BG_Event",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchor_max": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 2048.0,
+            "y": 2048.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UILoading",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchor_max": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 1080.0,
+            "y": 1920.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 7
+        },
+        {
+          "node_path": "UILoading/LogoArea/Logo_KR",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 1.0
+          },
+          "anchor_max": {
+            "x": 0.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 50.0,
+            "y": -280.0
+          },
+          "size_delta": {
+            "x": 512.0,
+            "y": 512.0
+          },
+          "pivot": {
+            "x": 0.0,
+            "y": 1.0
+          },
+          "children_count": 1
+        },
+        {
+          "node_path": "UILoading/LogoArea/Logo_EN",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 1.0
+          },
+          "anchor_max": {
+            "x": 0.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 50.0,
+            "y": -280.0
+          },
+          "size_delta": {
+            "x": 512.0,
+            "y": 512.0
+          },
+          "pivot": {
+            "x": 0.0,
+            "y": 1.0
+          },
+          "children_count": 1
+        },
+        {
+          "node_path": "UILoading/LogoArea/Logo_JP",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 1.0
+          },
+          "anchor_max": {
+            "x": 0.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 50.0,
+            "y": -280.0
+          },
+          "size_delta": {
+            "x": 512.0,
+            "y": 512.0
+          },
+          "pivot": {
+            "x": 0.0,
+            "y": 1.0
+          },
+          "children_count": 1
+        },
+        {
+          "node_path": "UILoading/LogoArea/Logo_CH",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 1.0
+          },
+          "anchor_max": {
+            "x": 0.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 50.0,
+            "y": -280.0
+          },
+          "size_delta": {
+            "x": 512.0,
+            "y": 512.0
+          },
+          "pivot": {
+            "x": 0.0,
+            "y": 1.0
+          },
+          "children_count": 1
+        },
+        {
+          "node_path": "UILoading/LogoArea/Logo_CHS",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 1.0
+          },
+          "anchor_max": {
+            "x": 0.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 50.0,
+            "y": -280.0
+          },
+          "size_delta": {
+            "x": 512.0,
+            "y": 512.0
+          },
+          "pivot": {
+            "x": 0.0,
+            "y": 1.0
+          },
+          "children_count": 1
+        },
+        {
+          "node_path": "UILoading/LogoArea/LogoImage",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 1.0
+          },
+          "anchor_max": {
+            "x": 0.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 50.0,
+            "y": -24.0
+          },
+          "size_delta": {
+            "x": 512.0,
+            "y": 512.0
+          },
+          "pivot": {
+            "x": 0.0,
+            "y": 1.0
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UILoading/LogoArea/Logo_KR/SkeletonGraphic (MugeMaidcafe Logo)",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchor_max": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 512.0,
+            "y": 512.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UILoading/LogoArea/Logo_EN/SkeletonGraphic (MaidCafe_Logo_Eg)",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchor_max": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 176.0
+          },
+          "size_delta": {
+            "x": 512.0,
+            "y": 512.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UILoading/LogoArea/Logo_JP/SkeletonGraphic (MaidCafe_Logo_Jp)",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchor_max": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 176.0
+          },
+          "size_delta": {
+            "x": 512.0,
+            "y": 512.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UILoading/LogoArea/Logo_CH/SkeletonGraphic (MaidCafe_Logo_CH)",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchor_max": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 176.0
+          },
+          "size_delta": {
+            "x": 512.0,
+            "y": 512.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UILoading/LogoArea/Logo_CHS/SkeletonGraphic (MaidCafe_Logo_CH)",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchor_max": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 176.0
+          },
+          "size_delta": {
+            "x": 512.0,
+            "y": 512.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UILoading/LoadingBar/Text",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchor_max": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": -79.0
+          },
+          "size_delta": {
+            "x": 1020.32,
+            "y": 60.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UILoading/LoadingBar/Text",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchor_max": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 134.0
+          },
+          "size_delta": {
+            "x": 1020.32,
+            "y": 60.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UILoading/LoadingBar",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.5,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 0.5,
+            "y": 0.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 300.0
+          },
+          "size_delta": {
+            "x": 670.0,
+            "y": 50.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 5
+        },
+        {
+          "node_path": "UILoading/Ver (1)",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchored_position": {
+            "x": 30.0,
+            "y": 30.0
+          },
+          "size_delta": {
+            "x": 500.0,
+            "y": 60.0
+          },
+          "pivot": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "children_count": 1
+        },
+        {
+          "node_path": "UILoading/Ver",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 1.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 0.0
+          },
+          "anchored_position": {
+            "x": -30.0,
+            "y": 30.0
+          },
+          "size_delta": {
+            "x": 500.0,
+            "y": 60.0
+          },
+          "pivot": {
+            "x": 1.0,
+            "y": 0.0
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UILoading/LoadingBar/Fill Area/Image",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchor_max": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 665.0,
+            "y": 45.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 23
+        }
+      ]
+    },
+    {
+      "name": "UISceneLoading",
+      "source_type": "prefab",
+      "source_path": "Assets/Resources/prefabs/ui/UISceneLoading.prefab",
+      "rect_transform_count": 323,
+      "reference_resolution": {
+        "width": 1080,
+        "height": 1920,
+        "basis": "inferred from recovered UILoading root; CanvasScaler still unconfirmed"
+      },
+      "layout_kind_counts": {
+        "fixed_anchor": 19,
+        "full_stretch": 97,
+        "large_panel": 2,
+        "mixed": 2
+      },
+      "key_rects": [
+        {
+          "node_path": "UISceneLoading/SceneObjects/TypeChristMas (1)/BG",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 475.0,
+            "y": 300.0
+          },
+          "size_delta": {
+            "x": 1050.0,
+            "y": 2686.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.0
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UISceneLoading/SceneObjects/TypeNormal/BG",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 200.0,
+            "y": 200.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UISceneLoading",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 5
+        },
+        {
+          "node_path": "UISceneLoading/SceneObjects/TypeA/SkeletonGraphic (kokomi_Loading)/Renderer0",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.0
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UISceneLoading/SceneObjects/TypeA/SkeletonGraphic (kokomi_Loading)/Renderer1",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.0
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UISceneLoading/SceneObjects/TypeA/SkeletonGraphic (kokomi_Loading)/Renderer2",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.0
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UISceneLoading/SceneObjects/TypeA/SkeletonGraphic (kokomi_Loading)/Renderer3",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.0
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UISceneLoading/SceneObjects/TypeA/SkeletonGraphic (kokomi_Loading)/Renderer4",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.0
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UISceneLoading/SceneObjects/TypeA/SkeletonGraphic (kokomi_Loading)/Renderer5",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.0
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UISceneLoading/SceneObjects/TypeA/SkeletonGraphic (kokomi_Loading)/Renderer6",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.0
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UISceneLoading/SceneObjects/TypeA/SkeletonGraphic (kokomi_Loading)/Renderer7",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.0
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UISceneLoading/SceneObjects/TypeA/SkeletonGraphic (kokomi_Loading)/Renderer8",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.0
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UISceneLoading/SceneObjects/TypeA/SkeletonGraphic (kokomi_Loading)/Renderer9",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.0
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UISceneLoading/SceneObjects/TypeA/SkeletonGraphic (kokomi_Loading)/Renderer10",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.0
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UISceneLoading/SceneObjects/TypeA/SkeletonGraphic (kokomi_Loading)/Renderer11",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.0
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UISceneLoading/SceneObjects/TypeA/SkeletonGraphic (kokomi_Loading)/Renderer12",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.0
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UISceneLoading/SceneObjects/TypeA/SkeletonGraphic (kokomi_Loading)/Renderer13",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.0
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UISceneLoading/SceneObjects/TypeA/SkeletonGraphic (kokomi_Loading)/Renderer14",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.0
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UISceneLoading/SceneObjects/TypeA/SkeletonGraphic (kokomi_Loading)/Renderer15",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.0
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UISceneLoading/SceneObjects/TypeA/SkeletonGraphic (kokomi_Loading)/Renderer16",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.0
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UISceneLoading/SceneObjects/TypeA/SkeletonGraphic (kokomi_Loading)/Renderer17",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.0
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UISceneLoading/SceneObjects/TypeA/SkeletonGraphic (kokomi_Loading)/Renderer18",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.0
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UISceneLoading/SceneObjects/TypeA/SkeletonGraphic (kokomi_Loading)/Renderer19",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.0
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UISceneLoading/SceneObjects/TypeA/SkeletonGraphic (kokomi_Loading)/Renderer20",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.0
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UISceneLoading/SceneObjects/TypeA/SkeletonGraphic (kokomi_Loading)/Renderer21",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.0
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UISceneLoading/SceneObjects/TypeA/SkeletonGraphic (kokomi_Loading)/Renderer22",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.0
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UISceneLoading/SceneObjects/TypeA/SkeletonGraphic (kokomi_Loading)/Renderer23",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.0
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UISceneLoading/SceneObjects/TypeA/SkeletonGraphic (kokomi_Loading)/Renderer24",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.0
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UISceneLoading/SceneObjects/TypeA/SkeletonGraphic (kokomi_Loading)/Renderer25",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.0
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UISceneLoading/SceneObjects/TypeA/SkeletonGraphic (kokomi_Loading)/Renderer26",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.0
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UISceneLoading/SceneObjects/TypeA/SkeletonGraphic (kokomi_Loading)/Renderer27",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.0
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UISceneLoading/SceneObjects/TypeA/SkeletonGraphic (kokomi_Loading)/Renderer28",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.0
+          },
+          "children_count": 0
+        }
+      ]
+    },
+    {
+      "name": "UIMaidLobbyLoading",
+      "source_type": "prefab",
+      "source_path": "Assets/Resources/prefabs/ui/UIMaidLobbyLoading.prefab",
+      "rect_transform_count": 86,
+      "reference_resolution": {
+        "width": 1080,
+        "height": 1920,
+        "basis": "inferred from recovered UILoading root; CanvasScaler still unconfirmed"
+      },
+      "layout_kind_counts": {
+        "fixed_anchor": 19,
+        "full_stretch": 67
+      },
+      "key_rects": [
+        {
+          "node_path": "UIMaidLobbyLoading/GameObject",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 1200.0,
+            "y": 1000.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 16
+        },
+        {
+          "node_path": "UIMaidLobbyLoading/Cover",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 400.0,
+            "y": 400.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIMaidLobbyLoading",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 3
+        },
+        {
+          "node_path": "UIMaidLobbyLoading/GameObject/Image_00/0",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 3
+        },
+        {
+          "node_path": "UIMaidLobbyLoading/GameObject/Image_01/1",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 3
+        },
+        {
+          "node_path": "UIMaidLobbyLoading/GameObject/Image_02/2",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 3
+        },
+        {
+          "node_path": "UIMaidLobbyLoading/GameObject/Image_03/3",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 3
+        },
+        {
+          "node_path": "UIMaidLobbyLoading/GameObject/Image_04/4",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 3
+        },
+        {
+          "node_path": "UIMaidLobbyLoading/GameObject/Image_05/5",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 3
+        },
+        {
+          "node_path": "UIMaidLobbyLoading/GameObject/Image_06/6",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 3
+        },
+        {
+          "node_path": "UIMaidLobbyLoading/GameObject/Image_07/7",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 3
+        },
+        {
+          "node_path": "UIMaidLobbyLoading/GameObject/Image_08/8",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 3
+        },
+        {
+          "node_path": "UIMaidLobbyLoading/GameObject/Image_09/9",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 3
+        },
+        {
+          "node_path": "UIMaidLobbyLoading/GameObject/Image_10/10",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 3
+        },
+        {
+          "node_path": "UIMaidLobbyLoading/GameObject/Image_11/11",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 3
+        },
+        {
+          "node_path": "UIMaidLobbyLoading/GameObject/Image_12/12",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 3
+        },
+        {
+          "node_path": "UIMaidLobbyLoading/GameObject/Image_13/13",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 3
+        },
+        {
+          "node_path": "UIMaidLobbyLoading/GameObject/Image_14/14",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 3
+        },
+        {
+          "node_path": "UIMaidLobbyLoading/GameObject/Image_15/15",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 3
+        },
+        {
+          "node_path": "UIMaidLobbyLoading/GameObject/Image_00/0/Deco",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": -200.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIMaidLobbyLoading/GameObject/Image_00/0/Deco_1",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": -440.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIMaidLobbyLoading/GameObject/Image_00/0/Deco_2",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": -720.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIMaidLobbyLoading/GameObject/Image_01/1/Deco",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": -200.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIMaidLobbyLoading/GameObject/Image_01/1/Deco_1",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": -440.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIMaidLobbyLoading/GameObject/Image_01/1/Deco_2",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": -720.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIMaidLobbyLoading/GameObject/Image_02/2/Deco",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": -200.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIMaidLobbyLoading/GameObject/Image_02/2/Deco_1",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": -440.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIMaidLobbyLoading/GameObject/Image_02/2/Deco_2",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": -720.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIMaidLobbyLoading/GameObject/Image_03/3/Deco",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": -200.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIMaidLobbyLoading/GameObject/Image_03/3/Deco_1",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": -440.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIMaidLobbyLoading/GameObject/Image_03/3/Deco_2",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": -720.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIMaidLobbyLoading/GameObject/Image_04/4/Deco",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": -200.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        }
+      ]
+    },
+    {
+      "name": "UIOutGame",
+      "source_type": "prefab",
+      "source_path": "Assets/Resources/prefabs/ui/UIOutGame.prefab",
+      "rect_transform_count": 26,
+      "reference_resolution": {
+        "width": 1080,
+        "height": 1920,
+        "basis": "inferred from recovered UILoading root; CanvasScaler still unconfirmed"
+      },
+      "layout_kind_counts": {
+        "fixed_anchor": 15,
+        "full_stretch": 11
+      },
+      "key_rects": [
+        {
+          "node_path": "UIOutGame/UIOutGame/UIMaidLD/Dim",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 400.0,
+            "y": 400.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIOutGame/UIOutGame/UIMaidLD/Btn_ToNormal",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 400.0,
+            "y": 400.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIOutGame/UIOutGame/UIMaidLD/Btn_InteractionArea",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": -100.05
+          },
+          "size_delta": {
+            "x": -400.0,
+            "y": -199.9
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIOutGame/UIOutGame/UIMaidLD",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 7
+        },
+        {
+          "node_path": "UIOutGame/UIOutGame",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 5
+        },
+        {
+          "node_path": "UIOutGame",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 1
+        },
+        {
+          "node_path": "UIOutGame/UIOutGame/UIVillageReBuild/Fillbar/Fill Area",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 1
+        },
+        {
+          "node_path": "UIOutGame/UIOutGame/MaidLobbyBtn/ToOutGame",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIOutGame/UIOutGame/MaidLobbyBtn/ToMaidLobby",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIOutGame/UIOutGame/UIMaidLD/SpinePos/Npc_Dialog/Icon_Dialog",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIOutGame/UIOutGame/UIVillageReBuild/Fillbar/Background",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIOutGame/UIOutGame/UIMaidLD/Btn_ToInteraction",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 320.0
+          },
+          "size_delta": {
+            "x": 320.0,
+            "y": 590.0
+          },
+          "pivot": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIOutGame/UIOutGame/UIMaidLD/SpinePos/Npc_Dialog",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchor_max": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 1179.4
+          },
+          "size_delta": {
+            "x": 540.0,
+            "y": 158.8
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 1.0
+          },
+          "children_count": 3
+        },
+        {
+          "node_path": "UIOutGame/UIOutGame/InGameBtn",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 1.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 0.0
+          },
+          "anchored_position": {
+            "x": -30.0,
+            "y": 20.0
+          },
+          "size_delta": {
+            "x": 300.0,
+            "y": 246.0
+          },
+          "pivot": {
+            "x": 1.0,
+            "y": 0.0
+          },
+          "children_count": 1
+        },
+        {
+          "node_path": "UIOutGame/UIOutGame/InGameBtn/InGame",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchor_max": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 300.0,
+            "y": 246.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIOutGame/UIOutGame/UIMaidLD/SpinePos/Npc_Dialog/Text_Dialog",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 1.0
+          },
+          "anchor_max": {
+            "x": 0.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 270.0,
+            "y": -79.4
+          },
+          "size_delta": {
+            "x": 480.0,
+            "y": 118.8
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIOutGame/UIOutGame/UIVillageReBuild/Fillbar",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchor_max": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 560.0,
+            "y": 100.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 3
+        },
+        {
+          "node_path": "UIOutGame/UIOutGame/MaidLobbyBtn",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 1.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 0.0
+          },
+          "anchored_position": {
+            "x": -360.0,
+            "y": 35.0
+          },
+          "size_delta": {
+            "x": 200.0,
+            "y": 200.0
+          },
+          "pivot": {
+            "x": 1.0,
+            "y": 0.0
+          },
+          "children_count": 2
+        },
+        {
+          "node_path": "UIOutGame/UIOutGame/UIMaidLD/SpinePos",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchored_position": {
+            "x": 240.0,
+            "y": -650.0
+          },
+          "size_delta": {
+            "x": 100.0,
+            "y": 100.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 1
+        },
+        {
+          "node_path": "UIOutGame/UIOutGame/UIVillageReBuild",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchor_max": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 100.0,
+            "y": 100.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 1
+        },
+        {
+          "node_path": "UIOutGame/UIOutGame/FurnitureQuest",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchor_max": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 100.0,
+            "y": 100.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIOutGame/UIOutGame/UIMaidLD/SpinePosTarget_Normal",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchored_position": {
+            "x": 240.0,
+            "y": -650.0
+          },
+          "size_delta": {
+            "x": 100.0,
+            "y": 100.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIOutGame/UIOutGame/UIMaidLD/SpinePosTarget_Interaction",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchor_max": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": -1500.0
+          },
+          "size_delta": {
+            "x": 100.0,
+            "y": 100.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIOutGame/UIOutGame/UIVillageReBuild/Fillbar/Image",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchor_max": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 80.0,
+            "y": 80.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIOutGame/UIOutGame/UIMaidLD/SpinePos/Npc_Dialog/Tail",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.5,
+            "y": 1.0
+          },
+          "anchor_max": {
+            "x": 0.5,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 50.0,
+            "y": 6.0
+          },
+          "size_delta": {
+            "x": 25.0,
+            "y": 15.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIOutGame/UIOutGame/UIVillageReBuild/Fillbar/Fill Area/Fill",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        }
+      ]
+    },
+    {
+      "name": "UIOutGame",
+      "source_type": "prefab",
+      "source_path": "Assets/Resources/prefabs/ui/uiroot/UIOutGame.prefab",
+      "rect_transform_count": 3,
+      "reference_resolution": {
+        "width": 1080,
+        "height": 1920,
+        "basis": "inferred from recovered UILoading root; CanvasScaler still unconfirmed"
+      },
+      "layout_kind_counts": {
+        "fixed_anchor": 1,
+        "full_stretch": 2
+      },
+      "key_rects": [
+        {
+          "node_path": "UIOutGame",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 1
+        },
+        {
+          "node_path": "UIOutGame/Button/Text (TMP)",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIOutGame/Button",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchor_max": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 160.0,
+            "y": 30.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 1
+        }
+      ]
+    },
+    {
+      "name": "UIInGame",
+      "source_type": "prefab",
+      "source_path": "Assets/Resources/prefabs/ui/uiroot/UIInGame.prefab",
+      "rect_transform_count": 1351,
+      "reference_resolution": {
+        "width": 1080,
+        "height": 1920,
+        "basis": "inferred from recovered UILoading root; CanvasScaler still unconfirmed"
+      },
+      "layout_kind_counts": {
+        "fixed_anchor": 75,
+        "full_stretch": 38,
+        "large_panel": 3,
+        "mixed": 4
+      },
+      "key_rects": [
+        {
+          "node_path": "UIInGame/Request/SkillInfo/Btn_Prev",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 10000.0,
+            "y": 10000.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIInGame/SubMapUI/UIEvent_SchoolUniform/AutoPosYSetting/PrefabParent/UIInGameSubMap_SchoolUniform/RewardInfoGroup/CloseBtn",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 600.0,
+            "y": 4000.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIInGame/UIUseItemBlock/UIGroup/BG (3)",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": -163.5
+          },
+          "size_delta": {
+            "x": 930.0,
+            "y": 1443.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIInGame/UIUseItemBlock/UIGroup/BG",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": -163.5
+          },
+          "size_delta": {
+            "x": 930.0,
+            "y": 1443.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIInGame/Request/RequestList/ScrollView/Viewport/Content/Grid_Request/EventQuestItem_WorkLog/BG",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 40.5
+          },
+          "size_delta": {
+            "x": 48.0,
+            "y": 83.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIInGame/Bottom/UIInventory/Btn_Inven/BG (1)",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 40.0,
+            "y": 40.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIInGame/Bottom/Lobby/GoToOutGame",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": -5.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": -10.0,
+            "y": -20.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIInGame/Bottom/UIBlockInfo/Bg/Grid/Btn_BoxOpenGold/BG/Bg",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 2.5
+          },
+          "size_delta": {
+            "x": -10.0,
+            "y": -15.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIInGame/Bottom/UIBlockInfo/Bg/Grid/Btn_Cash/BG/Bg",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 2.5
+          },
+          "size_delta": {
+            "x": -10.0,
+            "y": -15.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIInGame",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 9
+        },
+        {
+          "node_path": "UIInGame/Bottom/UIBlockInfo/Bg",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 3
+        },
+        {
+          "node_path": "UIInGame/Request/SkillInfo/Main/Viewport/MemoryArea/Skill_1/UIListItem_TeamFormation_MemoryCardSlot/Card/UnlockFx/BG",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 2
+        },
+        {
+          "node_path": "UIInGame/Request/SkillInfo/Main/Viewport/MemoryArea/Skill_2/UIListItem_TeamFormation_MemoryCardSlot/Card/UnlockFx/BG",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 2
+        },
+        {
+          "node_path": "UIInGame/Request/SkillInfo/Main/Viewport/MemoryArea/Skill_3/UIListItem_TeamFormation_MemoryCardSlot/Card/UnlockFx/BG",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 2
+        },
+        {
+          "node_path": "UIInGame/Bottom/UIBlockInfo/Bg/BGSkin",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 2
+        },
+        {
+          "node_path": "UIInGame/Request/SkillInfo/Main/Btn/BG",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 1
+        },
+        {
+          "node_path": "UIInGame/SubMapUI/UIEchoArchive/AutoPosYSetting/PrefabParent/UIEcho_Kurone/BG",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 1
+        },
+        {
+          "node_path": "UIInGame/SubMapUI/UIEvent_SchoolUniform/AutoPosYSetting/PrefabParent/UIInGameSubMap_SchoolUniform/BG (1)",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 1792.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 1
+        },
+        {
+          "node_path": "UIInGame/Bottom/UIInventory/Btn_Inven/BG",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIInGame/Bottom/UIBlockInfo/Bg/Grid/InnerBG",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIInGame/Bottom/UIBlockInfo/Bg/Grid/Crafting_Group/Scroll View/Viewport/Content/UIListItem_RewardItem/Btn_Remove/Bg",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIInGame/Bottom/UIBlockInfo/Bg/Grid/Crafting_Group/Scroll View/Viewport/Content/UIListItem_RewardItem/Btn_Remove/Bg (1)",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 2.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": -4.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIInGame/Bottom/UIBlockInfo/Bg/Grid/Crafting_Group/Scroll View/Viewport/Content/UIListItem_RewardItem (1)/Btn_Remove/Bg",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIInGame/Bottom/UIBlockInfo/Bg/Grid/Crafting_Group/Scroll View/Viewport/Content/UIListItem_RewardItem (1)/Btn_Remove/Bg (1)",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 2.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": -4.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIInGame/Bottom/UIBlockInfo/Bg/Grid/Crafting_Group/Scroll View/Viewport/Content/UIListItem_RewardItem (2)/Btn_Remove/Bg",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIInGame/Bottom/UIBlockInfo/Bg/Grid/Crafting_Group/Scroll View/Viewport/Content/UIListItem_RewardItem (2)/Btn_Remove/Bg (1)",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 2.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": -4.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIInGame/Bottom/UIBlockInfo/Bg/Grid/Crafting_Group/Scroll View/Viewport/Content/UIListItem_RewardItem (3)/Btn_Remove/Bg",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIInGame/Bottom/UIBlockInfo/Bg/Grid/Crafting_Group/Scroll View/Viewport/Content/UIListItem_RewardItem (3)/Btn_Remove/Bg (1)",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 2.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": -4.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIInGame/Bottom/UIBlockInfo/Bg/Grid/Crafting_Group/Scroll View/Viewport/Content/UIListItem_RewardItem (4)/Btn_Remove/Bg",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIInGame/Bottom/UIBlockInfo/Bg/Grid/Crafting_Group/Scroll View/Viewport/Content/UIListItem_RewardItem (4)/Btn_Remove/Bg (1)",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 2.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": -4.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIInGame/Bottom/UIBlockInfo/Bg/Grid/Crafting_Group/Scroll View/Viewport/Content/UIListItem_RewardItem (5)/Btn_Remove/Bg",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UIInGame/Bottom/UIBlockInfo/Bg/Grid/Crafting_Group/Scroll View/Viewport/Content/UIListItem_RewardItem (5)/Btn_Remove/Bg (1)",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 2.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": -4.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        }
+      ]
+    }
+  ]
+}

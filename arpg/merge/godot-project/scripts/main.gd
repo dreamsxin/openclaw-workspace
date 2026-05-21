@@ -8,6 +8,7 @@ const CELL_GAP := 8
 const BOARD_ORIGIN := Vector2(360, 92)
 const SPRITE_DIR := "res://assets/sprites/"
 const CHARACTER_DIR := "res://data/characters/"
+const UI_LAYOUT_REFERENCE := "res://data/ui_layout_reference.json"
 
 var catalog = BlockCatalogScript.new()
 var board = MergeBoardModelScript.new()
@@ -36,11 +37,16 @@ var maids: Array = []
 var customers: Array = []
 var character_mode := "maids"
 var character_index := 0
+var ui_layout_sources: Array = []
+var ui_layout_index := 0
+var ui_layout_title_label: Label
+var ui_layout_meta_label: Label
 
 func _ready() -> void:
 	catalog.load_from_file("res://data/blocks.json")
 	catalog.load_rules("res://data/block_rules.json")
 	_load_character_data()
+	_load_ui_layout_reference()
 	board.call("setup", catalog, "res://data/initial_board.json")
 	board.board_changed.connect(_refresh_board)
 	board.wallet_changed.connect(_refresh_wallet)
@@ -142,6 +148,7 @@ func _build_ui() -> void:
 	add_child(block_layer)
 
 	_build_character_panel()
+	_build_ui_layout_panel()
 
 	drag_preview = TextureRect.new()
 	drag_preview.visible = false
@@ -151,6 +158,7 @@ func _build_ui() -> void:
 	add_child(drag_preview)
 	_refresh_selection()
 	_refresh_character_panel()
+	_refresh_ui_layout_panel(false)
 
 func _build_character_panel() -> void:
 	var title := Label.new()
@@ -216,6 +224,31 @@ func _build_character_panel() -> void:
 	character_detail_label.add_theme_font_size_override("font_size", 14)
 	add_child(character_detail_label)
 
+func _build_ui_layout_panel() -> void:
+	ui_layout_title_label = Label.new()
+	ui_layout_title_label.text = "UI Ref"
+	ui_layout_title_label.position = Vector2(995, 24)
+	ui_layout_title_label.add_theme_font_size_override("font_size", 18)
+	add_child(ui_layout_title_label)
+
+	var next_button := _make_button("Next UI", Vector2(995, 52))
+	next_button.size = Vector2(104, 32)
+	next_button.pressed.connect(func() -> void:
+		if ui_layout_sources.is_empty():
+			_set_status("No UI layout reference data.")
+			return
+		ui_layout_index = posmod(ui_layout_index + 1, ui_layout_sources.size())
+		_refresh_ui_layout_panel(true)
+	)
+	add_child(next_button)
+
+	ui_layout_meta_label = Label.new()
+	ui_layout_meta_label.position = Vector2(1108, 52)
+	ui_layout_meta_label.size = Vector2(132, 34)
+	ui_layout_meta_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	ui_layout_meta_label.add_theme_font_size_override("font_size", 12)
+	add_child(ui_layout_meta_label)
+
 func _make_currency_label(icon_name: String, pos: Vector2) -> Label:
 	var icon := TextureRect.new()
 	icon.texture = load(SPRITE_DIR + icon_name)
@@ -248,6 +281,44 @@ func _load_character_data() -> void:
 	var customer_payload = JSON.parse_string(customer_text)
 	if typeof(customer_payload) == TYPE_DICTIONARY:
 		customers = customer_payload.get("customers", [])
+
+func _load_ui_layout_reference() -> void:
+	var text := FileAccess.get_file_as_string(UI_LAYOUT_REFERENCE)
+	var payload = JSON.parse_string(text)
+	if typeof(payload) == TYPE_DICTIONARY:
+		ui_layout_sources = payload.get("sources", [])
+
+func _refresh_ui_layout_panel(write_status: bool) -> void:
+	if ui_layout_meta_label == null:
+		return
+	if ui_layout_sources.is_empty():
+		ui_layout_meta_label.text = "no data"
+		return
+	ui_layout_index = clampi(ui_layout_index, 0, ui_layout_sources.size() - 1)
+	var source: Dictionary = ui_layout_sources[ui_layout_index]
+	ui_layout_meta_label.text = "%s\n%s rects" % [
+		source.get("name", "UI"),
+		source.get("rect_transform_count", 0)
+	]
+	if write_status:
+		_set_status(_describe_ui_layout_source(source))
+
+func _describe_ui_layout_source(source: Dictionary) -> String:
+	var resolution: Dictionary = source.get("reference_resolution", {})
+	var rects: Array = source.get("key_rects", [])
+	var lines := [
+		"%s: %s RectTransforms" % [source.get("name", "UI"), source.get("rect_transform_count", 0)],
+		"Reference %sx%s" % [resolution.get("width", "?"), resolution.get("height", "?")]
+	]
+	for index in range(mini(3, rects.size())):
+		var rect: Dictionary = rects[index]
+		var size: Dictionary = rect.get("size_delta", {})
+		lines.append("%s %sx%s" % [
+			String(rect.get("node_path", "")).get_file(),
+			size.get("x", 0),
+			size.get("y", 0)
+		])
+	return "\n".join(lines)
 
 func _toggle_character_mode() -> void:
 	character_mode = "customers" if character_mode == "maids" else "maids"
