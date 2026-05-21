@@ -135,7 +135,7 @@ Use `Next UI` to cycle through recovered startup/root layout sources:
 
 The selector shows the source RectTransform count and writes the reference resolution plus key node sizes to the status panel. A small portrait wireframe preview draws the first key RectTransforms in the 1080 x 1920 reference space so original layouts can be compared visually while the actual Godot screens are still being rebuilt.
 
-The loading-screen reference layer is shown by default on startup, and the left-side `Loading Ref` button toggles it. `run-game.bat` starts the project in restored startup mode, passes `--restored-startup`, and displays the startup flow full-window in a portrait-oriented 540 x 960 window. Restored startup mode now advances through `UILoading`, then `UISceneLoading`, then enters the current playable prototype.
+The loading-screen reference layer is shown by default on startup, and the left-side `Loading Ref` / `OutGame Ref` buttons toggle recovered layout overlays. `run-game.bat` starts the project in restored startup mode, passes `--restored-startup`, and displays the startup flow full-window in a portrait-oriented 540 x 960 window. Restored startup mode now advances through `UILoading`, then `UISceneLoading`, then displays the first `UIOutGame` reference layer before entering the current playable prototype controls.
 
 `UILoading` uses the recovered RectTransforms for the 1080 x 1920 root, background layers, logo area, loading bar, and version-label corners. `UISceneLoading` uses the recovered root/background structure and now draws `SkeletonGraphic (kokomi_Loading)` from official Spine-runtime output. The original `.atlas.txt`, `.skel.bytes`, and texture pages are copied under `godot-project/assets/spine/loading/kokomi_Loading/`; `bake_kokomi_loading_spine.mjs` uses `@esotericsoftware/spine-core@4.2.43` to parse the binary skeleton and write `kokomi_Loading.baked.json` with exact draw order, UVs, triangles, and world vertices. The current baked schema keeps legacy top-level `Idle` data and also includes `clips.Idle` plus `clips.Interaction`; Godot plays `Interaction` during the middle scene-loading progress window as the first multi-clip playback slice. The older `kokomi_Loading.rig.json` path remains only as a fallback.
 
@@ -145,6 +145,7 @@ Startup screenshot capture is built into `scripts/main.gd` behind the user argum
 reverse-output/startup-captures/01-uiloading.png
 reverse-output/startup-captures/02-uisceneloading.png
 reverse-output/startup-captures/03-uisceneloading-late.png
+reverse-output/startup-captures/04-outgame.png
 ```
 
 Use this whenever loading-screen layout or Spine rendering changes. The direct equivalent is:
@@ -154,6 +155,8 @@ Use this whenever loading-screen layout or Spine rendering changes. The direct e
 ```
 
 The latest `UISceneLoading` fix was verified with these captures. The baked Spine UVs are normalized `0..1` coordinates, so Godot must pass them directly to `draw_polygon`; multiplying by texture page size makes the second screen render as a blank progress-only view.
+
+`UIOutGame` is currently a structural reconstruction layer rather than a final screen. It uses the recovered `UIOutGame.prefab` RectTransforms for `UIMaidLD`, `Npc_Dialog`, `InGameBtn`, `MaidLobbyBtn`, and `UIVillageReBuild/Fillbar`. The maid LD character area is an explicit placeholder because the recovered maid LD assets are Spine atlas pages, not complete static portraits; replacing it requires the reusable Spine character renderer planned under T027.
 
 Imported character PNGs require Godot import metadata. Regenerate it after adding new copied character images with:
 

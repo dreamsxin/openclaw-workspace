@@ -222,6 +222,7 @@ Success criteria:
 | T030 | Build first Godot UI layout reference screens | in progress | `run-game.bat` restored startup mode now flows through recovered `UILoading` and `UISceneLoading`; loading fill uses the root `LoadingBar` rect, `kokomi_Loading` renders with normalized UVs, and `capture-startup.bat` records regression screenshots; remaining screens still pending |
 | T031 | Add repeatable startup visual regression capture | done | `capture-startup.bat`, `--startup-capture-dir=<path>`, and workflow docs for `01-uiloading.png`, `02-uisceneloading.png`, `03-uisceneloading-late.png` |
 | T032 | Add multi-clip baked Spine playback for loading character | done | `kokomi_Loading.baked.json` schema v2 with `clips.Idle` and `clips.Interaction`; `SceneLoadingReferenceScreen` switches clips during scene loading |
+| T033 | Add first UIOutGame structural reference layer | done | `OutGameReferenceScreen`, `OutGame Ref` toggle, restored-startup `04-outgame.png` capture, and recovered `UIMaidLD`/dialog/buttons/fillbar layout skeleton |
 
 ## Tool Acquisition Options
 

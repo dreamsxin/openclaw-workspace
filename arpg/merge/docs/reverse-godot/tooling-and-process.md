@@ -1126,6 +1126,31 @@ Findings:
 Follow-up:
 - Keep `--startup-capture-dir=<path>` as a local verification hook for future startup-screen regression checks.
 
+## 2026-05-21 - Add UIOutGame Reference Layer
+
+Inputs:
+- `godot-project/data/ui_layout_reference.json`
+- `reverse-output/assets/assetripper-main/ExportedProject/Assets/Resources/prefabs/ui/UIOutGame.prefab`
+
+Commands:
+```powershell
+.\tools\Godot\Godot_console.exe --path .\godot-project --headless --quit-after 5 -- --restored-startup
+.\capture-startup.bat
+```
+
+Outputs:
+- `godot-project/scripts/out_game_reference_screen.gd`
+- `reverse-output/startup-captures/04-outgame.png`
+
+Findings:
+- `UIOutGame` prefab has a compact first-pass structure: `UIMaidLD`, `Npc_Dialog`, `InGameBtn`, `MaidLobbyBtn`, and `UIVillageReBuild/Fillbar`.
+- Godot now exposes an `OutGame Ref` toggle and restored startup shows the first `UIOutGame` reference layer after `UISceneLoading`.
+- The first visual attempt accidentally drew a maid Spine atlas page as if it were a static portrait, producing disassembled body parts. The implementation was corrected to use an explicit placeholder until the reusable Spine renderer handles maid LD assets.
+
+Follow-up:
+- Replace the placeholder `UIMaidLD` area with real maid LD Spine playback.
+- Map the original `UIOutGame` background/furniture assets before treating the screen as visually complete.
+
 Recommended next runs:
 
 1. Run Il2CppDumper or Cpp2IL on `libil2cpp.so` and `global-metadata.dat`.

@@ -95,6 +95,8 @@ The current Godot prototype reads this file and exposes a small `UI Ref` selecto
 
 `UISceneLoading` now has a Godot reference layer in restored startup mode. It maps the recovered full-stretch root and background candidates and renders the original `SkeletonGraphic (kokomi_Loading)` target from official Spine-runtime data. The current implementation imports `kokomi_Loading.atlas.txt`, `kokomi_Loading.skel.bytes`, `kokomi_Loading.png`, and `kokomi_Loading_2.png` from the AssetRipper export, uses `@esotericsoftware/spine-core@4.2.43` to parse the binary skeleton, and bakes the `Idle` animation to `kokomi_Loading.baked.json`. Godot then renders each frame's original draw order, UVs, triangles, and world vertices. The earlier generated bridge rig remains as a fallback; raw atlas page PNGs remain evidence/crop sources only and should not be drawn directly as final character art.
 
+`UIOutGame` now has a first Godot structural reference layer. It maps the recovered `UIMaidLD` character area, `Npc_Dialog` dialog box, `InGameBtn`, `MaidLobbyBtn`, and `UIVillageReBuild/Fillbar` controls into the restored startup flow and the `OutGame Ref` toggle. Character art is intentionally placeholder-only in this pass because the maid LD data needs Spine reconstruction rather than drawing atlas pages as portraits.
+
 Latest startup recheck:
 
 - `UILoading/LoadingBar` is a direct child of the 1080 x 1920 root, fixed at anchor `(0.5, 0.0)`, anchored position `(0, 300)`, size `670 x 50`, pivot `(0.5, 0.5)`.

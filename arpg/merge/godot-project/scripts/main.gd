@@ -5,6 +5,7 @@ const MergeBoardModelScript := preload("res://scripts/models/merge_board_model.g
 const SaveManagerScript := preload("res://scripts/services/save_manager.gd")
 const LoadingReferenceScreenScript := preload("res://scripts/loading_reference_screen.gd")
 const SceneLoadingReferenceScreenScript := preload("res://scripts/scene_loading_reference_screen.gd")
+const OutGameReferenceScreenScript := preload("res://scripts/out_game_reference_screen.gd")
 const UILayoutReferencePreviewScript := preload("res://scripts/ui_layout_reference_preview.gd")
 const CELL_SIZE := 78
 const CELL_GAP := 8
@@ -50,8 +51,10 @@ var ui_layout_meta_label: Label
 var ui_layout_preview: Control
 var loading_reference_screen: Control
 var scene_loading_reference_screen: Control
+var out_game_reference_screen: Control
 var loading_reference_visible := false
 var scene_loading_reference_visible := false
+var out_game_reference_visible := false
 var restored_startup_mode := false
 var restored_startup_elapsed := 0.0
 var restored_startup_finished := false
@@ -146,10 +149,18 @@ func _build_ui() -> void:
 	add_child(reset_button)
 
 	var loading_button := _make_button("Loading Ref", Vector2(34, 556))
+	loading_button.size = Vector2(128, 40)
 	loading_button.pressed.connect(func() -> void:
 		_toggle_loading_reference()
 	)
 	add_child(loading_button)
+
+	var out_game_button := _make_button("OutGame Ref", Vector2(172, 556))
+	out_game_button.size = Vector2(122, 40)
+	out_game_button.pressed.connect(func() -> void:
+		_toggle_out_game_reference()
+	)
+	add_child(out_game_button)
 
 	selected_label = Label.new()
 	selected_label.position = Vector2(34, 602)
@@ -178,6 +189,7 @@ func _build_ui() -> void:
 	_build_ui_layout_panel()
 	_build_loading_reference_screen()
 	_build_scene_loading_reference_screen()
+	_build_out_game_reference_screen()
 
 	drag_preview = TextureRect.new()
 	drag_preview.visible = false
@@ -212,6 +224,7 @@ func _process(delta: float) -> void:
 	_maybe_capture_startup_frame("03-uisceneloading-late", RESTORED_APP_LOADING_SECONDS + 1.45)
 	if scene_progress >= 1.0:
 		_finish_restored_startup()
+		_maybe_capture_startup_frame("04-outgame", RESTORED_APP_LOADING_SECONDS + RESTORED_SCENE_LOADING_SECONDS)
 
 func _build_character_panel() -> void:
 	var title := Label.new()
@@ -330,6 +343,17 @@ func _build_scene_loading_reference_screen() -> void:
 	scene_loading_reference_screen.visible = scene_loading_reference_visible
 	add_child(scene_loading_reference_screen)
 
+func _build_out_game_reference_screen() -> void:
+	out_game_reference_screen = OutGameReferenceScreenScript.new()
+	if restored_startup_mode:
+		out_game_reference_screen.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	else:
+		out_game_reference_screen.position = Vector2(320, 24)
+		out_game_reference_screen.size = Vector2(650, 672)
+	out_game_reference_screen.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	out_game_reference_screen.visible = out_game_reference_visible
+	add_child(out_game_reference_screen)
+
 func _make_currency_label(icon_name: String, pos: Vector2) -> Label:
 	var icon := TextureRect.new()
 	icon.texture = load(SPRITE_DIR + icon_name)
@@ -393,6 +417,13 @@ func _toggle_loading_reference() -> void:
 	_apply_loading_reference_visibility()
 	_set_status("Loading reference %s." % ("shown" if loading_reference_visible else "hidden"))
 
+func _toggle_out_game_reference() -> void:
+	if out_game_reference_screen == null:
+		return
+	out_game_reference_visible = not out_game_reference_visible
+	_apply_out_game_reference_visibility()
+	_set_status("OutGame reference %s." % ("shown" if out_game_reference_visible else "hidden"))
+
 func _show_loading_reference() -> void:
 	loading_reference_visible = true
 	_apply_loading_reference_visibility()
@@ -420,6 +451,20 @@ func _apply_scene_loading_reference_visibility() -> void:
 		return
 	scene_loading_reference_screen.call("set_source", scene_loading_source)
 	scene_loading_reference_screen.visible = scene_loading_reference_visible
+
+func _show_out_game_reference() -> void:
+	out_game_reference_visible = true
+	_apply_out_game_reference_visibility()
+
+func _apply_out_game_reference_visibility() -> void:
+	if out_game_reference_screen == null:
+		return
+	var out_game_source := _ui_layout_source_by_name("UIOutGame")
+	if out_game_source.is_empty():
+		out_game_reference_screen.visible = false
+		return
+	out_game_reference_screen.call("set_source", out_game_source)
+	out_game_reference_screen.visible = out_game_reference_visible
 
 func _set_loading_reference_state(progress: float, message: String) -> void:
 	if loading_reference_screen == null:
@@ -453,6 +498,7 @@ func _finish_restored_startup() -> void:
 	scene_loading_reference_visible = false
 	_apply_loading_reference_visibility()
 	_apply_scene_loading_reference_visibility()
+	_show_out_game_reference()
 	_set_status("Restored startup complete.")
 
 func _maybe_capture_startup_frame(label: String, threshold_seconds: float) -> void:
