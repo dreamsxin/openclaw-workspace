@@ -6,10 +6,14 @@ const SaveManagerScript := preload("res://scripts/services/save_manager.gd")
 const LoadingReferenceScreenScript := preload("res://scripts/loading_reference_screen.gd")
 const SceneLoadingReferenceScreenScript := preload("res://scripts/scene_loading_reference_screen.gd")
 const OutGameReferenceScreenScript := preload("res://scripts/out_game_reference_screen.gd")
+const InGameReferenceShellScript := preload("res://scripts/ingame_reference_shell.gd")
 const UILayoutReferencePreviewScript := preload("res://scripts/ui_layout_reference_preview.gd")
 const CELL_SIZE := 78
 const CELL_GAP := 8
 const BOARD_ORIGIN := Vector2(360, 92)
+const PORTRAIT_CELL_SIZE := 62
+const PORTRAIT_CELL_GAP := 5
+const PORTRAIT_BOARD_MARGIN := 24
 const RESTORED_APP_LOADING_SECONDS := 2.0
 const RESTORED_SCENE_LOADING_SECONDS := 1.7
 const STARTUP_CAPTURE_ARG := "--startup-capture-dir="
@@ -53,7 +57,12 @@ var ui_layout_preview: Control
 var loading_reference_screen: Control
 var scene_loading_reference_screen: Control
 var out_game_reference_screen: Control
+var ingame_reference_shell: Control
 var gameplay_root: Control
+var portrait_hidden_controls: Array = []
+var board_origin := BOARD_ORIGIN
+var cell_size := CELL_SIZE
+var cell_gap := CELL_GAP
 var loading_reference_visible := false
 var scene_loading_reference_visible := false
 var out_game_reference_visible := false
@@ -102,17 +111,24 @@ func _build_ui() -> void:
 	gameplay_root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(gameplay_root)
 
+	ingame_reference_shell = InGameReferenceShellScript.new()
+	ingame_reference_shell.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	ingame_reference_shell.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	gameplay_root.add_child(ingame_reference_shell)
+
 	var title := Label.new()
 	title.text = "MergeMaidCafe Godot Prototype"
 	title.position = Vector2(32, 24)
 	title.add_theme_font_size_override("font_size", 30)
 	gameplay_root.add_child(title)
+	portrait_hidden_controls.append(title)
 
 	var info := Label.new()
 	info.text = "Drag matching blocks to merge. Spawn consumes AP. Save uses user://prototype-save.json."
 	info.position = Vector2(34, 62)
 	info.add_theme_font_size_override("font_size", 15)
 	gameplay_root.add_child(info)
+	portrait_hidden_controls.append(info)
 
 	ap_label = _make_currency_label("CURRENCY_AP.png", Vector2(34, 118))
 	gold_label = _make_currency_label("CURRENCY_GOLD.png", Vector2(34, 166))
@@ -126,6 +142,7 @@ func _build_ui() -> void:
 			_set_status("Spawned a recovered level 1 block.")
 	)
 	gameplay_root.add_child(spawn_button)
+	portrait_hidden_controls.append(spawn_button)
 
 	produce_button = _make_button("Produce", Vector2(34, 340))
 	produce_button.pressed.connect(func() -> void:
@@ -139,6 +156,7 @@ func _build_ui() -> void:
 		_set_status("Saved.")
 	)
 	gameplay_root.add_child(save_button)
+	portrait_hidden_controls.append(save_button)
 
 	var load_button := _make_button("Load", Vector2(34, 448))
 	load_button.pressed.connect(func() -> void:
@@ -148,6 +166,7 @@ func _build_ui() -> void:
 			_set_status("No save file yet.")
 	)
 	gameplay_root.add_child(load_button)
+	portrait_hidden_controls.append(load_button)
 
 	var reset_button := _make_button("Reset", Vector2(34, 502))
 	reset_button.pressed.connect(func() -> void:
@@ -157,6 +176,7 @@ func _build_ui() -> void:
 		_set_status("Reset to initial board.")
 	)
 	gameplay_root.add_child(reset_button)
+	portrait_hidden_controls.append(reset_button)
 
 	var loading_button := _make_button("Loading Ref", Vector2(34, 556))
 	loading_button.size = Vector2(128, 40)
@@ -164,6 +184,7 @@ func _build_ui() -> void:
 		_toggle_loading_reference()
 	)
 	gameplay_root.add_child(loading_button)
+	portrait_hidden_controls.append(loading_button)
 
 	var out_game_button := _make_button("OutGame Ref", Vector2(172, 556))
 	out_game_button.size = Vector2(122, 40)
@@ -171,6 +192,7 @@ func _build_ui() -> void:
 		_toggle_out_game_reference()
 	)
 	gameplay_root.add_child(out_game_button)
+	portrait_hidden_controls.append(out_game_button)
 
 	selected_label = Label.new()
 	selected_label.position = Vector2(34, 602)
@@ -210,6 +232,7 @@ func _build_ui() -> void:
 	_refresh_selection()
 	_refresh_character_panel()
 	_refresh_ui_layout_panel(false)
+	_apply_gameplay_layout()
 	_show_loading_reference()
 	if restored_startup_mode:
 		_set_gameplay_visible(false)
@@ -239,6 +262,10 @@ func _process(delta: float) -> void:
 		if auto_enter_ingame and not auto_enter_ingame_done:
 			auto_enter_ingame_done = true
 			call_deferred("_enter_gameplay_from_out_game")
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_RESIZED:
+		_apply_gameplay_layout()
 
 func _build_character_panel() -> void:
 	var title := Label.new()
@@ -384,11 +411,13 @@ func _make_currency_label(icon_name: String, pos: Vector2) -> Label:
 	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	gameplay_root.add_child(icon)
+	portrait_hidden_controls.append(icon)
 
 	var label := Label.new()
 	label.position = pos + Vector2(44, 5)
 	label.add_theme_font_size_override("font_size", 21)
 	gameplay_root.add_child(label)
+	portrait_hidden_controls.append(label)
 	return label
 
 func _make_button(text: String, pos: Vector2) -> Button:
@@ -496,7 +525,75 @@ func _enter_gameplay_from_out_game() -> void:
 	out_game_reference_visible = false
 	_apply_out_game_reference_visibility()
 	_set_gameplay_visible(true)
+	_apply_gameplay_layout()
 	_set_status("Entered recovered merge gameplay from UIOutGame/InGameBtn.")
+
+func _apply_gameplay_layout() -> void:
+	if gameplay_root == null:
+		return
+	var viewport_size := get_viewport_rect().size
+	var is_portrait := viewport_size.y >= viewport_size.x
+	var pitch: float
+	if is_portrait:
+		cell_size = PORTRAIT_CELL_SIZE
+		cell_gap = PORTRAIT_CELL_GAP
+		pitch = cell_size + cell_gap
+		var board_size := Vector2(board.width * cell_size + maxf(0, board.width - 1) * cell_gap, board.height * cell_size + maxf(0, board.height - 1) * cell_gap)
+		board_origin = Vector2((viewport_size.x - board_size.x) * 0.5, 170)
+		_layout_control(selected_label, Vector2(PORTRAIT_BOARD_MARGIN, 670), Vector2(viewport_size.x - PORTRAIT_BOARD_MARGIN * 2.0, 54), 14)
+		_layout_control(status_label, Vector2(PORTRAIT_BOARD_MARGIN, 726), Vector2(viewport_size.x - PORTRAIT_BOARD_MARGIN * 2.0, 54), 14)
+		_layout_control(produce_button, Vector2(PORTRAIT_BOARD_MARGIN, 790), Vector2(150, 40), 0)
+		_hide_desktop_side_panels(true)
+	else:
+		cell_size = CELL_SIZE
+		cell_gap = CELL_GAP
+		board_origin = BOARD_ORIGIN
+		_layout_control(selected_label, Vector2(34, 602), Vector2(260, 40), 14)
+		_layout_control(status_label, Vector2(34, 648), Vector2(260, 48), 16)
+		_layout_control(produce_button, Vector2(34, 340), Vector2(180, 40), 0)
+		_hide_desktop_side_panels(false)
+	board_layer.position = board_origin
+	block_layer.position = board_origin
+	if drag_preview != null:
+		drag_preview.custom_minimum_size = Vector2(cell_size, cell_size)
+		drag_preview.size = Vector2(cell_size, cell_size)
+	_refresh_board()
+	_refresh_selection()
+	_apply_ingame_reference_shell()
+
+func _layout_control(control: Control, pos: Vector2, next_size: Vector2, font_size: int) -> void:
+	if control == null:
+		return
+	control.position = pos
+	control.size = next_size
+	if font_size > 0 and control is Label:
+		control.add_theme_font_size_override("font_size", font_size)
+
+func _hide_desktop_side_panels(hidden: bool) -> void:
+	var controls: Array = [
+		character_title_label,
+		character_image,
+		character_image_status_label,
+		character_meta_label,
+		character_detail_label,
+		character_mode_button,
+		ui_layout_title_label,
+		ui_layout_meta_label,
+		ui_layout_preview,
+	]
+	for control in controls:
+		if control != null:
+			control.visible = not hidden
+	for control in portrait_hidden_controls:
+		if control != null:
+			control.visible = not hidden
+
+func _apply_ingame_reference_shell() -> void:
+	if ingame_reference_shell == null:
+		return
+	var source := _ui_layout_source_by_name("UIInGame")
+	ingame_reference_shell.call("set_source", source)
+	ingame_reference_shell.call("set_wallet", board.wallet)
 
 func _set_loading_reference_state(progress: float, message: String) -> void:
 	if loading_reference_screen == null:
@@ -698,6 +795,8 @@ func _refresh_wallet() -> void:
 	ap_label.text = str(board.wallet.get("ap", 0))
 	gold_label.text = str(board.wallet.get("gold", 0))
 	jewel_label.text = str(board.wallet.get("jewel", 0))
+	if ingame_reference_shell != null:
+		ingame_reference_shell.call("set_wallet", board.wallet)
 
 func _refresh_board() -> void:
 	if board_layer == null:
@@ -718,7 +817,7 @@ func _refresh_board() -> void:
 func _draw_cell(x: int, y: int) -> void:
 	var cell := TextureRect.new()
 	cell.position = _cell_pos(x, y)
-	cell.size = Vector2(CELL_SIZE, CELL_SIZE)
+	cell.size = Vector2(cell_size, cell_size)
 	cell.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	cell.stretch_mode = TextureRect.STRETCH_SCALE
 	cell.texture = load(SPRITE_DIR + ("BlockLock.png" if board.is_locked(x, y) else "Board01.png"))
@@ -729,7 +828,7 @@ func _draw_block(x: int, y: int, block_id: String) -> void:
 	var data: Dictionary = catalog.get_block(block_id)
 	var button := TextureButton.new()
 	button.position = _cell_pos(x, y) + Vector2(5, 5)
-	button.size = Vector2(CELL_SIZE - 10, CELL_SIZE - 10)
+	button.size = Vector2(cell_size - 10, cell_size - 10)
 	button.stretch_mode = TextureButton.STRETCH_KEEP_ASPECT_CENTERED
 	button.texture_normal = load(data.get("sprite", SPRITE_DIR + "Block_Unknown.png"))
 	button.texture_hover = button.texture_normal
@@ -839,15 +938,15 @@ func _refresh_selection() -> void:
 		)
 
 func _update_drag_preview() -> void:
-	drag_preview.position = get_viewport().get_mouse_position() - Vector2(CELL_SIZE, CELL_SIZE) * 0.5
+	drag_preview.position = get_viewport().get_mouse_position() - Vector2(cell_size, cell_size) * 0.5
 
 func _screen_to_cell(pos: Vector2) -> Vector2i:
-	var local := pos - BOARD_ORIGIN
-	var pitch := CELL_SIZE + CELL_GAP
+	var local := pos - board_origin
+	var pitch := cell_size + cell_gap
 	return Vector2i(floori(local.x / pitch), floori(local.y / pitch))
 
 func _cell_pos(x: int, y: int) -> Vector2:
-	return Vector2(x * (CELL_SIZE + CELL_GAP), y * (CELL_SIZE + CELL_GAP))
+	return Vector2(x * (cell_size + cell_gap), y * (cell_size + cell_gap))
 
 func _key(x: int, y: int) -> String:
 	return "%d,%d" % [x, y]

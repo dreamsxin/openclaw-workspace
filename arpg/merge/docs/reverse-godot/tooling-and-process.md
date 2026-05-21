@@ -1214,6 +1214,33 @@ Follow-up:
 - Replace the current debug-styled merge-board panel with a restored `UIInGame` layout shell.
 - Restore `MaidLobbyBtn` and maid interaction targets after `UIInGame` and maid LD Spine rendering are further along.
 
+## 2026-05-21 - UIInGame Portrait Shell
+
+Inputs:
+- `godot-project/data/ui_layout_reference.json`
+- `Assets/Resources/prefabs/ui/uiroot/UIInGame.prefab`
+- `godot-project/scripts/main.gd`
+
+Commands:
+```powershell
+.\tools\Godot\Godot_console.exe --path .\godot-project --headless --quit-after 6 -- --restored-startup --auto-enter-ingame
+.\capture-startup.bat
+```
+
+Outputs:
+- `godot-project/scripts/ingame_reference_shell.gd`
+- `godot-project/scripts/main.gd`
+
+Findings:
+- The `run-game.bat` portrait path now enters a 540 x 960 playable layout instead of the older 1280 x 720 debug layout.
+- `InGameReferenceShell` reads the recovered `UIInGame` reference source and draws first-pass top wallet, request, bottom block-info, inventory, and lobby structure.
+- The playable 7x7 merge board is centered in the portrait viewport, with selection/status and Produce controls below it.
+- Desktop-only debug buttons, UI reference selector, and character browser are hidden in portrait gameplay mode but remain available in the wider development run.
+
+Follow-up:
+- Replace shell rectangles with recovered `UIInGame` textures and sprites as they are mapped.
+- Move Produce, inventory, lobby, and request interactions onto the recovered `UIInGame` button regions.
+
 Recommended next runs:
 
 1. Run Il2CppDumper or Cpp2IL on `libil2cpp.so` and `global-metadata.dat`.
