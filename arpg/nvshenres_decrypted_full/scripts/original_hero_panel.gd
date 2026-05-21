@@ -361,6 +361,7 @@ func _build_power_strip() -> void:
 
 func _build_equipment_panel() -> void:
 	equipment_panel = VBoxContainer.new()
+	equipment_panel.visible = false
 	equipment_panel.position = Vector2(861.752, 97.361)
 	equipment_panel.size = Vector2(82, 360)
 	equipment_panel.z_index = 24
@@ -399,8 +400,9 @@ func _build_tabs() -> void:
 
 func _build_detail_panel() -> void:
 	detail_panel = Control.new()
-	detail_panel.position = Vector2(797, 86)
-	detail_panel.size = Vector2(404, 527)
+	var detail_rect := _layout_rect_from(main_layout_nodes, "heroContentPrefab", Rect2(Vector2(797, 86), Vector2(404, 527)))
+	detail_panel.position = detail_rect.position
+	detail_panel.size = detail_rect.size
 	detail_panel.z_index = 20
 	design_root.add_child(detail_panel)
 
@@ -1187,16 +1189,11 @@ func _add_skin_tab(root: Control, y_base := 126) -> void:
 		["防御:", "+80"],
 		["速度:", "+12"],
 	]
-	var attr_positions := [
-		Vector2(802.221, 469.77),
-		Vector2(1007.809, 469.77),
-		Vector2(802.221, 499.77),
-		Vector2(1007.809, 499.77),
-	]
 	for i in attrs.size():
-		var pos := _detail_local(attr_positions[i])
-		_add_label(root, attrs[i][0], pos, Vector2(72, 26), 16, Color(0.45, 0.48, 0.62))
-		_add_label(root, attrs[i][1], pos + Vector2(72, 0), Vector2(58, 26), 16, Color(0.74, 0.34, 0.56))
+		var name_rect := _skin_attr_layout_rect(i + 1, "name", Rect2(Vector2(802.221, 469.77 + floori(i / 2) * 30), Vector2(80, 26)))
+		var value_rect := _skin_attr_layout_rect(i + 1, "value", Rect2(Vector2(899.306, 469.77 + floori(i / 2) * 30), Vector2(48, 26)))
+		_add_label(root, attrs[i][0], _detail_local(name_rect.position), name_rect.size, 16, Color(0.45, 0.48, 0.62))
+		_add_label(root, attrs[i][1], _detail_local(value_rect.position), value_rect.size, 16, Color(0.74, 0.34, 0.56))
 	var equipped_skin := str(equipped_skin_by_hero.get(str(hero.get("id", "")), str(hero.get("id", ""))))
 	var primary_text := "前往获取"
 	var primary_button_name := "getBtn"
@@ -1393,6 +1390,15 @@ func _skin_layout_rect(name: String, fallback: Rect2) -> Rect2:
 			return _layout_rect_by_parent(nodes, "btnNext", 7 if detail_mode == "book" else 37, fallback)
 		_:
 			return _layout_rect_from(source, name, fallback)
+
+func _skin_attr_layout_rect(attr_index: int, child_name: String, fallback: Rect2) -> Rect2:
+	var nodes := book_layout_node_list if detail_mode == "book" else main_layout_node_list
+	var parent_index := 0
+	if detail_mode == "book":
+		parent_index = 21 + attr_index
+	else:
+		parent_index = 37 + attr_index
+	return _layout_rect_by_parent(nodes, child_name, parent_index, fallback)
 
 func _will_node_rect(name: String) -> Rect2:
 	match name:
