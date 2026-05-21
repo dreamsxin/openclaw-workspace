@@ -27,6 +27,7 @@ var gold_label: Label
 var jewel_label: Label
 var character_title_label: Label
 var character_image: TextureRect
+var character_image_status_label: Label
 var character_meta_label: Label
 var character_detail_label: Label
 var character_mode_button: Button
@@ -186,6 +187,15 @@ func _build_character_panel() -> void:
 	character_image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	add_child(character_image)
 
+	character_image_status_label = Label.new()
+	character_image_status_label.position = Vector2(1010, 270)
+	character_image_status_label.size = Vector2(210, 86)
+	character_image_status_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	character_image_status_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	character_image_status_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	character_image_status_label.add_theme_font_size_override("font_size", 14)
+	add_child(character_image_status_label)
+
 	character_title_label = Label.new()
 	character_title_label.position = Vector2(995, 406)
 	character_title_label.size = Vector2(240, 32)
@@ -275,6 +285,7 @@ func _refresh_character_panel() -> void:
 func _refresh_maid_profile(entry: Dictionary) -> void:
 	var npc := _first_npc_record(entry)
 	var profile: Dictionary = entry.get("profile", {})
+	var preview: Dictionary = npc.get("preview", {})
 	character_title_label.text = "%s  %s/%s" % [
 		npc.get("name", "Maid"),
 		character_index + 1,
@@ -299,9 +310,10 @@ func _refresh_maid_profile(entry: Dictionary) -> void:
 		profile.get("favorite", ""),
 		profile.get("hate", "")
 	]
-	_set_character_texture(npc)
+	_set_character_preview(preview)
 
 func _refresh_customer_profile(entry: Dictionary) -> void:
+	var preview: Dictionary = entry.get("preview", {})
 	character_title_label.text = "%s  %s/%s" % [
 		entry.get("name", "Customer"),
 		character_index + 1,
@@ -317,9 +329,9 @@ func _refresh_customer_profile(entry: Dictionary) -> void:
 		unlock.get("quest_id", 0),
 		unlock.get("furniture_id", 0),
 		entry.get("npc_type", 0),
-		entry.get("asset_keys", {}).get("icon_sd", "")
+		_preview_label(preview)
 	]
-	_set_character_texture(entry)
+	_set_character_preview(preview)
 
 func _first_npc_record(entry: Dictionary) -> Dictionary:
 	var records: Array = entry.get("npc_records", [])
@@ -327,14 +339,31 @@ func _first_npc_record(entry: Dictionary) -> Dictionary:
 		return {}
 	return records[0]
 
-func _set_character_texture(npc: Dictionary) -> void:
-	var assets: Dictionary = npc.get("assets", {})
-	for key in ["icon_sd", "prefab_sd", "prefab_sd_out_game", "icon_ld", "npc_icon"]:
-		var path := String(assets.get(key, ""))
-		if not path.is_empty():
-			character_image.texture = load(path)
-			return
+func _set_character_preview(preview: Dictionary) -> void:
+	var kind := String(preview.get("kind", "missing"))
+	var path := String(preview.get("path", ""))
+	if kind == "static_png_only" and not path.is_empty():
+		character_image.texture = load(path)
+		character_image_status_label.text = ""
+		return
 	character_image.texture = null
+	if kind.begins_with("spine_atlas_page"):
+		character_image_status_label.text = "Spine atlas page\n%s regions\n%s" % [
+			preview.get("region_count", 0),
+			"skel present" if bool(preview.get("has_skel", false)) else "skel missing"
+		]
+	elif kind == "missing":
+		character_image_status_label.text = "No preview asset"
+	else:
+		character_image_status_label.text = kind
+
+func _preview_label(preview: Dictionary) -> String:
+	var kind := String(preview.get("kind", "missing"))
+	if kind == "static_png_only":
+		return "static PNG"
+	if kind.begins_with("spine_atlas_page"):
+		return "Spine atlas (%s regions)" % preview.get("region_count", 0)
+	return kind
 
 func _refresh_wallet() -> void:
 	if ap_label == null:

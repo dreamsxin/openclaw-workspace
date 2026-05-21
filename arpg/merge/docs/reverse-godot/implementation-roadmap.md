@@ -213,9 +213,10 @@ Success criteria:
 | T021 | Inspect runtime producer methods for refill/open/cooldown semantics | in progress | Ghidra target index generated in `producer-runtime-notes.md` and `producer-runtime-methods.csv` |
 | T022 | Decompile producer runtime targets in Ghidra | pending | Confirm energy decrement/refill, open-state, cooldown, and drop-weight mutation semantics |
 | T023 | Inventory Maid/NPC/customer character tables and assets | done | first-pass asset/table inventory in `character-system-inventory.md`, `character_asset_inventory.csv`, `character_asset_summary.json` |
-| T024 | Build Godot character catalog data pipeline | done | first-pass resources copied; `Table_Npc` static lists decoded; Godot character JSON generated |
-| T025 | Implement first-pass character/profile UI in Godot | done | right-side Maid/customer browser with recovered static image and profile/skill/unlock summary |
+| T024 | Build Godot character catalog data pipeline | done | first-pass resources copied; `Table_Npc` static lists decoded; Godot character JSON generated with static-vs-Spine asset classification |
+| T025 | Implement first-pass character/profile UI in Godot | done | right-side Maid/customer browser; static PNGs display directly, Spine atlas pages show metadata placeholders |
 | T026 | Decode mixed-format character dialog/customer tail lists | in progress | initial tail scan shows row 1400 enters mixed dialog/presentation payload before remaining list boundaries |
+| T027 | Implement Spine character render path | pending | choose Godot Spine runtime or offline first-frame renderer for `.atlas.dat`/`.skel.dat` assets |
 
 ## Tool Acquisition Options
 

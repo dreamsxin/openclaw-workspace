@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import json
+import struct
 from pathlib import Path
 
 
@@ -7,23 +8,102 @@ ROOT = Path(__file__).resolve().parents[2]
 SOURCE = ROOT / "reverse-output/assets/derived/table_npc/table_npc_decoded.json"
 OUTPUT_DIR = ROOT / "godot-project/data/characters"
 CHARACTER_ASSET_DIR = ROOT / "godot-project/assets/characters"
+CLASSIFICATION_JSON = ROOT / "reverse-output/assets/derived/character_spine_asset_classification.json"
+CLASSIFICATION_CSV = ROOT / "reverse-output/assets/derived/character_spine_asset_classification.csv"
 
 
-def build_asset_index() -> dict[str, str]:
+def png_size(path: Path) -> list[int]:
+    try:
+        header = path.read_bytes()[:24]
+    except OSError:
+        return []
+    if header[:8] != b"\x89PNG\r\n\x1a\n":
+        return []
+    return list(struct.unpack(">II", header[16:24]))
+
+
+def atlas_regions(path: Path) -> list[str]:
+    if not path.exists():
+        return []
+    data = path.read_bytes()
+    png_marker = data.find(b".png")
+    if png_marker < 0:
+        return []
+    text = data[png_marker + 4 :].decode("utf-8", errors="ignore")
+    regions = []
+    for raw in text.splitlines():
+        line = raw.strip()
+        if not line or ":" in line or line.endswith(".png"):
+            continue
+        if all(32 <= ord(char) < 127 for char in line):
+            regions.append(line)
+    return regions
+
+
+def classify_png(path: Path) -> dict:
+    atlas = path.with_suffix(".atlas.dat")
+    skel = path.with_suffix(".skel.dat")
+    regions = atlas_regions(atlas)
+    if atlas.exists() and skel.exists():
+        kind = "spine_atlas_page_with_skel"
+    elif atlas.exists():
+        kind = "spine_atlas_page_no_skel"
+    else:
+        kind = "static_png_only"
+    rel = path.relative_to(ROOT / "godot-project").as_posix()
+    return {
+        "path": f"res://{rel}",
+        "kind": kind,
+        "has_atlas": atlas.exists(),
+        "has_skel": skel.exists(),
+        "atlas_path": f"res://{atlas.relative_to(ROOT / 'godot-project').as_posix()}" if atlas.exists() else "",
+        "skel_path": f"res://{skel.relative_to(ROOT / 'godot-project').as_posix()}" if skel.exists() else "",
+        "png_size": png_size(path),
+        "region_count": len(regions),
+        "sample_regions": regions[:12],
+    }
+
+
+def build_asset_index() -> tuple[dict[str, dict], list[dict]]:
     index = {}
+    inventory = []
     if not CHARACTER_ASSET_DIR.exists():
-        return index
-    for path in CHARACTER_ASSET_DIR.rglob("*"):
-        if path.is_file():
-            rel = path.relative_to(ROOT / "godot-project").as_posix()
-            index[path.stem.lower()] = f"res://{rel}"
-    return index
+        return index, inventory
+    for path in sorted(CHARACTER_ASSET_DIR.rglob("*.png")):
+        meta = classify_png(path)
+        inventory.append({"asset_key": path.stem, **meta})
+        index[path.stem.lower()] = meta
+    return index, inventory
 
 
-def asset_path(asset_index: dict[str, str], key: str) -> str:
+def asset_path(asset_index: dict[str, dict], key: str) -> str:
     if not key:
         return ""
-    return asset_index.get(key.lower(), "")
+    return asset_index.get(key.lower(), {}).get("path", "")
+
+
+def asset_meta(asset_index: dict[str, dict], key: str) -> dict:
+    if not key:
+        return {}
+    return asset_index.get(key.lower(), {})
+
+
+def preview_asset(asset_index: dict[str, dict], row: dict) -> dict:
+    ordered_keys = [
+        row["Icon_SD"],
+        row["Prefab_SD_OutGame"],
+        row["Prefab_SD"],
+        row["Icon_LD"],
+        row["Prefab_LD"],
+        row["Npc_Icon"],
+    ]
+    metas = [asset_meta(asset_index, key) for key in ordered_keys if asset_meta(asset_index, key)]
+    for meta in metas:
+        if meta.get("kind") == "static_png_only":
+            return meta
+    if metas:
+        return metas[0]
+    return {"path": "", "kind": "missing"}
 
 
 def slim_npc(row: dict, asset_index: dict[str, str]) -> dict:
@@ -63,12 +143,23 @@ def slim_npc(row: dict, asset_index: dict[str, str]) -> dict:
             "npc_cry_icon": asset_path(asset_index, row["Npc_CryIcon"]),
             "npc_prefab": asset_path(asset_index, row["Npc_Prefab"]),
         },
+        "asset_meta": {
+            "icon_ld": asset_meta(asset_index, row["Icon_LD"]),
+            "icon_sd": asset_meta(asset_index, row["Icon_SD"]),
+            "prefab_ld": asset_meta(asset_index, row["Prefab_LD"]),
+            "prefab_sd": asset_meta(asset_index, row["Prefab_SD"]),
+            "prefab_sd_out_game": asset_meta(asset_index, row["Prefab_SD_OutGame"]),
+            "npc_icon": asset_meta(asset_index, row["Npc_Icon"]),
+            "npc_cry_icon": asset_meta(asset_index, row["Npc_CryIcon"]),
+            "npc_prefab": asset_meta(asset_index, row["Npc_Prefab"]),
+        },
+        "preview": preview_asset(asset_index, row),
     }
 
 
 def main() -> None:
     decoded = json.loads(SOURCE.read_text(encoding="utf-8"))
-    asset_index = build_asset_index()
+    asset_index, asset_inventory = build_asset_index()
 
     npcs = [slim_npc(row, asset_index) for row in decoded["NpcTableData"]]
     npc_by_id = {row["npc_id"]: row for row in npcs}
@@ -183,11 +274,28 @@ def main() -> None:
             json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
             encoding="utf-8",
         )
+    CLASSIFICATION_JSON.parent.mkdir(parents=True, exist_ok=True)
+    CLASSIFICATION_JSON.write_text(
+        json.dumps(asset_inventory, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    with CLASSIFICATION_CSV.open("w", encoding="utf-8", newline="") as fh:
+        fh.write("asset_key,path,kind,has_atlas,has_skel,width,height,region_count,sample_regions\n")
+        for item in asset_inventory:
+            size = item.get("png_size", [])
+            width = size[0] if len(size) == 2 else ""
+            height = size[1] if len(size) == 2 else ""
+            samples = "|".join(item.get("sample_regions", []))
+            fh.write(
+                f"{item['asset_key']},{item['path']},{item['kind']},{item['has_atlas']},"
+                f"{item['has_skel']},{width},{height},{item['region_count']},{samples}\n"
+            )
 
     print(f"npcs={len(npcs)}")
     print(f"maids={len(maids)}")
     print(f"customers={len(customer_npcs)}")
     print(f"dialogs={len(dialogs)}")
+    print(f"character_assets={len(asset_inventory)}")
     print(OUTPUT_DIR)
 
 

@@ -689,6 +689,7 @@ Result:
 - Decoded 140 `MaidLevelTableData` rows.
 - Decoded 7 `MaidInfoTableData` rows.
 - Decoded the first 1400 text-dialog `InGameNpcDialog` rows.
+- Classified copied character PNGs by asset role: 47 complete Spine atlas pages, 32 atlas pages missing a copied `.skel.dat`, and 30 direct static PNGs.
 
 Limit:
 
@@ -714,12 +715,15 @@ Outputs:
 
 - `godot-project/scripts/main.gd`
 - `godot-project/assets/characters/**/*.png.import`
+- `reverse-output/assets/derived/character_spine_asset_classification.csv`
+- `reverse-output/assets/derived/character_spine_asset_classification.json`
 
 Result:
 
 - Added a right-side profile browser to the prototype.
 - The browser switches between recovered maid and customer catalogs.
-- It displays recovered static character PNGs plus profile, skill, and unlock summaries.
+- It displays recovered direct static PNGs plus profile, skill, and unlock summaries.
+- It does not render Spine atlas page PNGs as complete portraits; those entries show region/skeleton metadata until a Spine render path is implemented.
 - Godot imported 109 character PNGs so runtime `load()` calls can resolve the copied project assets.
 
 T026 note:

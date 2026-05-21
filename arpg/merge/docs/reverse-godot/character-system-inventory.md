@@ -153,6 +153,8 @@ Current generated files:
 | `godot-project/data/characters/maids.json` | decoded maid info/level/skill lists | generated |
 | `godot-project/data/characters/customers.json` | `NpcTableData` rows with `NPCType=2` | generated |
 | `godot-project/data/characters/dialogs.json` | decoded text-dialog prefix | generated |
+| `reverse-output/assets/derived/character_spine_asset_classification.csv` | copied Godot character PNGs | generated |
+| `reverse-output/assets/derived/character_spine_asset_classification.json` | copied Godot character PNGs | generated |
 
 Decode limit:
 
@@ -166,7 +168,10 @@ Godot integration:
 
 - `godot-project/scripts/main.gd` loads the generated maid and customer catalogs.
 - The prototype has a right-side character browser with mode switching and previous/next controls.
-- Static PNG display uses the recovered `assets.icon_sd` paths generated from the copied character assets.
+- Static PNG display now uses the generated `preview` metadata and only loads `static_png_only` assets directly.
+- PNGs with a same-name `.atlas.dat` are classified as Spine atlas pages, not complete static portraits.
+- Current classification: 47 `spine_atlas_page_with_skel`, 32 `spine_atlas_page_no_skel`, and 30 `static_png_only`.
+- Spine atlas pages expose atlas/skel paths, PNG size, region count, and sample region names in `asset_meta` / `preview`.
 - 109 character PNG `.import` files were generated so Godot can load the copied project assets at runtime.
 
 Planned services/models:
@@ -179,6 +184,7 @@ Planned services/models:
 | `DialogCatalog` | NPC and maid dialog lookup |
 | `CharacterAssetResolver` | Resolve LD/SD/static asset paths |
 | `CharacterProfileView` | First-pass profile and costume preview UI |
+| `SpineCharacterRenderer` | Future renderer for `.atlas.dat` / `.skel.dat` assembled characters |
 
 ## Next Tasks
 
@@ -186,3 +192,4 @@ Planned services/models:
 2. Decode `Table_CustomerEpisode.dat`.
 3. Decode `Table_MaidChat.dat` and decide whether full chat branching belongs in the first vertical slice.
 4. Replace placeholder localization keys in profiles after localization tables are decoded.
+5. Choose and integrate a Spine render path, or build an offline first-frame renderer from atlas/skeleton data.

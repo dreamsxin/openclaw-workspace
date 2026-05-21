@@ -99,6 +99,14 @@ The JSON files are generated from `Table_Npc.dat` by `scripts/reverse/parse_tabl
 The main scene now loads these files and shows a first-pass character browser on the right side of the prototype.
 Use the mode button to switch between maids and customers, then the arrow buttons to step through recovered entries.
 
+Character images are classified before use:
+
+- `static_png_only`: loaded directly as a profile preview.
+- `spine_atlas_page_with_skel`: has same-name `.atlas.dat` and `.skel.dat`; shown as Spine metadata until a renderer is integrated.
+- `spine_atlas_page_no_skel`: has atlas data but no copied skeleton companion yet; shown as incomplete Spine metadata.
+
+The current profile browser does not treat atlas page PNGs as full static portraits.
+
 Imported character PNGs require Godot import metadata. Regenerate it after adding new copied character images with:
 
 ```powershell
