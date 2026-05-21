@@ -96,7 +96,14 @@ godot-project/data/characters/dialogs.json
 ```
 
 The JSON files are generated from `Table_Npc.dat` by `scripts/reverse/parse_table_npc.py` and `scripts/reverse/build_godot_character_catalog.py`.
-They are not wired into UI yet; T025 will add the first profile browser.
+The main scene now loads these files and shows a first-pass character browser on the right side of the prototype.
+Use the mode button to switch between maids and customers, then the arrow buttons to step through recovered entries.
+
+Imported character PNGs require Godot import metadata. Regenerate it after adding new copied character images with:
+
+```powershell
+.\tools\Godot\Godot_console.exe --headless --path .\godot-project --import
+```
 
 ## Current Interaction Notes
 

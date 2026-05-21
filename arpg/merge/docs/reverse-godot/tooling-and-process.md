@@ -695,6 +695,38 @@ Limit:
 - `InGameNpcDialog` declares 1644 rows, but row 1400 changes into a mixed-format presentation/effect payload.
 - Tail decode for customer detail rows, rewards, gifts, and loading scene rows is deferred to T026.
 
+### 2026-05-21 Godot Character Profile UI
+
+Commands:
+
+```powershell
+.\tools\Godot\Godot_console.exe --headless --path .\godot-project --import
+.\run-godot.bat --headless --quit-after 1
+```
+
+Inputs:
+
+- `godot-project/data/characters/maids.json`
+- `godot-project/data/characters/customers.json`
+- `godot-project/assets/characters/`
+
+Outputs:
+
+- `godot-project/scripts/main.gd`
+- `godot-project/assets/characters/**/*.png.import`
+
+Result:
+
+- Added a right-side profile browser to the prototype.
+- The browser switches between recovered maid and customer catalogs.
+- It displays recovered static character PNGs plus profile, skill, and unlock summaries.
+- Godot imported 109 character PNGs so runtime `load()` calls can resolve the copied project assets.
+
+T026 note:
+
+- A byte scan of the remaining `Table_Npc` tail found no direct plain `CustomerTableData` count/string boundary immediately after row 1400.
+- Row 1400 begins a mixed dialog/presentation payload, so the remaining 244 declared dialog rows need a dedicated record parser before later list boundaries can be trusted.
+
 ```powershell
 .\run-godot.bat --headless --quit-after 1
 .\tools\Godot\Godot_console.exe --headless --path .\godot-project --quit-after 2

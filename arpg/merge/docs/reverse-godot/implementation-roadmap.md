@@ -212,10 +212,10 @@ Success criteria:
 | T020 | Map designed drop count ranges and producer charges | done | `count_min/count_max` queues and `BlockTableData.ProduceEnergy` per-cell counters wired into Godot |
 | T021 | Inspect runtime producer methods for refill/open/cooldown semantics | in progress | Ghidra target index generated in `producer-runtime-notes.md` and `producer-runtime-methods.csv` |
 | T022 | Decompile producer runtime targets in Ghidra | pending | Confirm energy decrement/refill, open-state, cooldown, and drop-weight mutation semantics |
-| T023 | Inventory Maid/NPC/customer character tables and assets | in progress | first-pass asset/table inventory in `character-system-inventory.md`, `character_asset_inventory.csv`, `character_asset_summary.json` |
-| T024 | Build Godot character catalog data pipeline | in progress | first-pass resources copied; `Table_Npc` static lists decoded; Godot character JSON generated |
-| T025 | Implement first-pass character/profile UI in Godot | pending | Maid/customer browser, profile data, costume preview placeholders |
-| T026 | Decode mixed-format character dialog/customer tail lists | pending | Remaining `Table_Npc` tail after dialog row 1400: customer table, rewards, gifts, loading scenes |
+| T023 | Inventory Maid/NPC/customer character tables and assets | done | first-pass asset/table inventory in `character-system-inventory.md`, `character_asset_inventory.csv`, `character_asset_summary.json` |
+| T024 | Build Godot character catalog data pipeline | done | first-pass resources copied; `Table_Npc` static lists decoded; Godot character JSON generated |
+| T025 | Implement first-pass character/profile UI in Godot | done | right-side Maid/customer browser with recovered static image and profile/skill/unlock summary |
+| T026 | Decode mixed-format character dialog/customer tail lists | in progress | initial tail scan shows row 1400 enters mixed dialog/presentation payload before remaining list boundaries |
 
 ## Tool Acquisition Options
 

@@ -7,6 +7,7 @@ const CELL_SIZE := 78
 const CELL_GAP := 8
 const BOARD_ORIGIN := Vector2(360, 92)
 const SPRITE_DIR := "res://assets/sprites/"
+const CHARACTER_DIR := "res://data/characters/"
 
 var catalog = BlockCatalogScript.new()
 var board = MergeBoardModelScript.new()
@@ -24,11 +25,21 @@ var produce_button: Button
 var ap_label: Label
 var gold_label: Label
 var jewel_label: Label
+var character_title_label: Label
+var character_image: TextureRect
+var character_meta_label: Label
+var character_detail_label: Label
+var character_mode_button: Button
 var selected_cell := Vector2i(-1, -1)
+var maids: Array = []
+var customers: Array = []
+var character_mode := "maids"
+var character_index := 0
 
 func _ready() -> void:
 	catalog.load_from_file("res://data/blocks.json")
 	catalog.load_rules("res://data/block_rules.json")
+	_load_character_data()
 	board.call("setup", catalog, "res://data/initial_board.json")
 	board.board_changed.connect(_refresh_board)
 	board.wallet_changed.connect(_refresh_wallet)
@@ -129,6 +140,8 @@ func _build_ui() -> void:
 	block_layer.position = BOARD_ORIGIN
 	add_child(block_layer)
 
+	_build_character_panel()
+
 	drag_preview = TextureRect.new()
 	drag_preview.visible = false
 	drag_preview.custom_minimum_size = Vector2(CELL_SIZE, CELL_SIZE)
@@ -136,6 +149,62 @@ func _build_ui() -> void:
 	drag_preview.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	add_child(drag_preview)
 	_refresh_selection()
+	_refresh_character_panel()
+
+func _build_character_panel() -> void:
+	var title := Label.new()
+	title.text = "Character"
+	title.position = Vector2(995, 92)
+	title.add_theme_font_size_override("font_size", 24)
+	add_child(title)
+
+	character_mode_button = _make_button("Maids", Vector2(995, 132))
+	character_mode_button.size = Vector2(122, 36)
+	character_mode_button.pressed.connect(func() -> void:
+		_toggle_character_mode()
+	)
+	add_child(character_mode_button)
+
+	var prev_button := _make_button("<", Vector2(1126, 132))
+	prev_button.size = Vector2(48, 36)
+	prev_button.pressed.connect(func() -> void:
+		_step_character(-1)
+	)
+	add_child(prev_button)
+
+	var next_button := _make_button(">", Vector2(1184, 132))
+	next_button.size = Vector2(48, 36)
+	next_button.pressed.connect(func() -> void:
+		_step_character(1)
+	)
+	add_child(next_button)
+
+	character_image = TextureRect.new()
+	character_image.position = Vector2(1010, 182)
+	character_image.size = Vector2(210, 210)
+	character_image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	character_image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	add_child(character_image)
+
+	character_title_label = Label.new()
+	character_title_label.position = Vector2(995, 406)
+	character_title_label.size = Vector2(240, 32)
+	character_title_label.add_theme_font_size_override("font_size", 20)
+	add_child(character_title_label)
+
+	character_meta_label = Label.new()
+	character_meta_label.position = Vector2(995, 442)
+	character_meta_label.size = Vector2(240, 88)
+	character_meta_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	character_meta_label.add_theme_font_size_override("font_size", 14)
+	add_child(character_meta_label)
+
+	character_detail_label = Label.new()
+	character_detail_label.position = Vector2(995, 536)
+	character_detail_label.size = Vector2(240, 132)
+	character_detail_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	character_detail_label.add_theme_font_size_override("font_size", 14)
+	add_child(character_detail_label)
 
 func _make_currency_label(icon_name: String, pos: Vector2) -> Label:
 	var icon := TextureRect.new()
@@ -159,6 +228,113 @@ func _make_button(text: String, pos: Vector2) -> Button:
 	button.position = pos
 	button.size = Vector2(180, 40)
 	return button
+
+func _load_character_data() -> void:
+	var maid_text := FileAccess.get_file_as_string(CHARACTER_DIR + "maids.json")
+	var maid_payload = JSON.parse_string(maid_text)
+	if typeof(maid_payload) == TYPE_DICTIONARY:
+		maids = maid_payload.get("maids", [])
+	var customer_text := FileAccess.get_file_as_string(CHARACTER_DIR + "customers.json")
+	var customer_payload = JSON.parse_string(customer_text)
+	if typeof(customer_payload) == TYPE_DICTIONARY:
+		customers = customer_payload.get("customers", [])
+
+func _toggle_character_mode() -> void:
+	character_mode = "customers" if character_mode == "maids" else "maids"
+	character_index = 0
+	_refresh_character_panel()
+
+func _step_character(delta: int) -> void:
+	var entries := _current_character_entries()
+	if entries.is_empty():
+		return
+	character_index = posmod(character_index + delta, entries.size())
+	_refresh_character_panel()
+
+func _current_character_entries() -> Array:
+	return customers if character_mode == "customers" else maids
+
+func _refresh_character_panel() -> void:
+	if character_title_label == null:
+		return
+	var entries := _current_character_entries()
+	character_mode_button.text = "Customers" if character_mode == "customers" else "Maids"
+	if entries.is_empty():
+		character_title_label.text = "No data"
+		character_meta_label.text = ""
+		character_detail_label.text = ""
+		character_image.texture = null
+		return
+	character_index = clampi(character_index, 0, entries.size() - 1)
+	var entry: Dictionary = entries[character_index]
+	if character_mode == "customers":
+		_refresh_customer_profile(entry)
+	else:
+		_refresh_maid_profile(entry)
+
+func _refresh_maid_profile(entry: Dictionary) -> void:
+	var npc := _first_npc_record(entry)
+	var profile: Dictionary = entry.get("profile", {})
+	character_title_label.text = "%s  %s/%s" % [
+		npc.get("name", "Maid"),
+		character_index + 1,
+		maids.size()
+	]
+	character_meta_label.text = "ID %s\n%s\n%s | %s" % [
+		entry.get("maid_id", ""),
+		profile.get("member", ""),
+		profile.get("tribe", ""),
+		profile.get("height", "")
+	]
+	var skill_summary := "Skill %s" % entry.get("skill_id", "")
+	var skills: Array = entry.get("skills", [])
+	if not skills.is_empty():
+		var first_skill: Dictionary = skills[0]
+		skill_summary += "\nTarget: %s\nValue L1: %s" % [
+			first_skill.get("target_id", ""),
+			first_skill.get("value", "")
+		]
+	character_detail_label.text = "%s\nFavorite: %s\nHate: %s" % [
+		skill_summary,
+		profile.get("favorite", ""),
+		profile.get("hate", "")
+	]
+	_set_character_texture(npc)
+
+func _refresh_customer_profile(entry: Dictionary) -> void:
+	character_title_label.text = "%s  %s/%s" % [
+		entry.get("name", "Customer"),
+		character_index + 1,
+		customers.size()
+	]
+	var unlock: Dictionary = entry.get("unlock", {})
+	character_meta_label.text = "ID %s\nSkin %s\nColor %s" % [
+		entry.get("npc_id", ""),
+		entry.get("skin_id", ""),
+		entry.get("personal_color", "")
+	]
+	character_detail_label.text = "Unlock quest: %s\nFurniture: %s\nType: %s\nAsset: %s" % [
+		unlock.get("quest_id", 0),
+		unlock.get("furniture_id", 0),
+		entry.get("npc_type", 0),
+		entry.get("asset_keys", {}).get("icon_sd", "")
+	]
+	_set_character_texture(entry)
+
+func _first_npc_record(entry: Dictionary) -> Dictionary:
+	var records: Array = entry.get("npc_records", [])
+	if records.is_empty():
+		return {}
+	return records[0]
+
+func _set_character_texture(npc: Dictionary) -> void:
+	var assets: Dictionary = npc.get("assets", {})
+	for key in ["icon_sd", "prefab_sd", "prefab_sd_out_game", "icon_ld", "npc_icon"]:
+		var path := String(assets.get(key, ""))
+		if not path.is_empty():
+			character_image.texture = load(path)
+			return
+	character_image.texture = null
 
 func _refresh_wallet() -> void:
 	if ap_label == null:

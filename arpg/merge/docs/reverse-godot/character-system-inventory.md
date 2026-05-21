@@ -162,6 +162,13 @@ Decode limit:
 - The remaining 84,796 bytes still include the tail lists declared by `Table_Npc`: `CustomerTableData`, `CustomerRewardData`, `MaidGiftTableData`, and `MaidSceneLoadingTableData`.
 - This is now tracked as T026 instead of being treated as lost data.
 
+Godot integration:
+
+- `godot-project/scripts/main.gd` loads the generated maid and customer catalogs.
+- The prototype has a right-side character browser with mode switching and previous/next controls.
+- Static PNG display uses the recovered `assets.icon_sd` paths generated from the copied character assets.
+- 109 character PNG `.import` files were generated so Godot can load the copied project assets at runtime.
+
 Planned services/models:
 
 | Godot module | Purpose |
@@ -178,4 +185,4 @@ Planned services/models:
 1. Decode the mixed-format `Table_Npc` tail after text-dialog row 1400.
 2. Decode `Table_CustomerEpisode.dat`.
 3. Decode `Table_MaidChat.dat` and decide whether full chat branching belongs in the first vertical slice.
-4. Add a simple profile browser using static LD/SD images before attempting Spine/prefab reconstruction.
+4. Replace placeholder localization keys in profiles after localization tables are decoded.
