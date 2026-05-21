@@ -1,0 +1,30 @@
+{
+  "source": "reverse-output\\assets\\assetstudio-cli-data-all-raw\\MonoBehaviour\\Table_Npc.dat",
+  "counts": {
+    "NpcTableData": 132,
+    "MaidSkillTableData": 75,
+    "MaidLevelTableData": 140,
+    "MaidInfoTableData": 7,
+    "InGameNpcDialog": 1400
+  },
+  "decode_notes": {
+    "dialog": "Rows before the first mixed-format dialog payload are decoded using the dump.cs InGameNpcDialog field order. Later rows contain non-text presentation/effect payloads and need a dedicated second-pass parser.",
+    "dialog_meta": {
+      "declared_count": 1644,
+      "parsed_count": 1400,
+      "stopped": {
+        "row_index": 1400,
+        "record_offset": 528284,
+        "error": "invalid string length 1132462080 at 0x8102c"
+      }
+    },
+    "unparsed_tail_offset": 528284,
+    "unparsed_tail_bytes": 84796,
+    "pending_lists": [
+      "CustomerTableData",
+      "CustomerRewardData",
+      "MaidGiftTableData",
+      "MaidSceneLoadingTableData"
+    ]
+  }
+}

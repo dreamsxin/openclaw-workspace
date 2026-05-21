@@ -656,6 +656,45 @@ Run:
 
 Validation:
 
+- `.\run-godot.bat --headless --quit-after 1`
+
+### 2026-05-21 Table_Npc Decode and Godot Character Catalog
+
+Commands:
+
+```powershell
+python scripts\reverse\parse_table_npc.py
+python scripts\reverse\build_godot_character_catalog.py
+```
+
+Inputs:
+
+- `reverse-output/assets/assetstudio-cli-data-all-raw/MonoBehaviour/Table_Npc.dat`
+- `godot-project/assets/characters/`
+
+Outputs:
+
+- `reverse-output/assets/derived/table_npc/table_npc_decoded.json`
+- `reverse-output/assets/derived/table_npc/table_npc_summary.json`
+- `reverse-output/assets/derived/table_npc/*.csv`
+- `godot-project/data/characters/npcs.json`
+- `godot-project/data/characters/maids.json`
+- `godot-project/data/characters/customers.json`
+- `godot-project/data/characters/dialogs.json`
+
+Result:
+
+- Decoded 132 `NpcTableData` rows.
+- Decoded 75 `MaidSkillTableData` rows.
+- Decoded 140 `MaidLevelTableData` rows.
+- Decoded 7 `MaidInfoTableData` rows.
+- Decoded the first 1400 text-dialog `InGameNpcDialog` rows.
+
+Limit:
+
+- `InGameNpcDialog` declares 1644 rows, but row 1400 changes into a mixed-format presentation/effect payload.
+- Tail decode for customer detail rows, rewards, gifts, and loading scene rows is deferred to T026.
+
 ```powershell
 .\run-godot.bat --headless --quit-after 1
 .\tools\Godot\Godot_console.exe --headless --path .\godot-project --quit-after 2

@@ -1,0 +1,2629 @@
+{
+  "source": "reverse-output\\assets\\assetstudio-cli-data-all-raw\\MonoBehaviour\\Table_Npc.dat",
+  "note": "Generated from MaidInfo, MaidLevel, MaidSkill, and matching NPC rows.",
+  "maids": [
+    {
+      "maid_id": 1002,
+      "profile": {
+        "member": "Kokomi_Maid Academy",
+        "tribe": "Kokomi_Tribe",
+        "height": "Kokomi_Height",
+        "birthday": "Kokomi_Birthday",
+        "age": "Kokomi_Age",
+        "cv": "Kokomi_CV",
+        "favorite": "Kokomi_FAVO",
+        "hate": "Kokomi_HATE"
+      },
+      "skill_id": 50201,
+      "skills": [
+        {
+          "level": 1,
+          "skill_type": 2,
+          "target_id": "ToolBox,WoodenBox",
+          "value": 3.0
+        },
+        {
+          "level": 2,
+          "skill_type": 2,
+          "target_id": "ToolBox,WoodenBox",
+          "value": 7.0
+        },
+        {
+          "level": 3,
+          "skill_type": 2,
+          "target_id": "ToolBox,WoodenBox",
+          "value": 9.0
+        },
+        {
+          "level": 4,
+          "skill_type": 2,
+          "target_id": "ToolBox,WoodenBox",
+          "value": 11.0
+        },
+        {
+          "level": 5,
+          "skill_type": 2,
+          "target_id": "ToolBox,WoodenBox",
+          "value": 13.0
+        }
+      ],
+      "liked_gift_ids": [
+        100201,
+        100202,
+        0
+      ],
+      "levels": [
+        {
+          "level": 1,
+          "need_exp": 0,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        },
+        {
+          "level": 2,
+          "need_exp": 20,
+          "reward_type": 2,
+          "reward_id": 70901,
+          "reward_count": 1
+        },
+        {
+          "level": 3,
+          "need_exp": 42,
+          "reward_type": 1,
+          "reward_id": 1,
+          "reward_count": 2000
+        },
+        {
+          "level": 4,
+          "need_exp": 68,
+          "reward_type": 9,
+          "reward_id": 50201,
+          "reward_count": 1
+        },
+        {
+          "level": 5,
+          "need_exp": 99,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        },
+        {
+          "level": 6,
+          "need_exp": 136,
+          "reward_type": 2,
+          "reward_id": 80104101,
+          "reward_count": 1
+        },
+        {
+          "level": 7,
+          "need_exp": 180,
+          "reward_type": 1,
+          "reward_id": 1,
+          "reward_count": 3000
+        },
+        {
+          "level": 8,
+          "need_exp": 234,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        },
+        {
+          "level": 9,
+          "need_exp": 301,
+          "reward_type": 9,
+          "reward_id": 50201,
+          "reward_count": 1
+        },
+        {
+          "level": 10,
+          "need_exp": 384,
+          "reward_type": 2,
+          "reward_id": 70901,
+          "reward_count": 1
+        },
+        {
+          "level": 11,
+          "need_exp": 519,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        },
+        {
+          "level": 12,
+          "need_exp": 712,
+          "reward_type": 2,
+          "reward_id": 80104102,
+          "reward_count": 1
+        },
+        {
+          "level": 13,
+          "need_exp": 955,
+          "reward_type": 9,
+          "reward_id": 50201,
+          "reward_count": 1
+        },
+        {
+          "level": 14,
+          "need_exp": 1258,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        },
+        {
+          "level": 15,
+          "need_exp": 1661,
+          "reward_type": 1,
+          "reward_id": 3,
+          "reward_count": 80
+        },
+        {
+          "level": 16,
+          "need_exp": 2163,
+          "reward_type": 1,
+          "reward_id": 1,
+          "reward_count": 5000
+        },
+        {
+          "level": 17,
+          "need_exp": 2726,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        },
+        {
+          "level": 18,
+          "need_exp": 3390,
+          "reward_type": 9,
+          "reward_id": 50201,
+          "reward_count": 1
+        },
+        {
+          "level": 19,
+          "need_exp": 4114,
+          "reward_type": 1,
+          "reward_id": 2,
+          "reward_count": 50
+        },
+        {
+          "level": 20,
+          "need_exp": 4882,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        }
+      ],
+      "npc_records": [
+        {
+          "npc_id": 1002,
+          "name": "Kokomi",
+          "skin_id": 0,
+          "parent_id": 0,
+          "npc_type": 1,
+          "personal_color": "#FFAACC",
+          "is_dormitory": true,
+          "unlock": {
+            "quest_id": 0,
+            "furniture_id": 0,
+            "type": 0,
+            "value_01": 0,
+            "value_02": 0,
+            "anim": false
+          },
+          "asset_keys": {
+            "icon_ld": "",
+            "icon_sd": "Ch_Maid01_Basic01_SD",
+            "prefab_ld": "Maid_1001_LD",
+            "prefab_sd": "Maid_1001_SD_InGame",
+            "prefab_sd_out_game": "Maid_1001_SD",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          },
+          "assets": {
+            "icon_ld": "",
+            "icon_sd": "res://assets/characters/maid_base/Ch_Maid01_Basic01_SD.png",
+            "prefab_ld": "",
+            "prefab_sd": "",
+            "prefab_sd_out_game": "",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          }
+        },
+        {
+          "npc_id": 1002,
+          "name": "Kokomi_Casual01",
+          "skin_id": 1002101,
+          "parent_id": 0,
+          "npc_type": 1,
+          "personal_color": "#FFAACC",
+          "is_dormitory": false,
+          "unlock": {
+            "quest_id": 0,
+            "furniture_id": 0,
+            "type": 0,
+            "value_01": 0,
+            "value_02": 0,
+            "anim": false
+          },
+          "asset_keys": {
+            "icon_ld": "",
+            "icon_sd": "Cos_Maid01_Casual01_SD",
+            "prefab_ld": "Maid_1001_LD_Casual01",
+            "prefab_sd": "Maid_1001_SD_Casual01_Ingame",
+            "prefab_sd_out_game": "Maid_1001_SD_Casual01",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          },
+          "assets": {
+            "icon_ld": "",
+            "icon_sd": "res://assets/characters/maid_costume/Cos_Maid01_Casual01_SD.png",
+            "prefab_ld": "",
+            "prefab_sd": "",
+            "prefab_sd_out_game": "",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          }
+        },
+        {
+          "npc_id": 1002,
+          "name": "Kokomi_SwimSuit01",
+          "skin_id": 1002201,
+          "parent_id": 0,
+          "npc_type": 1,
+          "personal_color": "#FFAACC",
+          "is_dormitory": false,
+          "unlock": {
+            "quest_id": 0,
+            "furniture_id": 0,
+            "type": 0,
+            "value_01": 0,
+            "value_02": 0,
+            "anim": false
+          },
+          "asset_keys": {
+            "icon_ld": "",
+            "icon_sd": "Maid_1001_SD_Summer01",
+            "prefab_ld": "Maid_1001_LD_Summer01",
+            "prefab_sd": "Maid_1001_SD_Summer01_Ingame",
+            "prefab_sd_out_game": "Maid_1001_SD_Summer01",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          },
+          "assets": {
+            "icon_ld": "",
+            "icon_sd": "",
+            "prefab_ld": "",
+            "prefab_sd": "",
+            "prefab_sd_out_game": "",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          }
+        },
+        {
+          "npc_id": 1002,
+          "name": "Kokomi_Band01",
+          "skin_id": 1002102,
+          "parent_id": 0,
+          "npc_type": 1,
+          "personal_color": "#FFAACC",
+          "is_dormitory": false,
+          "unlock": {
+            "quest_id": 0,
+            "furniture_id": 0,
+            "type": 0,
+            "value_01": 0,
+            "value_02": 0,
+            "anim": false
+          },
+          "asset_keys": {
+            "icon_ld": "",
+            "icon_sd": "Cos_Maid01_Band01_SD",
+            "prefab_ld": "Maid_1001_LD_Band01",
+            "prefab_sd": "Maid_1001_SD_Band01_Ingame",
+            "prefab_sd_out_game": "Maid_1001_SD_Band01",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          },
+          "assets": {
+            "icon_ld": "",
+            "icon_sd": "res://assets/characters/maid_costume/Cos_Maid01_Band01_SD.png",
+            "prefab_ld": "",
+            "prefab_sd": "",
+            "prefab_sd_out_game": "",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          }
+        },
+        {
+          "npc_id": 1002,
+          "name": "Kokomi_Christmas01",
+          "skin_id": 1002203,
+          "parent_id": 0,
+          "npc_type": 1,
+          "personal_color": "#FFAACC",
+          "is_dormitory": false,
+          "unlock": {
+            "quest_id": 0,
+            "furniture_id": 0,
+            "type": 0,
+            "value_01": 0,
+            "value_02": 0,
+            "anim": false
+          },
+          "asset_keys": {
+            "icon_ld": "",
+            "icon_sd": "Maid_1001_SD_Christmas01",
+            "prefab_ld": "Maid_1001_LD_ChristMas01",
+            "prefab_sd": "Maid_1001_SD_Christmas01_Ingame",
+            "prefab_sd_out_game": "Maid_1001_SD_Christmas01",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          },
+          "assets": {
+            "icon_ld": "",
+            "icon_sd": "",
+            "prefab_ld": "",
+            "prefab_sd": "",
+            "prefab_sd_out_game": "",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          }
+        }
+      ]
+    },
+    {
+      "maid_id": 1003,
+      "profile": {
+        "member": "Aku_Maid Academy",
+        "tribe": "Aku_Tribe",
+        "height": "Aku_Height",
+        "birthday": "Aku_Birthday",
+        "age": "Aku_Age",
+        "cv": "Aku_CV",
+        "favorite": "Aku_FAVO",
+        "hate": "Aku_HATE"
+      },
+      "skill_id": 50102,
+      "skills": [
+        {
+          "level": 1,
+          "skill_type": 1,
+          "target_id": "Coffeepot,Soda",
+          "value": 2.0
+        },
+        {
+          "level": 2,
+          "skill_type": 1,
+          "target_id": "Coffeepot,Soda",
+          "value": 4.0
+        },
+        {
+          "level": 3,
+          "skill_type": 1,
+          "target_id": "Coffeepot,Soda",
+          "value": 6.0
+        },
+        {
+          "level": 4,
+          "skill_type": 1,
+          "target_id": "Coffeepot,Soda",
+          "value": 8.0
+        },
+        {
+          "level": 5,
+          "skill_type": 1,
+          "target_id": "Coffeepot,Soda",
+          "value": 10.0
+        }
+      ],
+      "liked_gift_ids": [
+        100301,
+        100302,
+        0
+      ],
+      "levels": [
+        {
+          "level": 1,
+          "need_exp": 0,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        },
+        {
+          "level": 2,
+          "need_exp": 20,
+          "reward_type": 2,
+          "reward_id": 70901,
+          "reward_count": 1
+        },
+        {
+          "level": 3,
+          "need_exp": 42,
+          "reward_type": 1,
+          "reward_id": 1,
+          "reward_count": 2000
+        },
+        {
+          "level": 4,
+          "need_exp": 68,
+          "reward_type": 9,
+          "reward_id": 50102,
+          "reward_count": 1
+        },
+        {
+          "level": 5,
+          "need_exp": 99,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        },
+        {
+          "level": 6,
+          "need_exp": 136,
+          "reward_type": 2,
+          "reward_id": 80104101,
+          "reward_count": 1
+        },
+        {
+          "level": 7,
+          "need_exp": 180,
+          "reward_type": 1,
+          "reward_id": 1,
+          "reward_count": 3000
+        },
+        {
+          "level": 8,
+          "need_exp": 234,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        },
+        {
+          "level": 9,
+          "need_exp": 301,
+          "reward_type": 9,
+          "reward_id": 50102,
+          "reward_count": 1
+        },
+        {
+          "level": 10,
+          "need_exp": 384,
+          "reward_type": 2,
+          "reward_id": 70901,
+          "reward_count": 1
+        },
+        {
+          "level": 11,
+          "need_exp": 519,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        },
+        {
+          "level": 12,
+          "need_exp": 712,
+          "reward_type": 2,
+          "reward_id": 80104102,
+          "reward_count": 1
+        },
+        {
+          "level": 13,
+          "need_exp": 955,
+          "reward_type": 9,
+          "reward_id": 50102,
+          "reward_count": 1
+        },
+        {
+          "level": 14,
+          "need_exp": 1258,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        },
+        {
+          "level": 15,
+          "need_exp": 1661,
+          "reward_type": 1,
+          "reward_id": 3,
+          "reward_count": 80
+        },
+        {
+          "level": 16,
+          "need_exp": 2163,
+          "reward_type": 1,
+          "reward_id": 1,
+          "reward_count": 5000
+        },
+        {
+          "level": 17,
+          "need_exp": 2726,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        },
+        {
+          "level": 18,
+          "need_exp": 3390,
+          "reward_type": 9,
+          "reward_id": 50102,
+          "reward_count": 1
+        },
+        {
+          "level": 19,
+          "need_exp": 4114,
+          "reward_type": 1,
+          "reward_id": 2,
+          "reward_count": 50
+        },
+        {
+          "level": 20,
+          "need_exp": 4882,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        }
+      ],
+      "npc_records": [
+        {
+          "npc_id": 1003,
+          "name": "Aku",
+          "skin_id": 0,
+          "parent_id": 0,
+          "npc_type": 1,
+          "personal_color": "#7AA2F3",
+          "is_dormitory": true,
+          "unlock": {
+            "quest_id": 0,
+            "furniture_id": 94,
+            "type": 0,
+            "value_01": 0,
+            "value_02": 0,
+            "anim": false
+          },
+          "asset_keys": {
+            "icon_ld": "",
+            "icon_sd": "Ch_Maid02_Basic01_SD",
+            "prefab_ld": "Maid_1002_LD",
+            "prefab_sd": "Maid_1002_SD_InGame",
+            "prefab_sd_out_game": "Maid_1002_SD",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          },
+          "assets": {
+            "icon_ld": "",
+            "icon_sd": "res://assets/characters/maid_base/Ch_Maid02_Basic01_SD.png",
+            "prefab_ld": "",
+            "prefab_sd": "",
+            "prefab_sd_out_game": "",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          }
+        },
+        {
+          "npc_id": 1003,
+          "name": "Aku_Casual01",
+          "skin_id": 1003101,
+          "parent_id": 0,
+          "npc_type": 1,
+          "personal_color": "#7AA2F3",
+          "is_dormitory": false,
+          "unlock": {
+            "quest_id": 0,
+            "furniture_id": 0,
+            "type": 0,
+            "value_01": 0,
+            "value_02": 0,
+            "anim": false
+          },
+          "asset_keys": {
+            "icon_ld": "",
+            "icon_sd": "Cos_Maid02_Casual01_SD",
+            "prefab_ld": "Maid_1002_LD_Casual01",
+            "prefab_sd": "Maid_1002_SD_Casual01_Ingame",
+            "prefab_sd_out_game": "Maid_1002_SD_Casual01",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          },
+          "assets": {
+            "icon_ld": "",
+            "icon_sd": "res://assets/characters/maid_costume/Cos_Maid02_Casual01_SD.png",
+            "prefab_ld": "",
+            "prefab_sd": "",
+            "prefab_sd_out_game": "",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          }
+        },
+        {
+          "npc_id": 1003,
+          "name": "Aku_SwimSuit01",
+          "skin_id": 1003201,
+          "parent_id": 0,
+          "npc_type": 1,
+          "personal_color": "#7AA2F3",
+          "is_dormitory": false,
+          "unlock": {
+            "quest_id": 0,
+            "furniture_id": 0,
+            "type": 0,
+            "value_01": 0,
+            "value_02": 0,
+            "anim": false
+          },
+          "asset_keys": {
+            "icon_ld": "",
+            "icon_sd": "Maid_1002_SD_Summer01",
+            "prefab_ld": "Maid_1002_LD_Summer01",
+            "prefab_sd": "Maid_1002_SD_Summer01_Ingame",
+            "prefab_sd_out_game": "Maid_1002_SD_Summer01",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          },
+          "assets": {
+            "icon_ld": "",
+            "icon_sd": "",
+            "prefab_ld": "",
+            "prefab_sd": "",
+            "prefab_sd_out_game": "",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          }
+        },
+        {
+          "npc_id": 1003,
+          "name": "Aku_Halloween01",
+          "skin_id": 1003202,
+          "parent_id": 0,
+          "npc_type": 1,
+          "personal_color": "#7AA2F3",
+          "is_dormitory": false,
+          "unlock": {
+            "quest_id": 0,
+            "furniture_id": 0,
+            "type": 0,
+            "value_01": 0,
+            "value_02": 0,
+            "anim": false
+          },
+          "asset_keys": {
+            "icon_ld": "",
+            "icon_sd": "Maid_1002_SD_Halloween01",
+            "prefab_ld": "Maid_1002_LD_Halloween01",
+            "prefab_sd": "Maid_1002_SD_Halloween01_Ingame",
+            "prefab_sd_out_game": "Maid_1002_SD_Halloween01",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          },
+          "assets": {
+            "icon_ld": "",
+            "icon_sd": "",
+            "prefab_ld": "",
+            "prefab_sd": "",
+            "prefab_sd_out_game": "",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          }
+        },
+        {
+          "npc_id": 1003,
+          "name": "Aku_Christmas01",
+          "skin_id": 1003203,
+          "parent_id": 0,
+          "npc_type": 1,
+          "personal_color": "#7AA2F3",
+          "is_dormitory": false,
+          "unlock": {
+            "quest_id": 0,
+            "furniture_id": 0,
+            "type": 0,
+            "value_01": 0,
+            "value_02": 0,
+            "anim": false
+          },
+          "asset_keys": {
+            "icon_ld": "",
+            "icon_sd": "Maid_1002_SD_Christmas01",
+            "prefab_ld": "Maid_1002_LD_ChristMas01",
+            "prefab_sd": "Maid_1002_SD_Christmas01_Ingame",
+            "prefab_sd_out_game": "Maid_1002_SD_Christmas01",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          },
+          "assets": {
+            "icon_ld": "",
+            "icon_sd": "",
+            "prefab_ld": "",
+            "prefab_sd": "",
+            "prefab_sd_out_game": "",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          }
+        }
+      ]
+    },
+    {
+      "maid_id": 1004,
+      "profile": {
+        "member": "Yuki_Maid Academy",
+        "tribe": "Yuki_Tribe",
+        "height": "Yuki_Height",
+        "birthday": "Yuki_Birthday",
+        "age": "Yuki_Age",
+        "cv": "Yuki_CV",
+        "favorite": "Yuki_FAVO",
+        "hate": "Yuki_HATE"
+      },
+      "skill_id": 50502,
+      "skills": [
+        {
+          "level": 1,
+          "skill_type": 5,
+          "target_id": "Ap",
+          "value": 5.0
+        },
+        {
+          "level": 2,
+          "skill_type": 5,
+          "target_id": "Ap",
+          "value": 8.0
+        },
+        {
+          "level": 3,
+          "skill_type": 5,
+          "target_id": "Ap",
+          "value": 10.0
+        },
+        {
+          "level": 4,
+          "skill_type": 5,
+          "target_id": "Ap",
+          "value": 13.0
+        },
+        {
+          "level": 5,
+          "skill_type": 5,
+          "target_id": "Ap",
+          "value": 15.0
+        }
+      ],
+      "liked_gift_ids": [
+        100401,
+        100402,
+        0
+      ],
+      "levels": [
+        {
+          "level": 1,
+          "need_exp": 0,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        },
+        {
+          "level": 2,
+          "need_exp": 20,
+          "reward_type": 2,
+          "reward_id": 70901,
+          "reward_count": 1
+        },
+        {
+          "level": 3,
+          "need_exp": 42,
+          "reward_type": 1,
+          "reward_id": 1,
+          "reward_count": 2000
+        },
+        {
+          "level": 4,
+          "need_exp": 68,
+          "reward_type": 9,
+          "reward_id": 50502,
+          "reward_count": 1
+        },
+        {
+          "level": 5,
+          "need_exp": 99,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        },
+        {
+          "level": 6,
+          "need_exp": 136,
+          "reward_type": 2,
+          "reward_id": 80104101,
+          "reward_count": 1
+        },
+        {
+          "level": 7,
+          "need_exp": 180,
+          "reward_type": 1,
+          "reward_id": 1,
+          "reward_count": 3000
+        },
+        {
+          "level": 8,
+          "need_exp": 234,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        },
+        {
+          "level": 9,
+          "need_exp": 301,
+          "reward_type": 9,
+          "reward_id": 50502,
+          "reward_count": 1
+        },
+        {
+          "level": 10,
+          "need_exp": 384,
+          "reward_type": 2,
+          "reward_id": 70901,
+          "reward_count": 1
+        },
+        {
+          "level": 11,
+          "need_exp": 519,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        },
+        {
+          "level": 12,
+          "need_exp": 712,
+          "reward_type": 2,
+          "reward_id": 80104102,
+          "reward_count": 1
+        },
+        {
+          "level": 13,
+          "need_exp": 955,
+          "reward_type": 9,
+          "reward_id": 50502,
+          "reward_count": 1
+        },
+        {
+          "level": 14,
+          "need_exp": 1258,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        },
+        {
+          "level": 15,
+          "need_exp": 1661,
+          "reward_type": 1,
+          "reward_id": 3,
+          "reward_count": 80
+        },
+        {
+          "level": 16,
+          "need_exp": 2163,
+          "reward_type": 1,
+          "reward_id": 1,
+          "reward_count": 5000
+        },
+        {
+          "level": 17,
+          "need_exp": 2726,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        },
+        {
+          "level": 18,
+          "need_exp": 3390,
+          "reward_type": 9,
+          "reward_id": 50502,
+          "reward_count": 1
+        },
+        {
+          "level": 19,
+          "need_exp": 4114,
+          "reward_type": 1,
+          "reward_id": 2,
+          "reward_count": 50
+        },
+        {
+          "level": 20,
+          "need_exp": 4882,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        }
+      ],
+      "npc_records": [
+        {
+          "npc_id": 1004,
+          "name": "Yuki",
+          "skin_id": 0,
+          "parent_id": 0,
+          "npc_type": 1,
+          "personal_color": "#AADDEE",
+          "is_dormitory": true,
+          "unlock": {
+            "quest_id": 0,
+            "furniture_id": 94,
+            "type": 0,
+            "value_01": 0,
+            "value_02": 0,
+            "anim": false
+          },
+          "asset_keys": {
+            "icon_ld": "",
+            "icon_sd": "Ch_Maid03_Basic01_SD",
+            "prefab_ld": "Maid_1003_LD",
+            "prefab_sd": "Maid_1003_SD_InGame",
+            "prefab_sd_out_game": "Maid_1003_SD",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          },
+          "assets": {
+            "icon_ld": "",
+            "icon_sd": "res://assets/characters/maid_base/Ch_Maid03_Basic01_SD.png",
+            "prefab_ld": "",
+            "prefab_sd": "",
+            "prefab_sd_out_game": "",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          }
+        },
+        {
+          "npc_id": 1004,
+          "name": "Yuki_Casual01",
+          "skin_id": 1004101,
+          "parent_id": 0,
+          "npc_type": 1,
+          "personal_color": "#AADDEE",
+          "is_dormitory": false,
+          "unlock": {
+            "quest_id": 0,
+            "furniture_id": 0,
+            "type": 0,
+            "value_01": 0,
+            "value_02": 0,
+            "anim": false
+          },
+          "asset_keys": {
+            "icon_ld": "",
+            "icon_sd": "Cos_Maid03_Casual01_SD",
+            "prefab_ld": "Maid_1003_LD_Casual01",
+            "prefab_sd": "Maid_1003_SD_Casual01_Ingame",
+            "prefab_sd_out_game": "Maid_1003_SD_Casual01",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          },
+          "assets": {
+            "icon_ld": "",
+            "icon_sd": "res://assets/characters/maid_costume/Cos_Maid03_Casual01_SD.png",
+            "prefab_ld": "",
+            "prefab_sd": "",
+            "prefab_sd_out_game": "",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          }
+        },
+        {
+          "npc_id": 1004,
+          "name": "Yuki_SwimSuit01",
+          "skin_id": 1004201,
+          "parent_id": 0,
+          "npc_type": 1,
+          "personal_color": "#AADDEE",
+          "is_dormitory": false,
+          "unlock": {
+            "quest_id": 0,
+            "furniture_id": 0,
+            "type": 0,
+            "value_01": 0,
+            "value_02": 0,
+            "anim": false
+          },
+          "asset_keys": {
+            "icon_ld": "",
+            "icon_sd": "Maid_1003_SD_Summer01",
+            "prefab_ld": "Maid_1003_LD_Summer01",
+            "prefab_sd": "Maid_1003_SD_Summer01_Ingame",
+            "prefab_sd_out_game": "Maid_1003_SD_Summer01",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          },
+          "assets": {
+            "icon_ld": "",
+            "icon_sd": "",
+            "prefab_ld": "",
+            "prefab_sd": "",
+            "prefab_sd_out_game": "",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          }
+        },
+        {
+          "npc_id": 1004,
+          "name": "Yuki_Halloween01",
+          "skin_id": 1004202,
+          "parent_id": 0,
+          "npc_type": 1,
+          "personal_color": "#AADDEE",
+          "is_dormitory": false,
+          "unlock": {
+            "quest_id": 0,
+            "furniture_id": 0,
+            "type": 0,
+            "value_01": 0,
+            "value_02": 0,
+            "anim": false
+          },
+          "asset_keys": {
+            "icon_ld": "",
+            "icon_sd": "Maid_1003_SD_Halloween01",
+            "prefab_ld": "Maid_1003_LD_Halloween01",
+            "prefab_sd": "Maid_1003_SD_Halloween01_Ingame",
+            "prefab_sd_out_game": "Maid_1003_SD_Halloween01",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          },
+          "assets": {
+            "icon_ld": "",
+            "icon_sd": "",
+            "prefab_ld": "",
+            "prefab_sd": "",
+            "prefab_sd_out_game": "",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          }
+        },
+        {
+          "npc_id": 1004,
+          "name": "Yuki_Christmas01",
+          "skin_id": 1004203,
+          "parent_id": 0,
+          "npc_type": 1,
+          "personal_color": "#AADDEE",
+          "is_dormitory": false,
+          "unlock": {
+            "quest_id": 0,
+            "furniture_id": 0,
+            "type": 0,
+            "value_01": 0,
+            "value_02": 0,
+            "anim": false
+          },
+          "asset_keys": {
+            "icon_ld": "",
+            "icon_sd": "Maid_1003_SD_Christmas01",
+            "prefab_ld": "Maid_1003_LD_ChristMas01",
+            "prefab_sd": "Maid_1003_SD_Christmas01_Ingame",
+            "prefab_sd_out_game": "Maid_1003_SD_Christmas01",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          },
+          "assets": {
+            "icon_ld": "",
+            "icon_sd": "",
+            "prefab_ld": "",
+            "prefab_sd": "",
+            "prefab_sd_out_game": "",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          }
+        },
+        {
+          "npc_id": 1004,
+          "name": "Yuki_SchoolUniform01",
+          "skin_id": 1004103,
+          "parent_id": 0,
+          "npc_type": 1,
+          "personal_color": "#AADDEE",
+          "is_dormitory": false,
+          "unlock": {
+            "quest_id": 0,
+            "furniture_id": 0,
+            "type": 0,
+            "value_01": 0,
+            "value_02": 0,
+            "anim": false
+          },
+          "asset_keys": {
+            "icon_ld": "",
+            "icon_sd": "Maid_1003_SD_SchoolUniform01",
+            "prefab_ld": "Maid_1003_LD_SchoolUniform01",
+            "prefab_sd": "Maid_1003_SD_SchoolUniform01_Ingame",
+            "prefab_sd_out_game": "Maid_1003_SD_SchoolUniform01",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          },
+          "assets": {
+            "icon_ld": "",
+            "icon_sd": "",
+            "prefab_ld": "",
+            "prefab_sd": "",
+            "prefab_sd_out_game": "",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          }
+        }
+      ]
+    },
+    {
+      "maid_id": 1005,
+      "profile": {
+        "member": "Kaede_Maid Academy",
+        "tribe": "Kaede_Tribe",
+        "height": "Kaede_Height",
+        "birthday": "Kaede_Birthday",
+        "age": "Kaede_Age",
+        "cv": "Kaede_CV",
+        "favorite": "Kaede_FAVO",
+        "hate": "Kaede_HATE"
+      },
+      "skill_id": 50701,
+      "skills": [
+        {
+          "level": 1,
+          "skill_type": 7,
+          "target_id": "",
+          "value": 2.0
+        },
+        {
+          "level": 2,
+          "skill_type": 7,
+          "target_id": "",
+          "value": 4.0
+        },
+        {
+          "level": 3,
+          "skill_type": 7,
+          "target_id": "",
+          "value": 6.0
+        },
+        {
+          "level": 4,
+          "skill_type": 7,
+          "target_id": "",
+          "value": 8.0
+        },
+        {
+          "level": 5,
+          "skill_type": 7,
+          "target_id": "",
+          "value": 10.0
+        }
+      ],
+      "liked_gift_ids": [
+        100501,
+        100502,
+        0
+      ],
+      "levels": [
+        {
+          "level": 1,
+          "need_exp": 0,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        },
+        {
+          "level": 2,
+          "need_exp": 20,
+          "reward_type": 2,
+          "reward_id": 70901,
+          "reward_count": 1
+        },
+        {
+          "level": 3,
+          "need_exp": 42,
+          "reward_type": 1,
+          "reward_id": 1,
+          "reward_count": 2000
+        },
+        {
+          "level": 4,
+          "need_exp": 68,
+          "reward_type": 9,
+          "reward_id": 50701,
+          "reward_count": 1
+        },
+        {
+          "level": 5,
+          "need_exp": 99,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        },
+        {
+          "level": 6,
+          "need_exp": 136,
+          "reward_type": 2,
+          "reward_id": 80104101,
+          "reward_count": 1
+        },
+        {
+          "level": 7,
+          "need_exp": 180,
+          "reward_type": 1,
+          "reward_id": 1,
+          "reward_count": 3000
+        },
+        {
+          "level": 8,
+          "need_exp": 234,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        },
+        {
+          "level": 9,
+          "need_exp": 301,
+          "reward_type": 9,
+          "reward_id": 50701,
+          "reward_count": 1
+        },
+        {
+          "level": 10,
+          "need_exp": 384,
+          "reward_type": 2,
+          "reward_id": 70901,
+          "reward_count": 1
+        },
+        {
+          "level": 11,
+          "need_exp": 519,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        },
+        {
+          "level": 12,
+          "need_exp": 712,
+          "reward_type": 2,
+          "reward_id": 80104102,
+          "reward_count": 1
+        },
+        {
+          "level": 13,
+          "need_exp": 955,
+          "reward_type": 9,
+          "reward_id": 50701,
+          "reward_count": 1
+        },
+        {
+          "level": 14,
+          "need_exp": 1258,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        },
+        {
+          "level": 15,
+          "need_exp": 1661,
+          "reward_type": 1,
+          "reward_id": 3,
+          "reward_count": 80
+        },
+        {
+          "level": 16,
+          "need_exp": 2163,
+          "reward_type": 1,
+          "reward_id": 1,
+          "reward_count": 5000
+        },
+        {
+          "level": 17,
+          "need_exp": 2726,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        },
+        {
+          "level": 18,
+          "need_exp": 3390,
+          "reward_type": 9,
+          "reward_id": 50701,
+          "reward_count": 1
+        },
+        {
+          "level": 19,
+          "need_exp": 4114,
+          "reward_type": 1,
+          "reward_id": 2,
+          "reward_count": 50
+        },
+        {
+          "level": 20,
+          "need_exp": 4882,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        }
+      ],
+      "npc_records": [
+        {
+          "npc_id": 1005,
+          "name": "Kaede",
+          "skin_id": 0,
+          "parent_id": 0,
+          "npc_type": 1,
+          "personal_color": "#BBDDBB",
+          "is_dormitory": true,
+          "unlock": {
+            "quest_id": 0,
+            "furniture_id": 94,
+            "type": 0,
+            "value_01": 0,
+            "value_02": 0,
+            "anim": false
+          },
+          "asset_keys": {
+            "icon_ld": "",
+            "icon_sd": "Ch_Maid04_Basic01_SD",
+            "prefab_ld": "Maid_1004_LD",
+            "prefab_sd": "Maid_1004_SD_InGame",
+            "prefab_sd_out_game": "Maid_1004_SD",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          },
+          "assets": {
+            "icon_ld": "",
+            "icon_sd": "res://assets/characters/maid_base/Ch_Maid04_Basic01_SD.png",
+            "prefab_ld": "",
+            "prefab_sd": "",
+            "prefab_sd_out_game": "",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          }
+        },
+        {
+          "npc_id": 1005,
+          "name": "Kaede_Casual01",
+          "skin_id": 1005101,
+          "parent_id": 0,
+          "npc_type": 1,
+          "personal_color": "#BBDDBB",
+          "is_dormitory": false,
+          "unlock": {
+            "quest_id": 0,
+            "furniture_id": 0,
+            "type": 0,
+            "value_01": 0,
+            "value_02": 0,
+            "anim": false
+          },
+          "asset_keys": {
+            "icon_ld": "",
+            "icon_sd": "Cos_Maid04_Casual01_SD",
+            "prefab_ld": "Maid_1004_LD_Casual01",
+            "prefab_sd": "Maid_1004_SD_Casual01_Ingame",
+            "prefab_sd_out_game": "Maid_1004_SD_Casual01",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          },
+          "assets": {
+            "icon_ld": "",
+            "icon_sd": "res://assets/characters/maid_costume/Cos_Maid04_Casual01_SD.png",
+            "prefab_ld": "",
+            "prefab_sd": "",
+            "prefab_sd_out_game": "",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          }
+        },
+        {
+          "npc_id": 1005,
+          "name": "Kaede_SwimSuit01",
+          "skin_id": 1005201,
+          "parent_id": 0,
+          "npc_type": 1,
+          "personal_color": "#BBDDBB",
+          "is_dormitory": false,
+          "unlock": {
+            "quest_id": 0,
+            "furniture_id": 0,
+            "type": 0,
+            "value_01": 0,
+            "value_02": 0,
+            "anim": false
+          },
+          "asset_keys": {
+            "icon_ld": "",
+            "icon_sd": "Maid_1004_SD_Summer01",
+            "prefab_ld": "Maid_1004_LD_Summer01",
+            "prefab_sd": "Maid_1004_SD_Summer01_Ingame",
+            "prefab_sd_out_game": "Maid_1004_SD_Summer01",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          },
+          "assets": {
+            "icon_ld": "",
+            "icon_sd": "",
+            "prefab_ld": "",
+            "prefab_sd": "",
+            "prefab_sd_out_game": "",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          }
+        },
+        {
+          "npc_id": 1005,
+          "name": "Kaede_Band01",
+          "skin_id": 1005102,
+          "parent_id": 0,
+          "npc_type": 1,
+          "personal_color": "#BBDDBB",
+          "is_dormitory": false,
+          "unlock": {
+            "quest_id": 0,
+            "furniture_id": 0,
+            "type": 0,
+            "value_01": 0,
+            "value_02": 0,
+            "anim": false
+          },
+          "asset_keys": {
+            "icon_ld": "",
+            "icon_sd": "Cos_Maid04_Band01_SD",
+            "prefab_ld": "Maid_1004_LD_Band01",
+            "prefab_sd": "Maid_1004_SD_Band01_Ingame",
+            "prefab_sd_out_game": "Maid_1004_SD_Band01",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          },
+          "assets": {
+            "icon_ld": "",
+            "icon_sd": "res://assets/characters/maid_costume/Cos_Maid04_Band01_SD.png",
+            "prefab_ld": "",
+            "prefab_sd": "",
+            "prefab_sd_out_game": "",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          }
+        },
+        {
+          "npc_id": 1005,
+          "name": "Kaede_Christmas01",
+          "skin_id": 1005203,
+          "parent_id": 0,
+          "npc_type": 1,
+          "personal_color": "#BBDDBB",
+          "is_dormitory": false,
+          "unlock": {
+            "quest_id": 0,
+            "furniture_id": 0,
+            "type": 0,
+            "value_01": 0,
+            "value_02": 0,
+            "anim": false
+          },
+          "asset_keys": {
+            "icon_ld": "",
+            "icon_sd": "Maid_1004_SD_Christmas01",
+            "prefab_ld": "Maid_1004_LD_ChristMas01",
+            "prefab_sd": "Maid_1004_SD_Christmas01_Ingame",
+            "prefab_sd_out_game": "Maid_1004_SD_Christmas01",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          },
+          "assets": {
+            "icon_ld": "",
+            "icon_sd": "",
+            "prefab_ld": "",
+            "prefab_sd": "",
+            "prefab_sd_out_game": "",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          }
+        },
+        {
+          "npc_id": 1005,
+          "name": "Kaede_SchoolUniform01",
+          "skin_id": 1005103,
+          "parent_id": 0,
+          "npc_type": 1,
+          "personal_color": "#BBDDBB",
+          "is_dormitory": false,
+          "unlock": {
+            "quest_id": 0,
+            "furniture_id": 0,
+            "type": 0,
+            "value_01": 0,
+            "value_02": 0,
+            "anim": false
+          },
+          "asset_keys": {
+            "icon_ld": "",
+            "icon_sd": "Maid_1004_SD_SchoolUniform01",
+            "prefab_ld": "Maid_1004_LD_SchoolUniform01",
+            "prefab_sd": "Maid_1004_SD_SchoolUniform01_Ingame",
+            "prefab_sd_out_game": "Maid_1004_SD_SchoolUniform01",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          },
+          "assets": {
+            "icon_ld": "",
+            "icon_sd": "",
+            "prefab_ld": "",
+            "prefab_sd": "",
+            "prefab_sd_out_game": "",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          }
+        }
+      ]
+    },
+    {
+      "maid_id": 1006,
+      "profile": {
+        "member": "Akane_Maid Academy",
+        "tribe": "Akane_Tribe",
+        "height": "Akane_Height",
+        "birthday": "Akane_Birthday",
+        "age": "Akane_Age",
+        "cv": "Akane_CV",
+        "favorite": "Akane_FAVO",
+        "hate": "Akane_HATE"
+      },
+      "skill_id": 50901,
+      "skills": [
+        {
+          "level": 1,
+          "skill_type": 9,
+          "target_id": "",
+          "value": 3.0
+        },
+        {
+          "level": 2,
+          "skill_type": 9,
+          "target_id": "",
+          "value": 7.0
+        },
+        {
+          "level": 3,
+          "skill_type": 9,
+          "target_id": "",
+          "value": 9.0
+        },
+        {
+          "level": 4,
+          "skill_type": 9,
+          "target_id": "",
+          "value": 13.0
+        },
+        {
+          "level": 5,
+          "skill_type": 9,
+          "target_id": "",
+          "value": 15.0
+        }
+      ],
+      "liked_gift_ids": [
+        100601,
+        100602,
+        0
+      ],
+      "levels": [
+        {
+          "level": 1,
+          "need_exp": 0,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        },
+        {
+          "level": 2,
+          "need_exp": 20,
+          "reward_type": 2,
+          "reward_id": 70901,
+          "reward_count": 1
+        },
+        {
+          "level": 3,
+          "need_exp": 42,
+          "reward_type": 1,
+          "reward_id": 1,
+          "reward_count": 2000
+        },
+        {
+          "level": 4,
+          "need_exp": 68,
+          "reward_type": 9,
+          "reward_id": 50901,
+          "reward_count": 1
+        },
+        {
+          "level": 5,
+          "need_exp": 99,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        },
+        {
+          "level": 6,
+          "need_exp": 136,
+          "reward_type": 2,
+          "reward_id": 80104101,
+          "reward_count": 1
+        },
+        {
+          "level": 7,
+          "need_exp": 180,
+          "reward_type": 1,
+          "reward_id": 1,
+          "reward_count": 3000
+        },
+        {
+          "level": 8,
+          "need_exp": 234,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        },
+        {
+          "level": 9,
+          "need_exp": 301,
+          "reward_type": 9,
+          "reward_id": 50901,
+          "reward_count": 1
+        },
+        {
+          "level": 10,
+          "need_exp": 384,
+          "reward_type": 2,
+          "reward_id": 70901,
+          "reward_count": 1
+        },
+        {
+          "level": 11,
+          "need_exp": 519,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        },
+        {
+          "level": 12,
+          "need_exp": 712,
+          "reward_type": 2,
+          "reward_id": 80104102,
+          "reward_count": 1
+        },
+        {
+          "level": 13,
+          "need_exp": 955,
+          "reward_type": 9,
+          "reward_id": 50901,
+          "reward_count": 1
+        },
+        {
+          "level": 14,
+          "need_exp": 1258,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        },
+        {
+          "level": 15,
+          "need_exp": 1661,
+          "reward_type": 1,
+          "reward_id": 3,
+          "reward_count": 80
+        },
+        {
+          "level": 16,
+          "need_exp": 2163,
+          "reward_type": 1,
+          "reward_id": 1,
+          "reward_count": 5000
+        },
+        {
+          "level": 17,
+          "need_exp": 2726,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        },
+        {
+          "level": 18,
+          "need_exp": 3390,
+          "reward_type": 9,
+          "reward_id": 50901,
+          "reward_count": 1
+        },
+        {
+          "level": 19,
+          "need_exp": 4114,
+          "reward_type": 1,
+          "reward_id": 2,
+          "reward_count": 50
+        },
+        {
+          "level": 20,
+          "need_exp": 4882,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        }
+      ],
+      "npc_records": [
+        {
+          "npc_id": 1006,
+          "name": "Akane",
+          "skin_id": 0,
+          "parent_id": 0,
+          "npc_type": 1,
+          "personal_color": "#EE7777",
+          "is_dormitory": true,
+          "unlock": {
+            "quest_id": 0,
+            "furniture_id": 201,
+            "type": 0,
+            "value_01": 0,
+            "value_02": 0,
+            "anim": true
+          },
+          "asset_keys": {
+            "icon_ld": "",
+            "icon_sd": "Ch_Maid05_Basic01_SD",
+            "prefab_ld": "Maid_1005_LD",
+            "prefab_sd": "Maid_1005_SD_Ingame",
+            "prefab_sd_out_game": "Maid_1005_SD",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          },
+          "assets": {
+            "icon_ld": "",
+            "icon_sd": "res://assets/characters/maid_base/Ch_Maid05_Basic01_SD.png",
+            "prefab_ld": "",
+            "prefab_sd": "",
+            "prefab_sd_out_game": "",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          }
+        },
+        {
+          "npc_id": 1006,
+          "name": "Akane_Casual01",
+          "skin_id": 1006101,
+          "parent_id": 0,
+          "npc_type": 1,
+          "personal_color": "#EE7777",
+          "is_dormitory": false,
+          "unlock": {
+            "quest_id": 0,
+            "furniture_id": 0,
+            "type": 0,
+            "value_01": 0,
+            "value_02": 0,
+            "anim": false
+          },
+          "asset_keys": {
+            "icon_ld": "",
+            "icon_sd": "Cos_Maid05_Casual01_SD",
+            "prefab_ld": "Maid_1005_LD_Casual01",
+            "prefab_sd": "Maid_1005_SD_Casual01_Ingame",
+            "prefab_sd_out_game": "Maid_1005_SD_Casual01",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          },
+          "assets": {
+            "icon_ld": "",
+            "icon_sd": "res://assets/characters/maid_costume/Cos_Maid05_Casual01_SD.png",
+            "prefab_ld": "",
+            "prefab_sd": "",
+            "prefab_sd_out_game": "",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          }
+        },
+        {
+          "npc_id": 1006,
+          "name": "Akane_SwimSuit01",
+          "skin_id": 1006201,
+          "parent_id": 0,
+          "npc_type": 1,
+          "personal_color": "#EE7777",
+          "is_dormitory": false,
+          "unlock": {
+            "quest_id": 0,
+            "furniture_id": 0,
+            "type": 0,
+            "value_01": 0,
+            "value_02": 0,
+            "anim": false
+          },
+          "asset_keys": {
+            "icon_ld": "",
+            "icon_sd": "Maid_1005_SD_Summer01",
+            "prefab_ld": "Maid_1005_LD_Summer01",
+            "prefab_sd": "Maid_1005_SD_Summer01_Ingame",
+            "prefab_sd_out_game": "Maid_1005_SD_Summer01",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          },
+          "assets": {
+            "icon_ld": "",
+            "icon_sd": "",
+            "prefab_ld": "",
+            "prefab_sd": "",
+            "prefab_sd_out_game": "",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          }
+        },
+        {
+          "npc_id": 1006,
+          "name": "Akane_Halloween01",
+          "skin_id": 1006202,
+          "parent_id": 0,
+          "npc_type": 1,
+          "personal_color": "#EE7777",
+          "is_dormitory": false,
+          "unlock": {
+            "quest_id": 0,
+            "furniture_id": 0,
+            "type": 0,
+            "value_01": 0,
+            "value_02": 0,
+            "anim": false
+          },
+          "asset_keys": {
+            "icon_ld": "",
+            "icon_sd": "Maid_1005_SD_Halloween01",
+            "prefab_ld": "Maid_1005_LD_Halloween01",
+            "prefab_sd": "Maid_1005_SD_Halloween01_Ingame",
+            "prefab_sd_out_game": "Maid_1005_SD_Halloween01",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          },
+          "assets": {
+            "icon_ld": "",
+            "icon_sd": "",
+            "prefab_ld": "",
+            "prefab_sd": "",
+            "prefab_sd_out_game": "",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          }
+        },
+        {
+          "npc_id": 1006,
+          "name": "Akane_Christmas01",
+          "skin_id": 1006203,
+          "parent_id": 0,
+          "npc_type": 1,
+          "personal_color": "#EE7777",
+          "is_dormitory": false,
+          "unlock": {
+            "quest_id": 0,
+            "furniture_id": 0,
+            "type": 0,
+            "value_01": 0,
+            "value_02": 0,
+            "anim": false
+          },
+          "asset_keys": {
+            "icon_ld": "",
+            "icon_sd": "Maid_1005_SD_Christmas01",
+            "prefab_ld": "Maid_1005_LD_ChristMas01",
+            "prefab_sd": "Maid_1005_SD_Christmas01_Ingame",
+            "prefab_sd_out_game": "Maid_1005_SD_Christmas01",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          },
+          "assets": {
+            "icon_ld": "",
+            "icon_sd": "",
+            "prefab_ld": "",
+            "prefab_sd": "",
+            "prefab_sd_out_game": "",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          }
+        }
+      ]
+    },
+    {
+      "maid_id": 1007,
+      "profile": {
+        "member": "Kurone_Maid Academy",
+        "tribe": "Kurone_Tribe",
+        "height": "Kurone_Height",
+        "birthday": "Kurone_Birthday",
+        "age": "Kurone_Age",
+        "cv": "Kurone_CV",
+        "favorite": "Kurone_FAVO",
+        "hate": "Kurone_HATE"
+      },
+      "skill_id": 50801,
+      "skills": [
+        {
+          "level": 1,
+          "skill_type": 8,
+          "target_id": "",
+          "value": 1.0
+        },
+        {
+          "level": 2,
+          "skill_type": 8,
+          "target_id": "",
+          "value": 3.0
+        },
+        {
+          "level": 3,
+          "skill_type": 8,
+          "target_id": "",
+          "value": 5.0
+        },
+        {
+          "level": 4,
+          "skill_type": 8,
+          "target_id": "",
+          "value": 6.0
+        },
+        {
+          "level": 5,
+          "skill_type": 8,
+          "target_id": "",
+          "value": 8.0
+        }
+      ],
+      "liked_gift_ids": [
+        100701,
+        100702,
+        0
+      ],
+      "levels": [
+        {
+          "level": 1,
+          "need_exp": 0,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        },
+        {
+          "level": 2,
+          "need_exp": 20,
+          "reward_type": 2,
+          "reward_id": 70901,
+          "reward_count": 1
+        },
+        {
+          "level": 3,
+          "need_exp": 42,
+          "reward_type": 1,
+          "reward_id": 1,
+          "reward_count": 2000
+        },
+        {
+          "level": 4,
+          "need_exp": 68,
+          "reward_type": 9,
+          "reward_id": 50801,
+          "reward_count": 1
+        },
+        {
+          "level": 5,
+          "need_exp": 99,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        },
+        {
+          "level": 6,
+          "need_exp": 136,
+          "reward_type": 2,
+          "reward_id": 80104101,
+          "reward_count": 1
+        },
+        {
+          "level": 7,
+          "need_exp": 180,
+          "reward_type": 1,
+          "reward_id": 1,
+          "reward_count": 3000
+        },
+        {
+          "level": 8,
+          "need_exp": 234,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        },
+        {
+          "level": 9,
+          "need_exp": 301,
+          "reward_type": 9,
+          "reward_id": 50801,
+          "reward_count": 1
+        },
+        {
+          "level": 10,
+          "need_exp": 384,
+          "reward_type": 2,
+          "reward_id": 70901,
+          "reward_count": 1
+        },
+        {
+          "level": 11,
+          "need_exp": 519,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        },
+        {
+          "level": 12,
+          "need_exp": 712,
+          "reward_type": 2,
+          "reward_id": 80104102,
+          "reward_count": 1
+        },
+        {
+          "level": 13,
+          "need_exp": 955,
+          "reward_type": 9,
+          "reward_id": 50801,
+          "reward_count": 1
+        },
+        {
+          "level": 14,
+          "need_exp": 1258,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        },
+        {
+          "level": 15,
+          "need_exp": 1661,
+          "reward_type": 1,
+          "reward_id": 3,
+          "reward_count": 80
+        },
+        {
+          "level": 16,
+          "need_exp": 2163,
+          "reward_type": 1,
+          "reward_id": 1,
+          "reward_count": 5000
+        },
+        {
+          "level": 17,
+          "need_exp": 2726,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        },
+        {
+          "level": 18,
+          "need_exp": 3390,
+          "reward_type": 9,
+          "reward_id": 50801,
+          "reward_count": 1
+        },
+        {
+          "level": 19,
+          "need_exp": 4114,
+          "reward_type": 1,
+          "reward_id": 2,
+          "reward_count": 50
+        },
+        {
+          "level": 20,
+          "need_exp": 4882,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        }
+      ],
+      "npc_records": [
+        {
+          "npc_id": 1007,
+          "name": "Kurone",
+          "skin_id": 0,
+          "parent_id": 0,
+          "npc_type": 1,
+          "personal_color": "#9C84BB",
+          "is_dormitory": true,
+          "unlock": {
+            "quest_id": 0,
+            "furniture_id": 603,
+            "type": 1,
+            "value_01": 101001,
+            "value_02": 0,
+            "anim": true
+          },
+          "asset_keys": {
+            "icon_ld": "",
+            "icon_sd": "Ch_Maid06_Basic01_SD",
+            "prefab_ld": "Maid_1006_LD",
+            "prefab_sd": "Maid_1006_SD_Ingame",
+            "prefab_sd_out_game": "Maid_1006_SD",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          },
+          "assets": {
+            "icon_ld": "",
+            "icon_sd": "res://assets/characters/maid_base/Ch_Maid06_Basic01_SD.png",
+            "prefab_ld": "",
+            "prefab_sd": "",
+            "prefab_sd_out_game": "",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          }
+        },
+        {
+          "npc_id": 1007,
+          "name": "Kurone_Casual01",
+          "skin_id": 1007101,
+          "parent_id": 0,
+          "npc_type": 1,
+          "personal_color": "#9C84BB",
+          "is_dormitory": true,
+          "unlock": {
+            "quest_id": 0,
+            "furniture_id": 0,
+            "type": 0,
+            "value_01": 0,
+            "value_02": 0,
+            "anim": false
+          },
+          "asset_keys": {
+            "icon_ld": "",
+            "icon_sd": "Cos_Maid06_Casual01_SD",
+            "prefab_ld": "Maid_1006_LD_Casual01",
+            "prefab_sd": "Maid_1006_SD_Casual01_Ingame",
+            "prefab_sd_out_game": "Maid_1006_SD_Casual01",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          },
+          "assets": {
+            "icon_ld": "",
+            "icon_sd": "res://assets/characters/maid_costume/Cos_Maid06_Casual01_SD.png",
+            "prefab_ld": "",
+            "prefab_sd": "",
+            "prefab_sd_out_game": "",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          }
+        },
+        {
+          "npc_id": 100154,
+          "name": "KuroneDog",
+          "skin_id": 0,
+          "parent_id": 1007,
+          "npc_type": 0,
+          "personal_color": "#9C84BB",
+          "is_dormitory": false,
+          "unlock": {
+            "quest_id": 0,
+            "furniture_id": 0,
+            "type": 0,
+            "value_01": 0,
+            "value_02": 0,
+            "anim": false
+          },
+          "asset_keys": {
+            "icon_ld": "",
+            "icon_sd": "",
+            "prefab_ld": "Maid_1006_LD_2",
+            "prefab_sd": "",
+            "prefab_sd_out_game": "",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          },
+          "assets": {
+            "icon_ld": "",
+            "icon_sd": "",
+            "prefab_ld": "",
+            "prefab_sd": "",
+            "prefab_sd_out_game": "",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          }
+        },
+        {
+          "npc_id": 100154,
+          "name": "KuroneDog_Casual01",
+          "skin_id": 1007101,
+          "parent_id": 1007,
+          "npc_type": 0,
+          "personal_color": "#9C84BB",
+          "is_dormitory": false,
+          "unlock": {
+            "quest_id": 0,
+            "furniture_id": 0,
+            "type": 0,
+            "value_01": 0,
+            "value_02": 0,
+            "anim": false
+          },
+          "asset_keys": {
+            "icon_ld": "",
+            "icon_sd": "",
+            "prefab_ld": "Maid_1006_LD_2_Casual01",
+            "prefab_sd": "",
+            "prefab_sd_out_game": "",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          },
+          "assets": {
+            "icon_ld": "",
+            "icon_sd": "",
+            "prefab_ld": "",
+            "prefab_sd": "",
+            "prefab_sd_out_game": "",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          }
+        }
+      ]
+    },
+    {
+      "maid_id": 1008,
+      "profile": {
+        "member": "Aiko_Maid Academy",
+        "tribe": "Aiko_Tribe",
+        "height": "Aiko_Height",
+        "birthday": "Aiko_Birthday",
+        "age": "Aiko_Age",
+        "cv": "Aiko_CV",
+        "favorite": "Aiko_FAVO",
+        "hate": "Aiko_HATE"
+      },
+      "skill_id": 50301,
+      "skills": [
+        {
+          "level": 1,
+          "skill_type": 3,
+          "target_id": "ToolBox,WoodenBox",
+          "value": 3.0
+        },
+        {
+          "level": 2,
+          "skill_type": 3,
+          "target_id": "ToolBox,WoodenBox",
+          "value": 5.0
+        },
+        {
+          "level": 3,
+          "skill_type": 3,
+          "target_id": "ToolBox,WoodenBox",
+          "value": 7.0
+        },
+        {
+          "level": 4,
+          "skill_type": 3,
+          "target_id": "ToolBox,WoodenBox",
+          "value": 8.0
+        },
+        {
+          "level": 5,
+          "skill_type": 3,
+          "target_id": "ToolBox,WoodenBox",
+          "value": 10.0
+        }
+      ],
+      "liked_gift_ids": [
+        100801,
+        100802,
+        0
+      ],
+      "levels": [
+        {
+          "level": 1,
+          "need_exp": 0,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        },
+        {
+          "level": 2,
+          "need_exp": 20,
+          "reward_type": 2,
+          "reward_id": 70901,
+          "reward_count": 1
+        },
+        {
+          "level": 3,
+          "need_exp": 42,
+          "reward_type": 1,
+          "reward_id": 1,
+          "reward_count": 2000
+        },
+        {
+          "level": 4,
+          "need_exp": 68,
+          "reward_type": 9,
+          "reward_id": 50301,
+          "reward_count": 1
+        },
+        {
+          "level": 5,
+          "need_exp": 99,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        },
+        {
+          "level": 6,
+          "need_exp": 136,
+          "reward_type": 2,
+          "reward_id": 80104101,
+          "reward_count": 1
+        },
+        {
+          "level": 7,
+          "need_exp": 180,
+          "reward_type": 1,
+          "reward_id": 1,
+          "reward_count": 3000
+        },
+        {
+          "level": 8,
+          "need_exp": 234,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        },
+        {
+          "level": 9,
+          "need_exp": 301,
+          "reward_type": 9,
+          "reward_id": 50301,
+          "reward_count": 1
+        },
+        {
+          "level": 10,
+          "need_exp": 384,
+          "reward_type": 2,
+          "reward_id": 70901,
+          "reward_count": 1
+        },
+        {
+          "level": 11,
+          "need_exp": 519,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        },
+        {
+          "level": 12,
+          "need_exp": 712,
+          "reward_type": 2,
+          "reward_id": 80104102,
+          "reward_count": 1
+        },
+        {
+          "level": 13,
+          "need_exp": 955,
+          "reward_type": 9,
+          "reward_id": 50301,
+          "reward_count": 1
+        },
+        {
+          "level": 14,
+          "need_exp": 1258,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        },
+        {
+          "level": 15,
+          "need_exp": 1661,
+          "reward_type": 1,
+          "reward_id": 3,
+          "reward_count": 80
+        },
+        {
+          "level": 16,
+          "need_exp": 2163,
+          "reward_type": 1,
+          "reward_id": 1,
+          "reward_count": 5000
+        },
+        {
+          "level": 17,
+          "need_exp": 2726,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        },
+        {
+          "level": 18,
+          "need_exp": 3390,
+          "reward_type": 9,
+          "reward_id": 50301,
+          "reward_count": 1
+        },
+        {
+          "level": 19,
+          "need_exp": 4114,
+          "reward_type": 1,
+          "reward_id": 2,
+          "reward_count": 50
+        },
+        {
+          "level": 20,
+          "need_exp": 4882,
+          "reward_type": 0,
+          "reward_id": 0,
+          "reward_count": 0
+        }
+      ],
+      "npc_records": [
+        {
+          "npc_id": 1008,
+          "name": "Aiko_Playable",
+          "skin_id": 0,
+          "parent_id": 0,
+          "npc_type": 1,
+          "personal_color": "#FEFFC7",
+          "is_dormitory": true,
+          "unlock": {
+            "quest_id": 0,
+            "furniture_id": 0,
+            "type": 1,
+            "value_01": 102001,
+            "value_02": 0,
+            "anim": true
+          },
+          "asset_keys": {
+            "icon_ld": "",
+            "icon_sd": "Ch_Maid07_Basic01_SD",
+            "prefab_ld": "Maid_1007_LD",
+            "prefab_sd": "Maid_1007_SD_Ingame",
+            "prefab_sd_out_game": "Maid_1007_SD",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          },
+          "assets": {
+            "icon_ld": "",
+            "icon_sd": "res://assets/characters/maid_base/Ch_Maid07_Basic01_SD.png",
+            "prefab_ld": "",
+            "prefab_sd": "",
+            "prefab_sd_out_game": "",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          }
+        },
+        {
+          "npc_id": 1008,
+          "name": "Aiko_Playable_Casual01",
+          "skin_id": 1008101,
+          "parent_id": 0,
+          "npc_type": 1,
+          "personal_color": "#FEFFC7",
+          "is_dormitory": true,
+          "unlock": {
+            "quest_id": 0,
+            "furniture_id": 0,
+            "type": 0,
+            "value_01": 0,
+            "value_02": 0,
+            "anim": false
+          },
+          "asset_keys": {
+            "icon_ld": "",
+            "icon_sd": "Cos_Maid07_Casual01_SD",
+            "prefab_ld": "Maid_1007_LD_Casual01",
+            "prefab_sd": "Maid_1007_SD_Casual01_Ingame",
+            "prefab_sd_out_game": "Maid_1007_SD_Casual01",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          },
+          "assets": {
+            "icon_ld": "",
+            "icon_sd": "res://assets/characters/maid_costume/Cos_Maid07_Casual01_SD.png",
+            "prefab_ld": "",
+            "prefab_sd": "",
+            "prefab_sd_out_game": "",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          }
+        },
+        {
+          "npc_id": 1008,
+          "name": "Aiko_Playable_SchoolUniform01",
+          "skin_id": 1008103,
+          "parent_id": 0,
+          "npc_type": 1,
+          "personal_color": "#FEFFC7",
+          "is_dormitory": false,
+          "unlock": {
+            "quest_id": 0,
+            "furniture_id": 0,
+            "type": 0,
+            "value_01": 0,
+            "value_02": 0,
+            "anim": false
+          },
+          "asset_keys": {
+            "icon_ld": "",
+            "icon_sd": "Maid_1007_SD_SchoolUniform01",
+            "prefab_ld": "Maid_1007_LD_SchoolUniform01",
+            "prefab_sd": "Maid_1007_SD_SchoolUniform01_Ingame",
+            "prefab_sd_out_game": "Maid_1007_SD_SchoolUniform01",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          },
+          "assets": {
+            "icon_ld": "",
+            "icon_sd": "",
+            "prefab_ld": "",
+            "prefab_sd": "",
+            "prefab_sd_out_game": "",
+            "npc_icon": "",
+            "npc_cry_icon": "",
+            "npc_prefab": ""
+          }
+        }
+      ]
+    }
+  ]
+}

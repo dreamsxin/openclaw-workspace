@@ -84,6 +84,20 @@ Recovered block sprites are copied from AssetStudio Sprite output into `godot-pr
 | `scripts/models/merge_board_model.gd` | Board state, move/merge rules, wallet state |
 | `scripts/services/save_manager.gd` | JSON save/load |
 
+## Character Data
+
+First-pass recovered character catalogs are now generated under:
+
+```text
+godot-project/data/characters/npcs.json
+godot-project/data/characters/maids.json
+godot-project/data/characters/customers.json
+godot-project/data/characters/dialogs.json
+```
+
+The JSON files are generated from `Table_Npc.dat` by `scripts/reverse/parse_table_npc.py` and `scripts/reverse/build_godot_character_catalog.py`.
+They are not wired into UI yet; T025 will add the first profile browser.
+
 ## Current Interaction Notes
 
 - Initial board includes producer block `1101104` (`BlockName_ToolPocket`).

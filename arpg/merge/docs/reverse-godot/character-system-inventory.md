@@ -140,6 +140,28 @@ godot-project/data/characters/dialogs.json
 godot-project/data/characters/customer_episodes.json
 ```
 
+Current generated files:
+
+| Output | Source | Status |
+| --- | --- | --- |
+| `reverse-output/assets/derived/table_npc/NpcTableData.csv` | `Table_Npc.dat` | decoded, 132 rows |
+| `reverse-output/assets/derived/table_npc/MaidSkillTableData.csv` | `Table_Npc.dat` | decoded, 75 rows |
+| `reverse-output/assets/derived/table_npc/MaidLevelTableData.csv` | `Table_Npc.dat` | decoded, 140 rows |
+| `reverse-output/assets/derived/table_npc/MaidInfoTableData.csv` | `Table_Npc.dat` | decoded, 7 rows |
+| `reverse-output/assets/derived/table_npc/InGameNpcDialog.csv` | `Table_Npc.dat` | first 1400 text-dialog rows decoded |
+| `godot-project/data/characters/npcs.json` | decoded `NpcTableData` | generated |
+| `godot-project/data/characters/maids.json` | decoded maid info/level/skill lists | generated |
+| `godot-project/data/characters/customers.json` | `NpcTableData` rows with `NPCType=2` | generated |
+| `godot-project/data/characters/dialogs.json` | decoded text-dialog prefix | generated |
+
+Decode limit:
+
+- `Table_Npc.InGameNpcDialog` declares 1644 rows.
+- Rows 0-1399 follow the `dump.cs` field order for text dialog and were decoded.
+- Row 1400 starts a mixed-format presentation/effect payload; parsing as plain text dialog stops at offset `0x8102c`.
+- The remaining 84,796 bytes still include the tail lists declared by `Table_Npc`: `CustomerTableData`, `CustomerRewardData`, `MaidGiftTableData`, and `MaidSceneLoadingTableData`.
+- This is now tracked as T026 instead of being treated as lost data.
+
 Planned services/models:
 
 | Godot module | Purpose |
@@ -153,8 +175,7 @@ Planned services/models:
 
 ## Next Tasks
 
-1. Decode `Table_Npc.dat` main and child lists using the `dump.cs` field order.
+1. Decode the mixed-format `Table_Npc` tail after text-dialog row 1400.
 2. Decode `Table_CustomerEpisode.dat`.
 3. Decode `Table_MaidChat.dat` and decide whether full chat branching belongs in the first vertical slice.
-4. Build first Godot JSON catalogs from decoded rows.
-5. Add a simple profile browser using static LD/SD images before attempting Spine/prefab reconstruction.
+4. Add a simple profile browser using static LD/SD images before attempting Spine/prefab reconstruction.
