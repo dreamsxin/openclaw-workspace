@@ -40,6 +40,10 @@ build/Release
 
 # Dependency directories
 node_modules/
+!arpg/merge/tools/spine-baker-js/node_modules/
+!arpg/merge/tools/spine-baker-js/node_modules/@esotericsoftware/
+!arpg/merge/tools/spine-baker-js/node_modules/@esotericsoftware/spine-core/
+!arpg/merge/tools/spine-baker-js/node_modules/@esotericsoftware/spine-core/**
 jspm_packages/
 
 # Snowpack dependency directory (https://snowpack.dev/)
@@ -82,6 +86,8 @@ out
 # Nuxt.js build / generate output
 .nuxt
 dist
+!arpg/merge/tools/spine-baker-js/node_modules/@esotericsoftware/spine-core/dist/
+!arpg/merge/tools/spine-baker-js/node_modules/@esotericsoftware/spine-core/dist/**
 
 # Gatsby files
 .cache/
