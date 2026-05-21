@@ -12,6 +12,7 @@ const SceneLoadingReferenceScreenScript := preload("res://scripts/scene_loading_
 const MaidLobbyLoadingReferenceScreenScript := preload("res://scripts/maid_lobby_loading_reference_screen.gd")
 const OutGameReferenceScreenScript := preload("res://scripts/out_game_reference_screen.gd")
 const MaidLobbyReferenceScreenScript := preload("res://scripts/maid_lobby_reference_screen.gd")
+const MaidLobbySelectPopupReferenceScreenScript := preload("res://scripts/maid_lobby_select_popup_reference_screen.gd")
 const InGameReferenceShellScript := preload("res://scripts/ingame_reference_shell.gd")
 const InventoryPopupReferenceScreenScript := preload("res://scripts/inventory_popup_reference_screen.gd")
 const UILayoutReferencePreviewScript := preload("res://scripts/ui_layout_reference_preview.gd")
@@ -73,6 +74,7 @@ var scene_loading_reference_screen: Control
 var maid_lobby_loading_reference_screen: Control
 var out_game_reference_screen: Control
 var maid_lobby_reference_screen: Control
+var maid_lobby_select_popup_reference_screen: Control
 var ingame_reference_shell: Control
 var inventory_popup_reference_screen: Control
 var boot_services_reference_screen: Control
@@ -92,6 +94,7 @@ var scene_loading_reference_visible := false
 var maid_lobby_loading_reference_visible := false
 var out_game_reference_visible := false
 var maid_lobby_reference_visible := false
+var maid_lobby_select_popup_visible := false
 var inventory_popup_visible := false
 var gameplay_visible := true
 var restored_startup_mode := false
@@ -263,6 +266,7 @@ func _build_ui() -> void:
 	_build_maid_lobby_loading_reference_screen()
 	_build_out_game_reference_screen()
 	_build_maid_lobby_reference_screen()
+	_build_maid_lobby_select_popup_reference_screen()
 	_build_inventory_popup_reference_screen()
 
 	drag_preview = TextureRect.new()
@@ -577,11 +581,18 @@ func _build_maid_lobby_reference_screen() -> void:
 	maid_lobby_reference_screen.dialog_requested.connect(func() -> void:
 		_set_status("UIMaidLobby.OnClick_ShowDialog recovered; dialog content restore is pending.")
 	)
-	maid_lobby_reference_screen.select_requested.connect(func() -> void:
-		_set_status("UIPopup_MaidLobbySelect recovered; selection popup restore is next.")
-	)
+	maid_lobby_reference_screen.select_requested.connect(_show_maid_lobby_select_popup)
 	maid_lobby_reference_screen.visible = maid_lobby_reference_visible
 	add_child(maid_lobby_reference_screen)
+
+func _build_maid_lobby_select_popup_reference_screen() -> void:
+	maid_lobby_select_popup_reference_screen = MaidLobbySelectPopupReferenceScreenScript.new()
+	maid_lobby_select_popup_reference_screen.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	maid_lobby_select_popup_reference_screen.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	maid_lobby_select_popup_reference_screen.visible = false
+	maid_lobby_select_popup_reference_screen.close_requested.connect(_hide_maid_lobby_select_popup)
+	maid_lobby_select_popup_reference_screen.maid_selected.connect(_select_maid_from_lobby_popup)
+	add_child(maid_lobby_select_popup_reference_screen)
 
 func _build_inventory_popup_reference_screen() -> void:
 	inventory_popup_reference_screen = InventoryPopupReferenceScreenScript.new()
@@ -762,6 +773,14 @@ func _apply_maid_lobby_reference_visibility() -> void:
 	maid_lobby_reference_screen.call("set_maids", maids, character_index)
 	maid_lobby_reference_screen.visible = maid_lobby_reference_visible
 	maid_lobby_reference_screen.mouse_filter = Control.MOUSE_FILTER_STOP if maid_lobby_reference_visible else Control.MOUSE_FILTER_IGNORE
+	if not maid_lobby_reference_visible:
+		_hide_maid_lobby_select_popup()
+
+func _apply_maid_lobby_select_popup() -> void:
+	if maid_lobby_select_popup_reference_screen == null:
+		return
+	maid_lobby_select_popup_reference_screen.call("set_maids", maids, character_index)
+	maid_lobby_select_popup_reference_screen.call("set_popup_open", maid_lobby_select_popup_visible)
 
 func _set_gameplay_visible(next_visible: bool) -> void:
 	gameplay_visible = next_visible
@@ -775,6 +794,7 @@ func _enter_gameplay_from_out_game() -> void:
 	_apply_out_game_reference_visibility()
 	maid_lobby_reference_visible = false
 	_apply_maid_lobby_reference_visibility()
+	_hide_maid_lobby_select_popup()
 	_set_gameplay_visible(true)
 	_apply_gameplay_layout()
 	_set_status("Entered recovered merge gameplay from UIOutGame/InGameBtn.")
@@ -801,6 +821,8 @@ func _auto_enter_gameplay_after_capture() -> void:
 func _auto_enter_maid_lobby_after_capture() -> void:
 	await RenderingServer.frame_post_draw
 	_enter_maid_lobby_from_out_game()
+	await RenderingServer.frame_post_draw
+	_show_maid_lobby_select_popup()
 
 func _enter_gameplay_from_out_game_without_capture() -> void:
 	out_game_reference_visible = false
@@ -818,10 +840,29 @@ func _return_to_out_game_from_ingame() -> void:
 	_set_status("Returned to UIOutGame from UIInGame/Bottom/Lobby.")
 
 func _return_to_out_game_from_maid_lobby() -> void:
+	_hide_maid_lobby_select_popup()
 	maid_lobby_reference_visible = false
 	_apply_maid_lobby_reference_visibility()
 	_show_out_game_reference()
 	_set_status("Returned to UIOutGame from UIMaidLobby.")
+
+func _show_maid_lobby_select_popup() -> void:
+	maid_lobby_select_popup_visible = true
+	_apply_maid_lobby_select_popup()
+	_set_status("Opened recovered UIPopup_MaidLobbySelect shell.")
+	_maybe_capture_maid_lobby_select_frame()
+
+func _hide_maid_lobby_select_popup() -> void:
+	maid_lobby_select_popup_visible = false
+	_apply_maid_lobby_select_popup()
+
+func _select_maid_from_lobby_popup(index: int) -> void:
+	if maids.is_empty():
+		return
+	character_index = clampi(index, 0, maids.size() - 1)
+	_apply_maid_lobby_reference_visibility()
+	_hide_maid_lobby_select_popup()
+	_set_status("Selected maid from UIPopup_MaidLobbySelect.")
 
 func _select_first_producer_for_capture() -> void:
 	for y in range(board.height):
@@ -1083,6 +1124,12 @@ func _maybe_capture_maid_lobby_frame() -> void:
 		return
 	startup_capture_flags["10-maidlobby"] = true
 	call_deferred("_capture_startup_frame", "10-maidlobby")
+
+func _maybe_capture_maid_lobby_select_frame() -> void:
+	if startup_capture_dir.is_empty() or startup_capture_flags.has("11-maidlobbyselect"):
+		return
+	startup_capture_flags["11-maidlobbyselect"] = true
+	call_deferred("_capture_startup_frame", "11-maidlobbyselect")
 
 func _capture_startup_frame(label: String) -> void:
 	await RenderingServer.frame_post_draw

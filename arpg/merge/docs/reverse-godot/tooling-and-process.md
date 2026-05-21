@@ -1653,6 +1653,37 @@ Follow-up:
 - Replace the `UIMaidLobby` stand-in with the reusable LD maid Spine renderer when T027 is generalized beyond loading-screen Spine.
 - Decode dialog candidates for `UIMaidLobby.OnClick_ShowDialog` and replace the temporary Talk status with a real dialog popup.
 
+## 2026-05-21 - UIPopup_MaidLobbySelect First Pass
+
+Inputs:
+- `reverse-output/assets/assetripper-main/ExportedProject/Assets/Resources/prefabs/ui/popup/outgame/UIPopup_MaidLobbySelect.prefab`
+- `godot-project/data/characters/maids.json`
+- `godot-project/scripts/maid_lobby_reference_screen.gd`
+- `godot-project/scripts/main.gd`
+
+Commands:
+```powershell
+rg -n "m_Name: (Panel|TextTitle|Btn_Close|MaidList|UIListitem_MaidNone|Mask)" .\reverse-output\assets\assetripper-main\ExportedProject\Assets\Resources\prefabs\ui\popup\outgame\UIPopup_MaidLobbySelect.prefab -C 2
+.\tools\Godot\Godot_console.exe --headless --path .\godot-project --quit-after 9 -- --restored-startup --auto-enter-maid-lobby
+.\tools\Godot\Godot_console.exe --path .\godot-project --resolution 540x960 --quit-after 480 -- --restored-startup --auto-enter-maid-lobby --startup-capture-dir=D:\work\openclaw-workspace\arpg\merge\reverse-output\maid-lobby-captures
+```
+
+Findings:
+- The recovered popup root contains a dim layer, `Panel`, `TextTitle`, `Btn_Close`, and `MaidList`.
+- The exported prefab has repeated list-item structures with mask/image/outline children, so the first Godot pass reconstructs visible list rows using committed maid data and currently available character preview PNGs.
+- `UIMaidLobby/Select` now opens the popup; clicking a row updates the current maid index, refreshes the lobby shell, and closes the popup.
+- The `--auto-enter-maid-lobby` path now captures both `10-maidlobby.png` and `11-maidlobbyselect.png` when `--startup-capture-dir` is provided.
+
+Outputs:
+- `godot-project/scripts/maid_lobby_select_popup_reference_screen.gd`
+- `godot-project/scripts/main.gd`
+- `reverse-output/maid-lobby-captures/11-maidlobbyselect.png`
+
+Follow-up:
+- Replace drawn row frames with the exact recovered list item sprites and states.
+- Add scrolling once more than the first visible rows are needed.
+- Decode original selection persistence fields, including `MaidLobbySelectIndex`, before making selection affect save data or gameplay.
+
 Recommended next runs:
 
 1. Run Il2CppDumper or Cpp2IL on `libil2cpp.so` and `global-metadata.dat`.
