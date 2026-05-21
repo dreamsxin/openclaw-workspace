@@ -1184,6 +1184,36 @@ Follow-up:
 - Use Ghidra on `UIManager.Initialize` and `SafeArea.Awake` to confirm exact CanvasScaler policy and safe-area anchor mutation.
 - Keep Godot layout reconstruction based on recovered RectTransforms until runtime CanvasScaler values are confirmed.
 
+## 2026-05-21 - UIOutGame Entry To Gameplay
+
+Inputs:
+- `godot-project/data/ui_layout_reference.json`
+- `godot-project/scripts/out_game_reference_screen.gd`
+- `godot-project/scripts/main.gd`
+
+Commands:
+```powershell
+.\tools\Godot\Godot_console.exe --path .\godot-project --headless --quit-after 6 -- --restored-startup
+.\capture-startup.bat
+.\tools\Godot\Godot_console.exe --path .\godot-project --headless --quit-after 6 -- --restored-startup --auto-enter-ingame
+```
+
+Outputs:
+- `godot-project/scripts/out_game_reference_screen.gd`
+- `godot-project/scripts/main.gd`
+- `reverse-output/startup-captures/04-outgame.png`
+
+Findings:
+- `run-game.bat` now reaches a restored `UIOutGame` screen and waits there instead of immediately exposing the debug/prototype controls.
+- `OutGameReferenceScreen` derives hit regions from recovered RectTransforms for `InGameBtn`, `MaidLobbyBtn`, and `Btn_ToInteraction`.
+- `InGameBtn` is wired to hide the out-game reference layer and show the current recovered merge-board prototype.
+- `MaidLobbyBtn` and `Btn_ToInteraction` are recognized and produce status messages, but their target screens still need reconstruction.
+- `--auto-enter-ingame` is a non-interactive validation hook for headless runs; it does not change the default `run-game.bat` manual click path.
+
+Follow-up:
+- Replace the current debug-styled merge-board panel with a restored `UIInGame` layout shell.
+- Restore `MaidLobbyBtn` and maid interaction targets after `UIInGame` and maid LD Spine rendering are further along.
+
 Recommended next runs:
 
 1. Run Il2CppDumper or Cpp2IL on `libil2cpp.so` and `global-metadata.dat`.

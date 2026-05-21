@@ -1,11 +1,41 @@
 class_name OutGameReferenceScreen
 extends Control
 
+signal ingame_requested
+signal maid_lobby_requested
+signal interaction_requested
+
 var source: Dictionary = {}
+var action_regions: Dictionary = {}
+
+func _ready() -> void:
+	set_process(true)
+
+func _process(_delta: float) -> void:
+	if visible:
+		queue_redraw()
 
 func set_source(next_source: Dictionary) -> void:
 	source = next_source
+	_rebuild_action_regions()
 	queue_redraw()
+
+func _gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		var action := _action_at(event.position)
+		if action == "ingame":
+			emit_signal("ingame_requested")
+			accept_event()
+		elif action == "maid_lobby":
+			emit_signal("maid_lobby_requested")
+			accept_event()
+		elif action == "interaction":
+			emit_signal("interaction_requested")
+			accept_event()
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_RESIZED:
+		_rebuild_action_regions()
 
 func _draw() -> void:
 	draw_rect(Rect2(Vector2.ZERO, size), Color(0.025, 0.03, 0.035, 0.94), true)
@@ -23,6 +53,7 @@ func _draw() -> void:
 	_draw_maid_layer(reference_size, scale_factor, origin, screen_rect)
 	_draw_bottom_buttons(reference_size, scale_factor, origin, screen_rect)
 	_draw_village_progress(reference_size, scale_factor, origin, screen_rect)
+	_draw_action_hints()
 	draw_rect(screen_rect, Color(0.78, 0.72, 0.55, 0.82), false, 2.0)
 
 func _draw_cafe_backdrop(screen_rect: Rect2) -> void:
@@ -70,17 +101,18 @@ func _draw_bottom_buttons(reference_size: Vector2, scale_factor: float, origin: 
 	var in_game_rect := _to_preview_rect_world(_rect_by_suffix("InGameBtn"), reference_size, scale_factor, origin)
 	if in_game_rect.size == Vector2.ZERO:
 		in_game_rect = Rect2(screen_rect.position + Vector2(screen_rect.size.x - 175, screen_rect.size.y - 130), Vector2(150, 90))
-	_draw_command_button(in_game_rect, "InGame")
+	_draw_command_button(in_game_rect, "InGame", action_regions.get("ingame", Rect2()).has_point(get_local_mouse_position()))
 
 	var lobby_rect := _to_preview_rect_world(_rect_by_suffix("MaidLobbyBtn"), reference_size, scale_factor, origin)
 	if lobby_rect.size == Vector2.ZERO:
 		lobby_rect = Rect2(screen_rect.position + Vector2(screen_rect.size.x - 280, screen_rect.size.y - 116), Vector2(100, 100))
-	_draw_command_button(lobby_rect, "Maid")
+	_draw_command_button(lobby_rect, "Maid", action_regions.get("maid_lobby", Rect2()).has_point(get_local_mouse_position()))
 
 	var interaction_rect := _to_preview_rect_world(_rect_by_suffix("Btn_ToInteraction"), reference_size, scale_factor, origin)
 	if interaction_rect.size != Vector2.ZERO:
-		draw_rect(interaction_rect, Color(0.94, 0.68, 0.82, 0.12), true)
-		draw_rect(interaction_rect, Color(0.95, 0.72, 0.88, 0.42), false, 1.0)
+		var hover: bool = action_regions.get("interaction", Rect2()).has_point(get_local_mouse_position())
+		draw_rect(interaction_rect, Color(0.94, 0.68, 0.82, 0.18 if hover else 0.12), true)
+		draw_rect(interaction_rect, Color(0.95, 0.72, 0.88, 0.7 if hover else 0.42), false, 1.5 if hover else 1.0)
 
 func _draw_village_progress(reference_size: Vector2, scale_factor: float, origin: Vector2, screen_rect: Rect2) -> void:
 	var bar_rect := _to_preview_rect_world(_rect_by_suffix("UIVillageReBuild/Fillbar"), reference_size, scale_factor, origin)
@@ -90,10 +122,29 @@ func _draw_village_progress(reference_size: Vector2, scale_factor: float, origin
 	draw_rect(Rect2(bar_rect.position + Vector2(6, 6), Vector2((bar_rect.size.x - 12) * 0.57, maxf(bar_rect.size.y - 12, 4))), Color(0.58, 0.86, 0.68, 0.9), true)
 	draw_rect(bar_rect, Color(0.86, 0.78, 0.56, 0.84), false, 1.5)
 
-func _draw_command_button(rect: Rect2, label: String) -> void:
-	draw_rect(rect, Color(0.12, 0.14, 0.15, 0.82), true)
-	draw_rect(rect, Color(0.93, 0.78, 0.5, 0.86), false, 2.0)
+func _draw_command_button(rect: Rect2, label: String, hover := false) -> void:
+	draw_rect(rect, Color(0.16, 0.18, 0.18, 0.9) if hover else Color(0.12, 0.14, 0.15, 0.82), true)
+	draw_rect(rect, Color(1.0, 0.88, 0.56, 0.95) if hover else Color(0.93, 0.78, 0.5, 0.86), false, 3.0 if hover else 2.0)
 	draw_string(ThemeDB.fallback_font, rect.position + Vector2(0, rect.size.y * 0.5 + 7), label, HORIZONTAL_ALIGNMENT_CENTER, rect.size.x, 20, Color(1, 0.94, 0.78, 0.96))
+
+func _draw_action_hints() -> void:
+	var font := ThemeDB.fallback_font
+	for action in action_regions.keys():
+		var rect: Rect2 = action_regions[action]
+		if rect.size == Vector2.ZERO:
+			continue
+		var label := ""
+		if action == "ingame":
+			label = "Start"
+		elif action == "maid_lobby":
+			label = "Lobby"
+		elif action == "interaction":
+			label = "Talk"
+		if label.is_empty():
+			continue
+		var tag := Rect2(rect.position + Vector2(6, 6), Vector2(54, 20))
+		draw_rect(tag, Color(0.04, 0.05, 0.05, 0.68), true)
+		draw_string(font, tag.position + Vector2(0, 15), label, HORIZONTAL_ALIGNMENT_CENTER, tag.size.x, 13, Color(1, 0.94, 0.76, 0.9))
 
 func _reference_size() -> Vector2:
 	var resolution: Dictionary = source.get("reference_resolution", {})
@@ -159,3 +210,22 @@ func _vec2(value) -> Vector2:
 	if typeof(value) == TYPE_ARRAY:
 		return Vector2(float(value[0]) if value.size() > 0 else 0.0, float(value[1]) if value.size() > 1 else 0.0)
 	return Vector2.ZERO
+
+func _rebuild_action_regions() -> void:
+	action_regions.clear()
+	if source.is_empty() or size == Vector2.ZERO:
+		return
+	var reference_size := _reference_size()
+	var scale_factor := minf(size.x / reference_size.x, size.y / reference_size.y)
+	var viewport_size := reference_size * scale_factor
+	var origin := (size - viewport_size) * 0.5
+	action_regions["ingame"] = _to_preview_rect_world(_rect_by_suffix("InGameBtn"), reference_size, scale_factor, origin)
+	action_regions["maid_lobby"] = _to_preview_rect_world(_rect_by_suffix("MaidLobbyBtn"), reference_size, scale_factor, origin)
+	action_regions["interaction"] = _to_preview_rect_world(_rect_by_suffix("Btn_ToInteraction"), reference_size, scale_factor, origin)
+
+func _action_at(local_position: Vector2) -> String:
+	for action in ["ingame", "maid_lobby", "interaction"]:
+		var rect: Rect2 = action_regions.get(action, Rect2())
+		if rect.has_point(local_position):
+			return action
+	return ""

@@ -13,6 +13,7 @@ const BOARD_ORIGIN := Vector2(360, 92)
 const RESTORED_APP_LOADING_SECONDS := 2.0
 const RESTORED_SCENE_LOADING_SECONDS := 1.7
 const STARTUP_CAPTURE_ARG := "--startup-capture-dir="
+const AUTO_ENTER_INGAME_ARG := "--auto-enter-ingame"
 const SPRITE_DIR := "res://assets/sprites/"
 const CHARACTER_DIR := "res://data/characters/"
 const UI_LAYOUT_REFERENCE := "res://data/ui_layout_reference.json"
@@ -52,18 +53,23 @@ var ui_layout_preview: Control
 var loading_reference_screen: Control
 var scene_loading_reference_screen: Control
 var out_game_reference_screen: Control
+var gameplay_root: Control
 var loading_reference_visible := false
 var scene_loading_reference_visible := false
 var out_game_reference_visible := false
+var gameplay_visible := true
 var restored_startup_mode := false
 var restored_startup_elapsed := 0.0
 var restored_startup_finished := false
 var startup_capture_dir := ""
 var startup_capture_flags := {}
+var auto_enter_ingame := false
+var auto_enter_ingame_done := false
 
 func _ready() -> void:
 	var user_args := OS.get_cmdline_user_args()
 	restored_startup_mode = user_args.has("--restored-startup")
+	auto_enter_ingame = user_args.has(AUTO_ENTER_INGAME_ARG)
 	for arg in user_args:
 		if arg.begins_with(STARTUP_CAPTURE_ARG):
 			startup_capture_dir = arg.substr(STARTUP_CAPTURE_ARG.length())
@@ -92,17 +98,21 @@ func _build_ui() -> void:
 	shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(shade)
 
+	gameplay_root = Control.new()
+	gameplay_root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	add_child(gameplay_root)
+
 	var title := Label.new()
 	title.text = "MergeMaidCafe Godot Prototype"
 	title.position = Vector2(32, 24)
 	title.add_theme_font_size_override("font_size", 30)
-	add_child(title)
+	gameplay_root.add_child(title)
 
 	var info := Label.new()
 	info.text = "Drag matching blocks to merge. Spawn consumes AP. Save uses user://prototype-save.json."
 	info.position = Vector2(34, 62)
 	info.add_theme_font_size_override("font_size", 15)
-	add_child(info)
+	gameplay_root.add_child(info)
 
 	ap_label = _make_currency_label("CURRENCY_AP.png", Vector2(34, 118))
 	gold_label = _make_currency_label("CURRENCY_GOLD.png", Vector2(34, 166))
@@ -115,20 +125,20 @@ func _build_ui() -> void:
 		else:
 			_set_status("Spawned a recovered level 1 block.")
 	)
-	add_child(spawn_button)
+	gameplay_root.add_child(spawn_button)
 
 	produce_button = _make_button("Produce", Vector2(34, 340))
 	produce_button.pressed.connect(func() -> void:
 		_produce_selected()
 	)
-	add_child(produce_button)
+	gameplay_root.add_child(produce_button)
 
 	var save_button := _make_button("Save", Vector2(34, 394))
 	save_button.pressed.connect(func() -> void:
 		save_manager.call("save_board", board)
 		_set_status("Saved.")
 	)
-	add_child(save_button)
+	gameplay_root.add_child(save_button)
 
 	var load_button := _make_button("Load", Vector2(34, 448))
 	load_button.pressed.connect(func() -> void:
@@ -137,7 +147,7 @@ func _build_ui() -> void:
 		else:
 			_set_status("No save file yet.")
 	)
-	add_child(load_button)
+	gameplay_root.add_child(load_button)
 
 	var reset_button := _make_button("Reset", Vector2(34, 502))
 	reset_button.pressed.connect(func() -> void:
@@ -146,28 +156,28 @@ func _build_ui() -> void:
 		_refresh_selection()
 		_set_status("Reset to initial board.")
 	)
-	add_child(reset_button)
+	gameplay_root.add_child(reset_button)
 
 	var loading_button := _make_button("Loading Ref", Vector2(34, 556))
 	loading_button.size = Vector2(128, 40)
 	loading_button.pressed.connect(func() -> void:
 		_toggle_loading_reference()
 	)
-	add_child(loading_button)
+	gameplay_root.add_child(loading_button)
 
 	var out_game_button := _make_button("OutGame Ref", Vector2(172, 556))
 	out_game_button.size = Vector2(122, 40)
 	out_game_button.pressed.connect(func() -> void:
 		_toggle_out_game_reference()
 	)
-	add_child(out_game_button)
+	gameplay_root.add_child(out_game_button)
 
 	selected_label = Label.new()
 	selected_label.position = Vector2(34, 602)
 	selected_label.size = Vector2(260, 40)
 	selected_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	selected_label.add_theme_font_size_override("font_size", 14)
-	add_child(selected_label)
+	gameplay_root.add_child(selected_label)
 
 	status_label = Label.new()
 	status_label.text = "Ready."
@@ -175,15 +185,15 @@ func _build_ui() -> void:
 	status_label.size = Vector2(260, 48)
 	status_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	status_label.add_theme_font_size_override("font_size", 16)
-	add_child(status_label)
+	gameplay_root.add_child(status_label)
 
 	board_layer = Control.new()
 	board_layer.position = BOARD_ORIGIN
-	add_child(board_layer)
+	gameplay_root.add_child(board_layer)
 
 	block_layer = Control.new()
 	block_layer.position = BOARD_ORIGIN
-	add_child(block_layer)
+	gameplay_root.add_child(block_layer)
 
 	_build_character_panel()
 	_build_ui_layout_panel()
@@ -196,12 +206,13 @@ func _build_ui() -> void:
 	drag_preview.custom_minimum_size = Vector2(CELL_SIZE, CELL_SIZE)
 	drag_preview.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	drag_preview.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	add_child(drag_preview)
+	gameplay_root.add_child(drag_preview)
 	_refresh_selection()
 	_refresh_character_panel()
 	_refresh_ui_layout_panel(false)
 	_show_loading_reference()
 	if restored_startup_mode:
+		_set_gameplay_visible(false)
 		_set_loading_reference_state(0.0, "Loading...")
 
 func _process(delta: float) -> void:
@@ -225,41 +236,44 @@ func _process(delta: float) -> void:
 	if scene_progress >= 1.0:
 		_finish_restored_startup()
 		_maybe_capture_startup_frame("04-outgame", RESTORED_APP_LOADING_SECONDS + RESTORED_SCENE_LOADING_SECONDS)
+		if auto_enter_ingame and not auto_enter_ingame_done:
+			auto_enter_ingame_done = true
+			call_deferred("_enter_gameplay_from_out_game")
 
 func _build_character_panel() -> void:
 	var title := Label.new()
 	title.text = "Character"
 	title.position = Vector2(995, 92)
 	title.add_theme_font_size_override("font_size", 24)
-	add_child(title)
+	gameplay_root.add_child(title)
 
 	character_mode_button = _make_button("Maids", Vector2(995, 132))
 	character_mode_button.size = Vector2(122, 36)
 	character_mode_button.pressed.connect(func() -> void:
 		_toggle_character_mode()
 	)
-	add_child(character_mode_button)
+	gameplay_root.add_child(character_mode_button)
 
 	var prev_button := _make_button("<", Vector2(1126, 132))
 	prev_button.size = Vector2(48, 36)
 	prev_button.pressed.connect(func() -> void:
 		_step_character(-1)
 	)
-	add_child(prev_button)
+	gameplay_root.add_child(prev_button)
 
 	var next_button := _make_button(">", Vector2(1184, 132))
 	next_button.size = Vector2(48, 36)
 	next_button.pressed.connect(func() -> void:
 		_step_character(1)
 	)
-	add_child(next_button)
+	gameplay_root.add_child(next_button)
 
 	character_image = TextureRect.new()
 	character_image.position = Vector2(1010, 182)
 	character_image.size = Vector2(210, 210)
 	character_image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	character_image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	add_child(character_image)
+	gameplay_root.add_child(character_image)
 
 	character_image_status_label = Label.new()
 	character_image_status_label.position = Vector2(1010, 270)
@@ -268,34 +282,34 @@ func _build_character_panel() -> void:
 	character_image_status_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	character_image_status_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	character_image_status_label.add_theme_font_size_override("font_size", 14)
-	add_child(character_image_status_label)
+	gameplay_root.add_child(character_image_status_label)
 
 	character_title_label = Label.new()
 	character_title_label.position = Vector2(995, 406)
 	character_title_label.size = Vector2(240, 32)
 	character_title_label.add_theme_font_size_override("font_size", 20)
-	add_child(character_title_label)
+	gameplay_root.add_child(character_title_label)
 
 	character_meta_label = Label.new()
 	character_meta_label.position = Vector2(995, 442)
 	character_meta_label.size = Vector2(240, 88)
 	character_meta_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	character_meta_label.add_theme_font_size_override("font_size", 14)
-	add_child(character_meta_label)
+	gameplay_root.add_child(character_meta_label)
 
 	character_detail_label = Label.new()
 	character_detail_label.position = Vector2(995, 536)
 	character_detail_label.size = Vector2(240, 132)
 	character_detail_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	character_detail_label.add_theme_font_size_override("font_size", 14)
-	add_child(character_detail_label)
+	gameplay_root.add_child(character_detail_label)
 
 func _build_ui_layout_panel() -> void:
 	ui_layout_title_label = Label.new()
 	ui_layout_title_label.text = "UI Ref"
 	ui_layout_title_label.position = Vector2(995, 24)
 	ui_layout_title_label.add_theme_font_size_override("font_size", 18)
-	add_child(ui_layout_title_label)
+	gameplay_root.add_child(ui_layout_title_label)
 
 	var next_button := _make_button("Next UI", Vector2(995, 52))
 	next_button.size = Vector2(104, 32)
@@ -306,20 +320,20 @@ func _build_ui_layout_panel() -> void:
 		ui_layout_index = posmod(ui_layout_index + 1, ui_layout_sources.size())
 		_refresh_ui_layout_panel(true)
 	)
-	add_child(next_button)
+	gameplay_root.add_child(next_button)
 
 	ui_layout_meta_label = Label.new()
 	ui_layout_meta_label.position = Vector2(1108, 52)
 	ui_layout_meta_label.size = Vector2(132, 34)
 	ui_layout_meta_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	ui_layout_meta_label.add_theme_font_size_override("font_size", 12)
-	add_child(ui_layout_meta_label)
+	gameplay_root.add_child(ui_layout_meta_label)
 
 	ui_layout_preview = UILayoutReferencePreviewScript.new()
 	ui_layout_preview.position = Vector2(742, 92)
 	ui_layout_preview.size = Vector2(230, 408)
 	ui_layout_preview.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(ui_layout_preview)
+	gameplay_root.add_child(ui_layout_preview)
 
 func _build_loading_reference_screen() -> void:
 	loading_reference_screen = LoadingReferenceScreenScript.new()
@@ -350,7 +364,14 @@ func _build_out_game_reference_screen() -> void:
 	else:
 		out_game_reference_screen.position = Vector2(320, 24)
 		out_game_reference_screen.size = Vector2(650, 672)
-	out_game_reference_screen.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	out_game_reference_screen.mouse_filter = Control.MOUSE_FILTER_STOP
+	out_game_reference_screen.ingame_requested.connect(_enter_gameplay_from_out_game)
+	out_game_reference_screen.maid_lobby_requested.connect(func() -> void:
+		_set_status("Maid lobby target recovered; lobby scene restore is pending.")
+	)
+	out_game_reference_screen.interaction_requested.connect(func() -> void:
+		_set_status("Maid interaction target recovered; dialog restore is pending.")
+	)
 	out_game_reference_screen.visible = out_game_reference_visible
 	add_child(out_game_reference_screen)
 
@@ -362,12 +383,12 @@ func _make_currency_label(icon_name: String, pos: Vector2) -> Label:
 	icon.size = Vector2(34, 34)
 	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	add_child(icon)
+	gameplay_root.add_child(icon)
 
 	var label := Label.new()
 	label.position = pos + Vector2(44, 5)
 	label.add_theme_font_size_override("font_size", 21)
-	add_child(label)
+	gameplay_root.add_child(label)
 	return label
 
 func _make_button(text: String, pos: Vector2) -> Button:
@@ -466,6 +487,17 @@ func _apply_out_game_reference_visibility() -> void:
 	out_game_reference_screen.call("set_source", out_game_source)
 	out_game_reference_screen.visible = out_game_reference_visible
 
+func _set_gameplay_visible(next_visible: bool) -> void:
+	gameplay_visible = next_visible
+	if gameplay_root != null:
+		gameplay_root.visible = gameplay_visible
+
+func _enter_gameplay_from_out_game() -> void:
+	out_game_reference_visible = false
+	_apply_out_game_reference_visibility()
+	_set_gameplay_visible(true)
+	_set_status("Entered recovered merge gameplay from UIOutGame/InGameBtn.")
+
 func _set_loading_reference_state(progress: float, message: String) -> void:
 	if loading_reference_screen == null:
 		return
@@ -498,6 +530,7 @@ func _finish_restored_startup() -> void:
 	scene_loading_reference_visible = false
 	_apply_loading_reference_visibility()
 	_apply_scene_loading_reference_visibility()
+	_set_gameplay_visible(false)
 	_show_out_game_reference()
 	_set_status("Restored startup complete.")
 
@@ -820,4 +853,5 @@ func _key(x: int, y: int) -> String:
 	return "%d,%d" % [x, y]
 
 func _set_status(text: String) -> void:
-	status_label.text = text
+	if status_label != null:
+		status_label.text = text
