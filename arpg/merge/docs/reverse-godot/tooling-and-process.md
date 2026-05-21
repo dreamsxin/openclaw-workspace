@@ -1434,6 +1434,36 @@ Outputs:
 Follow-up:
 - Use Ghidra to confirm exact call order and blocking behavior for `GameManager.OnGameStartLoad`, platform login, network checks, `ReloadManager.LoadScene`, and `UIManager.Initialize`.
 
+## 2026-05-21 - GameManager Start-Load Operation Stage
+
+Inputs:
+- `reverse-output/il2cpp/2026-05-21-101217-il2cppdumper/dump.cs`
+- `godot-project/scripts/main.gd`
+- `godot-project/scripts/game_start_load_reference_screen.gd`
+
+Commands:
+```powershell
+Get-Content .\reverse-output\il2cpp\2026-05-21-101217-il2cppdumper\dump.cs | Select-Object -Skip 27850 -First 310
+.\tools\Godot\Godot_console.exe --path .\godot-project --headless --quit-after 10 -- --restored-startup --auto-enter-ingame
+.\capture-gameplay.bat
+.\capture-startup.bat
+.\run-game.bat --headless --quit-after 8
+```
+
+Findings:
+- `dump.cs` exposes the public/private method names around `GameManager.OnGameStartLoad`: `InitCheck`, `LoadABMode`, `LoadVersionData`, `LoadTableData`, `LoadProcess`, `CheckPlatformLogin`, `LoadComplete`, and `LoadMenu`.
+- The new Godot stage is still structural because the stripped IL2CPP method bodies need Ghidra/native analysis before exact wait conditions can be reproduced.
+- `run-game.bat` now follows `BootServices -> GameStartLoad -> RuntimeCanvas/SafeArea -> UILoading -> UISceneLoading -> UIMaidLobbyLoading -> UIOutGame`.
+
+Outputs:
+- `godot-project/scripts/game_start_load_reference_screen.gd`
+- `reverse-output/startup-captures/02-gamestartload.png`
+- `reverse-output/startup-captures/08-outgame.png`
+- `reverse-output/gameplay-captures/09-ingame.png`
+
+Follow-up:
+- Use Ghidra to determine which `OnGameStartLoad` callbacks block UI progress and whether `LoadMenu` directly triggers `ReloadManager.LoadScene` or passes through another manager first.
+
 Recommended next runs:
 
 1. Run Il2CppDumper or Cpp2IL on `libil2cpp.so` and `global-metadata.dat`.

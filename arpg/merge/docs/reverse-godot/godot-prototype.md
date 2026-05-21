@@ -26,7 +26,7 @@ Restored startup mode:
 .\run-game.bat
 ```
 
-`run-game.bat` now follows the restored flow `BootServices -> RuntimeCanvas/SafeArea -> UILoading -> UISceneLoading -> UIMaidLobbyLoading -> UIOutGame`. The `UIOutGame/InGameBtn` region is clickable and enters the current recovered merge-board prototype. For non-interactive validation, pass:
+`run-game.bat` now follows the restored flow `BootServices -> GameStartLoad -> RuntimeCanvas/SafeArea -> UILoading -> UISceneLoading -> UIMaidLobbyLoading -> UIOutGame`. The `UIOutGame/InGameBtn` region is clickable and enters the current recovered merge-board prototype. For non-interactive validation, pass:
 
 ```powershell
 .\tools\Godot\Godot_console.exe --path .\godot-project --headless --quit-after 6 -- --restored-startup --auto-enter-ingame
@@ -149,26 +149,27 @@ Use `Next UI` to cycle through recovered startup/root layout sources:
 
 The selector shows the source RectTransform count and writes the reference resolution plus key node sizes to the status panel. A small portrait wireframe preview draws the first key RectTransforms in the 1080 x 1920 reference space so original layouts can be compared visually while the actual Godot screens are still being rebuilt.
 
-The loading-screen reference layer is shown by default on startup, and the left-side `Loading Ref` / `OutGame Ref` buttons toggle recovered layout overlays. `run-game.bat` starts the project in restored startup mode, passes `--restored-startup`, and displays the startup flow full-window in a portrait-oriented 540 x 960 window. Restored startup mode now advances through the recovered pre-UI service chain, runtime Canvas/SafeArea bootstrap, `UILoading`, `UISceneLoading`, `UIMaidLobbyLoading`, then displays the first `UIOutGame` reference layer. Clicking the recovered `InGameBtn` hit area hides the out-game layer and enters the current playable merge-board prototype.
+The loading-screen reference layer is shown by default on startup, and the left-side `Loading Ref` / `OutGame Ref` buttons toggle recovered layout overlays. `run-game.bat` starts the project in restored startup mode, passes `--restored-startup`, and displays the startup flow full-window in a portrait-oriented 540 x 960 window. Restored startup mode now advances through the recovered pre-UI service chain, `GameManager.OnGameStartLoad` operation chain, runtime Canvas/SafeArea bootstrap, `UILoading`, `UISceneLoading`, `UIMaidLobbyLoading`, then displays the first `UIOutGame` reference layer. Clicking the recovered `InGameBtn` hit area hides the out-game layer and enters the current playable merge-board prototype.
 
-`BootServicesReferenceScreen` is a structural pass for startup code confirmed by `RuntimeInitializeOnLoads.json` and `dump.cs`: `GameManager.OnGameStart`, `HighscoreService.OnGameStart`, `GameManager.InitCheck`, platform login/network checks, `ReloadManager.LoadScene`, and `UIManager.Initialize`. Native method bodies and exact timing still need Ghidra confirmation. `RuntimeCanvasBootstrapScreen` is a structural pass for the original `Game.unity`/`UIManager.prefab` runtime canvas stack: main UI Canvas, BGCanvas, TouchEffectCanvas, and SafeArea. `UILoading` uses the recovered RectTransforms for the 1080 x 1920 root, background layers, logo area, loading bar, and version-label corners. `UISceneLoading` uses the recovered root/background structure and now draws `SkeletonGraphic (kokomi_Loading)` from official Spine-runtime output. The original `.atlas.txt`, `.skel.bytes`, and texture pages are copied under `godot-project/assets/spine/loading/kokomi_Loading/`; `bake_kokomi_loading_spine.mjs` uses `@esotericsoftware/spine-core@4.2.43` to parse the binary skeleton and write `kokomi_Loading.baked.json` with exact draw order, UVs, triangles, and world vertices. The current baked schema keeps legacy top-level `Idle` data and also includes `clips.Idle` plus `clips.Interaction`; Godot plays `Interaction` during the middle scene-loading progress window as the first multi-clip playback slice. `UIMaidLobbyLoading` is now represented as the third startup stage with its recovered full-screen `Cover`, 16 image slots, and decorative sub-rects. The older `kokomi_Loading.rig.json` path remains only as a fallback.
+`BootServicesReferenceScreen` is a structural pass for startup code confirmed by `RuntimeInitializeOnLoads.json` and `dump.cs`: `GameManager.OnGameStart`, `HighscoreService.OnGameStart`, runtime init gates, platform login/network checks, `ReloadManager.LoadScene`, and `UIManager.Initialize`. `GameStartLoadReferenceScreen` expands the recovered `GameManager.OnGameStartLoad` operation order from `dump.cs`: `InitCheck`, `LoadABMode`, `LoadVersionData`, `LoadTableData`, `LoadProcess`, `CheckPlatformLogin`, `LoadComplete`, and `LoadMenu`. Native method bodies and exact timing still need Ghidra confirmation. `RuntimeCanvasBootstrapScreen` is a structural pass for the original `Game.unity`/`UIManager.prefab` runtime canvas stack: main UI Canvas, BGCanvas, TouchEffectCanvas, and SafeArea. `UILoading` uses the recovered RectTransforms for the 1080 x 1920 root, background layers, logo area, loading bar, and version-label corners. `UISceneLoading` uses the recovered root/background structure and now draws `SkeletonGraphic (kokomi_Loading)` from official Spine-runtime output. The original `.atlas.txt`, `.skel.bytes`, and texture pages are copied under `godot-project/assets/spine/loading/kokomi_Loading/`; `bake_kokomi_loading_spine.mjs` uses `@esotericsoftware/spine-core@4.2.43` to parse the binary skeleton and write `kokomi_Loading.baked.json` with exact draw order, UVs, triangles, and world vertices. The current baked schema keeps legacy top-level `Idle` data and also includes `clips.Idle` plus `clips.Interaction`; Godot plays `Interaction` during the middle scene-loading progress window as the first multi-clip playback slice. `UIMaidLobbyLoading` is now represented as the third startup stage with its recovered full-screen `Cover`, 16 image slots, and decorative sub-rects. The older `kokomi_Loading.rig.json` path remains only as a fallback.
 
 Startup screenshot capture is built into `scripts/main.gd` behind the user argument `--startup-capture-dir=<path>`. `capture-startup.bat` wraps the full command and writes:
 
 ```text
 reverse-output/startup-captures/01-bootservices.png
-reverse-output/startup-captures/02-runtimecanvas.png
-reverse-output/startup-captures/03-uiloading.png
-reverse-output/startup-captures/04-uisceneloading.png
-reverse-output/startup-captures/05-uisceneloading-late.png
-reverse-output/startup-captures/06-maidlobbyloading.png
-reverse-output/startup-captures/07-outgame.png
+reverse-output/startup-captures/02-gamestartload.png
+reverse-output/startup-captures/03-runtimecanvas.png
+reverse-output/startup-captures/04-uiloading.png
+reverse-output/startup-captures/05-uisceneloading.png
+reverse-output/startup-captures/06-uisceneloading-late.png
+reverse-output/startup-captures/07-maidlobbyloading.png
+reverse-output/startup-captures/08-outgame.png
 ```
 
 `capture-gameplay.bat` uses the same startup capture hook plus `--auto-enter-ingame` and writes the gameplay verification set to `reverse-output/gameplay-captures/`, including:
 
 ```text
-reverse-output/gameplay-captures/08-ingame.png
+reverse-output/gameplay-captures/09-ingame.png
 ```
 
 Use this whenever loading-screen layout or Spine rendering changes. The direct equivalent is:
