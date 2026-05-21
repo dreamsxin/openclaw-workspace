@@ -1040,6 +1040,37 @@ Follow-up:
 - Add a baked `Interaction` clip or runtime clip switching once the original startup logic needs it.
 - Generalize the baked Spine path before applying it to maid/customer Spine entries.
 
+## 2026-05-21 - Bake Multiple UISceneLoading Spine Clips
+
+Inputs:
+- `godot-project/assets/spine/loading/kokomi_Loading/kokomi_Loading.atlas.txt`
+- `godot-project/assets/spine/loading/kokomi_Loading/kokomi_Loading.skel.bytes`
+- `godot-project/assets/spine/loading/kokomi_Loading/kokomi_Loading.png`
+- `godot-project/assets/spine/loading/kokomi_Loading/kokomi_Loading_2.png`
+
+Commands:
+```powershell
+node scripts\reverse\bake_kokomi_loading_spine.mjs
+.\tools\Godot\Godot_console.exe --path .\godot-project --headless --quit-after 5 -- --restored-startup
+.\capture-startup.bat
+```
+
+Outputs:
+- `godot-project/assets/spine/loading/kokomi_Loading/kokomi_Loading.baked.json`
+- `reverse-output/assets/derived/kokomi_loading_spine_bake_manifest.json`
+- `reverse-output/startup-captures/02-uisceneloading.png`
+
+Findings:
+- `kokomi_Loading.baked.json` is now schema `openclaw-spine-baked-v2`.
+- Legacy top-level `attachments`, `frames`, and `bake` fields are retained for compatibility.
+- New `clips` data includes `Idle` with 141 frames / 111 attachments and `Interaction` with 76 frames / 112 attachments.
+- Godot `SceneLoadingReferenceScreen` now reads `clips` when present and switches to `Interaction` during the middle scene-loading progress window, then returns to `Idle`.
+- `capture-startup.bat` verified that `02-uisceneloading.png` displays the Interaction pose with the same recovered background/progress overlay.
+
+Follow-up:
+- Replace the hard-coded progress-window clip switch with the original runtime condition once `UISceneLoading` controller logic is mapped from IL2CPP.
+- Promote the baked multi-clip reader into a reusable Spine renderer for maid/customer atlas pages.
+
 ## 2026-05-21 - Startup Screen Layout Recheck
 
 Inputs:

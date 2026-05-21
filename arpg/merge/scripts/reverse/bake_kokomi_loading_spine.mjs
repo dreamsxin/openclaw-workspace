@@ -22,7 +22,8 @@ const skelPath = path.join(spineDir, "kokomi_Loading.skel.bytes");
 const outPath = path.join(spineDir, "kokomi_Loading.baked.json");
 const manifestPath = path.join(root, "reverse-output/assets/derived/kokomi_loading_spine_bake_manifest.json");
 
-const preferredAnimations = ["idle", "loading", "Loading", "animation", "Ani"];
+const preferredAnimations = ["Idle", "idle", "loading", "Loading", "animation", "Ani"];
+const animationNamesToBake = ["Idle", "Interaction"];
 const fps = 30;
 const maxDuration = 6.0;
 
@@ -170,9 +171,7 @@ function computeBounds(frames) {
   };
 }
 
-function bake() {
-  const { skeletonData, skeleton } = loadSkeleton();
-  const animationName = chooseAnimation(skeletonData);
+function bakeAnimationClip(skeletonData, skeleton, animationName) {
   const animation = animationName ? skeletonData.findAnimation(animationName) : null;
   const duration = animation ? Math.min(animation.duration, maxDuration) : 0;
   const frameCount = Math.max(1, Math.ceil((duration || 1 / fps) * fps));
@@ -195,9 +194,29 @@ function bake() {
   }
   const compact = compactFrames(rawFrames);
   const bakedBounds = computeBounds(compact.frames);
+  return {
+    name: animationName || "setup",
+    duration: round(duration, 4),
+    frameCount,
+    bounds: bakedBounds,
+    attachments: compact.attachments,
+    frames: compact.frames,
+  };
+}
+
+function bake() {
+  const { skeletonData, skeleton } = loadSkeleton();
+  const defaultAnimationName = chooseAnimation(skeletonData);
+  const clipNames = animationNamesToBake.filter((name) => skeletonData.findAnimation(name));
+  if (clipNames.length === 0 && defaultAnimationName) clipNames.push(defaultAnimationName);
+  const clips = {};
+  for (const clipName of clipNames) {
+    clips[clipName] = bakeAnimationClip(skeletonData, skeleton, clipName);
+  }
+  const defaultClip = clips[defaultAnimationName] ?? Object.values(clips)[0];
 
   const output = {
-    schema: "openclaw-spine-baked-v1",
+    schema: "openclaw-spine-baked-v2",
     source: {
       atlas: path.relative(root, atlasPath).replaceAll("\\", "/"),
       skeleton: path.relative(root, skelPath).replaceAll("\\", "/"),
@@ -230,15 +249,28 @@ function bake() {
       })),
     },
     bake: {
-      animation: animationName,
+      animation: defaultClip?.name ?? "",
       fps,
-      duration: round(duration, 4),
-      frameCount,
+      duration: defaultClip?.duration ?? 0,
+      frameCount: defaultClip?.frameCount ?? 0,
       coordinateSystem: "Spine world coordinates; Godot flips Y at render time.",
-      bounds: bakedBounds,
+      bounds: defaultClip?.bounds ?? {},
     },
-    attachments: compact.attachments,
-    frames: compact.frames,
+    attachments: defaultClip?.attachments ?? [],
+    frames: defaultClip?.frames ?? [],
+    clips: Object.fromEntries(
+      Object.entries(clips).map(([name, clip]) => [
+        name,
+        {
+          fps,
+          duration: clip.duration,
+          frameCount: clip.frameCount,
+          bounds: clip.bounds,
+          attachments: clip.attachments,
+          frames: clip.frames,
+        },
+      ]),
+    ),
   };
 
   fs.writeFileSync(outPath, JSON.stringify(output) + "\n", "utf8");
@@ -251,8 +283,17 @@ function bake() {
         runtime: "@esotericsoftware/spine-core@4.2.43",
         skeletonVersion: skeletonData.version,
         animations: output.skeleton.animations,
-        bakedAnimation: animationName,
-        frames: frameCount,
+        bakedAnimation: defaultClip?.name ?? "",
+        bakedClips: Object.fromEntries(
+          Object.entries(clips).map(([name, clip]) => [
+            name,
+            {
+              duration: clip.duration,
+              frames: clip.frameCount,
+              attachments: clip.attachments.length,
+            },
+          ]),
+        ),
       },
       null,
       2,
@@ -260,7 +301,10 @@ function bake() {
     "utf8",
   );
 
-  console.log(`Baked ${frameCount} frames from ${animationName || "setup pose"} to ${outPath}`);
+  console.log(`Baked ${Object.keys(clips).length} clips to ${outPath}`);
+  for (const [name, clip] of Object.entries(clips)) {
+    console.log(`Clip ${name}: ${clip.frameCount} frames, ${clip.attachments.length} attachments`);
+  }
   console.log(`Skeleton version: ${skeletonData.version}`);
   console.log(`Bones: ${skeletonData.bones.length}, slots: ${skeletonData.slots.length}, animations: ${skeletonData.animations.length}`);
   console.log(`Animations: ${skeletonData.animations.map((item) => `${item.name}:${round(item.duration, 3)}s`).join(", ")}`);

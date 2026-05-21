@@ -20,6 +20,8 @@ var spine_draw_order: Array = []
 var spine_baked: Dictionary = {}
 var spine_baked_attachments: Array = []
 var spine_baked_frames: Array = []
+var spine_baked_clips: Dictionary = {}
+var spine_baked_clip_name := ""
 var spine_baked_ready := false
 var spine_assets_ready := false
 
@@ -199,6 +201,8 @@ func _load_spine_assets() -> void:
 	spine_baked.clear()
 	spine_baked_attachments.clear()
 	spine_baked_frames.clear()
+	spine_baked_clips.clear()
+	spine_baked_clip_name = ""
 	spine_baked_ready = false
 	for page_name in SPINE_PAGE_NAMES:
 		var texture := load(SPINE_ASSET_DIR + page_name)
@@ -255,12 +259,20 @@ func _load_spine_baked() -> void:
 	var parsed = JSON.parse_string(file.get_as_text())
 	if typeof(parsed) != TYPE_DICTIONARY:
 		return
-	var frames: Array = parsed.get("frames", [])
+	var clips: Dictionary = parsed.get("clips", {})
+	if not clips.is_empty():
+		spine_baked_clips = clips
+		spine_baked_clip_name = "Idle" if clips.has("Idle") else String(clips.keys()[0])
+		var default_clip: Dictionary = clips.get(spine_baked_clip_name, {})
+		spine_baked_attachments = default_clip.get("attachments", [])
+		spine_baked_frames = default_clip.get("frames", [])
+	else:
+		spine_baked_attachments = parsed.get("attachments", [])
+		spine_baked_frames = parsed.get("frames", [])
+	var frames: Array = spine_baked_frames
 	if frames.is_empty():
 		return
 	spine_baked = parsed
-	spine_baked_attachments = parsed.get("attachments", [])
-	spine_baked_frames = frames
 	spine_baked_ready = not spine_baked_attachments.is_empty()
 
 func _load_spine_rig() -> void:
@@ -301,13 +313,19 @@ func _draw_spine_region_animation(target: Rect2) -> void:
 	draw_string(ThemeDB.fallback_font, target.position + Vector2(0, target.size.y - 28), "SkeletonGraphic (kokomi_Loading)", HORIZONTAL_ALIGNMENT_CENTER, target.size.x, 16, Color(0.9, 0.98, 1.0, 0.82))
 
 func _draw_spine_baked_animation(target: Rect2) -> void:
-	var bake: Dictionary = spine_baked.get("bake", {})
-	var fps := float(bake.get("fps", 30.0))
-	var frame_count := spine_baked_frames.size()
-	var frame_index := int(floor(spine_time * fps)) % frame_count
-	var frame: Dictionary = spine_baked_frames[frame_index]
+	var clip := _active_baked_clip()
+	var attachments: Array = clip.get("attachments", spine_baked_attachments)
+	var frames: Array = clip.get("frames", spine_baked_frames)
+	var fps := float(clip.get("fps", spine_baked.get("bake", {}).get("fps", 30.0)))
+	var duration := float(clip.get("duration", frames.size() / maxf(fps, 1.0)))
+	var clip_time := fposmod(spine_time, maxf(duration, 1.0 / maxf(fps, 1.0)))
+	var frame_count := frames.size()
+	if frame_count <= 0:
+		return
+	var frame_index := int(floor(clip_time * fps)) % frame_count
+	var frame: Dictionary = frames[frame_index]
 	var items: Array = frame.get("items", [])
-	var bounds := _baked_animation_bounds()
+	var bounds := _baked_animation_bounds(clip)
 	if bounds.size.x <= 0.0 or bounds.size.y <= 0.0:
 		return
 	var scale_factor := minf(target.size.x / bounds.size.x, target.size.y / bounds.size.y) * 0.94
@@ -318,24 +336,38 @@ func _draw_spine_baked_animation(target: Rect2) -> void:
 		if typeof(item) != TYPE_ARRAY or item.size() < 2:
 			continue
 		var attachment_index := int(item[0])
-		if attachment_index < 0 or attachment_index >= spine_baked_attachments.size():
+		if attachment_index < 0 or attachment_index >= attachments.size():
 			continue
-		var attachment: Dictionary = spine_baked_attachments[attachment_index]
+		var attachment: Dictionary = attachments[attachment_index]
 		drawn += _draw_spine_baked_attachment(attachment, item[1], bounds, center, scale_factor)
 	if drawn == 0:
 		draw_string(ThemeDB.fallback_font, target.position + Vector2(0, target.size.y * 0.5), "Spine baked data loaded, no drawable triangles", HORIZONTAL_ALIGNMENT_CENTER, target.size.x, 18, Color(1, 0.72, 0.56, 0.92))
 
-func _baked_animation_bounds() -> Rect2:
-	var bake: Dictionary = spine_baked.get("bake", {})
-	var bounds: Dictionary = bake.get("bounds", {})
+func _active_baked_clip() -> Dictionary:
+	if not spine_baked_clips.is_empty():
+		var next_name := "Interaction" if progress >= 0.35 and progress < 0.82 and spine_baked_clips.has("Interaction") else "Idle"
+		if not spine_baked_clips.has(next_name):
+			next_name = spine_baked_clip_name
+		spine_baked_clip_name = next_name
+		return spine_baked_clips.get(spine_baked_clip_name, {})
+	return {
+		"fps": spine_baked.get("bake", {}).get("fps", 30.0),
+		"bounds": spine_baked.get("bake", {}).get("bounds", {}),
+		"attachments": spine_baked_attachments,
+		"frames": spine_baked_frames,
+	}
+
+func _baked_animation_bounds(clip: Dictionary) -> Rect2:
+	var bounds: Dictionary = clip.get("bounds", {})
 	if not bounds.is_empty():
 		var min_x := float(bounds.get("minX", 0.0))
 		var max_y := float(bounds.get("maxY", 0.0))
 		var width := float(bounds.get("width", 0.0))
 		var height := float(bounds.get("height", 0.0))
 		return Rect2(Vector2(min_x, -max_y), Vector2(width, height))
-	if not spine_baked_frames.is_empty():
-		return _baked_frame_bounds(spine_baked_frames[0])
+	var frames: Array = clip.get("frames", [])
+	if not frames.is_empty():
+		return _baked_frame_bounds(frames[0])
 	return Rect2()
 
 func _baked_frame_bounds(frame: Dictionary) -> Rect2:
