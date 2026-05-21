@@ -113,7 +113,12 @@ func _build_ui() -> void:
 
 	ingame_reference_shell = InGameReferenceShellScript.new()
 	ingame_reference_shell.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	ingame_reference_shell.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	ingame_reference_shell.mouse_filter = Control.MOUSE_FILTER_PASS
+	ingame_reference_shell.produce_requested.connect(_produce_selected)
+	ingame_reference_shell.out_game_requested.connect(_return_to_out_game_from_ingame)
+	ingame_reference_shell.inventory_requested.connect(func() -> void:
+		_set_status("Inventory target recovered; inventory contents restore is pending.")
+	)
 	gameplay_root.add_child(ingame_reference_shell)
 
 	var title := Label.new()
@@ -528,6 +533,11 @@ func _enter_gameplay_from_out_game() -> void:
 	_apply_gameplay_layout()
 	_set_status("Entered recovered merge gameplay from UIOutGame/InGameBtn.")
 
+func _return_to_out_game_from_ingame() -> void:
+	_set_gameplay_visible(false)
+	_show_out_game_reference()
+	_set_status("Returned to UIOutGame from UIInGame/Bottom/Lobby.")
+
 func _apply_gameplay_layout() -> void:
 	if gameplay_root == null:
 		return
@@ -594,6 +604,7 @@ func _apply_ingame_reference_shell() -> void:
 	var source := _ui_layout_source_by_name("UIInGame")
 	ingame_reference_shell.call("set_source", source)
 	ingame_reference_shell.call("set_wallet", board.wallet)
+	ingame_reference_shell.call("set_selected_block", _selected_block_summary())
 
 func _set_loading_reference_state(progress: float, message: String) -> void:
 	if loading_reference_screen == null:
@@ -936,6 +947,24 @@ func _refresh_selection() -> void:
 				or board.get_remaining_produce_energy(selected_cell.x, selected_cell.y) <= 0
 			)
 		)
+	if ingame_reference_shell != null:
+		ingame_reference_shell.call("set_selected_block", _selected_block_summary())
+
+func _selected_block_summary() -> Dictionary:
+	if selected_cell.x < 0:
+		return {}
+	var block_id := board.get_block(selected_cell.x, selected_cell.y)
+	if block_id.is_empty():
+		return {}
+	var data := catalog.get_block(block_id)
+	return {
+		"id": block_id,
+		"name": data.get("name", block_id),
+		"level": data.get("level", "?"),
+		"has_produce": not catalog.get_produce_rule(block_id).is_empty(),
+		"energy": board.get_remaining_produce_energy(selected_cell.x, selected_cell.y),
+		"max_energy": catalog.get_produce_energy(block_id),
+	}
 
 func _update_drag_preview() -> void:
 	drag_preview.position = get_viewport().get_mouse_position() - Vector2(cell_size, cell_size) * 0.5

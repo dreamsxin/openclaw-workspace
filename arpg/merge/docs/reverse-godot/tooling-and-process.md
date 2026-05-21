@@ -1241,6 +1241,34 @@ Follow-up:
 - Replace shell rectangles with recovered `UIInGame` textures and sprites as they are mapped.
 - Move Produce, inventory, lobby, and request interactions onto the recovered `UIInGame` button regions.
 
+## 2026-05-21 - UIInGame Action Regions
+
+Inputs:
+- `godot-project/data/ui_layout_reference.json`
+- `godot-project/scripts/ingame_reference_shell.gd`
+- `godot-project/scripts/main.gd`
+
+Commands:
+```powershell
+.\tools\Godot\Godot_console.exe --path .\godot-project --headless --quit-after 6 -- --restored-startup --auto-enter-ingame
+.\capture-startup.bat
+```
+
+Outputs:
+- `godot-project/scripts/ingame_reference_shell.gd`
+- `godot-project/scripts/main.gd`
+
+Findings:
+- `InGameReferenceShell` now derives bottom hit regions from recovered `UIInGame` RectTransforms.
+- `Bottom/Lobby/GoToOutGame` is wired as the first working return path from InGame to `UIOutGame`.
+- The shell exposes Produce, Bag, and Cafe labels over recovered bottom UI regions.
+- Produce reuses the current recovered producer logic and updates the shell-selected block summary.
+- Bag currently reports the pending inventory restore rather than opening a placeholder popup.
+
+Follow-up:
+- Replace the Produce fallback region with the exact original button once the correct `UIBlockInfo` action mapping is confirmed from runtime code.
+- Restore the inventory popup/list after request/order and inventory data are mapped.
+
 Recommended next runs:
 
 1. Run Il2CppDumper or Cpp2IL on `libil2cpp.so` and `global-metadata.dat`.
