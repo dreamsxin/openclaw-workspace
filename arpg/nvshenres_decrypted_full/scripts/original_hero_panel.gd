@@ -1190,9 +1190,9 @@ func _add_skin_tab(root: Control, y_base := 126) -> void:
 		["速度:", "+12"],
 	]
 	for i in attrs.size():
-		var name_rect := _skin_attr_layout_rect(i + 1, "name", Rect2(Vector2(802.221, 469.77 + floori(i / 2) * 30), Vector2(80, 26)))
+		var attr_name_rect := _skin_attr_layout_rect(i + 1, "name", Rect2(Vector2(802.221, 469.77 + floori(i / 2) * 30), Vector2(80, 26)))
 		var value_rect := _skin_attr_layout_rect(i + 1, "value", Rect2(Vector2(899.306, 469.77 + floori(i / 2) * 30), Vector2(48, 26)))
-		_add_label(root, attrs[i][0], _detail_local(name_rect.position), name_rect.size, 16, Color(0.45, 0.48, 0.62))
+		_add_label(root, attrs[i][0], _detail_local(attr_name_rect.position), attr_name_rect.size, 16, Color(0.45, 0.48, 0.62))
 		_add_label(root, attrs[i][1], _detail_local(value_rect.position), value_rect.size, 16, Color(0.74, 0.34, 0.56))
 	var equipped_skin := str(equipped_skin_by_hero.get(str(hero.get("id", "")), str(hero.get("id", ""))))
 	var primary_text := "前往获取"
