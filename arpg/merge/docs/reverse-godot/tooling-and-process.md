@@ -1374,6 +1374,35 @@ Outputs:
 Follow-up:
 - Map the original `UIMaidLobbyLoading` image-slot sprites or animations from Unity asset references instead of the current structural color pass.
 
+## 2026-05-21 - Runtime Canvas Bootstrap Stage
+
+Inputs:
+- `reverse-output/assets/derived/ui_layout/canvas_layout_inventory.json`
+- `docs/reverse-godot/ui-layout-analysis.md`
+- `godot-project/scripts/runtime_canvas_bootstrap_screen.gd`
+- `godot-project/scripts/main.gd`
+
+Commands:
+```powershell
+.\tools\Godot\Godot_console.exe --path .\godot-project --headless --quit-after 8 -- --restored-startup --auto-enter-ingame
+.\capture-gameplay.bat
+.\capture-startup.bat
+.\run-game.bat --headless --quit-after 6
+```
+
+Findings:
+- Serialized layout evidence shows `Game.unity` and `UIManager.prefab` contain the runtime canvas stack before screen-specific UI: main `Canvas`, `BGCanvas`, `TouchEffectCanvas`, story canvases, and `SafeArea` roots.
+- `RuntimeInitializeOnLoads.json` confirms game-level startup hooks, but method bodies are still pending native analysis; the current Godot step is therefore a structural visual pass, not a confirmed exact timing implementation.
+- `run-game.bat` now starts with a visible `RuntimeCanvas/SafeArea` bootstrap stage before `UILoading`.
+
+Outputs:
+- `reverse-output/startup-captures/01-runtimecanvas.png`
+- `reverse-output/startup-captures/06-outgame.png`
+- `reverse-output/gameplay-captures/07-ingame.png`
+
+Follow-up:
+- Use Ghidra on `GameManager.OnGameStartLoad`, `ReloadManager.LoadScene`, `UIManager.Initialize`, and `SafeArea.Awake` to confirm exact runtime timing and CanvasScaler policy.
+
 Recommended next runs:
 
 1. Run Il2CppDumper or Cpp2IL on `libil2cpp.so` and `global-metadata.dat`.

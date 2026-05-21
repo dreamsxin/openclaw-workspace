@@ -3,6 +3,7 @@ extends Control
 const BlockCatalogScript := preload("res://scripts/models/block_catalog.gd")
 const MergeBoardModelScript := preload("res://scripts/models/merge_board_model.gd")
 const SaveManagerScript := preload("res://scripts/services/save_manager.gd")
+const RuntimeCanvasBootstrapScreenScript := preload("res://scripts/runtime_canvas_bootstrap_screen.gd")
 const LoadingReferenceScreenScript := preload("res://scripts/loading_reference_screen.gd")
 const SceneLoadingReferenceScreenScript := preload("res://scripts/scene_loading_reference_screen.gd")
 const MaidLobbyLoadingReferenceScreenScript := preload("res://scripts/maid_lobby_loading_reference_screen.gd")
@@ -15,6 +16,7 @@ const BOARD_ORIGIN := Vector2(360, 92)
 const PORTRAIT_CELL_SIZE := 62
 const PORTRAIT_CELL_GAP := 5
 const PORTRAIT_BOARD_MARGIN := 24
+const RESTORED_UI_BOOTSTRAP_SECONDS := 0.55
 const RESTORED_APP_LOADING_SECONDS := 2.0
 const RESTORED_SCENE_LOADING_SECONDS := 1.7
 const RESTORED_MAID_LOBBY_LOADING_SECONDS := 1.1
@@ -56,6 +58,7 @@ var ui_layout_index := 0
 var ui_layout_title_label: Label
 var ui_layout_meta_label: Label
 var ui_layout_preview: Control
+var runtime_canvas_bootstrap_screen: Control
 var loading_reference_screen: Control
 var scene_loading_reference_screen: Control
 var maid_lobby_loading_reference_screen: Control
@@ -66,6 +69,7 @@ var portrait_hidden_controls: Array = []
 var board_origin := BOARD_ORIGIN
 var cell_size := CELL_SIZE
 var cell_gap := CELL_GAP
+var runtime_canvas_bootstrap_visible := false
 var loading_reference_visible := false
 var scene_loading_reference_visible := false
 var maid_lobby_loading_reference_visible := false
@@ -230,6 +234,7 @@ func _build_ui() -> void:
 
 	_build_character_panel()
 	_build_ui_layout_panel()
+	_build_runtime_canvas_bootstrap_screen()
 	_build_loading_reference_screen()
 	_build_scene_loading_reference_screen()
 	_build_maid_lobby_loading_reference_screen()
@@ -245,21 +250,33 @@ func _build_ui() -> void:
 	_refresh_character_panel()
 	_refresh_ui_layout_panel(false)
 	_apply_gameplay_layout()
-	_show_loading_reference()
 	if restored_startup_mode:
 		_set_gameplay_visible(false)
-		_set_loading_reference_state(0.0, "Loading...")
+		_show_runtime_canvas_bootstrap()
+		_set_runtime_canvas_bootstrap_state(0.0, "Initializing UI...")
+	else:
+		_show_loading_reference()
 
 func _process(delta: float) -> void:
 	if not restored_startup_mode or restored_startup_finished:
 		return
 	restored_startup_elapsed += delta
-	if restored_startup_elapsed < RESTORED_APP_LOADING_SECONDS:
-		var app_progress := clampf(restored_startup_elapsed / RESTORED_APP_LOADING_SECONDS, 0.0, 1.0)
-		_set_loading_reference_state(app_progress, _restored_app_loading_message(app_progress))
-		_maybe_capture_startup_frame("01-uiloading", 1.0)
+	if restored_startup_elapsed < RESTORED_UI_BOOTSTRAP_SECONDS:
+		var bootstrap_progress := clampf(restored_startup_elapsed / RESTORED_UI_BOOTSTRAP_SECONDS, 0.0, 1.0)
+		_set_runtime_canvas_bootstrap_state(bootstrap_progress, _restored_ui_bootstrap_message(bootstrap_progress))
+		_maybe_capture_startup_frame("01-runtimecanvas", 0.3)
 		return
-	var scene_elapsed := restored_startup_elapsed - RESTORED_APP_LOADING_SECONDS
+	var app_elapsed := restored_startup_elapsed - RESTORED_UI_BOOTSTRAP_SECONDS
+	if app_elapsed < RESTORED_APP_LOADING_SECONDS:
+		var app_progress := clampf(app_elapsed / RESTORED_APP_LOADING_SECONDS, 0.0, 1.0)
+		if runtime_canvas_bootstrap_visible:
+			runtime_canvas_bootstrap_visible = false
+			_apply_runtime_canvas_bootstrap_visibility()
+			_show_loading_reference()
+		_set_loading_reference_state(app_progress, _restored_app_loading_message(app_progress))
+		_maybe_capture_startup_frame("02-uiloading", RESTORED_UI_BOOTSTRAP_SECONDS + 1.0)
+		return
+	var scene_elapsed := app_elapsed - RESTORED_APP_LOADING_SECONDS
 	if scene_elapsed < RESTORED_SCENE_LOADING_SECONDS:
 		var scene_progress := clampf(scene_elapsed / RESTORED_SCENE_LOADING_SECONDS, 0.0, 1.0)
 		if loading_reference_visible:
@@ -267,8 +284,8 @@ func _process(delta: float) -> void:
 			_apply_loading_reference_visibility()
 			_show_scene_loading_reference()
 		_set_scene_loading_reference_state(scene_progress, _restored_scene_loading_message(scene_progress))
-		_maybe_capture_startup_frame("02-uisceneloading", RESTORED_APP_LOADING_SECONDS + 0.9)
-		_maybe_capture_startup_frame("03-uisceneloading-late", RESTORED_APP_LOADING_SECONDS + 1.45)
+		_maybe_capture_startup_frame("03-uisceneloading", RESTORED_UI_BOOTSTRAP_SECONDS + RESTORED_APP_LOADING_SECONDS + 0.9)
+		_maybe_capture_startup_frame("04-uisceneloading-late", RESTORED_UI_BOOTSTRAP_SECONDS + RESTORED_APP_LOADING_SECONDS + 1.45)
 		return
 	var maid_lobby_elapsed := scene_elapsed - RESTORED_SCENE_LOADING_SECONDS
 	var maid_lobby_progress := clampf(maid_lobby_elapsed / RESTORED_MAID_LOBBY_LOADING_SECONDS, 0.0, 1.0)
@@ -277,10 +294,10 @@ func _process(delta: float) -> void:
 		_apply_scene_loading_reference_visibility()
 		_show_maid_lobby_loading_reference()
 	_set_maid_lobby_loading_reference_state(maid_lobby_progress, _restored_maid_lobby_loading_message(maid_lobby_progress))
-	_maybe_capture_startup_frame("04-maidlobbyloading", RESTORED_APP_LOADING_SECONDS + RESTORED_SCENE_LOADING_SECONDS + 0.45)
+	_maybe_capture_startup_frame("05-maidlobbyloading", RESTORED_UI_BOOTSTRAP_SECONDS + RESTORED_APP_LOADING_SECONDS + RESTORED_SCENE_LOADING_SECONDS + 0.45)
 	if maid_lobby_progress >= 1.0:
 		_finish_restored_startup()
-		_maybe_capture_startup_frame("05-outgame", RESTORED_APP_LOADING_SECONDS + RESTORED_SCENE_LOADING_SECONDS + RESTORED_MAID_LOBBY_LOADING_SECONDS)
+		_maybe_capture_startup_frame("06-outgame", RESTORED_UI_BOOTSTRAP_SECONDS + RESTORED_APP_LOADING_SECONDS + RESTORED_SCENE_LOADING_SECONDS + RESTORED_MAID_LOBBY_LOADING_SECONDS)
 		if auto_enter_ingame and not auto_enter_ingame_done:
 			auto_enter_ingame_done = true
 			call_deferred("_auto_enter_gameplay_after_capture")
@@ -396,6 +413,17 @@ func _build_ui_layout_panel() -> void:
 	ui_layout_preview.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	gameplay_root.add_child(ui_layout_preview)
 	portrait_hidden_controls.append(ui_layout_preview)
+
+func _build_runtime_canvas_bootstrap_screen() -> void:
+	runtime_canvas_bootstrap_screen = RuntimeCanvasBootstrapScreenScript.new()
+	if restored_startup_mode:
+		runtime_canvas_bootstrap_screen.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	else:
+		runtime_canvas_bootstrap_screen.position = Vector2(320, 24)
+		runtime_canvas_bootstrap_screen.size = Vector2(650, 672)
+	runtime_canvas_bootstrap_screen.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	runtime_canvas_bootstrap_screen.visible = runtime_canvas_bootstrap_visible
+	add_child(runtime_canvas_bootstrap_screen)
 
 func _build_loading_reference_screen() -> void:
 	loading_reference_screen = LoadingReferenceScreenScript.new()
@@ -519,6 +547,15 @@ func _toggle_out_game_reference() -> void:
 	out_game_reference_visible = not out_game_reference_visible
 	_apply_out_game_reference_visibility()
 	_set_status("OutGame reference %s." % ("shown" if out_game_reference_visible else "hidden"))
+
+func _show_runtime_canvas_bootstrap() -> void:
+	runtime_canvas_bootstrap_visible = true
+	_apply_runtime_canvas_bootstrap_visibility()
+
+func _apply_runtime_canvas_bootstrap_visibility() -> void:
+	if runtime_canvas_bootstrap_screen == null:
+		return
+	runtime_canvas_bootstrap_screen.visible = runtime_canvas_bootstrap_visible
 
 func _show_loading_reference() -> void:
 	loading_reference_visible = true
@@ -670,6 +707,11 @@ func _apply_ingame_reference_shell() -> void:
 	ingame_reference_shell.call("set_wallet", board.wallet)
 	ingame_reference_shell.call("set_selected_block", _selected_block_summary())
 
+func _set_runtime_canvas_bootstrap_state(progress: float, message: String) -> void:
+	if runtime_canvas_bootstrap_screen == null:
+		return
+	runtime_canvas_bootstrap_screen.call("set_loading_state", progress, message)
+
 func _set_loading_reference_state(progress: float, message: String) -> void:
 	if loading_reference_screen == null:
 		return
@@ -684,6 +726,13 @@ func _set_maid_lobby_loading_reference_state(progress: float, message: String) -
 	if maid_lobby_loading_reference_screen == null:
 		return
 	maid_lobby_loading_reference_screen.call("set_loading_state", progress, message)
+
+func _restored_ui_bootstrap_message(progress: float) -> String:
+	if progress < 0.5:
+		return "Initializing canvases..."
+	if progress < 1.0:
+		return "Applying safe area..."
+	return "UI ready"
 
 func _restored_app_loading_message(progress: float) -> String:
 	if progress < 0.35:
@@ -710,9 +759,11 @@ func _restored_maid_lobby_loading_message(progress: float) -> String:
 
 func _finish_restored_startup() -> void:
 	restored_startup_finished = true
+	runtime_canvas_bootstrap_visible = false
 	loading_reference_visible = false
 	scene_loading_reference_visible = false
 	maid_lobby_loading_reference_visible = false
+	_apply_runtime_canvas_bootstrap_visibility()
 	_apply_loading_reference_visibility()
 	_apply_scene_loading_reference_visibility()
 	_apply_maid_lobby_loading_reference_visibility()
@@ -729,10 +780,10 @@ func _maybe_capture_startup_frame(label: String, threshold_seconds: float) -> vo
 	call_deferred("_capture_startup_frame", label)
 
 func _maybe_capture_ingame_frame() -> void:
-	if startup_capture_dir.is_empty() or startup_capture_flags.has("06-ingame"):
+	if startup_capture_dir.is_empty() or startup_capture_flags.has("07-ingame"):
 		return
-	startup_capture_flags["06-ingame"] = true
-	call_deferred("_capture_startup_frame", "06-ingame")
+	startup_capture_flags["07-ingame"] = true
+	call_deferred("_capture_startup_frame", "07-ingame")
 
 func _capture_startup_frame(label: String) -> void:
 	await RenderingServer.frame_post_draw
