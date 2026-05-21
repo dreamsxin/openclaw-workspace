@@ -233,16 +233,16 @@ func _build_prefab_chrome() -> void:
 func _add_resource_bar(position: Vector2, icon_path: String, text: String) -> void:
 	var box := Control.new()
 	box.position = position
-	box.size = Vector2(144, 30)
+	box.size = Vector2(172, 36)
 	design_root.add_child(box)
 	var bg := ColorRect.new()
 	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	bg.color = Color(0.035, 0.04, 0.07, 0.80)
 	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	box.add_child(bg)
-	_add_named_image_to(box, icon_path, Vector2(-4, -3), Vector2(38, 38))
-	_add_label(box, text, Vector2(38, 3), Vector2(78, 24), 16, Color(0.95, 0.96, 1.0))
-	_add_label(box, "+", Vector2(116, -1), Vector2(26, 28), 24, Color(1.0, 0.92, 0.58)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_add_named_image_to(box, icon_path, Vector2(-4, -37), Vector2(110, 110))
+	_add_label(box, text, Vector2(28.945, 5.4), Vector2(100.11, 25.2), 16, Color(0.95, 0.96, 1.0))
+	_add_label(box, "+", Vector2(138.067, 6), Vector2(24, 24), 24, Color(1.0, 0.92, 0.58)).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 func _add_top_button(parent: HBoxContainer, text: String, callback: Callable) -> void:
 	var button := Button.new()
@@ -260,7 +260,7 @@ func _build_side_panel() -> void:
 	var name_bg := ColorRect.new()
 	name_bg.position = Vector2(16, 76)
 	name_bg.size = Vector2(220, 144)
-	name_bg.color = Color(0.035, 0.04, 0.065, 0.76)
+	name_bg.color = Color(0.035, 0.04, 0.065, 0.0)
 	name_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	side_panel.add_child(name_bg)
 
@@ -269,21 +269,21 @@ func _build_side_panel() -> void:
 	_add_label(side_panel, "", Vector2(62, 115), Vector2(118, 22), 15, Color(0.78, 0.86, 1.0)).name = "hero_job"
 	var quality := TextureRect.new()
 	quality.name = "quality_tag"
-	quality.position = Vector2(22, 125)
-	quality.size = Vector2(142, 70)
+	quality.position = Vector2(21.263, 107)
+	quality.size = Vector2(215, 98)
 	quality.texture = _load_texture(HERO_BOOK_TAG_TEX)
 	quality.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	quality.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	quality.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	side_panel.add_child(quality)
-	quality_text_label = _add_label(side_panel, "SSR", Vector2(26, 130), Vector2(126, 48), 38, Color(1.0, 0.72, 0.25))
+	quality_text_label = _add_label(side_panel, "SSR", Vector2(24, 132), Vector2(126, 48), 38, Color(1.0, 0.72, 0.25))
 	quality_text_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
-	var action_positions := [Vector2(58, 314), Vector2(58, 372), Vector2(58, 430)]
-	var action_icons := ["image/common/cm_btn_chakan", "image/common/cm_btn_FenXiang", "image/en/HeroPanel/yx_switch_suooff"]
-	var action_tooltips := ["查看", "分享", "锁定"]
+	var action_positions := [Vector2(32.5, 392.066), Vector2(32.5, 460.669), Vector2(30, 525.694)]
+	var action_icons := ["image/common/cm_btn_GuShi", "image/common/cm_btn_FenXiang", "image/en/HeroPanel/yx_switch_suooff"]
+	var action_tooltips := ["故事", "分享", "锁定"]
 	var action_callbacks := [
-		_toggle_full_preview,
+		func(): Navigation.go_with_args(PREFAB_PREVIEW, {"layout": "英雄故事"}),
 		_show_share_menu,
 		func(): _show_local_notice("源码 btnHeroLock -> CG_HERO_BAG_LOCK：离线 Demo 已模拟锁定")
 	]
@@ -297,7 +297,7 @@ func _build_side_panel() -> void:
 		icon.pressed.connect(action_callbacks[i])
 		side_panel.add_child(icon)
 		left_info_actions.append(icon)
-		if _add_named_image_to(icon, action_icons[i], Vector2(4, 4), icon.size - Vector2(8, 8)) == null:
+		if _add_named_image_to(icon, action_icons[i], Vector2.ZERO, icon.size) == null:
 			var fallback := ColorRect.new()
 			fallback.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 			fallback.color = Color(0.16, 0.18, 0.32, 0.58)
@@ -850,7 +850,29 @@ func _add_detail_summary(root: Control, hero: Dictionary, position: Vector2, wid
 
 func _add_hero_main_summary(root: Control, hero: Dictionary) -> void:
 	_add_skill_column(root, Vector2(0, 90))
+	var job_icon_rect := _layout_rect_from(main_layout_nodes, "imgJob", Rect2(Vector2(890.445, 83.977), Vector2(81, 81)))
+	_add_named_image_to(root, "image/common/cm_icon_ZhiYe1", _detail_local(job_icon_rect.position), job_icon_rect.size)
+	var job_name_rect := _layout_rect_from(main_layout_nodes, "imgJobName", Rect2(Vector2(1027.281, 114.333), Vector2(48, 24)))
+	var job_name := _add_label(root, str(hero.get("job", "灵师")), _detail_local(job_name_rect.position) - Vector2(28, 3), job_name_rect.size + Vector2(60, 6), 16, Color(0.55, 0.36, 0.18))
+	job_name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	var attrs: Array = hero.get("attrs", _generated_attrs(hero))
+	var attr_icons := [
+		["cm_icon_GongJi", "image/common/cm_icon_GongJi"],
+		["cm_icon_ShengMing", "image/common/cm_icon_ShengMing"],
+		["cm_icon_FangYu", "image/common/cm_icon_FangYu"],
+		["cm_icon_SuDu", "image/common/cm_icon_SuDu"],
+	]
+	for attr_icon in attr_icons:
+		var icon_rect := _layout_rect_from(main_layout_nodes, attr_icon[0], Rect2(Vector2.ZERO, Vector2(21, 21)))
+		_add_named_image_to(root, attr_icon[1], _detail_local(icon_rect.position), icon_rect.size)
+	for line_index in [134, 135, 136, 137]:
+		var line_rect := _layout_rect_by_index(main_layout_node_list, line_index, Rect2(Vector2(968, 194), Vector2(190, 1)))
+		var line := ColorRect.new()
+		line.position = _detail_local(line_rect.position)
+		line.size = line_rect.size
+		line.color = Color(0.46, 0.45, 0.56, 0.35)
+		line.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		root.add_child(line)
 	var attr_positions := [
 		_layout_rect_from(main_layout_nodes, "lblGongJiAttr", Rect2(Vector2(970.389, 169.239), Vector2(74, 28))),
 		_layout_rect_from(main_layout_nodes, "lblShengMingAttr", Rect2(Vector2(970.389, 209.803), Vector2(74, 28))),
