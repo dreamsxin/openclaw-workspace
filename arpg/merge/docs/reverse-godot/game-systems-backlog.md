@@ -1,0 +1,86 @@
+# Game Systems Backlog
+
+Use this as the reverse and reimplementation checklist.
+
+Status values:
+
+- `unknown`: not analyzed yet.
+- `candidate`: suspected from names/assets.
+- `confirmed`: verified from code/assets/runtime.
+- `ported`: implemented in Godot.
+- `tested`: covered by tests or runtime verification.
+
+## Boot and App Flow
+
+| System | Status | Evidence | Godot target |
+| --- | --- | --- | --- |
+| Game startup | confirmed | `RuntimeInitializeOnLoads.json`: `GameManager.OnGameStart` | `GameApp` |
+| Highscore service startup | confirmed | `RuntimeInitializeOnLoads.json`: `HighscoreService.OnGameStart` | service or omitted |
+| Scene loading | unknown | Need IL2CPP dump and Unity scene export | `SceneRouter` |
+| Loading screen | unknown | Need asset export | `scenes/boot` |
+
+## Core Gameplay
+
+| System | Status | Evidence | Godot target |
+| --- | --- | --- | --- |
+| Merge board/grid | ported | IL2CPP classes: `InGame_MapManager`, `InGame_BlockManager`, `InGame_ItemCell`, `MapSaveData`; prototype in `godot-project/scripts/models/merge_board_model.gd` | `MergeBoardModel` |
+| Item instances | ported | IL2CPP classes use `Block` and `ItemBlock`: `InGame_ItemBlock`, `MapBlockData`, `ProduceBlockData`; prototype block ids in `godot-project/data/blocks.json` | `ItemInstance`/`BlockInstance` |
+| Merge chains | candidate | `SeriouslyMergeDataManager`, `BlockType`, block tables likely define chains | `MergeRuleResolver` |
+| Item generators | confirmed | `ProduceBlockData`, `ProduceBlockSaveData`, `FabricateBlockMapData`, fabricate timers | `SpawnerModel` |
+| Board blockers/obstacles | candidate | `BubbleBlockData`, `BoxBlockSaveData`, map cell type data | board cell modifiers |
+| Energy or stamina | ported | `UserSaveDataMetaInfo.ap`, `ProduceBlockData.produceEnergy`; prototype AP wallet and spawn cost | `EconomyModel` |
+| Timers/cooldowns | unknown | Need code/runtime | timer service |
+| Tutorial | unknown | Need classes/assets | tutorial state machine |
+
+## Progression
+
+| System | Status | Evidence | Godot target |
+| --- | --- | --- | --- |
+| Player level | unknown | Need code/data | `ProgressionModel` |
+| Tasks/orders | unknown | Merge cafe games usually use orders; verify | `TaskModel` |
+| Chapter/story progression | unknown | Need scenes/assets/localization | `StoryModel` |
+| Unlock conditions | unknown | Need config | `UnlockResolver` |
+| Highscore/leaderboard | candidate | `HighscoreService.OnGameStart` | `HighscoreService` or no-op |
+
+## Economy and Monetization
+
+| System | Status | Evidence | Godot target |
+| --- | --- | --- | --- |
+| Soft currency | unknown | Need code/data | `WalletModel` |
+| Premium currency | unknown | Need code/data | `WalletModel` |
+| Rewarded ads | candidate | Many ad SDKs | `AdsService` |
+| Interstitial ads | candidate | Many ad SDKs | `AdsService` |
+| IAP products | confirmed integration, unknown products | Billing and Unity IAP present | `IapService` |
+| Daily rewards | unknown | Need code/data | reward system |
+| Offline rewards | unknown | Need code/data | reward system |
+
+## Content and Presentation
+
+| System | Status | Evidence | Godot target |
+| --- | --- | --- | --- |
+| Localization | confirmed | Addressables localization bundles for EN, JA, KO, ZH-TW | Godot translations |
+| Spine animation | candidate | `spine-csharp`, `spine-unity` assemblies | Spine runtime or conversion |
+| UI particles | confirmed dependency | `Coffee.UIParticle` | Godot particles or simplified FX |
+| Soft masks | confirmed dependency | `Coffee.SoftMaskForUGUI` | Godot clipping/masks |
+| Toony materials | confirmed dependency | `ToonyColorsPro.Runtime` | Godot materials/shaders |
+| Audio | unknown | Need asset extraction | `AudioManager` |
+
+## Save and Backend
+
+| System | Status | Evidence | Godot target |
+| --- | --- | --- | --- |
+| Local save | ported | Many `UserSaveData` subclasses, `EncryptedPlayerPrefs`, manager keys like `mapdata`, `blockdata`; prototype JSON save at `user://prototype-save.json` | `SaveManager` |
+| Cloud save | candidate | Firebase/Google Play present, verify usage | `CloudSaveService` |
+| Analytics | confirmed integration | Firebase/GameAnalytics/Singular | `AnalyticsService` |
+| Push notifications | confirmed integration, unknown usage | FCM and notification permissions | `NotificationService` |
+| Remote config | unknown | Need code/network strings | config service |
+
+## Analysis Tasks
+
+1. Dump IL2CPP symbols and dummy assemblies.
+2. Search recovered `Assembly-CSharp` for `GameManager`.
+3. Search recovered `Assembly-CSharp` for item, merge, board, order, reward, save, shop, ad, IAP, tutorial names.
+4. Export Unity assets and identify ScriptableObject/TextAsset configuration files.
+5. Build a table of item IDs, names, icons, merge results, and spawn sources.
+6. Build a save schema from code or runtime files.
+7. Implement a minimal Godot board model and verify merge rules against recovered data.
