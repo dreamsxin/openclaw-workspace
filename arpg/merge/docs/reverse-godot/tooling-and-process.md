@@ -1001,6 +1001,38 @@ Follow-up:
 
 ## Next Tool Runs
 
+## 2026-05-21 - Import UISceneLoading Spine Loading Assets
+
+Inputs:
+- `reverse-output/assets/assetripper-main/ExportedProject/Assets/TextAsset/kokomi_Loading.atlas.txt`
+- `reverse-output/assets/assetripper-main/ExportedProject/Assets/TextAsset/kokomi_Loading.skel.bytes`
+- `reverse-output/assets/assetripper-main/ExportedProject/Assets/Texture2D/kokomi_Loading.png`
+- `reverse-output/assets/assetripper-main/ExportedProject/Assets/Texture2D/kokomi_Loading_2.png`
+
+Commands:
+```powershell
+python scripts\reverse\import_godot_spine_loading_assets.py
+.\tools\Godot\Godot_console.exe --headless --path .\godot-project --import
+.\run-game.bat --headless --quit-after 5
+.\run-godot.bat --headless --quit-after 1
+```
+
+Outputs:
+- `godot-project/assets/spine/loading/kokomi_Loading/kokomi_Loading.atlas.txt`
+- `godot-project/assets/spine/loading/kokomi_Loading/kokomi_Loading.skel.bytes`
+- `godot-project/assets/spine/loading/kokomi_Loading/kokomi_Loading.png`
+- `godot-project/assets/spine/loading/kokomi_Loading/kokomi_Loading_2.png`
+- `reverse-output/assets/derived/godot_spine_loading_import_manifest.json`
+
+Findings:
+- AssetRipper has the complete `kokomi_Loading` loading Spine evidence set: atlas text, binary skeleton, and both texture pages.
+- `UISceneLoading` can now render a first-pass animated Spine preview by cropping atlas regions and applying time-driven body, hair, arm, eye, skirt, and table offsets.
+- The current Godot path still does not parse the `.skel.bytes` binary timeline; it uses the file as preserved source evidence and uses atlas regions for visible animation.
+
+Follow-up:
+- Decide whether to integrate a Godot Spine runtime or implement a focused `.skel.bytes` parser for exact timeline playback.
+- Generalize the atlas-region preview path before applying it to maid/customer Spine entries.
+
 Recommended next runs:
 
 1. Run Il2CppDumper or Cpp2IL on `libil2cpp.so` and `global-metadata.dat`.

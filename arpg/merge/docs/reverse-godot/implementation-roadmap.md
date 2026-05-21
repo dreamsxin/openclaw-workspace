@@ -216,10 +216,10 @@ Success criteria:
 | T024 | Build Godot character catalog data pipeline | done | first-pass resources copied; `Table_Npc` static lists decoded; Godot character JSON generated with static-vs-Spine asset classification |
 | T025 | Implement first-pass character/profile UI in Godot | done | right-side Maid/customer browser; static PNGs display directly, Spine atlas pages show metadata placeholders |
 | T026 | Decode mixed-format character dialog/customer tail lists | in progress | initial tail scan shows row 1400 enters mixed dialog/presentation payload before remaining list boundaries |
-| T027 | Implement Spine character render path | pending | choose Godot Spine runtime or offline first-frame renderer for `.atlas.dat`/`.skel.dat` assets; do not render raw atlas PNGs directly as character art |
+| T027 | Implement Spine character render path | in progress | first UISceneLoading atlas-region animation path implemented for `kokomi_Loading`; full `.skel.bytes` binary skeleton/timeline playback still pending |
 | T028 | Inventory original Unity UI prefab layouts | done | 1,137 UI prefabs and 84,034 RectTransforms indexed in `ui-layout-analysis.md` |
 | T029 | Map startup UI flow and Canvas scaling | in progress | startup focus layout details generated and converted into `godot-project/data/ui_layout_reference.json`; CanvasScaler/SafeArea runtime confirmation still pending |
-| T030 | Build first Godot UI layout reference screens | in progress | `run-game.bat` restored startup mode now flows through recovered `UILoading` and `UISceneLoading`, then enters the playable prototype; Spine output and remaining screens still pending |
+| T030 | Build first Godot UI layout reference screens | in progress | `run-game.bat` restored startup mode now flows through recovered `UILoading` and an animated `UISceneLoading` Spine-region preview, then enters the playable prototype; remaining screens still pending |
 
 ## Tool Acquisition Options
 

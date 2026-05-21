@@ -93,7 +93,7 @@ The current Godot prototype reads this file and exposes a small `UI Ref` selecto
 
 `UILoading` is now also represented by a first Godot structural reference layer. It maps the recovered 1080 x 1920 root, `Loading_Type/BG_Base` background stack, `LogoArea`, `LoadingBar`, and `Ver` / `Ver (1)` corner labels into a centered preview panel. First-pass loading PNGs are copied into `godot-project/assets/loading/` and used for the visible background/logo/loading fill where possible. Spine logo renderer behavior still needs a proper runtime or baked-frame replacement.
 
-`UISceneLoading` now has a Godot reference layer in restored startup mode. It maps the recovered full-stretch root and background candidates and displays an explicit placeholder for the original `SkeletonGraphic (kokomi_Loading)` renderer group. Raw Spine atlas page PNGs are evidence assets only and should not be drawn directly as final character art.
+`UISceneLoading` now has a Godot reference layer in restored startup mode. It maps the recovered full-stretch root and background candidates and renders the original `SkeletonGraphic (kokomi_Loading)` target with a first-pass Spine atlas-region animation. The current implementation imports `kokomi_Loading.atlas.txt`, `kokomi_Loading.skel.bytes`, `kokomi_Loading.png`, and `kokomi_Loading_2.png` from the AssetRipper export, crops named atlas regions, and applies time-driven bone-like offsets for the loading preview. Full `.skel.bytes` timeline playback is still a follow-up; raw atlas page PNGs remain evidence/crop sources only and should not be drawn directly as final character art.
 
 ## Largest UI Prefabs
 
