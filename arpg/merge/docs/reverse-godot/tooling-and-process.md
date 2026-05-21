@@ -731,6 +731,34 @@ T026 note:
 - A byte scan of the remaining `Table_Npc` tail found no direct plain `CustomerTableData` count/string boundary immediately after row 1400.
 - Row 1400 begins a mixed dialog/presentation payload, so the remaining 244 declared dialog rows need a dedicated record parser before later list boundaries can be trusted.
 
+### 2026-05-21 UI Layout Inventory
+
+Command:
+
+```powershell
+python scripts\reverse\extract_ui_layout_inventory.py
+```
+
+Inputs:
+
+- `reverse-output/assets/assetripper-main/ExportedProject/Assets/Resources/prefabs/ui/**/*.prefab`
+- `reverse-output/assets/assetripper-main/ExportedProject/Assets/Scenes/*.unity`
+
+Outputs:
+
+- `reverse-output/assets/derived/ui_layout/ui_prefab_layout_inventory.csv`
+- `reverse-output/assets/derived/ui_layout/ui_prefab_layout_inventory.json`
+- `reverse-output/assets/derived/ui_layout/startup_ui_candidates.json`
+- `docs/reverse-godot/ui-layout-analysis.md`
+
+Result:
+
+- Scanned 1,137 UI prefab files.
+- Scanned 2 Unity scene files.
+- Indexed 84,034 `RectTransform` records.
+- First high-value boot/layout candidates: `Reload`, `Game`, `UIManager`, `UISceneLoading`, `UIMaidLobbyLoading`, `UIOutGame`, `UIInGame`.
+- CanvasScaler reference resolution is still unconfirmed and requires runtime/code follow-up.
+
 ```powershell
 .\run-godot.bat --headless --quit-after 1
 .\tools\Godot\Godot_console.exe --headless --path .\godot-project --quit-after 2

@@ -68,6 +68,8 @@ Status values:
 | Customer episodes | confirmed | `Table_CustomerEpisode`, `CustomerEpisodeData`, `CustomerLikeLevelData` | `CustomerEpisodeModel` |
 | NPC dialog | confirmed | `InGameNpcDialog` with multilingual text and audio fields | `DialogCatalog`, `DialogRunner` |
 | Spine animation | candidate | `spine-csharp`, `spine-unity` assemblies | Spine runtime or conversion |
+| Static UI layout | confirmed | 1,137 UI prefabs and 84,034 `RectTransform` records from AssetRipper export | `UiLayoutReference`, Godot scene templates |
+| Startup UI flow | candidate | `Reload` scene, `Game` scene, `UIManager`, `UISceneLoading`, `UIMaidLobbyLoading`, `UIOutGame` prefabs | `BootFlow`, loading/lobby screens |
 | UI particles | confirmed dependency | `Coffee.UIParticle` | Godot particles or simplified FX |
 | Soft masks | confirmed dependency | `Coffee.SoftMaskForUGUI` | Godot clipping/masks |
 | Toony materials | confirmed dependency | `ToonyColorsPro.Runtime` | Godot materials/shaders |
