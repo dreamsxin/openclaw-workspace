@@ -1,15 +1,9 @@
 class_name SceneLoadingReferenceScreen
 extends Control
 
-const LOADING_ASSET_DIR := "res://assets/loading/"
-
 var source: Dictionary = {}
 var progress := 0.0
 var message := "Scene loading..."
-var character_texture: Texture2D
-
-func _ready() -> void:
-	character_texture = load(LOADING_ASSET_DIR + "kokomi_Loading.png")
 
 func set_source(next_source: Dictionary) -> void:
 	source = next_source
@@ -52,11 +46,15 @@ func _draw_character(screen_rect: Rect2) -> void:
 		screen_rect.position + Vector2(screen_rect.size.x * 0.12, screen_rect.size.y * 0.2),
 		Vector2(screen_rect.size.x * 0.76, screen_rect.size.y * 0.58)
 	)
-	if character_texture != null:
-		draw_texture_rect(character_texture, target, false)
-	else:
-		draw_rect(target, Color(0.88, 0.72, 0.56, 0.72), true)
-		draw_string(ThemeDB.fallback_font, target.position + Vector2(0, target.size.y * 0.5), "Spine loading character", HORIZONTAL_ALIGNMENT_CENTER, target.size.x, 22, Color(0.1, 0.08, 0.06, 1.0))
+	draw_rect(target, Color(0.12, 0.16, 0.18, 0.64), true)
+	draw_rect(target, Color(0.7, 0.88, 0.94, 0.72), false, 2.0)
+	var center := target.position + target.size * 0.5
+	draw_circle(center + Vector2(0, -target.size.y * 0.18), target.size.x * 0.09, Color(0.7, 0.88, 0.94, 0.42))
+	draw_line(center + Vector2(0, -target.size.y * 0.08), center + Vector2(0, target.size.y * 0.2), Color(0.7, 0.88, 0.94, 0.72), 4.0)
+	draw_line(center + Vector2(0, target.size.y * 0.02), center + Vector2(-target.size.x * 0.16, target.size.y * 0.12), Color(0.7, 0.88, 0.94, 0.72), 3.0)
+	draw_line(center + Vector2(0, target.size.y * 0.02), center + Vector2(target.size.x * 0.16, target.size.y * 0.12), Color(0.7, 0.88, 0.94, 0.72), 3.0)
+	draw_string(ThemeDB.fallback_font, target.position + Vector2(0, target.size.y * 0.72), "Spine renderer pending", HORIZONTAL_ALIGNMENT_CENTER, target.size.x, 22, Color(1, 1, 1, 0.86))
+	draw_string(ThemeDB.fallback_font, target.position + Vector2(0, target.size.y * 0.8), "SkeletonGraphic (kokomi_Loading)", HORIZONTAL_ALIGNMENT_CENTER, target.size.x, 16, Color(0.82, 0.92, 0.96, 0.78))
 
 func _draw_progress(screen_rect: Rect2) -> void:
 	var bar_rect := Rect2(

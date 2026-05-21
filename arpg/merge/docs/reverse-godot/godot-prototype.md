@@ -131,7 +131,7 @@ The selector shows the source RectTransform count and writes the reference resol
 
 The loading-screen reference layer is shown by default on startup, and the left-side `Loading Ref` button toggles it. `run-game.bat` starts the project in restored startup mode, passes `--restored-startup`, and displays the startup flow full-window in a portrait-oriented 540 x 960 window. Restored startup mode now advances through `UILoading`, then `UISceneLoading`, then enters the current playable prototype.
 
-`UILoading` uses the recovered RectTransforms for the 1080 x 1920 root, background layers, logo area, loading bar, and version-label corners. `UISceneLoading` uses the recovered root/background structure plus `kokomi_Loading.png` as a static fallback for the original Spine loading character. Spine renderer behavior is still represented by static PNG fallbacks until a Spine path is implemented.
+`UILoading` uses the recovered RectTransforms for the 1080 x 1920 root, background layers, logo area, loading bar, and version-label corners. `UISceneLoading` uses the recovered root/background structure and marks the original `SkeletonGraphic (kokomi_Loading)` area with an explicit Spine-renderer placeholder. Raw Spine atlas pages are not drawn as final character art.
 
 Imported character PNGs require Godot import metadata. Regenerate it after adding new copied character images with:
 
