@@ -1525,6 +1525,36 @@ Follow-up:
 - Parse the exact `UIPopup_Inventory` RectTransforms into a dedicated reference data file instead of using the current structural two-column approximation.
 - Implement persistent `InvenDataManager` slot data and map it to `BlockSlotData` and `ProduceBlockSlotData` before adding drag-out/put-in behavior.
 
+## 2026-05-21 - UIInGame Bottom Operation Bar Rebuild
+
+Inputs:
+- `reverse-output/assets/assetripper-main/ExportedProject/Assets/Resources/prefabs/ui/uiroot/UIInGame.prefab`
+- `godot-project/scripts/ingame_reference_shell.gd`
+- `godot-project/scripts/main.gd`
+
+Commands:
+```powershell
+rg -n "Btn_BoxOpen|Btn_Use|Btn_CoolTime|Btn_BoxOpenGold|Btn_Cash|Crafting_Group|Bottom|UIBlockInfo|UIInventory|Lobby" .\reverse-output\assets\assetripper-main -g "UIInGame.prefab" -S
+.\tools\Godot\Godot_console.exe --headless --path .\godot-project --quit-after 18 -- --restored-startup --auto-enter-ingame
+.\capture-gameplay.bat
+```
+
+Findings:
+- AssetRipper `UIInGame.prefab` records `Bottom/UIInventory` and `Bottom/Lobby` as 150 x 150 side controls.
+- `Bottom/UIBlockInfo` is recorded as a 160-high central operation strip with `size_delta.x = -400`, placing it between the side controls.
+- The operation grid contains inactive-state button variants for `Btn_CoolTime`, `Btn_BoxOpen`, `Btn_Use`, `Btn_BoxOpenGold`, `Btn_Cash`, ad buttons, and crafting groups. The first Godot pass maps `Btn_BoxOpen` to the existing Produce behavior and visualizes `Btn_Use`/`Btn_CoolTime` as recovered operation slots.
+- The general RectTransform converter collapses `Bottom` because the original uses a zero-height bottom anchor group; `InGameReferenceShell` now has a dedicated bottom operation layout using the recovered 150/160/100 dimensions.
+- `capture-gameplay.bat` now auto-selects the initial producer before capturing `10-ingame.png` so the regression frame covers the selected-block operation state.
+
+Outputs:
+- `godot-project/scripts/ingame_reference_shell.gd`
+- `godot-project/scripts/main.gd`
+- `reverse-output/gameplay-captures/10-ingame.png`
+
+Follow-up:
+- Map the real button sprites and localized labels for `Btn_BoxOpen`, `Btn_Use`, `Btn_CoolTime`, premium open, cash, ad, and crafting variants.
+- Confirm from native runtime code which button variant is shown for each block type, cooldown state, bubble, fabricate/crafting state, and item-use state.
+
 Recommended next runs:
 
 1. Run Il2CppDumper or Cpp2IL on `libil2cpp.so` and `global-metadata.dat`.

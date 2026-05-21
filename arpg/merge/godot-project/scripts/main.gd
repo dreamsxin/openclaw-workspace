@@ -745,15 +745,37 @@ func _enter_gameplay_from_out_game() -> void:
 
 func _auto_enter_gameplay_after_capture() -> void:
 	await RenderingServer.frame_post_draw
-	_enter_gameplay_from_out_game()
+	_enter_gameplay_from_out_game_without_capture()
+	_select_first_producer_for_capture()
+	await RenderingServer.frame_post_draw
+	_maybe_capture_ingame_frame()
 	await RenderingServer.frame_post_draw
 	_show_inventory_popup()
+
+func _enter_gameplay_from_out_game_without_capture() -> void:
+	out_game_reference_visible = false
+	_apply_out_game_reference_visibility()
+	_set_gameplay_visible(true)
+	_apply_gameplay_layout()
+	_set_status("Entered recovered merge gameplay from UIOutGame/InGameBtn.")
 
 func _return_to_out_game_from_ingame() -> void:
 	_hide_inventory_popup()
 	_set_gameplay_visible(false)
 	_show_out_game_reference()
 	_set_status("Returned to UIOutGame from UIInGame/Bottom/Lobby.")
+
+func _select_first_producer_for_capture() -> void:
+	for y in range(board.height):
+		for x in range(board.width):
+			var block_id := board.get_block(x, y)
+			if block_id.is_empty():
+				continue
+			if not catalog.get_produce_rule(block_id).is_empty():
+				selected_cell = Vector2i(x, y)
+				_refresh_selection()
+				_set_status("Auto-selected recovered producer for UIInGame operation capture.")
+				return
 
 func _toggle_inventory_popup() -> void:
 	if inventory_popup_visible:

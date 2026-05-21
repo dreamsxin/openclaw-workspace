@@ -12,6 +12,9 @@ const WALLET_ICONS := {
 	"gold": SPRITE_DIR + "CURRENCY_GOLD.png",
 	"jewel": SPRITE_DIR + "CURRENCY_JEWEL.png",
 }
+const ORIGINAL_BOTTOM_SIDE_BUTTON := 150.0
+const ORIGINAL_BOTTOM_INFO_HEIGHT := 160.0
+const ORIGINAL_BOTTOM_ACTION_BUTTON := 100.0
 
 var source: Dictionary = {}
 var wallet: Dictionary = {}
@@ -72,14 +75,8 @@ func _draw() -> void:
 	var screen_rect := Rect2(origin, viewport_size)
 	_draw_game_backdrop(screen_rect)
 	_draw_recovered_panel("Request", Color(0.12, 0.16, 0.17, 0.24), Color(0.74, 0.84, 0.78, 0.34), reference_size, scale_factor, origin)
-	_draw_recovered_panel("Bottom/UIBlockInfo/Bg", Color(0.13, 0.1, 0.08, 0.46), Color(0.95, 0.78, 0.48, 0.56), reference_size, scale_factor, origin)
-	_draw_recovered_panel("Bottom/UIInventory/Btn_Inven", Color(0.16, 0.13, 0.1, 0.48), Color(0.95, 0.8, 0.52, 0.58), reference_size, scale_factor, origin)
-	_draw_recovered_panel("Bottom/Lobby", Color(0.16, 0.13, 0.1, 0.48), Color(0.95, 0.8, 0.52, 0.58), reference_size, scale_factor, origin)
 	_draw_top_wallet(screen_rect)
-	_draw_selected_block_info(screen_rect)
-	_draw_action_button("produce", "Produce")
-	_draw_action_button("out_game", "Cafe")
-	_draw_action_button("inventory", "Bag")
+	_draw_bottom_operation_bar(screen_rect)
 
 func _draw_fallback_shell() -> void:
 	var top_rect := Rect2(Vector2(0, 0), Vector2(size.x, 86))
@@ -133,6 +130,18 @@ func _draw_recovered_panel(suffix: String, fill: Color, stroke: Color, reference
 		draw_rect(rect, fill, true)
 	draw_rect(rect, stroke, false, 1.5)
 
+func _draw_bottom_operation_bar(screen_rect: Rect2) -> void:
+	var layout := _operation_layout(screen_rect)
+	var bar_rect: Rect2 = layout.get("bar", Rect2())
+	if bar_rect.size == Vector2.ZERO:
+		return
+	draw_rect(bar_rect, Color(0.11, 0.075, 0.045, 0.9), true)
+	draw_rect(bar_rect, Color(0.78, 0.58, 0.34, 0.5), false, 1.5)
+	_draw_selected_block_info(screen_rect)
+	_draw_side_action_button("inventory", "Bag", layout.get("inventory", Rect2()))
+	_draw_side_action_button("out_game", "Cafe", layout.get("out_game", Rect2()))
+	_draw_block_operation_buttons(layout)
+
 func _draw_selected_block_info(screen_rect: Rect2) -> void:
 	var info_rect: Rect2 = action_regions.get("block_info", Rect2())
 	if info_rect.size == Vector2.ZERO:
@@ -140,6 +149,7 @@ func _draw_selected_block_info(screen_rect: Rect2) -> void:
 	draw_rect(info_rect, Color(0.04, 0.045, 0.045, 0.72), true)
 	draw_rect(info_rect, Color(0.9, 0.72, 0.45, 0.4), false, 1.2)
 	var label: String = "Select a block"
+	var icon_rect := Rect2(info_rect.position + Vector2(10, 12), Vector2(minf(52.0, info_rect.size.y - 24.0), minf(52.0, info_rect.size.y - 24.0)))
 	if not selected.is_empty():
 		label = "%s  L%s\nEnergy %s/%s%s" % [
 			selected.get("name", selected.get("id", "")),
@@ -148,16 +158,59 @@ func _draw_selected_block_info(screen_rect: Rect2) -> void:
 			selected.get("max_energy", 0),
 			"  Producer" if bool(selected.get("has_produce", false)) else "",
 		]
-	draw_multiline_string(ThemeDB.fallback_font, info_rect.position + Vector2(14, 26), label, HORIZONTAL_ALIGNMENT_LEFT, info_rect.size.x - 28, 17, 3, Color(1, 0.93, 0.75, 0.96))
+		var texture: Texture2D = load(String(selected.get("sprite", "")))
+		if texture != null:
+			draw_texture_rect(texture, icon_rect, false, Color(1, 1, 1, 0.96))
+		else:
+			draw_rect(icon_rect, Color(0.25, 0.2, 0.14, 0.92), true)
+	else:
+		draw_rect(icon_rect, Color(0.2, 0.16, 0.11, 0.74), true)
+		draw_string(ThemeDB.fallback_font, icon_rect.position + Vector2(0, icon_rect.size.y * 0.55 + 5), "?", HORIZONTAL_ALIGNMENT_CENTER, icon_rect.size.x, 18, Color(0.85, 0.76, 0.58, 0.8))
+	var text_left := icon_rect.end.x + 8.0
+	var text_width := maxf(0.0, info_rect.size.x - (text_left - info_rect.position.x) - 170.0)
+	draw_multiline_string(ThemeDB.fallback_font, Vector2(text_left, info_rect.position.y + 24), label, HORIZONTAL_ALIGNMENT_LEFT, text_width, 15, 3, Color(1, 0.93, 0.75, 0.96))
 
-func _draw_action_button(action: String, label: String) -> void:
-	var rect: Rect2 = action_regions.get(action, Rect2())
+func _draw_side_action_button(action: String, label: String, rect: Rect2) -> void:
 	if rect.size == Vector2.ZERO:
 		return
 	var hover: bool = rect.has_point(get_local_mouse_position())
 	draw_rect(rect, Color(0.22, 0.17, 0.1, 0.92) if hover else Color(0.12, 0.1, 0.08, 0.82), true)
 	draw_rect(rect, Color(1.0, 0.82, 0.48, 0.92) if hover else Color(0.92, 0.73, 0.42, 0.7), false, 2.0 if hover else 1.4)
-	draw_string(ThemeDB.fallback_font, rect.position + Vector2(0, rect.size.y * 0.5 + 6), label, HORIZONTAL_ALIGNMENT_CENTER, rect.size.x, 16, Color(1, 0.94, 0.78, 0.98))
+	var icon_center := rect.position + Vector2(rect.size.x * 0.5, rect.size.y * 0.42)
+	draw_circle(icon_center, minf(rect.size.x, rect.size.y) * 0.2, Color(0.82, 0.62, 0.34, 0.85))
+	draw_string(ThemeDB.fallback_font, rect.position + Vector2(0, rect.size.y - 15), label, HORIZONTAL_ALIGNMENT_CENTER, rect.size.x, 13, Color(1, 0.94, 0.78, 0.98))
+
+func _draw_block_operation_buttons(layout: Dictionary) -> void:
+	var button_specs := [
+		{"key": "produce", "label": "Open", "enabled": bool(selected.get("has_produce", false))},
+		{"key": "use", "label": "Use", "enabled": not selected.is_empty()},
+		{"key": "cool_time", "label": "Time", "enabled": bool(selected.get("has_produce", false))},
+	]
+	for spec in button_specs:
+		var rect: Rect2 = layout.get(String(spec["key"]), Rect2())
+		if rect.size == Vector2.ZERO:
+			continue
+		var enabled := bool(spec["enabled"])
+		var hover := enabled and rect.has_point(get_local_mouse_position())
+		var fill := Color(0.26, 0.18, 0.09, 0.96) if enabled else Color(0.08, 0.075, 0.065, 0.74)
+		var stroke := Color(1.0, 0.8, 0.42, 0.96) if hover else Color(0.72, 0.55, 0.32, 0.62)
+		draw_rect(rect, fill, true)
+		draw_rect(rect, stroke, false, 1.4)
+		var icon_color := Color(1.0, 0.77, 0.34, 0.92) if enabled else Color(0.42, 0.36, 0.28, 0.72)
+		draw_circle(rect.position + Vector2(rect.size.x * 0.5, rect.size.y * 0.38), rect.size.x * 0.18, icon_color)
+		draw_string(ThemeDB.fallback_font, rect.position + Vector2(0, rect.size.y - 8), String(spec["label"]), HORIZONTAL_ALIGNMENT_CENTER, rect.size.x, 10, Color(1, 0.9, 0.7, 0.92) if enabled else Color(0.58, 0.52, 0.44, 0.82))
+
+	var premium_rects := [
+		[layout.get("gold_open", Rect2()), "Gold"],
+		[layout.get("cash", Rect2()), "Cash"],
+	]
+	for item in premium_rects:
+		var rect: Rect2 = item[0]
+		if rect.size == Vector2.ZERO:
+			continue
+		draw_rect(rect, Color(0.09, 0.08, 0.065, 0.72), true)
+		draw_rect(rect, Color(0.52, 0.42, 0.28, 0.52), false, 1.0)
+		draw_string(ThemeDB.fallback_font, rect.position + Vector2(0, rect.size.y * 0.58), String(item[1]), HORIZONTAL_ALIGNMENT_CENTER, rect.size.x, 9, Color(0.62, 0.55, 0.43, 0.84))
 
 func _reference_size() -> Vector2:
 	var resolution: Dictionary = source.get("reference_resolution", {})
@@ -239,24 +292,54 @@ func _rebuild_action_regions() -> void:
 	var scale_factor: float = minf(size.x / reference_size.x, size.y / reference_size.y)
 	var viewport_size: Vector2 = reference_size * scale_factor
 	var origin: Vector2 = (size - viewport_size) * 0.5
-	action_regions["out_game"] = _largest_rect([
-		_to_preview_rect_world(_rect_by_suffix("Bottom/Lobby/GoToOutGame"), reference_size, scale_factor, origin),
-		_to_preview_rect_world(_rect_by_suffix("Bottom/Lobby"), reference_size, scale_factor, origin),
-	])
-	action_regions["inventory"] = _largest_rect([
-		_to_preview_rect_world(_rect_by_suffix("Bottom/UIInventory/Btn_Inven"), reference_size, scale_factor, origin),
-		_to_preview_rect_world(_rect_by_suffix("Bottom/UIInventory/Btn_Inven/BG"), reference_size, scale_factor, origin),
-	])
-	action_regions["block_info"] = _to_preview_rect_world(_rect_by_suffix("Bottom/UIBlockInfo/Bg"), reference_size, scale_factor, origin)
-	var produce_candidate: Rect2 = _largest_rect([
-		_to_preview_rect_world(_rect_by_suffix("Bottom/UIBlockInfo/Bg/Grid/Btn_BoxOpen/BG"), reference_size, scale_factor, origin),
-		_to_preview_rect_world(_rect_by_suffix("Bottom/UIBlockInfo/Bg/Grid/Btn_Use/BG"), reference_size, scale_factor, origin),
-		_to_preview_rect_world(_rect_by_suffix("Bottom/UIBlockInfo/Bg/Grid/Btn_CoolTime/BG"), reference_size, scale_factor, origin),
-	])
-	if produce_candidate.size == Vector2.ZERO:
-		var block_info: Rect2 = action_regions.get("block_info", Rect2())
-		produce_candidate = Rect2(block_info.end - Vector2(148, 48), Vector2(128, 38))
-	action_regions["produce"] = produce_candidate
+	var layout := _operation_layout(Rect2(origin, viewport_size))
+	action_regions["out_game"] = layout.get("out_game", Rect2())
+	action_regions["inventory"] = layout.get("inventory", Rect2())
+	action_regions["block_info"] = layout.get("block_info", Rect2())
+	action_regions["produce"] = layout.get("produce", Rect2())
+
+func _operation_layout(screen_rect: Rect2) -> Dictionary:
+	var scale_factor := screen_rect.size.x / 1080.0
+	var side_size := clampf(ORIGINAL_BOTTOM_SIDE_BUTTON * scale_factor, 72.0, 92.0)
+	var info_height := clampf(ORIGINAL_BOTTOM_INFO_HEIGHT * scale_factor, 78.0, 104.0)
+	var action_size := clampf(ORIGINAL_BOTTOM_ACTION_BUTTON * scale_factor, 42.0, 56.0)
+	var margin_x := maxf(10.0, 20.0 * scale_factor)
+	var bottom_margin := maxf(18.0, 32.0 * scale_factor)
+	var bar_height := maxf(info_height + 34.0, side_size + 32.0)
+	var bar_rect := Rect2(
+		Vector2(screen_rect.position.x + margin_x, screen_rect.end.y - bar_height - bottom_margin),
+		Vector2(screen_rect.size.x - margin_x * 2.0, bar_height)
+	)
+	var inventory_rect := Rect2(
+		bar_rect.position + Vector2(10.0, (bar_rect.size.y - side_size) * 0.5),
+		Vector2(side_size, side_size)
+	)
+	var out_game_rect := Rect2(
+		Vector2(bar_rect.end.x - side_size - 10.0, inventory_rect.position.y),
+		Vector2(side_size, side_size)
+	)
+	var block_info_rect := Rect2(
+		Vector2(inventory_rect.end.x + 10.0, bar_rect.position.y + (bar_rect.size.y - info_height) * 0.5),
+		Vector2(maxf(80.0, out_game_rect.position.x - inventory_rect.end.x - 20.0), info_height)
+	)
+	var action_gap := maxf(4.0, 8.0 * scale_factor)
+	var action_y := block_info_rect.position.y + (block_info_rect.size.y - action_size) * 0.5
+	var right_x := block_info_rect.end.x - action_size - 8.0
+	var produce_rect := Rect2(Vector2(right_x - (action_size + action_gap) * 2.0, action_y), Vector2(action_size, action_size))
+	var use_rect := Rect2(Vector2(right_x - (action_size + action_gap), action_y), Vector2(action_size, action_size))
+	var cool_rect := Rect2(Vector2(right_x, action_y), Vector2(action_size, action_size))
+	var mini_size := maxf(28.0, action_size * 0.58)
+	return {
+		"bar": bar_rect,
+		"inventory": inventory_rect,
+		"out_game": out_game_rect,
+		"block_info": block_info_rect,
+		"produce": produce_rect,
+		"use": use_rect,
+		"cool_time": cool_rect,
+		"gold_open": Rect2(produce_rect.position + Vector2(0.0, -mini_size - 5.0), Vector2(mini_size, mini_size)),
+		"cash": Rect2(use_rect.position + Vector2(0.0, -mini_size - 5.0), Vector2(mini_size, mini_size)),
+	}
 
 func _largest_rect(rects: Array) -> Rect2:
 	var best := Rect2()
