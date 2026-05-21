@@ -280,6 +280,7 @@ func _build_character_panel() -> void:
 	title.position = Vector2(995, 92)
 	title.add_theme_font_size_override("font_size", 24)
 	gameplay_root.add_child(title)
+	portrait_hidden_controls.append(title)
 
 	character_mode_button = _make_button("Maids", Vector2(995, 132))
 	character_mode_button.size = Vector2(122, 36)
@@ -287,6 +288,7 @@ func _build_character_panel() -> void:
 		_toggle_character_mode()
 	)
 	gameplay_root.add_child(character_mode_button)
+	portrait_hidden_controls.append(character_mode_button)
 
 	var prev_button := _make_button("<", Vector2(1126, 132))
 	prev_button.size = Vector2(48, 36)
@@ -294,6 +296,7 @@ func _build_character_panel() -> void:
 		_step_character(-1)
 	)
 	gameplay_root.add_child(prev_button)
+	portrait_hidden_controls.append(prev_button)
 
 	var next_button := _make_button(">", Vector2(1184, 132))
 	next_button.size = Vector2(48, 36)
@@ -301,6 +304,7 @@ func _build_character_panel() -> void:
 		_step_character(1)
 	)
 	gameplay_root.add_child(next_button)
+	portrait_hidden_controls.append(next_button)
 
 	character_image = TextureRect.new()
 	character_image.position = Vector2(1010, 182)
@@ -308,6 +312,7 @@ func _build_character_panel() -> void:
 	character_image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	character_image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	gameplay_root.add_child(character_image)
+	portrait_hidden_controls.append(character_image)
 
 	character_image_status_label = Label.new()
 	character_image_status_label.position = Vector2(1010, 270)
@@ -317,12 +322,14 @@ func _build_character_panel() -> void:
 	character_image_status_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	character_image_status_label.add_theme_font_size_override("font_size", 14)
 	gameplay_root.add_child(character_image_status_label)
+	portrait_hidden_controls.append(character_image_status_label)
 
 	character_title_label = Label.new()
 	character_title_label.position = Vector2(995, 406)
 	character_title_label.size = Vector2(240, 32)
 	character_title_label.add_theme_font_size_override("font_size", 20)
 	gameplay_root.add_child(character_title_label)
+	portrait_hidden_controls.append(character_title_label)
 
 	character_meta_label = Label.new()
 	character_meta_label.position = Vector2(995, 442)
@@ -330,6 +337,7 @@ func _build_character_panel() -> void:
 	character_meta_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	character_meta_label.add_theme_font_size_override("font_size", 14)
 	gameplay_root.add_child(character_meta_label)
+	portrait_hidden_controls.append(character_meta_label)
 
 	character_detail_label = Label.new()
 	character_detail_label.position = Vector2(995, 536)
@@ -337,6 +345,7 @@ func _build_character_panel() -> void:
 	character_detail_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	character_detail_label.add_theme_font_size_override("font_size", 14)
 	gameplay_root.add_child(character_detail_label)
+	portrait_hidden_controls.append(character_detail_label)
 
 func _build_ui_layout_panel() -> void:
 	ui_layout_title_label = Label.new()
@@ -344,6 +353,7 @@ func _build_ui_layout_panel() -> void:
 	ui_layout_title_label.position = Vector2(995, 24)
 	ui_layout_title_label.add_theme_font_size_override("font_size", 18)
 	gameplay_root.add_child(ui_layout_title_label)
+	portrait_hidden_controls.append(ui_layout_title_label)
 
 	var next_button := _make_button("Next UI", Vector2(995, 52))
 	next_button.size = Vector2(104, 32)
@@ -355,6 +365,7 @@ func _build_ui_layout_panel() -> void:
 		_refresh_ui_layout_panel(true)
 	)
 	gameplay_root.add_child(next_button)
+	portrait_hidden_controls.append(next_button)
 
 	ui_layout_meta_label = Label.new()
 	ui_layout_meta_label.position = Vector2(1108, 52)
@@ -362,12 +373,14 @@ func _build_ui_layout_panel() -> void:
 	ui_layout_meta_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	ui_layout_meta_label.add_theme_font_size_override("font_size", 12)
 	gameplay_root.add_child(ui_layout_meta_label)
+	portrait_hidden_controls.append(ui_layout_meta_label)
 
 	ui_layout_preview = UILayoutReferencePreviewScript.new()
 	ui_layout_preview.position = Vector2(742, 92)
 	ui_layout_preview.size = Vector2(230, 408)
 	ui_layout_preview.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	gameplay_root.add_child(ui_layout_preview)
+	portrait_hidden_controls.append(ui_layout_preview)
 
 func _build_loading_reference_screen() -> void:
 	loading_reference_screen = LoadingReferenceScreenScript.new()
@@ -557,8 +570,8 @@ func _apply_gameplay_layout() -> void:
 		pitch = cell_size + cell_gap
 		var board_size := Vector2(board.width * cell_size + maxf(0, board.width - 1) * cell_gap, board.height * cell_size + maxf(0, board.height - 1) * cell_gap)
 		board_origin = Vector2((viewport_size.x - board_size.x) * 0.5, 170)
-		_layout_control(selected_label, Vector2(PORTRAIT_BOARD_MARGIN, 670), Vector2(viewport_size.x - PORTRAIT_BOARD_MARGIN * 2.0, 54), 14)
-		_layout_control(status_label, Vector2(PORTRAIT_BOARD_MARGIN, 726), Vector2(viewport_size.x - PORTRAIT_BOARD_MARGIN * 2.0, 54), 14)
+		_layout_control(selected_label, Vector2(PORTRAIT_BOARD_MARGIN, 696), Vector2(viewport_size.x - PORTRAIT_BOARD_MARGIN * 2.0, 48), 14)
+		_layout_control(status_label, Vector2(PORTRAIT_BOARD_MARGIN, 746), Vector2(viewport_size.x - PORTRAIT_BOARD_MARGIN * 2.0, 44), 14)
 		_layout_control(produce_button, Vector2(PORTRAIT_BOARD_MARGIN, 790), Vector2(150, 40), 0)
 		if produce_button != null:
 			produce_button.visible = false

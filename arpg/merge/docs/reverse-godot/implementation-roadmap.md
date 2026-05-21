@@ -228,6 +228,7 @@ Success criteria:
 | T036 | Add restored UIInGame shell for portrait gameplay | done | `InGameReferenceShell` draws recovered `UIInGame` top/request/bottom regions; `run-game.bat` portrait gameplay now centers the 7x7 board and hides desktop debug panels |
 | T037 | Wire first UIInGame action regions | done | `InGameReferenceShell` exposes recovered bottom action hit regions; Produce reuses current producer logic, Bag reports pending inventory restore, and Cafe returns to `UIOutGame` |
 | T038 | Add gameplay capture and portrait action polish | done | `capture-gameplay.bat` records startup plus `05-ingame.png`; portrait `run-game.bat` now hides the legacy debug Produce button so bottom actions are driven by recovered `UIInGame` hit regions |
+| T039 | Add first real out-game character stand-in and clean portrait shell | done | `UIOutGame` now draws a committed full SD maid PNG stand-in instead of only a sketch placeholder; portrait `UIInGame` hides remaining desktop reference controls and uses committed background/currency sprites in its shell |
 
 ## Tool Acquisition Options
 

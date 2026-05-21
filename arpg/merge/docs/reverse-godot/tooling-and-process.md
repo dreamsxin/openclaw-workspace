@@ -1322,6 +1322,31 @@ Findings:
 Fix:
 - `run-game.bat` now runs a headless Godot import before launching the restored startup flow, using `tools/Godot/Godot_console.exe` when available.
 
+## 2026-05-21 - OutGame Stand-in and Portrait Shell Cleanup
+
+Inputs:
+- `godot-project/scripts/out_game_reference_screen.gd`
+- `godot-project/scripts/ingame_reference_shell.gd`
+- `godot-project/scripts/main.gd`
+- `godot-project/assets/characters/maid_costume/Cos_Maid01_Casual_SD.png`
+- `godot-project/assets/sprites/BG_gameboard2.png`
+
+Commands:
+```powershell
+.\tools\Godot\Godot_console.exe --path .\godot-project --headless --quit-after 6 -- --restored-startup --auto-enter-ingame
+.\capture-gameplay.bat
+```
+
+Findings:
+- Most recovered maid LD/SD PNGs are Spine atlas pages with disassembled body parts and should not be drawn as complete static portraits.
+- `Cos_Maid01_Casual_SD.png` is a complete SD character PNG and is safe as a temporary `UIOutGame` stand-in until the reusable Spine renderer is available.
+- The portrait gameplay capture still exposed desktop reference controls; these are now hidden through `portrait_hidden_controls`.
+- `05-ingame.png` now shows the portrait gameplay shell without the right-side character/UI reference debug panel.
+
+Follow-up:
+- Replace the SD stand-in with the actual `UIMaidLD` Spine pose after LD skeleton baking/rendering is reusable.
+- Continue mapping original `UIInGame` textures so bottom panels/buttons can replace structural color rectangles.
+
 Recommended next runs:
 
 1. Run Il2CppDumper or Cpp2IL on `libil2cpp.so` and `global-metadata.dat`.

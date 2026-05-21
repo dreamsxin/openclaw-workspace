@@ -5,10 +5,14 @@ signal ingame_requested
 signal maid_lobby_requested
 signal interaction_requested
 
+const OUT_GAME_MAID_STANDIN := "res://assets/characters/maid_costume/Cos_Maid01_Casual_SD.png"
+
 var source: Dictionary = {}
 var action_regions: Dictionary = {}
+var maid_standin_texture: Texture2D
 
 func _ready() -> void:
+	maid_standin_texture = load(OUT_GAME_MAID_STANDIN)
 	set_process(true)
 
 func _process(_delta: float) -> void:
@@ -82,13 +86,23 @@ func _draw_maid_layer(reference_size: Vector2, scale_factor: float, origin: Vect
 		Vector2(spine_pos.position.x - screen_rect.size.x * 0.18, screen_rect.position.y + screen_rect.size.y * 0.17),
 		Vector2(screen_rect.size.x * 0.58, screen_rect.size.y * 0.62)
 	)
-	var body_color := Color(0.92, 0.76, 0.84, 0.56)
-	var outline := Color(0.98, 0.9, 0.94, 0.72)
-	draw_circle(maid_rect.get_center() + Vector2(0, -maid_rect.size.y * 0.22), maid_rect.size.x * 0.17, body_color)
-	draw_line(maid_rect.get_center() + Vector2(0, -maid_rect.size.y * 0.05), maid_rect.get_center() + Vector2(0, maid_rect.size.y * 0.24), outline, 7.0)
-	draw_line(maid_rect.get_center() + Vector2(0, maid_rect.size.y * 0.02), maid_rect.get_center() + Vector2(-maid_rect.size.x * 0.18, maid_rect.size.y * 0.16), outline, 5.0)
-	draw_line(maid_rect.get_center() + Vector2(0, maid_rect.size.y * 0.02), maid_rect.get_center() + Vector2(maid_rect.size.x * 0.18, maid_rect.size.y * 0.16), outline, 5.0)
-	draw_rect(maid_rect, Color(1, 0.92, 0.96, 0.42), false, 1.5)
+	if maid_standin_texture != null:
+		var texture_size := Vector2(maid_standin_texture.get_width(), maid_standin_texture.get_height())
+		var draw_scale: float = minf(maid_rect.size.x / texture_size.x, maid_rect.size.y / texture_size.y)
+		var draw_size := texture_size * draw_scale
+		var draw_rect := Rect2(
+			Vector2(maid_rect.get_center().x - draw_size.x * 0.5, maid_rect.end.y - draw_size.y),
+			draw_size
+		)
+		draw_texture_rect(maid_standin_texture, draw_rect, false, Color(1, 1, 1, 0.98))
+	else:
+		var body_color := Color(0.92, 0.76, 0.84, 0.56)
+		var outline := Color(0.98, 0.9, 0.94, 0.72)
+		draw_circle(maid_rect.get_center() + Vector2(0, -maid_rect.size.y * 0.22), maid_rect.size.x * 0.17, body_color)
+		draw_line(maid_rect.get_center() + Vector2(0, -maid_rect.size.y * 0.05), maid_rect.get_center() + Vector2(0, maid_rect.size.y * 0.24), outline, 7.0)
+		draw_line(maid_rect.get_center() + Vector2(0, maid_rect.size.y * 0.02), maid_rect.get_center() + Vector2(-maid_rect.size.x * 0.18, maid_rect.size.y * 0.16), outline, 5.0)
+		draw_line(maid_rect.get_center() + Vector2(0, maid_rect.size.y * 0.02), maid_rect.get_center() + Vector2(maid_rect.size.x * 0.18, maid_rect.size.y * 0.16), outline, 5.0)
+		draw_rect(maid_rect, Color(1, 0.92, 0.96, 0.42), false, 1.5)
 
 	var dialog_rect := _to_preview_rect_world(_rect_by_suffix("Npc_Dialog"), reference_size, scale_factor, origin)
 	if dialog_rect.size == Vector2.ZERO:

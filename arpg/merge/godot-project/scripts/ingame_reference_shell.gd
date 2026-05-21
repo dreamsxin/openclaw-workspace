@@ -5,12 +5,25 @@ signal produce_requested
 signal out_game_requested
 signal inventory_requested
 
+const SPRITE_DIR := "res://assets/sprites/"
+const BACKDROP_TEXTURE_PATH := SPRITE_DIR + "BG_gameboard2.png"
+const WALLET_ICONS := {
+	"ap": SPRITE_DIR + "CURRENCY_AP.png",
+	"gold": SPRITE_DIR + "CURRENCY_GOLD.png",
+	"jewel": SPRITE_DIR + "CURRENCY_JEWEL.png",
+}
+
 var source: Dictionary = {}
 var wallet: Dictionary = {}
 var selected: Dictionary = {}
 var action_regions: Dictionary = {}
+var backdrop_texture: Texture2D
+var wallet_icon_textures: Dictionary = {}
 
 func _ready() -> void:
+	backdrop_texture = load(BACKDROP_TEXTURE_PATH)
+	for key in WALLET_ICONS.keys():
+		wallet_icon_textures[key] = load(WALLET_ICONS[key])
 	set_process(true)
 
 func _process(_delta: float) -> void:
@@ -48,7 +61,7 @@ func _notification(what: int) -> void:
 		_rebuild_action_regions()
 
 func _draw() -> void:
-	draw_rect(Rect2(Vector2.ZERO, size), Color(0.06, 0.075, 0.075, 0.98), true)
+	draw_rect(Rect2(Vector2.ZERO, size), Color(0.34, 0.22, 0.14, 1.0), true)
 	if source.is_empty():
 		_draw_fallback_shell()
 		return
@@ -58,10 +71,10 @@ func _draw() -> void:
 	var origin := (size - viewport_size) * 0.5
 	var screen_rect := Rect2(origin, viewport_size)
 	_draw_game_backdrop(screen_rect)
-	_draw_recovered_panel("Request", Color(0.12, 0.16, 0.17, 0.66), Color(0.74, 0.84, 0.78, 0.34), reference_size, scale_factor, origin)
-	_draw_recovered_panel("Bottom/UIBlockInfo/Bg", Color(0.13, 0.1, 0.08, 0.78), Color(0.95, 0.78, 0.48, 0.56), reference_size, scale_factor, origin)
-	_draw_recovered_panel("Bottom/UIInventory/Btn_Inven", Color(0.16, 0.13, 0.1, 0.78), Color(0.95, 0.8, 0.52, 0.58), reference_size, scale_factor, origin)
-	_draw_recovered_panel("Bottom/Lobby", Color(0.16, 0.13, 0.1, 0.78), Color(0.95, 0.8, 0.52, 0.58), reference_size, scale_factor, origin)
+	_draw_recovered_panel("Request", Color(0.12, 0.16, 0.17, 0.24), Color(0.74, 0.84, 0.78, 0.34), reference_size, scale_factor, origin)
+	_draw_recovered_panel("Bottom/UIBlockInfo/Bg", Color(0.13, 0.1, 0.08, 0.46), Color(0.95, 0.78, 0.48, 0.56), reference_size, scale_factor, origin)
+	_draw_recovered_panel("Bottom/UIInventory/Btn_Inven", Color(0.16, 0.13, 0.1, 0.48), Color(0.95, 0.8, 0.52, 0.58), reference_size, scale_factor, origin)
+	_draw_recovered_panel("Bottom/Lobby", Color(0.16, 0.13, 0.1, 0.48), Color(0.95, 0.8, 0.52, 0.58), reference_size, scale_factor, origin)
 	_draw_top_wallet(screen_rect)
 	_draw_selected_block_info(screen_rect)
 	_draw_action_button("produce", "Produce")
@@ -76,32 +89,48 @@ func _draw_fallback_shell() -> void:
 	_draw_top_wallet(Rect2(Vector2.ZERO, size))
 
 func _draw_game_backdrop(screen_rect: Rect2) -> void:
-	draw_rect(screen_rect, Color(0.16, 0.22, 0.21, 1.0), true)
-	draw_rect(Rect2(screen_rect.position, Vector2(screen_rect.size.x, screen_rect.size.y * 0.32)), Color(0.28, 0.38, 0.36, 0.52), true)
-	draw_rect(Rect2(screen_rect.position + Vector2(0, screen_rect.size.y * 0.32), Vector2(screen_rect.size.x, screen_rect.size.y * 0.68)), Color(0.22, 0.15, 0.1, 0.58), true)
+	var wall_rect := Rect2(screen_rect.position, Vector2(screen_rect.size.x, screen_rect.size.y * 0.38))
+	var floor_rect := Rect2(screen_rect.position + Vector2(0, screen_rect.size.y * 0.38), Vector2(screen_rect.size.x, screen_rect.size.y * 0.62))
+	if backdrop_texture != null:
+		draw_rect(wall_rect, Color(0.94, 0.82, 0.66, 0.98), true)
+		draw_texture_rect(backdrop_texture, wall_rect, false, Color(1, 1, 1, 0.92))
+		draw_rect(floor_rect, Color(0.62, 0.39, 0.24, 0.98), true)
+	else:
+		draw_rect(wall_rect, Color(0.94, 0.82, 0.66, 0.98), true)
+		draw_rect(floor_rect, Color(0.62, 0.39, 0.24, 0.98), true)
 	for index in range(5):
-		var y := screen_rect.position.y + screen_rect.size.y * (0.36 + float(index) * 0.11)
-		draw_line(Vector2(screen_rect.position.x, y), Vector2(screen_rect.end.x, y + 22.0), Color(0.09, 0.06, 0.04, 0.24), 2.0)
+		var y := floor_rect.position.y + floor_rect.size.y * (float(index) + 1.0) / 6.0
+		draw_line(Vector2(floor_rect.position.x, y), Vector2(floor_rect.end.x, y + 28.0), Color(0.2, 0.11, 0.06, 0.32), 2.0)
+	draw_line(Vector2(screen_rect.position.x, floor_rect.position.y), Vector2(screen_rect.end.x, floor_rect.position.y), Color(0.25, 0.14, 0.07, 0.72), 3.0)
 
 func _draw_top_wallet(screen_rect: Rect2) -> void:
 	var top_rect := Rect2(screen_rect.position + Vector2(12, 12), Vector2(screen_rect.size.x - 24, 52))
-	draw_rect(top_rect, Color(0.04, 0.05, 0.05, 0.72), true)
-	draw_rect(top_rect, Color(0.86, 0.76, 0.52, 0.34), false, 1.5)
+	draw_rect(top_rect, Color(0.04, 0.05, 0.05, 0.82), true)
+	draw_rect(top_rect, Color(0.86, 0.76, 0.52, 0.44), false, 1.5)
 	var labels := [
-		"AP %s" % wallet.get("ap", 0),
-		"G %s" % wallet.get("gold", 0),
-		"J %s" % wallet.get("jewel", 0),
+		["ap", "%s" % wallet.get("ap", 0)],
+		["gold", "%s" % wallet.get("gold", 0)],
+		["jewel", "%s" % wallet.get("jewel", 0)],
 	]
 	var segment_width := top_rect.size.x / 3.0
 	for index in range(labels.size()):
-		var pos := top_rect.position + Vector2(segment_width * index, 33)
-		draw_string(ThemeDB.fallback_font, pos, labels[index], HORIZONTAL_ALIGNMENT_CENTER, segment_width, 18, Color(1, 0.94, 0.76, 0.95))
+		var key: String = labels[index][0]
+		var value: String = labels[index][1]
+		var segment := Rect2(top_rect.position + Vector2(segment_width * index, 0), Vector2(segment_width, top_rect.size.y))
+		var icon: Texture2D = wallet_icon_textures.get(key, null)
+		var text_x := segment.position.x + segment_width * 0.48
+		if icon != null:
+			var icon_size := Vector2(26, 26)
+			var icon_rect := Rect2(Vector2(segment.position.x + segment_width * 0.24 - icon_size.x * 0.5, segment.position.y + 13), icon_size)
+			draw_texture_rect(icon, icon_rect, false, Color(1, 1, 1, 0.96))
+		draw_string(ThemeDB.fallback_font, Vector2(text_x, segment.position.y + 34), value, HORIZONTAL_ALIGNMENT_LEFT, segment_width * 0.45, 18, Color(1, 0.94, 0.76, 0.95))
 
 func _draw_recovered_panel(suffix: String, fill: Color, stroke: Color, reference_size: Vector2, scale_factor: float, origin: Vector2) -> void:
 	var rect := _to_preview_rect_world(_rect_by_suffix(suffix), reference_size, scale_factor, origin)
 	if rect.size == Vector2.ZERO:
 		return
-	draw_rect(rect, fill, true)
+	if rect.size.x * rect.size.y < size.x * size.y * 0.42:
+		draw_rect(rect, fill, true)
 	draw_rect(rect, stroke, false, 1.5)
 
 func _draw_selected_block_info(screen_rect: Rect2) -> void:
