@@ -18,6 +18,32 @@ FOCUS_SOURCES = [
 
 MAX_RECTS_PER_SOURCE = 32
 
+PINNED_NODE_SUFFIXES = {
+    "UILoading": [
+        "UILoading",
+        "Loading_Type/BG_Base",
+        "Loading_Type/BG_Base/BG",
+        "LogoArea/LogoImage",
+        "LoadingBar",
+        "LoadingBar/Fill Area",
+        "LoadingBar/Fill Area/Image",
+        "LoadingBar/Handle Slide Area",
+        "LoadingBar/Handle Slide Area/Handle",
+        "LoadingBar/Text",
+        "Ver",
+        "Ver (1)",
+    ],
+    "UISceneLoading": [
+        "UISceneLoading",
+        "SceneObjects",
+        "SceneObjects/TypeA",
+        "SceneObjects/TypeA/SkeletonGraphic (kokomi_Loading)",
+        "SceneObjects/TypeNormal",
+        "SceneObjects/TypeNormal/BG",
+        "SceneObjects/TypeNormal/SpinePos",
+    ],
+}
+
 
 def _round_value(value):
     if isinstance(value, float):
@@ -83,7 +109,24 @@ def _infer_reference_resolution(source: dict) -> dict:
 
 def _build_reference(source: dict) -> dict:
     rects = sorted(source.get("key_rects", []), key=_rect_score, reverse=True)
-    compact_rects = [_compact_rect(rect) for rect in rects[:MAX_RECTS_PER_SOURCE]]
+    pinned_suffixes = PINNED_NODE_SUFFIXES.get(str(source.get("name", "")), [])
+    pinned_rects = []
+    seen_paths = set()
+    for suffix in pinned_suffixes:
+        for rect in source.get("key_rects", []):
+            node_path = str(rect.get("node_path", ""))
+            if node_path.endswith(suffix) and node_path not in seen_paths:
+                pinned_rects.append(rect)
+                seen_paths.add(node_path)
+    compact_rects = [_compact_rect(rect) for rect in pinned_rects]
+    for rect in rects:
+        node_path = str(rect.get("node_path", ""))
+        if node_path in seen_paths:
+            continue
+        compact_rects.append(_compact_rect(rect))
+        seen_paths.add(node_path)
+        if len(compact_rects) >= MAX_RECTS_PER_SOURCE:
+            break
     layout_kinds: dict[str, int] = {}
     for rect in source.get("key_rects", []):
         kind = str(rect.get("layout_kind", "unknown"))

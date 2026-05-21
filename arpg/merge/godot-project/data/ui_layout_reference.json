@@ -24,6 +24,306 @@
       },
       "key_rects": [
         {
+          "node_path": "UILoading",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchor_max": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 1080.0,
+            "y": 1920.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 7
+        },
+        {
+          "node_path": "UILoading/Loading_Type/BG_Base",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchor_max": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 2048.0,
+            "y": 2048.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 3
+        },
+        {
+          "node_path": "UILoading/Loading_Type/BG_Base/BG",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchor_max": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 2048.0,
+            "y": 2048.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UILoading/LogoArea/LogoImage",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 1.0
+          },
+          "anchor_max": {
+            "x": 0.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 50.0,
+            "y": -24.0
+          },
+          "size_delta": {
+            "x": 512.0,
+            "y": 512.0
+          },
+          "pivot": {
+            "x": 0.0,
+            "y": 1.0
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UILoading/LoadingBar",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.5,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 0.5,
+            "y": 0.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 300.0
+          },
+          "size_delta": {
+            "x": 670.0,
+            "y": 50.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 5
+        },
+        {
+          "node_path": "UILoading/LoadingBar/Fill Area",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 1
+        },
+        {
+          "node_path": "UILoading/LoadingBar/Fill Area/Image",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchor_max": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 665.0,
+            "y": 45.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 23
+        },
+        {
+          "node_path": "UILoading/LoadingBar/Handle Slide Area",
+          "layout_kind": "full_stretch",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 1.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": -26.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 1
+        },
+        {
+          "node_path": "UILoading/LoadingBar/Handle Slide Area/Handle",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchored_position": {
+            "x": -30.0,
+            "y": 57.5
+          },
+          "size_delta": {
+            "x": 100.0,
+            "y": 15.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 1
+        },
+        {
+          "node_path": "UILoading/LoadingBar/Text",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchor_max": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": -79.0
+          },
+          "size_delta": {
+            "x": 1020.32,
+            "y": 60.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UILoading/Ver",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 1.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 1.0,
+            "y": 0.0
+          },
+          "anchored_position": {
+            "x": -30.0,
+            "y": 30.0
+          },
+          "size_delta": {
+            "x": 500.0,
+            "y": 60.0
+          },
+          "pivot": {
+            "x": 1.0,
+            "y": 0.0
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UILoading/Ver (1)",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "anchored_position": {
+            "x": 30.0,
+            "y": 30.0
+          },
+          "size_delta": {
+            "x": 500.0,
+            "y": 60.0
+          },
+          "pivot": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "children_count": 1
+        },
+        {
           "node_path": "UILoading/Btn_ContactUs/Btn_Default/Image",
           "layout_kind": "full_stretch",
           "anchor_min": {
@@ -174,31 +474,6 @@
           "children_count": 1
         },
         {
-          "node_path": "UILoading/LoadingBar/Handle Slide Area",
-          "layout_kind": "full_stretch",
-          "anchor_min": {
-            "x": 0.0,
-            "y": 0.0
-          },
-          "anchor_max": {
-            "x": 1.0,
-            "y": 1.0
-          },
-          "anchored_position": {
-            "x": 0.0,
-            "y": 0.0
-          },
-          "size_delta": {
-            "x": -26.0,
-            "y": 0.0
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          },
-          "children_count": 1
-        },
-        {
           "node_path": "UILoading/Loading_Type/BG_Base/HalloweenBG/White",
           "layout_kind": "full_stretch",
           "anchor_min": {
@@ -299,56 +574,6 @@
           "children_count": 1
         },
         {
-          "node_path": "UILoading/Loading_Type/BG_Base",
-          "layout_kind": "fixed_anchor",
-          "anchor_min": {
-            "x": 0.5,
-            "y": 0.5
-          },
-          "anchor_max": {
-            "x": 0.5,
-            "y": 0.5
-          },
-          "anchored_position": {
-            "x": 0.0,
-            "y": 0.0
-          },
-          "size_delta": {
-            "x": 2048.0,
-            "y": 2048.0
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          },
-          "children_count": 3
-        },
-        {
-          "node_path": "UILoading/Loading_Type/BG_Base/BG",
-          "layout_kind": "fixed_anchor",
-          "anchor_min": {
-            "x": 0.5,
-            "y": 0.5
-          },
-          "anchor_max": {
-            "x": 0.5,
-            "y": 0.5
-          },
-          "anchored_position": {
-            "x": 0.0,
-            "y": 0.0
-          },
-          "size_delta": {
-            "x": 2048.0,
-            "y": 2048.0
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          },
-          "children_count": 0
-        },
-        {
           "node_path": "UILoading/Loading_Type/BG_Base/BG_Event",
           "layout_kind": "fixed_anchor",
           "anchor_min": {
@@ -372,31 +597,6 @@
             "y": 0.5
           },
           "children_count": 0
-        },
-        {
-          "node_path": "UILoading",
-          "layout_kind": "fixed_anchor",
-          "anchor_min": {
-            "x": 0.5,
-            "y": 0.5
-          },
-          "anchor_max": {
-            "x": 0.5,
-            "y": 0.5
-          },
-          "anchored_position": {
-            "x": 0.0,
-            "y": 0.0
-          },
-          "size_delta": {
-            "x": 1080.0,
-            "y": 1920.0
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          },
-          "children_count": 7
         },
         {
           "node_path": "UILoading/LogoArea/Logo_KR",
@@ -524,31 +724,6 @@
           "children_count": 1
         },
         {
-          "node_path": "UILoading/LogoArea/LogoImage",
-          "layout_kind": "fixed_anchor",
-          "anchor_min": {
-            "x": 0.0,
-            "y": 1.0
-          },
-          "anchor_max": {
-            "x": 0.0,
-            "y": 1.0
-          },
-          "anchored_position": {
-            "x": 50.0,
-            "y": -24.0
-          },
-          "size_delta": {
-            "x": 512.0,
-            "y": 512.0
-          },
-          "pivot": {
-            "x": 0.0,
-            "y": 1.0
-          },
-          "children_count": 0
-        },
-        {
           "node_path": "UILoading/LogoArea/Logo_KR/SkeletonGraphic (MugeMaidcafe Logo)",
           "layout_kind": "fixed_anchor",
           "anchor_min": {
@@ -647,181 +822,6 @@
             "y": 0.5
           },
           "children_count": 0
-        },
-        {
-          "node_path": "UILoading/LogoArea/Logo_CHS/SkeletonGraphic (MaidCafe_Logo_CH)",
-          "layout_kind": "fixed_anchor",
-          "anchor_min": {
-            "x": 0.5,
-            "y": 0.5
-          },
-          "anchor_max": {
-            "x": 0.5,
-            "y": 0.5
-          },
-          "anchored_position": {
-            "x": 0.0,
-            "y": 176.0
-          },
-          "size_delta": {
-            "x": 512.0,
-            "y": 512.0
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          },
-          "children_count": 0
-        },
-        {
-          "node_path": "UILoading/LoadingBar/Text",
-          "layout_kind": "fixed_anchor",
-          "anchor_min": {
-            "x": 0.5,
-            "y": 0.5
-          },
-          "anchor_max": {
-            "x": 0.5,
-            "y": 0.5
-          },
-          "anchored_position": {
-            "x": 0.0,
-            "y": -79.0
-          },
-          "size_delta": {
-            "x": 1020.32,
-            "y": 60.0
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          },
-          "children_count": 0
-        },
-        {
-          "node_path": "UILoading/LoadingBar/Text",
-          "layout_kind": "fixed_anchor",
-          "anchor_min": {
-            "x": 0.5,
-            "y": 0.5
-          },
-          "anchor_max": {
-            "x": 0.5,
-            "y": 0.5
-          },
-          "anchored_position": {
-            "x": 0.0,
-            "y": 134.0
-          },
-          "size_delta": {
-            "x": 1020.32,
-            "y": 60.0
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          },
-          "children_count": 0
-        },
-        {
-          "node_path": "UILoading/LoadingBar",
-          "layout_kind": "fixed_anchor",
-          "anchor_min": {
-            "x": 0.5,
-            "y": 0.0
-          },
-          "anchor_max": {
-            "x": 0.5,
-            "y": 0.0
-          },
-          "anchored_position": {
-            "x": 0.0,
-            "y": 300.0
-          },
-          "size_delta": {
-            "x": 670.0,
-            "y": 50.0
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          },
-          "children_count": 5
-        },
-        {
-          "node_path": "UILoading/Ver (1)",
-          "layout_kind": "fixed_anchor",
-          "anchor_min": {
-            "x": 0.0,
-            "y": 0.0
-          },
-          "anchor_max": {
-            "x": 0.0,
-            "y": 0.0
-          },
-          "anchored_position": {
-            "x": 30.0,
-            "y": 30.0
-          },
-          "size_delta": {
-            "x": 500.0,
-            "y": 60.0
-          },
-          "pivot": {
-            "x": 0.0,
-            "y": 0.0
-          },
-          "children_count": 1
-        },
-        {
-          "node_path": "UILoading/Ver",
-          "layout_kind": "fixed_anchor",
-          "anchor_min": {
-            "x": 1.0,
-            "y": 0.0
-          },
-          "anchor_max": {
-            "x": 1.0,
-            "y": 0.0
-          },
-          "anchored_position": {
-            "x": -30.0,
-            "y": 30.0
-          },
-          "size_delta": {
-            "x": 500.0,
-            "y": 60.0
-          },
-          "pivot": {
-            "x": 1.0,
-            "y": 0.0
-          },
-          "children_count": 0
-        },
-        {
-          "node_path": "UILoading/LoadingBar/Fill Area/Image",
-          "layout_kind": "fixed_anchor",
-          "anchor_min": {
-            "x": 0.5,
-            "y": 0.5
-          },
-          "anchor_max": {
-            "x": 0.5,
-            "y": 0.5
-          },
-          "anchored_position": {
-            "x": 0.0,
-            "y": 0.0
-          },
-          "size_delta": {
-            "x": 665.0,
-            "y": 45.0
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          },
-          "children_count": 23
         }
       ]
     },
@@ -843,7 +843,7 @@
       },
       "key_rects": [
         {
-          "node_path": "UISceneLoading/SceneObjects/TypeChristMas (1)/BG",
+          "node_path": "UISceneLoading",
           "layout_kind": "full_stretch",
           "anchor_min": {
             "x": 0.0,
@@ -854,18 +854,118 @@
             "y": 1.0
           },
           "anchored_position": {
-            "x": 475.0,
-            "y": 300.0
+            "x": 0.0,
+            "y": 0.0
           },
           "size_delta": {
-            "x": 1050.0,
-            "y": 2686.0
+            "x": 0.0,
+            "y": 0.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 5
+        },
+        {
+          "node_path": "UISceneLoading/SceneObjects",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.5,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 0.5,
+            "y": 0.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 1506.459,
+            "y": 2105.959
           },
           "pivot": {
             "x": 0.5,
             "y": 0.0
           },
-          "children_count": 0
+          "children_count": 9
+        },
+        {
+          "node_path": "UISceneLoading/SceneObjects/TypeA",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchor_max": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 1655.45,
+            "y": 2314.24
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 1
+        },
+        {
+          "node_path": "UISceneLoading/SceneObjects/TypeA/SkeletonGraphic (kokomi_Loading)",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.5,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 0.5,
+            "y": 0.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "size_delta": {
+            "x": 2000.0,
+            "y": 2000.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.0
+          },
+          "children_count": 41
+        },
+        {
+          "node_path": "UISceneLoading/SceneObjects/TypeNormal",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.5,
+            "y": 0.0
+          },
+          "anchor_max": {
+            "x": 0.5,
+            "y": 0.0
+          },
+          "anchored_position": {
+            "x": 0.0,
+            "y": -418.0
+          },
+          "size_delta": {
+            "x": 1655.45,
+            "y": 2314.24
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.0
+          },
+          "children_count": 2
         },
         {
           "node_path": "UISceneLoading/SceneObjects/TypeNormal/BG",
@@ -893,7 +993,32 @@
           "children_count": 0
         },
         {
-          "node_path": "UISceneLoading",
+          "node_path": "UISceneLoading/SceneObjects/TypeNormal/SpinePos",
+          "layout_kind": "fixed_anchor",
+          "anchor_min": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchor_max": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "anchored_position": {
+            "x": 36.34,
+            "y": -1400.0
+          },
+          "size_delta": {
+            "x": 100.0,
+            "y": 100.0
+          },
+          "pivot": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "children_count": 0
+        },
+        {
+          "node_path": "UISceneLoading/SceneObjects/TypeChristMas (1)/BG",
           "layout_kind": "full_stretch",
           "anchor_min": {
             "x": 0.0,
@@ -904,18 +1029,18 @@
             "y": 1.0
           },
           "anchored_position": {
-            "x": 0.0,
-            "y": 0.0
+            "x": 475.0,
+            "y": 300.0
           },
           "size_delta": {
-            "x": 0.0,
-            "y": 0.0
+            "x": 1050.0,
+            "y": 2686.0
           },
           "pivot": {
             "x": 0.5,
-            "y": 0.5
+            "y": 0.0
           },
-          "children_count": 5
+          "children_count": 0
         },
         {
           "node_path": "UISceneLoading/SceneObjects/TypeA/SkeletonGraphic (kokomi_Loading)/Renderer0",
@@ -1494,131 +1619,6 @@
         },
         {
           "node_path": "UISceneLoading/SceneObjects/TypeA/SkeletonGraphic (kokomi_Loading)/Renderer23",
-          "layout_kind": "full_stretch",
-          "anchor_min": {
-            "x": 0.0,
-            "y": 0.0
-          },
-          "anchor_max": {
-            "x": 1.0,
-            "y": 1.0
-          },
-          "anchored_position": {
-            "x": 0.0,
-            "y": 0.0
-          },
-          "size_delta": {
-            "x": 0.0,
-            "y": 0.0
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.0
-          },
-          "children_count": 0
-        },
-        {
-          "node_path": "UISceneLoading/SceneObjects/TypeA/SkeletonGraphic (kokomi_Loading)/Renderer24",
-          "layout_kind": "full_stretch",
-          "anchor_min": {
-            "x": 0.0,
-            "y": 0.0
-          },
-          "anchor_max": {
-            "x": 1.0,
-            "y": 1.0
-          },
-          "anchored_position": {
-            "x": 0.0,
-            "y": 0.0
-          },
-          "size_delta": {
-            "x": 0.0,
-            "y": 0.0
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.0
-          },
-          "children_count": 0
-        },
-        {
-          "node_path": "UISceneLoading/SceneObjects/TypeA/SkeletonGraphic (kokomi_Loading)/Renderer25",
-          "layout_kind": "full_stretch",
-          "anchor_min": {
-            "x": 0.0,
-            "y": 0.0
-          },
-          "anchor_max": {
-            "x": 1.0,
-            "y": 1.0
-          },
-          "anchored_position": {
-            "x": 0.0,
-            "y": 0.0
-          },
-          "size_delta": {
-            "x": 0.0,
-            "y": 0.0
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.0
-          },
-          "children_count": 0
-        },
-        {
-          "node_path": "UISceneLoading/SceneObjects/TypeA/SkeletonGraphic (kokomi_Loading)/Renderer26",
-          "layout_kind": "full_stretch",
-          "anchor_min": {
-            "x": 0.0,
-            "y": 0.0
-          },
-          "anchor_max": {
-            "x": 1.0,
-            "y": 1.0
-          },
-          "anchored_position": {
-            "x": 0.0,
-            "y": 0.0
-          },
-          "size_delta": {
-            "x": 0.0,
-            "y": 0.0
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.0
-          },
-          "children_count": 0
-        },
-        {
-          "node_path": "UISceneLoading/SceneObjects/TypeA/SkeletonGraphic (kokomi_Loading)/Renderer27",
-          "layout_kind": "full_stretch",
-          "anchor_min": {
-            "x": 0.0,
-            "y": 0.0
-          },
-          "anchor_max": {
-            "x": 1.0,
-            "y": 1.0
-          },
-          "anchored_position": {
-            "x": 0.0,
-            "y": 0.0
-          },
-          "size_delta": {
-            "x": 0.0,
-            "y": 0.0
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.0
-          },
-          "children_count": 0
-        },
-        {
-          "node_path": "UISceneLoading/SceneObjects/TypeA/SkeletonGraphic (kokomi_Loading)/Renderer28",
           "layout_kind": "full_stretch",
           "anchor_min": {
             "x": 0.0,

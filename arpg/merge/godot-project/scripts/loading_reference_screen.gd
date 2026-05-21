@@ -68,13 +68,11 @@ func _draw_logo(reference_size: Vector2, scale_factor: float, origin: Vector2) -
 
 func _draw_loading_bar(reference_size: Vector2, scale_factor: float, origin: Vector2) -> void:
 	var bar_rect := _to_preview_rect(_rect_by_suffix("LoadingBar"), reference_size, scale_factor, origin)
-	var fill_rect := _to_preview_rect(_rect_by_suffix("LoadingBar/Fill Area/Image"), reference_size, scale_factor, origin)
 	if bar_rect.size == Vector2.ZERO:
 		return
 	draw_rect(bar_rect, Color(0.08, 0.1, 0.12, 0.95), true)
 	draw_rect(bar_rect, Color(0.95, 0.85, 0.56, 0.95), false, 2.0)
-	if fill_rect.size == Vector2.ZERO:
-		fill_rect = bar_rect.grow(-3.0)
+	var fill_rect := bar_rect.grow(-3.0)
 	var fill_width := fill_rect.size.x * loading_progress
 	fill_rect.size.x = fill_width
 	fill_rect.position.x = bar_rect.position.x + 3.0
@@ -112,18 +110,20 @@ func _to_preview_rect(rect: Dictionary, reference_size: Vector2, scale_factor: f
 	var size_delta := _vec2(rect.get("size_delta", {}))
 	var pivot := _vec2(rect.get("pivot", {"x": 0.5, "y": 0.5}))
 
-	if anchor_min.distance_to(anchor_max) > 0.001:
-		var top_left := Vector2(anchor_min.x * reference_size.x, (1.0 - anchor_max.y) * reference_size.y)
-		var bottom_right := Vector2(anchor_max.x * reference_size.x, (1.0 - anchor_min.y) * reference_size.y)
-		var stretch_size := bottom_right - top_left + Vector2(size_delta.x, -size_delta.y)
-		return Rect2(origin + top_left * scale_factor, stretch_size.abs() * scale_factor)
-
-	var center := Vector2(
-		anchor_min.x * reference_size.x + anchored_position.x,
-		(1.0 - anchor_min.y) * reference_size.y - anchored_position.y
+	var anchor_span := anchor_max - anchor_min
+	var rect_size := Vector2(
+		reference_size.x * anchor_span.x + size_delta.x,
+		reference_size.y * anchor_span.y + size_delta.y
+	).abs()
+	var center_from_bottom := Vector2(
+		(anchor_min.x + anchor_span.x * pivot.x) * reference_size.x + anchored_position.x,
+		(anchor_min.y + anchor_span.y * pivot.y) * reference_size.y + anchored_position.y
 	)
-	var top_left := center - Vector2(size_delta.x * pivot.x, size_delta.y * (1.0 - pivot.y))
-	return Rect2(origin + top_left * scale_factor, size_delta.abs() * scale_factor)
+	var top_left := Vector2(
+		center_from_bottom.x - rect_size.x * pivot.x,
+		reference_size.y - center_from_bottom.y - rect_size.y * (1.0 - pivot.y)
+	)
+	return Rect2(origin + top_left * scale_factor, rect_size * scale_factor)
 
 func _vec2(value) -> Vector2:
 	if typeof(value) == TYPE_DICTIONARY:

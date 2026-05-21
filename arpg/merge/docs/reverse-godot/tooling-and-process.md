@@ -1040,6 +1040,35 @@ Follow-up:
 - Add a baked `Interaction` clip or runtime clip switching once the original startup logic needs it.
 - Generalize the baked Spine path before applying it to maid/customer Spine entries.
 
+## 2026-05-21 - Startup Screen Layout Recheck
+
+Inputs:
+- `reverse-output/assets/assetripper-main/ExportedProject/Assets/Resources/prefabs/ui/UILoading.prefab`
+- `reverse-output/assets/assetripper-main/ExportedProject/Assets/Resources/prefabs/ui/UISceneLoading.prefab`
+- `godot-project/assets/spine/loading/kokomi_Loading/kokomi_Loading.baked.json`
+
+Commands:
+```powershell
+python scripts\reverse\build_godot_ui_layout_reference.py
+.\tools\Godot\Godot_console.exe --path .\godot-project --headless --quit-after 5 -- --restored-startup
+.\run-game.bat --headless --quit-after 5
+```
+
+Outputs:
+- `godot-project/data/ui_layout_reference.json`
+- `godot-project/scripts/loading_reference_screen.gd`
+- `godot-project/scripts/scene_loading_reference_screen.gd`
+
+Findings:
+- `UILoading/LoadingBar` is root-space at anchor `(0.5, 0.0)`, anchored position `(0, 300)`, size `670 x 50`.
+- `UILoading/LoadingBar/Fill Area/Image` is child-local and caused a wrong Godot fill position when interpreted as root-space.
+- `UISceneLoading/SceneObjects/TypeA/SkeletonGraphic (kokomi_Loading)` is the real 2000 x 2000 character root; `Renderer*` children are stretch render helpers with zero size. Godot now resolves the character rect through its parent RectTransform chain.
+- Baked `Idle` frame comparisons show large vertex deltas, confirming the Spine bake is animated.
+
+Follow-up:
+- Confirm original CanvasScaler/SafeArea runtime setup from IL2CPP.
+- Capture visual screenshots from a non-headless Godot session if automated `--screenshot` remains unavailable.
+
 Recommended next runs:
 
 1. Run Il2CppDumper or Cpp2IL on `libil2cpp.so` and `global-metadata.dat`.

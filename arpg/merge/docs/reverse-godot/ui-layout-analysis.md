@@ -95,6 +95,13 @@ The current Godot prototype reads this file and exposes a small `UI Ref` selecto
 
 `UISceneLoading` now has a Godot reference layer in restored startup mode. It maps the recovered full-stretch root and background candidates and renders the original `SkeletonGraphic (kokomi_Loading)` target from official Spine-runtime data. The current implementation imports `kokomi_Loading.atlas.txt`, `kokomi_Loading.skel.bytes`, `kokomi_Loading.png`, and `kokomi_Loading_2.png` from the AssetRipper export, uses `@esotericsoftware/spine-core@4.2.43` to parse the binary skeleton, and bakes the `Idle` animation to `kokomi_Loading.baked.json`. Godot then renders each frame's original draw order, UVs, triangles, and world vertices. The earlier generated bridge rig remains as a fallback; raw atlas page PNGs remain evidence/crop sources only and should not be drawn directly as final character art.
 
+Latest startup recheck:
+
+- `UILoading/LoadingBar` is a direct child of the 1080 x 1920 root, fixed at anchor `(0.5, 0.0)`, anchored position `(0, 300)`, size `670 x 50`, pivot `(0.5, 0.5)`.
+- `UILoading/LoadingBar/Fill Area/Image` is local to `LoadingBar`; it must not be converted as a root-space RectTransform. Godot now derives the visible fill rect from the recovered `LoadingBar` root rect and only scales its width by progress.
+- `UISceneLoading/SceneObjects/TypeA/SkeletonGraphic (kokomi_Loading)` is the character root, not the zero-size `Renderer*` children. Its recovered rect is anchor `(0.5, 0.0)`, anchored position `(0, 0)`, size `2000 x 2000`, pivot `(0.5, 0.0)`; Godot now resolves this through the `UISceneLoading/SceneObjects/TypeA` parent chain rather than as a root-space shortcut.
+- The baked `Idle` data is not static: frame-delta checks show large vertex movement between frames, so missing second-screen motion should be treated as a Godot target-rect or mesh-render path problem, not as a bake-data problem.
+
 ## Largest UI Prefabs
 
 | Name | Category | RectTransforms | Large Rects | Path |

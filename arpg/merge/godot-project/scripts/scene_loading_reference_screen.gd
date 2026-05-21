@@ -55,7 +55,7 @@ func _draw() -> void:
 
 	draw_rect(screen_rect, Color(0.1, 0.16, 0.18, 1.0), true)
 	_draw_background(reference_size, scale_factor, origin)
-	_draw_character(screen_rect)
+	_draw_character(reference_size, scale_factor, origin, screen_rect)
 	_draw_progress(screen_rect)
 	draw_rect(screen_rect, Color(0.58, 0.78, 0.86, 0.85), false, 2.0)
 
@@ -69,16 +69,24 @@ func _draw_background(reference_size: Vector2, scale_factor: float, origin: Vect
 		draw_rect(preview_rect, Color(0.2, 0.42, 0.48, 0.34), true)
 		draw_rect(preview_rect, Color(0.78, 0.95, 1.0, 0.26), false, 1.0)
 
-func _draw_character(screen_rect: Rect2) -> void:
-	var target := Rect2(
-		screen_rect.position + Vector2(screen_rect.size.x * 0.12, screen_rect.size.y * 0.2),
-		Vector2(screen_rect.size.x * 0.76, screen_rect.size.y * 0.58)
+func _draw_character(reference_size: Vector2, scale_factor: float, origin: Vector2, screen_rect: Rect2) -> void:
+	var target := _to_preview_rect_world(
+		_rect_by_suffix("SceneObjects/TypeA/SkeletonGraphic (kokomi_Loading)"),
+		reference_size,
+		scale_factor,
+		origin
 	)
-	draw_rect(target, Color(0.12, 0.16, 0.18, 0.64), true)
-	draw_rect(target, Color(0.7, 0.88, 0.94, 0.72), false, 2.0)
+	if target.size == Vector2.ZERO:
+		var fallback_size := Vector2(screen_rect.size.y * 1.04, screen_rect.size.y * 1.04)
+		target = Rect2(
+			Vector2(screen_rect.get_center().x - fallback_size.x * 0.5, screen_rect.position.y + screen_rect.size.y - fallback_size.y),
+			fallback_size
+		)
 	if spine_assets_ready:
 		_draw_spine_region_animation(target)
 	else:
+		draw_rect(target, Color(0.12, 0.16, 0.18, 0.64), true)
+		draw_rect(target, Color(0.7, 0.88, 0.94, 0.72), false, 2.0)
 		_draw_spine_fallback(target)
 
 func _draw_progress(screen_rect: Rect2) -> void:
@@ -102,6 +110,54 @@ func _rect_by_suffix(suffix: String) -> Dictionary:
 			return rect
 	return {}
 
+func _rect_by_path(path: String) -> Dictionary:
+	var rects: Array = source.get("key_rects", [])
+	for rect in rects:
+		if String(rect.get("node_path", "")) == path:
+			return rect
+	return {}
+
+func _to_preview_rect_world(rect: Dictionary, reference_size: Vector2, scale_factor: float, origin: Vector2) -> Rect2:
+	if rect.is_empty():
+		return Rect2()
+	var path := String(rect.get("node_path", ""))
+	if path.is_empty():
+		return _to_preview_rect(rect, reference_size, scale_factor, origin)
+	var parts := path.split("/")
+	var parent_rect := Rect2(Vector2.ZERO, reference_size)
+	var current_rect := Rect2()
+	var prefix := ""
+	for part in parts:
+		prefix = part if prefix.is_empty() else prefix + "/" + part
+		var current_data := _rect_by_path(prefix)
+		if current_data.is_empty():
+			return _to_preview_rect(rect, reference_size, scale_factor, origin)
+		current_rect = _rect_to_parent_reference_rect(current_data, parent_rect)
+		parent_rect = current_rect
+	return Rect2(origin + current_rect.position * scale_factor, current_rect.size * scale_factor)
+
+func _rect_to_parent_reference_rect(rect: Dictionary, parent_rect: Rect2) -> Rect2:
+	var anchor_min := _vec2(rect.get("anchor_min", {}))
+	var anchor_max := _vec2(rect.get("anchor_max", {}))
+	var anchored_position := _vec2(rect.get("anchored_position", {}))
+	var size_delta := _vec2(rect.get("size_delta", {}))
+	var pivot := _vec2(rect.get("pivot", {"x": 0.5, "y": 0.5}))
+	var parent_size := parent_rect.size
+	var anchor_span := anchor_max - anchor_min
+	var rect_size := Vector2(
+		parent_size.x * anchor_span.x + size_delta.x,
+		parent_size.y * anchor_span.y + size_delta.y
+	).abs()
+	var center_from_bottom := Vector2(
+		(anchor_min.x + anchor_span.x * pivot.x) * parent_size.x + anchored_position.x,
+		(anchor_min.y + anchor_span.y * pivot.y) * parent_size.y + anchored_position.y
+	)
+	var local_top_left := Vector2(
+		center_from_bottom.x - rect_size.x * pivot.x,
+		parent_size.y - center_from_bottom.y - rect_size.y * (1.0 - pivot.y)
+	)
+	return Rect2(parent_rect.position + local_top_left, rect_size)
+
 func _to_preview_rect(rect: Dictionary, reference_size: Vector2, scale_factor: float, origin: Vector2) -> Rect2:
 	if rect.is_empty():
 		return Rect2()
@@ -111,18 +167,20 @@ func _to_preview_rect(rect: Dictionary, reference_size: Vector2, scale_factor: f
 	var size_delta := _vec2(rect.get("size_delta", {}))
 	var pivot := _vec2(rect.get("pivot", {"x": 0.5, "y": 0.5}))
 
-	if anchor_min.distance_to(anchor_max) > 0.001:
-		var top_left := Vector2(anchor_min.x * reference_size.x, (1.0 - anchor_max.y) * reference_size.y)
-		var bottom_right := Vector2(anchor_max.x * reference_size.x, (1.0 - anchor_min.y) * reference_size.y)
-		var stretch_size := bottom_right - top_left + Vector2(size_delta.x, -size_delta.y)
-		return Rect2(origin + top_left * scale_factor, stretch_size.abs() * scale_factor)
-
-	var center := Vector2(
-		anchor_min.x * reference_size.x + anchored_position.x,
-		(1.0 - anchor_min.y) * reference_size.y - anchored_position.y
+	var anchor_span := anchor_max - anchor_min
+	var rect_size := Vector2(
+		reference_size.x * anchor_span.x + size_delta.x,
+		reference_size.y * anchor_span.y + size_delta.y
+	).abs()
+	var center_from_bottom := Vector2(
+		(anchor_min.x + anchor_span.x * pivot.x) * reference_size.x + anchored_position.x,
+		(anchor_min.y + anchor_span.y * pivot.y) * reference_size.y + anchored_position.y
 	)
-	var top_left := center - Vector2(size_delta.x * pivot.x, size_delta.y * (1.0 - pivot.y))
-	return Rect2(origin + top_left * scale_factor, size_delta.abs() * scale_factor)
+	var top_left := Vector2(
+		center_from_bottom.x - rect_size.x * pivot.x,
+		reference_size.y - center_from_bottom.y - rect_size.y * (1.0 - pivot.y)
+	)
+	return Rect2(origin + top_left * scale_factor, rect_size * scale_factor)
 
 func _vec2(value) -> Vector2:
 	if typeof(value) == TYPE_DICTIONARY:
@@ -266,7 +324,6 @@ func _draw_spine_baked_animation(target: Rect2) -> void:
 		drawn += _draw_spine_baked_attachment(attachment, item[1], bounds, center, scale_factor)
 	if drawn == 0:
 		draw_string(ThemeDB.fallback_font, target.position + Vector2(0, target.size.y * 0.5), "Spine baked data loaded, no drawable triangles", HORIZONTAL_ALIGNMENT_CENTER, target.size.x, 18, Color(1, 0.72, 0.56, 0.92))
-	draw_string(ThemeDB.fallback_font, target.position + Vector2(0, target.size.y - 28), "SkeletonGraphic (kokomi_Loading) baked Idle", HORIZONTAL_ALIGNMENT_CENTER, target.size.x, 16, Color(0.9, 0.98, 1.0, 0.82))
 
 func _baked_animation_bounds() -> Rect2:
 	var bake: Dictionary = spine_baked.get("bake", {})
@@ -331,9 +388,9 @@ func _draw_spine_baked_attachment(attachment: Dictionary, vertices: Array, bound
 		var c := int(triangles[tri_index + 2])
 		if a >= points.size() or b >= points.size() or c >= points.size():
 			continue
-		draw_colored_polygon(
+		draw_polygon(
 			PackedVector2Array([points[a], points[b], points[c]]),
-			Color.WHITE,
+			PackedColorArray([Color.WHITE, Color.WHITE, Color.WHITE]),
 			PackedVector2Array([uv_points[a], uv_points[b], uv_points[c]]),
 			page_texture
 		)
