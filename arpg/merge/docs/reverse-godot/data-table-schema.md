@@ -68,7 +68,7 @@ High-value `BlockTableData` fields:
 | `BlockImage` | Sprite/spine asset key |
 | `IsSpineBlock` | Use Spine asset instead of static sprite |
 | `ParentBlockID` | Parent/producer relation candidate |
-| `ProduceEnergy` | AP/energy cost or generator energy |
+| `ProduceEnergy` | Producer internal energy/capacity; runtime save also stores `ProduceBlockData.produceEnergy` |
 | `CoolTime` | Generator cooldown |
 | `ProduceRewardType/ID/Value` | Producer output reward |
 | `OpenCoolTime/OpenType` | Unlock/opening behavior |
@@ -121,6 +121,7 @@ Current `Table_Block` decode status:
 - Generated 74 non-currency merge chains and 541 Godot block entries.
 - Reliable fields: `ID`, `CategoryName`, `SubCategoryName`, `GroupName`, `BlockType`, `Level`, `BlockTier`, `ProductionDiff`, `BlockName`, `BlockImage`.
 - Each `BlockTableData` row has a 120-byte primitive tail after the string fields.
+- The 120-byte tail is now decoded using the `dump.cs` field order: `IsSpineBlock`, `ParentBlockID`, `ProduceEnergy`, `CoolTime`, reward fields, bubble/shop fields, collection visibility, and active-merge flags.
 - The full `Table_Block` byte stream and child-list order now align with `dump.cs`.
 
 Decoded child lists:

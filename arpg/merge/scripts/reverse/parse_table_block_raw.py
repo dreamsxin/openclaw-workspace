@@ -13,6 +13,39 @@ INPUTS = [
 CSV_OUTPUT = ROOT / "reverse-output/assets/derived/table_block_catalog.csv"
 JSON_OUTPUT = ROOT / "reverse-output/assets/derived/table_block_catalog.json"
 
+TAIL_FIELDS = [
+    ("is_spine_block", "bool"),
+    ("parent_block_id", "int"),
+    ("is_all_parent_block", "bool"),
+    ("produce_energy", "int"),
+    ("cool_time", "int"),
+    ("max_subtract_cool_time_per", "int"),
+    ("ongoing_added_cool_time_per", "int"),
+    ("produce_reward_type", "int"),
+    ("produce_reward_id", "int"),
+    ("produce_reward_value", "int"),
+    ("expendability", "bool"),
+    ("expend_alter_block_id", "int"),
+    ("open_cool_time", "int"),
+    ("open_type", "int"),
+    ("added_drop_rate", "int"),
+    ("added_drop_block_id", "int"),
+    ("bubble_block_rate", "int"),
+    ("bubble_pop_currency_type", "int"),
+    ("jewel_bubble_pop_coef", "float"),
+    ("obtain_reward_type", "int"),
+    ("obtain_reward_id", "int"),
+    ("obtain_reward_value", "int"),
+    ("sell_available", "bool"),
+    ("sell_gold_coef", "float"),
+    ("gold_shop_coef", "float"),
+    ("jewel_shop_coef", "float"),
+    ("shop_block_currency_type", "int"),
+    ("shop_block_currency_value", "int"),
+    ("display_in_collection", "bool"),
+    ("is_active_merge", "bool"),
+]
+
 
 def align4(pos: int) -> int:
     return (pos + 3) & ~3
@@ -109,7 +142,17 @@ def parse_block_record(data: bytes, pos: int, has_next: bool) -> tuple[dict, int
         row["scanned_tail_size"] = next_pos - pos
         next_pos = pos + 120
 
-    row["tail_raw_hex"] = data[pos:next_pos].hex()
+    tail = data[pos:next_pos]
+    tail_pos = 0
+    for field_name, field_type in TAIL_FIELDS:
+        if field_type == "float":
+            row[field_name] = struct.unpack_from("<f", tail, tail_pos)[0]
+        else:
+            value = struct.unpack_from("<i", tail, tail_pos)[0]
+            row[field_name] = bool(value) if field_type == "bool" else value
+        tail_pos += 4
+
+    row["tail_raw_hex"] = tail.hex()
     row["tail_size"] = next_pos - pos
     row["record_offset"] = start
     return row, next_pos

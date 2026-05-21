@@ -260,6 +260,8 @@ func _produce_selected() -> void:
 			_set_status("%s is cooling down: %ss." % [name, remaining])
 		elif int(board.wallet.get("ap", 0)) <= 0:
 			_set_status("No AP.")
+		elif board.get_remaining_produce_energy(selected_cell.x, selected_cell.y) <= 0:
+			_set_status("%s has no produce energy." % name)
 		else:
 			_set_status("No available production rule or empty cell for %s." % name)
 	else:
@@ -279,17 +281,30 @@ func _refresh_selection() -> void:
 			var rule := catalog.get_produce_rule(block_id)
 			has_produce = not rule.is_empty()
 			var cooldown := board.get_cooldown_remaining(selected_cell.x, selected_cell.y)
+			var queued_drops := board.get_designed_drop_queue_count(selected_cell.x, selected_cell.y)
+			var remaining_energy := board.get_remaining_produce_energy(selected_cell.x, selected_cell.y)
+			var max_energy := catalog.get_produce_energy(block_id)
 			text = "Selected: %s L%s\nID %s%s" % [
 				data.get("name", block_id),
 				data.get("level", "?"),
 				block_id,
 				" | Producer" if has_produce else ""
 			]
+			if has_produce:
+				text += "\nAP cost: 1 | Energy: %s/%s" % [remaining_energy, max_energy]
+			if queued_drops > 0:
+				text += "\nDesigned queue: %s" % queued_drops
 			if cooldown > 0:
 				text += "\nCooldown: %ss" % cooldown
 	selected_label.text = text
 	if produce_button != null:
-		produce_button.disabled = not has_produce or (selected_cell.x >= 0 and board.get_cooldown_remaining(selected_cell.x, selected_cell.y) > 0)
+		produce_button.disabled = not has_produce or (
+			selected_cell.x >= 0
+			and (
+				board.get_cooldown_remaining(selected_cell.x, selected_cell.y) > 0
+				or board.get_remaining_produce_energy(selected_cell.x, selected_cell.y) <= 0
+			)
+		)
 
 func _update_drag_preview() -> void:
 	drag_preview.position = get_viewport().get_mouse_position() - Vector2(CELL_SIZE, CELL_SIZE) * 0.5

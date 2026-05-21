@@ -1,0 +1,29 @@
+class,method,signature,rva,offset,va,dump_line
+InGame_ItemBlock,OnProduce,"public void OnProduce(bool _isUseProduceEnergy = True, bool isDoubleSpawn = False, int _levelUpValue = 0) { }",0x28B405C,0x28B005C,0x28B405C,7901
+InGame_ItemBlock,SetProduceEnergyData,private void SetProduceEnergyData() { },0x28B5088,0x28B1088,0x28B5088,7946
+InGame_ItemBlock,CheckCoolTime,public void CheckCoolTime() { },0x28AF488,0x28AB488,0x28AF488,7949
+InGame_ItemBlock,CheckOpenCoolTime,public void CheckOpenCoolTime(int _openCoolTime = 0) { },0x28AF708,0x28AB708,0x28AF708,7958
+InGame_ItemBlock,OnStartCoolTime,"public void OnStartCoolTime(int _time, float _coolTimeMax, float _coolTime, int subtractCoolTime) { }",0x28B4C78,0x28B0C78,0x28B4C78,7964
+InGame_ItemBlock,OnStartOpenCoolTime,"public void OnStartOpenCoolTime(int _time, float _coolTimeMax, float _coolTime) { }",0x28B6028,0x28B2028,0x28B6028,7967
+InGame_BlockManager,OnNewProduceBlock,"public void OnNewProduceBlock(InGame_ItemBlock _produceBlock, bool _isAuto, bool _isBag = False, bool _isUseEnergy = True) { }",0x29A39C8,0x299F9C8,0x29A39C8,9198
+InGame_BlockManager,OnNewProduceRandBox,public void OnNewProduceRandBox(InGame_ItemBlock _produceBlock) { },0x29A5518,0x29A1518,0x29A5518,9210
+InGame_BlockManager,OnNewProduceDesignedBox,public void OnNewProduceDesignedBox(InGame_ItemBlock _produceBlock) { },0x29A5E58,0x29A1E58,0x29A5E58,9213
+InGame_BlockManager,GetDropPossibleProduceBlock,public BlockTableData GetDropPossibleProduceBlock(BlockTableData _blockTData) { },0x29AC768,0x29A8768,0x29AC768,9318
+InGame_BlockManager,GetProducelockCount,public int GetProducelockCount(int _blockId) { },0x29ADF5C,0x29A9F5C,0x29ADF5C,9347
+InGame_MapManager,NewProduceBlock,"public bool NewProduceBlock(BlockTableData _blockTableData, InGame_ItemBlock _produceBlock, bool _isAuto, bool _isUseProduceEnergy = True, bool _isDoubleSpawn = False, SkillContribution skillUse, int _levelUpSkillValue = 0, MapType _mapType = 0, int _mapID = 0) { }",0x2AB000C,0x2AAC00C,0x2AB000C,10118
+InGame_MapManager,SetRestoreBlock,"public InGame_ItemCell SetRestoreBlock(int _uniqueID, int _blockId, int _goldValue, Vector2 _pos, Vector2Int _prevPos, int produceEnergy = 0, bool isDormitory = False, MapType _mapType = 0, int _mapID = 0) { }",0x2AB289C,0x2AAE89C,0x2AB289C,10145
+InGame_MapManager,SetPullOutInventoryBlock,"public InGame_ItemCell SetPullOutInventoryBlock(int _uniqueID, int _blockId, Vector2Int _prevPos, BlockSlotData _blockSlotData, int _produceEnergy, bool _isDormitory, MapType _mapType = 0, int _mapID = 0) { }",0x2AB342C,0x2AAF42C,0x2AB342C,10151
+MapDataManager,MoveProduceBlockData,"public void MoveProduceBlockData(int _id, Vector2Int _movePos, MapType _mapType = 0, int _mapID = 0) { }",0x2C58D28,0x2C54D28,0x2C58D28,14686
+MapDataManager,SetProduceActive,"public void SetProduceActive(int _uniqueID, bool isActive) { }",0x2C59014,0x2C55014,0x2C59014,14689
+MapDataManager,SetProduceEnergy,"public void SetProduceEnergy(int _uniqueID, int _energy) { }",0x2C59260,0x2C55260,0x2C59260,14692
+MapDataManager,GetProduceBlockData,"public ProduceBlockData GetProduceBlockData(int _id, MapType _mapType = 0, int _mapID = 0) { }",0x2C5905C,0x2C5505C,0x2C5905C,14719
+MapDataManager,SetNewProduceBlock,public void SetNewProduceBlock(string _groupName) { },0x2C59FE0,0x2C55FE0,0x2C59FE0,14722
+MapDataManager,SetNewProduceBlockData,"public void SetNewProduceBlockData(Vector2Int _pos, int _uniqueID, int _blockId, int _produceEnergy, bool _isOpen, bool _isOpening, BlockSlotData _blockSlotData, int _startCoolTime = 0, int _subCoolTIme = 0, List<int> _dropBlockIds, MapType _mapType = 0, int _mapID = 0) { }",0x2C5A1C8,0x2C561C8,0x2C5A1C8,14728
+MapDataManager,SetProduceBlockData,"public void SetProduceBlockData(int _uniqueID, int _startCoolTime, int _startOpenCoolTime, int _subCooltime, bool _isOpen = True, bool _isOpening = True, bool _isProduceActive = True, bool _isBag = False) { }",0x2C5A95C,0x2C5695C,0x2C5A95C,14731
+MapDataManager,SetProduceBlockData_OpenInfo,"public void SetProduceBlockData_OpenInfo(int _uniqueID, int _startOpenCoolTime, bool _isOpen, bool _isOpening) { }",0x2C5A9FC,0x2C569FC,0x2C5A9FC,14734
+MapDataManager,SetProduceBlockData_CoolTimeInfo,"public void SetProduceBlockData_CoolTimeInfo(int _uniqueID, int _startCoolTime, float coolTimeMax = 0, int subtractCoolTime = 0) { }",0x2C5AA7C,0x2C56A7C,0x2C5AA7C,14737
+MapDataManager,GetProduceBlockDropWeight,"public int GetProduceBlockDropWeight(int produceUniqueID, int targetBlockID) { }",0x2C5AD7C,0x2C56D7C,0x2C5AD7C,14743
+MapDataManager,AddProduceBlockDropWeight,"public void AddProduceBlockDropWeight(int produceUniqueID, int targetBlockID, int weight) { }",0x2C5AE3C,0x2C56E3C,0x2C5AE3C,14746
+MapDataManager,SetProduceBlockDropWeight,"public void SetProduceBlockDropWeight(int produceUniqueID, int targetBlockID, int weight) { }",0x2C5AF30,0x2C56F30,0x2C5AF30,14749
+MapDataManager,SetDesignedProduceBlockData,"public void SetDesignedProduceBlockData(int _uniqueID, Vector2Int _pos, int _blockId, List<int> _dropBlockIds, MapType _mapType = 0, int _mapID = 0) { }",0x2C5B498,0x2C57498,0x2C5B498,14758
+MapDataManager,SaveProduceBlockData,public void SaveProduceBlockData() { },0x2C58F84,0x2C54F84,0x2C58F84,14902

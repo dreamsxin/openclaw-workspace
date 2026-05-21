@@ -59,6 +59,14 @@ Status values:
 | System | Status | Evidence | Godot target |
 | --- | --- | --- | --- |
 | Localization | confirmed | Addressables localization bundles for EN, JA, KO, ZH-TW | Godot translations |
+| Maid/NPC catalog | confirmed | `Table_Npc`, `NpcTableData`, `MaidInfoTableData`; assets include `Ch_Maid01`-`Ch_Maid07` | `NpcCatalog`, `MaidCatalog` |
+| Maid profiles | confirmed | `MaidInfoTableData` fields include member, tribe, height, birthday, age, CV, favorite/hate, skill and gift preferences | `MaidProfileModel` |
+| Maid levels and skills | confirmed | `MaidLevelTableData`, `MaidSkillTableData`, `GetMaidLevelTableData_ToLv`, `GetMaidSkillData` | `MaidProgressionModel`, `MaidSkillModel` |
+| Maid costumes/skins | confirmed | `ShopNpcCostumeTableData`; assets include `Cos_Maid01`-`Cos_Maid07` with seasonal variants | `CostumeCatalog`, `SkinResolver` |
+| Maid chat / AI chat | confirmed | `Table_MaidChat`, `Table_MaidAIChat`, `MaidChatTableData`, `MaidAIChatTableData` | `MaidChatModel` |
+| Customer/NPC catalog | confirmed | `CustomerTableData`; assets include `Ch_Customer01`-`Ch_Customer15` | `CustomerCatalog` |
+| Customer episodes | confirmed | `Table_CustomerEpisode`, `CustomerEpisodeData`, `CustomerLikeLevelData` | `CustomerEpisodeModel` |
+| NPC dialog | confirmed | `InGameNpcDialog` with multilingual text and audio fields | `DialogCatalog`, `DialogRunner` |
 | Spine animation | candidate | `spine-csharp`, `spine-unity` assemblies | Spine runtime or conversion |
 | UI particles | confirmed dependency | `Coffee.UIParticle` | Godot particles or simplified FX |
 | Soft masks | confirmed dependency | `Coffee.SoftMaskForUGUI` | Godot clipping/masks |

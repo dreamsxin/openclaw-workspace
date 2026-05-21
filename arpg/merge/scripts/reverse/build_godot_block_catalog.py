@@ -40,6 +40,13 @@ def main() -> None:
                     "sprite_key": row["block_image"],
                     "category": row["category_name"],
                     "sub_category": row["sub_category_name"],
+                    "block_type": int(row["block_type"]),
+                    "produce_energy": int(row.get("produce_energy", 0)),
+                    "cool_time": int(row.get("cool_time", 0)),
+                    "parent_block_id": int(row.get("parent_block_id", 0)),
+                    "produce_reward_type": int(row.get("produce_reward_type", 0)),
+                    "produce_reward_id": int(row.get("produce_reward_id", 0)),
+                    "produce_reward_value": int(row.get("produce_reward_value", 0)),
                     "next": next_id,
                 }
             )
@@ -47,7 +54,7 @@ def main() -> None:
 
     payload = {
         "source": "reverse-output/assets/assetstudio-cli-data-monobehaviour-raw/MonoBehaviour/Table_Block.dat",
-        "note": "Generated from recovered Table_Block main fields. Tail numeric fields still require per-subtable decoding.",
+        "note": "Generated from recovered Table_Block main fields and decoded BlockTableData primitive tail.",
         "chains": chains,
     }
     OUTPUT.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

@@ -670,6 +670,142 @@ Change:
 - `MergeBoardModel.produce_from_block()` now uses weighted random selection for normal `drops`.
 - `designed_drops` remain deterministic until count-range semantics are mapped.
 
+### 2026-05-21 Godot producer designed-drop queue pass
+
+Command:
+
+```powershell
+.\run-godot.bat --headless --quit-after 1
+```
+
+Result:
+
+- `MergeBoardModel` now expands recovered `BlockDesignedDropTableData.count_min/count_max` values into a shuffled per-producer-cell queue.
+- Each Produce action consumes one queued designed drop; if the queue is empty, a new queue is generated from the current producer rule.
+- Designed-drop queues are saved and loaded through the board save payload.
+- Moving a producer cell carries its cooldown and designed-drop queue; merging clears stale per-cell producer state.
+- Remaining unknown: producer charge/count caps are still not identified in the decoded fields and need native `TableDataManager.LoadTable_Block` confirmation.
+
+### 2026-05-21 BlockTableData Tail Decode and Producer Energy Pass
+
+Commands:
+
+```powershell
+python scripts\reverse\parse_table_block_raw.py
+python scripts\reverse\build_godot_block_catalog.py
+.\run-godot.bat --headless --quit-after 1
+```
+
+Evidence:
+
+- `dump.cs` defines `BlockTableData.ProduceEnergy` at offset `0x5C` and `CoolTime` at offset `0x60`.
+- `dump.cs` also defines runtime `ProduceBlockData.produceEnergy`, `dailyCoolTimeCount`, `startCoolTime`, `coolTimeMax`, and per-producer drop weight dictionaries.
+- `InGame_ItemBlock.OnProduce(bool _isUseProduceEnergy = True, ...)` indicates produce energy is producer internal energy/capacity, not player AP.
+
+Result:
+
+- `parse_table_block_raw.py` now decodes the full 120-byte `BlockTableData` primitive tail into named fields.
+- `build_godot_block_catalog.py` carries high-value tail fields into `godot-project/data/blocks.json`.
+- `BlockCatalog.get_produce_energy()` exposes recovered producer energy.
+- `MergeBoardModel` now initializes and saves per-cell remaining producer energy, decrements it by one per Produce, and still charges the prototype AP cost separately.
+- `BlockCatalog.get_cooldown_seconds()` prefers recovered block-level `CoolTime` when present, falling back to `BlockCoolTimeTableData` group rules.
+
+Remaining runtime work:
+
+- Inspect `InGame_ItemBlock.SetProduceEnergyData`, `OnProduce`, and `InGame_MapManager.NewProduceBlock` to confirm refill/reset/open-cooldown edge cases.
+
+### 2026-05-21 Producer Runtime Ghidra Target Index
+
+Command:
+
+```powershell
+python scripts\reverse\extract_producer_runtime_notes.py
+```
+
+Outputs:
+
+- `reverse-output/il2cpp/2026-05-21-101217-il2cppdumper/analysis/producer-runtime-methods.csv`
+- `docs/reverse-godot/producer-runtime-notes.md`
+
+Result:
+
+- Extracted 28 producer-related native method targets from `dump.cs`.
+- Extracted 30 producer-related field targets from `InGame_ItemBlock`, `ProduceBlockData`, and `BlockTableData`.
+- High-priority Ghidra RVAs:
+  - `InGame_ItemBlock.OnProduce`: `0x28B405C`
+  - `InGame_ItemBlock.SetProduceEnergyData`: `0x28B5088`
+  - `InGame_MapManager.NewProduceBlock`: `0x2AB000C`
+  - `MapDataManager.SetNewProduceBlockData`: `0x2C5A1C8`
+  - `MapDataManager.SetProduceBlockData_CoolTimeInfo`: `0x2C5AA7C`
+
+Known limit:
+
+- Il2CppDumper `dump.cs` has signatures and RVAs, not method bodies. Runtime semantics now require Ghidra/native decompilation at the generated RVA list.
+
+### 2026-05-21 Character System Route Update
+
+Evidence:
+
+- AssetStudio inventory contains base maid textures for `Ch_Maid01` through `Ch_Maid07`.
+- AssetStudio inventory contains maid costume textures for `Cos_Maid01` through `Cos_Maid07`, including seasonal variants.
+- AssetStudio inventory contains customer textures for `Ch_Customer01` through `Ch_Customer15`.
+- `dump.cs` contains `Table_Npc`, `NpcTableData`, `MaidInfoTableData`, `MaidLevelTableData`, `MaidSkillTableData`, `MaidGiftTableData`, `CustomerTableData`, `CustomerLikeLevelData`, `InGameNpcDialog`, `Table_MaidChat`, `Table_MaidAIChat`, and `Table_CustomerEpisode`.
+
+Route update:
+
+- Added confirmed Maid/NPC/customer systems to `game-systems-backlog.md`.
+- Expanded M5 in `implementation-roadmap.md` to include character catalog/profile/dialog models.
+- Added T023-T025 for character inventory, Godot data pipeline, and first-pass profile UI.
+
+### 2026-05-21 Character Asset Inventory
+
+Command:
+
+```powershell
+python scripts\reverse\inventory_character_assets.py
+```
+
+Outputs:
+
+- `reverse-output/assets/derived/character_asset_inventory.csv`
+- `reverse-output/assets/derived/character_asset_summary.json`
+- `docs/reverse-godot/character-system-inventory.md`
+
+Result:
+
+- 483 character-related assets identified from the AssetStudio inventory.
+- 37 base maid assets across Maid IDs 1-7.
+- 146 maid costume assets across Maid IDs 1-7.
+- 77 customer assets across Customer IDs 1-15.
+- 14 maid/chat UI assets.
+- 209 broader character UI, skin, and episode assets.
+
+Next:
+
+- Decode `Table_Npc.dat`, `Table_MaidChat.dat`, `Table_MaidAIChat.dat`, and `Table_CustomerEpisode.dat` from raw MonoBehaviour payloads.
+
+### 2026-05-21 Godot Character Asset Import
+
+Command:
+
+```powershell
+python scripts\reverse\import_godot_character_assets.py
+```
+
+Outputs:
+
+- `godot-project/assets/characters/maid_base/`
+- `godot-project/assets/characters/maid_costume/`
+- `godot-project/assets/characters/customer/`
+- `godot-project/assets/characters/maid_chat/`
+- `reverse-output/assets/derived/godot_character_asset_import_manifest.json`
+
+Result:
+
+- Copied 274 first-pass character resource files into the Godot project, including static PNGs and available Spine `.atlas.dat` / `.skel.dat` companions.
+- Missing source files: 0.
+- This follows the project policy: keep raw exports in `reverse-output/`, but copy runtime-used assets into `godot-project/assets/`.
+
 Validation:
 
 ```powershell

@@ -56,6 +56,15 @@ The prototype is intentionally small and data-driven:
 | `godot-project/data/block_rules.json` | Recovered production, drop, cooldown, and merge-drop rules from `Table_Block` child lists |
 | `godot-project/data/initial_board.json` | Initial board, wallet, locked cells, and block placement |
 
+## Imported Assets
+
+Godot-runtime assets are copied into the project tree. Raw reverse exports remain under `reverse-output/`.
+
+| Target | Purpose |
+| --- | --- |
+| `godot-project/assets/sprites/` | Board, currency, and block sprites used by the merge prototype |
+| `godot-project/assets/characters/` | First-pass maid, maid costume, customer, and maid-chat static image assets |
+
 Current catalog summary:
 
 ```text
@@ -81,7 +90,9 @@ Recovered block sprites are copied from AssetStudio Sprite output into `godot-pr
 - Click/select that block, then press `Produce` to create the first recovered designed drop, currently `1201101`.
 - Produce consumes 1 AP and applies the first recovered cooldown duration for the producer group.
 - Weighted random selection is implemented for normal drop pools.
-- Designed drops still use the first recovered entry until count range semantics are mapped.
+- Designed drop ranges now build a per-producer-cell shuffled queue from recovered `count_min/count_max` values, and each Produce consumes one queued block.
+- `BlockTableData.ProduceEnergy` is treated as producer internal energy/capacity, matching `ProduceBlockData.produceEnergy` in the runtime save model.
+- Designed drop queues and remaining producer energy are saved with the board state so partial producer cycles survive load.
 
 ## Reverse Mapping
 
@@ -98,9 +109,8 @@ Current prototype modules map to recovered Unity concepts:
 
 ## Next Implementation Targets
 
-1. Identify real block tables or ScriptableObject/MonoBehaviour config exports.
-1. Add production charge/count limits.
-2. Map designed drop count ranges to actual reward quantities.
+1. Inspect `InGame_ItemBlock.OnProduce` and `SetProduceEnergyData` for refill and open/cooldown edge cases.
+2. Add producer refill/reset behavior once native runtime semantics are confirmed.
 3. Add basic request/order model after `RequestDataManager` and request table assets are mapped.
 
 Current schema reference:

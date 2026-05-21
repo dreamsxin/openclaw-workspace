@@ -53,6 +53,9 @@ func get_cooldown_rules(group_name: String) -> Array:
 
 func get_cooldown_seconds(block_id: String) -> int:
 	var block: Dictionary = get_block(block_id)
+	var block_cool_time := int(block.get("cool_time", 0))
+	if block_cool_time > 0:
+		return block_cool_time
 	var chain_id := String(block.get("chain_id", ""))
 	if chain_id.is_empty():
 		return 0
@@ -60,3 +63,7 @@ func get_cooldown_seconds(block_id: String) -> int:
 	if cooldowns.is_empty():
 		return 0
 	return int(cooldowns[0].get("cool_time_during", 0))
+
+func get_produce_energy(block_id: String) -> int:
+	var block: Dictionary = get_block(block_id)
+	return maxi(0, int(block.get("produce_energy", 0)))

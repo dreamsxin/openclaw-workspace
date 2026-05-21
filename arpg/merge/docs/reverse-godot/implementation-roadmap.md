@@ -156,9 +156,12 @@ Deliverables:
 - Main screen flow.
 - Popup system.
 - Shop/reward screens.
+- Maid/NPC/customer catalog import.
+- Maid profile, level, skill, gift, costume, chat, and dialog data models.
+- Customer catalog and customer episode/progression model.
 - Localization integration.
 - Audio and basic effects.
-- Character/decoration systems if present.
+- Character/decoration presentation systems.
 
 Success criteria:
 
@@ -205,8 +208,13 @@ Success criteria:
 | T016 | Map recovered block sprite keys into Godot assets | done | `scripts/reverse/import_godot_block_sprites.py`, 505 copied icons, `godot_block_sprite_import_manifest.json` |
 | T017 | Build producer interaction and cooldown UI | done | first-pass producer selection, `Produce` button, deterministic recovered drop |
 | T018 | Implement producer cooldown/cost/count state | done | 1 AP produce cost, cooldown timers, cooldown save/load |
-| T019 | Implement weighted/random drop selection and production charges | in progress | weighted normal drops done; designed-drop counts and charge counters pending |
-| T020 | Map designed drop count ranges and producer charges | pending | reward quantities, charge counters |
+| T019 | Implement weighted/random drop selection and production charges | done | weighted normal drops, designed-drop queues, and producer energy counters implemented |
+| T020 | Map designed drop count ranges and producer charges | done | `count_min/count_max` queues and `BlockTableData.ProduceEnergy` per-cell counters wired into Godot |
+| T021 | Inspect runtime producer methods for refill/open/cooldown semantics | in progress | Ghidra target index generated in `producer-runtime-notes.md` and `producer-runtime-methods.csv` |
+| T022 | Decompile producer runtime targets in Ghidra | pending | Confirm energy decrement/refill, open-state, cooldown, and drop-weight mutation semantics |
+| T023 | Inventory Maid/NPC/customer character tables and assets | in progress | first-pass asset/table inventory in `character-system-inventory.md`, `character_asset_inventory.csv`, `character_asset_summary.json` |
+| T024 | Build Godot character catalog data pipeline | in progress | first-pass character static/Spine companion resources copied to `godot-project/assets/characters/`; table decoding pending |
+| T025 | Implement first-pass character/profile UI in Godot | pending | Maid/customer browser, profile data, costume preview placeholders |
 
 ## Tool Acquisition Options
 

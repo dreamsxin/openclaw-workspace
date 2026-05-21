@@ -28,6 +28,9 @@ These questions need evidence from IL2CPP dumps, Unity asset exports, or runtime
 - Which Unity scenes exist?
 - Which assets are UI versus gameplay versus ads/debug?
 - Are character animations Spine-based?
+- How should the confirmed Maid/NPC/customer systems be scoped for the first Godot vertical slice?
+- Which `Table_Npc`, `Table_MaidChat`, `Table_MaidAIChat`, and `Table_CustomerEpisode` fields are required for initial profile/dialog UI?
+- Should maid costumes use extracted LD/SD static images first, or should Spine/prefab reconstruction be prioritized?
 - Are localization tables complete in the APK or partly remote?
 - Are there hidden/unused content packs?
 

@@ -104,3 +104,16 @@ Java source recovered from APK bytecode. Current counts show most files are thir
 | `stack` | 1 | Library `BuildConfig.java` only |
 
 Important conclusion: there is no substantial game Java source under `puzzle.merge.maid.cafe`; gameplay should be recovered from IL2CPP and Unity assets.
+
+## Reverse Notes
+
+High-value reverse-engineering notes are kept under `docs/reverse-godot/`.
+
+Current producer-specific runtime index:
+
+```text
+docs/reverse-godot/producer-runtime-notes.md
+reverse-output/il2cpp/2026-05-21-101217-il2cppdumper/analysis/producer-runtime-methods.csv
+```
+
+Use these when opening `libil2cpp.so` in Ghidra; the note lists RVAs for `InGame_ItemBlock.OnProduce`, `SetProduceEnergyData`, `InGame_MapManager.NewProduceBlock`, and `MapDataManager` producer save methods.
