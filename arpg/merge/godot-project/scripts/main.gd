@@ -13,6 +13,7 @@ const MaidLobbyLoadingReferenceScreenScript := preload("res://scripts/maid_lobby
 const OutGameReferenceScreenScript := preload("res://scripts/out_game_reference_screen.gd")
 const MaidLobbyReferenceScreenScript := preload("res://scripts/maid_lobby_reference_screen.gd")
 const MaidLobbySelectPopupReferenceScreenScript := preload("res://scripts/maid_lobby_select_popup_reference_screen.gd")
+const MaidDialogPopupReferenceScreenScript := preload("res://scripts/maid_dialog_popup_reference_screen.gd")
 const InGameReferenceShellScript := preload("res://scripts/ingame_reference_shell.gd")
 const InventoryPopupReferenceScreenScript := preload("res://scripts/inventory_popup_reference_screen.gd")
 const UILayoutReferencePreviewScript := preload("res://scripts/ui_layout_reference_preview.gd")
@@ -61,6 +62,7 @@ var character_mode_button: Button
 var selected_cell := Vector2i(-1, -1)
 var maids: Array = []
 var customers: Array = []
+var dialogs: Array = []
 var character_mode := "maids"
 var character_index := 0
 var ui_layout_sources: Array = []
@@ -75,6 +77,7 @@ var maid_lobby_loading_reference_screen: Control
 var out_game_reference_screen: Control
 var maid_lobby_reference_screen: Control
 var maid_lobby_select_popup_reference_screen: Control
+var maid_dialog_popup_reference_screen: Control
 var ingame_reference_shell: Control
 var inventory_popup_reference_screen: Control
 var boot_services_reference_screen: Control
@@ -95,6 +98,8 @@ var maid_lobby_loading_reference_visible := false
 var out_game_reference_visible := false
 var maid_lobby_reference_visible := false
 var maid_lobby_select_popup_visible := false
+var maid_dialog_popup_visible := false
+var maid_dialog_index := 0
 var inventory_popup_visible := false
 var gameplay_visible := true
 var restored_startup_mode := false
@@ -267,6 +272,7 @@ func _build_ui() -> void:
 	_build_out_game_reference_screen()
 	_build_maid_lobby_reference_screen()
 	_build_maid_lobby_select_popup_reference_screen()
+	_build_maid_dialog_popup_reference_screen()
 	_build_inventory_popup_reference_screen()
 
 	drag_preview = TextureRect.new()
@@ -563,9 +569,7 @@ func _build_out_game_reference_screen() -> void:
 	out_game_reference_screen.mouse_filter = Control.MOUSE_FILTER_STOP
 	out_game_reference_screen.ingame_requested.connect(_enter_gameplay_from_out_game)
 	out_game_reference_screen.maid_lobby_requested.connect(_enter_maid_lobby_from_out_game)
-	out_game_reference_screen.interaction_requested.connect(func() -> void:
-		_set_status("Maid interaction target recovered; dialog restore is pending.")
-	)
+	out_game_reference_screen.interaction_requested.connect(_show_maid_dialog_popup)
 	out_game_reference_screen.visible = out_game_reference_visible
 	add_child(out_game_reference_screen)
 
@@ -578,9 +582,7 @@ func _build_maid_lobby_reference_screen() -> void:
 		maid_lobby_reference_screen.size = Vector2(650, 672)
 	maid_lobby_reference_screen.mouse_filter = Control.MOUSE_FILTER_STOP
 	maid_lobby_reference_screen.back_requested.connect(_return_to_out_game_from_maid_lobby)
-	maid_lobby_reference_screen.dialog_requested.connect(func() -> void:
-		_set_status("UIMaidLobby.OnClick_ShowDialog recovered; dialog content restore is pending.")
-	)
+	maid_lobby_reference_screen.dialog_requested.connect(_show_maid_dialog_popup)
 	maid_lobby_reference_screen.select_requested.connect(_show_maid_lobby_select_popup)
 	maid_lobby_reference_screen.visible = maid_lobby_reference_visible
 	add_child(maid_lobby_reference_screen)
@@ -593,6 +595,15 @@ func _build_maid_lobby_select_popup_reference_screen() -> void:
 	maid_lobby_select_popup_reference_screen.close_requested.connect(_hide_maid_lobby_select_popup)
 	maid_lobby_select_popup_reference_screen.maid_selected.connect(_select_maid_from_lobby_popup)
 	add_child(maid_lobby_select_popup_reference_screen)
+
+func _build_maid_dialog_popup_reference_screen() -> void:
+	maid_dialog_popup_reference_screen = MaidDialogPopupReferenceScreenScript.new()
+	maid_dialog_popup_reference_screen.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	maid_dialog_popup_reference_screen.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	maid_dialog_popup_reference_screen.visible = false
+	maid_dialog_popup_reference_screen.close_requested.connect(_hide_maid_dialog_popup)
+	maid_dialog_popup_reference_screen.next_requested.connect(_next_maid_dialog)
+	add_child(maid_dialog_popup_reference_screen)
 
 func _build_inventory_popup_reference_screen() -> void:
 	inventory_popup_reference_screen = InventoryPopupReferenceScreenScript.new()
@@ -636,6 +647,10 @@ func _load_character_data() -> void:
 	var customer_payload = JSON.parse_string(customer_text)
 	if typeof(customer_payload) == TYPE_DICTIONARY:
 		customers = customer_payload.get("customers", [])
+	var dialog_text := FileAccess.get_file_as_string(CHARACTER_DIR + "dialogs.json")
+	var dialog_payload = JSON.parse_string(dialog_text)
+	if typeof(dialog_payload) == TYPE_DICTIONARY:
+		dialogs = dialog_payload.get("dialogs", [])
 
 func _load_ui_layout_reference() -> void:
 	var text := FileAccess.get_file_as_string(UI_LAYOUT_REFERENCE)
@@ -782,6 +797,12 @@ func _apply_maid_lobby_select_popup() -> void:
 	maid_lobby_select_popup_reference_screen.call("set_maids", maids, character_index)
 	maid_lobby_select_popup_reference_screen.call("set_popup_open", maid_lobby_select_popup_visible)
 
+func _apply_maid_dialog_popup() -> void:
+	if maid_dialog_popup_reference_screen == null:
+		return
+	maid_dialog_popup_reference_screen.call("set_dialog_state", _current_maid_entry(), _current_maid_dialogs(), maid_dialog_index)
+	maid_dialog_popup_reference_screen.call("set_popup_open", maid_dialog_popup_visible)
+
 func _set_gameplay_visible(next_visible: bool) -> void:
 	gameplay_visible = next_visible
 	if gameplay_root != null:
@@ -795,6 +816,7 @@ func _enter_gameplay_from_out_game() -> void:
 	maid_lobby_reference_visible = false
 	_apply_maid_lobby_reference_visibility()
 	_hide_maid_lobby_select_popup()
+	_hide_maid_dialog_popup()
 	_set_gameplay_visible(true)
 	_apply_gameplay_layout()
 	_set_status("Entered recovered merge gameplay from UIOutGame/InGameBtn.")
@@ -823,6 +845,9 @@ func _auto_enter_maid_lobby_after_capture() -> void:
 	_enter_maid_lobby_from_out_game()
 	await RenderingServer.frame_post_draw
 	_show_maid_lobby_select_popup()
+	await RenderingServer.frame_post_draw
+	_hide_maid_lobby_select_popup()
+	_show_maid_dialog_popup()
 
 func _enter_gameplay_from_out_game_without_capture() -> void:
 	out_game_reference_visible = false
@@ -841,6 +866,7 @@ func _return_to_out_game_from_ingame() -> void:
 
 func _return_to_out_game_from_maid_lobby() -> void:
 	_hide_maid_lobby_select_popup()
+	_hide_maid_dialog_popup()
 	maid_lobby_reference_visible = false
 	_apply_maid_lobby_reference_visibility()
 	_show_out_game_reference()
@@ -863,6 +889,24 @@ func _select_maid_from_lobby_popup(index: int) -> void:
 	_apply_maid_lobby_reference_visibility()
 	_hide_maid_lobby_select_popup()
 	_set_status("Selected maid from UIPopup_MaidLobbySelect.")
+
+func _show_maid_dialog_popup() -> void:
+	maid_dialog_popup_visible = true
+	maid_dialog_index = 0
+	_apply_maid_dialog_popup()
+	_set_status("Opened recovered maid dialog shell.")
+	_maybe_capture_maid_dialog_frame()
+
+func _hide_maid_dialog_popup() -> void:
+	maid_dialog_popup_visible = false
+	_apply_maid_dialog_popup()
+
+func _next_maid_dialog() -> void:
+	var candidates := _current_maid_dialogs()
+	if candidates.is_empty():
+		return
+	maid_dialog_index = posmod(maid_dialog_index + 1, candidates.size())
+	_apply_maid_dialog_popup()
 
 func _select_first_producer_for_capture() -> void:
 	for y in range(board.height):
@@ -1131,6 +1175,12 @@ func _maybe_capture_maid_lobby_select_frame() -> void:
 	startup_capture_flags["11-maidlobbyselect"] = true
 	call_deferred("_capture_startup_frame", "11-maidlobbyselect")
 
+func _maybe_capture_maid_dialog_frame() -> void:
+	if startup_capture_dir.is_empty() or startup_capture_flags.has("12-maiddialog"):
+		return
+	startup_capture_flags["12-maiddialog"] = true
+	call_deferred("_capture_startup_frame", "12-maiddialog")
+
 func _capture_startup_frame(label: String) -> void:
 	await RenderingServer.frame_post_draw
 	DirAccess.make_dir_recursive_absolute(startup_capture_dir)
@@ -1179,6 +1229,31 @@ func _step_character(delta: int) -> void:
 
 func _current_character_entries() -> Array:
 	return customers if character_mode == "customers" else maids
+
+func _current_maid_entry() -> Dictionary:
+	if maids.is_empty():
+		return {}
+	character_index = clampi(character_index, 0, maids.size() - 1)
+	return maids[character_index]
+
+func _current_maid_dialogs() -> Array:
+	var maid := _current_maid_entry()
+	if maid.is_empty():
+		return []
+	var npc_id := int(maid.get("maid_id", 0))
+	var candidates: Array = []
+	for dialog in dialogs:
+		if typeof(dialog) != TYPE_DICTIONARY:
+			continue
+		if int(dialog.get("npc_id", -1)) != npc_id:
+			continue
+		var text: Dictionary = dialog.get("text", {})
+		if String(text.get("eng", "")).is_empty():
+			continue
+		candidates.append(dialog)
+		if candidates.size() >= 6:
+			break
+	return candidates
 
 func _refresh_character_panel() -> void:
 	if character_title_label == null:

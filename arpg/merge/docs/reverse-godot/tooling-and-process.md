@@ -1684,6 +1684,38 @@ Follow-up:
 - Add scrolling once more than the first visible rows are needed.
 - Decode original selection persistence fields, including `MaidLobbySelectIndex`, before making selection affect save data or gameplay.
 
+## 2026-05-22 - Maid Dialog Popup First Pass
+
+Inputs:
+- `reverse-output/assets/assetripper-main/ExportedProject/Assets/Resources/prefabs/ui/UIMaidLobby.prefab`
+- `reverse-output/il2cpp/2026-05-21-101217-il2cppdumper/dump.cs`
+- `godot-project/data/characters/maids.json`
+- `godot-project/data/characters/dialogs.json`
+- `godot-project/scripts/main.gd`
+
+Commands:
+```powershell
+rg -n "UIMaidLobby\\$\\$OnClick_ShowDialog|Btn_ToInteraction|Npc_Dialog|Text_Dialog" .\reverse-output .\godot-project -S
+.\tools\Godot\Godot_console.exe --headless --path .\godot-project --quit-after 9 -- --restored-startup --auto-enter-maid-lobby
+.\tools\Godot\Godot_console.exe --path .\godot-project --resolution 540x960 --quit-after 480 -- --restored-startup --auto-enter-maid-lobby --startup-capture-dir=D:\work\openclaw-workspace\arpg\merge\reverse-output\maid-lobby-captures
+```
+
+Findings:
+- `UIMaidLobby` has `Npc_Dialog`, `Text_Dialog`, and `DialogBtn` controls, and IL2CPP exposes `UIMaidLobby.OnClick_ShowDialog`.
+- `UIOutGame` already exposes `Btn_ToInteraction`, so both the home-screen interaction area and lobby Talk button can share a first dialog popup.
+- `godot-project/data/characters/dialogs.json` has decoded text rows keyed by `npc_id`; current first-pass lookup uses the selected maid id and English text candidates.
+- Godot now opens `MaidDialogPopupReferenceScreen` from `UIMaidLobby/Talk` and `UIOutGame/Btn_ToInteraction`, supports close/next, and captures `12-maiddialog.png`.
+
+Outputs:
+- `godot-project/scripts/maid_dialog_popup_reference_screen.gd`
+- `godot-project/scripts/main.gd`
+- `reverse-output/maid-lobby-captures/12-maiddialog.png`
+
+Follow-up:
+- Confirm the exact dialog filtering used by `lastDialogId`, `dialog_type`, skin id, and facial/animation fields.
+- Replace the generic popup frame with recovered `Npc_Dialog` sprites and original text styles.
+- When the reusable LD maid Spine renderer lands, drive face/animation state from `facial_type` and `anim_type`.
+
 Recommended next runs:
 
 1. Run Il2CppDumper or Cpp2IL on `libil2cpp.so` and `global-metadata.dat`.
