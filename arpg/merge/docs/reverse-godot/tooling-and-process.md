@@ -1263,7 +1263,7 @@ Findings:
 - `Bottom/Lobby/GoToOutGame` is wired as the first working return path from InGame to `UIOutGame`.
 - The shell exposes Produce, Bag, and Cafe labels over recovered bottom UI regions.
 - Produce reuses the current recovered producer logic and updates the shell-selected block summary.
-- Bag currently reports the pending inventory restore rather than opening a placeholder popup.
+- Bag now has a later first-pass popup shell; see "UIInGame Bag To UIPopup_Inventory Shell" below.
 
 Follow-up:
 - Replace the Produce fallback region with the exact original button once the correct `UIBlockInfo` action mapping is confirmed from runtime code.
@@ -1295,7 +1295,7 @@ Findings:
 
 Follow-up:
 - Add exact recovered sprites/textures for `UIInGame` bottom action buttons after sprite GUID mapping is complete.
-- Add `06-inventory.png` once the recovered inventory popup is wired.
+- Keep expanding the inventory capture after the recovered popup gains exact RectTransform and data-model behavior.
 
 ## 2026-05-21 - Fresh Pull Asset Import Fix
 
@@ -1494,6 +1494,36 @@ Outputs:
 
 Follow-up:
 - Use native analysis to determine whether `RuntimeCanvas/SafeArea` should be shown before or after `Reload.unity` creation on the exact device build.
+
+## 2026-05-21 - UIInGame Bag To UIPopup_Inventory Shell
+
+Inputs:
+- `reverse-output/il2cpp/2026-05-21-101217-il2cppdumper/dump.cs`
+- `reverse-output/assets/derived/ui_layout/ui_prefab_layout_inventory.json`
+- `godot-project/scripts/main.gd`
+- `godot-project/scripts/inventory_popup_reference_screen.gd`
+
+Commands:
+```powershell
+rg -n "UIPopup_Inventory|UIInventory|UIListItem_Inven|InvenDataManager|PutInInventory|PullOutInventory" .\reverse-output .\docs -S
+.\tools\Godot\Godot_console.exe --headless --path .\godot-project --quit-after 18 -- --restored-startup --auto-enter-ingame
+.\capture-gameplay.bat
+```
+
+Findings:
+- Static UI inventory evidence names `UIInventory.prefab`, `UIPopup_Inventory.prefab`, `ProduceInventory`, `NormalInventory`, and list item prefabs for block, block-machine, gift, and produce-block slots.
+- IL2CPP names the runtime inventory surface through `InGame_BlockManager.PutInInventory_BlockSlot`, `PutInInventory_ProduceBlockSlot`, `PullOutInventory`, `PullOutInventory_ProduceBlock`, and `InvenDataManager` fields such as `BlockSlotData` and `ProduceBlockSlotData`.
+- Godot now routes the recovered `UIInGame` Bag region to a top-level `UIPopup_Inventory` structural shell instead of only writing a pending status line.
+- `capture-gameplay.bat` now opens the popup after the auto-entered gameplay frame and records `reverse-output/gameplay-captures/11-inventory.png`.
+
+Outputs:
+- `godot-project/scripts/inventory_popup_reference_screen.gd`
+- `godot-project/scripts/main.gd`
+- `reverse-output/gameplay-captures/11-inventory.png`
+
+Follow-up:
+- Parse the exact `UIPopup_Inventory` RectTransforms into a dedicated reference data file instead of using the current structural two-column approximation.
+- Implement persistent `InvenDataManager` slot data and map it to `BlockSlotData` and `ProduceBlockSlotData` before adding drag-out/put-in behavior.
 
 Recommended next runs:
 

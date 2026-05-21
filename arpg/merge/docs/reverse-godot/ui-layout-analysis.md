@@ -157,6 +157,25 @@ Interpretation:
 - The exact scale mode and match mode must be confirmed by IL2CPP/native analysis of the runtime CanvasScaler setup or by a more complete Unity export that preserves those fields.
 - Godot should keep using the recovered RectTransform tree for layout reconstruction and treat CanvasScaler policy as a runtime compatibility layer until the missing fields are confirmed.
 
+## Inventory Popup Evidence
+
+Relevant serialized UI assets:
+
+- `Assets/Resources/prefabs/ui/ingame/UIInventory.prefab`
+- `Assets/Resources/prefabs/ui/popup/UIPopup_Inventory.prefab`
+- `Assets/Resources/prefabs/ui/listitem/UIListItem_InvenSlot_Block.prefab`
+- `Assets/Resources/prefabs/ui/listitem/UIListItem_InvenSlot_BM.prefab`
+- `Assets/Resources/prefabs/ui/listitem/UIListItem_InvenSlot_Gift.prefab`
+- `Assets/Resources/prefabs/ui/listitem/UIListItem_InvenSlot_ProduceBlock.prefab`
+
+Runtime class evidence from the IL2CPP dump links the popup to `InvenDataManager`, `BlockSlotData`, `ProduceBlockSlotData`, `InGame_BlockManager.PutInInventory_BlockSlot`, `PutInInventory_ProduceBlockSlot`, `PullOutInventory`, and `PullOutInventory_ProduceBlock`.
+
+Current Godot state:
+
+- `UIInGame` Bag opens a first-pass top-level `UIPopup_Inventory` shell.
+- The shell separates producer candidates into `ProduceInventory` and normal blocks into `NormalInventory`.
+- Exact slot scroll/list layout, persistent `InvenDataManager` data, and drag-out/put-in behavior remain pending.
+
 ## Largest UI Prefabs
 
 | Name | Category | RectTransforms | Large Rects | Path |

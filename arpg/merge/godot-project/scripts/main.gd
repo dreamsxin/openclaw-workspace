@@ -12,6 +12,7 @@ const SceneLoadingReferenceScreenScript := preload("res://scripts/scene_loading_
 const MaidLobbyLoadingReferenceScreenScript := preload("res://scripts/maid_lobby_loading_reference_screen.gd")
 const OutGameReferenceScreenScript := preload("res://scripts/out_game_reference_screen.gd")
 const InGameReferenceShellScript := preload("res://scripts/ingame_reference_shell.gd")
+const InventoryPopupReferenceScreenScript := preload("res://scripts/inventory_popup_reference_screen.gd")
 const UILayoutReferencePreviewScript := preload("res://scripts/ui_layout_reference_preview.gd")
 const CELL_SIZE := 78
 const CELL_GAP := 8
@@ -70,6 +71,7 @@ var scene_loading_reference_screen: Control
 var maid_lobby_loading_reference_screen: Control
 var out_game_reference_screen: Control
 var ingame_reference_shell: Control
+var inventory_popup_reference_screen: Control
 var boot_services_reference_screen: Control
 var game_start_load_reference_screen: Control
 var reload_scene_reference_screen: Control
@@ -86,6 +88,7 @@ var loading_reference_visible := false
 var scene_loading_reference_visible := false
 var maid_lobby_loading_reference_visible := false
 var out_game_reference_visible := false
+var inventory_popup_visible := false
 var gameplay_visible := true
 var restored_startup_mode := false
 var restored_startup_elapsed := 0.0
@@ -136,9 +139,7 @@ func _build_ui() -> void:
 	ingame_reference_shell.mouse_filter = Control.MOUSE_FILTER_PASS
 	ingame_reference_shell.produce_requested.connect(_produce_selected)
 	ingame_reference_shell.out_game_requested.connect(_return_to_out_game_from_ingame)
-	ingame_reference_shell.inventory_requested.connect(func() -> void:
-		_set_status("Inventory target recovered; inventory contents restore is pending.")
-	)
+	ingame_reference_shell.inventory_requested.connect(_toggle_inventory_popup)
 	gameplay_root.add_child(ingame_reference_shell)
 
 	var title := Label.new()
@@ -254,6 +255,7 @@ func _build_ui() -> void:
 	_build_scene_loading_reference_screen()
 	_build_maid_lobby_loading_reference_screen()
 	_build_out_game_reference_screen()
+	_build_inventory_popup_reference_screen()
 
 	drag_preview = TextureRect.new()
 	drag_preview.visible = false
@@ -554,6 +556,14 @@ func _build_out_game_reference_screen() -> void:
 	out_game_reference_screen.visible = out_game_reference_visible
 	add_child(out_game_reference_screen)
 
+func _build_inventory_popup_reference_screen() -> void:
+	inventory_popup_reference_screen = InventoryPopupReferenceScreenScript.new()
+	inventory_popup_reference_screen.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	inventory_popup_reference_screen.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	inventory_popup_reference_screen.visible = false
+	inventory_popup_reference_screen.close_requested.connect(_hide_inventory_popup)
+	add_child(inventory_popup_reference_screen)
+
 func _make_currency_label(icon_name: String, pos: Vector2) -> Label:
 	var icon := TextureRect.new()
 	icon.texture = load(SPRITE_DIR + icon_name)
@@ -722,6 +732,8 @@ func _set_gameplay_visible(next_visible: bool) -> void:
 	gameplay_visible = next_visible
 	if gameplay_root != null:
 		gameplay_root.visible = gameplay_visible
+	if not gameplay_visible:
+		_hide_inventory_popup()
 
 func _enter_gameplay_from_out_game() -> void:
 	out_game_reference_visible = false
@@ -734,11 +746,36 @@ func _enter_gameplay_from_out_game() -> void:
 func _auto_enter_gameplay_after_capture() -> void:
 	await RenderingServer.frame_post_draw
 	_enter_gameplay_from_out_game()
+	await RenderingServer.frame_post_draw
+	_show_inventory_popup()
 
 func _return_to_out_game_from_ingame() -> void:
+	_hide_inventory_popup()
 	_set_gameplay_visible(false)
 	_show_out_game_reference()
 	_set_status("Returned to UIOutGame from UIInGame/Bottom/Lobby.")
+
+func _toggle_inventory_popup() -> void:
+	if inventory_popup_visible:
+		_hide_inventory_popup()
+	else:
+		_show_inventory_popup()
+
+func _show_inventory_popup() -> void:
+	inventory_popup_visible = true
+	_apply_inventory_popup()
+	_set_status("Opened recovered UIPopup_Inventory shell.")
+	_maybe_capture_inventory_frame()
+
+func _hide_inventory_popup() -> void:
+	inventory_popup_visible = false
+	_apply_inventory_popup()
+
+func _apply_inventory_popup() -> void:
+	if inventory_popup_reference_screen == null:
+		return
+	inventory_popup_reference_screen.call("set_inventory_state", _selected_block_summary(), _board_block_summaries(), board.wallet)
+	inventory_popup_reference_screen.call("set_popup_open", inventory_popup_visible)
 
 func _apply_gameplay_layout() -> void:
 	if gameplay_root == null:
@@ -811,6 +848,7 @@ func _apply_ingame_reference_shell() -> void:
 	ingame_reference_shell.call("set_source", source)
 	ingame_reference_shell.call("set_wallet", board.wallet)
 	ingame_reference_shell.call("set_selected_block", _selected_block_summary())
+	_apply_inventory_popup()
 
 func _set_runtime_canvas_bootstrap_state(progress: float, message: String) -> void:
 	if runtime_canvas_bootstrap_screen == null:
@@ -943,6 +981,12 @@ func _maybe_capture_ingame_frame() -> void:
 		return
 	startup_capture_flags["10-ingame"] = true
 	call_deferred("_capture_startup_frame", "10-ingame")
+
+func _maybe_capture_inventory_frame() -> void:
+	if startup_capture_dir.is_empty() or startup_capture_flags.has("11-inventory"):
+		return
+	startup_capture_flags["11-inventory"] = true
+	call_deferred("_capture_startup_frame", "11-inventory")
 
 func _capture_startup_frame(label: String) -> void:
 	await RenderingServer.frame_post_draw
@@ -1165,6 +1209,10 @@ func _on_block_input(event: InputEvent, cell: Vector2i, block_id: String) -> voi
 		_update_drag_preview()
 
 func _input(event: InputEvent) -> void:
+	if inventory_popup_visible:
+		if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
+			_hide_inventory_popup()
+		return
 	if event is InputEventMouseMotion and dragging:
 		_update_drag_preview()
 	if event is InputEventMouseButton and not event.pressed and dragging:
@@ -1243,6 +1291,7 @@ func _refresh_selection() -> void:
 		)
 	if ingame_reference_shell != null:
 		ingame_reference_shell.call("set_selected_block", _selected_block_summary())
+	_apply_inventory_popup()
 
 func _selected_block_summary() -> Dictionary:
 	if selected_cell.x < 0:
@@ -1255,10 +1304,31 @@ func _selected_block_summary() -> Dictionary:
 		"id": block_id,
 		"name": data.get("name", block_id),
 		"level": data.get("level", "?"),
+		"sprite": data.get("sprite", SPRITE_DIR + "Block_Unknown.png"),
 		"has_produce": not catalog.get_produce_rule(block_id).is_empty(),
 		"energy": board.get_remaining_produce_energy(selected_cell.x, selected_cell.y),
 		"max_energy": catalog.get_produce_energy(block_id),
 	}
+
+func _board_block_summaries() -> Array:
+	var summaries: Array = []
+	for y in range(board.height):
+		for x in range(board.width):
+			var block_id := board.get_block(x, y)
+			if block_id.is_empty():
+				continue
+			var data := catalog.get_block(block_id)
+			summaries.append({
+				"id": block_id,
+				"name": data.get("name", block_id),
+				"level": data.get("level", "?"),
+				"sprite": data.get("sprite", SPRITE_DIR + "Block_Unknown.png"),
+				"has_produce": not catalog.get_produce_rule(block_id).is_empty(),
+				"energy": board.get_remaining_produce_energy(x, y),
+				"max_energy": catalog.get_produce_energy(block_id),
+				"cell": Vector2i(x, y),
+			})
+	return summaries
 
 func _update_drag_preview() -> void:
 	drag_preview.position = get_viewport().get_mouse_position() - Vector2(cell_size, cell_size) * 0.5

@@ -176,7 +176,7 @@ Use the gameplay capture helper after any change to `UIOutGame` transitions, `UI
 .\capture-gameplay.bat
 ```
 
-It runs the same restored startup flow with `--auto-enter-ingame` and writes `10-ingame.png` under `reverse-output/gameplay-captures/`.
+It runs the same restored startup flow with `--auto-enter-ingame` and writes `10-ingame.png` plus the Bag popup regression frame `11-inventory.png` under `reverse-output/gameplay-captures/`.
 
 Checks:
 
@@ -190,6 +190,7 @@ Checks:
 - `08-maidlobbyloading.png` should show the recovered `UIMaidLobbyLoading` structural transition after scene loading.
 - `09-outgame.png` should show the first `UIOutGame` reference layer after startup: maid layer, dialog box, bottom buttons, and village rebuild progress bar.
 - `10-ingame.png` from `capture-gameplay.bat` should show the first portrait gameplay shell after `UIOutGame/InGameBtn`, with the board centered and bottom actions coming from the recovered `UIInGame` shell instead of standalone debug buttons.
+- `11-inventory.png` from `capture-gameplay.bat` should show the first-pass `UIPopup_Inventory` shell opened by the recovered Bag hit region, with separate `ProduceInventory` and `NormalInventory` slot sections.
 - The `UIOutGame/InGameBtn` hit region should be clickable in `run-game.bat` and should enter the playable merge-board prototype. For headless validation, run `.\tools\Godot\Godot_console.exe --path .\godot-project --headless --quit-after 6 -- --restored-startup --auto-enter-ingame`.
 - If the second screen shows only the progress bar, first check UV handling. The baked Spine UVs are normalized `0..1`; do not multiply them by texture page size before passing them to Godot `draw_polygon`.
 - If `09-outgame.png` shows disassembled body parts, a Spine atlas page has been incorrectly drawn as a static portrait. Keep the maid area as a placeholder until the reusable Spine renderer is wired for LD maid assets.

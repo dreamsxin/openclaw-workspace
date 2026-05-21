@@ -226,7 +226,7 @@ Success criteria:
 | T034 | Extract Canvas/SafeArea serialized topology | done | `scripts/reverse/extract_canvas_layout_inventory.py`, `canvas_layout_inventory.json`, and `canvas_layout_inventory.csv`; 104 Canvas, 12 CanvasScaler, and 8 SafeArea components indexed across startup/UI focus files |
 | T035 | Wire UIOutGame entry into playable prototype | done | `OutGameReferenceScreen` exposes recovered `InGameBtn`, `MaidLobbyBtn`, and `Btn_ToInteraction` hit regions; `run-game.bat` now reaches clickable out-game and `InGameBtn` transitions into the merge board |
 | T036 | Add restored UIInGame shell for portrait gameplay | done | `InGameReferenceShell` draws recovered `UIInGame` top/request/bottom regions; `run-game.bat` portrait gameplay now centers the 7x7 board and hides desktop debug panels |
-| T037 | Wire first UIInGame action regions | done | `InGameReferenceShell` exposes recovered bottom action hit regions; Produce reuses current producer logic, Bag reports pending inventory restore, and Cafe returns to `UIOutGame` |
+| T037 | Wire first UIInGame action regions | done | `InGameReferenceShell` exposes recovered bottom action hit regions; Produce reuses current producer logic, Bag is now superseded by the T046 popup shell, and Cafe returns to `UIOutGame` |
 | T038 | Add gameplay capture and portrait action polish | done | `capture-gameplay.bat` records startup plus `05-ingame.png`; portrait `run-game.bat` now hides the legacy debug Produce button so bottom actions are driven by recovered `UIInGame` hit regions |
 | T039 | Add first real out-game character stand-in and clean portrait shell | done | `UIOutGame` now draws a committed full SD maid PNG stand-in instead of only a sketch placeholder; portrait `UIInGame` hides remaining desktop reference controls and uses committed background/currency sprites in its shell |
 | T040 | Restore UIMaidLobbyLoading into startup order | done | `run-game.bat` restored startup now follows `UILoading -> UISceneLoading -> UIMaidLobbyLoading -> UIOutGame`; captures now include `04-maidlobbyloading.png`, `05-outgame.png`, and gameplay `06-ingame.png` |
@@ -235,6 +235,7 @@ Success criteria:
 | T043 | Add GameManager start-load operation stage | done | `run-game.bat` now inserts a `GameManager.OnGameStartLoad` operation stage between boot services and runtime Canvas bootstrap; captures now include `02-gamestartload.png`, `08-outgame.png`, and gameplay `09-ingame.png` |
 | T044 | Add Reload scene mount stage | done | `run-game.bat` now inserts a `Reload.unity` Canvas/SafeArea/UILoading mount stage between `GameStartLoad` and runtime Canvas bootstrap; captures now include `03-reloadscene.png`, `09-outgame.png`, and gameplay `10-ingame.png` |
 | T045 | Confirm native startup timings and first scene load chain | pending | Use Ghidra on `GameManager.OnGameStartLoad`, `PlatformLoginManager.CheckPlatformLogin`, `GameManager.CheckNetwork`, `ReloadManager.LoadScene`, and `UIManager.Initialize` |
+| T046 | Add first recovered inventory popup shell | done | `UIInGame` Bag now opens a top-level `UIPopup_Inventory` structural shell with `ProduceInventory` and `NormalInventory` sections; `capture-gameplay.bat` now writes `11-inventory.png` |
 
 ## Tool Acquisition Options
 
