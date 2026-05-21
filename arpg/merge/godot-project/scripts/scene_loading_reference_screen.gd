@@ -4,6 +4,7 @@ extends Control
 const SPINE_ASSET_DIR := "res://assets/spine/loading/kokomi_Loading/"
 const SPINE_ATLAS_PATH := SPINE_ASSET_DIR + "kokomi_Loading.atlas.txt"
 const SPINE_RIG_PATH := SPINE_ASSET_DIR + "kokomi_Loading.rig.json"
+const SPINE_BAKED_PATH := SPINE_ASSET_DIR + "kokomi_Loading.baked.json"
 const SPINE_PAGE_NAMES := ["kokomi_Loading_2.png", "kokomi_Loading.png"]
 
 var source: Dictionary = {}
@@ -16,6 +17,10 @@ var spine_rig: Dictionary = {}
 var spine_bones: Dictionary = {}
 var spine_attachments: Array = []
 var spine_draw_order: Array = []
+var spine_baked: Dictionary = {}
+var spine_baked_attachments: Array = []
+var spine_baked_frames: Array = []
+var spine_baked_ready := false
 var spine_assets_ready := false
 
 func _ready() -> void:
@@ -133,6 +138,10 @@ func _load_spine_assets() -> void:
 	spine_bones.clear()
 	spine_attachments.clear()
 	spine_draw_order.clear()
+	spine_baked.clear()
+	spine_baked_attachments.clear()
+	spine_baked_frames.clear()
+	spine_baked_ready = false
 	for page_name in SPINE_PAGE_NAMES:
 		var texture := load(SPINE_ASSET_DIR + page_name)
 		if texture != null:
@@ -175,8 +184,26 @@ func _load_spine_assets() -> void:
 			var region: Dictionary = spine_regions[current_region]
 			region["rotate"] = value
 			spine_regions[current_region] = region
+	_load_spine_baked()
 	_load_spine_rig()
-	spine_assets_ready = spine_regions.has("Head") and spine_regions.has("Cafe_Table") and not spine_attachments.is_empty()
+	spine_assets_ready = spine_baked_ready or (spine_regions.has("Head") and spine_regions.has("Cafe_Table") and not spine_attachments.is_empty())
+
+func _load_spine_baked() -> void:
+	if not FileAccess.file_exists(SPINE_BAKED_PATH):
+		return
+	var file := FileAccess.open(SPINE_BAKED_PATH, FileAccess.READ)
+	if file == null:
+		return
+	var parsed = JSON.parse_string(file.get_as_text())
+	if typeof(parsed) != TYPE_DICTIONARY:
+		return
+	var frames: Array = parsed.get("frames", [])
+	if frames.is_empty():
+		return
+	spine_baked = parsed
+	spine_baked_attachments = parsed.get("attachments", [])
+	spine_baked_frames = frames
+	spine_baked_ready = not spine_baked_attachments.is_empty()
 
 func _load_spine_rig() -> void:
 	if not FileAccess.file_exists(SPINE_RIG_PATH):
@@ -204,6 +231,9 @@ func _parse_atlas_numbers(value: String) -> Array[float]:
 	return numbers
 
 func _draw_spine_region_animation(target: Rect2) -> void:
+	if spine_baked_ready:
+		_draw_spine_baked_animation(target)
+		return
 	var rig_origin := target.position + Vector2(target.size.x * 0.5, target.size.y * 0.5)
 	var scale_factor := minf(target.size.x / 1220.0, target.size.y / 1700.0)
 	var pose := _evaluate_spine_pose()
@@ -211,6 +241,85 @@ func _draw_spine_region_animation(target: Rect2) -> void:
 	for attachment in spine_attachments:
 		_draw_spine_attachment(attachment, target, rig_origin, scale_factor, pose)
 	draw_string(ThemeDB.fallback_font, target.position + Vector2(0, target.size.y - 28), "SkeletonGraphic (kokomi_Loading)", HORIZONTAL_ALIGNMENT_CENTER, target.size.x, 16, Color(0.9, 0.98, 1.0, 0.82))
+
+func _draw_spine_baked_animation(target: Rect2) -> void:
+	var bake: Dictionary = spine_baked.get("bake", {})
+	var fps := float(bake.get("fps", 30.0))
+	var frame_count := spine_baked_frames.size()
+	var frame_index := int(floor(spine_time * fps)) % frame_count
+	var frame: Dictionary = spine_baked_frames[frame_index]
+	var items: Array = frame.get("items", [])
+	var bounds := _baked_frame_bounds(frame)
+	if bounds.size.x <= 0.0 or bounds.size.y <= 0.0:
+		return
+	var scale_factor := minf(target.size.x / bounds.size.x, target.size.y / bounds.size.y) * 0.94
+	var center := target.position + target.size * 0.5
+
+	for item in items:
+		if typeof(item) != TYPE_ARRAY or item.size() < 2:
+			continue
+		var attachment_index := int(item[0])
+		if attachment_index < 0 or attachment_index >= spine_baked_attachments.size():
+			continue
+		var attachment: Dictionary = spine_baked_attachments[attachment_index]
+		_draw_spine_baked_attachment(attachment, item[1], bounds, center, scale_factor)
+	draw_string(ThemeDB.fallback_font, target.position + Vector2(0, target.size.y - 28), "SkeletonGraphic (kokomi_Loading) baked Idle", HORIZONTAL_ALIGNMENT_CENTER, target.size.x, 16, Color(0.9, 0.98, 1.0, 0.82))
+
+func _baked_frame_bounds(frame: Dictionary) -> Rect2:
+	var items: Array = frame.get("items", [])
+	var has_point := false
+	var min_point := Vector2(INF, INF)
+	var max_point := Vector2(-INF, -INF)
+	for item in items:
+		if typeof(item) != TYPE_ARRAY or item.size() < 2:
+			continue
+		var vertices: Array = item[1]
+		var index := 0
+		while index + 1 < vertices.size():
+			var point := Vector2(float(vertices[index]), -float(vertices[index + 1]))
+			min_point = min_point.min(point)
+			max_point = max_point.max(point)
+			has_point = true
+			index += 2
+	if not has_point:
+		return Rect2()
+	return Rect2(min_point, max_point - min_point)
+
+func _draw_spine_baked_attachment(attachment: Dictionary, vertices: Array, bounds: Rect2, center: Vector2, scale_factor: float) -> void:
+	var page_name := String(attachment.get("page", ""))
+	if not spine_pages.has(page_name):
+		return
+	var uvs: Array = attachment.get("uvs", [])
+	var triangles: Array = attachment.get("triangles", [])
+	if vertices.size() < 6 or uvs.size() < 6 or triangles.size() < 3:
+		return
+
+	var page_texture: Texture2D = spine_pages[page_name]
+	var texture_size := page_texture.get_size()
+	var points: Array[Vector2] = []
+	var uv_points: Array[Vector2] = []
+	var index := 0
+	while index + 1 < vertices.size() and index + 1 < uvs.size():
+		var spine_point := Vector2(float(vertices[index]), -float(vertices[index + 1]))
+		var local := (spine_point - bounds.position - bounds.size * 0.5) * scale_factor
+		points.append(center + local)
+		uv_points.append(Vector2(float(uvs[index]) * texture_size.x, float(uvs[index + 1]) * texture_size.y))
+		index += 2
+
+	for tri_index in range(0, triangles.size(), 3):
+		if tri_index + 2 >= triangles.size():
+			break
+		var a := int(triangles[tri_index])
+		var b := int(triangles[tri_index + 1])
+		var c := int(triangles[tri_index + 2])
+		if a >= points.size() or b >= points.size() or c >= points.size():
+			continue
+		draw_colored_polygon(
+			PackedVector2Array([points[a], points[b], points[c]]),
+			Color.WHITE,
+			PackedVector2Array([uv_points[a], uv_points[b], uv_points[c]]),
+			page_texture
+		)
 
 func _draw_spine_attachment(attachment: Dictionary, target: Rect2, rig_origin: Vector2, scale_factor: float, pose: Dictionary) -> void:
 	var region_name := String(attachment.get("region", ""))

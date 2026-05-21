@@ -1013,6 +1013,7 @@ Commands:
 ```powershell
 python scripts\reverse\import_godot_spine_loading_assets.py
 python scripts\reverse\build_kokomi_loading_spine_rig.py
+node scripts\reverse\bake_kokomi_loading_spine.mjs
 .\tools\Godot\Godot_console.exe --headless --path .\godot-project --import
 .\run-game.bat --headless --quit-after 5
 .\run-godot.bat --headless --quit-after 1
@@ -1024,17 +1025,20 @@ Outputs:
 - `godot-project/assets/spine/loading/kokomi_Loading/kokomi_Loading.png`
 - `godot-project/assets/spine/loading/kokomi_Loading/kokomi_Loading_2.png`
 - `godot-project/assets/spine/loading/kokomi_Loading/kokomi_Loading.rig.json`
+- `godot-project/assets/spine/loading/kokomi_Loading/kokomi_Loading.baked.json`
 - `reverse-output/assets/derived/godot_spine_loading_import_manifest.json`
+- `reverse-output/assets/derived/kokomi_loading_spine_bake_manifest.json`
 
 Findings:
 - AssetRipper has the complete `kokomi_Loading` loading Spine evidence set: atlas text, binary skeleton, and both texture pages.
 - The `.skel.bytes` string table identifies Spine `4.2.43` and includes region names plus bone-name samples such as `sub_root`, `Pelvis`, `Lower body_H`, `Skirt_H`, `body_1`, `body_2`, `nack`, and `Back_Ribbon_H`.
-- `UISceneLoading` now renders through `kokomi_Loading.rig.json`, a generated bridge rig with bones, attachment bindings, draw order, and loading-idle channels. Godot evaluates that rig before cropping atlas regions.
-- The current Godot path still does not parse the exact `.skel.bytes` binary timeline; it uses the file as preserved source evidence and derives a bridge rig for visible skeletal animation.
+- `@esotericsoftware/spine-core@4.2.43` successfully parsed the binary skeleton: 383 bones, 111 slots, 2 animations (`Idle` 4.6667s and `Interaction` 2.5s).
+- `bake_kokomi_loading_spine.mjs` bakes `Idle` at 30 FPS into 141 frames with original draw order, UVs, triangles, and world vertices.
+- `UISceneLoading` now prefers `kokomi_Loading.baked.json` and renders baked Spine geometry directly. `kokomi_Loading.rig.json` remains only as a fallback when baked data is unavailable.
 
 Follow-up:
-- Decide whether to integrate a Godot Spine runtime or implement a focused `.skel.bytes` parser for exact timeline playback.
-- Generalize the atlas-region preview path before applying it to maid/customer Spine entries.
+- Add a baked `Interaction` clip or runtime clip switching once the original startup logic needs it.
+- Generalize the baked Spine path before applying it to maid/customer Spine entries.
 
 Recommended next runs:
 

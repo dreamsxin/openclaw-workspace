@@ -46,6 +46,16 @@ def main() -> None:
                 "bytes": (TARGET_ROOT / "kokomi_Loading.rig.json").stat().st_size,
             }
         )
+    baker = ROOT / "scripts" / "reverse" / "bake_kokomi_loading_spine.mjs"
+    if baker.exists():
+        subprocess.run(["node", str(baker)], check=True)
+        copied.append(
+            {
+                "source": "baked by @esotericsoftware/spine-core@4.2.43 from kokomi_Loading.skel.bytes",
+                "target": "godot-project/assets/spine/loading/kokomi_Loading/kokomi_Loading.baked.json",
+                "bytes": (TARGET_ROOT / "kokomi_Loading.baked.json").stat().st_size,
+            }
+        )
     MANIFEST_PATH.parent.mkdir(parents=True, exist_ok=True)
     MANIFEST_PATH.write_text(
         json.dumps(
