@@ -159,12 +159,13 @@ It runs:
 Expected outputs:
 
 ```text
-reverse-output/startup-captures/01-runtimecanvas.png
-reverse-output/startup-captures/02-uiloading.png
-reverse-output/startup-captures/03-uisceneloading.png
-reverse-output/startup-captures/04-uisceneloading-late.png
-reverse-output/startup-captures/05-maidlobbyloading.png
-reverse-output/startup-captures/06-outgame.png
+reverse-output/startup-captures/01-bootservices.png
+reverse-output/startup-captures/02-runtimecanvas.png
+reverse-output/startup-captures/03-uiloading.png
+reverse-output/startup-captures/04-uisceneloading.png
+reverse-output/startup-captures/05-uisceneloading-late.png
+reverse-output/startup-captures/06-maidlobbyloading.png
+reverse-output/startup-captures/07-outgame.png
 ```
 
 Use the gameplay capture helper after any change to `UIOutGame` transitions, `UIInGame`, or portrait gameplay layout:
@@ -173,17 +174,18 @@ Use the gameplay capture helper after any change to `UIOutGame` transitions, `UI
 .\capture-gameplay.bat
 ```
 
-It runs the same restored startup flow with `--auto-enter-ingame` and writes `07-ingame.png` under `reverse-output/gameplay-captures/`.
+It runs the same restored startup flow with `--auto-enter-ingame` and writes `08-ingame.png` under `reverse-output/gameplay-captures/`.
 
 Checks:
 
-- `01-runtimecanvas.png` should show the recovered runtime Canvas/SafeArea bootstrap structure before the first visible loading prefab.
-- `02-uiloading.png` should show the recovered app loading page and bottom progress bar.
-- `03-uisceneloading.png` should show the recovered `kokomi_Loading` Spine character, background, and progress bar.
-- `04-uisceneloading-late.png` should differ from `03-uisceneloading.png`; if the files are visually identical, inspect the baked frame clock and `SceneLoadingReferenceScreen._draw_spine_baked_animation`.
-- `05-maidlobbyloading.png` should show the recovered `UIMaidLobbyLoading` structural transition after scene loading.
-- `06-outgame.png` should show the first `UIOutGame` reference layer after startup: maid layer, dialog box, bottom buttons, and village rebuild progress bar.
-- `07-ingame.png` from `capture-gameplay.bat` should show the first portrait gameplay shell after `UIOutGame/InGameBtn`, with the board centered and bottom actions coming from the recovered `UIInGame` shell instead of standalone debug buttons.
+- `01-bootservices.png` should show the recovered pre-UI service order: runtime initialize hooks, `GameManager`, high score service, login/network gates, `ReloadManager`, and `UIManager`.
+- `02-runtimecanvas.png` should show the recovered runtime Canvas/SafeArea bootstrap structure before the first visible loading prefab.
+- `03-uiloading.png` should show the recovered app loading page and bottom progress bar.
+- `04-uisceneloading.png` should show the recovered `kokomi_Loading` Spine character, background, and progress bar.
+- `05-uisceneloading-late.png` should differ from `04-uisceneloading.png`; if the files are visually identical, inspect the baked frame clock and `SceneLoadingReferenceScreen._draw_spine_baked_animation`.
+- `06-maidlobbyloading.png` should show the recovered `UIMaidLobbyLoading` structural transition after scene loading.
+- `07-outgame.png` should show the first `UIOutGame` reference layer after startup: maid layer, dialog box, bottom buttons, and village rebuild progress bar.
+- `08-ingame.png` from `capture-gameplay.bat` should show the first portrait gameplay shell after `UIOutGame/InGameBtn`, with the board centered and bottom actions coming from the recovered `UIInGame` shell instead of standalone debug buttons.
 - The `UIOutGame/InGameBtn` hit region should be clickable in `run-game.bat` and should enter the playable merge-board prototype. For headless validation, run `.\tools\Godot\Godot_console.exe --path .\godot-project --headless --quit-after 6 -- --restored-startup --auto-enter-ingame`.
 - If the second screen shows only the progress bar, first check UV handling. The baked Spine UVs are normalized `0..1`; do not multiply them by texture page size before passing them to Godot `draw_polygon`.
-- If `06-outgame.png` shows disassembled body parts, a Spine atlas page has been incorrectly drawn as a static portrait. Keep the maid area as a placeholder until the reusable Spine renderer is wired for LD maid assets.
+- If `07-outgame.png` shows disassembled body parts, a Spine atlas page has been incorrectly drawn as a static portrait. Keep the maid area as a placeholder until the reusable Spine renderer is wired for LD maid assets.

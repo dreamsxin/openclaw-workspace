@@ -3,6 +3,7 @@ extends Control
 const BlockCatalogScript := preload("res://scripts/models/block_catalog.gd")
 const MergeBoardModelScript := preload("res://scripts/models/merge_board_model.gd")
 const SaveManagerScript := preload("res://scripts/services/save_manager.gd")
+const BootServicesReferenceScreenScript := preload("res://scripts/boot_services_reference_screen.gd")
 const RuntimeCanvasBootstrapScreenScript := preload("res://scripts/runtime_canvas_bootstrap_screen.gd")
 const LoadingReferenceScreenScript := preload("res://scripts/loading_reference_screen.gd")
 const SceneLoadingReferenceScreenScript := preload("res://scripts/scene_loading_reference_screen.gd")
@@ -16,6 +17,7 @@ const BOARD_ORIGIN := Vector2(360, 92)
 const PORTRAIT_CELL_SIZE := 62
 const PORTRAIT_CELL_GAP := 5
 const PORTRAIT_BOARD_MARGIN := 24
+const RESTORED_BOOT_SERVICES_SECONDS := 0.75
 const RESTORED_UI_BOOTSTRAP_SECONDS := 0.55
 const RESTORED_APP_LOADING_SECONDS := 2.0
 const RESTORED_SCENE_LOADING_SECONDS := 1.7
@@ -64,11 +66,13 @@ var scene_loading_reference_screen: Control
 var maid_lobby_loading_reference_screen: Control
 var out_game_reference_screen: Control
 var ingame_reference_shell: Control
+var boot_services_reference_screen: Control
 var gameplay_root: Control
 var portrait_hidden_controls: Array = []
 var board_origin := BOARD_ORIGIN
 var cell_size := CELL_SIZE
 var cell_gap := CELL_GAP
+var boot_services_reference_visible := false
 var runtime_canvas_bootstrap_visible := false
 var loading_reference_visible := false
 var scene_loading_reference_visible := false
@@ -234,6 +238,7 @@ func _build_ui() -> void:
 
 	_build_character_panel()
 	_build_ui_layout_panel()
+	_build_boot_services_reference_screen()
 	_build_runtime_canvas_bootstrap_screen()
 	_build_loading_reference_screen()
 	_build_scene_loading_reference_screen()
@@ -252,8 +257,8 @@ func _build_ui() -> void:
 	_apply_gameplay_layout()
 	if restored_startup_mode:
 		_set_gameplay_visible(false)
-		_show_runtime_canvas_bootstrap()
-		_set_runtime_canvas_bootstrap_state(0.0, "Initializing UI...")
+		_show_boot_services_reference()
+		_set_boot_services_reference_state(0.0, "RuntimeInitializeOnLoad")
 	else:
 		_show_loading_reference()
 
@@ -261,12 +266,22 @@ func _process(delta: float) -> void:
 	if not restored_startup_mode or restored_startup_finished:
 		return
 	restored_startup_elapsed += delta
-	if restored_startup_elapsed < RESTORED_UI_BOOTSTRAP_SECONDS:
-		var bootstrap_progress := clampf(restored_startup_elapsed / RESTORED_UI_BOOTSTRAP_SECONDS, 0.0, 1.0)
-		_set_runtime_canvas_bootstrap_state(bootstrap_progress, _restored_ui_bootstrap_message(bootstrap_progress))
-		_maybe_capture_startup_frame("01-runtimecanvas", 0.3)
+	if restored_startup_elapsed < RESTORED_BOOT_SERVICES_SECONDS:
+		var boot_progress := clampf(restored_startup_elapsed / RESTORED_BOOT_SERVICES_SECONDS, 0.0, 1.0)
+		_set_boot_services_reference_state(boot_progress, _restored_boot_services_message(boot_progress))
+		_maybe_capture_startup_frame("01-bootservices", 0.35)
 		return
-	var app_elapsed := restored_startup_elapsed - RESTORED_UI_BOOTSTRAP_SECONDS
+	var bootstrap_elapsed := restored_startup_elapsed - RESTORED_BOOT_SERVICES_SECONDS
+	if bootstrap_elapsed < RESTORED_UI_BOOTSTRAP_SECONDS:
+		var bootstrap_progress := clampf(bootstrap_elapsed / RESTORED_UI_BOOTSTRAP_SECONDS, 0.0, 1.0)
+		if boot_services_reference_visible:
+			boot_services_reference_visible = false
+			_apply_boot_services_reference_visibility()
+			_show_runtime_canvas_bootstrap()
+		_set_runtime_canvas_bootstrap_state(bootstrap_progress, _restored_ui_bootstrap_message(bootstrap_progress))
+		_maybe_capture_startup_frame("02-runtimecanvas", RESTORED_BOOT_SERVICES_SECONDS + 0.3)
+		return
+	var app_elapsed := bootstrap_elapsed - RESTORED_UI_BOOTSTRAP_SECONDS
 	if app_elapsed < RESTORED_APP_LOADING_SECONDS:
 		var app_progress := clampf(app_elapsed / RESTORED_APP_LOADING_SECONDS, 0.0, 1.0)
 		if runtime_canvas_bootstrap_visible:
@@ -274,7 +289,7 @@ func _process(delta: float) -> void:
 			_apply_runtime_canvas_bootstrap_visibility()
 			_show_loading_reference()
 		_set_loading_reference_state(app_progress, _restored_app_loading_message(app_progress))
-		_maybe_capture_startup_frame("02-uiloading", RESTORED_UI_BOOTSTRAP_SECONDS + 1.0)
+		_maybe_capture_startup_frame("03-uiloading", RESTORED_BOOT_SERVICES_SECONDS + RESTORED_UI_BOOTSTRAP_SECONDS + 1.0)
 		return
 	var scene_elapsed := app_elapsed - RESTORED_APP_LOADING_SECONDS
 	if scene_elapsed < RESTORED_SCENE_LOADING_SECONDS:
@@ -284,8 +299,8 @@ func _process(delta: float) -> void:
 			_apply_loading_reference_visibility()
 			_show_scene_loading_reference()
 		_set_scene_loading_reference_state(scene_progress, _restored_scene_loading_message(scene_progress))
-		_maybe_capture_startup_frame("03-uisceneloading", RESTORED_UI_BOOTSTRAP_SECONDS + RESTORED_APP_LOADING_SECONDS + 0.9)
-		_maybe_capture_startup_frame("04-uisceneloading-late", RESTORED_UI_BOOTSTRAP_SECONDS + RESTORED_APP_LOADING_SECONDS + 1.45)
+		_maybe_capture_startup_frame("04-uisceneloading", RESTORED_BOOT_SERVICES_SECONDS + RESTORED_UI_BOOTSTRAP_SECONDS + RESTORED_APP_LOADING_SECONDS + 0.9)
+		_maybe_capture_startup_frame("05-uisceneloading-late", RESTORED_BOOT_SERVICES_SECONDS + RESTORED_UI_BOOTSTRAP_SECONDS + RESTORED_APP_LOADING_SECONDS + 1.45)
 		return
 	var maid_lobby_elapsed := scene_elapsed - RESTORED_SCENE_LOADING_SECONDS
 	var maid_lobby_progress := clampf(maid_lobby_elapsed / RESTORED_MAID_LOBBY_LOADING_SECONDS, 0.0, 1.0)
@@ -294,10 +309,10 @@ func _process(delta: float) -> void:
 		_apply_scene_loading_reference_visibility()
 		_show_maid_lobby_loading_reference()
 	_set_maid_lobby_loading_reference_state(maid_lobby_progress, _restored_maid_lobby_loading_message(maid_lobby_progress))
-	_maybe_capture_startup_frame("05-maidlobbyloading", RESTORED_UI_BOOTSTRAP_SECONDS + RESTORED_APP_LOADING_SECONDS + RESTORED_SCENE_LOADING_SECONDS + 0.45)
+	_maybe_capture_startup_frame("06-maidlobbyloading", RESTORED_BOOT_SERVICES_SECONDS + RESTORED_UI_BOOTSTRAP_SECONDS + RESTORED_APP_LOADING_SECONDS + RESTORED_SCENE_LOADING_SECONDS + 0.45)
 	if maid_lobby_progress >= 1.0:
 		_finish_restored_startup()
-		_maybe_capture_startup_frame("06-outgame", RESTORED_UI_BOOTSTRAP_SECONDS + RESTORED_APP_LOADING_SECONDS + RESTORED_SCENE_LOADING_SECONDS + RESTORED_MAID_LOBBY_LOADING_SECONDS)
+		_maybe_capture_startup_frame("07-outgame", RESTORED_BOOT_SERVICES_SECONDS + RESTORED_UI_BOOTSTRAP_SECONDS + RESTORED_APP_LOADING_SECONDS + RESTORED_SCENE_LOADING_SECONDS + RESTORED_MAID_LOBBY_LOADING_SECONDS)
 		if auto_enter_ingame and not auto_enter_ingame_done:
 			auto_enter_ingame_done = true
 			call_deferred("_auto_enter_gameplay_after_capture")
@@ -425,6 +440,17 @@ func _build_runtime_canvas_bootstrap_screen() -> void:
 	runtime_canvas_bootstrap_screen.visible = runtime_canvas_bootstrap_visible
 	add_child(runtime_canvas_bootstrap_screen)
 
+func _build_boot_services_reference_screen() -> void:
+	boot_services_reference_screen = BootServicesReferenceScreenScript.new()
+	if restored_startup_mode:
+		boot_services_reference_screen.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	else:
+		boot_services_reference_screen.position = Vector2(320, 24)
+		boot_services_reference_screen.size = Vector2(650, 672)
+	boot_services_reference_screen.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	boot_services_reference_screen.visible = boot_services_reference_visible
+	add_child(boot_services_reference_screen)
+
 func _build_loading_reference_screen() -> void:
 	loading_reference_screen = LoadingReferenceScreenScript.new()
 	if restored_startup_mode:
@@ -551,6 +577,15 @@ func _toggle_out_game_reference() -> void:
 func _show_runtime_canvas_bootstrap() -> void:
 	runtime_canvas_bootstrap_visible = true
 	_apply_runtime_canvas_bootstrap_visibility()
+
+func _show_boot_services_reference() -> void:
+	boot_services_reference_visible = true
+	_apply_boot_services_reference_visibility()
+
+func _apply_boot_services_reference_visibility() -> void:
+	if boot_services_reference_screen == null:
+		return
+	boot_services_reference_screen.visible = boot_services_reference_visible
 
 func _apply_runtime_canvas_bootstrap_visibility() -> void:
 	if runtime_canvas_bootstrap_screen == null:
@@ -712,6 +747,11 @@ func _set_runtime_canvas_bootstrap_state(progress: float, message: String) -> vo
 		return
 	runtime_canvas_bootstrap_screen.call("set_loading_state", progress, message)
 
+func _set_boot_services_reference_state(progress: float, message: String) -> void:
+	if boot_services_reference_screen == null:
+		return
+	boot_services_reference_screen.call("set_loading_state", progress, message)
+
 func _set_loading_reference_state(progress: float, message: String) -> void:
 	if loading_reference_screen == null:
 		return
@@ -726,6 +766,17 @@ func _set_maid_lobby_loading_reference_state(progress: float, message: String) -
 	if maid_lobby_loading_reference_screen == null:
 		return
 	maid_lobby_loading_reference_screen.call("set_loading_state", progress, message)
+
+func _restored_boot_services_message(progress: float) -> String:
+	if progress < 0.2:
+		return "RuntimeInitializeOnLoad"
+	if progress < 0.42:
+		return "GameManager.OnGameStart"
+	if progress < 0.62:
+		return "Checking login and network..."
+	if progress < 0.82:
+		return "ReloadManager.LoadScene"
+	return "Preparing UIManager..."
 
 func _restored_ui_bootstrap_message(progress: float) -> String:
 	if progress < 0.5:
@@ -759,10 +810,12 @@ func _restored_maid_lobby_loading_message(progress: float) -> String:
 
 func _finish_restored_startup() -> void:
 	restored_startup_finished = true
+	boot_services_reference_visible = false
 	runtime_canvas_bootstrap_visible = false
 	loading_reference_visible = false
 	scene_loading_reference_visible = false
 	maid_lobby_loading_reference_visible = false
+	_apply_boot_services_reference_visibility()
 	_apply_runtime_canvas_bootstrap_visibility()
 	_apply_loading_reference_visibility()
 	_apply_scene_loading_reference_visibility()
@@ -780,10 +833,10 @@ func _maybe_capture_startup_frame(label: String, threshold_seconds: float) -> vo
 	call_deferred("_capture_startup_frame", label)
 
 func _maybe_capture_ingame_frame() -> void:
-	if startup_capture_dir.is_empty() or startup_capture_flags.has("07-ingame"):
+	if startup_capture_dir.is_empty() or startup_capture_flags.has("08-ingame"):
 		return
-	startup_capture_flags["07-ingame"] = true
-	call_deferred("_capture_startup_frame", "07-ingame")
+	startup_capture_flags["08-ingame"] = true
+	call_deferred("_capture_startup_frame", "08-ingame")
 
 func _capture_startup_frame(label: String) -> void:
 	await RenderingServer.frame_post_draw

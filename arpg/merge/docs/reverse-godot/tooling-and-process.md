@@ -1403,6 +1403,37 @@ Outputs:
 Follow-up:
 - Use Ghidra on `GameManager.OnGameStartLoad`, `ReloadManager.LoadScene`, `UIManager.Initialize`, and `SafeArea.Awake` to confirm exact runtime timing and CanvasScaler policy.
 
+## 2026-05-21 - Boot Services Startup Stage
+
+Inputs:
+- `reverse-output/il2cpp/2026-05-21-101217-il2cppdumper/RuntimeInitializeOnLoads.json`
+- `reverse-output/il2cpp/2026-05-21-101217-il2cppdumper/dump.cs`
+- `godot-project/scripts/main.gd`
+
+Commands:
+```powershell
+rg -n "OnGameStart|OnGameStartLoad|CheckPlatformLogin|CheckNetwork|ReloadManager|UIManager" .\reverse-output\il2cpp\2026-05-21-101217-il2cppdumper\dump.cs
+.\tools\Godot\Godot_console.exe --path .\godot-project --headless --quit-after 9 -- --restored-startup --auto-enter-ingame
+.\capture-gameplay.bat
+.\capture-startup.bat
+.\run-game.bat --headless --quit-after 7
+```
+
+Findings:
+- `RuntimeInitializeOnLoads.json` identifies game-level startup hooks before visible UI.
+- `dump.cs` names the relevant early startup methods: `GameManager.OnGameStart`, `GameManager.OnGameStartLoad`, `GameManager.InitCheck`, `PlatformLoginManager.CheckPlatformLogin`, `GameManager.CheckNetwork`, `ReloadManager.LoadScene`, and `UIManager.Initialize`.
+- Method bodies are still pending native analysis, so the Godot stage is a structural order marker rather than exact timing.
+- `run-game.bat` now begins with `BootServices -> RuntimeCanvas/SafeArea -> UILoading -> UISceneLoading -> UIMaidLobbyLoading -> UIOutGame`.
+
+Outputs:
+- `godot-project/scripts/boot_services_reference_screen.gd`
+- `reverse-output/startup-captures/01-bootservices.png`
+- `reverse-output/startup-captures/07-outgame.png`
+- `reverse-output/gameplay-captures/08-ingame.png`
+
+Follow-up:
+- Use Ghidra to confirm exact call order and blocking behavior for `GameManager.OnGameStartLoad`, platform login, network checks, `ReloadManager.LoadScene`, and `UIManager.Initialize`.
+
 Recommended next runs:
 
 1. Run Il2CppDumper or Cpp2IL on `libil2cpp.so` and `global-metadata.dat`.
