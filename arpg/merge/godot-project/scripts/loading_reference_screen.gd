@@ -73,11 +73,17 @@ func _draw_loading_bar(reference_size: Vector2, scale_factor: float, origin: Vec
 		return
 	draw_rect(bar_rect, Color(0.08, 0.1, 0.12, 0.95), true)
 	draw_rect(bar_rect, Color(0.95, 0.85, 0.56, 0.95), false, 2.0)
-	fill_rect.size.x *= loading_progress
+	if fill_rect.size == Vector2.ZERO:
+		fill_rect = bar_rect.grow(-3.0)
+	var fill_width := fill_rect.size.x * loading_progress
+	fill_rect.size.x = fill_width
+	fill_rect.position.x = bar_rect.position.x + 3.0
 	if bar_texture != null:
 		draw_texture_rect(bar_texture, fill_rect, true, Color(0.42, 0.78, 0.9, 0.92))
 	else:
 		draw_rect(fill_rect, Color(0.42, 0.78, 0.9, 0.92), true)
+	var shine_x := fill_rect.position.x + maxf(0.0, fill_width - 10.0)
+	draw_rect(Rect2(Vector2(shine_x, fill_rect.position.y), Vector2(10.0, fill_rect.size.y)), Color(1, 1, 1, 0.38), true)
 	draw_string(ThemeDB.fallback_font, bar_rect.position + Vector2(0, -18), loading_message, HORIZONTAL_ALIGNMENT_CENTER, bar_rect.size.x, 18, Color(1, 1, 1, 0.9))
 
 func _draw_corner_labels(reference_size: Vector2, scale_factor: float, origin: Vector2) -> void:

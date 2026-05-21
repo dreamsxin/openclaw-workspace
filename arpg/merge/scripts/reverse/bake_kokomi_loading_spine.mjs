@@ -143,6 +143,33 @@ function compactFrames(rawFrames) {
   return { attachments, frames };
 }
 
+function computeBounds(frames) {
+  let minX = Number.POSITIVE_INFINITY;
+  let minY = Number.POSITIVE_INFINITY;
+  let maxX = Number.NEGATIVE_INFINITY;
+  let maxY = Number.NEGATIVE_INFINITY;
+  for (const frame of frames) {
+    for (const [, vertices] of frame.items) {
+      for (let i = 0; i + 1 < vertices.length; i += 2) {
+        const x = vertices[i];
+        const y = vertices[i + 1];
+        minX = Math.min(minX, x);
+        minY = Math.min(minY, y);
+        maxX = Math.max(maxX, x);
+        maxY = Math.max(maxY, y);
+      }
+    }
+  }
+  return {
+    minX: round(minX),
+    minY: round(minY),
+    maxX: round(maxX),
+    maxY: round(maxY),
+    width: round(maxX - minX),
+    height: round(maxY - minY),
+  };
+}
+
 function bake() {
   const { skeletonData, skeleton } = loadSkeleton();
   const animationName = chooseAnimation(skeletonData);
@@ -167,6 +194,7 @@ function bake() {
     rawFrames.push(captureFrame(skeleton, 0));
   }
   const compact = compactFrames(rawFrames);
+  const bakedBounds = computeBounds(compact.frames);
 
   const output = {
     schema: "openclaw-spine-baked-v1",
@@ -207,6 +235,7 @@ function bake() {
       duration: round(duration, 4),
       frameCount,
       coordinateSystem: "Spine world coordinates; Godot flips Y at render time.",
+      bounds: bakedBounds,
     },
     attachments: compact.attachments,
     frames: compact.frames,

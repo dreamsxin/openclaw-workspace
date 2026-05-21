@@ -249,12 +249,13 @@ func _draw_spine_baked_animation(target: Rect2) -> void:
 	var frame_index := int(floor(spine_time * fps)) % frame_count
 	var frame: Dictionary = spine_baked_frames[frame_index]
 	var items: Array = frame.get("items", [])
-	var bounds := _baked_frame_bounds(frame)
+	var bounds := _baked_animation_bounds()
 	if bounds.size.x <= 0.0 or bounds.size.y <= 0.0:
 		return
 	var scale_factor := minf(target.size.x / bounds.size.x, target.size.y / bounds.size.y) * 0.94
 	var center := target.position + target.size * 0.5
 
+	var drawn := 0
 	for item in items:
 		if typeof(item) != TYPE_ARRAY or item.size() < 2:
 			continue
@@ -262,8 +263,23 @@ func _draw_spine_baked_animation(target: Rect2) -> void:
 		if attachment_index < 0 or attachment_index >= spine_baked_attachments.size():
 			continue
 		var attachment: Dictionary = spine_baked_attachments[attachment_index]
-		_draw_spine_baked_attachment(attachment, item[1], bounds, center, scale_factor)
+		drawn += _draw_spine_baked_attachment(attachment, item[1], bounds, center, scale_factor)
+	if drawn == 0:
+		draw_string(ThemeDB.fallback_font, target.position + Vector2(0, target.size.y * 0.5), "Spine baked data loaded, no drawable triangles", HORIZONTAL_ALIGNMENT_CENTER, target.size.x, 18, Color(1, 0.72, 0.56, 0.92))
 	draw_string(ThemeDB.fallback_font, target.position + Vector2(0, target.size.y - 28), "SkeletonGraphic (kokomi_Loading) baked Idle", HORIZONTAL_ALIGNMENT_CENTER, target.size.x, 16, Color(0.9, 0.98, 1.0, 0.82))
+
+func _baked_animation_bounds() -> Rect2:
+	var bake: Dictionary = spine_baked.get("bake", {})
+	var bounds: Dictionary = bake.get("bounds", {})
+	if not bounds.is_empty():
+		var min_x := float(bounds.get("minX", 0.0))
+		var max_y := float(bounds.get("maxY", 0.0))
+		var width := float(bounds.get("width", 0.0))
+		var height := float(bounds.get("height", 0.0))
+		return Rect2(Vector2(min_x, -max_y), Vector2(width, height))
+	if not spine_baked_frames.is_empty():
+		return _baked_frame_bounds(spine_baked_frames[0])
+	return Rect2()
 
 func _baked_frame_bounds(frame: Dictionary) -> Rect2:
 	var items: Array = frame.get("items", [])
@@ -285,14 +301,14 @@ func _baked_frame_bounds(frame: Dictionary) -> Rect2:
 		return Rect2()
 	return Rect2(min_point, max_point - min_point)
 
-func _draw_spine_baked_attachment(attachment: Dictionary, vertices: Array, bounds: Rect2, center: Vector2, scale_factor: float) -> void:
+func _draw_spine_baked_attachment(attachment: Dictionary, vertices: Array, bounds: Rect2, center: Vector2, scale_factor: float) -> int:
 	var page_name := String(attachment.get("page", ""))
 	if not spine_pages.has(page_name):
-		return
+		return 0
 	var uvs: Array = attachment.get("uvs", [])
 	var triangles: Array = attachment.get("triangles", [])
 	if vertices.size() < 6 or uvs.size() < 6 or triangles.size() < 3:
-		return
+		return 0
 
 	var page_texture: Texture2D = spine_pages[page_name]
 	var texture_size := page_texture.get_size()
@@ -306,6 +322,7 @@ func _draw_spine_baked_attachment(attachment: Dictionary, vertices: Array, bound
 		uv_points.append(Vector2(float(uvs[index]) * texture_size.x, float(uvs[index + 1]) * texture_size.y))
 		index += 2
 
+	var drawn := 0
 	for tri_index in range(0, triangles.size(), 3):
 		if tri_index + 2 >= triangles.size():
 			break
@@ -320,6 +337,8 @@ func _draw_spine_baked_attachment(attachment: Dictionary, vertices: Array, bound
 			PackedVector2Array([uv_points[a], uv_points[b], uv_points[c]]),
 			page_texture
 		)
+		drawn += 1
+	return drawn
 
 func _draw_spine_attachment(attachment: Dictionary, target: Rect2, rig_origin: Vector2, scale_factor: float, pose: Dictionary) -> void:
 	var region_name := String(attachment.get("region", ""))
