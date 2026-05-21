@@ -32,6 +32,8 @@ Restored startup mode:
 .\tools\Godot\Godot_console.exe --path .\godot-project --headless --quit-after 6 -- --restored-startup --auto-enter-ingame
 ```
 
+`run-game.bat` runs a headless Godot import before launching. The committed sources include the PNG, Spine, JSON, and `.import` files, while `godot-project/.godot/imported/*.ctex` remains a local cache and is intentionally ignored by git. This makes a fresh pull regenerate texture imports before the restored startup screen opens.
+
 Capture restored startup screenshots:
 
 ```powershell
@@ -178,7 +180,7 @@ The latest `UISceneLoading` fix was verified with these captures. The baked Spin
 
 `UIInGame` now has a first gameplay shell in `run-game.bat` mode. `InGameReferenceShell` reads the recovered `UIInGame` RectTransforms and draws the top wallet bar plus candidate `Request`, `Bottom/UIBlockInfo`, inventory, and lobby regions behind the playable board. In the 540 x 960 portrait window, the 7x7 board is centered and the older desktop debug panels are hidden so the restored path remains playable after `UIOutGame/InGameBtn`. The legacy standalone Produce button is hidden in portrait mode; Produce, Bag, and Cafe now route through recovered `UIInGame` bottom hit regions. Produce calls the current recovered producer logic, Bag reports the pending inventory restore, and Cafe returns to `UIOutGame`.
 
-Imported character PNGs require Godot import metadata. Regenerate it after adding new copied character images with:
+Imported character PNGs require Godot import metadata. `run-game.bat` regenerates imports automatically before launching; for manual validation after adding new copied character images, run:
 
 ```powershell
 .\tools\Godot\Godot_console.exe --headless --path .\godot-project --import

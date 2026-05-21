@@ -1297,6 +1297,31 @@ Follow-up:
 - Add exact recovered sprites/textures for `UIInGame` bottom action buttons after sprite GUID mapping is complete.
 - Add `06-inventory.png` once the recovered inventory popup is wired.
 
+## 2026-05-21 - Fresh Pull Asset Import Fix
+
+Inputs:
+- `run-game.bat`
+- `godot-project/.gitignore`
+- `godot-project/assets/**`
+- `godot-project/data/blocks.json`
+
+Commands:
+```powershell
+git ls-files arpg/merge/godot-project/assets
+git check-ignore -v arpg/merge/godot-project/.godot/imported/Bag1_1.png-0fb5c722e68d133d1a774c6be2d4efda.ctex
+.\tools\Godot\Godot_console.exe --headless --import --path .\godot-project
+.\run-game.bat --headless --quit-after 5
+```
+
+Findings:
+- `godot-project/assets` already has 1,417 tracked source/import files, including startup loading textures, `kokomi_Loading` Spine pages/data, board sprites, currency sprites, and block sprites.
+- `blocks.json` sprite references resolve to tracked files; no referenced block sprite is missing from git.
+- `godot-project/.godot/imported/*.ctex` is ignored by `godot-project/.gitignore` and should stay generated locally.
+- A fresh pull can show blank textures if the import cache has not been generated before the first run.
+
+Fix:
+- `run-game.bat` now runs a headless Godot import before launching the restored startup flow, using `tools/Godot/Godot_console.exe` when available.
+
 Recommended next runs:
 
 1. Run Il2CppDumper or Cpp2IL on `libil2cpp.so` and `global-metadata.dat`.

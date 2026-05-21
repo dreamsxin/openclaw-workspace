@@ -138,6 +138,12 @@ Keep Godot code independent from Unity naming where possible, but maintain a map
 
 ## Godot Startup Verification
 
+Fresh pull behavior:
+
+- `godot-project/assets/**` contains the committed source PNG/Spine/JSON assets and `.import` metadata required by `run-game.bat`.
+- `godot-project/.godot/imported/**` is Godot's generated texture cache, is ignored by git, and must not be committed.
+- `run-game.bat` runs `Godot_console.exe --headless --import --path godot-project` before opening the restored startup window so a clean checkout regenerates `.ctex` texture imports automatically.
+
 Use the restored startup capture helper after any change to `UILoading`, `UISceneLoading`, Spine baking, or texture import paths:
 
 ```powershell
