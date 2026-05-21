@@ -1069,6 +1069,32 @@ Follow-up:
 - Confirm original CanvasScaler/SafeArea runtime setup from IL2CPP.
 - Capture visual screenshots from a non-headless Godot session if automated `--screenshot` remains unavailable.
 
+## 2026-05-21 - UISceneLoading Screenshot Verification
+
+Inputs:
+- `godot-project/assets/spine/loading/kokomi_Loading/kokomi_Loading.baked.json`
+- `godot-project/assets/spine/loading/kokomi_Loading/kokomi_Loading.png`
+- `godot-project/assets/spine/loading/kokomi_Loading/kokomi_Loading_2.png`
+
+Command:
+```powershell
+.\tools\Godot\Godot_console.exe --path .\godot-project --resolution 540x960 --quit-after 360 -- --restored-startup --startup-capture-dir=D:\work\openclaw-workspace\arpg\merge\reverse-output\startup-captures
+```
+
+Outputs:
+- `reverse-output/startup-captures/01-uiloading.png`
+- `reverse-output/startup-captures/02-uisceneloading.png`
+- `reverse-output/startup-captures/03-uisceneloading-late.png`
+
+Findings:
+- The first screenshot after the layout fix showed `UISceneLoading` with only the progress bar and no character.
+- Root cause: baked Spine UVs from `@esotericsoftware/spine-core` are normalized `0..1` texture coordinates; the Godot renderer incorrectly multiplied them by texture size before passing them to `draw_polygon`.
+- After using normalized UVs directly, `02-uisceneloading.png` contains the full `kokomi_Loading` character and background.
+- A later capture differs from the first scene-loading capture by 101,209 pixels (`diff_bounds=97,205-539,959`), confirming the second screen is animated rather than a static single frame.
+
+Follow-up:
+- Keep `--startup-capture-dir=<path>` as a local verification hook for future startup-screen regression checks.
+
 Recommended next runs:
 
 1. Run Il2CppDumper or Cpp2IL on `libil2cpp.so` and `global-metadata.dat`.

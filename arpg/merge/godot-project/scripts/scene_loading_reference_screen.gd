@@ -368,7 +368,6 @@ func _draw_spine_baked_attachment(attachment: Dictionary, vertices: Array, bound
 		return 0
 
 	var page_texture: Texture2D = spine_pages[page_name]
-	var texture_size := page_texture.get_size()
 	var points: Array[Vector2] = []
 	var uv_points: Array[Vector2] = []
 	var index := 0
@@ -376,7 +375,7 @@ func _draw_spine_baked_attachment(attachment: Dictionary, vertices: Array, bound
 		var spine_point := Vector2(float(vertices[index]), -float(vertices[index + 1]))
 		var local := (spine_point - bounds.position - bounds.size * 0.5) * scale_factor
 		points.append(center + local)
-		uv_points.append(Vector2(float(uvs[index]) * texture_size.x, float(uvs[index + 1]) * texture_size.y))
+		uv_points.append(Vector2(float(uvs[index]), float(uvs[index + 1])))
 		index += 2
 
 	var drawn := 0

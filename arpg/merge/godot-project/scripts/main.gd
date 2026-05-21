@@ -11,6 +11,7 @@ const CELL_GAP := 8
 const BOARD_ORIGIN := Vector2(360, 92)
 const RESTORED_APP_LOADING_SECONDS := 2.0
 const RESTORED_SCENE_LOADING_SECONDS := 1.7
+const STARTUP_CAPTURE_ARG := "--startup-capture-dir="
 const SPRITE_DIR := "res://assets/sprites/"
 const CHARACTER_DIR := "res://data/characters/"
 const UI_LAYOUT_REFERENCE := "res://data/ui_layout_reference.json"
@@ -54,9 +55,15 @@ var scene_loading_reference_visible := false
 var restored_startup_mode := false
 var restored_startup_elapsed := 0.0
 var restored_startup_finished := false
+var startup_capture_dir := ""
+var startup_capture_flags := {}
 
 func _ready() -> void:
-	restored_startup_mode = OS.get_cmdline_user_args().has("--restored-startup")
+	var user_args := OS.get_cmdline_user_args()
+	restored_startup_mode = user_args.has("--restored-startup")
+	for arg in user_args:
+		if arg.begins_with(STARTUP_CAPTURE_ARG):
+			startup_capture_dir = arg.substr(STARTUP_CAPTURE_ARG.length())
 	catalog.load_from_file("res://data/blocks.json")
 	catalog.load_rules("res://data/block_rules.json")
 	_load_character_data()
@@ -192,6 +199,7 @@ func _process(delta: float) -> void:
 	if restored_startup_elapsed < RESTORED_APP_LOADING_SECONDS:
 		var app_progress := clampf(restored_startup_elapsed / RESTORED_APP_LOADING_SECONDS, 0.0, 1.0)
 		_set_loading_reference_state(app_progress, _restored_app_loading_message(app_progress))
+		_maybe_capture_startup_frame("01-uiloading", 1.0)
 		return
 	var scene_elapsed := restored_startup_elapsed - RESTORED_APP_LOADING_SECONDS
 	var scene_progress := clampf(scene_elapsed / RESTORED_SCENE_LOADING_SECONDS, 0.0, 1.0)
@@ -200,6 +208,8 @@ func _process(delta: float) -> void:
 		_apply_loading_reference_visibility()
 		_show_scene_loading_reference()
 	_set_scene_loading_reference_state(scene_progress, _restored_scene_loading_message(scene_progress))
+	_maybe_capture_startup_frame("02-uisceneloading", RESTORED_APP_LOADING_SECONDS + 0.9)
+	_maybe_capture_startup_frame("03-uisceneloading-late", RESTORED_APP_LOADING_SECONDS + 1.45)
 	if scene_progress >= 1.0:
 		_finish_restored_startup()
 
@@ -444,6 +454,25 @@ func _finish_restored_startup() -> void:
 	_apply_loading_reference_visibility()
 	_apply_scene_loading_reference_visibility()
 	_set_status("Restored startup complete.")
+
+func _maybe_capture_startup_frame(label: String, threshold_seconds: float) -> void:
+	if startup_capture_dir.is_empty() or startup_capture_flags.has(label):
+		return
+	if restored_startup_elapsed < threshold_seconds:
+		return
+	startup_capture_flags[label] = true
+	call_deferred("_capture_startup_frame", label)
+
+func _capture_startup_frame(label: String) -> void:
+	await RenderingServer.frame_post_draw
+	DirAccess.make_dir_recursive_absolute(startup_capture_dir)
+	var image := get_viewport().get_texture().get_image()
+	var output_path := startup_capture_dir.path_join(label + ".png")
+	var error := image.save_png(output_path)
+	if error == OK:
+		print("startup_capture=", output_path)
+	else:
+		push_warning("Failed to save startup capture %s: %s" % [output_path, error])
 
 func _ui_layout_source_by_name(source_name: String) -> Dictionary:
 	for source in ui_layout_sources:

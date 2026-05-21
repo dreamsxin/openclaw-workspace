@@ -101,6 +101,7 @@ Latest startup recheck:
 - `UILoading/LoadingBar/Fill Area/Image` is local to `LoadingBar`; it must not be converted as a root-space RectTransform. Godot now derives the visible fill rect from the recovered `LoadingBar` root rect and only scales its width by progress.
 - `UISceneLoading/SceneObjects/TypeA/SkeletonGraphic (kokomi_Loading)` is the character root, not the zero-size `Renderer*` children. Its recovered rect is anchor `(0.5, 0.0)`, anchored position `(0, 0)`, size `2000 x 2000`, pivot `(0.5, 0.0)`; Godot now resolves this through the `UISceneLoading/SceneObjects/TypeA` parent chain rather than as a root-space shortcut.
 - The baked `Idle` data is not static: frame-delta checks show large vertex movement between frames, so missing second-screen motion should be treated as a Godot target-rect or mesh-render path problem, not as a bake-data problem.
+- Screenshot verification confirmed the exact render bug: baked UVs are normalized, and multiplying them by texture page size made the second screen sample the wrong texture coordinates. Godot now passes normalized UVs directly to textured polygons.
 
 ## Largest UI Prefabs
 
