@@ -947,6 +947,7 @@ Result:
 - Added a structural `UILoading` reference layer in Godot using recovered root, background, logo, loading bar, and version-label RectTransforms.
 - Added `scripts/reverse/import_godot_loading_assets.py` and copied 11 first-pass loading/logo PNGs into `godot-project/assets/loading/`.
 - Generated `reverse-output/assets/derived/godot_loading_asset_import_manifest.json`.
+- Added restored startup flow in `run-game.bat` mode: the loading bar advances, status text changes, and the layer hides into the playable prototype.
 
 Follow-up:
 

@@ -5,6 +5,7 @@ const LOADING_ASSET_DIR := "res://assets/loading/"
 
 var source: Dictionary = {}
 var loading_progress := 0.62
+var loading_message := "Loading..."
 var background_texture: Texture2D
 var logo_texture: Texture2D
 var bar_texture: Texture2D
@@ -16,6 +17,11 @@ func _ready() -> void:
 
 func set_source(next_source: Dictionary) -> void:
 	source = next_source
+	queue_redraw()
+
+func set_loading_state(progress: float, message: String) -> void:
+	loading_progress = clampf(progress, 0.0, 1.0)
+	loading_message = message
 	queue_redraw()
 
 func _draw() -> void:
@@ -72,7 +78,7 @@ func _draw_loading_bar(reference_size: Vector2, scale_factor: float, origin: Vec
 		draw_texture_rect(bar_texture, fill_rect, true, Color(0.42, 0.78, 0.9, 0.92))
 	else:
 		draw_rect(fill_rect, Color(0.42, 0.78, 0.9, 0.92), true)
-	draw_string(ThemeDB.fallback_font, bar_rect.position + Vector2(0, -18), "Loading...", HORIZONTAL_ALIGNMENT_CENTER, bar_rect.size.x, 18, Color(1, 1, 1, 0.9))
+	draw_string(ThemeDB.fallback_font, bar_rect.position + Vector2(0, -18), loading_message, HORIZONTAL_ALIGNMENT_CENTER, bar_rect.size.x, 18, Color(1, 1, 1, 0.9))
 
 func _draw_corner_labels(reference_size: Vector2, scale_factor: float, origin: Vector2) -> void:
 	var left_version := _to_preview_rect(_rect_by_suffix("Ver (1)"), reference_size, scale_factor, origin)

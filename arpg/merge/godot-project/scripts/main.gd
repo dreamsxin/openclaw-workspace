@@ -8,6 +8,7 @@ const UILayoutReferencePreviewScript := preload("res://scripts/ui_layout_referen
 const CELL_SIZE := 78
 const CELL_GAP := 8
 const BOARD_ORIGIN := Vector2(360, 92)
+const RESTORED_STARTUP_SECONDS := 2.5
 const SPRITE_DIR := "res://assets/sprites/"
 const CHARACTER_DIR := "res://data/characters/"
 const UI_LAYOUT_REFERENCE := "res://data/ui_layout_reference.json"
@@ -47,6 +48,8 @@ var ui_layout_preview: Control
 var loading_reference_screen: Control
 var loading_reference_visible := false
 var restored_startup_mode := false
+var restored_startup_elapsed := 0.0
+var restored_startup_finished := false
 
 func _ready() -> void:
 	restored_startup_mode = OS.get_cmdline_user_args().has("--restored-startup")
@@ -174,6 +177,17 @@ func _build_ui() -> void:
 	_refresh_character_panel()
 	_refresh_ui_layout_panel(false)
 	_show_loading_reference()
+	if restored_startup_mode:
+		_set_loading_reference_state(0.0, "Loading...")
+
+func _process(delta: float) -> void:
+	if not restored_startup_mode or restored_startup_finished:
+		return
+	restored_startup_elapsed += delta
+	var progress := clampf(restored_startup_elapsed / RESTORED_STARTUP_SECONDS, 0.0, 1.0)
+	_set_loading_reference_state(progress, _restored_loading_message(progress))
+	if progress >= 1.0:
+		_finish_restored_startup()
 
 func _build_character_panel() -> void:
 	var title := Label.new()
@@ -357,6 +371,26 @@ func _apply_loading_reference_visibility() -> void:
 		return
 	loading_reference_screen.call("set_source", loading_source)
 	loading_reference_screen.visible = loading_reference_visible
+
+func _set_loading_reference_state(progress: float, message: String) -> void:
+	if loading_reference_screen == null:
+		return
+	loading_reference_screen.call("set_loading_state", progress, message)
+
+func _restored_loading_message(progress: float) -> String:
+	if progress < 0.35:
+		return "Loading assets..."
+	if progress < 0.7:
+		return "Preparing cafe..."
+	if progress < 1.0:
+		return "Opening..."
+	return "Ready"
+
+func _finish_restored_startup() -> void:
+	restored_startup_finished = true
+	loading_reference_visible = false
+	_apply_loading_reference_visibility()
+	_set_status("Restored startup complete.")
 
 func _ui_layout_source_by_name(source_name: String) -> Dictionary:
 	for source in ui_layout_sources:
