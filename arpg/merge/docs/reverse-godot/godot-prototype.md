@@ -120,7 +120,7 @@ Use `Next UI` to cycle through recovered startup/root layout sources:
 - `UIOutGame`
 - `UIInGame`
 
-The selector shows the source RectTransform count and writes the reference resolution plus key node sizes to the status panel. This is a reconstruction aid for matching the original Unity layout while the actual Godot screens are still being rebuilt.
+The selector shows the source RectTransform count and writes the reference resolution plus key node sizes to the status panel. A small portrait wireframe preview draws the first key RectTransforms in the 1080 x 1920 reference space so original layouts can be compared visually while the actual Godot screens are still being rebuilt.
 
 Imported character PNGs require Godot import metadata. Regenerate it after adding new copied character images with:
 

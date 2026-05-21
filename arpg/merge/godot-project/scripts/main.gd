@@ -3,6 +3,7 @@ extends Control
 const BlockCatalogScript := preload("res://scripts/models/block_catalog.gd")
 const MergeBoardModelScript := preload("res://scripts/models/merge_board_model.gd")
 const SaveManagerScript := preload("res://scripts/services/save_manager.gd")
+const UILayoutReferencePreviewScript := preload("res://scripts/ui_layout_reference_preview.gd")
 const CELL_SIZE := 78
 const CELL_GAP := 8
 const BOARD_ORIGIN := Vector2(360, 92)
@@ -41,6 +42,7 @@ var ui_layout_sources: Array = []
 var ui_layout_index := 0
 var ui_layout_title_label: Label
 var ui_layout_meta_label: Label
+var ui_layout_preview: Control
 
 func _ready() -> void:
 	catalog.load_from_file("res://data/blocks.json")
@@ -249,6 +251,12 @@ func _build_ui_layout_panel() -> void:
 	ui_layout_meta_label.add_theme_font_size_override("font_size", 12)
 	add_child(ui_layout_meta_label)
 
+	ui_layout_preview = UILayoutReferencePreviewScript.new()
+	ui_layout_preview.position = Vector2(742, 92)
+	ui_layout_preview.size = Vector2(230, 408)
+	ui_layout_preview.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(ui_layout_preview)
+
 func _make_currency_label(icon_name: String, pos: Vector2) -> Label:
 	var icon := TextureRect.new()
 	icon.texture = load(SPRITE_DIR + icon_name)
@@ -300,6 +308,8 @@ func _refresh_ui_layout_panel(write_status: bool) -> void:
 		source.get("name", "UI"),
 		source.get("rect_transform_count", 0)
 	]
+	if ui_layout_preview != null:
+		ui_layout_preview.call("set_source", source)
 	if write_status:
 		_set_status(_describe_ui_layout_source(source))
 

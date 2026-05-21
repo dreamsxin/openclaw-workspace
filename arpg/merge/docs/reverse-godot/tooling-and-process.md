@@ -941,6 +941,7 @@ Result:
 - Converted recovered startup/root UI RectTransform details into a compact Godot-readable reference file.
 - Included `UILoading`, `UISceneLoading`, `UIMaidLobbyLoading`, `UIOutGame`, and `UIInGame` sources.
 - Added a prototype `UI Ref` selector so the Godot app can inspect source layout roots while rebuilding actual Control scenes.
+- Added a scaled 1080 x 1920 wireframe preview Control for key RectTransforms in each selected source.
 
 Follow-up:
 

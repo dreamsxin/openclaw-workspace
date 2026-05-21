@@ -89,7 +89,7 @@ The Godot data currently includes:
 
 This file is intentionally a reference layer, not a final scene export. It preserves Unity RectTransform anchors, pivots, positions, sizes, and source paths so the Godot UI can be rebuilt screen-by-screen while keeping a direct evidence trail back to the original prefabs.
 
-The current Godot prototype reads this file and exposes a small `UI Ref` selector in the top-right control area. Use it to cycle through recovered startup UI roots and show the source resolution plus the first key RectTransform entries in the status panel.
+The current Godot prototype reads this file and exposes a small `UI Ref` selector in the top-right control area. Use it to cycle through recovered startup UI roots, show the source resolution and key RectTransform entries in the status panel, and preview the first key rectangles as a scaled 1080 x 1920 portrait wireframe.
 
 ## Largest UI Prefabs
 
