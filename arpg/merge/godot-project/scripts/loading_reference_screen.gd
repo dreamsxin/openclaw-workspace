@@ -1,8 +1,18 @@
 class_name LoadingReferenceScreen
 extends Control
 
+const LOADING_ASSET_DIR := "res://assets/loading/"
+
 var source: Dictionary = {}
 var loading_progress := 0.62
+var background_texture: Texture2D
+var logo_texture: Texture2D
+var bar_texture: Texture2D
+
+func _ready() -> void:
+	background_texture = load(LOADING_ASSET_DIR + "Loading_maid_2.png")
+	logo_texture = load(LOADING_ASSET_DIR + "MaidCafe_Logo_Kr.png")
+	bar_texture = load(LOADING_ASSET_DIR + "Image_Loading.png")
 
 func set_source(next_source: Dictionary) -> void:
 	source = next_source
@@ -33,16 +43,22 @@ func _draw_background_layers(reference_size: Vector2, scale_factor: float, origi
 		if rect.is_empty():
 			continue
 		var preview_rect := _to_preview_rect(rect, reference_size, scale_factor, origin)
-		draw_rect(preview_rect, Color(0.23, 0.31, 0.34, 0.62), true)
+		if background_texture != null:
+			draw_texture_rect(background_texture, preview_rect, false, Color(1, 1, 1, 0.72))
+		else:
+			draw_rect(preview_rect, Color(0.23, 0.31, 0.34, 0.62), true)
 		draw_rect(preview_rect, Color(0.58, 0.7, 0.74, 0.35), false, 1.0)
 
 func _draw_logo(reference_size: Vector2, scale_factor: float, origin: Vector2) -> void:
 	var logo_rect := _to_preview_rect(_rect_by_suffix("LogoArea/LogoImage"), reference_size, scale_factor, origin)
 	if logo_rect.size == Vector2.ZERO:
 		logo_rect = _to_preview_rect(_rect_by_suffix("LogoArea/Logo_EN"), reference_size, scale_factor, origin)
-	draw_rect(logo_rect, Color(0.88, 0.68, 0.28, 0.88), true)
-	draw_rect(logo_rect, Color(1.0, 0.96, 0.72, 0.95), false, 2.0)
-	draw_string(ThemeDB.fallback_font, logo_rect.position + Vector2(18, 54), "Maid Cafe", HORIZONTAL_ALIGNMENT_LEFT, logo_rect.size.x - 36, 32, Color(0.12, 0.08, 0.04, 1.0))
+	if logo_texture != null:
+		draw_texture_rect(logo_texture, logo_rect, false)
+	else:
+		draw_rect(logo_rect, Color(0.88, 0.68, 0.28, 0.88), true)
+		draw_rect(logo_rect, Color(1.0, 0.96, 0.72, 0.95), false, 2.0)
+		draw_string(ThemeDB.fallback_font, logo_rect.position + Vector2(18, 54), "Maid Cafe", HORIZONTAL_ALIGNMENT_LEFT, logo_rect.size.x - 36, 32, Color(0.12, 0.08, 0.04, 1.0))
 
 func _draw_loading_bar(reference_size: Vector2, scale_factor: float, origin: Vector2) -> void:
 	var bar_rect := _to_preview_rect(_rect_by_suffix("LoadingBar"), reference_size, scale_factor, origin)
@@ -52,7 +68,10 @@ func _draw_loading_bar(reference_size: Vector2, scale_factor: float, origin: Vec
 	draw_rect(bar_rect, Color(0.08, 0.1, 0.12, 0.95), true)
 	draw_rect(bar_rect, Color(0.95, 0.85, 0.56, 0.95), false, 2.0)
 	fill_rect.size.x *= loading_progress
-	draw_rect(fill_rect, Color(0.42, 0.78, 0.9, 0.92), true)
+	if bar_texture != null:
+		draw_texture_rect(bar_texture, fill_rect, true, Color(0.42, 0.78, 0.9, 0.92))
+	else:
+		draw_rect(fill_rect, Color(0.42, 0.78, 0.9, 0.92), true)
 	draw_string(ThemeDB.fallback_font, bar_rect.position + Vector2(0, -18), "Loading...", HORIZONTAL_ALIGNMENT_CENTER, bar_rect.size.x, 18, Color(1, 1, 1, 0.9))
 
 func _draw_corner_labels(reference_size: Vector2, scale_factor: float, origin: Vector2) -> void:

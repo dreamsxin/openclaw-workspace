@@ -91,7 +91,7 @@ This file is intentionally a reference layer, not a final scene export. It prese
 
 The current Godot prototype reads this file and exposes a small `UI Ref` selector in the top-right control area. Use it to cycle through recovered startup UI roots, show the source resolution and key RectTransform entries in the status panel, and preview the first key rectangles as a scaled 1080 x 1920 portrait wireframe.
 
-`UILoading` is now also represented by a first Godot structural reference layer. It maps the recovered 1080 x 1920 root, `Loading_Type/BG_Base` background stack, `LogoArea`, `LoadingBar`, and `Ver` / `Ver (1)` corner labels into a centered preview panel. This is not yet an art-accurate loading screen; loading-specific textures and Spine logo renderers still need to be imported or replaced.
+`UILoading` is now also represented by a first Godot structural reference layer. It maps the recovered 1080 x 1920 root, `Loading_Type/BG_Base` background stack, `LogoArea`, `LoadingBar`, and `Ver` / `Ver (1)` corner labels into a centered preview panel. First-pass loading PNGs are copied into `godot-project/assets/loading/` and used for the visible background/logo/loading fill where possible. Spine logo renderer behavior still needs a proper runtime or baked-frame replacement.
 
 ## Largest UI Prefabs
 
@@ -128,4 +128,4 @@ The current Godot prototype reads this file and exposes a small `UI Ref` selecto
 
 1. Map startup flow through `ReloadManager`, `LoginMenuHandler`, `UIRoot`, `UIManager`, `UIPopupManager`, and `UISceneLoading`.
 2. Confirm CanvasScaler and SafeArea behavior from serialized components and IL2CPP `UIManager.Initialize` / `SafeArea` usage.
-3. Replace the `UILoading` placeholder drawing with recovered textures/Spine logo output, then convert `UISceneLoading`, `UIOutGame`, and the first in-game HUD from reference data into actual Godot Control scenes.
+3. Replace remaining `UILoading` static fallbacks with Spine logo output, then convert `UISceneLoading`, `UIOutGame`, and the first in-game HUD from reference data into actual Godot Control scenes.

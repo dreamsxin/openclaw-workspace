@@ -219,7 +219,7 @@ Success criteria:
 | T027 | Implement Spine character render path | pending | choose Godot Spine runtime or offline first-frame renderer for `.atlas.dat`/`.skel.dat` assets |
 | T028 | Inventory original Unity UI prefab layouts | done | 1,137 UI prefabs and 84,034 RectTransforms indexed in `ui-layout-analysis.md` |
 | T029 | Map startup UI flow and Canvas scaling | in progress | startup focus layout details generated and converted into `godot-project/data/ui_layout_reference.json`; CanvasScaler/SafeArea runtime confirmation still pending |
-| T030 | Build first Godot UI layout reference screens | in progress | Godot prototype now has `UI Ref` wireframes plus a structural `UILoading` reference layer for root/background/logo/loading bar/version corners; art-accurate textures and remaining screens still pending |
+| T030 | Build first Godot UI layout reference screens | in progress | Godot prototype now has `UI Ref` wireframes plus a `UILoading` reference layer using recovered PNGs for background/logo/loading fill; Spine logo output and remaining screens still pending |
 
 ## Tool Acquisition Options
 
