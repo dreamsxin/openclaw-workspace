@@ -942,10 +942,12 @@ Result:
 - Included `UILoading`, `UISceneLoading`, `UIMaidLobbyLoading`, `UIOutGame`, and `UIInGame` sources.
 - Added a prototype `UI Ref` selector so the Godot app can inspect source layout roots while rebuilding actual Control scenes.
 - Added a scaled 1080 x 1920 wireframe preview Control for key RectTransforms in each selected source.
+- Added a structural `UILoading` reference layer in Godot using recovered root, background, logo, loading bar, and version-label RectTransforms.
 
 Follow-up:
 
 - Confirm CanvasScaler and SafeArea behavior from `UIManager`, `SafeArea`, and serialized Canvas components before treating positions as exact responsive layout.
+- Import loading-specific textures and resolve Spine logo renderers before treating the loading reference as visually accurate.
 
 ## Tool Run Template
 

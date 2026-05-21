@@ -3,6 +3,7 @@ extends Control
 const BlockCatalogScript := preload("res://scripts/models/block_catalog.gd")
 const MergeBoardModelScript := preload("res://scripts/models/merge_board_model.gd")
 const SaveManagerScript := preload("res://scripts/services/save_manager.gd")
+const LoadingReferenceScreenScript := preload("res://scripts/loading_reference_screen.gd")
 const UILayoutReferencePreviewScript := preload("res://scripts/ui_layout_reference_preview.gd")
 const CELL_SIZE := 78
 const CELL_GAP := 8
@@ -43,6 +44,8 @@ var ui_layout_index := 0
 var ui_layout_title_label: Label
 var ui_layout_meta_label: Label
 var ui_layout_preview: Control
+var loading_reference_screen: Control
+var loading_reference_visible := false
 
 func _ready() -> void:
 	catalog.load_from_file("res://data/blocks.json")
@@ -126,17 +129,23 @@ func _build_ui() -> void:
 	)
 	add_child(reset_button)
 
+	var loading_button := _make_button("Loading Ref", Vector2(34, 556))
+	loading_button.pressed.connect(func() -> void:
+		_toggle_loading_reference()
+	)
+	add_child(loading_button)
+
 	selected_label = Label.new()
-	selected_label.position = Vector2(34, 558)
-	selected_label.size = Vector2(260, 58)
+	selected_label.position = Vector2(34, 602)
+	selected_label.size = Vector2(260, 40)
 	selected_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	selected_label.add_theme_font_size_override("font_size", 14)
 	add_child(selected_label)
 
 	status_label = Label.new()
 	status_label.text = "Ready."
-	status_label.position = Vector2(34, 622)
-	status_label.size = Vector2(260, 70)
+	status_label.position = Vector2(34, 648)
+	status_label.size = Vector2(260, 48)
 	status_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	status_label.add_theme_font_size_override("font_size", 16)
 	add_child(status_label)
@@ -151,6 +160,7 @@ func _build_ui() -> void:
 
 	_build_character_panel()
 	_build_ui_layout_panel()
+	_build_loading_reference_screen()
 
 	drag_preview = TextureRect.new()
 	drag_preview.visible = false
@@ -257,6 +267,14 @@ func _build_ui_layout_panel() -> void:
 	ui_layout_preview.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(ui_layout_preview)
 
+func _build_loading_reference_screen() -> void:
+	loading_reference_screen = LoadingReferenceScreenScript.new()
+	loading_reference_screen.position = Vector2(320, 24)
+	loading_reference_screen.size = Vector2(650, 672)
+	loading_reference_screen.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	loading_reference_screen.visible = false
+	add_child(loading_reference_screen)
+
 func _make_currency_label(icon_name: String, pos: Vector2) -> Label:
 	var icon := TextureRect.new()
 	icon.texture = load(SPRITE_DIR + icon_name)
@@ -312,6 +330,24 @@ func _refresh_ui_layout_panel(write_status: bool) -> void:
 		ui_layout_preview.call("set_source", source)
 	if write_status:
 		_set_status(_describe_ui_layout_source(source))
+
+func _toggle_loading_reference() -> void:
+	if loading_reference_screen == null:
+		return
+	var loading_source := _ui_layout_source_by_name("UILoading")
+	if loading_source.is_empty():
+		_set_status("UILoading reference data is missing.")
+		return
+	loading_reference_visible = not loading_reference_visible
+	loading_reference_screen.visible = loading_reference_visible
+	loading_reference_screen.call("set_source", loading_source)
+	_set_status("Loading reference %s." % ("shown" if loading_reference_visible else "hidden"))
+
+func _ui_layout_source_by_name(source_name: String) -> Dictionary:
+	for source in ui_layout_sources:
+		if String(source.get("name", "")) == source_name:
+			return source
+	return {}
 
 func _describe_ui_layout_source(source: Dictionary) -> String:
 	var resolution: Dictionary = source.get("reference_resolution", {})
