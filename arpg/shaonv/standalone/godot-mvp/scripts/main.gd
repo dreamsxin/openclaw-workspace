@@ -4,6 +4,7 @@ const SAVE_PATH := "user://shaonv_godot_mvp_save.json"
 const HERO_DATA_PATH := "res://data/heroes_mvp.json"
 const POOL_DATA_PATH := "res://data/gacha_pools_mvp.json"
 const LIVE_OPS_DATA_PATH := "res://data/live_ops_mvp.json"
+const BAKED_SPINE_CANVAS := preload("res://scripts/spine_baked_preview_canvas.gd")
 
 var heroes: Array = []
 var pools: Array = []
@@ -833,7 +834,17 @@ func _draw_hero_stage(hero: Dictionary, pos := Vector2(470, 0), size := Vector2(
 	texture.size = size
 	var resource_path := str(hero.get("artResource", ""))
 	if not resource_path.is_empty():
-		var godot_path := "res://%s.png" % resource_path.replace("Art/Spine", "assets/spine")
+		var spine_base_path := "res://%s" % resource_path.replace("Art/Spine", "assets/spine")
+		var baked_path := "%s.baked.json" % spine_base_path
+		if FileAccess.file_exists(baked_path):
+			var canvas := Control.new()
+			canvas.set_script(BAKED_SPINE_CANVAS)
+			canvas.position = pos
+			canvas.size = size
+			content.add_child(canvas)
+			canvas.call("set_baked_path", baked_path, "wait")
+			return
+		var godot_path := "%s.png" % spine_base_path
 		var source_texture := _load_png_source_texture(godot_path)
 		if source_texture != null:
 			texture.texture = source_texture

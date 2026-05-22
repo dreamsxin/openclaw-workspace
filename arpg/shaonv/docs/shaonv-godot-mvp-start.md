@@ -168,7 +168,20 @@ capture-godot-mvp.bat
 .\Godot\Godot.exe --path standalone\godot-mvp --scene res://scenes/main.tscn
 ```
 
-## 7. 当前还原依据和缺口
+## 7. Spine 动画验证更新
+
+2026-05-22 已完成 `hero_016` 的 Spine MVP 验证：
+
+- `hero_016.skel.bytes` 为 Spine binary `4.2.26`。
+- 可用动画为 `wait`、`wait1`，没有名为 `idle` 的 clip；当前把 `wait` 作为待机动画。
+- `D:\work\openclaw-workspace\arpg\merge` 的可运行方案是预烘焙 Spine 帧，再在 Godot 中用 `draw_polygon()` 绘制 attachment mesh。
+- 已为本项目新增 `scripts/spine/bake_hero_spine_preview.mjs`、`standalone/godot-mvp/scripts/spine_baked_preview_canvas.gd` 和 `standalone/godot-mvp/assets/spine/hero_016/hero_016.baked.json`。
+- `main.gd` 会优先加载 `<hero>.baked.json` 播放 baked 动画；没有 baked 数据时继续退回 PNG 静态展示。
+- 官方 Spine GDExtension zip 已探测，但命令行 `ClassDB` 没有注册出 Spine 类，本轮不作为 MVP 依赖提交。
+
+详细记录见 `docs/shaonv-godot-spine-verification-2026-05-22.md`。
+
+## 8. 当前还原依据和缺口
 
 本轮 Godot UI 还原依据：
 
@@ -181,20 +194,20 @@ capture-godot-mvp.bat
 - `reverse-output/gacha-static/tables/drawconfig.json` 和 `draw_pool_summary.csv` 中的 `cnt3/rateUp` 字段，用于标注当前 MVP 卡池规则来源。
 - `docs/shaonv-yooasset-physical-mapping-fix.md` 中已定位的抽卡 prefab 物理映射。
 - `reverse-output/managed/Assembly-CSharp-index/methods.csv` 中 `GalCollectionView` 的 `OnSelectHero/GetGridCount/OnBtnNextClick/OnBtnPreviousClick/UpdateProgress` 和 `CommonHeroView` 的 `OnOpen/OnTabChange/UpdateSkill`，用于确定图鉴页需要进度、筛选、选择角色和角色详情信息区。
-- 已导入 Godot 的 5 个代表角色 Spine 三件套中的 PNG，用作看板和抽卡展示。
+- 已导入 Godot 的 5 个代表角色 Spine 三件套中的 PNG，用作看板和抽卡展示；`hero_016` 已进一步验证 baked Spine 动画播放。
 
 当前仍未完全还原：
 
 - 启动视频 `launch.mp4`、真实热更进度、服务器/SDK 登录仍未接入；当前为离线可跳过流程。
 - 原 `MainUIView`、`LotteryDrawMainView`、`GalCollectionView`、`CommonHeroView` prefab 的完整 RectTransform 层级尚未转换为 Godot scene。
 - 抽卡 UI 图集、按钮图、真实结果光效、音效仍未批量导入 Godot；当前结果页用 Godot 半透明色块模拟稀有度光效。
-- Spine 运行时尚未接入，当前仍是 PNG 静态展示。
+- Spine GDExtension 运行时尚未接入；当前 `hero_016` 已支持 baked Spine 动画，其余角色仍是 PNG 静态展示。
 - 原游戏 reward 掉落表仍需继续展开；当前概率和重复碎片已数据化，但仍是基于 `drawconfig/ac_limit_draw` 字段的 MVP 近似规则。
 
-## 8. 下一步
+## 9. 下一步
 
 1. 用 Godot 编辑器检查布局并调整主题、字体、按钮样式。
-2. 接入 Spine Godot 运行方案，验证 `.skel.bytes + .atlas.txt + .png` 播放。
+2. 批量为主推角色烘焙 `wait/idle/show` 等 Spine clip，并把抽卡结果页切到 animated hero stage。
 3. 将抽卡 UI 图集、结果光效和音效导入 Godot，并建立 Godot 资源命名规范。
 4. 用真实掉落表替换当前 MVP 概率。
 5. 将 `HeroRecruitView/LotteryDrawMainView/LotteryDrawFinishView` 的结构分析转成 Godot Control 节点重建清单。
