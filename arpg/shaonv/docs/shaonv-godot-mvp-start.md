@@ -53,9 +53,27 @@ standalone/godot-mvp/
 - 主界面：货币、看板角色、入口按钮。
 - 抽卡：普通/高级/进阶/源神祈願池切换，单抽和十连，显示当前卡池、UP、保底和消耗。
 - 结果页：显示抽卡结果卡片、新角色和重复，点击结果可设为看板并回主界面。
-- 图鉴：角色收集状态，点击设为看板。
+- 图鉴：角色收集状态、持有数量、重复碎片，点击进入角色详情。
+- 角色详情：显示获得状态、碎片、资源路径和 Spine key，可设为看板。
 - 记录：抽卡历史。
+- 商店：源石兑换喚靈券，提供单机测试补给入口。
 - 本地存档：`user://shaonv_godot_mvp_save.json`。
+
+当前存档字段：
+
+```json
+{
+  "tickets": 120,
+  "gems": 16800,
+  "owned": {},
+  "shards": {},
+  "pity": {},
+  "history": [],
+  "draw_count": 0,
+  "selected_hero_id": 240065,
+  "active_pool_id": "advanced"
+}
+```
 
 ## 5. 资源
 
@@ -104,4 +122,5 @@ standalone/godot-mvp/
 3. 将抽卡 UI 图集、结果光效和音效导入 Godot，并建立 Godot 资源命名规范。
 4. 用真实掉落表替换当前 MVP 概率。
 5. 将 `HeroRecruitView/LotteryDrawMainView/LotteryDrawFinishView` 的结构分析转成 Godot Control 节点重建清单。
-6. 把抽卡结果演出、角色详情页和图鉴筛选做成独立 scene，降低 `main.gd` 复杂度。
+6. 把抽卡结果演出、角色详情页、商店和图鉴筛选做成独立 scene，降低 `main.gd` 复杂度。
+7. 增加任务/邮件/每日补给，替代当前测试补给按钮。

@@ -90,8 +90,10 @@ standalone/godot-mvp/
 - 主界面：显示本地货币、看板娘、入口、保底状态。
 - 抽卡：普通/高级/进阶/源神祈愿池切换，单抽和十连。
 - 结果：结果卡片、新角色标记、重复转化提示，点击结果可设为看板。
-- 图鉴：已获得角色高亮，未获得灰显，点击设为看板。
+- 图鉴：已获得角色高亮，未获得灰显，显示持有数量和碎片。
+- 角色详情：展示获得状态、碎片、资源路径和 Spine key，可设为看板。
 - 记录：最近抽卡记录。
+- 商店：源石兑换喚靈券，并提供单机测试补给。
 - 本地存档：`user://shaonv_godot_mvp_save.json`。
 
 资源接入：
@@ -181,3 +183,4 @@ python reverse-output\scripts\export-unitypy-all-assets.py `
 5. 追 `rewardRaw` 对应的掉落/概率表，确认真实概率、保底、UP、自选祈愿和重复转化规则。
 6. 整理 `LotteryDraw.spriteatlas`、抽卡背景图、按钮图、结果光效和音效，形成 `single-player asset manifest`。
 7. 将 `HeroRecruitView/LotteryDrawMainView/LotteryRewardShowView` 的结构映射成 Godot Control scene，并用真实 Spine/图集/音效替换当前静态 PNG 和基础按钮。
+8. 继续补任务、邮件、每日补给或离线商店规则，让抽卡资源来源从测试按钮过渡到可玩的单机经济循环。
