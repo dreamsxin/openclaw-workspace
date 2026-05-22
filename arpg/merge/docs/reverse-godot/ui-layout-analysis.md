@@ -145,10 +145,13 @@ Current audit status:
 - `UIMaidLobbyLoading`, `UISceneLoading`, and `UIInGame` are `prefab_reference_shell` or lower because they still have low exact path coverage.
 - `UIPopup_Inventory` now loads focused prefab data and references `BG`, `ProduceInventory`, `NormalInventory`, `ScrollViewMask`, and `Btn_Close`, but the visible popup keeps a fallback root because the serialized `BG` spans beyond the practical portrait panel.
 - `UIPopup_MaidLobbySelect` now loads focused prefab data and references `Panel`, `TextTitle`, `MaidList`, `BtnArea/Btn`, `Btn_Close`, and list-item rows; screenshot verification confirms the close button is no longer misplaced over the list.
-- `UIPopup_Shop` and `UIFurnitureQuest` remain manual shells and should not be considered correctly restored.
+- `UIPopup_Shop` now loads focused prefab data and references `BG`, `Top`, `Title`, `Btn_Close`, `Scroll View`, `Viewport`, `UIList_ShopNormal`, and first section groups including `Grid_Package`, `BannerGroup`, `Grid_Costume`, and `Grid_Daily`.
+- `UIFurnitureQuest` remains a manual shell and should not be considered correctly restored.
 
 The focused audit is the gate for future UI completion labels: a screen must load focused prefab data and reference concrete RectTransform paths before it can be marked as prefab-first.
 Converted source rectangles are additionally sanity-checked at runtime. If a recovered RectTransform is valid but lands far outside the current fallback panel, Godot keeps the stable fallback region and leaves the source path in the audit for later normalization.
+
+`UIPopup_Shop` is a large staged case: the first focused pass restores its top/title/chat/scroll/list section structure, while exact product row layout and sprite mapping remain pending because the prefab has 932 RectTransforms and several inactive or scroll-clipped item groups.
 
 Latest startup recheck:
 

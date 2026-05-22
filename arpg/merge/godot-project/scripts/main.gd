@@ -951,6 +951,9 @@ func _apply_out_game_app_popup() -> void:
 func _apply_shop_popup() -> void:
 	if shop_popup_reference_screen == null:
 		return
+	var source: Dictionary = focused_ui_layout_sources.get("UIPopup_Shop", {})
+	if not source.is_empty():
+		shop_popup_reference_screen.call("set_source", source)
 	shop_popup_reference_screen.call("set_popup_state", shop_popup_visible, board.wallet)
 
 func _apply_mail_settings_popup() -> void:

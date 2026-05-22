@@ -19834,18 +19834,28 @@
       "godot_script": {
         "path": "godot-project/scripts/shop_popup_reference_screen.gd",
         "exists": true,
-        "has_set_source": false,
-        "has_rect_transform_helpers": false,
-        "rect2_calls": 13,
-        "source_rect_paths": [],
+        "has_set_source": true,
+        "has_rect_transform_helpers": true,
+        "rect2_calls": 28,
+        "source_rect_paths": [
+          "UIPopup_Shop/BG",
+          "UIPopup_Shop/BG/Btn_Close",
+          "UIPopup_Shop/BG/Scroll View",
+          "UIPopup_Shop/BG/Scroll View/Viewport",
+          "UIPopup_Shop/BG/Scroll View/Viewport/Content/UIList_ShopNormal",
+          "UIPopup_Shop/BG/Top",
+          "UIPopup_Shop/BG/Top/ChatBox",
+          "UIPopup_Shop/BG/Top/Title",
+          "UIPopup_Shop/BG/Top/Title/Text (TMP)"
+        ],
         "exact_rect_paths": [],
         "suffix_rect_paths": []
       },
       "score": {
-        "status": "manual_shell",
-        "score": 10,
-        "referenced_rect_paths": 0,
-        "rect_coverage_ratio": 0.0
+        "status": "prefab_first_partial",
+        "score": 76,
+        "referenced_rect_paths": 9,
+        "rect_coverage_ratio": 0.0097
       }
     },
     {

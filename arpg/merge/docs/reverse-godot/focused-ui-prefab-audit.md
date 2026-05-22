@@ -9,7 +9,7 @@ This audit checks the currently implemented Godot screens against focused AssetR
 | `UIInGame` | high | prefab_reference_shell | 25 | 1351 | `godot-project/scripts/ingame_reference_shell.gd` | 0 | low path coverage |
 | `UIMaidLobby` | high | prefab_first_partial | 64 | 10 | `godot-project/scripts/maid_lobby_reference_screen.gd` | 6 | source driven |
 | `UIPopup_Inventory` | high | prefab_first_partial | 64 | 131 | `godot-project/scripts/inventory_popup_reference_screen.gd` | 6 | low path coverage |
-| `UIPopup_Shop` | high | manual_shell | 10 | 932 | `godot-project/scripts/shop_popup_reference_screen.gd` | 0 | manual Rect2 shell, low path coverage, no set_source |
+| `UIPopup_Shop` | high | prefab_first_partial | 76 | 932 | `godot-project/scripts/shop_popup_reference_screen.gd` | 9 | low path coverage |
 | `UIPopup_MaidLobbySelect` | high | prefab_first_partial | 64 | 87 | `godot-project/scripts/maid_lobby_select_popup_reference_screen.gd` | 6 | source driven |
 | `UIFurnitureQuest` | medium | manual_shell | 10 | 20 | `godot-project/scripts/furniture_quest_popup_reference_screen.gd` | 0 | manual Rect2 shell, low path coverage, no set_source |
 | `UIVillageReBuild` | medium | prefab_first_partial | 64 | 6 | `godot-project/scripts/out_game_reference_screen.gd` | 6 | source driven |
@@ -129,13 +129,13 @@ Key serialized rect paths:
 
 - Prefab: `Assets/Resources/prefabs/ui/popup/shop/UIPopup_Shop.prefab`
 - Godot: `godot-project/scripts/shop_popup_reference_screen.gd`
-- Status: `manual_shell`
+- Status: `prefab_first_partial`
 - RectTransforms: 932
 - Layout kinds: fixed_anchor=553, full_stretch=320, large_panel=4, mixed=55
 - Components: CanvasRenderer=754, Image=385, MonoBehaviour:09d2eff8=10, MonoBehaviour:16c0ec1e=40, MonoBehaviour:18d0a906=48, MonoBehaviour:19fbb4a3=46, MonoBehaviour:1be30ab7=64, MonoBehaviour:21c79540=31, MonoBehaviour:2cbaf7f9=3, MonoBehaviour:2f92a323=3, MonoBehaviour:32753fc3=1, MonoBehaviour:35faa8f5=1, MonoBehaviour:4293fd42=122, MonoBehaviour:594212b2=1, MonoBehaviour:598ca59b=7, MonoBehaviour:5eccd90b=20, MonoBehaviour:62677321=2, MonoBehaviour:6c71a908=5, MonoBehaviour:75ba2a8b=46, MonoBehaviour:76ccfb4b=23, MonoBehaviour:7f04cdee=1, MonoBehaviour:865ff746=1, MonoBehaviour:8d5f9603=1, MonoBehaviour:8da296ca=15, MonoBehaviour:8ffc7d92=9, MonoBehaviour:93716f31=5, MonoBehaviour:a1b197ce=6, MonoBehaviour:a1e79089=165, MonoBehaviour:abd451f2=2, MonoBehaviour:da9b4ee3=3, MonoBehaviour:e43d41b3=15, MonoBehaviour:e7250304=8, MonoBehaviour:f18f2cc2=9, MonoBehaviour:f3f93bf7=1, MonoBehaviour:fe7d7fa5=2, MonoBehaviour:ff326197=41, RectTransform=932, TextMeshProUGUI=101
-- Godot has `set_source`: False
-- Godot has RectTransform helpers: False
-- Godot hard-coded `Rect2(...)` calls: 13
+- Godot has `set_source`: True
+- Godot has RectTransform helpers: True
+- Godot hard-coded `Rect2(...)` calls: 28
 
 Key serialized rect paths:
 

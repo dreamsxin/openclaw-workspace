@@ -1822,6 +1822,41 @@ Follow-up:
 - Add accepted/rejected runtime RectTransform diagnostics to the focused audit.
 - Normalize popup roots against their own visible panel parents before replacing more fallback rectangles.
 
+## 2026-05-22 - UIPopup_Shop Focused Prefab Conversion Pass
+
+Inputs:
+- `godot-project/data/focused_ui_layout_reference.json`
+- `reverse-output/assets/assetripper-main/ExportedProject/Assets/Resources/prefabs/ui/popup/shop/UIPopup_Shop.prefab`
+- `godot-project/scripts/shop_popup_reference_screen.gd`
+- `godot-project/scripts/main.gd`
+
+Commands:
+```powershell
+python .\scripts\reverse\extract_focused_ui_layout_reports.py
+.\tools\Godot\Godot_console.exe --headless --path .\godot-project --quit
+.\capture-outgame-popups.bat
+```
+
+Findings:
+- `main.gd` now passes the focused `UIPopup_Shop` prefab record into `ShopPopupReferenceScreen`.
+- `ShopPopupReferenceScreen` now has `set_source`, RectTransform conversion helpers, and the same runtime sanity gate used by the other focused popup shells.
+- The first focused Shop pass references `BG`, `Top`, `Top/Title`, `Top/Title/Text (TMP)`, `Top/ChatBox`, `Btn_Close`, `Scroll View`, `Scroll View/Viewport`, `UIList_ShopNormal`, `Grid_Package`, `BannerGroup`, `Grid_Costume`, and `Grid_Daily`.
+- The audit now marks `UIPopup_Shop` as `prefab_first_partial` with 9 referenced rect paths instead of `manual_shell`.
+- `capture-outgame-popups.bat` verified `reverse-output/outgame-captures/11-outgame-shop.png`; the popup remains visible and stable after focused-source gating.
+- Audio initialization warnings from WASAPI appeared during screenshot capture, but Godot fell back to the dummy driver and completed all captures successfully.
+
+Outputs:
+- `godot-project/scripts/main.gd`
+- `godot-project/scripts/shop_popup_reference_screen.gd`
+- `docs/reverse-godot/focused-ui-prefab-audit.md`
+- `godot-project/data/focused_ui_layout_reference.json`
+- `reverse-output/outgame-captures/11-outgame-shop.png`
+
+Follow-up:
+- Replace the current placeholder product cards with section-specific layouts from `Grid_Package`, `BannerGroup`, `Grid_Costume`, `Grid_Daily`, and their list item children.
+- Resolve Shop image sprite GUIDs to committed Godot assets.
+- Add runtime accepted/rejected RectTransform diagnostics so staged Shop conversion can be audited beyond path coverage.
+
 Recommended next runs:
 
 1. Run Il2CppDumper or Cpp2IL on `libil2cpp.so` and `global-metadata.dat`.
