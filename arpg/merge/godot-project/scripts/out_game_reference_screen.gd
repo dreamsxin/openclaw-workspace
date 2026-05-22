@@ -15,6 +15,7 @@ const CHARACTER_DIR := "res://assets/characters/"
 const LOADING_DIR := "res://assets/loading/"
 const UI_ICON_DIR := "res://assets/ui_icons/"
 const CAFE_DIR := "res://assets/cafe/"
+const UI_FRAME_DIR := "res://assets/ui_frames/"
 const WALLET_ICON_PATHS := {
 	"ap": SPRITE_DIR + "CURRENCY_AP.png",
 	"gold": SPRITE_DIR + "CURRENCY_GOLD.png",
@@ -42,6 +43,18 @@ const CAFE_TEXTURE_PATHS := {
 	"sofa": CAFE_DIR + "cafe_inside_sofa_basic_01.png",
 	"sofa_table": CAFE_DIR + "cafe_inside_sofa_table_basic_01.png",
 }
+const UI_FRAME_PATHS := {
+	"btn_green": UI_FRAME_DIR + "Btn_Green.png",
+	"btn_red": UI_FRAME_DIR + "Btn_Red.png",
+	"btn_default": UI_FRAME_DIR + "Btn_default.png",
+	"btn_square_navy": UI_FRAME_DIR + "Btn_Rectangle04_Navy.png",
+	"btn_square_white": UI_FRAME_DIR + "Btn_Rectangle04_White.png",
+	"gauge_out": UI_FRAME_DIR + "Gaugebar_Out.png",
+	"gauge_in": UI_FRAME_DIR + "Gaugebar_In.png",
+	"frame_square": UI_FRAME_DIR + "BasicFrame_Square01.png",
+	"frame_circle": UI_FRAME_DIR + "BasicFrame_Circle_78_White.png",
+	"panel": UI_FRAME_DIR + "Popup_Back.png",
+}
 
 var source: Dictionary = {}
 var wallet: Dictionary = {"ap": 0, "gold": 0, "jewel": 0}
@@ -51,6 +64,7 @@ var wallet_icon_textures: Dictionary = {}
 var nav_icon_textures: Dictionary = {}
 var utility_icon_textures: Dictionary = {}
 var cafe_textures: Dictionary = {}
+var ui_frame_textures: Dictionary = {}
 var maid_interaction_mode := false
 
 func _ready() -> void:
@@ -59,6 +73,7 @@ func _ready() -> void:
 	nav_icon_textures = _load_texture_map(NAV_ICON_PATHS)
 	utility_icon_textures = _load_texture_map(UTILITY_ICON_PATHS)
 	cafe_textures = _load_texture_map(CAFE_TEXTURE_PATHS)
+	ui_frame_textures = _load_texture_map(UI_FRAME_PATHS)
 	set_process(true)
 
 func _process(_delta: float) -> void:
@@ -334,14 +349,14 @@ func _draw_village_progress(layout: Dictionary) -> void:
 	var s: float = layout["scale"]
 	var bar_rect: Rect2 = layout["progress"]
 	var progress_hover: bool = action_regions.get("village_rebuild", Rect2()).has_point(get_local_mouse_position())
-	draw_rect(bar_rect, Color(0.12, 0.11, 0.1, 0.88), true)
+	_draw_frame_or_rect("panel", bar_rect, Color(0.12, 0.11, 0.1, 0.88))
 	draw_rect(bar_rect, Color(1.0, 0.84, 0.48, 0.96) if progress_hover else Color(0.94, 0.78, 0.45, 0.9), false, 2.0 * s)
 	var icon_rect := Rect2(bar_rect.position + Vector2(8.0 * s, 8.0 * s), Vector2(bar_rect.size.y - 16.0 * s, bar_rect.size.y - 16.0 * s))
-	draw_circle(icon_rect.get_center(), icon_rect.size.x * 0.5, Color(0.86, 0.58, 0.28, 0.9))
+	_draw_frame_or_rect("frame_circle", icon_rect, Color(0.86, 0.58, 0.28, 0.9))
 	draw_string(ThemeDB.fallback_font, icon_rect.position + Vector2(0, icon_rect.size.y * 0.68), "!", HORIZONTAL_ALIGNMENT_CENTER, icon_rect.size.x, int(20.0 * s), Color(1, 0.96, 0.72, 0.96))
 	var inner := Rect2(bar_rect.position + Vector2(bar_rect.size.y, bar_rect.size.y * 0.48), Vector2(bar_rect.size.x - bar_rect.size.y - 14.0 * s, bar_rect.size.y * 0.22))
-	draw_rect(inner, Color(0.05, 0.06, 0.05, 0.7), true)
-	draw_rect(Rect2(inner.position, Vector2(inner.size.x * 0.57, inner.size.y)), Color(0.57, 0.86, 0.64, 0.92), true)
+	_draw_frame_or_rect("gauge_out", inner, Color(0.05, 0.06, 0.05, 0.7))
+	_draw_frame_or_rect("gauge_in", Rect2(inner.position, Vector2(inner.size.x * 0.57, inner.size.y)), Color(0.57, 0.86, 0.64, 0.92))
 	draw_string(ThemeDB.fallback_font, bar_rect.position + Vector2(bar_rect.size.y, 22.0 * s), "Village ReBuild", HORIZONTAL_ALIGNMENT_LEFT, bar_rect.size.x - bar_rect.size.y, int(15.0 * s), Color(1.0, 0.92, 0.68, 0.95))
 
 func _draw_home_entries(layout: Dictionary) -> void:
@@ -359,8 +374,8 @@ func _draw_home_entries(layout: Dictionary) -> void:
 
 func _draw_command_button(rect: Rect2, title: String, subtitle: String, hover := false, accent := Color(0.74, 0.38, 0.36, 1.0)) -> void:
 	var s: float = rect.size.x / 150.0
-	var fill := Color(0.16, 0.17, 0.16, 0.94) if hover else Color(0.11, 0.12, 0.12, 0.88)
-	draw_rect(rect, fill, true)
+	var frame_key := "btn_green" if title == "Maid" else "btn_red"
+	_draw_frame_or_rect(frame_key, rect, Color(0.16, 0.17, 0.16, 0.94) if hover else Color(0.11, 0.12, 0.12, 0.88))
 	draw_rect(rect, Color(1.0, 0.88, 0.56, 0.95) if hover else Color(0.93, 0.78, 0.5, 0.84), false, 3.0 if hover else 2.0)
 	var badge_center := rect.position + Vector2(rect.size.x * 0.5, rect.size.y * 0.34)
 	draw_circle(badge_center, minf(rect.size.x, rect.size.y) * 0.23, accent)
@@ -371,7 +386,7 @@ func _draw_command_button(rect: Rect2, title: String, subtitle: String, hover :=
 func _draw_bottom_navigation(layout: Dictionary) -> void:
 	var bottom_rect: Rect2 = layout["bottom"]
 	var s: float = layout["scale"]
-	draw_rect(bottom_rect, Color(0.08, 0.08, 0.075, 0.9), true)
+	_draw_frame_or_rect("panel", bottom_rect, Color(0.08, 0.08, 0.075, 0.9))
 	draw_rect(bottom_rect, Color(0.86, 0.72, 0.46, 0.66), false, 1.5 * s)
 	var entries := [
 		{"label": "Shop", "action": "app_shop", "color": Color(0.5, 0.28, 0.42, 0.92)},
@@ -389,7 +404,8 @@ func _draw_bottom_navigation(layout: Dictionary) -> void:
 		var icon_color: Color = entries[index]["color"]
 		var icon_texture: Texture2D = nav_icon_textures.get(action, null)
 		draw_rect(cell.grow(-3.0 * s), Color(0.18, 0.14, 0.1, 0.78) if hover else Color(0.0, 0.0, 0.0, 0.0), true)
-		draw_circle(center, minf(cell.size.x, cell.size.y) * 0.24, icon_color)
+		var icon_back := Rect2(center - Vector2(22.0 * s, 22.0 * s), Vector2(44.0 * s, 44.0 * s))
+		_draw_frame_or_rect("frame_circle", icon_back, icon_color)
 		var icon_rect := Rect2(center - Vector2(17.0 * s, 17.0 * s), Vector2(34.0 * s, 34.0 * s))
 		if icon_texture != null:
 			_draw_texture_aspect_centered(icon_texture, icon_rect, Color(1, 1, 1, 0.95))
@@ -400,7 +416,7 @@ func _draw_bottom_navigation(layout: Dictionary) -> void:
 func _draw_top_home_hud(screen_rect: Rect2, layout: Dictionary) -> void:
 	var top_rect: Rect2 = layout["top"]
 	var s: float = layout["scale"]
-	draw_rect(top_rect, Color(0.07, 0.075, 0.07, 0.92), true)
+	_draw_frame_or_rect("panel", top_rect, Color(0.07, 0.075, 0.07, 0.92))
 	draw_rect(Rect2(top_rect.position + Vector2(0, top_rect.size.y - 2.0 * s), Vector2(top_rect.size.x, 2.0 * s)), Color(0.91, 0.76, 0.45, 0.72), true)
 	var x := screen_rect.position.x + 10.0 * s
 	_draw_wallet_item(Vector2(x, screen_rect.position.y + 10.0 * s), "ap", wallet.get("ap", 0), s)
@@ -415,7 +431,7 @@ func _draw_top_home_hud(screen_rect: Rect2, layout: Dictionary) -> void:
 		var btn := Rect2(Vector2(side_x + float(index) * 40.0 * s, screen_rect.position.y + 12.0 * s), Vector2(30.0 * s, 30.0 * s))
 		var action: String = utility_actions[index]
 		var hover: bool = action_regions.get(action, Rect2()).has_point(get_local_mouse_position())
-		draw_rect(btn, Color(0.23, 0.16, 0.1, 0.96) if hover else Color(0.16, 0.17, 0.16, 0.92), true)
+		_draw_frame_or_rect("btn_square_white" if hover else "btn_square_navy", btn, Color(0.23, 0.16, 0.1, 0.96) if hover else Color(0.16, 0.17, 0.16, 0.92))
 		draw_rect(btn, Color(1.0, 0.84, 0.5, 0.9) if hover else Color(0.88, 0.72, 0.46, 0.72), false, 1.5 * s)
 		var utility_texture: Texture2D = utility_icon_textures.get(action, null)
 		var icon_rect := Rect2(btn.position + Vector2(6.0 * s, 4.0 * s), Vector2(18.0 * s, 18.0 * s))
@@ -427,7 +443,7 @@ func _draw_top_home_hud(screen_rect: Rect2, layout: Dictionary) -> void:
 
 func _draw_wallet_item(position: Vector2, key: String, value, s: float) -> void:
 	var rect := Rect2(position, Vector2(116.0 * s, 34.0 * s))
-	draw_rect(rect, Color(0.02, 0.025, 0.025, 0.56), true)
+	_draw_frame_or_rect("panel", rect, Color(0.02, 0.025, 0.025, 0.56))
 	draw_rect(rect, Color(0.77, 0.63, 0.38, 0.46), false, 1.0 * s)
 	var icon_texture: Texture2D = wallet_icon_textures.get(key, null)
 	var icon_rect := Rect2(rect.position + Vector2(5.0 * s, 4.0 * s), Vector2(26.0 * s, 26.0 * s))
@@ -448,6 +464,13 @@ func _load_texture_map(paths: Dictionary) -> Dictionary:
 	for key in paths.keys():
 		result[key] = load(String(paths[key]))
 	return result
+
+func _draw_frame_or_rect(key: String, target: Rect2, fallback: Color, modulate := Color.WHITE) -> void:
+	var texture: Texture2D = ui_frame_textures.get(key, null)
+	if texture != null:
+		draw_texture_rect(texture, target, false, modulate)
+	else:
+		draw_rect(target, fallback, true)
 
 func _draw_texture_aspect_centered(texture: Texture2D, target: Rect2, modulate := Color.WHITE) -> void:
 	var texture_size := Vector2(texture.get_width(), texture.get_height())
