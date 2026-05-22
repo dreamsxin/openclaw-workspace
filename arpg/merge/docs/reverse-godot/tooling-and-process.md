@@ -1749,6 +1749,40 @@ Follow-up:
 - Confirm runtime state that activates and positions `UIVillageReBuild`, `MaidLobbyBtn`, and dialog/interact controls.
 - Implement `OutGameUIShow/Hide*` as named home-screen transition states.
 
+## 2026-05-22 - Focused UI Prefab Audit And UIMaidLobby Conversion
+
+Inputs:
+- `reverse-output/assets/assetripper-main/ExportedProject/Assets/Resources/prefabs/ui/uiroot/UIInGame.prefab`
+- `reverse-output/assets/assetripper-main/ExportedProject/Assets/Resources/prefabs/ui/UIMaidLobby.prefab`
+- `reverse-output/assets/assetripper-main/ExportedProject/Assets/Resources/prefabs/ui/popup/UIPopup_Inventory.prefab`
+- `reverse-output/assets/assetripper-main/ExportedProject/Assets/Resources/prefabs/ui/popup/shop/UIPopup_Shop.prefab`
+- `reverse-output/assets/assetripper-main/ExportedProject/Assets/Resources/prefabs/ui/popup/outgame/UIPopup_MaidLobbySelect.prefab`
+
+Commands:
+```powershell
+python .\scripts\reverse\extract_focused_ui_layout_reports.py
+.\tools\Godot\Godot_console.exe --headless --path .\godot-project --quit-after 2
+.\tools\Godot\Godot_console.exe --path .\godot-project --resolution 540x960 --quit-after 480 -- --restored-startup --auto-enter-maid-lobby --startup-capture-dir=D:\work\openclaw-workspace\arpg\merge\reverse-output\maid-lobby-captures
+```
+
+Findings:
+- The focused audit confirms that several visible popups were still manual `Rect2` shells despite having prefab evidence.
+- High-priority manual shells remaining after this pass: `UIPopup_Inventory`, `UIPopup_Shop`, and `UIPopup_MaidLobbySelect`.
+- `UIMaidLobby.prefab` is compact enough to convert immediately: 10 RectTransforms, including `BG`, `White`, `SpinePos`, `Gradient`, `Npc_Dialog`, and `DialogBtn`.
+- `MaidLobbyReferenceScreen` now receives focused prefab data from `main.gd` and resolves these source RectTransforms at runtime.
+
+Outputs:
+- `scripts/reverse/extract_focused_ui_layout_reports.py`
+- `docs/reverse-godot/focused-ui-prefab-audit.md`
+- `godot-project/data/focused_ui_layout_reference.json`
+- `godot-project/scripts/main.gd`
+- `godot-project/scripts/maid_lobby_reference_screen.gd`
+
+Follow-up:
+- Convert `UIPopup_Inventory` next because it is much smaller than `UIPopup_Shop` but central to the gameplay path.
+- Convert `UIPopup_MaidLobbySelect` before further visual polish in the maid lobby flow.
+- Treat `UIPopup_Shop` as a staged conversion because it has 932 RectTransforms.
+
 Recommended next runs:
 
 1. Run Il2CppDumper or Cpp2IL on `libil2cpp.so` and `global-metadata.dat`.

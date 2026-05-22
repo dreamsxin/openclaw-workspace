@@ -45,6 +45,7 @@ const SPRITE_DIR := "res://assets/sprites/"
 const CHARACTER_DIR := "res://data/characters/"
 const UI_LAYOUT_REFERENCE := "res://data/ui_layout_reference.json"
 const UI_OUTGAME_LAYOUT_REFERENCE := "res://data/uioutgame_layout_reference.json"
+const FOCUSED_UI_LAYOUT_REFERENCE := "res://data/focused_ui_layout_reference.json"
 
 var catalog = BlockCatalogScript.new()
 var board = MergeBoardModelScript.new()
@@ -77,6 +78,7 @@ var character_index := 0
 var ui_layout_sources: Array = []
 var ui_layout_index := 0
 var uioutgame_layout_source: Dictionary = {}
+var focused_ui_layout_sources: Dictionary = {}
 var ui_layout_title_label: Label
 var ui_layout_meta_label: Label
 var ui_layout_preview: Control
@@ -156,6 +158,7 @@ func _ready() -> void:
 	_load_character_data()
 	_load_ui_layout_reference()
 	_load_uioutgame_layout_reference()
+	_load_focused_ui_layout_reference()
 	board.call("setup", catalog, "res://data/initial_board.json")
 	board.board_changed.connect(_refresh_board)
 	board.wallet_changed.connect(_refresh_wallet)
@@ -781,6 +784,31 @@ func _load_uioutgame_layout_reference() -> void:
 			}
 			return
 
+func _load_focused_ui_layout_reference() -> void:
+	if not FileAccess.file_exists(FOCUSED_UI_LAYOUT_REFERENCE):
+		return
+	var text := FileAccess.get_file_as_string(FOCUSED_UI_LAYOUT_REFERENCE)
+	var payload = JSON.parse_string(text)
+	if typeof(payload) != TYPE_DICTIONARY:
+		return
+	for target in payload.get("targets", []):
+		if typeof(target) != TYPE_DICTIONARY:
+			continue
+		var name := String(target.get("name", ""))
+		var prefab: Dictionary = target.get("prefab", {})
+		if name.is_empty() or prefab.is_empty():
+			continue
+		var source := prefab.duplicate(true)
+		source["name"] = name
+		source["source_type"] = "prefab"
+		source["source_path"] = prefab.get("path", "")
+		source["reference_resolution"] = {
+			"width": 1080,
+			"height": 1920,
+			"basis": "inferred from recovered UILoading root; CanvasScaler still unconfirmed"
+		}
+		focused_ui_layout_sources[name] = source
+
 func _refresh_ui_layout_panel(write_status: bool) -> void:
 	if ui_layout_meta_label == null:
 		return
@@ -948,6 +976,9 @@ func _apply_story_memory_popup() -> void:
 func _apply_maid_lobby_reference_visibility() -> void:
 	if maid_lobby_reference_screen == null:
 		return
+	var source: Dictionary = focused_ui_layout_sources.get("UIMaidLobby", {})
+	if not source.is_empty():
+		maid_lobby_reference_screen.call("set_source", source)
 	maid_lobby_reference_screen.call("set_maids", maids, character_index)
 	maid_lobby_reference_screen.visible = maid_lobby_reference_visible
 	maid_lobby_reference_screen.mouse_filter = Control.MOUSE_FILTER_STOP if maid_lobby_reference_visible else Control.MOUSE_FILTER_IGNORE

@@ -268,13 +268,16 @@ Success criteria:
 | T076 | Switch UIOutGame restoration to prefab-first layout | planned | Stop visual trial placement for the home screen; extract a complete `UIOutGame` component/layout map from AssetRipper prefabs and animation clips, then use screenshots only as regression validation |
 | T077 | Generate UIOutGame layout evidence report | done | `scripts/reverse/extract_uioutgame_layout_report.py`, `docs/reverse-godot/uioutgame-layout-report.md`, and `godot-project/data/uioutgame_layout_reference.json` now record `UIOutGame.prefab`, `uiroot/UIOutGame.prefab`, and `OutGameUIShow/Hide*` hierarchy/component/animation evidence |
 | T078 | Re-align Godot UIOutGame to recovered RectTransforms | in progress | `OutGameReferenceScreen` now loads the focused UIOutGame reference and uses source RectTransforms for `Npc_Dialog`, `InGameBtn`, `MaidLobbyBtn`, `Btn_ToInteraction`, `FurnitureQuest`, and `UIVillageReBuild/Fillbar`; inactive parent surfaces remain flagged for runtime mount/state confirmation |
+| T079 | Audit all implemented screens against prefab-first rules | done | `scripts/reverse/extract_focused_ui_layout_reports.py` generates `docs/reverse-godot/focused-ui-prefab-audit.md` and `godot-project/data/focused_ui_layout_reference.json`; current high-priority gaps are `UIPopup_Inventory`, `UIPopup_Shop`, and `UIPopup_MaidLobbySelect` |
+| T080 | Convert UIMaidLobby to focused prefab data | done | `MaidLobbyReferenceScreen` now receives `UIMaidLobby` focused layout data and uses source RectTransforms for `BG`, `White`, `SpinePos`, `Gradient`, `Npc_Dialog`, and `DialogBtn` |
+| T081 | Convert high-priority popups to prefab-first shells | pending | Use `focused_ui_layout_reference.json` to replace hand-built `Rect2` layouts for `UIPopup_Inventory`, `UIPopup_Shop`, and `UIPopup_MaidLobbySelect` |
 
 Immediate next implementation targets:
 
-1. Resolve UIOutGame Image sprite GUIDs from the focused report into exact AssetStudio/AssetRipper sprite names.
-2. Confirm runtime mount/toggle state for inactive `UIVillageReBuild`, `MaidLobbyBtn`, `Npc_Dialog`, `Btn_ToNormal`, and `Btn_InteractionArea`.
-3. Apply `OutGameUIShow/Hide*` animation offsets as named Godot transition states instead of baking them into base layout.
-4. After the prefab-first home alignment is stable, resume asset binding for Shop, Mail/Settings, Bag/Menu, Story/Memory, FurnitureQuest, and LD maid Spine.
+1. Convert `UIPopup_Inventory` to load focused prefab data and derive `BG`, `ProduceInventory`, `NormalInventory`, `ScrollViewMask`, close/button regions, and slot grids from RectTransforms.
+2. Convert `UIPopup_MaidLobbySelect` to load focused prefab data for `Panel`, `TextTitle`, `Btn_Close`, `MaidList`, and list-item rows.
+3. Start `UIPopup_Shop` focused conversion after the smaller popups, because its 932 RectTransforms need a staged target list.
+4. Resolve Image sprite GUIDs from focused reports into exact AssetStudio/AssetRipper sprite names before replacing remaining geometric fallbacks.
 
 ## Tool Acquisition Options
 

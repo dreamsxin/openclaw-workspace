@@ -132,6 +132,21 @@ Current Godot use:
 - `UIVillageReBuild` and `FurnitureQuest` now use source RectTransforms for evidence preview, but their runtime activation and final mount state still need confirmation because `UIVillageReBuild` is serialized inactive and some child nodes are centered placeholders.
 - `OutGameUIShow*` and `OutGameUIHide*` are documented as transition clips and should be implemented as animation states, not as edits to the base RectTransform table.
 
+## Focused UI Prefab Audit
+
+`scripts/reverse/extract_focused_ui_layout_reports.py` now generates a cross-screen prefab-first audit:
+
+- `docs/reverse-godot/focused-ui-prefab-audit.md`
+- `godot-project/data/focused_ui_layout_reference.json`
+
+Current audit status:
+
+- `UIOutGame`, `UIVillageReBuild`, and `UIMaidLobby` are `prefab_first_partial`.
+- `UIMaidLobbyLoading`, `UISceneLoading`, and `UIInGame` are `prefab_reference_shell` or lower because they still have low exact path coverage.
+- `UIPopup_Inventory`, `UIPopup_Shop`, `UIPopup_MaidLobbySelect`, and `UIFurnitureQuest` remain `manual_shell` and should not be considered correctly restored.
+
+The focused audit is the gate for future UI completion labels: a screen must load focused prefab data and reference concrete RectTransform paths before it can be marked as prefab-first.
+
 Latest startup recheck:
 
 - `UILoading/LoadingBar` is a direct child of the 1080 x 1920 root, fixed at anchor `(0.5, 0.0)`, anchored position `(0, 300)`, size `670 x 50`, pivot `(0.5, 0.5)`.
