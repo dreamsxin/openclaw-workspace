@@ -19,6 +19,7 @@ const UI_FRAME_DIR := "res://assets/ui_frames/"
 const OUTGAME_ENTRY_DIR := "res://assets/outgame_entries/"
 const OUTGAME_QUEST_DIR := "res://assets/outgame_quest/"
 const OUTGAME_BADGE_DIR := "res://assets/outgame_badges/"
+const OUTGAME_WALLET_DIR := "res://assets/outgame_wallet/"
 const WALLET_ICON_PATHS := {
 	"ap": SPRITE_DIR + "CURRENCY_AP.png",
 	"gold": SPRITE_DIR + "CURRENCY_GOLD.png",
@@ -76,6 +77,10 @@ const OUTGAME_BADGE_PATHS := {
 	"alert": OUTGAME_BADGE_DIR + "Icon_Alert.png",
 	"sub_noti": OUTGAME_BADGE_DIR + "subNoti.png",
 }
+const OUTGAME_WALLET_PATHS := {
+	"add": OUTGAME_WALLET_DIR + "Icon_Add.png",
+	"add_small": OUTGAME_WALLET_DIR + "Icon_WhiteIcon_Add_s.png",
+}
 
 var source: Dictionary = {}
 var wallet: Dictionary = {"ap": 0, "gold": 0, "jewel": 0}
@@ -89,6 +94,7 @@ var ui_frame_textures: Dictionary = {}
 var outgame_entry_textures: Dictionary = {}
 var outgame_quest_textures: Dictionary = {}
 var outgame_badge_textures: Dictionary = {}
+var outgame_wallet_textures: Dictionary = {}
 var maid_interaction_mode := false
 
 func _ready() -> void:
@@ -101,6 +107,7 @@ func _ready() -> void:
 	outgame_entry_textures = _load_texture_map(OUTGAME_ENTRY_PATHS)
 	outgame_quest_textures = _load_texture_map(OUTGAME_QUEST_PATHS)
 	outgame_badge_textures = _load_texture_map(OUTGAME_BADGE_PATHS)
+	outgame_wallet_textures = _load_texture_map(OUTGAME_WALLET_PATHS)
 	set_process(true)
 
 func _process(_delta: float) -> void:
@@ -516,7 +523,18 @@ func _draw_wallet_item(position: Vector2, key: String, value, s: float) -> void:
 		draw_texture_rect(icon_texture, icon_rect, false, Color(1, 1, 1, 0.96))
 	else:
 		draw_circle(icon_rect.get_center(), icon_rect.size.x * 0.48, Color(0.86, 0.68, 0.32, 0.9))
-	draw_string(ThemeDB.fallback_font, rect.position + Vector2(36.0 * s, 23.0 * s), _format_wallet_value(value), HORIZONTAL_ALIGNMENT_LEFT, rect.size.x - 40.0 * s, int(15.0 * s), Color(1.0, 0.93, 0.72, 0.96))
+	var add_rect := Rect2(rect.end - Vector2(23.0 * s, 27.0 * s), Vector2(18.0 * s, 18.0 * s))
+	_draw_wallet_add_button(add_rect, s)
+	draw_string(ThemeDB.fallback_font, rect.position + Vector2(36.0 * s, 23.0 * s), _format_wallet_value(value), HORIZONTAL_ALIGNMENT_LEFT, rect.size.x - 60.0 * s, int(15.0 * s), Color(1.0, 0.93, 0.72, 0.96))
+
+func _draw_wallet_add_button(rect: Rect2, s: float) -> void:
+	draw_circle(rect.get_center(), rect.size.x * 0.5, Color(0.22, 0.18, 0.12, 0.88))
+	draw_circle(rect.get_center(), rect.size.x * 0.48, Color(0.86, 0.68, 0.34, 0.74))
+	var add_texture: Texture2D = outgame_wallet_textures.get("add", null)
+	if add_texture != null:
+		_draw_texture_aspect_centered(add_texture, rect.grow(-2.0 * s), Color(1, 1, 1, 0.95))
+	else:
+		draw_string(ThemeDB.fallback_font, rect.position + Vector2(0, rect.size.y * 0.72), "+", HORIZONTAL_ALIGNMENT_CENTER, rect.size.x, int(14.0 * s), Color(1, 0.95, 0.78, 0.96))
 
 func _format_wallet_value(value) -> String:
 	var number := float(value)

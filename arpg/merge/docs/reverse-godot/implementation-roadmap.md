@@ -264,6 +264,7 @@ Success criteria:
 | T072 | Use recovered UIOutGame entry composition art | done | The home village rebuild icon now uses `Icon_InGameCoffee`, and the Merge button layers `MainRoom5_Merge` behind the recovered `InLobby`/`MergeMadeMark` assets while keeping `OutLobby` on the Maid entry |
 | T073 | Import recovered FurnitureQuest home icons | done | AssetStudio `Icon_QuestList`, `Icon_UnlockFurniture`, and `Appicon_Remodeling` are copied into `godot-project/assets/outgame_quest`; the home FurnitureQuest entry now uses recovered icon art instead of a text-only box |
 | T074 | Add recovered UIOutGame notification badges | done | AssetStudio `Noti`, `Noti_pin`, `subNoti`, and `Icon_Alert` are copied into `godot-project/assets/outgame_badges`; home Mail, Story, Bag, Menu, FurnitureQuest, and rebuild progress now display recovered notification badges |
+| T075 | Add recovered wallet add controls | done | AssetStudio `Icon_Add` and `Icon_WhiteIcon_Add_s` are copied into `godot-project/assets/outgame_wallet`; the top AP/Gold/Jewel HUD slots now show recovered add buttons beside the wallet values |
 
 Immediate next implementation targets:
 
