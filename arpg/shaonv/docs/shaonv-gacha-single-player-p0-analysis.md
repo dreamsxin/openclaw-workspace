@@ -385,35 +385,37 @@ MVP 必须优先支持：
 
 ## 11. P0-7 单机 MVP 落地
 
-已新增 Web 版最小闭环：
+当前实现已迁移到 Godot MVP：
 
 ```text
-standalone/web-mvp/
-  index.html
-  styles.css
-  app.js
+standalone/godot-mvp/
+  project.godot
+  scenes/main.tscn
+  scripts/main.gd
+  data/
+  assets/spine/
 ```
 
 当前功能：
 
 - 主界面：本地货币、看板娘、保底、入口。
 - 抽卡：普通/高级/进阶/源神祈愿池切换，单抽和十连。
-- 结果：稀有度高亮、新角色标记、重复转化提示。
-- 图鉴：已获得高亮、未获得灰显、角色详情。
+- 结果：结果卡片、新角色标记、重复转化提示，点击结果可设为看板。
+- 图鉴：已获得高亮、未获得灰显，点击角色设为看板。
 - 记录：最近抽卡记录。
-- 存档：浏览器 `localStorage`。
+- 存档：Godot `user://shaonv_godot_mvp_save.json`。
 
 运行：
 
 ```powershell
 cd D:\work\openclaw-workspace\arpg\shaonv
-python -m http.server 5177
+.\Godot\Godot_console.exe --headless --path standalone\godot-mvp --quit-after 2
 ```
 
-打开：
+直接运行：
 
-```text
-http://127.0.0.1:5177/standalone/web-mvp/
+```powershell
+.\Godot\Godot.exe --path standalone\godot-mvp --scene res://scenes/main.tscn
 ```
 
-该 MVP 使用已验证导出的 `hero_003Dh.png` 作为实际视觉资源，其它角色暂按 `hero_001/005/016/017` key 占位，等待 manifest 物理映射修正后替换。
+该 MVP 使用已导出的 `hero_001/003Dh/005/016/017` PNG 做静态展示，并保留对应 `.skel.bytes + .atlas.txt + .png` 三件套，等待接入 Spine Godot 运行方案。此前 `standalone/web-mvp` 已删除，只保留历史分析结论。

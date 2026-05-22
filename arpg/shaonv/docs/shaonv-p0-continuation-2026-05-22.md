@@ -16,7 +16,7 @@
 | P0-4 | 导出并验证 3-5 个代表角色资源 | 部分完成 | 已实际导出并验证 `hero_003Dh`；`hero_016` 逻辑 bundle 已定位，但当前磁盘物理文件名未闭合。 |
 | P0-5 | 整理抽卡 UI prefab 和结果展示 prefab | 部分完成 | 6 个目标 prefab asset 行已定位，只有 `HeroRecruitView` 能从当前 parsed bundle 表拿到 hash。 |
 | P0-6 | 离线抽卡规则和本地存档 | 已完成设计 | 已在 P0 文档中定义本地规则、保底和 JSON 存档结构。 |
-| P0-7 | 实现单机版最小闭环 | 已完成 Web MVP | 新增 `standalone/web-mvp`，实现主界面、抽卡、结果、图鉴、记录、本地存档。 |
+| P0-7 | 实现单机版最小闭环 | 已迁移到 Godot MVP | 当前实现目录为 `standalone/godot-mvp`，已实现主界面、抽卡、结果、图鉴、记录、本地存档。此前 `standalone/web-mvp` 已删除，仅保留历史分析价值。 |
 
 ## 3. P0-4 资源验证进展
 
@@ -72,45 +72,48 @@ reverse-output/gacha-static/sample-export/b61d633c6f7beec5301d9f48ffb87909/by_co
 reverse-output/gacha-static/sample-export/8532f257e2c3fee0602027efb486883a/unitypy-export-manifest.csv
 ```
 
-## 5. P0-7 Web MVP
+## 5. P0-7 Godot MVP
 
-新增目录：
+当前实现目录：
 
 ```text
-standalone/web-mvp/
-  index.html
-  styles.css
-  app.js
+standalone/godot-mvp/
+  project.godot
+  scenes/main.tscn
+  scripts/main.gd
+  data/
+  assets/spine/
 ```
 
 已实现：
 
 - 主界面：显示本地货币、看板娘、入口、保底状态。
 - 抽卡：普通/高级/进阶/源神祈愿池切换，单抽和十连。
-- 结果：稀有度高亮、新角色标记、重复转化提示。
-- 图鉴：已获得角色高亮，未获得灰显，角色详情展示。
+- 结果：结果卡片、新角色标记、重复转化提示，点击结果可设为看板。
+- 图鉴：已获得角色高亮，未获得灰显，点击设为看板。
 - 记录：最近抽卡记录。
-- 本地存档：`localStorage["shaonv-single-player-save"]`。
+- 本地存档：`user://shaonv_godot_mvp_save.json`。
 
 资源接入：
 
-- 当前使用已验证导出的 `hero_003Dh.png` 作为可见角色资源。
-- 其他角色保留 `hero_001/005/016/017` 资源 key，占位等待 bundle 物理映射补齐后替换。
+- 当前使用已导出的 `hero_001/003Dh/005/016/017` 的 PNG 静态展示。
+- 每个角色目录保留 `.skel.bytes + .atlas.txt + .png`，等待接入 Spine Godot 运行方案。
 
 运行方式：
 
 ```powershell
 cd D:\work\openclaw-workspace\arpg\shaonv
-python -m http.server 5177
+.\Godot\Godot_console.exe --headless --path standalone\godot-mvp --quit-after 2
 ```
 
-浏览器打开：
+启动编辑器或直接运行：
 
-```text
-http://127.0.0.1:5177/standalone/web-mvp/
+```powershell
+.\Godot\Godot.exe --path standalone\godot-mvp
+.\Godot\Godot.exe --path standalone\godot-mvp --scene res://scenes/main.tscn
 ```
 
-也可以直接打开 `standalone/web-mvp/index.html`，但建议用本地 HTTP 服务验证资源相对路径。
+此前 `standalone/web-mvp` 和 `standalone/unity-mvp` 已删除，不再作为当前实现目录。
 
 ## 6. 本轮使用命令和工具
 
@@ -169,7 +172,7 @@ python reverse-output\scripts\export-unitypy-all-assets.py `
 
 ## 7. 还需要继续分析的数据
 
-为了尽可能还原游戏操作界面并开始 Unity/单机正式实现，下一步优先级如下：
+为了尽可能还原游戏操作界面并继续 Godot 单机实现，下一步优先级如下：
 
 1. 修正 YooAsset manifest 解析，得到完整 `assetPath -> bundleID -> bundleName -> 当前磁盘物理文件` 映射。
 2. 批量导出 `hero_001/003/005/016/017` 的 Spine、立绘、头像、半身像和皮肤资源。
@@ -177,4 +180,4 @@ python reverse-output\scripts\export-unitypy-all-assets.py `
 4. 对上述 View 的 MonoBehaviour 字段做定向 IL/反编译，补齐按钮、动画、结果格、特效节点绑定。
 5. 追 `rewardRaw` 对应的掉落/概率表，确认真实概率、保底、UP、自选祈愿和重复转化规则。
 6. 整理 `LotteryDraw.spriteatlas`、抽卡背景图、按钮图、结果光效和音效，形成 `single-player asset manifest`。
-7. 将 Web MVP 的离线规则迁移到 Unity MVP，并用真实 prefab/Spine 替换占位 UI。
+7. 将 `HeroRecruitView/LotteryDrawMainView/LotteryRewardShowView` 的结构映射成 Godot Control scene，并用真实 Spine/图集/音效替换当前静态 PNG 和基础按钮。

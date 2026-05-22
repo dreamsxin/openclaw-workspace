@@ -2,36 +2,36 @@
 
 时间：2026-05-22
 
-## 1. 方案是否合理
+## 1. 当前方案是否合理
 
-当前“两阶段”方案是合理的：
+当前方案已从 Web/Unity 两阶段切换为 Godot 主线。原因是 Unity 授权和发行成本不适合当前单机 MVP，Web 版只能验证流程，无法低成本承接后续 Spine、音频、存档、场景组织和打包发布。
 
 | 阶段 | 目标 | 技术选择 | 结论 |
 |---|---|---|---|
-| 快速验证 | 先跑通主界面、抽卡、结果、图鉴、存档 | `standalone/web-mvp` 静态 Web | 合理，开发快，适合验证离线规则和界面流程。 |
-| 正式还原 | 尽量复用原资源、UI prefab、Spine、音效、特效 | Unity 单机工程 | 更合理，原游戏就是 Unity，骨骼动画和 prefab 迁移成本最低。 |
+| 当前 MVP | 跑通主界面、抽卡、结果、图鉴、记录、存档 | `standalone/godot-mvp` | 当前主线，适合开源/低成本发行，并能逐步接入 Spine、音效和 UI 资源。 |
+| 历史验证 | 快速验证离线抽卡规则和界面流程 | `standalone/web-mvp` | 已删除，仅保留文档结论。 |
+| 高还原参考 | 理论上最容易复用 Unity 原 prefab/Material/Animator | `standalone/unity-mvp` | 已删除，不再作为实现方向；只保留逆向分析价值。 |
 
-Web MVP 不应作为最终还原载体。它适合先把抽卡循环和数据结构跑通，但要高还原原游戏界面，正式版本建议新建 Unity 工程：
+当前工程位置：
 
 ```text
-standalone/unity-mvp
+standalone/godot-mvp
 ```
 
-理由：
+Godot 方案的取舍：
 
-- 原资源是 Unity AssetBundle/YooAsset 体系，prefab、Material、Texture2D、SpriteAtlas、AudioClip 都是 Unity 原生资产。
-- Spine 资源以 Unity Spine Runtime 组件使用，导出的 `.skel.bytes + .atlas.txt + .png` 可直接被 Unity Spine Runtime 接入。
-- 抽卡界面的 `LotteryDrawMainView`、`HeroRecruitView`、`LotteryRewardShowView` 等 prefab 原本就是 UGUI/MonoBehaviour 结构，用 Unity 复刻最省成本。
-- Web 要实现 Spine 也可行，但需要 Spine Web Runtime，并且 UI prefab、Unity 材质、特效、动画控制器都要二次翻译。
+- 优点：无 Unity 授权风险，适合单机发行；Control UI、JSON 存档、资源管理足够支撑抽卡 MVP。
+- 代价：不能直接复用 Unity UGUI prefab、AnimatorController、Material，需要按分析结果在 Godot 中重建 UI。
+- 资源策略：先使用导出的 PNG 静态展示角色；后续接入 Spine Godot 插件或转换流程播放 `.skel.bytes + .atlas.txt + .png`。
 
 ## 2. 能否实现骨骼动画
 
 可以实现。
 
-已验证导出的 `hero_003Dh` 包含 Spine 运行所需核心资源：
+已验证导出的 `hero_003Dh` 包含 Spine 运行所需核心资源，当前已复制到 Godot 工程资源目录：
 
 ```text
-standalone/web-mvp/assets/spine/hero_003Dh/
+standalone/godot-mvp/assets/spine/hero_003Dh/
   hero_003Dh.png
   hero_003Dh.atlas.txt
   hero_003Dh.skel.bytes
@@ -54,40 +54,42 @@ reverse-output/gacha-static/sample-export/b61d633c6f7beec5301d9f48ffb87909/by_co
 | `_Atlas.asset` | Unity Spine 预制 AtlasAsset | Unity 中可选，能重建则不强依赖 |
 | `_Material.mat` | Spine 渲染材质 | Unity 中建议导出，方便还原 blend/加法材质 |
 
-### Unity 实现方式
+### Godot 实现方式
 
-Unity 正式版推荐接入 Spine Unity Runtime：
+Godot 正式版建议优先验证 Spine Godot 运行方案：
 
-1. 将 `hero_003Dh.skel.bytes`、`hero_003Dh.atlas.txt`、`hero_003Dh.png` 放入 Unity `Assets/Art/Spine/Hero/hero_003Dh/`。
-2. 使用 Spine Unity Runtime 生成 `SkeletonDataAsset` 和 `AtlasAsset`。
-3. 在角色展示页、抽卡结果页使用 `SkeletonGraphic` 或 `SkeletonAnimation`。
+1. 保持 `assets/spine/<heroKey>/<heroKey>.skel.bytes`、`.atlas.txt`、`.png` 三件套同目录。
+2. 接入可用于 Godot 4 的 Spine Runtime/插件，验证二进制 `.skel`、atlas 路径和透明混合。
+3. 在角色展示页、抽卡结果页使用 Spine 节点播放 idle/入场/点击动画。
 4. 动画名从 `.skel.bytes` 解析或用 Spine Runtime 枚举，优先尝试 `idle`、`standby`、`animation`、`touch` 等常见名。
 
 ### Web 实现方式
 
-Web 也能播放，但不是当前 MVP 的首选目标：
+Web 也能播放，但已不再作为当前 MVP 目标：
 
 1. 引入 Spine Web Runtime。
 2. 加载 `.skel.bytes`、`.atlas.txt`、`.png`。
 3. 使用 WebGL/Canvas 播放 Skeleton。
 4. 需要额外处理二进制加载、atlas 图片路径、动画名枚举、透明混合。
 
-因此：正式高还原选 Unity；Web 只作为抽卡流程和数据结构验证。
+因此：当前实现选 Godot；Unity/Web 只作为历史方案和资源复用参考。
 
 ## 3. 当前已导出的可用资源
 
 ### 3.1 MVP 已复制资源
 
 ```text
-standalone/web-mvp/assets/spine/hero_003Dh/hero_003Dh.png
-standalone/web-mvp/assets/spine/hero_003Dh/hero_003Dh.atlas.txt
-standalone/web-mvp/assets/spine/hero_003Dh/hero_003Dh.skel.bytes
+standalone/godot-mvp/assets/spine/hero_001/
+standalone/godot-mvp/assets/spine/hero_003Dh/
+standalone/godot-mvp/assets/spine/hero_005/
+standalone/godot-mvp/assets/spine/hero_016/
+standalone/godot-mvp/assets/spine/hero_017/
 ```
 
-`standalone/web-mvp/app.js` 当前引用本地 PNG：
+`standalone/godot-mvp/scripts/main.gd` 当前按角色 `artResource` 映射本地 PNG：
 
-```js
-const ART = "./assets/spine/hero_003Dh/hero_003Dh.png";
+```gdscript
+load("res://%s.png" % resource_path.replace("Art/Spine", "assets/spine"))
 ```
 
 ### 3.2 分析产物
@@ -118,7 +120,7 @@ reverse-output/gacha-static/ui_prefab_candidates.json
 建议落盘：
 
 ```text
-standalone/unity-mvp/Assets/StreamingAssets/data/
+standalone/godot-mvp/data/
   gacha_pools.json
   heroes.json
   hero_skins.json
@@ -231,15 +233,12 @@ fx_HeroRecruitView_linght_*
 reverse-output/
   继续保存原始分析、dry-run、批量导出记录
 
-standalone/web-mvp/
-  只放 Web MVP 真正使用的轻量资源
-
-standalone/unity-mvp/
-  未来正式 Unity 工程
-  Assets/Art/Spine/Hero/...
-  Assets/Art/UI/LotteryDraw/...
-  Assets/Audio/...
-  Assets/StreamingAssets/data/...
+standalone/godot-mvp/
+  Godot 单机 MVP
+  assets/spine/Hero/...
+  assets/ui/lottery/...
+  assets/audio/...
+  data/...
 ```
 
 ## 6. 当前最大阻塞
@@ -267,8 +266,7 @@ assetPath -> bundleID -> bundleName -> 当前磁盘物理文件
 
 ## 7. 实施结论
 
-- 现在的单机实现方案合理，但 Web MVP 只作为流程验证。
+- 现在的单机实现方案已切换为 Godot MVP，方向合理。
 - 骨骼动画能实现，已验证 `hero_003Dh` 拥有完整 Spine 三件套。
-- 正式高还原应使用 Unity + Spine Unity Runtime。
-- 下一步导出优先级是角色 Spine 三件套、角色静态图、抽卡 UI prefab、抽卡 UI 图集、结果特效、音效、真实掉落表。
+- 下一步导出优先级是角色 Spine 三件套、角色静态图、抽卡 UI prefab 结构、抽卡 UI 图集、结果特效、音效、真实掉落表。
 - 在 manifest 物理映射补齐前，不应大规模写死 bundle hash；应以 dry-run 结果和已验证导出为准。

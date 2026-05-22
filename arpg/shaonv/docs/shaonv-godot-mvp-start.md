@@ -17,13 +17,14 @@ D:\work\openclaw-workspace\arpg\shaonv\Godot\Godot_console.exe
 
 ## 2. 当前选择
 
-从授权和发行成本考虑，MVP 正式实现转向 Godot。Unity 工程保留为参考和备选，不删除。
+从授权和发行成本考虑，MVP 正式实现转向 Godot。此前的 `standalone/web-mvp` 和 `standalone/unity-mvp` 已删除，当前可运行实现以 `standalone/godot-mvp` 为唯一主线。
 
 Godot 当前目标是“用原素材重制单机抽卡闭环”，不是直接复用 Unity prefab。原因：
 
 - Godot 不能直接使用 Unity UGUI prefab、AnimatorController、Material。
 - 现有 `skel.bytes + atlas.txt + png` 可以作为 Spine 运行输入，但需要 Godot Spine 插件或转换流程。
 - 当前 MVP 先用 atlas PNG 静态展示角色，保证抽卡/图鉴闭环可运行。
+- Unity/Web 文档保留为逆向分析和方案演进记录，不再作为实现目录。
 
 ## 3. 当前内容
 
@@ -50,8 +51,8 @@ standalone/godot-mvp/
 `scripts/main.gd` 已实现：
 
 - 主界面：货币、看板角色、入口按钮。
-- 抽卡：普通/高级/进阶/源神祈願池切换，单抽和十连。
-- 结果页：显示抽卡结果、新角色和重复。
+- 抽卡：普通/高级/进阶/源神祈願池切换，单抽和十连，显示当前卡池、UP、保底和消耗。
+- 结果页：显示抽卡结果卡片、新角色和重复，点击结果可设为看板并回主界面。
 - 图鉴：角色收集状态，点击设为看板。
 - 记录：抽卡历史。
 - 本地存档：`user://shaonv_godot_mvp_save.json`。
@@ -100,6 +101,7 @@ standalone/godot-mvp/
 
 1. 用 Godot 编辑器检查布局并调整主题、字体、按钮样式。
 2. 接入 Spine Godot 运行方案，验证 `.skel.bytes + .atlas.txt + .png` 播放。
-3. 将抽卡 UI 图集、结果光效和音效导入 Godot。
+3. 将抽卡 UI 图集、结果光效和音效导入 Godot，并建立 Godot 资源命名规范。
 4. 用真实掉落表替换当前 MVP 概率。
 5. 将 `HeroRecruitView/LotteryDrawMainView/LotteryDrawFinishView` 的结构分析转成 Godot Control 节点重建清单。
+6. 把抽卡结果演出、角色详情页和图鉴筛选做成独立 scene，降低 `main.gd` 复杂度。

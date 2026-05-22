@@ -124,12 +124,13 @@ func _show_gacha() -> void:
 	_clear("抽卡")
 	var x := 24.0
 	for pool in pools:
+		var pool_id := str(pool.get("id", "advanced"))
 		var button := Button.new()
-		button.text = str(pool.get("name", "Pool"))
+		button.text = "%s%s" % ["✓ " if pool_id == str(save.get("active_pool_id", "advanced")) else "", str(pool.get("name", "Pool"))]
 		button.position = Vector2(x, 0)
 		button.size = Vector2(132, 42)
 		button.pressed.connect(func() -> void:
-			save["active_pool_id"] = pool.get("id", "advanced")
+			save["active_pool_id"] = pool_id
 			_persist()
 			_show_gacha()
 		)
@@ -145,9 +146,9 @@ func _show_gacha() -> void:
 	var featured_names := []
 	for id in pool.get("featuredHeroIds", []):
 		featured_names.append(_hero_by_id(int(id)).get("name", str(id)))
-	var detail := _label("UP: %s\n保底: %d/%d" % [" / ".join(featured_names), _pity(pool.get("id", "advanced")), int(pool.get("pityLimit", 60))], 20)
+	var detail := _label("UP: %s\n保底: %d/%d\n消耗: 喚靈券 x%d" % [" / ".join(featured_names), _pity(pool.get("id", "advanced")), int(pool.get("pityLimit", 60)), int(pool.get("ticketCost", 1))], 20)
 	detail.position = Vector2(24, 154)
-	detail.size = Vector2(840, 80)
+	detail.size = Vector2(840, 108)
 	content.add_child(detail)
 	_add_action_button("喚靈 1 次", Vector2(24, 270), func() -> void: _draw_and_show(1))
 	_add_action_button("喚靈 10 次", Vector2(170, 270), func() -> void: _draw_and_show(10))
@@ -162,15 +163,28 @@ func _draw_and_show(count: int) -> void:
 		_add_action_button("返回", Vector2(24, 104), _show_gacha)
 		return
 	_draw_hero_stage(results[0].get("hero", _hero_by_id(240065)))
-	var lines := []
+	var x := 24.0
+	var y := 142.0
 	for result in results:
-		lines.append("%s %s %s" % [_stars(int(result.get("rolled_rarity", 1))), result.get("hero", {}).get("name", ""), "NEW" if result.get("is_new", false) else "碎片"])
-	var label := _label("\n".join(lines), 20)
-	label.position = Vector2(24, 138)
-	label.size = Vector2(520, 300)
-	content.add_child(label)
+		var hero: Dictionary = result.get("hero", {})
+		var hero_id := int(hero.get("id", 0))
+		var card := Button.new()
+		card.text = "%s\n%s\n%s" % [_stars(int(result.get("rolled_rarity", 1))), hero.get("name", ""), "NEW" if result.get("is_new", false) else "碎片 +1"]
+		card.position = Vector2(x, y)
+		card.size = Vector2(142, 88)
+		card.pressed.connect(func() -> void:
+			save["selected_hero_id"] = hero_id
+			_persist()
+			_show_home()
+		)
+		content.add_child(card)
+		x += 154
+		if x > 780:
+			x = 24
+			y += 100
 	_add_action_button("再抽一次", Vector2(24, 486), func() -> void: _draw_and_show(count))
 	_add_action_button("返回卡池", Vector2(170, 486), _show_gacha)
+	_add_action_button("查看圖鑑", Vector2(316, 486), _show_gallery)
 
 func _show_gallery() -> void:
 	_clear("圖鑑")
@@ -178,13 +192,13 @@ func _show_gallery() -> void:
 	var y := 0.0
 	for hero in heroes:
 		var button := Button.new()
-		var id := int(hero.get("id", 0))
-		var copies := int(save.get("owned", {}).get(str(id), 0))
+		var hero_id := int(hero.get("id", 0))
+		var copies := int(save.get("owned", {}).get(str(hero_id), 0))
 		button.text = "%s\n%s x%d" % [hero.get("name", "Unknown") if copies > 0 else "未獲得", _stars(int(hero.get("rarity", 1))), copies]
 		button.position = Vector2(x, y)
 		button.size = Vector2(150, 84)
 		button.pressed.connect(func() -> void:
-			save["selected_hero_id"] = id
+			save["selected_hero_id"] = hero_id
 			_persist()
 			_show_home()
 		)
@@ -224,7 +238,7 @@ func _perform_draw(count: int) -> Array:
 		return []
 	save["tickets"] = int(save.get("tickets", 0)) - cost
 	var results: Array = []
-	for i in count:
+	for i in range(count):
 		results.append(_draw_one(pool))
 	var history: Array = save.get("history", [])
 	history.push_front({
@@ -242,10 +256,11 @@ func _draw_one(pool: Dictionary) -> Dictionary:
 	var pool_id := str(pool.get("id", "advanced"))
 	var pity := _pity(pool_id) + 1
 	var rarity := 2
-	if pity >= int(pool.get("pityLimit", 60)) or rng.randf() < 0.02:
+	var roll := rng.randf()
+	if pity >= int(pool.get("pityLimit", 60)) or roll < 0.02:
 		rarity = 4
 		pity = 0
-	elif rng.randf() < 0.14:
+	elif roll < 0.16:
 		rarity = 3
 	_set_pity(pool_id, pity)
 
