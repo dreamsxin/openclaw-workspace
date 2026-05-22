@@ -151,6 +151,8 @@ Do not promote a hand-placed sprite to the main UI unless the owning Unity compo
 
 ## Godot Startup Verification
 
+Low-level asset audit rules are collected in `reverse-audit-knowledge.md`. Check that file before manually validating TextAssets, Spine skeletons, atlas pages, or Godot polygon rendering.
+
 Fresh pull behavior:
 
 - `godot-project/assets/**` contains the committed source PNG/Spine/JSON assets and `.import` metadata required by `run-game.bat`.

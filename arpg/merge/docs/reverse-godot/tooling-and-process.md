@@ -1966,6 +1966,23 @@ Follow-up:
 - Keep atlas-size validation in the regular character asset import path. Spine atlas pages must come from `Texture2D`, not sprite-crop exports.
 - If a future character still appears wrong after size and skin checks, inspect slot blend mode, clipping attachments, and multi-page atlas references next.
 
+## 2026-05-22 - Reverse Audit Knowledge Consolidation
+
+The reusable low-level lessons from TextAsset, Spine, and atlas debugging were moved into:
+
+```text
+docs/reverse-godot/reverse-audit-knowledge.md
+```
+
+Covered audit facts:
+
+- Unity/TextAsset `.dat` wrapper shape and payload offset checks.
+- AssetRipper raw `.bytes` source priority for Spine and transform payloads.
+- Full `Texture2D` atlas page versus cropped Sprite export rules.
+- Spine skin selection rules for animation-specific skins.
+- Godot `draw_polygon` normalized UV handling.
+- The current `Ch_Maid02_Basic01_SD` missing-region exception.
+
 Recommended next runs:
 
 1. Run Il2CppDumper or Cpp2IL on `libil2cpp.so` and `global-metadata.dat`.
