@@ -61,6 +61,7 @@ const OUTGAME_ENTRY_PATHS := {
 	"ingame_mark": OUTGAME_ENTRY_DIR + "MergeMadeMark.png",
 	"maid_mark": OUTGAME_ENTRY_DIR + "Icon_MaidMark.png",
 	"coffee": OUTGAME_ENTRY_DIR + "Icon_InGameCoffee.png",
+	"merge_panel": OUTGAME_ENTRY_DIR + "MainRoom5_Merge.png",
 }
 
 var source: Dictionary = {}
@@ -362,7 +363,11 @@ func _draw_village_progress(layout: Dictionary) -> void:
 	draw_rect(bar_rect, Color(1.0, 0.84, 0.48, 0.96) if progress_hover else Color(0.94, 0.78, 0.45, 0.9), false, 2.0 * s)
 	var icon_rect := Rect2(bar_rect.position + Vector2(8.0 * s, 8.0 * s), Vector2(bar_rect.size.y - 16.0 * s, bar_rect.size.y - 16.0 * s))
 	_draw_frame_or_rect("frame_circle", icon_rect, Color(0.86, 0.58, 0.28, 0.9))
-	draw_string(ThemeDB.fallback_font, icon_rect.position + Vector2(0, icon_rect.size.y * 0.68), "!", HORIZONTAL_ALIGNMENT_CENTER, icon_rect.size.x, int(20.0 * s), Color(1, 0.96, 0.72, 0.96))
+	var coffee_texture: Texture2D = outgame_entry_textures.get("coffee", null)
+	if coffee_texture != null:
+		_draw_texture_aspect_centered(coffee_texture, icon_rect.grow(-5.0 * s), Color(1, 1, 1, 0.94))
+	else:
+		draw_string(ThemeDB.fallback_font, icon_rect.position + Vector2(0, icon_rect.size.y * 0.68), "!", HORIZONTAL_ALIGNMENT_CENTER, icon_rect.size.x, int(20.0 * s), Color(1, 0.96, 0.72, 0.96))
 	var inner := Rect2(bar_rect.position + Vector2(bar_rect.size.y, bar_rect.size.y * 0.48), Vector2(bar_rect.size.x - bar_rect.size.y - 14.0 * s, bar_rect.size.y * 0.22))
 	draw_rect(inner, Color(0.05, 0.06, 0.05, 0.7), true)
 	draw_rect(Rect2(inner.position, Vector2(inner.size.x * 0.57, inner.size.y)), Color(0.57, 0.86, 0.64, 0.92), true)
@@ -386,10 +391,18 @@ func _draw_command_button(rect: Rect2, title: String, subtitle: String, icon_key
 	var frame_key := "btn_green" if title == "Maid" else "btn_red"
 	_draw_frame_or_rect(frame_key, rect, Color(0.16, 0.17, 0.16, 0.94) if hover else Color(0.11, 0.12, 0.12, 0.88))
 	draw_rect(rect, Color(1.0, 0.88, 0.56, 0.95) if hover else Color(0.93, 0.78, 0.5, 0.84), false, 3.0 if hover else 2.0)
+	var art_key := "merge_panel" if icon_key == "ingame" else ""
+	var art_texture: Texture2D = outgame_entry_textures.get(art_key, null)
+	var art_rect := Rect2(rect.position + Vector2(9.0 * s, 8.0 * s), Vector2(rect.size.x - 18.0 * s, rect.size.y * 0.58))
+	if art_texture != null:
+		_draw_texture_aspect_centered(art_texture, art_rect, Color(1, 1, 1, 0.9))
+		draw_rect(art_rect, Color(0.04, 0.035, 0.03, 0.18), true)
 	var icon_texture: Texture2D = outgame_entry_textures.get(icon_key, null)
 	var icon_rect := Rect2(rect.position + Vector2(rect.size.x * 0.5 - 30.0 * s, 10.0 * s), Vector2(60.0 * s, 52.0 * s))
-	if icon_texture != null:
+	if icon_texture != null and art_texture == null:
 		_draw_texture_aspect_centered(icon_texture, icon_rect, Color(1, 1, 1, 0.94))
+	elif icon_texture != null and icon_key == "ingame":
+		_draw_texture_aspect_centered(icon_texture, Rect2(rect.end - Vector2(42.0 * s, rect.size.y - 12.0 * s), Vector2(30.0 * s, 34.0 * s)), Color(1, 1, 1, 0.86))
 	else:
 		var badge_center := rect.position + Vector2(rect.size.x * 0.5, rect.size.y * 0.34)
 		draw_circle(badge_center, minf(rect.size.x, rect.size.y) * 0.23, accent)

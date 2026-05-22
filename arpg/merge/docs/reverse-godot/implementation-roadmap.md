@@ -261,6 +261,7 @@ Success criteria:
 | T069 | Add UIOutGame popup regression capture | done | `capture-outgame-popups.bat` and `--auto-capture-outgame-popups` now capture the home screen plus Shop, Story, FurnitureQuest, Mail, Settings, Bag, and Menu popup states |
 | T070 | Clean up stretched UI frame artifacts | done | The new popup capture exposed stretched `Popup_Back`/gauge artifacts on wide HUD panels, so large panels and thin bars now use stable geometric fills while button/icon frames keep recovered sprites |
 | T071 | Import recovered UIOutGame entry icons | done | AssetStudio `InLobby`, `OutLobby`, `MergeMadeMark`, `Icon_MaidMark`, and `Icon_InGameCoffee` are copied into `godot-project/assets/outgame_entries`; Merge/Maid home buttons now use recovered entry art |
+| T072 | Use recovered UIOutGame entry composition art | done | The home village rebuild icon now uses `Icon_InGameCoffee`, and the Merge button layers `MainRoom5_Merge` behind the recovered `InLobby`/`MergeMadeMark` assets while keeping `OutLobby` on the Maid entry |
 
 Immediate next implementation targets:
 
