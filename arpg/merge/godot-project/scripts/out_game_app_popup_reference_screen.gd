@@ -10,6 +10,8 @@ const ICON_PATHS := {
 	"menu": "res://assets/loading/LoadingIcon64.png",
 	"mail": "res://assets/characters/maid_chat/ProfileImg_QuestionMaiChat.png",
 	"settings": "res://assets/loading/LoadingIcon64.png",
+	"gift": "res://assets/sprites/CURRENCY_JEWEL.png",
+	"profile": "res://assets/characters/maid_costume/Cos_Maid01_Casual_SD.png",
 }
 
 var open := false
@@ -123,6 +125,8 @@ func _title() -> String:
 		"menu": "Menu",
 		"mail": "Mail",
 		"settings": "Settings",
+		"gift": "Gift",
+		"profile": "Maid Profile",
 	}
 	return String(titles.get(app_key, "Cafe App"))
 
@@ -134,6 +138,8 @@ func _body_text() -> String:
 		"menu": "Settings, mail, account, support, and other utility popups still need exact prefab and service mapping.",
 		"mail": "Mailbox and notification surfaces are restored here as a first UI shell. Message data and rewards still need table/runtime mapping.",
 		"settings": "Settings, account, support, language, and service toggles are grouped here until exact original popup prefabs are mapped.",
+		"gift": "Gift interaction is exposed from UIOutGame/UIMaidLD interaction mode. Favorite/hate gift rules still need exact table binding.",
+		"profile": "Profile interaction is exposed from UIOutGame/UIMaidLD interaction mode. Detailed maid profile layout still needs exact prefab mapping.",
 	}
 	return String(bodies.get(app_key, "Out-game popup surface pending exact original prefab mapping."))
 
@@ -145,6 +151,8 @@ func _slot_label(index: int) -> String:
 		"menu": ["Mail", "Config", "Info"],
 		"mail": ["Inbox", "Gift", "Notice"],
 		"settings": ["Sound", "Account", "Help"],
+		"gift": ["Favorite", "Present", "Reward"],
+		"profile": ["Info", "Skill", "Costume"],
 	}
 	var selected_labels: Array = labels.get(app_key, ["Entry", "Entry", "Entry"])
 	return String(selected_labels[index])

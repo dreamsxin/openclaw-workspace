@@ -105,6 +105,7 @@ var out_game_reference_visible := false
 var out_game_app_popup_visible := false
 var out_game_app_popup_key := "shop"
 var furniture_quest_popup_visible := false
+var out_game_maid_interaction_mode := false
 var maid_lobby_reference_visible := false
 var maid_lobby_select_popup_visible := false
 var maid_dialog_popup_visible := false
@@ -586,6 +587,8 @@ func _build_out_game_reference_screen() -> void:
 	out_game_reference_screen.interaction_requested.connect(_show_maid_dialog_popup)
 	out_game_reference_screen.app_navigation_requested.connect(_show_out_game_app_popup)
 	out_game_reference_screen.furniture_quest_requested.connect(_show_furniture_quest_popup)
+	out_game_reference_screen.maid_interaction_mode_requested.connect(_set_out_game_maid_interaction_mode)
+	out_game_reference_screen.maid_normal_requested.connect(_set_out_game_maid_normal_mode)
 	out_game_reference_screen.visible = out_game_reference_visible
 	add_child(out_game_reference_screen)
 
@@ -820,6 +823,7 @@ func _apply_out_game_reference_visibility() -> void:
 		return
 	out_game_reference_screen.call("set_source", out_game_source)
 	out_game_reference_screen.call("set_wallet", board.wallet)
+	out_game_reference_screen.call("set_maid_interaction_mode", out_game_maid_interaction_mode)
 	out_game_reference_screen.visible = out_game_reference_visible
 	if not out_game_reference_visible:
 		_hide_out_game_app_popup()
@@ -866,6 +870,7 @@ func _set_gameplay_visible(next_visible: bool) -> void:
 
 func _enter_gameplay_from_out_game() -> void:
 	_hide_out_game_app_popup()
+	_set_out_game_maid_normal_mode()
 	out_game_reference_visible = false
 	_apply_out_game_reference_visibility()
 	maid_lobby_reference_visible = false
@@ -879,6 +884,7 @@ func _enter_gameplay_from_out_game() -> void:
 
 func _enter_maid_lobby_from_out_game() -> void:
 	_hide_out_game_app_popup()
+	_set_out_game_maid_normal_mode()
 	out_game_reference_visible = false
 	_apply_out_game_reference_visibility()
 	maid_lobby_reference_visible = true
@@ -931,6 +937,7 @@ func _return_to_out_game_from_maid_lobby() -> void:
 
 func _show_out_game_app_popup(app_key: String) -> void:
 	_hide_furniture_quest_popup()
+	_set_out_game_maid_normal_mode()
 	out_game_app_popup_key = app_key
 	out_game_app_popup_visible = true
 	_apply_out_game_app_popup()
@@ -942,6 +949,7 @@ func _hide_out_game_app_popup() -> void:
 
 func _show_furniture_quest_popup() -> void:
 	_hide_out_game_app_popup()
+	_set_out_game_maid_normal_mode()
 	furniture_quest_popup_visible = true
 	_apply_furniture_quest_popup()
 	_set_status("Opened first-pass UIOutGame FurnitureQuest shell.")
@@ -949,6 +957,15 @@ func _show_furniture_quest_popup() -> void:
 func _hide_furniture_quest_popup() -> void:
 	furniture_quest_popup_visible = false
 	_apply_furniture_quest_popup()
+
+func _set_out_game_maid_interaction_mode() -> void:
+	out_game_maid_interaction_mode = true
+	_apply_out_game_reference_visibility()
+	_set_status("Entered UIOutGame/UIMaidLD interaction mode.")
+
+func _set_out_game_maid_normal_mode() -> void:
+	out_game_maid_interaction_mode = false
+	_apply_out_game_reference_visibility()
 
 func _apply_request_detail_popup() -> void:
 	if request_detail_popup_reference_screen == null:

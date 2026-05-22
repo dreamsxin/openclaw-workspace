@@ -6,6 +6,8 @@ signal maid_lobby_requested
 signal interaction_requested
 signal app_navigation_requested(app_key: String)
 signal furniture_quest_requested
+signal maid_interaction_mode_requested
+signal maid_normal_requested
 
 const OUT_GAME_MAID_STANDIN := "res://assets/characters/maid_costume/Cos_Maid01_Casual_SD.png"
 const SPRITE_DIR := "res://assets/sprites/"
@@ -20,6 +22,7 @@ var wallet: Dictionary = {"ap": 0, "gold": 0, "jewel": 0}
 var action_regions: Dictionary = {}
 var maid_standin_texture: Texture2D
 var wallet_icon_textures: Dictionary = {}
+var maid_interaction_mode := false
 
 func _ready() -> void:
 	maid_standin_texture = load(OUT_GAME_MAID_STANDIN)
@@ -40,6 +43,11 @@ func set_wallet(next_wallet: Dictionary) -> void:
 	wallet = next_wallet.duplicate(true)
 	queue_redraw()
 
+func set_maid_interaction_mode(enabled: bool) -> void:
+	maid_interaction_mode = enabled
+	_rebuild_action_regions()
+	queue_redraw()
+
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		var action := _action_at(event.position)
@@ -50,7 +58,22 @@ func _gui_input(event: InputEvent) -> void:
 			emit_signal("maid_lobby_requested")
 			accept_event()
 		elif action == "interaction":
+			if maid_interaction_mode:
+				emit_signal("interaction_requested")
+			else:
+				emit_signal("maid_interaction_mode_requested")
+			accept_event()
+		elif action == "interaction_talk":
 			emit_signal("interaction_requested")
+			accept_event()
+		elif action == "interaction_gift":
+			emit_signal("app_navigation_requested", "gift")
+			accept_event()
+		elif action == "interaction_profile":
+			emit_signal("app_navigation_requested", "profile")
+			accept_event()
+		elif action == "maid_normal":
+			emit_signal("maid_normal_requested")
 			accept_event()
 		elif action == "furniture_quest" or action == "village_rebuild":
 			emit_signal("furniture_quest_requested")
@@ -73,6 +96,7 @@ func _draw() -> void:
 	draw_rect(screen_rect, Color(0.1, 0.12, 0.13, 1.0), true)
 	_draw_cafe_backdrop(screen_rect, layout)
 	_draw_maid_layer(screen_rect, layout)
+	_draw_maid_interaction_controls(layout)
 	_draw_village_progress(layout)
 	_draw_home_entries(layout)
 	_draw_bottom_navigation(layout)
@@ -186,6 +210,8 @@ func _draw_cafe_backdrop(screen_rect: Rect2, layout: Dictionary) -> void:
 func _draw_maid_layer(_screen_rect: Rect2, layout: Dictionary) -> void:
 	var s: float = layout["scale"]
 	var maid_rect: Rect2 = layout["maid"]
+	if maid_interaction_mode:
+		draw_rect(Rect2(layout["screen"].position, layout["screen"].size), Color(0.02, 0.018, 0.02, 0.28), true)
 	var shadow_center := Vector2(maid_rect.get_center().x, maid_rect.end.y - 22.0 * s)
 	draw_circle(shadow_center, maid_rect.size.x * 0.28, Color(0.08, 0.06, 0.05, 0.28))
 	if maid_standin_texture != null:
@@ -211,6 +237,40 @@ func _draw_maid_layer(_screen_rect: Rect2, layout: Dictionary) -> void:
 	draw_line(tail_origin, tail_origin + Vector2(28.0 * s, -24.0 * s), Color(0.98, 0.94, 0.86, 0.78), 5.0 * s)
 	draw_string(ThemeDB.fallback_font, dialog_rect.position + Vector2(18.0 * s, 30.0 * s), "Welcome back.", HORIZONTAL_ALIGNMENT_LEFT, dialog_rect.size.x - 36.0 * s, int(20.0 * s), Color(0.18, 0.12, 0.08, 0.95))
 
+func _draw_maid_interaction_controls(layout: Dictionary) -> void:
+	if not maid_interaction_mode:
+		return
+	var s: float = layout["scale"]
+	var normal_rect: Rect2 = action_regions.get("maid_normal", Rect2())
+	var dialog_rect: Rect2 = action_regions.get("interaction", Rect2())
+	var quick_rect := Rect2(
+		Vector2(layout["screen"].end.x - 154.0 * s, layout["maid"].position.y + 26.0 * s),
+		Vector2(132.0 * s, 154.0 * s)
+	)
+	draw_rect(quick_rect, Color(0.08, 0.065, 0.06, 0.88), true)
+	draw_rect(quick_rect, Color(0.9, 0.72, 0.45, 0.72), false, 1.5 * s)
+	draw_string(ThemeDB.fallback_font, quick_rect.position + Vector2(0, 30.0 * s), "Interaction", HORIZONTAL_ALIGNMENT_CENTER, quick_rect.size.x, int(15.0 * s), Color(1, 0.9, 0.7, 0.94))
+	var actions := [
+		["Talk", "interaction_talk"],
+		["Gift", "interaction_gift"],
+		["Profile", "interaction_profile"],
+	]
+	for index in range(actions.size()):
+		var row := Rect2(quick_rect.position + Vector2(12.0 * s, 46.0 * s + float(index) * 34.0 * s), Vector2(quick_rect.size.x - 24.0 * s, 26.0 * s))
+		var key: String = actions[index][1]
+		var hover: bool = action_regions.get(key, Rect2()).has_point(get_local_mouse_position())
+		draw_rect(row, Color(0.24, 0.16, 0.1, 0.96) if hover else Color(0.14, 0.11, 0.09, 0.9), true)
+		draw_rect(row, Color(1.0, 0.8, 0.44, 0.88) if hover else Color(0.66, 0.5, 0.3, 0.62), false, 1.0 * s)
+		draw_string(ThemeDB.fallback_font, row.position + Vector2(0, row.size.y * 0.68), String(actions[index][0]), HORIZONTAL_ALIGNMENT_CENTER, row.size.x, int(12.0 * s), Color(1, 0.9, 0.72, 0.94))
+	if normal_rect.size != Vector2.ZERO:
+		var hover_normal: bool = normal_rect.has_point(get_local_mouse_position())
+		draw_rect(normal_rect, Color(0.22, 0.14, 0.09, 0.96) if hover_normal else Color(0.1, 0.085, 0.075, 0.9), true)
+		draw_rect(normal_rect, Color(1, 0.82, 0.48, 0.9) if hover_normal else Color(0.82, 0.64, 0.38, 0.72), false, 1.3 * s)
+		draw_string(ThemeDB.fallback_font, normal_rect.position + Vector2(0, normal_rect.size.y * 0.66), "Normal", HORIZONTAL_ALIGNMENT_CENTER, normal_rect.size.x, int(12.0 * s), Color(1, 0.9, 0.72, 0.94))
+	if dialog_rect.size != Vector2.ZERO:
+		draw_rect(dialog_rect, Color(0.94, 0.68, 0.82, 0.08), true)
+		draw_rect(dialog_rect, Color(0.95, 0.72, 0.88, 0.32), false, 1.0 * s)
+
 func _draw_village_progress(layout: Dictionary) -> void:
 	var s: float = layout["scale"]
 	var bar_rect: Rect2 = layout["progress"]
@@ -232,7 +292,7 @@ func _draw_home_entries(layout: Dictionary) -> void:
 	var ingame_hover: bool = action_regions.get("ingame", Rect2()).has_point(get_local_mouse_position())
 	var lobby_hover: bool = action_regions.get("maid_lobby", Rect2()).has_point(get_local_mouse_position())
 	var interaction_hover: bool = action_regions.get("interaction", Rect2()).has_point(get_local_mouse_position())
-	if interaction_hover:
+	if interaction_hover and not maid_interaction_mode:
 		draw_rect(interaction_rect, Color(0.94, 0.68, 0.82, 0.1), true)
 		draw_rect(interaction_rect, Color(0.95, 0.72, 0.88, 0.36), false, 1.0)
 	_draw_command_button(lobby_rect, "Maid", "Lobby", lobby_hover, Color(0.43, 0.54, 0.72, 1.0))
@@ -390,6 +450,16 @@ func _rebuild_action_regions() -> void:
 	action_regions["interaction"] = layout["interaction"]
 	action_regions["furniture_quest"] = layout["furniture"]
 	action_regions["village_rebuild"] = layout["progress"]
+	if maid_interaction_mode:
+		var s: float = layout["scale"]
+		var normal_rect := Rect2(layout["maid"].position + Vector2(8.0 * s, 10.0 * s), Vector2(74.0 * s, 30.0 * s))
+		action_regions["maid_normal"] = normal_rect
+		var quick_rect := Rect2(
+			Vector2(layout["screen"].end.x - 154.0 * s, layout["maid"].position.y + 26.0 * s),
+			Vector2(132.0 * s, 154.0 * s)
+		)
+		for index in range(3):
+			action_regions[["interaction_talk", "interaction_gift", "interaction_profile"][index]] = Rect2(quick_rect.position + Vector2(12.0 * s, 46.0 * s + float(index) * 34.0 * s), Vector2(quick_rect.size.x - 24.0 * s, 26.0 * s))
 	var bottom_rect: Rect2 = layout["bottom"]
 	var app_actions := ["app_shop", "app_story", "maid_lobby", "app_bag", "app_menu"]
 	var cell_w := bottom_rect.size.x / float(app_actions.size())
@@ -401,7 +471,7 @@ func _rebuild_action_regions() -> void:
 	action_regions["app_settings"] = Rect2(Vector2(side_x + 40.0 * s, screen_rect.position.y + 12.0 * s), Vector2(30.0 * s, 30.0 * s))
 
 func _action_at(local_position: Vector2) -> String:
-	for action in ["ingame", "maid_lobby", "interaction", "furniture_quest", "village_rebuild", "app_mail", "app_settings", "app_shop", "app_story", "app_bag", "app_menu"]:
+	for action in ["ingame", "maid_lobby", "interaction_talk", "interaction_gift", "interaction_profile", "maid_normal", "interaction", "furniture_quest", "village_rebuild", "app_mail", "app_settings", "app_shop", "app_story", "app_bag", "app_menu"]:
 		var rect: Rect2 = action_regions.get(action, Rect2())
 		if rect.has_point(local_position):
 			return action
