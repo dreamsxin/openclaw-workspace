@@ -44,6 +44,7 @@ const AUTO_CAPTURE_OUTGAME_POPUPS_ARG := "--auto-capture-outgame-popups"
 const SPRITE_DIR := "res://assets/sprites/"
 const CHARACTER_DIR := "res://data/characters/"
 const UI_LAYOUT_REFERENCE := "res://data/ui_layout_reference.json"
+const UI_OUTGAME_LAYOUT_REFERENCE := "res://data/uioutgame_layout_reference.json"
 
 var catalog = BlockCatalogScript.new()
 var board = MergeBoardModelScript.new()
@@ -75,6 +76,7 @@ var character_mode := "maids"
 var character_index := 0
 var ui_layout_sources: Array = []
 var ui_layout_index := 0
+var uioutgame_layout_source: Dictionary = {}
 var ui_layout_title_label: Label
 var ui_layout_meta_label: Label
 var ui_layout_preview: Control
@@ -153,6 +155,7 @@ func _ready() -> void:
 	catalog.load_rules("res://data/block_rules.json")
 	_load_character_data()
 	_load_ui_layout_reference()
+	_load_uioutgame_layout_reference()
 	board.call("setup", catalog, "res://data/initial_board.json")
 	board.board_changed.connect(_refresh_board)
 	board.wallet_changed.connect(_refresh_wallet)
@@ -758,6 +761,26 @@ func _load_ui_layout_reference() -> void:
 	if typeof(payload) == TYPE_DICTIONARY:
 		ui_layout_sources = payload.get("sources", [])
 
+func _load_uioutgame_layout_reference() -> void:
+	if not FileAccess.file_exists(UI_OUTGAME_LAYOUT_REFERENCE):
+		return
+	var text := FileAccess.get_file_as_string(UI_OUTGAME_LAYOUT_REFERENCE)
+	var payload = JSON.parse_string(text)
+	if typeof(payload) != TYPE_DICTIONARY:
+		return
+	for prefab in payload.get("prefabs", []):
+		if typeof(prefab) == TYPE_DICTIONARY and String(prefab.get("path", "")) == "Assets/Resources/prefabs/ui/UIOutGame.prefab":
+			uioutgame_layout_source = prefab.duplicate(true)
+			uioutgame_layout_source["name"] = "UIOutGame"
+			uioutgame_layout_source["source_type"] = "prefab"
+			uioutgame_layout_source["source_path"] = prefab.get("path", "")
+			uioutgame_layout_source["reference_resolution"] = {
+				"width": 1080,
+				"height": 1920,
+				"basis": "inferred from recovered UILoading root; CanvasScaler still unconfirmed"
+			}
+			return
+
 func _refresh_ui_layout_panel(write_status: bool) -> void:
 	if ui_layout_meta_label == null:
 		return
@@ -875,6 +898,8 @@ func _apply_out_game_reference_visibility() -> void:
 	if out_game_reference_screen == null:
 		return
 	var out_game_source := _ui_layout_source_by_name("UIOutGame")
+	if not uioutgame_layout_source.is_empty():
+		out_game_source = uioutgame_layout_source
 	if out_game_source.is_empty():
 		out_game_reference_screen.visible = false
 		return

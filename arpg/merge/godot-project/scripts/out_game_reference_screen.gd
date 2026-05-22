@@ -194,30 +194,30 @@ func _home_layout(screen_rect: Rect2) -> Dictionary:
 	var margin: float = 12.0 * s
 	var top_h: float = clampf(58.0 * s, 50.0, 72.0)
 	var bottom_h: float = clampf(92.0 * s, 78.0, 112.0)
-	var progress_size := Vector2(screen_rect.size.x * 0.68, clampf(52.0 * s, 44.0, 62.0))
-	var progress_rect := Rect2(
-		Vector2(screen_rect.position.x + (screen_rect.size.x - progress_size.x) * 0.5, screen_rect.position.y + top_h + 12.0 * s),
-		progress_size
+	var fallback_progress_size := Vector2(screen_rect.size.x * 0.68, clampf(52.0 * s, 44.0, 62.0))
+	var fallback_progress_rect := Rect2(
+		Vector2(screen_rect.position.x + (screen_rect.size.x - fallback_progress_size.x) * 0.5, screen_rect.position.y + top_h + 12.0 * s),
+		fallback_progress_size
 	)
-	var maid_rect := Rect2(
+	var fallback_maid_rect := Rect2(
 		Vector2(screen_rect.position.x + screen_rect.size.x * 0.02, screen_rect.position.y + screen_rect.size.y * 0.19),
 		Vector2(screen_rect.size.x * 0.56, screen_rect.size.y * 0.58)
 	)
-	var dialog_rect := Rect2(
+	var fallback_dialog_rect := Rect2(
 		Vector2(screen_rect.position.x + margin, screen_rect.position.y + screen_rect.size.y - bottom_h - 98.0 * s),
 		Vector2(screen_rect.size.x - margin * 2.0, clampf(76.0 * s, 66.0, 92.0))
 	)
 	var ingame_size := Vector2(clampf(150.0 * s, 132.0, 176.0), clampf(123.0 * s, 104.0, 148.0))
-	var ingame_rect := Rect2(
-		Vector2(screen_rect.end.x - margin - ingame_size.x, dialog_rect.position.y - ingame_size.y - 18.0 * s),
+	var fallback_ingame_rect := Rect2(
+		Vector2(screen_rect.end.x - margin - ingame_size.x, fallback_dialog_rect.position.y - ingame_size.y - 18.0 * s),
 		ingame_size
 	)
 	var maid_lobby_size := Vector2(clampf(102.0 * s, 90.0, 122.0), clampf(102.0 * s, 90.0, 122.0))
-	var maid_lobby_rect := Rect2(
-		Vector2(ingame_rect.position.x - maid_lobby_size.x - 10.0 * s, ingame_rect.position.y + ingame_rect.size.y - maid_lobby_size.y),
+	var fallback_maid_lobby_rect := Rect2(
+		Vector2(fallback_ingame_rect.position.x - maid_lobby_size.x - 10.0 * s, fallback_ingame_rect.position.y + fallback_ingame_rect.size.y - maid_lobby_size.y),
 		maid_lobby_size
 	)
-	var interaction_rect := Rect2(
+	var fallback_interaction_rect := Rect2(
 		Vector2(screen_rect.position.x, screen_rect.position.y + screen_rect.size.y * 0.24),
 		Vector2(screen_rect.size.x * 0.54, screen_rect.size.y * 0.5)
 	)
@@ -225,10 +225,23 @@ func _home_layout(screen_rect: Rect2) -> Dictionary:
 		Vector2(screen_rect.position.x + margin, screen_rect.end.y - bottom_h + 8.0 * s),
 		Vector2(screen_rect.size.x - margin * 2.0, bottom_h - 18.0 * s)
 	)
-	var furniture_rect := Rect2(
-		Vector2(screen_rect.position.x + margin, progress_rect.end.y + 12.0 * s),
+	var fallback_furniture_rect := Rect2(
+		Vector2(screen_rect.position.x + margin, fallback_progress_rect.end.y + 12.0 * s),
 		Vector2(clampf(118.0 * s, 102.0, 138.0), clampf(58.0 * s, 50.0, 68.0))
 	)
+	var source_ingame_rect := _source_rect("UIOutGame/UIOutGame/InGameBtn", screen_rect)
+	var source_maid_lobby_rect := _source_rect("UIOutGame/UIOutGame/MaidLobbyBtn", screen_rect)
+	var source_interaction_rect := _source_rect("UIOutGame/UIOutGame/UIMaidLD/Btn_ToInteraction", screen_rect)
+	var source_dialog_rect := _source_rect("UIOutGame/UIOutGame/UIMaidLD/SpinePos/Npc_Dialog", screen_rect)
+	var source_progress_rect := _source_rect("UIOutGame/UIOutGame/UIVillageReBuild/Fillbar", screen_rect)
+	var source_furniture_rect := _source_rect("UIOutGame/UIOutGame/FurnitureQuest", screen_rect)
+	var ingame_rect := _fallback_rect(source_ingame_rect, fallback_ingame_rect)
+	var maid_lobby_rect := _fallback_rect(source_maid_lobby_rect, fallback_maid_lobby_rect)
+	var interaction_rect := _fallback_rect(source_interaction_rect, fallback_interaction_rect)
+	var dialog_rect := _fallback_rect(source_dialog_rect, fallback_dialog_rect)
+	var progress_rect := _fallback_rect(source_progress_rect, fallback_progress_rect)
+	var furniture_rect := _fallback_rect(source_furniture_rect, fallback_furniture_rect)
+	var maid_rect := _fallback_rect(source_interaction_rect, fallback_maid_rect).grow_individual(10.0 * s, 78.0 * s, 24.0 * s, 18.0 * s)
 	return {
 		"screen": screen_rect,
 		"top": Rect2(screen_rect.position, Vector2(screen_rect.size.x, top_h)),
@@ -597,6 +610,19 @@ func _rect_by_path(path: String) -> Dictionary:
 		if String(rect.get("node_path", "")) == path:
 			return rect
 	return {}
+
+func _source_rect(path: String, screen_rect: Rect2) -> Rect2:
+	var rect := _rect_by_path(path)
+	if rect.is_empty():
+		return Rect2()
+	var reference_size := _reference_size()
+	var scale_factor := screen_rect.size.x / reference_size.x
+	return _to_preview_rect_world(rect, reference_size, scale_factor, screen_rect.position)
+
+func _fallback_rect(candidate: Rect2, fallback: Rect2) -> Rect2:
+	if candidate.size.x <= 0.0 or candidate.size.y <= 0.0:
+		return fallback
+	return candidate
 
 func _to_preview_rect_world(rect: Dictionary, reference_size: Vector2, scale_factor: float, origin: Vector2) -> Rect2:
 	if rect.is_empty():

@@ -1716,6 +1716,39 @@ Follow-up:
 - Replace the generic popup frame with recovered `Npc_Dialog` sprites and original text styles.
 - When the reusable LD maid Spine renderer lands, drive face/animation state from `facial_type` and `anim_type`.
 
+## 2026-05-22 - UIOutGame Prefab-First Layout Pass
+
+Inputs:
+- `reverse-output/assets/assetripper-main/ExportedProject/Assets/Resources/prefabs/ui/UIOutGame.prefab`
+- `reverse-output/assets/assetripper-main/ExportedProject/Assets/Resources/prefabs/ui/uiroot/UIOutGame.prefab`
+- `reverse-output/assets/assetripper-main/ExportedProject/Assets/Resources/animation/OutGameUIShow*.anim`
+- `reverse-output/assets/assetripper-main/ExportedProject/Assets/Resources/animation/OutGameUIHide*.anim`
+
+Commands:
+```powershell
+python .\scripts\reverse\extract_uioutgame_layout_report.py
+.\tools\Godot\Godot_console.exe --headless --path .\godot-project --quit-after 2
+.\capture-outgame-popups.bat
+```
+
+Findings:
+- `UIOutGame.prefab` has 26 GameObjects and 26 RectTransforms; `uiroot/UIOutGame.prefab` is only a 3-RectTransform mount wrapper.
+- `Npc_Dialog`, `MaidLobbyBtn`, `Btn_ToNormal`, `Btn_InteractionArea`, and `UIVillageReBuild` are inactive in the serialized base state.
+- `OutGameUIShow/Hide` animates `InGameBtn`, `MaidLobbyBtn`, `UIMaidLD`, `UILobby`, and `UIGlobal` offsets, while the lobby variants omit the `UIMaidLD` active/position curves.
+- Godot now loads the focused `uioutgame_layout_reference.json` for the home screen and uses source RectTransforms for the main command/dialog/interaction hit regions.
+
+Outputs:
+- `scripts/reverse/extract_uioutgame_layout_report.py`
+- `docs/reverse-godot/uioutgame-layout-report.md`
+- `godot-project/data/uioutgame_layout_reference.json`
+- `godot-project/scripts/main.gd`
+- `godot-project/scripts/out_game_reference_screen.gd`
+
+Follow-up:
+- Resolve Image sprite GUIDs in the focused prefab report to exact sprite asset names.
+- Confirm runtime state that activates and positions `UIVillageReBuild`, `MaidLobbyBtn`, and dialog/interact controls.
+- Implement `OutGameUIShow/Hide*` as named home-screen transition states.
+
 Recommended next runs:
 
 1. Run Il2CppDumper or Cpp2IL on `libil2cpp.so` and `global-metadata.dat`.

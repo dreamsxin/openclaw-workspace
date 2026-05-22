@@ -266,14 +266,14 @@ Success criteria:
 | T074 | Add recovered UIOutGame notification badges | done | AssetStudio `Noti`, `Noti_pin`, `subNoti`, and `Icon_Alert` are copied into `godot-project/assets/outgame_badges`; home Mail, Story, Bag, Menu, FurnitureQuest, and rebuild progress now display recovered notification badges |
 | T075 | Add recovered wallet add controls | done | AssetStudio `Icon_Add` and `Icon_WhiteIcon_Add_s` are copied into `godot-project/assets/outgame_wallet`; the top AP/Gold/Jewel HUD slots now show recovered add buttons beside the wallet values |
 | T076 | Switch UIOutGame restoration to prefab-first layout | planned | Stop visual trial placement for the home screen; extract a complete `UIOutGame` component/layout map from AssetRipper prefabs and animation clips, then use screenshots only as regression validation |
-| T077 | Generate UIOutGame layout evidence report | pending | Produce a dedicated report for `UIOutGame.prefab`, `uiroot/UIOutGame.prefab`, and `OutGameUIShow/Hide*` clips listing hierarchy, RectTransforms, sprite references, text nodes, buttons, and runtime-state unknowns |
-| T078 | Re-align Godot UIOutGame to recovered RectTransforms | pending | Replace hand-tuned home positions with source-derived RectTransform conversion for `Npc_Dialog`, `InGameBtn`, `MaidLobbyBtn`, `FurnitureQuest`, `UIVillageReBuild`, and `UIMaidLD` hit regions |
+| T077 | Generate UIOutGame layout evidence report | done | `scripts/reverse/extract_uioutgame_layout_report.py`, `docs/reverse-godot/uioutgame-layout-report.md`, and `godot-project/data/uioutgame_layout_reference.json` now record `UIOutGame.prefab`, `uiroot/UIOutGame.prefab`, and `OutGameUIShow/Hide*` hierarchy/component/animation evidence |
+| T078 | Re-align Godot UIOutGame to recovered RectTransforms | in progress | `OutGameReferenceScreen` now loads the focused UIOutGame reference and uses source RectTransforms for `Npc_Dialog`, `InGameBtn`, `MaidLobbyBtn`, `Btn_ToInteraction`, `FurnitureQuest`, and `UIVillageReBuild/Fillbar`; inactive parent surfaces remain flagged for runtime mount/state confirmation |
 
 Immediate next implementation targets:
 
-1. Generate the dedicated `UIOutGame` layout evidence report before making further home-screen placement changes.
-2. Convert the recovered RectTransform/component data into Godot layout inputs, including animation-clip states where available.
-3. Re-align the Godot home shell to source-derived `UIOutGame` positions and keep screenshots as validation rather than placement evidence.
+1. Resolve UIOutGame Image sprite GUIDs from the focused report into exact AssetStudio/AssetRipper sprite names.
+2. Confirm runtime mount/toggle state for inactive `UIVillageReBuild`, `MaidLobbyBtn`, `Npc_Dialog`, `Btn_ToNormal`, and `Btn_InteractionArea`.
+3. Apply `OutGameUIShow/Hide*` animation offsets as named Godot transition states instead of baking them into base layout.
 4. After the prefab-first home alignment is stable, resume asset binding for Shop, Mail/Settings, Bag/Menu, Story/Memory, FurnitureQuest, and LD maid Spine.
 
 ## Tool Acquisition Options
