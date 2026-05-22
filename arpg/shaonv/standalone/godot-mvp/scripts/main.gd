@@ -14,9 +14,23 @@ var save := {
 	"pity": {},
 	"history": [],
 	"draw_count": 0,
+	"claimed_tasks": {},
+	"claimed_mail": {},
+	"daily_claimed_date": "",
 	"selected_hero_id": 240065,
 	"active_pool_id": "advanced"
 }
+
+const TASKS := [
+	{"id": "draw_1", "name": "初次喚靈", "desc": "完成 1 次喚靈", "target": 1, "tickets": 2, "gems": 160},
+	{"id": "draw_10", "name": "十次喚靈", "desc": "累計完成 10 次喚靈", "target": 10, "tickets": 5, "gems": 480},
+	{"id": "collect_3", "name": "武將收集", "desc": "收集 3 名武將", "target": 3, "tickets": 3, "gems": 300}
+]
+
+const MAILS := [
+	{"id": "launch_gift", "title": "單機版啟動補給", "body": "用於測試主界面、喚靈和圖鑑閉環。", "tickets": 10, "gems": 1600},
+	{"id": "return_gift", "title": "回歸補給", "body": "替代原遊戲郵件獎勵的 MVP 版本。", "tickets": 5, "gems": 800}
+]
 
 var rng := RandomNumberGenerator.new()
 var content: Control
@@ -98,7 +112,7 @@ func _clear(title: String) -> void:
 	_refresh_wallet()
 
 func _refresh_wallet() -> void:
-	wallet_label.text = "喚靈券 %s   源石 %s" % [save.get("tickets", 0), save.get("gems", 0)]
+	wallet_label.text = "郵件 %d   喚靈券 %s   源石 %s" % [_unclaimed_mail_count(), save.get("tickets", 0), save.get("gems", 0)]
 
 func _show_home() -> void:
 	_clear("主界面")
@@ -226,6 +240,9 @@ func _show_history() -> void:
 			"pity": {},
 			"history": [],
 			"draw_count": 0,
+			"claimed_tasks": {},
+			"claimed_mail": {},
+			"daily_claimed_date": "",
 			"selected_hero_id": 240065,
 			"active_pool_id": "advanced"
 		}
@@ -323,19 +340,109 @@ func _show_shop() -> void:
 	title.position = Vector2(44, 44)
 	title.size = Vector2(420, 52)
 	content.add_child(title)
-	var desc := _label("單機 MVP 暫定兌換規則：源石 160 = 喚靈券 1。後續可替換為原遊戲商城/任務/郵件規則。", 20)
+	var desc := _label("單機 MVP 暫定兌換規則：源石 160 = 喚靈券 1。日常、郵件和章節任務也會產出喚靈資源。", 20)
 	desc.position = Vector2(44, 112)
 	desc.size = Vector2(760, 72)
 	content.add_child(desc)
 	_add_action_button("兌換 1 張", Vector2(44, 210), func() -> void: _buy_tickets(1))
 	_add_action_button("兌換 10 張", Vector2(190, 210), func() -> void: _buy_tickets(10))
-	_add_action_button("測試補給", Vector2(336, 210), func() -> void:
-		save["tickets"] = int(save.get("tickets", 0)) + 30
-		save["gems"] = int(save.get("gems", 0)) + 4800
-		_persist()
-		_show_shop()
-	)
+	_add_action_button("每日補給", Vector2(336, 210), _show_daily)
+	_add_action_button("郵件", Vector2(482, 210), _show_mail)
+	_add_action_button("任務", Vector2(628, 210), _show_tasks)
 	_add_action_button("前往喚靈", Vector2(44, 284), _show_gacha)
+
+func _show_daily() -> void:
+	_clear("每日補給")
+	var today := Time.get_date_string_from_system()
+	var claimed := str(save.get("daily_claimed_date", "")) == today
+	var title := _label("每日補給", 34)
+	title.position = Vector2(44, 44)
+	title.size = Vector2(420, 52)
+	content.add_child(title)
+	var text := "今日補給\n喚靈券 x3\n源石 x480\n\n狀態：%s" % ["已領取" if claimed else "可領取"]
+	var label := _label(text, 22)
+	label.position = Vector2(44, 126)
+	label.size = Vector2(520, 180)
+	content.add_child(label)
+	if not claimed:
+		_add_action_button("領取", Vector2(44, 330), func() -> void:
+			save["daily_claimed_date"] = today
+			_grant_reward(3, 480)
+			_show_daily()
+		)
+	_add_action_button("返回商店", Vector2(190, 330), _show_shop, Vector2(146, 44))
+	_add_action_button("前往喚靈", Vector2(350, 330), _show_gacha, Vector2(146, 44))
+
+func _show_mail() -> void:
+	_clear("郵件")
+	var title := _label("郵件", 34)
+	title.position = Vector2(44, 32)
+	title.size = Vector2(420, 52)
+	content.add_child(title)
+	var claimed: Dictionary = save.get("claimed_mail", {})
+	var y := 104.0
+	for mail in MAILS:
+		var mail_id := str(mail.get("id", ""))
+		var is_claimed := bool(claimed.get(mail_id, false))
+		var panel := _panel(Vector2(44, y), Vector2(760, 92), Color(0.095, 0.078, 0.065, 0.9))
+		content.add_child(panel)
+		var row := _label("%s\n%s\n獎勵：喚靈券 x%d  源石 x%d   %s" % [mail.get("title", ""), mail.get("body", ""), int(mail.get("tickets", 0)), int(mail.get("gems", 0)), "已領取" if is_claimed else "可領取"], 17)
+		row.position = Vector2(60, y + 8)
+		row.size = Vector2(600, 78)
+		content.add_child(row)
+		if not is_claimed:
+			_add_action_button("領取", Vector2(670, y + 24), func(id := mail_id, tickets := int(mail.get("tickets", 0)), gems := int(mail.get("gems", 0))) -> void:
+				var mail_claimed: Dictionary = save.get("claimed_mail", {})
+				mail_claimed[id] = true
+				save["claimed_mail"] = mail_claimed
+				_grant_reward(tickets, gems)
+				_show_mail()
+			, Vector2(104, 42))
+		y += 108
+	_add_action_button("返回主界面", Vector2(44, 548), _show_home, Vector2(146, 44))
+	_add_action_button("前往喚靈", Vector2(204, 548), _show_gacha, Vector2(146, 44))
+
+func _show_tasks() -> void:
+	_clear("任務")
+	var title := _label("章節任務", 34)
+	title.position = Vector2(44, 32)
+	title.size = Vector2(420, 52)
+	content.add_child(title)
+	var claimed: Dictionary = save.get("claimed_tasks", {})
+	var y := 104.0
+	for task in TASKS:
+		var task_id := str(task.get("id", ""))
+		var progress := _task_progress(task_id)
+		var target := int(task.get("target", 1))
+		var done := progress >= target
+		var is_claimed := bool(claimed.get(task_id, false))
+		var panel := _panel(Vector2(44, y), Vector2(820, 86), Color(0.095, 0.078, 0.065, 0.9))
+		content.add_child(panel)
+		var row := _label("%s\n%s  %d/%d\n獎勵：喚靈券 x%d  源石 x%d" % [task.get("name", ""), task.get("desc", ""), progress, target, int(task.get("tickets", 0)), int(task.get("gems", 0))], 17)
+		row.position = Vector2(60, y + 8)
+		row.size = Vector2(630, 72)
+		content.add_child(row)
+		if is_claimed:
+			var claimed_label := _label("已領取", 18, HORIZONTAL_ALIGNMENT_CENTER)
+			claimed_label.position = Vector2(724, y + 22)
+			claimed_label.size = Vector2(110, 42)
+			content.add_child(claimed_label)
+		elif done:
+			_add_action_button("領取", Vector2(724, y + 22), func(id := task_id, tickets := int(task.get("tickets", 0)), gems := int(task.get("gems", 0))) -> void:
+				var task_claimed: Dictionary = save.get("claimed_tasks", {})
+				task_claimed[id] = true
+				save["claimed_tasks"] = task_claimed
+				_grant_reward(tickets, gems)
+				_show_tasks()
+			, Vector2(110, 42))
+		else:
+			var todo := _label("進行中", 18, HORIZONTAL_ALIGNMENT_CENTER)
+			todo.position = Vector2(724, y + 22)
+			todo.size = Vector2(110, 42)
+			content.add_child(todo)
+		y += 102
+	_add_action_button("返回主界面", Vector2(44, 548), _show_home, Vector2(146, 44))
+	_add_action_button("前往喚靈", Vector2(204, 548), _show_gacha, Vector2(146, 44))
 
 func _buy_tickets(count: int) -> void:
 	var cost := count * 160
@@ -367,8 +474,9 @@ func _draw_home_side_entries() -> void:
 	_add_action_button("喚靈", Vector2(1064, 124), _show_gacha, Vector2(142, 44))
 	_add_action_button("競技", Vector2(1064, 182), _show_home, Vector2(142, 44))
 	_add_action_button("祈願", Vector2(1064, 240), _open_prayer_pool, Vector2(142, 44))
-	_add_action_button("奇遇", Vector2(1064, 298), _show_home, Vector2(142, 44))
+	_add_action_button("福利", Vector2(1064, 298), _show_daily, Vector2(142, 44))
 	_add_action_button("收穫", Vector2(1064, 356), _show_shop, Vector2(142, 44))
+	_add_action_button("郵件 %d" % _unclaimed_mail_count(), Vector2(1064, 414), _show_mail, Vector2(142, 44))
 
 func _open_prayer_pool() -> void:
 	save["active_pool_id"] = "prayer"
@@ -384,7 +492,7 @@ func _draw_home_bottom_bar() -> void:
 		["背包", _show_shop],
 		["寵物", _show_home],
 		["養成", _show_gallery],
-		["任務", _show_history],
+		["任務", _show_tasks],
 		["軍團", _show_home]
 	]
 	var x := 260.0
@@ -395,11 +503,12 @@ func _draw_home_bottom_bar() -> void:
 func _draw_home_status() -> void:
 	var panel := _panel(Vector2(24, 92), Vector2(286, 156), Color(0.09, 0.075, 0.065, 0.78))
 	content.add_child(panel)
-	var info := _label("章節任務\n已收集 %d\n抽卡 %d 次\n高級保底 %d/60" % [save.get("owned", {}).size(), int(save.get("draw_count", 0)), _pity("advanced")], 19)
+	var next_task := _next_task_text()
+	var info := _label("章節任務\n%s\n已收集 %d  抽卡 %d\n高級保底 %d/60" % [next_task, save.get("owned", {}).size(), int(save.get("draw_count", 0)), _pity("advanced")], 18)
 	info.position = Vector2(44, 110)
 	info.size = Vector2(246, 118)
 	content.add_child(info)
-	_add_action_button("看板", Vector2(44, 274), _show_gallery, Vector2(112, 42))
+	_add_action_button("任務", Vector2(44, 274), _show_tasks, Vector2(112, 42))
 	_add_action_button("變更", Vector2(168, 274), _show_gallery, Vector2(112, 42))
 
 func _draw_result_stage(result: Dictionary) -> void:
@@ -468,6 +577,35 @@ func _set_pity(pool_id: String, value: int) -> void:
 	var pity: Dictionary = save.get("pity", {})
 	pity[pool_id] = value
 	save["pity"] = pity
+
+func _grant_reward(tickets: int, gems: int) -> void:
+	save["tickets"] = int(save.get("tickets", 0)) + tickets
+	save["gems"] = int(save.get("gems", 0)) + gems
+	_persist()
+
+func _task_progress(task_id: String) -> int:
+	if task_id == "draw_1" or task_id == "draw_10":
+		return int(save.get("draw_count", 0))
+	if task_id == "collect_3":
+		return save.get("owned", {}).size()
+	return 0
+
+func _next_task_text() -> String:
+	var claimed: Dictionary = save.get("claimed_tasks", {})
+	for task in TASKS:
+		var task_id := str(task.get("id", ""))
+		if bool(claimed.get(task_id, false)):
+			continue
+		return "%s %d/%d" % [task.get("name", ""), _task_progress(task_id), int(task.get("target", 1))]
+	return "章節任務已完成"
+
+func _unclaimed_mail_count() -> int:
+	var claimed: Dictionary = save.get("claimed_mail", {})
+	var count := 0
+	for mail in MAILS:
+		if not bool(claimed.get(str(mail.get("id", "")), false)):
+			count += 1
+	return count
 
 func _label(text: String, size: int, align := HORIZONTAL_ALIGNMENT_LEFT) -> Label:
 	var label := Label.new()

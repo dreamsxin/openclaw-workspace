@@ -56,7 +56,10 @@ standalone/godot-mvp/
 - 图鉴：角色收集状态、持有数量、重复碎片，点击进入角色详情。
 - 角色详情：显示获得状态、碎片、资源路径和 Spine key，可设为看板。
 - 记录：抽卡历史。
-- 商店：源石兑换喚靈券，提供单机测试补给入口。
+- 商店：源石兑换喚靈券，并跳转每日补给、邮件、任务。
+- 章节任务：按抽卡次数、收集数量发放喚靈券和源石，替代原 `InitPnlTask/ChapterTask` 的 MVP 版本。
+- 每日补给：按本地日期每日领取一次资源。
+- 邮件：提供启动补给和回归补给，模拟原游戏邮件奖励入口。
 - 本地存档：`user://shaonv_godot_mvp_save.json`。
 
 当前存档字段：
@@ -70,6 +73,9 @@ standalone/godot-mvp/
   "pity": {},
   "history": [],
   "draw_count": 0,
+  "claimed_tasks": {},
+  "claimed_mail": {},
+  "daily_claimed_date": "",
   "selected_hero_id": 240065,
   "active_pool_id": "advanced"
 }
@@ -122,6 +128,8 @@ standalone/godot-mvp/
 本轮 Godot UI 还原依据：
 
 - `docs/shaonv-hotfix-ui-lifecycle-analysis.md` 中 `MainUIView` 字段分组：`pnlPlayerInfo`、`_topBar`、`pnlFunny`、`pnlBottom`、`WallpaperPanel`、`btnDraw`、`btnPrayer`、`btnHero`、`btnBagpack`、`btnTask` 等。
+- `MainUIView.InitPnlTask()` 中的章节任务刷新、领取事件和 `ReqGetChapterTask` 行为，被简化为本地 `TASKS` 表和 `claimed_tasks` 存档。
+- `pnlCommercialization/btnWelfare/btnShop` 被简化为每日补给、邮件和商店入口。
 - `docs/shaonv-p0-continuation-2026-05-22.md` 中抽卡调用链：`LotteryDrawMainView -> LotteryDrawPanel -> LotteryDrawModel -> LotteryDrawFinishView/HeroRecruitView`。
 - `docs/shaonv-yooasset-physical-mapping-fix.md` 中已定位的抽卡 prefab 物理映射。
 - 已导入 Godot 的 5 个代表角色 Spine 三件套中的 PNG，用作看板和抽卡展示。
@@ -131,7 +139,7 @@ standalone/godot-mvp/
 - 原 `MainUIView`、`LotteryDrawMainView` prefab 的完整 RectTransform 层级尚未转换为 Godot scene。
 - 抽卡 UI 图集、按钮图、结果光效、音效仍未批量导入 Godot。
 - Spine 运行时尚未接入，当前仍是 PNG 静态展示。
-- 原游戏真实掉落表、商城/任务/邮件资源产出规则仍需继续补齐。
+- 原游戏真实掉落表、商城/任务/邮件资源产出规则仍需继续补齐；当前任务/邮件/每日补给是可玩性 MVP 规则。
 
 ## 8. 下一步
 
@@ -141,4 +149,4 @@ standalone/godot-mvp/
 4. 用真实掉落表替换当前 MVP 概率。
 5. 将 `HeroRecruitView/LotteryDrawMainView/LotteryDrawFinishView` 的结构分析转成 Godot Control 节点重建清单。
 6. 把抽卡结果演出、角色详情页、商店和图鉴筛选做成独立 scene，降低 `main.gd` 复杂度。
-7. 增加任务/邮件/每日补给，替代当前测试补给按钮。
+7. 将任务、邮件、每日补给拆成独立 scene，并继续对齐原 `QuestView/GameShopView/Welfare` 资源与文本。
