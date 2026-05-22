@@ -254,11 +254,12 @@ Success criteria:
 | T062 | Add first UIOutGame Shop shell | done | The bottom Shop entry now opens `ShopPopupReferenceScreen`, with `UIPopup_Shop`/`UIList_ShopNormal` evidence represented by wallet pills, shop tabs, product rows, ad reward, package, and event-memory placeholders |
 | T063 | Add first UIOutGame Mail/Settings shell | done | The top-right Mail and Settings entries now open `MailSettingsPopupReferenceScreen`, with inbox/reward/notice rows and sound/account/language rows staged for later table/runtime binding |
 | T064 | Add first UIOutGame Bag/Menu shell | done | The bottom Bag and Menu entries now open `BagMenuPopupReferenceScreen`, with item/chat/collection cards and profile/notice/support cards staged from current evidence |
+| T065 | Add asset-backed UIOutGame navigation icons | done | `OutGameReferenceScreen` now maps committed PNG resources onto Shop/Story/Maid/Bag/Menu and Mail/Settings buttons, with geometric fallback if an asset is missing |
 
 Immediate next implementation targets:
 
 1. Bind more recovered sprite assets into the Shop, Mail/Settings, Bag/Menu, Story/Memory, and FurnitureQuest shells, then map table/config IDs where available.
-2. Continue main UI exactness work: bottom navigation icons, cafe/furniture background sprites, and LD maid Spine rendering.
+2. Continue main UI exactness work: cafe/furniture background sprites, exact button frames, and LD maid Spine rendering.
 3. Replace structural placeholders with source-derived request/task/shop/mail/settings/menu rules as table/runtime evidence is mapped.
 4. Add regression captures for the newly split `UIOutGame` popups.
 

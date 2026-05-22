@@ -11,10 +11,23 @@ signal maid_normal_requested
 
 const OUT_GAME_MAID_STANDIN := "res://assets/characters/maid_costume/Cos_Maid01_Casual_SD.png"
 const SPRITE_DIR := "res://assets/sprites/"
+const CHARACTER_DIR := "res://assets/characters/"
+const LOADING_DIR := "res://assets/loading/"
 const WALLET_ICON_PATHS := {
 	"ap": SPRITE_DIR + "CURRENCY_AP.png",
 	"gold": SPRITE_DIR + "CURRENCY_GOLD.png",
 	"jewel": SPRITE_DIR + "CURRENCY_JEWEL.png",
+}
+const NAV_ICON_PATHS := {
+	"app_shop": CHARACTER_DIR + "maid_chat/AIChatIcon_Shopping.png",
+	"app_story": SPRITE_DIR + "SubStory_MemoryBox.png",
+	"maid_lobby": OUT_GAME_MAID_STANDIN,
+	"app_bag": SPRITE_DIR + "Bag1_1.png",
+	"app_menu": LOADING_DIR + "LoadingIcon64.png",
+}
+const UTILITY_ICON_PATHS := {
+	"app_mail": CHARACTER_DIR + "maid_chat/ProfileImg_QuestionMaiChat.png",
+	"app_settings": LOADING_DIR + "LoadingIcon64.png",
 }
 
 var source: Dictionary = {}
@@ -22,12 +35,15 @@ var wallet: Dictionary = {"ap": 0, "gold": 0, "jewel": 0}
 var action_regions: Dictionary = {}
 var maid_standin_texture: Texture2D
 var wallet_icon_textures: Dictionary = {}
+var nav_icon_textures: Dictionary = {}
+var utility_icon_textures: Dictionary = {}
 var maid_interaction_mode := false
 
 func _ready() -> void:
 	maid_standin_texture = load(OUT_GAME_MAID_STANDIN)
-	for key in WALLET_ICON_PATHS.keys():
-		wallet_icon_textures[key] = load(WALLET_ICON_PATHS[key])
+	wallet_icon_textures = _load_texture_map(WALLET_ICON_PATHS)
+	nav_icon_textures = _load_texture_map(NAV_ICON_PATHS)
+	utility_icon_textures = _load_texture_map(UTILITY_ICON_PATHS)
 	set_process(true)
 
 func _process(_delta: float) -> void:
@@ -328,9 +344,14 @@ func _draw_bottom_navigation(layout: Dictionary) -> void:
 		var hover: bool = action_regions.get(action, Rect2()).has_point(get_local_mouse_position())
 		var center := cell.position + Vector2(cell.size.x * 0.5, cell.size.y * 0.34)
 		var icon_color: Color = entries[index]["color"]
+		var icon_texture: Texture2D = nav_icon_textures.get(action, null)
 		draw_rect(cell.grow(-3.0 * s), Color(0.18, 0.14, 0.1, 0.78) if hover else Color(0.0, 0.0, 0.0, 0.0), true)
 		draw_circle(center, minf(cell.size.x, cell.size.y) * 0.24, icon_color)
-		draw_rect(Rect2(center - Vector2(8.0 * s, 8.0 * s), Vector2(16.0 * s, 16.0 * s)), Color(0.94, 0.78, 0.48, 0.74), false, 1.5 * s)
+		var icon_rect := Rect2(center - Vector2(17.0 * s, 17.0 * s), Vector2(34.0 * s, 34.0 * s))
+		if icon_texture != null:
+			_draw_texture_aspect_centered(icon_texture, icon_rect, Color(1, 1, 1, 0.95))
+		else:
+			draw_rect(Rect2(center - Vector2(8.0 * s, 8.0 * s), Vector2(16.0 * s, 16.0 * s)), Color(0.94, 0.78, 0.48, 0.74), false, 1.5 * s)
 		draw_string(ThemeDB.fallback_font, cell.position + Vector2(0, cell.size.y - 14.0 * s), String(entries[index]["label"]), HORIZONTAL_ALIGNMENT_CENTER, cell.size.x, int(12.0 * s), Color(0.96, 0.87, 0.68, 0.9))
 
 func _draw_top_home_hud(screen_rect: Rect2, layout: Dictionary) -> void:
@@ -353,7 +374,12 @@ func _draw_top_home_hud(screen_rect: Rect2, layout: Dictionary) -> void:
 		var hover: bool = action_regions.get(action, Rect2()).has_point(get_local_mouse_position())
 		draw_rect(btn, Color(0.23, 0.16, 0.1, 0.96) if hover else Color(0.16, 0.17, 0.16, 0.92), true)
 		draw_rect(btn, Color(1.0, 0.84, 0.5, 0.9) if hover else Color(0.88, 0.72, 0.46, 0.72), false, 1.5 * s)
-		draw_circle(btn.get_center() + Vector2(0, -2.0 * s), 5.0 * s, Color(0.92, 0.82, 0.62, 0.84))
+		var utility_texture: Texture2D = utility_icon_textures.get(action, null)
+		var icon_rect := Rect2(btn.position + Vector2(6.0 * s, 4.0 * s), Vector2(18.0 * s, 18.0 * s))
+		if utility_texture != null:
+			_draw_texture_aspect_centered(utility_texture, icon_rect, Color(1, 1, 1, 0.92))
+		else:
+			draw_circle(btn.get_center() + Vector2(0, -2.0 * s), 5.0 * s, Color(0.92, 0.82, 0.62, 0.84))
 		draw_string(ThemeDB.fallback_font, btn.position + Vector2(0, btn.size.y - 4.0 * s), utility_labels[index], HORIZONTAL_ALIGNMENT_CENTER, btn.size.x, int(8.0 * s), Color(1, 0.92, 0.72, 0.92))
 
 func _draw_wallet_item(position: Vector2, key: String, value, s: float) -> void:
@@ -373,6 +399,21 @@ func _format_wallet_value(value) -> String:
 	if is_equal_approx(number, roundf(number)):
 		return str(int(roundf(number)))
 	return str(number)
+
+func _load_texture_map(paths: Dictionary) -> Dictionary:
+	var result := {}
+	for key in paths.keys():
+		result[key] = load(String(paths[key]))
+	return result
+
+func _draw_texture_aspect_centered(texture: Texture2D, target: Rect2, modulate := Color.WHITE) -> void:
+	var texture_size := Vector2(texture.get_width(), texture.get_height())
+	if texture_size.x <= 0 or texture_size.y <= 0:
+		return
+	var scale := minf(target.size.x / texture_size.x, target.size.y / texture_size.y)
+	var draw_size := texture_size * scale
+	var draw_rect := Rect2(target.position + (target.size - draw_size) * 0.5, draw_size)
+	draw_texture_rect(texture, draw_rect, false, modulate)
 
 func _reference_size() -> Vector2:
 	var resolution: Dictionary = source.get("reference_resolution", {})
