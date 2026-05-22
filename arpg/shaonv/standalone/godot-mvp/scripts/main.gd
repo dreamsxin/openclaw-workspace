@@ -277,9 +277,48 @@ func _show_gacha() -> void:
 
 	_add_action_button("概率", Vector2(326, 334), _show_gacha_rate)
 	_add_action_button("記錄", Vector2(472, 334), _show_history)
-	_add_action_button("喚靈 1 次", Vector2(326, 468), func() -> void: _draw_and_show(1))
-	_add_action_button("喚靈 10 次", Vector2(492, 468), func() -> void: _draw_and_show(10), Vector2(156, 50))
+	_add_action_button("喚靈 1 次", Vector2(326, 468), func() -> void: _show_draw_animation(1))
+	_add_action_button("喚靈 10 次", Vector2(492, 468), func() -> void: _show_draw_animation(10), Vector2(156, 50))
 	_add_action_button("返回主界面", Vector2(22, 546), _show_home, Vector2(210, 44))
+
+func _show_draw_animation(count: int) -> void:
+	var pool := _pool_by_id(str(save.get("active_pool_id", "advanced")))
+	var cost := count * int(pool.get("ticketCost", 1))
+	_clear("喚靈演出")
+	content.add_child(_panel(Vector2(0, 0), Vector2(1280, 646), Color(0.035, 0.028, 0.032, 1.0)))
+	content.add_child(_panel(Vector2(252, 70), Vector2(776, 420), Color(0.11, 0.088, 0.08, 0.92)))
+	content.add_child(_panel(Vector2(300, 116), Vector2(680, 240), Color(0.65, 0.42, 0.16, 0.14)))
+
+	var title := _label("喚靈儀式", 42, HORIZONTAL_ALIGNMENT_CENTER)
+	title.position = Vector2(390, 92)
+	title.size = Vector2(500, 62)
+	content.add_child(title)
+
+	var info := _label("%s\n\n本次喚靈：%d 次\n消耗喚靈券：%d / %d\n保底進度：%d / %d\n\n演出完成後進入結果展示" % [
+		pool.get("name", "喚靈"),
+		count,
+		cost,
+		int(save.get("tickets", 0)),
+		_pity(pool.get("id", "advanced")),
+		int(pool.get("pityLimit", 60))
+	], 22, HORIZONTAL_ALIGNMENT_CENTER)
+	info.position = Vector2(380, 156)
+	info.size = Vector2(520, 210)
+	content.add_child(info)
+
+	var orb := _panel(Vector2(560, 374), Vector2(160, 22), Color(1.0, 0.72, 0.22, 0.72))
+	content.add_child(orb)
+	if int(save.get("tickets", 0)) < cost:
+		var warning := _label("喚靈券不足", 28, HORIZONTAL_ALIGNMENT_CENTER)
+		warning.position = Vector2(430, 408)
+		warning.size = Vector2(420, 42)
+		content.add_child(warning)
+		_add_action_button("返回卡池", Vector2(574, 510), _show_gacha, Vector2(132, 46))
+		return
+
+	_add_action_button("開始喚靈", Vector2(486, 510), func() -> void: _draw_and_show(count), Vector2(132, 46))
+	_add_action_button("跳過演出", Vector2(646, 510), func() -> void: _draw_and_show(count), Vector2(132, 46))
+	_add_action_button("返回卡池", Vector2(806, 510), _show_gacha, Vector2(132, 46))
 
 func _draw_and_show(count: int) -> void:
 	var results := _perform_draw(count)
@@ -293,7 +332,7 @@ func _draw_and_show(count: int) -> void:
 	_draw_result_stage(results[0])
 	_draw_result_grid(results)
 	_add_action_button("跳過", Vector2(706, 538), _show_gacha, Vector2(112, 46))
-	_add_action_button("再抽一次", Vector2(838, 538), func() -> void: _draw_and_show(count), Vector2(132, 46))
+	_add_action_button("再抽一次", Vector2(838, 538), func() -> void: _show_draw_animation(count), Vector2(132, 46))
 	_add_action_button("返回卡池", Vector2(990, 538), _show_gacha, Vector2(132, 46))
 	_add_action_button("圖鑑", Vector2(1142, 538), _show_gallery, Vector2(92, 46))
 
