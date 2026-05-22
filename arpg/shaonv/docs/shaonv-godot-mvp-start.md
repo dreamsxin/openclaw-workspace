@@ -50,9 +50,9 @@ standalone/godot-mvp/
 
 `scripts/main.gd` 已实现：
 
-- 主界面：货币、看板角色、入口按钮。
-- 抽卡：普通/高级/进阶/源神祈願池切换，单抽和十连，显示当前卡池、UP、保底和消耗。
-- 结果页：显示抽卡结果卡片、新角色和重复，点击结果可设为看板并回主界面。
+- 主界面：按原 `MainUIView` 分析重排为顶部玩家/资源栏、壁纸看板区、右侧玩法入口、底部功能栏、章节任务信息。
+- 抽卡：按 `LotteryDrawMainView -> LotteryDrawPanel` 分析重排为左侧卡池 tab、中部 UP/保底信息、右侧角色展示、底部单抽/十连/概率/记录按钮。
+- 结果页：按 `HeroRecruitView/LotteryRewardShowView` 职责拆分，显示主出货角色、稀有度标题、十连结果格、新角色和重复碎片，点击结果进入角色详情。
 - 图鉴：角色收集状态、持有数量、重复碎片，点击进入角色详情。
 - 角色详情：显示获得状态、碎片、资源路径和 Spine key，可设为看板。
 - 记录：抽卡历史。
@@ -116,6 +116,24 @@ standalone/godot-mvp/
 ```
 
 ## 7. 下一步
+
+## 7. 当前还原依据和缺口
+
+本轮 Godot UI 还原依据：
+
+- `docs/shaonv-hotfix-ui-lifecycle-analysis.md` 中 `MainUIView` 字段分组：`pnlPlayerInfo`、`_topBar`、`pnlFunny`、`pnlBottom`、`WallpaperPanel`、`btnDraw`、`btnPrayer`、`btnHero`、`btnBagpack`、`btnTask` 等。
+- `docs/shaonv-p0-continuation-2026-05-22.md` 中抽卡调用链：`LotteryDrawMainView -> LotteryDrawPanel -> LotteryDrawModel -> LotteryDrawFinishView/HeroRecruitView`。
+- `docs/shaonv-yooasset-physical-mapping-fix.md` 中已定位的抽卡 prefab 物理映射。
+- 已导入 Godot 的 5 个代表角色 Spine 三件套中的 PNG，用作看板和抽卡展示。
+
+当前仍未完全还原：
+
+- 原 `MainUIView`、`LotteryDrawMainView` prefab 的完整 RectTransform 层级尚未转换为 Godot scene。
+- 抽卡 UI 图集、按钮图、结果光效、音效仍未批量导入 Godot。
+- Spine 运行时尚未接入，当前仍是 PNG 静态展示。
+- 原游戏真实掉落表、商城/任务/邮件资源产出规则仍需继续补齐。
+
+## 8. 下一步
 
 1. 用 Godot 编辑器检查布局并调整主题、字体、按钮样式。
 2. 接入 Spine Godot 运行方案，验证 `.skel.bytes + .atlas.txt + .png` 播放。
