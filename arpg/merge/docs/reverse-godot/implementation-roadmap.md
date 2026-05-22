@@ -250,6 +250,7 @@ Success criteria:
 | T058 | Wire UIOutGame utility buttons | done | The two top-right home buttons now open first-pass Mail and Settings shells through `OutGameAppPopupReferenceScreen` |
 | T059 | Add first UIOutGame FurnitureQuest shell | done | `FurnitureQuest` and `UIVillageReBuild/Fillbar` regions now open `FurnitureQuestPopupReferenceScreen` with rebuild progress, task rows, rewards, and a Go action placeholder |
 | T060 | Add first UIOutGame maid interaction mode | done | `UIMaidLD/Btn_ToInteraction` now enters an interaction overlay with Talk/Gift/Profile actions, `Btn_ToNormal` returns to the normal home state, and Talk reuses the maid dialog popup |
+| T061 | Add first UIOutGame Story/Memory shell | done | The bottom Story entry now opens `StoryMemoryPopupReferenceScreen` with Story/Memory/Echo tabs and recovered SubStory thumbnail assets |
 
 ## Tool Acquisition Options
 

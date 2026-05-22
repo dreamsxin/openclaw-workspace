@@ -13,6 +13,7 @@ const MaidLobbyLoadingReferenceScreenScript := preload("res://scripts/maid_lobby
 const OutGameReferenceScreenScript := preload("res://scripts/out_game_reference_screen.gd")
 const OutGameAppPopupReferenceScreenScript := preload("res://scripts/out_game_app_popup_reference_screen.gd")
 const FurnitureQuestPopupReferenceScreenScript := preload("res://scripts/furniture_quest_popup_reference_screen.gd")
+const StoryMemoryPopupReferenceScreenScript := preload("res://scripts/story_memory_popup_reference_screen.gd")
 const MaidLobbyReferenceScreenScript := preload("res://scripts/maid_lobby_reference_screen.gd")
 const MaidLobbySelectPopupReferenceScreenScript := preload("res://scripts/maid_lobby_select_popup_reference_screen.gd")
 const MaidDialogPopupReferenceScreenScript := preload("res://scripts/maid_dialog_popup_reference_screen.gd")
@@ -80,6 +81,7 @@ var maid_lobby_loading_reference_screen: Control
 var out_game_reference_screen: Control
 var out_game_app_popup_reference_screen: Control
 var furniture_quest_popup_reference_screen: Control
+var story_memory_popup_reference_screen: Control
 var maid_lobby_reference_screen: Control
 var maid_lobby_select_popup_reference_screen: Control
 var maid_dialog_popup_reference_screen: Control
@@ -105,6 +107,7 @@ var out_game_reference_visible := false
 var out_game_app_popup_visible := false
 var out_game_app_popup_key := "shop"
 var furniture_quest_popup_visible := false
+var story_memory_popup_visible := false
 var out_game_maid_interaction_mode := false
 var maid_lobby_reference_visible := false
 var maid_lobby_select_popup_visible := false
@@ -284,6 +287,7 @@ func _build_ui() -> void:
 	_build_out_game_reference_screen()
 	_build_out_game_app_popup_reference_screen()
 	_build_furniture_quest_popup_reference_screen()
+	_build_story_memory_popup_reference_screen()
 	_build_maid_lobby_reference_screen()
 	_build_maid_lobby_select_popup_reference_screen()
 	_build_maid_dialog_popup_reference_screen()
@@ -608,6 +612,14 @@ func _build_furniture_quest_popup_reference_screen() -> void:
 	furniture_quest_popup_reference_screen.close_requested.connect(_hide_furniture_quest_popup)
 	add_child(furniture_quest_popup_reference_screen)
 
+func _build_story_memory_popup_reference_screen() -> void:
+	story_memory_popup_reference_screen = StoryMemoryPopupReferenceScreenScript.new()
+	story_memory_popup_reference_screen.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	story_memory_popup_reference_screen.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	story_memory_popup_reference_screen.visible = false
+	story_memory_popup_reference_screen.close_requested.connect(_hide_story_memory_popup)
+	add_child(story_memory_popup_reference_screen)
+
 func _build_maid_lobby_reference_screen() -> void:
 	maid_lobby_reference_screen = MaidLobbyReferenceScreenScript.new()
 	if restored_startup_mode:
@@ -828,6 +840,7 @@ func _apply_out_game_reference_visibility() -> void:
 	if not out_game_reference_visible:
 		_hide_out_game_app_popup()
 		_hide_furniture_quest_popup()
+		_hide_story_memory_popup()
 
 func _apply_out_game_app_popup() -> void:
 	if out_game_app_popup_reference_screen == null:
@@ -838,6 +851,11 @@ func _apply_furniture_quest_popup() -> void:
 	if furniture_quest_popup_reference_screen == null:
 		return
 	furniture_quest_popup_reference_screen.call("set_popup_state", furniture_quest_popup_visible, board.wallet)
+
+func _apply_story_memory_popup() -> void:
+	if story_memory_popup_reference_screen == null:
+		return
+	story_memory_popup_reference_screen.call("set_popup_open", story_memory_popup_visible)
 
 func _apply_maid_lobby_reference_visibility() -> void:
 	if maid_lobby_reference_screen == null:
@@ -937,7 +955,11 @@ func _return_to_out_game_from_maid_lobby() -> void:
 
 func _show_out_game_app_popup(app_key: String) -> void:
 	_hide_furniture_quest_popup()
+	_hide_story_memory_popup()
 	_set_out_game_maid_normal_mode()
+	if app_key == "story":
+		_show_story_memory_popup()
+		return
 	out_game_app_popup_key = app_key
 	out_game_app_popup_visible = true
 	_apply_out_game_app_popup()
@@ -949,6 +971,7 @@ func _hide_out_game_app_popup() -> void:
 
 func _show_furniture_quest_popup() -> void:
 	_hide_out_game_app_popup()
+	_hide_story_memory_popup()
 	_set_out_game_maid_normal_mode()
 	furniture_quest_popup_visible = true
 	_apply_furniture_quest_popup()
@@ -957,6 +980,18 @@ func _show_furniture_quest_popup() -> void:
 func _hide_furniture_quest_popup() -> void:
 	furniture_quest_popup_visible = false
 	_apply_furniture_quest_popup()
+
+func _show_story_memory_popup() -> void:
+	_hide_out_game_app_popup()
+	_hide_furniture_quest_popup()
+	_set_out_game_maid_normal_mode()
+	story_memory_popup_visible = true
+	_apply_story_memory_popup()
+	_set_status("Opened first-pass UIOutGame Story/Memory shell.")
+
+func _hide_story_memory_popup() -> void:
+	story_memory_popup_visible = false
+	_apply_story_memory_popup()
 
 func _set_out_game_maid_interaction_mode() -> void:
 	out_game_maid_interaction_mode = true
