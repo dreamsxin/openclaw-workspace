@@ -789,3 +789,197 @@ LoadingView 负责登录后的进度条，并在进度完成后调用 GameHelper
 GameHelper.LoadMainScene 通过 SceneLoadManagerExtension.LoadAsyncScene 加载 "MainScene"。
 MainUIView 在 MainScene 进入后初始化玩家信息、玩法入口、底部栏、商业化入口、章节任务、红点和壁纸面板。
 ```
+
+## 继续分析：故事文本导出
+
+目标：整理游戏中的故事文本，支持后续单机版剧情/角色互动浏览器。
+
+### 定位故事文本资源
+
+先扫描所有 TextAsset：
+
+```powershell
+python reverse-output\scripts\export-unitypy-all-assets.py `
+  resources\assets\yoo\Default `
+  reverse-output\assets\unitypy-textasset-dryrun `
+  --types TextAsset `
+  --xor-prefix 222 `
+  --xor-key 0x16 `
+  --container-paths `
+  --dry-run
+```
+
+输出：
+
+```text
+files_seen=324
+objects_seen=33712
+objects_matched=487
+objects_exported=0
+```
+
+筛选候选：
+
+```powershell
+Import-Csv reverse-output\assets\unitypy-textasset-dryrun\unitypy-export-manifest.csv |
+  Where-Object {
+    $_.name -match 'lang|cht|cn|plot|story|gal|date|favor|guide|chapter|dialog|conversation|rule' -or
+    $_.output -match 'lang|cht|cn|plot|story|gal|date|favor|guide|chapter|dialog|conversation|rule'
+  } |
+  Sort-Object name |
+  Export-Csv -NoTypeInformation -Encoding UTF8 reverse-output\assets\unitypy-textasset-dryrun\story-textasset-candidates.csv
+```
+
+关键资源定位：
+
+```text
+resources\assets\yoo\Default\324fcda729f678d13d6dea7bf868e1bc.bundle
+  Assets/Game/Static/cht.bytes
+  Assets/Game/Static/cn.bytes
+  Assets/Game/Static/plot.bytes
+  Assets/Game/Static/role_story.bytes
+  Assets/Game/Static/role_story_chapter.bytes
+  Assets/Game/Static/date.bytes
+  Assets/Game/Static/chapter.bytes
+  Assets/Game/Static/gal_character.bytes
+  Assets/Game/Static/gal_chat.bytes
+  Assets/Game/Static/gal_memory.bytes
+  Assets/Game/Static/gal_plot.bytes
+  Assets/Game/Static/gal_plot_spine.bytes
+
+resources\assets\yoo\Default\d9b9bdbf670710a8292513b8cfafdb4e.bundle
+  Assets/Game/Lang/lang.json
+
+resources\assets\yoo\Default\80f715d17a1ca97917c6b587896e60bd.bundle
+  Assets/Game/Lang/lang_extra.json
+```
+
+### 修正 TextAsset 二进制导出
+
+发现 UnityPy 对二进制 TextAsset 的 `m_Script` 可能返回带 surrogate 的字符串。原导出脚本用：
+
+```python
+value.encode("utf-8", errors="replace")
+```
+
+会破坏 MemoryPack 字节，例如 `FF FF FF` 被替换为 `3F 3F 3F`。
+
+已修正：
+
+```python
+value.encode("utf-8", errors="surrogateescape")
+```
+
+修改文件：
+
+```text
+reverse-output\scripts\export-unitypy-all-assets.py
+```
+
+### 导出关键 TextAsset
+
+```powershell
+python reverse-output\scripts\export-unitypy-all-assets.py `
+  resources\assets\yoo\Default\324fcda729f678d13d6dea7bf868e1bc.bundle `
+  reverse-output\assets\story-textassets-raw `
+  --types TextAsset `
+  --xor-prefix 222 `
+  --xor-key 0x16 `
+  --container-paths
+
+python reverse-output\scripts\export-unitypy-all-assets.py `
+  resources\assets\yoo\Default\d9b9bdbf670710a8292513b8cfafdb4e.bundle `
+  reverse-output\assets\story-textassets-raw `
+  --types TextAsset `
+  --xor-prefix 222 `
+  --xor-key 0x16 `
+  --container-paths
+
+python reverse-output\scripts\export-unitypy-all-assets.py `
+  resources\assets\yoo\Default\80f715d17a1ca97917c6b587896e60bd.bundle `
+  reverse-output\assets\story-textassets-raw `
+  --types TextAsset `
+  --xor-prefix 222 `
+  --xor-key 0x16 `
+  --container-paths
+```
+
+### 确认 StaticItem 字段
+
+使用 `dump-managed-il.ps1` 查看字段：
+
+```powershell
+$types='PlotStaticItem','RoleStoryStaticItem','RoleStoryChapterStaticItem',
+  'GalPlotStaticItem','GalChatStaticItem','GalMemoryStaticItem',
+  'GalCharacterStaticItem','DateStaticItem','ChapterStaticItem',
+  'ChtStaticItem','CnStaticItem'
+
+foreach($t in $types){
+  powershell -ExecutionPolicy Bypass -File reverse-output\scripts\dump-managed-il.ps1 `
+    -AssemblyPath reverse-output\managed\hotfix-dlls\Assembly-CSharp.dll `
+    -CecilPath 'D:\work\openclaw-workspace\arpg\tools\AssetStudio.net472.v0.16.47\Mono.Cecil.dll' `
+    -Patterns $t |
+    Select-String -Pattern '^  FIELD'
+}
+```
+
+确认 `GalPlotStaticItem` 关键字段：
+
+```text
+id, sceneType, dialogueType, name, spine, optionType, option, keyOption,
+trait, traitInterval, nextId, plotText, sound, animation, pic, image,
+bgType, bg, bgm, skip, skipId
+```
+
+### 新增故事文本解析脚本
+
+新增：
+
+```text
+reverse-output\scripts\export-story-texts.py
+```
+
+运行：
+
+```powershell
+python reverse-output\scripts\export-story-texts.py `
+  --static-dir reverse-output\assets\story-textassets-raw\by_container\Assets\Game\Static `
+  --lang reverse-output\assets\story-textassets-raw\by_container\Assets\Game\Lang\lang.bytes `
+  --lang reverse-output\assets\story-textassets-raw\by_container\Assets\Game\Lang\lang_extra.bytes `
+  --out-dir reverse-output\story-texts
+```
+
+输出：
+
+```text
+lang_entries=55361
+cht=24
+cn=24
+plot=110
+role_story=2
+role_story_chapter=14
+gal_plot=7785
+gal_chat=35
+gal_memory=35
+gal_character=16
+date=22
+chapter=15
+story_lang_keys=22939
+```
+
+主要产物：
+
+```text
+reverse-output\story-texts\gal_plot_resolved.csv
+reverse-output\story-texts\gal_plot_resolved.json
+reverse-output\story-texts\role_story_chapter_resolved.csv
+reverse-output\story-texts\date_resolved.csv
+reverse-output\story-texts\chapter_resolved.csv
+reverse-output\story-texts\story_lang_keys.csv
+```
+
+专项文档：
+
+```text
+docs\shaonv-story-text-analysis.md
+```

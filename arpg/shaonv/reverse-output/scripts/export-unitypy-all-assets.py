@@ -100,7 +100,7 @@ def raw_data(obj, data) -> bytes:
         if isinstance(value, bytes):
             return value
         if isinstance(value, str):
-            return value.encode("utf-8", errors="replace")
+            return value.encode("utf-8", errors="surrogateescape")
     try:
         return obj.get_raw_data()
     except Exception:
