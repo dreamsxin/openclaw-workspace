@@ -11,6 +11,7 @@ The source tree is a decompiled Android Unity IL2CPP package. Java code is mostl
 - [IL2CPP Code Map](il2cpp-code-map.md): first dump output, class index summary, and high-priority gameplay classes.
 - [Producer Runtime Notes](producer-runtime-notes.md): Ghidra target list for producer energy, cooldown, open-state, and drop runtime methods.
 - [Character System Inventory](character-system-inventory.md): Maid, NPC, customer, costume, chat, and dialog evidence.
+- [Gameplay and Feature Analysis](gameplay-and-features.md): current analysis of original gameplay loops, feature character, and Godot priorities.
 - [Unity Asset Inventory](unity-asset-inventory.md): Unity data files, Addressables, native libraries, and likely extraction tools.
 - [Runtime and Services](runtime-and-services.md): Android entry points, permissions, SDK integrations, and what to replace in Godot.
 - [Implementation Roadmap](implementation-roadmap.md): milestones, immediate tasks, blockers, and delivery strategy.

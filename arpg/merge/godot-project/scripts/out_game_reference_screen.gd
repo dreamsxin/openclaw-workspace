@@ -4,6 +4,7 @@ extends Control
 signal ingame_requested
 signal maid_lobby_requested
 signal interaction_requested
+signal app_navigation_requested(app_key: String)
 
 const OUT_GAME_MAID_STANDIN := "res://assets/characters/maid_costume/Cos_Maid01_Casual_SD.png"
 const SPRITE_DIR := "res://assets/sprites/"
@@ -49,6 +50,9 @@ func _gui_input(event: InputEvent) -> void:
 			accept_event()
 		elif action == "interaction":
 			emit_signal("interaction_requested")
+			accept_event()
+		elif action.begins_with("app_"):
+			emit_signal("app_navigation_requested", action.trim_prefix("app_"))
 			accept_event()
 
 func _notification(what: int) -> void:
@@ -244,14 +248,24 @@ func _draw_bottom_navigation(layout: Dictionary) -> void:
 	var s: float = layout["scale"]
 	draw_rect(bottom_rect, Color(0.08, 0.08, 0.075, 0.9), true)
 	draw_rect(bottom_rect, Color(0.86, 0.72, 0.46, 0.66), false, 1.5 * s)
-	var entries := ["Shop", "Story", "Maid", "Bag", "Menu"]
+	var entries := [
+		{"label": "Shop", "action": "app_shop", "color": Color(0.5, 0.28, 0.42, 0.92)},
+		{"label": "Story", "action": "app_story", "color": Color(0.34, 0.34, 0.54, 0.92)},
+		{"label": "Maid", "action": "maid_lobby", "color": Color(0.32, 0.44, 0.58, 0.92)},
+		{"label": "Bag", "action": "app_bag", "color": Color(0.38, 0.34, 0.23, 0.92)},
+		{"label": "Menu", "action": "app_menu", "color": Color(0.28, 0.28, 0.27, 0.92)},
+	]
 	var cell_w := bottom_rect.size.x / float(entries.size())
 	for index in range(entries.size()):
 		var cell := Rect2(bottom_rect.position + Vector2(cell_w * float(index), 0), Vector2(cell_w, bottom_rect.size.y))
+		var action := String(entries[index]["action"])
+		var hover: bool = action_regions.get(action, Rect2()).has_point(get_local_mouse_position())
 		var center := cell.position + Vector2(cell.size.x * 0.5, cell.size.y * 0.34)
-		draw_circle(center, minf(cell.size.x, cell.size.y) * 0.24, Color(0.32 + 0.06 * float(index % 2), 0.24, 0.18, 0.92))
+		var icon_color: Color = entries[index]["color"]
+		draw_rect(cell.grow(-3.0 * s), Color(0.18, 0.14, 0.1, 0.78) if hover else Color(0.0, 0.0, 0.0, 0.0), true)
+		draw_circle(center, minf(cell.size.x, cell.size.y) * 0.24, icon_color)
 		draw_rect(Rect2(center - Vector2(8.0 * s, 8.0 * s), Vector2(16.0 * s, 16.0 * s)), Color(0.94, 0.78, 0.48, 0.74), false, 1.5 * s)
-		draw_string(ThemeDB.fallback_font, cell.position + Vector2(0, cell.size.y - 14.0 * s), entries[index], HORIZONTAL_ALIGNMENT_CENTER, cell.size.x, int(12.0 * s), Color(0.96, 0.87, 0.68, 0.9))
+		draw_string(ThemeDB.fallback_font, cell.position + Vector2(0, cell.size.y - 14.0 * s), String(entries[index]["label"]), HORIZONTAL_ALIGNMENT_CENTER, cell.size.x, int(12.0 * s), Color(0.96, 0.87, 0.68, 0.9))
 
 func _draw_top_home_hud(screen_rect: Rect2, layout: Dictionary) -> void:
 	var top_rect: Rect2 = layout["top"]
@@ -363,9 +377,14 @@ func _rebuild_action_regions() -> void:
 	action_regions["ingame"] = layout["ingame"]
 	action_regions["maid_lobby"] = layout["maid_lobby"]
 	action_regions["interaction"] = layout["interaction"]
+	var bottom_rect: Rect2 = layout["bottom"]
+	var app_actions := ["app_shop", "app_story", "maid_lobby", "app_bag", "app_menu"]
+	var cell_w := bottom_rect.size.x / float(app_actions.size())
+	for index in range(app_actions.size()):
+		action_regions[app_actions[index]] = Rect2(bottom_rect.position + Vector2(cell_w * float(index), 0), Vector2(cell_w, bottom_rect.size.y))
 
 func _action_at(local_position: Vector2) -> String:
-	for action in ["ingame", "maid_lobby", "interaction"]:
+	for action in ["ingame", "maid_lobby", "interaction", "app_shop", "app_story", "app_bag", "app_menu"]:
 		var rect: Rect2 = action_regions.get(action, Rect2())
 		if rect.has_point(local_position):
 			return action

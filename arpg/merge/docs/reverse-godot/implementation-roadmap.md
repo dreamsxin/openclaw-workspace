@@ -243,7 +243,9 @@ Success criteria:
 | T051 | Add first UIMaidLobby shell and route | done | `UIOutGame/MaidLobbyBtn` now enters `MaidLobbyReferenceScreen`; the shell uses recovered `UIMaidLobby` evidence (`BG`, `White`, `SpinePos`, `Gradient`, `Npc_Dialog`, `DialogBtn`) with Back/Talk/Select regions and `--auto-enter-maid-lobby` capture support |
 | T052 | Add UIPopup_MaidLobbySelect shell | done | `Select` from `UIMaidLobby` now opens `MaidLobbySelectPopupReferenceScreen`; the popup reconstructs `Panel`, `TextTitle`, `Btn_Close`, `MaidList`, first maid list-item states, close/select handling, and `11-maidlobbyselect.png` capture support |
 | T053 | Add maid interaction/dialog shell | done | `UIMaidLobby/Talk` and `UIOutGame/Btn_ToInteraction` now open `MaidDialogPopupReferenceScreen`; it uses current maid data plus decoded `dialogs.json` rows, supports close/next, and captures `12-maiddialog.png` |
-| T054 | Replace out-game placeholder art with recovered UI sprites | pending | Map original `UIOutGame`/`UIMaidLobby` background, entry-button, app-nav, and popup sprites from AssetStudio/AssetRipper exports into committed Godot assets |
+| T054 | Replace out-game placeholder art with recovered UI sprites | in progress | Existing committed character, loading, currency, and maid-chat assets are used where available; exact `UIOutGame`/`UIMaidLobby` background, entry-button, app-nav, and popup sprites still need import from AssetStudio/AssetRipper exports |
+| T055 | Record original gameplay and feature analysis | done | `gameplay-and-features.md` now documents the merge-cafe core loop, confirmed systems, content scale, pending unknowns, and reimplementation priority |
+| T056 | Add first out-game app navigation popup shell | done | `UIOutGame` bottom Shop/Story/Bag/Menu actions now open `OutGameAppPopupReferenceScreen`; Maid continues to route to `UIMaidLobby` |
 
 ## Tool Acquisition Options
 

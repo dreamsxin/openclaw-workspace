@@ -25,11 +25,11 @@ Status values:
 | --- | --- | --- | --- |
 | Merge board/grid | ported | IL2CPP classes: `InGame_MapManager`, `InGame_BlockManager`, `InGame_ItemCell`, `MapSaveData`; prototype in `godot-project/scripts/models/merge_board_model.gd` | `MergeBoardModel` |
 | Item instances | ported | IL2CPP classes use `Block` and `ItemBlock`: `InGame_ItemBlock`, `MapBlockData`, `ProduceBlockData`; prototype block ids in `godot-project/data/blocks.json` | `ItemInstance`/`BlockInstance` |
-| Merge chains | candidate | `SeriouslyMergeDataManager`, `BlockType`, block tables likely define chains | `MergeRuleResolver` |
-| Item generators | confirmed | `ProduceBlockData`, `ProduceBlockSaveData`, `FabricateBlockMapData`, fabricate timers | `SpawnerModel` |
+| Merge chains | ported | `Table_Block.dat` decoded into `godot-project/data/blocks.json`: 74 non-currency chains, 541 blocks | `MergeRuleResolver` |
+| Item generators | ported | `ProduceBlockData`, `ProduceBlockSaveData`, `FabricateBlockMapData`; decoded `block_rules.json` includes 117 producer blocks, 23 cooldown groups | `SpawnerModel` |
 | Board blockers/obstacles | candidate | `BubbleBlockData`, `BoxBlockSaveData`, map cell type data | board cell modifiers |
 | Energy or stamina | ported | `UserSaveDataMetaInfo.ap`, `ProduceBlockData.produceEnergy`; prototype AP wallet and spawn cost | `EconomyModel` |
-| Timers/cooldowns | unknown | Need code/runtime | timer service |
+| Timers/cooldowns | ported, runtime semantics pending | first-pass cooldown groups decoded into `block_rules.json`; exact refill/open behavior still needs Ghidra | timer service |
 | Tutorial | unknown | Need classes/assets | tutorial state machine |
 
 ## Progression
@@ -37,7 +37,7 @@ Status values:
 | System | Status | Evidence | Godot target |
 | --- | --- | --- | --- |
 | Player level | unknown | Need code/data | `ProgressionModel` |
-| Tasks/orders | unknown | Merge cafe games usually use orders; verify | `TaskModel` |
+| Tasks/orders | candidate | `UIInGame/Request/RequestList` and reward slots confirmed in UI layout; `RequestDataManager` and request tables still need decoding | `TaskModel` |
 | Chapter/story progression | unknown | Need scenes/assets/localization | `StoryModel` |
 | Unlock conditions | unknown | Need config | `UnlockResolver` |
 | Highscore/leaderboard | candidate | `HighscoreService.OnGameStart` | `HighscoreService` or no-op |
