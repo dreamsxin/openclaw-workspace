@@ -253,13 +253,14 @@ Success criteria:
 | T061 | Add first UIOutGame Story/Memory shell | done | The bottom Story entry now opens `StoryMemoryPopupReferenceScreen` with Story/Memory/Echo tabs and recovered SubStory thumbnail assets |
 | T062 | Add first UIOutGame Shop shell | done | The bottom Shop entry now opens `ShopPopupReferenceScreen`, with `UIPopup_Shop`/`UIList_ShopNormal` evidence represented by wallet pills, shop tabs, product rows, ad reward, package, and event-memory placeholders |
 | T063 | Add first UIOutGame Mail/Settings shell | done | The top-right Mail and Settings entries now open `MailSettingsPopupReferenceScreen`, with inbox/reward/notice rows and sound/account/language rows staged for later table/runtime binding |
+| T064 | Add first UIOutGame Bag/Menu shell | done | The bottom Bag and Menu entries now open `BagMenuPopupReferenceScreen`, with item/chat/collection cards and profile/notice/support cards staged from current evidence |
 
 Immediate next implementation targets:
 
-1. Split the remaining high-priority `UIOutGame` app surfaces from generic shells into purpose-built popups: Bag/App and Menu.
-2. Bind more recovered sprite assets into the Shop, Mail/Settings, Story/Memory, and FurnitureQuest shells, then map table/config IDs where available.
-3. Continue main UI exactness work: bottom navigation icons, cafe/furniture background sprites, and LD maid Spine rendering.
-4. Add more source-derived request/task rules to the merge board once out-game shell coverage is broader.
+1. Bind more recovered sprite assets into the Shop, Mail/Settings, Bag/Menu, Story/Memory, and FurnitureQuest shells, then map table/config IDs where available.
+2. Continue main UI exactness work: bottom navigation icons, cafe/furniture background sprites, and LD maid Spine rendering.
+3. Replace structural placeholders with source-derived request/task/shop/mail/settings/menu rules as table/runtime evidence is mapped.
+4. Add regression captures for the newly split `UIOutGame` popups.
 
 ## Tool Acquisition Options
 

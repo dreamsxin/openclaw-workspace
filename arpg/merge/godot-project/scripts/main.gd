@@ -14,6 +14,7 @@ const OutGameReferenceScreenScript := preload("res://scripts/out_game_reference_
 const OutGameAppPopupReferenceScreenScript := preload("res://scripts/out_game_app_popup_reference_screen.gd")
 const ShopPopupReferenceScreenScript := preload("res://scripts/shop_popup_reference_screen.gd")
 const MailSettingsPopupReferenceScreenScript := preload("res://scripts/mail_settings_popup_reference_screen.gd")
+const BagMenuPopupReferenceScreenScript := preload("res://scripts/bag_menu_popup_reference_screen.gd")
 const FurnitureQuestPopupReferenceScreenScript := preload("res://scripts/furniture_quest_popup_reference_screen.gd")
 const StoryMemoryPopupReferenceScreenScript := preload("res://scripts/story_memory_popup_reference_screen.gd")
 const MaidLobbyReferenceScreenScript := preload("res://scripts/maid_lobby_reference_screen.gd")
@@ -84,6 +85,7 @@ var out_game_reference_screen: Control
 var out_game_app_popup_reference_screen: Control
 var shop_popup_reference_screen: Control
 var mail_settings_popup_reference_screen: Control
+var bag_menu_popup_reference_screen: Control
 var furniture_quest_popup_reference_screen: Control
 var story_memory_popup_reference_screen: Control
 var maid_lobby_reference_screen: Control
@@ -113,6 +115,8 @@ var out_game_app_popup_key := "shop"
 var shop_popup_visible := false
 var mail_settings_popup_visible := false
 var mail_settings_popup_key := "mail"
+var bag_menu_popup_visible := false
+var bag_menu_popup_key := "bag"
 var furniture_quest_popup_visible := false
 var story_memory_popup_visible := false
 var out_game_maid_interaction_mode := false
@@ -295,6 +299,7 @@ func _build_ui() -> void:
 	_build_out_game_app_popup_reference_screen()
 	_build_shop_popup_reference_screen()
 	_build_mail_settings_popup_reference_screen()
+	_build_bag_menu_popup_reference_screen()
 	_build_furniture_quest_popup_reference_screen()
 	_build_story_memory_popup_reference_screen()
 	_build_maid_lobby_reference_screen()
@@ -629,6 +634,14 @@ func _build_mail_settings_popup_reference_screen() -> void:
 	mail_settings_popup_reference_screen.close_requested.connect(_hide_mail_settings_popup)
 	add_child(mail_settings_popup_reference_screen)
 
+func _build_bag_menu_popup_reference_screen() -> void:
+	bag_menu_popup_reference_screen = BagMenuPopupReferenceScreenScript.new()
+	bag_menu_popup_reference_screen.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	bag_menu_popup_reference_screen.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	bag_menu_popup_reference_screen.visible = false
+	bag_menu_popup_reference_screen.close_requested.connect(_hide_bag_menu_popup)
+	add_child(bag_menu_popup_reference_screen)
+
 func _build_furniture_quest_popup_reference_screen() -> void:
 	furniture_quest_popup_reference_screen = FurnitureQuestPopupReferenceScreenScript.new()
 	furniture_quest_popup_reference_screen.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -866,6 +879,7 @@ func _apply_out_game_reference_visibility() -> void:
 		_hide_out_game_app_popup()
 		_hide_shop_popup()
 		_hide_mail_settings_popup()
+		_hide_bag_menu_popup()
 		_hide_furniture_quest_popup()
 		_hide_story_memory_popup()
 
@@ -883,6 +897,11 @@ func _apply_mail_settings_popup() -> void:
 	if mail_settings_popup_reference_screen == null:
 		return
 	mail_settings_popup_reference_screen.call("set_popup_state", mail_settings_popup_visible, mail_settings_popup_key)
+
+func _apply_bag_menu_popup() -> void:
+	if bag_menu_popup_reference_screen == null:
+		return
+	bag_menu_popup_reference_screen.call("set_popup_state", bag_menu_popup_visible, bag_menu_popup_key)
 
 func _apply_furniture_quest_popup() -> void:
 	if furniture_quest_popup_reference_screen == null:
@@ -927,6 +946,7 @@ func _enter_gameplay_from_out_game() -> void:
 	_hide_out_game_app_popup()
 	_hide_shop_popup()
 	_hide_mail_settings_popup()
+	_hide_bag_menu_popup()
 	_set_out_game_maid_normal_mode()
 	out_game_reference_visible = false
 	_apply_out_game_reference_visibility()
@@ -943,6 +963,7 @@ func _enter_maid_lobby_from_out_game() -> void:
 	_hide_out_game_app_popup()
 	_hide_shop_popup()
 	_hide_mail_settings_popup()
+	_hide_bag_menu_popup()
 	_set_out_game_maid_normal_mode()
 	out_game_reference_visible = false
 	_apply_out_game_reference_visibility()
@@ -999,6 +1020,7 @@ func _show_out_game_app_popup(app_key: String) -> void:
 	_hide_story_memory_popup()
 	_hide_shop_popup()
 	_hide_mail_settings_popup()
+	_hide_bag_menu_popup()
 	_set_out_game_maid_normal_mode()
 	if app_key == "story":
 		_show_story_memory_popup()
@@ -1008,6 +1030,9 @@ func _show_out_game_app_popup(app_key: String) -> void:
 		return
 	if app_key == "mail" or app_key == "settings":
 		_show_mail_settings_popup(app_key)
+		return
+	if app_key == "bag" or app_key == "menu":
+		_show_bag_menu_popup(app_key)
 		return
 	out_game_app_popup_key = app_key
 	out_game_app_popup_visible = true
@@ -1046,10 +1071,27 @@ func _hide_mail_settings_popup() -> void:
 	mail_settings_popup_visible = false
 	_apply_mail_settings_popup()
 
+func _show_bag_menu_popup(app_key: String) -> void:
+	_hide_out_game_app_popup()
+	_hide_shop_popup()
+	_hide_mail_settings_popup()
+	_hide_furniture_quest_popup()
+	_hide_story_memory_popup()
+	_set_out_game_maid_normal_mode()
+	bag_menu_popup_key = app_key
+	bag_menu_popup_visible = true
+	_apply_bag_menu_popup()
+	_set_status("Opened first-pass UIOutGame %s shell." % app_key)
+
+func _hide_bag_menu_popup() -> void:
+	bag_menu_popup_visible = false
+	_apply_bag_menu_popup()
+
 func _show_furniture_quest_popup() -> void:
 	_hide_out_game_app_popup()
 	_hide_shop_popup()
 	_hide_mail_settings_popup()
+	_hide_bag_menu_popup()
 	_hide_story_memory_popup()
 	_set_out_game_maid_normal_mode()
 	furniture_quest_popup_visible = true
@@ -1064,6 +1106,7 @@ func _show_story_memory_popup() -> void:
 	_hide_out_game_app_popup()
 	_hide_shop_popup()
 	_hide_mail_settings_popup()
+	_hide_bag_menu_popup()
 	_hide_furniture_quest_popup()
 	_set_out_game_maid_normal_mode()
 	story_memory_popup_visible = true
