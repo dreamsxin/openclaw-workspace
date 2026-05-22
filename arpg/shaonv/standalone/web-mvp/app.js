@@ -1,11 +1,11 @@
 const ART = "./assets/spine/hero_003Dh/hero_003Dh.png";
 
 const HEROES = [
-  { id: 240055, name: "天狐妲己", rarity: 4, spine: "hero_016", assets: "zhero_016 / bhero_016 / hero_016" },
+  { id: 240055, name: "天狐妲己", rarity: 4, spine: "hero_016", assets: "zhero_016 / bhero_016 / hero_016", art: "./assets/spine/hero_016/hero_016.png" },
   { id: 240065, name: "莉莉絲", rarity: 3, spine: "hero_003", assets: "zhero_003 / bhero_003 / hero_003", art: ART },
-  { id: 240069, name: "女帝", rarity: 3, spine: "hero_017", assets: "zhero_017 / bhero_017 / hero_017" },
-  { id: 240068, name: "哪吒", rarity: 3, spine: "hero_001", assets: "zhero_001 / bhero_001 / hero_001" },
-  { id: 240045, name: "蔡文姬", rarity: 3, spine: "hero_005", assets: "zhero_005 / bhero_005 / hero_005" },
+  { id: 240069, name: "女帝", rarity: 3, spine: "hero_017", assets: "zhero_017 / bhero_017 / hero_017", art: "./assets/spine/hero_017/hero_017.png" },
+  { id: 240068, name: "哪吒", rarity: 3, spine: "hero_001", assets: "zhero_001 / bhero_001 / hero_001", art: "./assets/spine/hero_001/hero_001.png" },
+  { id: 240045, name: "蔡文姬", rarity: 3, spine: "hero_005", assets: "zhero_005 / bhero_005 / hero_005", art: "./assets/spine/hero_005/hero_005.png" },
   { id: 240082, name: "阿布羅狄忒", rarity: 3, spine: "hero_018", assets: "待補導出" },
   { id: 240037, name: "阿修羅", rarity: 2, spine: "hero_037", assets: "待補導出" },
   { id: 240062, name: "大喬", rarity: 2, spine: "hero_062", assets: "待補導出" }

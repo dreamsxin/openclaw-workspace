@@ -119,10 +119,17 @@ def index_physical_files(paths: list[Path]) -> dict[str, dict[str, Any]]:
         for path in candidates:
             if not path.is_file():
                 continue
-            files[path.name.lower()] = {
+            record = {
                 "physicalPath": str(path),
                 "physicalSize": path.stat().st_size,
             }
+            files[path.name.lower()] = record
+            # YooAsset runtime cache stores downloaded bundles as:
+            #   BundleFiles/<first-two-hash-chars>/<hash>/__data
+            # and the hash directory name is the manifest fileHash.
+            if path.name == "__data" and path.parent.name:
+                files[f"{path.parent.name.lower()}.bundle"] = record
+                files[path.parent.name.lower()] = record
     return files
 
 
