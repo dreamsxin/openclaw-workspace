@@ -377,8 +377,43 @@ MVP 必须优先支持：
 
 还需要补齐：
 
-- YooAsset manifest 二进制字段顺序。当前 `parse-yoo-manifest.js` 解析 `Default_1001.1774870195.cht.bytes` 会越界，阻塞 `assetPath -> bundleName` 自动映射。
-- 更多 Spine 样本的实际导出验证。现已验证 `hero_003Dh`，还需验证 `hero_001/005/016/017`。
-- UI prefab 的 MonoBehaviour 字段结构。当前仅定位 prefab 路径，还没有解析 prefab 内绑定的按钮、特效和结果卡格字段。
+- YooAsset manifest 二进制字段顺序。当前 Python parser 可解析 `assetCount=18195` 和前 790 个 bundle，但仍未闭合全部 `bundleName -> 当前磁盘物理文件` 映射。
+- 更多 Spine 样本的实际导出验证。现已验证 `hero_003Dh`；`hero_016` 逻辑 bundle 和 parsed hash 已定位，但当前磁盘未找到同名物理 bundle。
+- UI prefab 的 MonoBehaviour 字段结构。当前已定位 6 个抽卡/祈愿 prefab asset 行，`HeroRecruitView` 可拿到 parsed hash，其它 View 仍需修 manifest 或反查物理包。
 - `LotteryDrawHelper.ShowLotteryAnimation` 的动画名、跳过动画逻辑和结果展示参数。
 - 原始概率字段。Static 表有 `reward1/reward2/reward3/reward4/rewardF2/cnt*`，但 reward id 到真实概率/掉落表还需继续追 `reward` 表或协议展示字段。
+
+## 11. P0-7 单机 MVP 落地
+
+已新增 Web 版最小闭环：
+
+```text
+standalone/web-mvp/
+  index.html
+  styles.css
+  app.js
+```
+
+当前功能：
+
+- 主界面：本地货币、看板娘、保底、入口。
+- 抽卡：普通/高级/进阶/源神祈愿池切换，单抽和十连。
+- 结果：稀有度高亮、新角色标记、重复转化提示。
+- 图鉴：已获得高亮、未获得灰显、角色详情。
+- 记录：最近抽卡记录。
+- 存档：浏览器 `localStorage`。
+
+运行：
+
+```powershell
+cd D:\work\openclaw-workspace\arpg\shaonv
+python -m http.server 5177
+```
+
+打开：
+
+```text
+http://127.0.0.1:5177/standalone/web-mvp/
+```
+
+该 MVP 使用已验证导出的 `hero_003Dh.png` 作为实际视觉资源，其它角色暂按 `hero_001/005/016/017` key 占位，等待 manifest 物理映射修正后替换。
