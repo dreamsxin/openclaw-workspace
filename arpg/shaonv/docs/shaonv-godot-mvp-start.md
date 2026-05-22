@@ -58,8 +58,8 @@ standalone/godot-mvp/
 - 抽卡：按 `LotteryDrawMainView -> LotteryDrawPanel` 分析重排为左侧卡池 tab、中部 UP/保底信息、右侧角色展示、底部单抽/十连/概率/记录按钮。
 - 抽卡规则：`data/gacha_pools_mvp.json` 驱动概率、UP 权重、保底、重复碎片和 Static 来源字段。
 - 结果页：按 `HeroRecruitView/LotteryRewardShowView` 职责拆分，显示主出货角色、稀有度标题、十连结果格、新角色和重复碎片，点击结果进入角色详情。
-- 图鉴：角色收集状态、持有数量、重复碎片，点击进入角色详情。
-- 角色详情：显示获得状态、碎片、资源路径和 Spine key，可设为看板。
+- 图鉴：按 `GalCollectionView` 的分页/筛选/进度职责补了收集进度、全部/已获得/未获得/稀有度筛选、已获得优先和稀有度排序，未获得角色灰显。
+- 角色详情：按 `CommonHeroView` 的角色信息页职责显示获得状态、稀有度、碎片、获得途径、资源路径和 Spine key；未获得角色叠加锁定遮罩，已获得角色可设为看板。
 - 记录：抽卡历史。
 - 商店：源石兑换喚靈券，并跳转每日补给、邮件、任务。
 - 章节任务：按抽卡次数、收集数量发放喚靈券和源石，替代原 `InitPnlTask/ChapterTask` 的 MVP 版本。
@@ -158,12 +158,13 @@ standalone/godot-mvp/
 - `docs/shaonv-p0-continuation-2026-05-22.md` 中抽卡调用链：`LotteryDrawMainView -> LotteryDrawPanel -> LotteryDrawModel -> LotteryDrawFinishView/HeroRecruitView`。
 - `reverse-output/gacha-static/tables/drawconfig.json` 和 `draw_pool_summary.csv` 中的 `cnt3/rateUp` 字段，用于标注当前 MVP 卡池规则来源。
 - `docs/shaonv-yooasset-physical-mapping-fix.md` 中已定位的抽卡 prefab 物理映射。
+- `reverse-output/managed/Assembly-CSharp-index/methods.csv` 中 `GalCollectionView` 的 `OnSelectHero/GetGridCount/OnBtnNextClick/OnBtnPreviousClick/UpdateProgress` 和 `CommonHeroView` 的 `OnOpen/OnTabChange/UpdateSkill`，用于确定图鉴页需要进度、筛选、选择角色和角色详情信息区。
 - 已导入 Godot 的 5 个代表角色 Spine 三件套中的 PNG，用作看板和抽卡展示。
 
 当前仍未完全还原：
 
 - 启动视频 `launch.mp4`、真实热更进度、服务器/SDK 登录仍未接入；当前为离线可跳过流程。
-- 原 `MainUIView`、`LotteryDrawMainView` prefab 的完整 RectTransform 层级尚未转换为 Godot scene。
+- 原 `MainUIView`、`LotteryDrawMainView`、`GalCollectionView`、`CommonHeroView` prefab 的完整 RectTransform 层级尚未转换为 Godot scene。
 - 抽卡 UI 图集、按钮图、结果光效、音效仍未批量导入 Godot。
 - Spine 运行时尚未接入，当前仍是 PNG 静态展示。
 - 原游戏 reward 掉落表仍需继续展开；当前概率和重复碎片已数据化，但仍是基于 `drawconfig/ac_limit_draw` 字段的 MVP 近似规则。

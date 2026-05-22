@@ -42,6 +42,7 @@ var title_label: Label
 var wallet_label: Label
 var top_bar: Control
 var current_view := "boot"
+var gallery_filter := "all"
 
 func _ready() -> void:
 	rng.randomize()
@@ -314,16 +315,41 @@ func _show_gallery() -> void:
 	header.position = Vector2(40, 24)
 	header.size = Vector2(280, 50)
 	content.add_child(header)
+
+	var owned_count: int = save.get("owned", {}).size()
+	var progress := _label("收集進度  %d / %d" % [owned_count, heroes.size()], 20, HORIZONTAL_ALIGNMENT_RIGHT)
+	progress.position = Vector2(782, 30)
+	progress.size = Vector2(420, 34)
+	content.add_child(progress)
+
+	_add_gallery_filter_button("全部", "all", Vector2(40, 82))
+	_add_gallery_filter_button("已獲得", "owned", Vector2(148, 82))
+	_add_gallery_filter_button("未獲得", "unowned", Vector2(256, 82))
+	_add_gallery_filter_button("★★★★", "r4", Vector2(364, 82))
+	_add_gallery_filter_button("★★★", "r3", Vector2(472, 82))
+	_add_gallery_filter_button("★★", "r2", Vector2(580, 82))
+
+	var filtered := _gallery_filtered_heroes()
+	if filtered.is_empty():
+		var empty := _label("暫無符合條件的角色", 22, HORIZONTAL_ALIGNMENT_CENTER)
+		empty.position = Vector2(280, 270)
+		empty.size = Vector2(720, 40)
+		content.add_child(empty)
+		return
+
 	var x := 40.0
-	var y := 96.0
-	for hero in heroes:
+	var y := 146.0
+	for hero in filtered:
 		var button := Button.new()
 		var hero_id := int(hero.get("id", 0))
 		var copies := int(save.get("owned", {}).get(str(hero_id), 0))
 		var shards := int(save.get("shards", {}).get(str(hero_id), 0))
-		button.text = "%s\n%s x%d  碎%d" % [hero.get("name", "Unknown") if copies > 0 else "未獲得", _stars(int(hero.get("rarity", 1))), copies, shards]
+		var display_name := str(hero.get("name", "Unknown")) if copies > 0 else "未獲得"
+		button.text = "%s\n%s\n持有%d  碎%d" % [display_name, _stars(int(hero.get("rarity", 1))), copies, shards]
 		button.position = Vector2(x, y)
-		button.size = Vector2(176, 94)
+		button.size = Vector2(176, 104)
+		if copies <= 0:
+			button.modulate = Color(0.52, 0.52, 0.52, 1.0)
 		button.pressed.connect(func() -> void:
 			_show_hero_detail(hero_id)
 		)
@@ -331,7 +357,7 @@ func _show_gallery() -> void:
 		x += 194
 		if x > 1080:
 			x = 40
-			y += 110
+			y += 120
 
 func _show_history() -> void:
 	_clear("記錄")
@@ -446,17 +472,25 @@ func _show_hero_detail(hero_id: int) -> void:
 	var copies := int(save.get("owned", {}).get(key, 0))
 	var shards := int(save.get("shards", {}).get(key, 0))
 	var state := "已獲得" if copies > 0 else "未獲得"
-	var detail := _label("%s\n持有: %d\n碎片: %d\n資源: %s\nSpine: %s" % [state, copies, shards, hero.get("artResource", ""), hero.get("spine", "")], 20)
+	var detail := _label("%s\n稀有度: %s\n持有: %d\n碎片: %d\n獲得途徑: 喚靈 / 祈願\n資源: %s\nSpine: %s" % [state, _stars(int(hero.get("rarity", 1))), copies, shards, hero.get("artResource", ""), hero.get("spine", "")], 20)
 	detail.position = Vector2(54, 108)
-	detail.size = Vector2(560, 170)
+	detail.size = Vector2(610, 210)
 	content.add_child(detail)
-	_add_action_button("設為看板", Vector2(54, 340), func() -> void:
-		save["selected_hero_id"] = hero_id
-		_persist()
-		_show_home()
-	)
-	_add_action_button("返回圖鑑", Vector2(200, 340), _show_gallery)
-	_add_action_button("前往喚靈", Vector2(346, 340), _show_gacha)
+	if copies <= 0:
+		var mask := _panel(Vector2(706, 10), Vector2(520, 560), Color(0.0, 0.0, 0.0, 0.42))
+		content.add_child(mask)
+		var locked := _label("未獲得", 36, HORIZONTAL_ALIGNMENT_CENTER)
+		locked.position = Vector2(706, 242)
+		locked.size = Vector2(520, 56)
+		content.add_child(locked)
+		_add_action_button("前往喚靈", Vector2(54, 360), _show_gacha)
+	else:
+		_add_action_button("設為看板", Vector2(54, 360), func() -> void:
+			save["selected_hero_id"] = hero_id
+			_persist()
+			_show_home()
+		)
+	_add_action_button("返回圖鑑", Vector2(200, 360), _show_gallery)
 
 func _show_player_info() -> void:
 	_clear("玩家信息")
@@ -759,6 +793,55 @@ func _set_pity(pool_id: String, value: int) -> void:
 	var pity: Dictionary = save.get("pity", {})
 	pity[pool_id] = value
 	save["pity"] = pity
+
+func _add_gallery_filter_button(text: String, filter: String, pos: Vector2) -> void:
+	var button := Button.new()
+	button.text = ("✓ " if gallery_filter == filter else "") + text
+	button.position = pos
+	button.size = Vector2(96, 38)
+	button.pressed.connect(func() -> void:
+		gallery_filter = filter
+		_show_gallery()
+	)
+	content.add_child(button)
+
+func _gallery_filtered_heroes() -> Array:
+	var list := []
+	for hero in heroes:
+		var hero_id := int(hero.get("id", 0))
+		var rarity := int(hero.get("rarity", 1))
+		var owned := int(save.get("owned", {}).get(str(hero_id), 0)) > 0
+		var include := true
+		match gallery_filter:
+			"owned":
+				include = owned
+			"unowned":
+				include = not owned
+			"r4":
+				include = rarity >= 4
+			"r3":
+				include = rarity == 3
+			"r2":
+				include = rarity <= 2
+			_:
+				include = true
+		if include:
+			list.append(hero)
+	list.sort_custom(_sort_gallery_heroes)
+	return list
+
+func _sort_gallery_heroes(a: Dictionary, b: Dictionary) -> bool:
+	var a_id := int(a.get("id", 0))
+	var b_id := int(b.get("id", 0))
+	var a_owned := int(save.get("owned", {}).get(str(a_id), 0)) > 0
+	var b_owned := int(save.get("owned", {}).get(str(b_id), 0)) > 0
+	if a_owned != b_owned:
+		return a_owned
+	var a_rarity := int(a.get("rarity", 1))
+	var b_rarity := int(b.get("rarity", 1))
+	if a_rarity != b_rarity:
+		return a_rarity > b_rarity
+	return a_id < b_id
 
 func _grant_reward(tickets: int, gems: int) -> void:
 	save["tickets"] = int(save.get("tickets", 0)) + tickets
