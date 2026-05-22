@@ -11,6 +11,7 @@ import argparse
 import csv
 import json
 from pathlib import Path
+import re
 import struct
 from typing import Any
 
@@ -40,6 +41,12 @@ class Reader:
         self.require(4)
         value = struct.unpack_from("<I", self.data, self.off)[0]
         self.off += 4
+        return value
+
+    def u64(self) -> int:
+        self.require(8)
+        value = struct.unpack_from("<Q", self.data, self.off)[0]
+        self.off += 8
         return value
 
     def u16(self) -> int:
@@ -103,7 +110,24 @@ def remote_file_name(output_name_style: int, bundle_name: str, file_hash: str) -
     return f"{file_hash}{suffix}"
 
 
-def parse_manifest(path: Path) -> dict[str, Any]:
+def index_physical_files(paths: list[Path]) -> dict[str, dict[str, Any]]:
+    files: dict[str, dict[str, Any]] = {}
+    for root in paths:
+        if not root.exists():
+            continue
+        candidates = [root] if root.is_file() else root.rglob("*")
+        for path in candidates:
+            if not path.is_file():
+                continue
+            files[path.name.lower()] = {
+                "physicalPath": str(path),
+                "physicalSize": path.stat().st_size,
+            }
+    return files
+
+
+def parse_manifest(path: Path, physical_roots: list[Path] | None = None) -> dict[str, Any]:
+    physical_files = index_physical_files(physical_roots or [])
     reader = Reader(path.read_bytes())
     signature = reader.data[:4]
     reader.off = 4
@@ -146,31 +170,35 @@ def parse_manifest(path: Path) -> dict[str, Any]:
 
     bundle_count = reader.i32()
     # This manifest variant writes a compact lookup/header section before
-    # bundle records.  Align to the first logical bundle name.  The skipped
-    # bytes are preserved in summary so this remains auditable.
+    # bundle records. Align once to the first logical bundle name, then parse
+    # records sequentially. Bundle fileSize is uint64 in YooAsset 2.3.1; using
+    # uint32 shifts encrypted/tags/dependency fields and corrupts later rows.
     bundle_header_start = reader.off
     bundle_header_skipped = reader.align_to_prefixed_string(b"assets_", b".bundle")
     bundle_lookup_header = reader.data[bundle_header_start : bundle_header_start + bundle_header_skipped].hex()
     bundles = []
     bundle_id = 0
     while bundle_id < bundle_count:
-        if bundle_id:
-            try:
-                reader.align_to_prefixed_string(b"assets_", b".bundle")
-            except ValueError:
-                break
         record_offset = reader.off
         try:
             bundle_name = reader.string()
             unity_crc = reader.u32()
             file_hash = reader.string()
             file_crc = reader.string()
-            file_size = reader.u32()
+            file_size = reader.u64()
             encrypted = bool(reader.u8())
             tags = reader.string_array()
             depend_bundle_ids = reader.int_array()
         except Exception as exc:
             raise ValueError(f"failed parsing bundle #{bundle_id} at offset {record_offset}") from exc
+        file_name = remote_file_name(int(manifest["outputNameStyle"]), bundle_name, file_hash)
+        hash_file_name = f"{file_hash}{Path(bundle_name).suffix}"
+        physical = (
+            physical_files.get(file_name.lower())
+            or physical_files.get(hash_file_name.lower())
+            or physical_files.get(bundle_name.lower())
+            or {}
+        )
         bundles.append(
             {
                 "id": bundle_id,
@@ -182,24 +210,38 @@ def parse_manifest(path: Path) -> dict[str, Any]:
                 "encrypted": encrypted,
                 "tags": "|".join(tags),
                 "dependBundleIDs": "|".join(str(v) for v in depend_bundle_ids),
-                "fileName": remote_file_name(int(manifest["outputNameStyle"]), bundle_name, file_hash),
+                "fileName": file_name,
+                "hashFileName": hash_file_name,
+                "physicalPath": physical.get("physicalPath", ""),
+                "physicalSize": physical.get("physicalSize", ""),
+                "physicalExists": bool(physical),
+                "physicalSizeMatches": bool(physical) and int(physical.get("physicalSize", -1)) == int(file_size),
                 "bundleLookupHeader": bundle_lookup_header,
             }
         )
         bundle_id += 1
 
+    bundle_id_offset = infer_bundle_id_offset(assets, bundles)
     rows = []
     for asset in assets:
-        bundle = bundles[asset["bundleID"]] if 0 <= asset["bundleID"] < len(bundles) else {}
+        resolved_bundle_id = asset["bundleID"] + bundle_id_offset
+        bundle = bundles[resolved_bundle_id] if 0 <= resolved_bundle_id < len(bundles) else {}
         rows.append(
             {
                 **asset,
+                "resolvedBundleID": resolved_bundle_id if bundle else "",
+                "bundleIDOffset": bundle_id_offset,
                 "bundleName": bundle.get("bundleName", ""),
                 "fileName": bundle.get("fileName", ""),
+                "hashFileName": bundle.get("hashFileName", ""),
                 "fileHash": bundle.get("fileHash", ""),
                 "fileCRC": bundle.get("fileCRC", ""),
                 "fileSize": bundle.get("fileSize", ""),
                 "encrypted": bundle.get("encrypted", ""),
+                "physicalPath": bundle.get("physicalPath", ""),
+                "physicalSize": bundle.get("physicalSize", ""),
+                "physicalExists": bundle.get("physicalExists", ""),
+                "physicalSizeMatches": bundle.get("physicalSizeMatches", ""),
             }
         )
 
@@ -213,20 +255,70 @@ def parse_manifest(path: Path) -> dict[str, Any]:
             "assetCount": asset_count,
             "bundleCount": bundle_count,
             "bundlesParsed": len(bundles),
+            "physicalFilesIndexed": len(physical_files),
+            "bundlesWithPhysicalFile": sum(1 for bundle in bundles if bundle.get("physicalExists")),
+            "bundlesWithPhysicalSizeMatch": sum(1 for bundle in bundles if bundle.get("physicalSizeMatches")),
+            "bundleIDOffset": bundle_id_offset,
             "endOffset": reader.off,
             "fileSize": len(reader.data),
         },
     }
 
 
+def infer_bundle_id_offset(assets: list[dict[str, Any]], bundles: list[dict[str, Any]]) -> int:
+    """Infer manifest asset bundleID base against the parsed bundle array.
+
+    This shaonv manifest stores asset.bundleID in an external numbering space.
+    Matching obvious asset path tokens against bundle names gives a stable
+    offset of -133 for this package, but keep the inference generic and
+    auditable instead of hardcoding it.
+    """
+
+    best_offset = 0
+    best_score = -1
+    for offset in range(-512, 513):
+        score = 0
+        for asset in assets:
+            resolved = int(asset["bundleID"]) + offset
+            if not 0 <= resolved < len(bundles):
+                continue
+            address = str(asset.get("address") or asset.get("assetPath") or "").lower()
+            bundle_name = str(bundles[resolved].get("bundleName") or "").lower()
+            if not address or not bundle_name:
+                continue
+            leaf = Path(address).stem.lower().replace("_", "")
+            compact_bundle = bundle_name.replace("_", "")
+            if leaf and leaf in compact_bundle:
+                score += 3
+            spine_match = re.search(r"spine/hero/(hero_[^/]+)/", address)
+            if spine_match and spine_match.group(1).replace("_", "") in compact_bundle:
+                score += 10
+            if "prefabs/ui/" in address:
+                parent = Path(address).parent.name.lower().replace("_", "")
+                if parent and parent in compact_bundle:
+                    score += 5
+            if address.startswith("assets/game/static/") and "static" in bundle_name:
+                score += 1
+        if score > best_score:
+            best_score = score
+            best_offset = offset
+    return best_offset
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("manifest")
     parser.add_argument("out_dir")
+    parser.add_argument(
+        "--physical-root",
+        action="append",
+        default=[],
+        help="Folder or file to index for fileName/hashFileName physical bundle lookup; may be repeated",
+    )
     parser.add_argument("--json", action="store_true", help="Also write large JSON files for assets/bundles")
     args = parser.parse_args()
 
-    parsed = parse_manifest(Path(args.manifest))
+    parsed = parse_manifest(Path(args.manifest), [Path(item) for item in args.physical_root])
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -239,12 +331,19 @@ def main() -> int:
             "assetPath",
             "assetTags",
             "bundleID",
+            "resolvedBundleID",
+            "bundleIDOffset",
             "bundleName",
             "fileName",
+            "hashFileName",
             "fileHash",
             "fileCRC",
             "fileSize",
             "encrypted",
+            "physicalPath",
+            "physicalSize",
+            "physicalExists",
+            "physicalSizeMatches",
             "dependAssetIDs",
             "dependBundleIDs",
         ],
@@ -256,10 +355,15 @@ def main() -> int:
             "id",
             "bundleName",
             "fileName",
+            "hashFileName",
             "fileHash",
             "fileCRC",
             "fileSize",
             "encrypted",
+            "physicalPath",
+            "physicalSize",
+            "physicalExists",
+            "physicalSizeMatches",
             "tags",
             "dependBundleIDs",
             "unityCRC",
