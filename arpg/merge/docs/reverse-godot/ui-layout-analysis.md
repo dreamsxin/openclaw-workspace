@@ -97,6 +97,29 @@ The current Godot prototype reads this file and exposes a small `UI Ref` selecto
 
 `UIOutGame` now has a first Godot home-screen shell. It uses the recovered `UIMaidLD` character area, `Npc_Dialog` dialog box, `InGameBtn`, `MaidLobbyBtn`, and `UIVillageReBuild/Fillbar` controls as layout evidence, then draws the current portrait home view with wallet HUD, cafe backdrop, village rebuild progress, maid stand-in/dialog, Merge/Maid entry buttons, and bottom app navigation. Character art remains a safe committed SD PNG stand-in because the original maid LD data still needs Spine reconstruction rather than drawing atlas pages as portraits.
 
+## UIOutGame Prefab-First Restoration Rule
+
+Further `UIOutGame` home-screen work should be driven by serialized Unity evidence rather than visual trial placement.
+
+Primary evidence:
+
+- `Assets/Resources/prefabs/ui/UIOutGame.prefab`
+- `Assets/Resources/prefabs/ui/uiroot/UIOutGame.prefab`
+- `Assets/Resources/animations/**/OutGameUIShow*.anim`
+- `Assets/Resources/animations/**/OutGameUIHide*.anim`
+- AssetStudio sprite and texture exports only after the owning prefab component is identified.
+
+Required extraction before the next layout pass:
+
+- Full GameObject hierarchy and active state.
+- RectTransform anchor, pivot, anchored position, size delta, and sibling order for every child.
+- Image/SpriteRenderer sprite references, material references, and source asset names.
+- Button/click target nodes and their runtime method evidence from IL2CPP, where available.
+- Text/TextMeshPro node bounds and any serialized text keys or fallback strings.
+- AnimationClip bindings that alter position, scale, alpha, enabled state, or sprite choice.
+
+Screenshots remain useful as regression checks, but they are not the source of truth for component placement. If a sprite looks plausible but its owning prefab component cannot be identified, it should be recorded as a candidate asset and not used for final home-screen positioning.
+
 Latest startup recheck:
 
 - `UILoading/LoadingBar` is a direct child of the 1080 x 1920 root, fixed at anchor `(0.5, 0.0)`, anchored position `(0, 300)`, size `670 x 50`, pivot `(0.5, 0.5)`.

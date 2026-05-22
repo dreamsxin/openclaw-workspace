@@ -265,13 +265,16 @@ Success criteria:
 | T073 | Import recovered FurnitureQuest home icons | done | AssetStudio `Icon_QuestList`, `Icon_UnlockFurniture`, and `Appicon_Remodeling` are copied into `godot-project/assets/outgame_quest`; the home FurnitureQuest entry now uses recovered icon art instead of a text-only box |
 | T074 | Add recovered UIOutGame notification badges | done | AssetStudio `Noti`, `Noti_pin`, `subNoti`, and `Icon_Alert` are copied into `godot-project/assets/outgame_badges`; home Mail, Story, Bag, Menu, FurnitureQuest, and rebuild progress now display recovered notification badges |
 | T075 | Add recovered wallet add controls | done | AssetStudio `Icon_Add` and `Icon_WhiteIcon_Add_s` are copied into `godot-project/assets/outgame_wallet`; the top AP/Gold/Jewel HUD slots now show recovered add buttons beside the wallet values |
+| T076 | Switch UIOutGame restoration to prefab-first layout | planned | Stop visual trial placement for the home screen; extract a complete `UIOutGame` component/layout map from AssetRipper prefabs and animation clips, then use screenshots only as regression validation |
+| T077 | Generate UIOutGame layout evidence report | pending | Produce a dedicated report for `UIOutGame.prefab`, `uiroot/UIOutGame.prefab`, and `OutGameUIShow/Hide*` clips listing hierarchy, RectTransforms, sprite references, text nodes, buttons, and runtime-state unknowns |
+| T078 | Re-align Godot UIOutGame to recovered RectTransforms | pending | Replace hand-tuned home positions with source-derived RectTransform conversion for `Npc_Dialog`, `InGameBtn`, `MaidLobbyBtn`, `FurnitureQuest`, `UIVillageReBuild`, and `UIMaidLD` hit regions |
 
 Immediate next implementation targets:
 
-1. Bind more recovered sprite assets into the Shop, Mail/Settings, Bag/Menu, Story/Memory, and FurnitureQuest shells, then map table/config IDs where available.
-2. Continue main UI exactness work: tighter cafe/furniture placement, original button text/icon composition, and LD maid Spine rendering.
-3. Replace structural placeholders with source-derived request/task/shop/mail/settings/menu rules as table/runtime evidence is mapped.
-4. Use `capture-outgame-popups.bat` frames to tighten per-popup layout and detect visual regressions.
+1. Generate the dedicated `UIOutGame` layout evidence report before making further home-screen placement changes.
+2. Convert the recovered RectTransform/component data into Godot layout inputs, including animation-clip states where available.
+3. Re-align the Godot home shell to source-derived `UIOutGame` positions and keep screenshots as validation rather than placement evidence.
+4. After the prefab-first home alignment is stable, resume asset binding for Shop, Mail/Settings, Bag/Menu, Story/Memory, FurnitureQuest, and LD maid Spine.
 
 ## Tool Acquisition Options
 

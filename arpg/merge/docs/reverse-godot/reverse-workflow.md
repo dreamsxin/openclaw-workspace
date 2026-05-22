@@ -136,6 +136,19 @@ Recommended order:
 
 Keep Godot code independent from Unity naming where possible, but maintain a mapping table for traceability.
 
+## Prefab-First UI Restoration
+
+For `UIOutGame` and other major screens, use this order before changing visible Godot placement:
+
+1. Extract a focused layout report from AssetRipper prefabs and scenes.
+2. Record the exact RectTransform chain for each target component, including parent transforms.
+3. Record sprite, material, text, and button component references for the same nodes.
+4. Inspect related AnimationClip bindings for show/hide or state changes.
+5. Only then update Godot layout or asset binding.
+6. Use `capture-outgame-popups.bat` screenshots to verify the result and catch regressions.
+
+Do not promote a hand-placed sprite to the main UI unless the owning Unity component or runtime code path is known. Screenshot matching is acceptable for verification and for flagging issues, but not as the primary placement source.
+
 ## Godot Startup Verification
 
 Fresh pull behavior:
