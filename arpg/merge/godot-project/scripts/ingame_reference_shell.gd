@@ -4,6 +4,7 @@ extends Control
 signal produce_requested
 signal out_game_requested
 signal inventory_requested
+signal request_detail_requested
 
 const SPRITE_DIR := "res://assets/sprites/"
 const BACKDROP_TEXTURE_PATH := SPRITE_DIR + "BG_gameboard2.png"
@@ -57,6 +58,9 @@ func _gui_input(event: InputEvent) -> void:
 			accept_event()
 		elif action == "inventory":
 			emit_signal("inventory_requested")
+			accept_event()
+		elif action == "request_detail":
+			emit_signal("request_detail_requested")
 			accept_event()
 
 func _notification(what: int) -> void:
@@ -359,6 +363,8 @@ func _rebuild_action_regions() -> void:
 	action_regions["inventory"] = layout.get("inventory", Rect2())
 	action_regions["block_info"] = layout.get("block_info", Rect2())
 	action_regions["produce"] = layout.get("produce", Rect2())
+	var request_layout := _request_layout(Rect2(origin, viewport_size))
+	action_regions["request_detail"] = request_layout.get("quest", Rect2())
 
 func _operation_layout(screen_rect: Rect2) -> Dictionary:
 	var scale_factor := screen_rect.size.x / 1080.0
@@ -451,7 +457,7 @@ func _largest_rect(rects: Array) -> Rect2:
 	return best
 
 func _action_at(local_position: Vector2) -> String:
-	for action in ["produce", "out_game", "inventory"]:
+	for action in ["produce", "out_game", "inventory", "request_detail"]:
 		var rect: Rect2 = action_regions.get(action, Rect2())
 		if rect.has_point(local_position):
 			return action

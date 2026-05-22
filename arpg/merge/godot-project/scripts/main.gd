@@ -17,6 +17,7 @@ const MaidLobbySelectPopupReferenceScreenScript := preload("res://scripts/maid_l
 const MaidDialogPopupReferenceScreenScript := preload("res://scripts/maid_dialog_popup_reference_screen.gd")
 const InGameReferenceShellScript := preload("res://scripts/ingame_reference_shell.gd")
 const InventoryPopupReferenceScreenScript := preload("res://scripts/inventory_popup_reference_screen.gd")
+const RequestDetailPopupReferenceScreenScript := preload("res://scripts/request_detail_popup_reference_screen.gd")
 const UILayoutReferencePreviewScript := preload("res://scripts/ui_layout_reference_preview.gd")
 const CELL_SIZE := 78
 const CELL_GAP := 8
@@ -82,6 +83,7 @@ var maid_lobby_select_popup_reference_screen: Control
 var maid_dialog_popup_reference_screen: Control
 var ingame_reference_shell: Control
 var inventory_popup_reference_screen: Control
+var request_detail_popup_reference_screen: Control
 var boot_services_reference_screen: Control
 var game_start_load_reference_screen: Control
 var reload_scene_reference_screen: Control
@@ -105,6 +107,7 @@ var maid_lobby_select_popup_visible := false
 var maid_dialog_popup_visible := false
 var maid_dialog_index := 0
 var inventory_popup_visible := false
+var request_detail_popup_visible := false
 var gameplay_visible := true
 var restored_startup_mode := false
 var restored_startup_elapsed := 0.0
@@ -159,6 +162,7 @@ func _build_ui() -> void:
 	ingame_reference_shell.produce_requested.connect(_produce_selected)
 	ingame_reference_shell.out_game_requested.connect(_return_to_out_game_from_ingame)
 	ingame_reference_shell.inventory_requested.connect(_toggle_inventory_popup)
+	ingame_reference_shell.request_detail_requested.connect(_show_request_detail_popup)
 	gameplay_root.add_child(ingame_reference_shell)
 
 	var title := Label.new()
@@ -279,6 +283,7 @@ func _build_ui() -> void:
 	_build_maid_lobby_select_popup_reference_screen()
 	_build_maid_dialog_popup_reference_screen()
 	_build_inventory_popup_reference_screen()
+	_build_request_detail_popup_reference_screen()
 
 	drag_preview = TextureRect.new()
 	drag_preview.visible = false
@@ -627,6 +632,14 @@ func _build_inventory_popup_reference_screen() -> void:
 	inventory_popup_reference_screen.close_requested.connect(_hide_inventory_popup)
 	add_child(inventory_popup_reference_screen)
 
+func _build_request_detail_popup_reference_screen() -> void:
+	request_detail_popup_reference_screen = RequestDetailPopupReferenceScreenScript.new()
+	request_detail_popup_reference_screen.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	request_detail_popup_reference_screen.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	request_detail_popup_reference_screen.visible = false
+	request_detail_popup_reference_screen.close_requested.connect(_hide_request_detail_popup)
+	add_child(request_detail_popup_reference_screen)
+
 func _make_currency_label(icon_name: String, pos: Vector2) -> Label:
 	var icon := TextureRect.new()
 	icon.texture = load(SPRITE_DIR + icon_name)
@@ -830,6 +843,7 @@ func _set_gameplay_visible(next_visible: bool) -> void:
 		gameplay_root.visible = gameplay_visible
 	if not gameplay_visible:
 		_hide_inventory_popup()
+		_hide_request_detail_popup()
 
 func _enter_gameplay_from_out_game() -> void:
 	_hide_out_game_app_popup()
@@ -883,6 +897,7 @@ func _enter_gameplay_from_out_game_without_capture() -> void:
 
 func _return_to_out_game_from_ingame() -> void:
 	_hide_inventory_popup()
+	_hide_request_detail_popup()
 	_set_gameplay_visible(false)
 	_show_out_game_reference()
 	_set_status("Returned to UIOutGame from UIInGame/Bottom/Lobby.")
@@ -904,6 +919,20 @@ func _show_out_game_app_popup(app_key: String) -> void:
 func _hide_out_game_app_popup() -> void:
 	out_game_app_popup_visible = false
 	_apply_out_game_app_popup()
+
+func _apply_request_detail_popup() -> void:
+	if request_detail_popup_reference_screen == null:
+		return
+	request_detail_popup_reference_screen.call("set_request_state", request_detail_popup_visible, _selected_block_summary(), _board_block_summaries(), board.wallet)
+
+func _show_request_detail_popup() -> void:
+	request_detail_popup_visible = true
+	_apply_request_detail_popup()
+	_set_status("Opened first-pass UIInGame request detail shell.")
+
+func _hide_request_detail_popup() -> void:
+	request_detail_popup_visible = false
+	_apply_request_detail_popup()
 
 func _show_maid_lobby_select_popup() -> void:
 	maid_lobby_select_popup_visible = true
@@ -1055,6 +1084,7 @@ func _apply_ingame_reference_shell() -> void:
 	ingame_reference_shell.call("set_wallet", board.wallet)
 	ingame_reference_shell.call("set_selected_block", _selected_block_summary())
 	_apply_inventory_popup()
+	_apply_request_detail_popup()
 
 func _set_runtime_canvas_bootstrap_state(progress: float, message: String) -> void:
 	if runtime_canvas_bootstrap_screen == null:
@@ -1545,6 +1575,7 @@ func _refresh_selection() -> void:
 	if ingame_reference_shell != null:
 		ingame_reference_shell.call("set_selected_block", _selected_block_summary())
 	_apply_inventory_popup()
+	_apply_request_detail_popup()
 
 func _selected_block_summary() -> Dictionary:
 	if selected_cell.x < 0:

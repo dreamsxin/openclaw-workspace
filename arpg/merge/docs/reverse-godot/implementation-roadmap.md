@@ -246,6 +246,7 @@ Success criteria:
 | T054 | Replace out-game placeholder art with recovered UI sprites | in progress | Existing committed character, loading, currency, and maid-chat assets are used where available; exact `UIOutGame`/`UIMaidLobby` background, entry-button, app-nav, and popup sprites still need import from AssetStudio/AssetRipper exports |
 | T055 | Record original gameplay and feature analysis | done | `gameplay-and-features.md` now documents the merge-cafe core loop, confirmed systems, content scale, pending unknowns, and reimplementation priority |
 | T056 | Add first out-game app navigation popup shell | done | `UIOutGame` bottom Shop/Story/Bag/Menu actions now open `OutGameAppPopupReferenceScreen`; Maid continues to route to `UIMaidLobby` |
+| T057 | Add first UIInGame request detail popup shell | done | Clicking the `UIInGame/Request` quest card now opens `RequestDetailPopupReferenceScreen` with required item, placeholder rewards, board candidates, and a Deliver action shell |
 
 ## Tool Acquisition Options
 

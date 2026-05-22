@@ -40,7 +40,7 @@ BootServices -> GameStartLoad -> ReloadScene -> RuntimeCanvas/SafeArea -> UILoad
 | Drop rules | decoded `Table_Block` child lists, generated `block_rules.json` | weighted drops and designed drop queues |
 | Wallet | `UserSaveDataMetaInfo.ap/gold/jewel` | AP, gold, jewel HUD values |
 | Inventory UI | `UIInGame/Bottom/UIInventory`, `UIPopup_Inventory` layout evidence | first-pass popup shell |
-| Request strip | `UIInGame/Request/RequestList`, reward slots, skill placeholders | first-pass structural strip |
+| Request UI | `UIInGame/Request/RequestList`, reward slots, skill placeholders | first-pass structural strip and clickable request-detail popup |
 | Cafe/out-game home | `UIOutGame.prefab`, `UIMaidLD`, `InGameBtn`, `MaidLobbyBtn`, `UIVillageReBuild` | first-pass home shell |
 | Maid lobby | `UIMaidLobby.prefab`, `SpinePos`, `Npc_Dialog`, `DialogBtn` | first-pass lobby shell |
 | Maid select popup | `UIPopup_MaidLobbySelect` layout evidence | first-pass selectable popup |
@@ -68,7 +68,7 @@ The main design characteristics are:
 
 - Merge-board play is the core interaction, not only a side minigame.
 - Producers are stateful objects with AP cost, internal energy, drop queues, and cooldown behavior.
-- Requests/orders likely provide the main directed goals for what to merge.
+- Requests/orders likely provide the main directed goals for what to merge, with a request card, required item, reward row, and delivery action surface.
 - The cafe home acts as the main navigation and presentation hub.
 - Maid/NPC/customer systems are large enough to be treated as first-class features.
 - Character presentation uses both static PNG assets and Spine atlas/skeleton pairs.
@@ -94,9 +94,9 @@ These areas have strong evidence but are not yet precise enough for final gamepl
 For gameplay fidelity, the next systems should be restored in this order:
 
 1. Decode `RequestDataManager` and request/order table assets.
-2. Confirm producer runtime semantics in Ghidra for energy, refill, open state, cooldown, and drop selection.
-3. Replace remaining hand-drawn out-game navigation surfaces with recovered UI sprites.
-4. Implement real inventory persistence and item submission to requests.
-5. Continue rebuilding out-game app popups: shop, story/memory, mail/settings, collection, and event surfaces.
-6. Generalize Spine rendering for LD maid presentation outside the loading screen.
-
+2. Bind the current request-detail shell to real request rows, completion checks, and reward grants.
+3. Confirm producer runtime semantics in Ghidra for energy, refill, open state, cooldown, and drop selection.
+4. Replace remaining hand-drawn out-game navigation surfaces with recovered UI sprites.
+5. Implement real inventory persistence and item submission to requests.
+6. Continue rebuilding out-game app popups: shop, story/memory, mail/settings, collection, and event surfaces.
+7. Generalize Spine rendering for LD maid presentation outside the loading screen.
