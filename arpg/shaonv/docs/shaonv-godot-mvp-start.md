@@ -148,6 +148,8 @@ capture-godot-mvp.bat
 
 注意：`Godot_console.exe --headless` 可以执行脚本逻辑，但没有可读取的渲染 viewport texture，不能用于当前 UI 截图。自动截图应使用 `Godot_console.exe` 非 headless 模式创建窗口后，由 `SHAONV_MVP_CAPTURE` 触发内部 viewport 保存。
 
+源码运行阶段角色贴图通过 `Image.load()` 从已提交的原始 PNG 直接创建 `ImageTexture`，不依赖 `.godot/imported/*.ctex`。这是为了避免 `git pull` 后本地没有 Godot 导入缓存时报 `Unable to open file: res://.godot/imported/*.ctex`。后续做导出包时再改回正式导入资源流程。
+
 命令行校验：
 
 ```powershell

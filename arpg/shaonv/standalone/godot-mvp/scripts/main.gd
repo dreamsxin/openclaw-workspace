@@ -834,14 +834,25 @@ func _draw_hero_stage(hero: Dictionary, pos := Vector2(470, 0), size := Vector2(
 	var resource_path := str(hero.get("artResource", ""))
 	if not resource_path.is_empty():
 		var godot_path := "res://%s.png" % resource_path.replace("Art/Spine", "assets/spine")
-		if ResourceLoader.exists(godot_path):
-			texture.texture = load(godot_path)
+		var source_texture := _load_png_source_texture(godot_path)
+		if source_texture != null:
+			texture.texture = source_texture
 		else:
 			var missing := _label("資源缺失\n%s" % godot_path, 16, HORIZONTAL_ALIGNMENT_CENTER)
 			missing.position = pos
 			missing.size = Vector2(size.x, 64)
 			content.add_child(missing)
 	content.add_child(texture)
+
+func _load_png_source_texture(path: String) -> Texture2D:
+	if not FileAccess.file_exists(path):
+		return null
+	var image := Image.new()
+	var error := image.load(path)
+	if error != OK:
+		push_warning("Failed to load PNG source: %s error=%d" % [path, error])
+		return null
+	return ImageTexture.create_from_image(image)
 
 func _show_gacha_rate() -> void:
 	_clear("概率")
