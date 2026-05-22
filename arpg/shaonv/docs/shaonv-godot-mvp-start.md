@@ -129,6 +129,12 @@ standalone/godot-mvp/
 
 ## 6. 运行和校验
 
+Windows 双击运行：
+
+```bat
+run-godot-mvp.bat
+```
+
 命令行校验：
 
 ```powershell
