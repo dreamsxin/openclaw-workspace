@@ -153,6 +153,8 @@ func _draw_attachment(attachment: Dictionary, vertices: Array, bounds: Rect2, ce
 		var c := int(triangles[tri_index + 2])
 		if a >= points.size() or b >= points.size() or c >= points.size():
 			continue
+		if _triangle_area(points[a], points[b], points[c]) < 0.01:
+			continue
 		draw_polygon(
 			PackedVector2Array([points[a], points[b], points[c]]),
 			PackedColorArray([Color.WHITE, Color.WHITE, Color.WHITE]),
@@ -161,6 +163,9 @@ func _draw_attachment(attachment: Dictionary, vertices: Array, bounds: Rect2, ce
 		)
 		drawn += 1
 	return drawn
+
+func _triangle_area(a: Vector2, b: Vector2, c: Vector2) -> float:
+	return abs((b.x - a.x) * (c.y - a.y) - (c.x - a.x) * (b.y - a.y)) * 0.5
 
 func _load_png_source_texture(path: String) -> Texture2D:
 	if not FileAccess.file_exists(path):

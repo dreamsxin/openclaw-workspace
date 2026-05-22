@@ -198,7 +198,20 @@ capture-godot-mvp.bat
 - 当前 UnityPy 对这些 bundle 返回空对象，暂未能直接导出 Login sprite；本轮先按结构和字段还原布局，后续需要用 AssetStudio 或补完整 YooAsset bundle 解码路径继续导出原图。
 - `loading_tip.bytes` 已确认含 `loading_1_1...loading_6_9` 等加载图 key，可作为后续加载提示和背景映射依据。
 
-## 9. 当前还原依据和缺口
+## 9. MainUIView 精修更新
+
+2026-05-22 对进入 `MainScene` 后的第一屏做了一轮结构精修：
+
+- 顶部保留 `pnlPlayerInfo` 等价玩家按钮和 `_topBar/TopResGrid` 等价资源栏，显示等级、名称、战力、邮件、喚靈券和源石。
+- 中央 `WallpaperPanel` 区域改为主视觉层，优先播放当前看板角色 baked Spine 动画，并保留“壁紙/隱藏”控制入口。
+- 左侧补 `btnChapterInfo/txtChapterTitle/svChapterReward` 的等价章节任务面板，并增加挂机收益/收取入口，对齐 `InitPnlTask` 和 `RefreshAutoFight` 证据。
+- 右侧拆成 `pnlCommercialization` 小按钮区和 `pnlFunny` 玩法入口区，覆盖活动、福利、商店、月卡、战役、喚靈、竞技、祈愿、冒险、收获、援助。
+- 底部 `pnlBottom` 改成固定功能栏，覆盖约会、武将、背包、宠物、养成、任务、军团，并保留红点占位。
+- `spine_baked_preview_canvas.gd` 增加退化三角形过滤，避免部分 baked Spine attachment 在 Godot 中触发 `Invalid polygon data`。
+
+本轮仍是结构精修，原 `MainUIView.prefab` 的具体图片、按钮九宫格和动效还未导入；后续应继续导出 MainUI 图集和 prefab RectTransform。
+
+## 10. 当前还原依据和缺口
 
 本轮 Godot UI 还原依据：
 
@@ -216,16 +229,16 @@ capture-godot-mvp.bat
 当前仍未完全还原：
 
 - 启动视频 `launch.mp4`、真实热更进度、服务器/SDK 登录仍未接入；当前为离线可跳过流程。
-- 原 `MainUIView`、`LotteryDrawMainView`、`GalCollectionView`、`CommonHeroView` prefab 的完整 RectTransform 层级尚未转换为 Godot scene。
+- 原 `MainUIView`、`LotteryDrawMainView`、`GalCollectionView`、`CommonHeroView` prefab 的完整 RectTransform 层级尚未转换为 Godot scene；当前 `MainUIView` 已按字段和调用链完成第一轮结构还原。
 - 登录 UI 图集、抽卡 UI 图集、按钮图、真实结果光效、音效仍未批量导入 Godot；当前结果页用 Godot 半透明色块模拟稀有度光效。
 - Spine GDExtension 运行时尚未接入；当前采用 baked Spine 动画，适合 MVP 展示，但不支持运行时换装和混合动画。
 - 原游戏 reward 掉落表仍需继续展开；当前概率和重复碎片已数据化，但仍是基于 `drawconfig/ac_limit_draw` 字段的 MVP 近似规则。
 
-## 10. 下一步
+## 11. 下一步
 
 1. 用 Godot 编辑器检查布局并调整主题、字体、按钮样式。
 2. 使用 AssetStudio 或继续修 YooAsset 解码，导出 `Assets/Game/RawAssets/Sprite/Login` 原图，替换当前登录页几何占位。
-3. 将抽卡 UI 图集、结果光效和音效导入 Godot，并建立 Godot 资源命名规范。
+3. 导出 `Assets/Game/RawAssets/Sprite/MainUI`、`Prefabs/UI/MainUI/MainUIView` 相关图片和 RectTransform，替换当前 MainUIView 几何占位。
 4. 用真实掉落表替换当前 MVP 概率。
 5. 将 `HeroRecruitView/LotteryDrawMainView/LotteryDrawFinishView` 的结构分析转成 Godot Control 节点重建清单。
 6. 把抽卡结果演出、角色详情页、商店和图鉴筛选做成独立 scene，降低 `main.gd` 复杂度。
