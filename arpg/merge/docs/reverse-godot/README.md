@@ -9,6 +9,7 @@ The source tree is a decompiled Android Unity IL2CPP package. Java code is mostl
 - [Project Map](project-map.md): confirmed package structure, important files, and what each directory is for.
 - [Reverse Workflow](reverse-workflow.md): recommended extraction and analysis steps.
 - [Reverse Audit Knowledge](reverse-audit-knowledge.md): low-level manual audit facts such as Unity/TextAsset wrappers, Spine atlas page rules, skin selection, and Godot UV handling.
+- [Spine Animation Authoring Guide](spine-animation-authoring-guide.md): practical Spine animation and texture-production rules for rebuilt character assets.
 - [IL2CPP Code Map](il2cpp-code-map.md): first dump output, class index summary, and high-priority gameplay classes.
 - [Producer Runtime Notes](producer-runtime-notes.md): Ghidra target list for producer energy, cooldown, open-state, and drop runtime methods.
 - [Character System Inventory](character-system-inventory.md): Maid, NPC, customer, costume, chat, and dialog evidence.
