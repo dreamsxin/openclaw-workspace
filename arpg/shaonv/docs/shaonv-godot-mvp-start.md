@@ -53,6 +53,8 @@ standalone/godot-mvp/
 
 - 启动链路：按原分析简化为 `LaunchView -> PreloadingView -> LoginView -> LoadingView -> MainUIView`，使用离线账号进入主界面。
 - 主界面：按原 `MainUIView` 分析重排为顶部玩家/资源栏、壁纸看板区、右侧玩法入口、底部功能栏、章节任务信息。
+- 玩家信息：顶部 `pnlPlayerInfo/btnPlayerInfo` 可点击，显示等级、名称、战力、收集数、抽卡数和看板设置。
+- 设置：简化 `SystemSettingView/PlayerSetting`，支持看板自动播放、音乐、音效开关并写入存档。
 - 抽卡：按 `LotteryDrawMainView -> LotteryDrawPanel` 分析重排为左侧卡池 tab、中部 UP/保底信息、右侧角色展示、底部单抽/十连/概率/记录按钮。
 - 结果页：按 `HeroRecruitView/LotteryRewardShowView` 职责拆分，显示主出货角色、稀有度标题、十连结果格、新角色和重复碎片，点击结果进入角色详情。
 - 图鉴：角色收集状态、持有数量、重复碎片，点击进入角色详情。
@@ -71,6 +73,16 @@ standalone/godot-mvp/
 {
   "tickets": 120,
   "gems": 16800,
+  "profile": {
+    "name": "Player",
+    "level": 88,
+    "base_power": 999999
+  },
+  "settings": {
+    "wallpaper_auto_play": true,
+    "music": true,
+    "effects": true
+  },
   "owned": {},
   "shards": {},
   "pity": {},

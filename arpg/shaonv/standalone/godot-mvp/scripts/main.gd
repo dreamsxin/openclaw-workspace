@@ -12,6 +12,16 @@ var mails: Array = []
 var daily := {}
 var shop := {}
 var save := {
+	"profile": {
+		"name": "Player",
+		"level": 88,
+		"base_power": 999999
+	},
+	"settings": {
+		"wallpaper_auto_play": true,
+		"music": true,
+		"effects": true
+	},
 	"tickets": 120,
 	"gems": 16800,
 	"owned": {},
@@ -85,10 +95,12 @@ func _build_root() -> void:
 	top_bg.size = Vector2(1280, 74)
 	top_bar.add_child(top_bg)
 
-	var profile := _label("Lv.88  玩家\n戰力 999999", 17, HORIZONTAL_ALIGNMENT_LEFT)
-	profile.position = Vector2(22, 10)
-	profile.size = Vector2(210, 52)
-	top_bar.add_child(profile)
+	var profile_button := Button.new()
+	profile_button.text = _profile_summary()
+	profile_button.position = Vector2(18, 10)
+	profile_button.size = Vector2(220, 52)
+	profile_button.pressed.connect(_show_player_info)
+	top_bar.add_child(profile_button)
 
 	title_label = _label("主界面", 28, HORIZONTAL_ALIGNMENT_CENTER)
 	title_label.position = Vector2(486, 16)
@@ -195,6 +207,8 @@ func _enter_main_scene() -> void:
 	_show_home()
 
 func _refresh_wallet() -> void:
+	if top_bar != null and top_bar.get_child_count() > 1 and top_bar.get_child(1) is Button:
+		top_bar.get_child(1).text = _profile_summary()
 	wallet_label.text = "郵件 %d   喚靈券 %s   源石 %s" % [_unclaimed_mail_count(), save.get("tickets", 0), save.get("gems", 0)]
 
 func _show_home() -> void:
@@ -322,6 +336,16 @@ func _show_history() -> void:
 		save = {
 			"tickets": 120,
 			"gems": 16800,
+			"profile": {
+				"name": "Player",
+				"level": 88,
+				"base_power": 999999
+			},
+			"settings": {
+				"wallpaper_auto_play": true,
+				"music": true,
+				"effects": true
+			},
 			"owned": {},
 			"shards": {},
 			"pity": {},
@@ -420,6 +444,41 @@ func _show_hero_detail(hero_id: int) -> void:
 	)
 	_add_action_button("返回圖鑑", Vector2(200, 340), _show_gallery)
 	_add_action_button("前往喚靈", Vector2(346, 340), _show_gacha)
+
+func _show_player_info() -> void:
+	_clear("玩家信息")
+	var profile: Dictionary = save.get("profile", {})
+	var settings: Dictionary = save.get("settings", {})
+	var panel := _panel(Vector2(44, 44), Vector2(620, 360), Color(0.095, 0.078, 0.065, 0.94))
+	content.add_child(panel)
+	var info := _label("玩家資料\n名稱：%s\n等級：%d\n戰力：%d\n\n收集武將：%d\n累計喚靈：%d\n看板自動播放：%s" % [
+		profile.get("name", "Player"),
+		int(profile.get("level", 1)),
+		_player_power(),
+		save.get("owned", {}).size(),
+		int(save.get("draw_count", 0)),
+		"開" if bool(settings.get("wallpaper_auto_play", true)) else "關"
+	], 21)
+	info.position = Vector2(70, 70)
+	info.size = Vector2(520, 230)
+	content.add_child(info)
+	_add_action_button("設定", Vector2(70, 330), _show_settings)
+	_add_action_button("返回主界面", Vector2(216, 330), _show_home, Vector2(146, 44))
+
+func _show_settings() -> void:
+	_clear("設定")
+	var settings: Dictionary = save.get("settings", {})
+	var panel := _panel(Vector2(44, 44), Vector2(700, 370), Color(0.095, 0.078, 0.065, 0.94))
+	content.add_child(panel)
+	var title := _label("SystemSettingView MVP", 30)
+	title.position = Vector2(70, 70)
+	title.size = Vector2(440, 44)
+	content.add_child(title)
+	_add_toggle_button("看板自動播放", "wallpaper_auto_play", Vector2(70, 140), bool(settings.get("wallpaper_auto_play", true)))
+	_add_toggle_button("音樂", "music", Vector2(70, 202), bool(settings.get("music", true)))
+	_add_toggle_button("音效", "effects", Vector2(70, 264), bool(settings.get("effects", true)))
+	_add_action_button("玩家信息", Vector2(70, 340), _show_player_info)
+	_add_action_button("返回主界面", Vector2(216, 340), _show_home, Vector2(146, 44))
 
 func _show_shop() -> void:
 	_clear("商店")
@@ -566,6 +625,7 @@ func _draw_home_side_entries() -> void:
 	_add_action_button("福利", Vector2(1064, 298), _show_daily, Vector2(142, 44))
 	_add_action_button("收穫", Vector2(1064, 356), _show_shop, Vector2(142, 44))
 	_add_action_button("郵件 %d" % _unclaimed_mail_count(), Vector2(1064, 414), _show_mail, Vector2(142, 44))
+	_add_action_button("設定", Vector2(1064, 472), _show_settings, Vector2(142, 44))
 
 func _open_prayer_pool() -> void:
 	save["active_pool_id"] = "prayer"
@@ -597,7 +657,7 @@ func _draw_home_status() -> void:
 	info.position = Vector2(44, 110)
 	info.size = Vector2(246, 118)
 	content.add_child(info)
-	_add_action_button("任務", Vector2(44, 274), _show_tasks, Vector2(112, 42))
+	_add_action_button("玩家", Vector2(44, 274), _show_player_info, Vector2(112, 42))
 	_add_action_button("變更", Vector2(168, 274), _show_gallery, Vector2(112, 42))
 
 func _draw_result_stage(result: Dictionary) -> void:
@@ -700,6 +760,23 @@ func _unclaimed_mail_count() -> int:
 		if not bool(claimed.get(str(mail.get("id", "")), false)):
 			count += 1
 	return count
+
+func _profile_summary() -> String:
+	var profile: Dictionary = save.get("profile", {})
+	return "Lv.%d  %s\n戰力 %d" % [int(profile.get("level", 1)), profile.get("name", "Player"), _player_power()]
+
+func _player_power() -> int:
+	var profile: Dictionary = save.get("profile", {})
+	return int(profile.get("base_power", 0)) + save.get("owned", {}).size() * 24000 + int(save.get("draw_count", 0)) * 120
+
+func _add_toggle_button(label: String, key: String, pos: Vector2, value: bool) -> void:
+	_add_action_button("%s：%s" % [label, "開" if value else "關"], pos, func() -> void:
+		var settings: Dictionary = save.get("settings", {})
+		settings[key] = not bool(settings.get(key, true))
+		save["settings"] = settings
+		_persist()
+		_show_settings()
+	, Vector2(220, 44))
 
 func _label(text: String, size: int, align := HORIZONTAL_ALIGNMENT_LEFT) -> Label:
 	var label := Label.new()
