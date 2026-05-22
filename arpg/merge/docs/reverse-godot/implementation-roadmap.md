@@ -248,6 +248,7 @@ Success criteria:
 | T056 | Add first out-game app navigation popup shell | done | `UIOutGame` bottom Shop/Story/Bag/Menu actions now open `OutGameAppPopupReferenceScreen`; Maid continues to route to `UIMaidLobby` |
 | T057 | Add first UIInGame request detail popup shell | done | Clicking the `UIInGame/Request` quest card now opens `RequestDetailPopupReferenceScreen` with required item, placeholder rewards, board candidates, and a Deliver action shell |
 | T058 | Wire UIOutGame utility buttons | done | The two top-right home buttons now open first-pass Mail and Settings shells through `OutGameAppPopupReferenceScreen` |
+| T059 | Add first UIOutGame FurnitureQuest shell | done | `FurnitureQuest` and `UIVillageReBuild/Fillbar` regions now open `FurnitureQuestPopupReferenceScreen` with rebuild progress, task rows, rewards, and a Go action placeholder |
 
 ## Tool Acquisition Options
 

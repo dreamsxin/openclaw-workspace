@@ -5,6 +5,7 @@ signal ingame_requested
 signal maid_lobby_requested
 signal interaction_requested
 signal app_navigation_requested(app_key: String)
+signal furniture_quest_requested
 
 const OUT_GAME_MAID_STANDIN := "res://assets/characters/maid_costume/Cos_Maid01_Casual_SD.png"
 const SPRITE_DIR := "res://assets/sprites/"
@@ -50,6 +51,9 @@ func _gui_input(event: InputEvent) -> void:
 			accept_event()
 		elif action == "interaction":
 			emit_signal("interaction_requested")
+			accept_event()
+		elif action == "furniture_quest" or action == "village_rebuild":
+			emit_signal("furniture_quest_requested")
 			accept_event()
 		elif action.begins_with("app_"):
 			emit_signal("app_navigation_requested", action.trim_prefix("app_"))
@@ -174,8 +178,9 @@ func _draw_cafe_backdrop(screen_rect: Rect2, layout: Dictionary) -> void:
 	draw_rect(counter, Color(0.32, 0.18, 0.12, 0.44), false, 2.0 * s)
 
 	var furniture_rect: Rect2 = layout["furniture"]
+	var furniture_hover: bool = action_regions.get("furniture_quest", Rect2()).has_point(get_local_mouse_position())
 	draw_rect(furniture_rect, Color(0.18, 0.16, 0.13, 0.62), true)
-	draw_rect(furniture_rect, Color(0.95, 0.78, 0.45, 0.78), false, 2.0 * s)
+	draw_rect(furniture_rect, Color(1.0, 0.84, 0.48, 0.94) if furniture_hover else Color(0.95, 0.78, 0.45, 0.78), false, 2.0 * s)
 	draw_string(ThemeDB.fallback_font, furniture_rect.position + Vector2(0, furniture_rect.size.y * 0.58), "Quest", HORIZONTAL_ALIGNMENT_CENTER, furniture_rect.size.x, int(16.0 * s), Color(1.0, 0.92, 0.68, 0.92))
 
 func _draw_maid_layer(_screen_rect: Rect2, layout: Dictionary) -> void:
@@ -209,8 +214,9 @@ func _draw_maid_layer(_screen_rect: Rect2, layout: Dictionary) -> void:
 func _draw_village_progress(layout: Dictionary) -> void:
 	var s: float = layout["scale"]
 	var bar_rect: Rect2 = layout["progress"]
+	var progress_hover: bool = action_regions.get("village_rebuild", Rect2()).has_point(get_local_mouse_position())
 	draw_rect(bar_rect, Color(0.12, 0.11, 0.1, 0.88), true)
-	draw_rect(bar_rect, Color(0.94, 0.78, 0.45, 0.9), false, 2.0 * s)
+	draw_rect(bar_rect, Color(1.0, 0.84, 0.48, 0.96) if progress_hover else Color(0.94, 0.78, 0.45, 0.9), false, 2.0 * s)
 	var icon_rect := Rect2(bar_rect.position + Vector2(8.0 * s, 8.0 * s), Vector2(bar_rect.size.y - 16.0 * s, bar_rect.size.y - 16.0 * s))
 	draw_circle(icon_rect.get_center(), icon_rect.size.x * 0.5, Color(0.86, 0.58, 0.28, 0.9))
 	draw_string(ThemeDB.fallback_font, icon_rect.position + Vector2(0, icon_rect.size.y * 0.68), "!", HORIZONTAL_ALIGNMENT_CENTER, icon_rect.size.x, int(20.0 * s), Color(1, 0.96, 0.72, 0.96))
@@ -382,6 +388,8 @@ func _rebuild_action_regions() -> void:
 	action_regions["ingame"] = layout["ingame"]
 	action_regions["maid_lobby"] = layout["maid_lobby"]
 	action_regions["interaction"] = layout["interaction"]
+	action_regions["furniture_quest"] = layout["furniture"]
+	action_regions["village_rebuild"] = layout["progress"]
 	var bottom_rect: Rect2 = layout["bottom"]
 	var app_actions := ["app_shop", "app_story", "maid_lobby", "app_bag", "app_menu"]
 	var cell_w := bottom_rect.size.x / float(app_actions.size())
@@ -393,7 +401,7 @@ func _rebuild_action_regions() -> void:
 	action_regions["app_settings"] = Rect2(Vector2(side_x + 40.0 * s, screen_rect.position.y + 12.0 * s), Vector2(30.0 * s, 30.0 * s))
 
 func _action_at(local_position: Vector2) -> String:
-	for action in ["ingame", "maid_lobby", "interaction", "app_mail", "app_settings", "app_shop", "app_story", "app_bag", "app_menu"]:
+	for action in ["ingame", "maid_lobby", "interaction", "furniture_quest", "village_rebuild", "app_mail", "app_settings", "app_shop", "app_story", "app_bag", "app_menu"]:
 		var rect: Rect2 = action_regions.get(action, Rect2())
 		if rect.has_point(local_position):
 			return action
