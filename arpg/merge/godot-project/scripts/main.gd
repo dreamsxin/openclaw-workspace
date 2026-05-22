@@ -24,6 +24,7 @@ const InGameReferenceShellScript := preload("res://scripts/ingame_reference_shel
 const InventoryPopupReferenceScreenScript := preload("res://scripts/inventory_popup_reference_screen.gd")
 const RequestDetailPopupReferenceScreenScript := preload("res://scripts/request_detail_popup_reference_screen.gd")
 const UILayoutReferencePreviewScript := preload("res://scripts/ui_layout_reference_preview.gd")
+const CharacterSpineBrowserScreenScript := preload("res://scripts/character_spine_browser_screen.gd")
 const CELL_SIZE := 78
 const CELL_GAP := 8
 const BOARD_ORIGIN := Vector2(360, 92)
@@ -41,6 +42,7 @@ const STARTUP_CAPTURE_ARG := "--startup-capture-dir="
 const AUTO_ENTER_INGAME_ARG := "--auto-enter-ingame"
 const AUTO_ENTER_MAID_LOBBY_ARG := "--auto-enter-maid-lobby"
 const AUTO_CAPTURE_OUTGAME_POPUPS_ARG := "--auto-capture-outgame-popups"
+const OPEN_SPINE_BROWSER_ARG := "--spine-browser"
 const SPRITE_DIR := "res://assets/sprites/"
 const CHARACTER_DIR := "res://data/characters/"
 const UI_LAYOUT_REFERENCE := "res://data/ui_layout_reference.json"
@@ -99,6 +101,7 @@ var maid_dialog_popup_reference_screen: Control
 var ingame_reference_shell: Control
 var inventory_popup_reference_screen: Control
 var request_detail_popup_reference_screen: Control
+var character_spine_browser_screen: Control
 var boot_services_reference_screen: Control
 var game_start_load_reference_screen: Control
 var reload_scene_reference_screen: Control
@@ -143,6 +146,7 @@ var auto_enter_maid_lobby := false
 var auto_enter_maid_lobby_done := false
 var auto_capture_outgame_popups := false
 var auto_capture_outgame_popups_done := false
+var open_spine_browser := false
 
 func _ready() -> void:
 	var user_args := OS.get_cmdline_user_args()
@@ -150,6 +154,7 @@ func _ready() -> void:
 	auto_enter_ingame = user_args.has(AUTO_ENTER_INGAME_ARG)
 	auto_enter_maid_lobby = user_args.has(AUTO_ENTER_MAID_LOBBY_ARG)
 	auto_capture_outgame_popups = user_args.has(AUTO_CAPTURE_OUTGAME_POPUPS_ARG)
+	open_spine_browser = user_args.has(OPEN_SPINE_BROWSER_ARG)
 	for arg in user_args:
 		if arg.begins_with(STARTUP_CAPTURE_ARG):
 			startup_capture_dir = arg.substr(STARTUP_CAPTURE_ARG.length())
@@ -166,6 +171,8 @@ func _ready() -> void:
 	_build_ui()
 	_refresh_wallet()
 	_refresh_board()
+	if open_spine_browser:
+		call_deferred("_show_character_spine_browser")
 
 func _build_ui() -> void:
 	var bg := TextureRect.new()
@@ -271,6 +278,14 @@ func _build_ui() -> void:
 	gameplay_root.add_child(out_game_button)
 	portrait_hidden_controls.append(out_game_button)
 
+	var spine_button := _make_button("Spine", Vector2(172, 502))
+	spine_button.size = Vector2(122, 40)
+	spine_button.pressed.connect(func() -> void:
+		_show_character_spine_browser()
+	)
+	gameplay_root.add_child(spine_button)
+	portrait_hidden_controls.append(spine_button)
+
 	selected_label = Label.new()
 	selected_label.position = Vector2(34, 602)
 	selected_label.size = Vector2(260, 40)
@@ -317,6 +332,7 @@ func _build_ui() -> void:
 	_build_maid_dialog_popup_reference_screen()
 	_build_inventory_popup_reference_screen()
 	_build_request_detail_popup_reference_screen()
+	_build_character_spine_browser_screen()
 
 	drag_preview = TextureRect.new()
 	drag_preview.visible = false
@@ -718,6 +734,14 @@ func _build_request_detail_popup_reference_screen() -> void:
 	request_detail_popup_reference_screen.visible = false
 	request_detail_popup_reference_screen.close_requested.connect(_hide_request_detail_popup)
 	add_child(request_detail_popup_reference_screen)
+
+func _build_character_spine_browser_screen() -> void:
+	character_spine_browser_screen = CharacterSpineBrowserScreenScript.new()
+	character_spine_browser_screen.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	character_spine_browser_screen.visible = false
+	character_spine_browser_screen.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	character_spine_browser_screen.close_requested.connect(_hide_character_spine_browser)
+	add_child(character_spine_browser_screen)
 
 func _make_currency_label(icon_name: String, pos: Vector2) -> Label:
 	var icon := TextureRect.new()
@@ -1245,6 +1269,20 @@ func _show_request_detail_popup() -> void:
 func _hide_request_detail_popup() -> void:
 	request_detail_popup_visible = false
 	_apply_request_detail_popup()
+
+func _show_character_spine_browser() -> void:
+	if character_spine_browser_screen == null:
+		return
+	character_spine_browser_screen.visible = true
+	character_spine_browser_screen.call("set_browser_open", true)
+	_set_status("Opened character Spine browser.")
+	_maybe_capture_named_frame("18-character-spine-browser")
+
+func _hide_character_spine_browser() -> void:
+	if character_spine_browser_screen == null:
+		return
+	character_spine_browser_screen.call("set_browser_open", false)
+	_set_status("Closed character Spine browser.")
 
 func _show_maid_lobby_select_popup() -> void:
 	maid_lobby_select_popup_visible = true
@@ -1813,6 +1851,10 @@ func _on_block_input(event: InputEvent, cell: Vector2i, block_id: String) -> voi
 		_update_drag_preview()
 
 func _input(event: InputEvent) -> void:
+	if character_spine_browser_screen != null and character_spine_browser_screen.visible:
+		if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
+			_hide_character_spine_browser()
+		return
 	if inventory_popup_visible:
 		if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
 			_hide_inventory_popup()

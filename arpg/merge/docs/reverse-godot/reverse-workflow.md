@@ -210,6 +210,30 @@ It runs the restored startup flow with `--auto-capture-outgame-popups` and write
 17-outgame-menu.png
 ```
 
+Use the character Spine browser when validating recovered maid/customer skeleton assets:
+
+```powershell
+.\run-spine-browser.bat
+```
+
+To regenerate the browser data from AssetRipper raw TextAssets:
+
+```powershell
+node .\scripts\reverse\bake_character_spine_previews.mjs --fps=8 --max-duration=0.9 --max-clips=2
+```
+
+To capture the browser regression frame:
+
+```powershell
+.\capture-spine-browser.bat
+```
+
+It writes:
+
+```text
+reverse-output/spine-browser-captures/18-character-spine-browser.png
+```
+
 Checks:
 
 - `01-bootservices.png` should show the recovered pre-UI service order: runtime initialize hooks, `GameManager`, high score service, login/network gates, `ReloadManager`, and `UIManager`.
@@ -224,6 +248,7 @@ Checks:
 - `10-ingame.png` from `capture-gameplay.bat` should show the first portrait gameplay shell after `UIOutGame/InGameBtn`, with the board centered, a producer auto-selected for regression, the recovered top `Request/RequestList` strip visible, and the recovered bottom operation bar showing Bag, Cafe, `UIBlockInfo`, `Btn_BoxOpen`, `Btn_Use`, and `Btn_CoolTime` instead of standalone debug buttons.
 - `11-inventory.png` from `capture-gameplay.bat` should show the first-pass `UIPopup_Inventory` shell opened by the recovered Bag hit region, with separate `ProduceInventory` and `NormalInventory` slot sections.
 - `10-outgame-home.png` through `17-outgame-menu.png` from `capture-outgame-popups.bat` should cover the current asset-backed `UIOutGame` home screen and every split first-pass out-game popup.
+- `18-character-spine-browser.png` from `capture-spine-browser.bat` should show the list of recovered character skeletons on the left and a textured animated Spine preview in the main pane.
 - The `UIOutGame/InGameBtn` hit region should be clickable in `run-game.bat` and should enter the playable merge-board prototype. For headless validation, run `.\tools\Godot\Godot_console.exe --path .\godot-project --headless --quit-after 6 -- --restored-startup --auto-enter-ingame`.
 - The `UIOutGame/MaidLobbyBtn` hit region should be clickable in `run-game.bat` and should enter the first `UIMaidLobby` shell. For headless validation, run `.\tools\Godot\Godot_console.exe --path .\godot-project --headless --quit-after 9 -- --restored-startup --auto-enter-maid-lobby`; with a startup capture directory it writes `10-maidlobby.png`, `11-maidlobbyselect.png`, and `12-maiddialog.png`.
 - If the second screen shows only the progress bar, first check UV handling. The baked Spine UVs are normalized `0..1`; do not multiply them by texture page size before passing them to Godot `draw_polygon`.

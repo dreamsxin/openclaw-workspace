@@ -1,0 +1,4184 @@
+{
+  "schema": "openclaw-character-spine-browser-v1",
+  "generated_by": "scripts/reverse/bake_character_spine_previews.mjs",
+  "runtime": "@esotericsoftware/spine-core@4.2.43",
+  "bake": {
+    "fps": 8,
+    "maxDuration": 0.9,
+    "maxClips": 2,
+    "sourceTextRoot": "reverse-output/assets/assetripper-primary/Assets/TextAsset"
+  },
+  "totals": {
+    "candidates": 83,
+    "baked": 82,
+    "failed": 1
+  },
+  "characters": [
+    {
+      "name": "Ch_Customer01_SD",
+      "category": "customer",
+      "baked_path": "res://assets/characters/customer/Ch_Customer01_SD.baked.json",
+      "page_paths": {
+        "Ch_Customer01_SD.png": "res://assets/characters/customer/Ch_Customer01_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "-7334df2a-51956204",
+        "width": 237,
+        "height": 365,
+        "bones": 130,
+        "slots": 43,
+        "skins": [
+          "default",
+          "01 Idle",
+          "03 Interactive"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 2,
+            "timelines": 76
+          },
+          {
+            "name": "02 Ready_ef",
+            "duration": 2,
+            "timelines": 114
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 2,
+            "timelines": 61
+          },
+          {
+            "name": "05 Interaction2",
+            "duration": 0.6667,
+            "timelines": 77
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready_ef"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Customer01_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Customer01_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/customer/Ch_Customer01_SD.baked.json"
+    },
+    {
+      "name": "Ch_Customer02_SD",
+      "category": "customer",
+      "baked_path": "res://assets/characters/customer/Ch_Customer02_SD.baked.json",
+      "page_paths": {
+        "Ch_Customer02_SD.png": "res://assets/characters/customer/Ch_Customer02_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "-3cedb89d321a53ad",
+        "width": 231,
+        "height": 394.382,
+        "bones": 108,
+        "slots": 39,
+        "skins": [
+          "default",
+          "01 Idle",
+          "03 Interactive"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 2,
+            "timelines": 63
+          },
+          {
+            "name": "02 Ready_ef",
+            "duration": 2,
+            "timelines": 101
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 2,
+            "timelines": 68
+          },
+          {
+            "name": "05 Interaction2",
+            "duration": 0.6667,
+            "timelines": 76
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready_ef"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Customer02_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Customer02_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/customer/Ch_Customer02_SD.baked.json"
+    },
+    {
+      "name": "Ch_Customer02_Summer2025Event_01_SD",
+      "category": "customer",
+      "baked_path": "res://assets/characters/customer/Ch_Customer02_Summer2025Event_01_SD.baked.json",
+      "page_paths": {
+        "Ch_Customer02_Summer2025Event_01_SD.png": "res://assets/characters/customer/Ch_Customer02_Summer2025Event_01_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "54187c05-5099e845",
+        "width": 231,
+        "height": 387.015,
+        "bones": 108,
+        "slots": 41,
+        "skins": [
+          "default",
+          "01 Idle",
+          "03 Interactive"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 2,
+            "timelines": 63
+          },
+          {
+            "name": "02 Ready",
+            "duration": 2,
+            "timelines": 63
+          },
+          {
+            "name": "02 Ready_ef",
+            "duration": 2,
+            "timelines": 101
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 2,
+            "timelines": 69
+          },
+          {
+            "name": "04 Complete_Ready",
+            "duration": 2,
+            "timelines": 101
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Customer02_Summer2025Event_01_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Customer02_Summer2025Event_01_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/customer/Ch_Customer02_Summer2025Event_01_SD.baked.json"
+    },
+    {
+      "name": "Ch_Customer03_SD",
+      "category": "customer",
+      "baked_path": "res://assets/characters/customer/Ch_Customer03_SD.baked.json",
+      "page_paths": {
+        "Ch_Customer03_SD.png": "res://assets/characters/customer/Ch_Customer03_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "-38dac30c-22932dcf",
+        "width": 310.768,
+        "height": 399.316,
+        "bones": 152,
+        "slots": 45,
+        "skins": [
+          "default",
+          "01 Idle"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 2,
+            "timelines": 117
+          },
+          {
+            "name": "02 Ready_ef",
+            "duration": 2,
+            "timelines": 129
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 2,
+            "timelines": 123
+          },
+          {
+            "name": "05 Interaction2",
+            "duration": 0.6667,
+            "timelines": 124
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready_ef"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Customer03_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Customer03_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/customer/Ch_Customer03_SD.baked.json"
+    },
+    {
+      "name": "Ch_Customer04_SD",
+      "category": "customer",
+      "baked_path": "res://assets/characters/customer/Ch_Customer04_SD.baked.json",
+      "page_paths": {
+        "Ch_Customer04_SD.png": "res://assets/characters/customer/Ch_Customer04_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "-2500d98e-49d40e09",
+        "width": 280.461,
+        "height": 392.2,
+        "bones": 93,
+        "slots": 39,
+        "skins": [
+          "default",
+          "01 Idle",
+          "02 Interactive"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 2,
+            "timelines": 65
+          },
+          {
+            "name": "02 Ready_ef",
+            "duration": 2,
+            "timelines": 103
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 2,
+            "timelines": 67
+          },
+          {
+            "name": "05 Interaction2",
+            "duration": 0.6667,
+            "timelines": 62
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready_ef"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Customer04_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Customer04_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/customer/Ch_Customer04_SD.baked.json"
+    },
+    {
+      "name": "Ch_Customer04_Summer2025Event_01_SD",
+      "category": "customer",
+      "baked_path": "res://assets/characters/customer/Ch_Customer04_Summer2025Event_01_SD.baked.json",
+      "page_paths": {
+        "Ch_Customer04_Summer2025Event_01_SD.png": "res://assets/characters/customer/Ch_Customer04_Summer2025Event_01_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "-45c78b2c-3133c829",
+        "width": 268.662,
+        "height": 391.342,
+        "bones": 93,
+        "slots": 39,
+        "skins": [
+          "default",
+          "01 Idle",
+          "02 Interactive"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 2,
+            "timelines": 65
+          },
+          {
+            "name": "02 Ready",
+            "duration": 2,
+            "timelines": 65
+          },
+          {
+            "name": "02 Ready_ef",
+            "duration": 2,
+            "timelines": 103
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 2,
+            "timelines": 67
+          },
+          {
+            "name": "04 Complete_Ready",
+            "duration": 2,
+            "timelines": 103
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Customer04_Summer2025Event_01_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Customer04_Summer2025Event_01_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/customer/Ch_Customer04_Summer2025Event_01_SD.baked.json"
+    },
+    {
+      "name": "Ch_Customer05_SD",
+      "category": "customer",
+      "baked_path": "res://assets/characters/customer/Ch_Customer05_SD.baked.json",
+      "page_paths": {
+        "Ch_Customer05_SD.png": "res://assets/characters/customer/Ch_Customer05_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "3976fa9238a13124",
+        "width": 247.433,
+        "height": 396.76,
+        "bones": 147,
+        "slots": 41,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 2,
+            "timelines": 107
+          },
+          {
+            "name": "02 Ready_ef",
+            "duration": 2,
+            "timelines": 148
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 3.3333,
+            "timelines": 115
+          },
+          {
+            "name": "05 Interaction2",
+            "duration": 0.6667,
+            "timelines": 200
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready_ef"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Customer05_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Customer05_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/customer/Ch_Customer05_SD.baked.json"
+    },
+    {
+      "name": "Ch_Customer06_SD",
+      "category": "customer",
+      "baked_path": "res://assets/characters/customer/Ch_Customer06_SD.baked.json",
+      "page_paths": {
+        "Ch_Customer06_SD.png": "res://assets/characters/customer/Ch_Customer06_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "-5d87f8b52b227558",
+        "width": 305.741,
+        "height": 422.055,
+        "bones": 153,
+        "slots": 51,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 2,
+            "timelines": 99
+          },
+          {
+            "name": "02 Ready_ef",
+            "duration": 2,
+            "timelines": 137
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 1.3333,
+            "timelines": 114
+          },
+          {
+            "name": "05 Interaction2",
+            "duration": 0.8333,
+            "timelines": 114
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready_ef"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Customer06_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Customer06_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/customer/Ch_Customer06_SD.baked.json"
+    },
+    {
+      "name": "Ch_Customer07_Summer2025Event_01_SD",
+      "category": "customer",
+      "baked_path": "res://assets/characters/customer/Ch_Customer07_Summer2025Event_01_SD.baked.json",
+      "page_paths": {
+        "Ch_Customer07_Summer2025Event_01_SD.png": "res://assets/characters/customer/Ch_Customer07_Summer2025Event_01_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "29e97e5721077f7c",
+        "width": 250.787,
+        "height": 392.44,
+        "bones": 84,
+        "slots": 40,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 2,
+            "timelines": 35
+          },
+          {
+            "name": "02 Ready",
+            "duration": 2,
+            "timelines": 35
+          },
+          {
+            "name": "02 Ready_ef",
+            "duration": 2,
+            "timelines": 74
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 2.6667,
+            "timelines": 61
+          },
+          {
+            "name": "04 Complete_Ready",
+            "duration": 2,
+            "timelines": 74
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Customer07_Summer2025Event_01_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Customer07_Summer2025Event_01_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/customer/Ch_Customer07_Summer2025Event_01_SD.baked.json"
+    },
+    {
+      "name": "Ch_Customer08_Summer2025Event_01_SD",
+      "category": "customer",
+      "baked_path": "res://assets/characters/customer/Ch_Customer08_Summer2025Event_01_SD.baked.json",
+      "page_paths": {
+        "Ch_Customer08_Summer2025Event_01_SD.png": "res://assets/characters/customer/Ch_Customer08_Summer2025Event_01_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "-1dc30ff91fdd747d",
+        "width": 276.852,
+        "height": 399.916,
+        "bones": 136,
+        "slots": 43,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 2.0667,
+            "timelines": 72
+          },
+          {
+            "name": "02 Ready",
+            "duration": 2.0667,
+            "timelines": 72
+          },
+          {
+            "name": "02 Ready_ef",
+            "duration": 2.0667,
+            "timelines": 109
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 2.6667,
+            "timelines": 78
+          },
+          {
+            "name": "04 Complete_Ready",
+            "duration": 2.0667,
+            "timelines": 109
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Customer08_Summer2025Event_01_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Customer08_Summer2025Event_01_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/customer/Ch_Customer08_Summer2025Event_01_SD.baked.json"
+    },
+    {
+      "name": "Ch_Customer09_SD",
+      "category": "customer",
+      "baked_path": "res://assets/characters/customer/Ch_Customer09_SD.baked.json",
+      "page_paths": {
+        "Ch_Customer09_SD.png": "res://assets/characters/customer/Ch_Customer09_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "-401d2940-7901d02a",
+        "width": 242.396,
+        "height": 380.262,
+        "bones": 82,
+        "slots": 37,
+        "skins": [
+          "default",
+          "03 Interactive"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 2.0667,
+            "timelines": 35
+          },
+          {
+            "name": "02 Ready_ef",
+            "duration": 2.0667,
+            "timelines": 78
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 2.0667,
+            "timelines": 42
+          },
+          {
+            "name": "03 Interaction2",
+            "duration": 2.4,
+            "timelines": 52
+          },
+          {
+            "name": "05 Interaction2",
+            "duration": 0.8333,
+            "timelines": 56
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready_ef"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Customer09_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Customer09_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/customer/Ch_Customer09_SD.baked.json"
+    },
+    {
+      "name": "Ch_Customer11_Summer2025Event_01_SD",
+      "category": "customer",
+      "baked_path": "res://assets/characters/customer/Ch_Customer11_Summer2025Event_01_SD.baked.json",
+      "page_paths": {
+        "Ch_Customer11_Summer2025Event_01_SD.png": "res://assets/characters/customer/Ch_Customer11_Summer2025Event_01_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "3bea603b-38cd3725",
+        "width": 267.04,
+        "height": 396.633,
+        "bones": 77,
+        "slots": 38,
+        "skins": [
+          "default",
+          "01 Idle",
+          "03 Interaction"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 2.6667,
+            "timelines": 28
+          },
+          {
+            "name": "02 Ready",
+            "duration": 2.6667,
+            "timelines": 27
+          },
+          {
+            "name": "02 Ready_ef",
+            "duration": 2.6667,
+            "timelines": 65
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 2,
+            "timelines": 25
+          },
+          {
+            "name": "03 Interaction 2",
+            "duration": 4,
+            "timelines": 31
+          },
+          {
+            "name": "04 Complete_Ready",
+            "duration": 2.6667,
+            "timelines": 65
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Customer11_Summer2025Event_01_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Customer11_Summer2025Event_01_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/customer/Ch_Customer11_Summer2025Event_01_SD.baked.json"
+    },
+    {
+      "name": "Ch_Customer12_SD",
+      "category": "customer",
+      "baked_path": "res://assets/characters/customer/Ch_Customer12_SD.baked.json",
+      "page_paths": {
+        "Ch_Customer12_SD.png": "res://assets/characters/customer/Ch_Customer12_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "4bf6ab114584d4a5",
+        "width": 243.252,
+        "height": 382.993,
+        "bones": 64,
+        "slots": 38,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 4.0667,
+            "timelines": 31
+          },
+          {
+            "name": "02 Ready_ef",
+            "duration": 2,
+            "timelines": 69
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 2,
+            "timelines": 30
+          },
+          {
+            "name": "04 Complete_Ready",
+            "duration": 2,
+            "timelines": 67
+          },
+          {
+            "name": "05 Interaction2",
+            "duration": 0.7667,
+            "timelines": 46
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready_ef"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Customer12_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Customer12_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/customer/Ch_Customer12_SD.baked.json"
+    },
+    {
+      "name": "Ch_Customer13_SD",
+      "category": "customer",
+      "baked_path": "res://assets/characters/customer/Ch_Customer13_SD.baked.json",
+      "page_paths": {
+        "Ch_Customer13_SD.png": "res://assets/characters/customer/Ch_Customer13_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "4155903268333d75",
+        "width": 293.171,
+        "height": 398.825,
+        "bones": 147,
+        "slots": 50,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 5.3333,
+            "timelines": 109
+          },
+          {
+            "name": "02 Ready_ef",
+            "duration": 2.6667,
+            "timelines": 145
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 2.1667,
+            "timelines": 137
+          },
+          {
+            "name": "05 Interaction2",
+            "duration": 0.8333,
+            "timelines": 122
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready_ef"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Customer13_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Customer13_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/customer/Ch_Customer13_SD.baked.json"
+    },
+    {
+      "name": "Ch_Customer13_Summer2025Event_01_SD",
+      "category": "customer",
+      "baked_path": "res://assets/characters/customer/Ch_Customer13_Summer2025Event_01_SD.baked.json",
+      "page_paths": {
+        "Ch_Customer13_Summer2025Event_01_SD.png": "res://assets/characters/customer/Ch_Customer13_Summer2025Event_01_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "5f68b6ea-7ecf34de",
+        "width": 298.716,
+        "height": 398.825,
+        "bones": 113,
+        "slots": 47,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 5.3333,
+            "timelines": 81
+          },
+          {
+            "name": "02 Ready",
+            "duration": 2.6667,
+            "timelines": 70
+          },
+          {
+            "name": "02 Ready_ef",
+            "duration": 2.6667,
+            "timelines": 115
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 2.1667,
+            "timelines": 107
+          },
+          {
+            "name": "04 Complete_Ready",
+            "duration": 2.6667,
+            "timelines": 115
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Customer13_Summer2025Event_01_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Customer13_Summer2025Event_01_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/customer/Ch_Customer13_Summer2025Event_01_SD.baked.json"
+    },
+    {
+      "name": "Ch_Customer14_SD",
+      "category": "customer",
+      "baked_path": "res://assets/characters/customer/Ch_Customer14_SD.baked.json",
+      "page_paths": {
+        "Ch_Customer14_SD.png": "res://assets/characters/customer/Ch_Customer14_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "-77156285-793067cd",
+        "width": 340.482,
+        "height": 409.887,
+        "bones": 105,
+        "slots": 40,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 2,
+            "timelines": 67
+          },
+          {
+            "name": "02 Ready_ef",
+            "duration": 2,
+            "timelines": 106
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 2.1667,
+            "timelines": 73
+          },
+          {
+            "name": "05 Interaction2",
+            "duration": 2.6667,
+            "timelines": 79
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready_ef"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Customer14_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Customer14_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/customer/Ch_Customer14_SD.baked.json"
+    },
+    {
+      "name": "Ch_Customer15_SD",
+      "category": "customer",
+      "baked_path": "res://assets/characters/customer/Ch_Customer15_SD.baked.json",
+      "page_paths": {
+        "Ch_Customer15_SD.png": "res://assets/characters/customer/Ch_Customer15_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "2d3924643cd7b7c",
+        "width": 299.095,
+        "height": 403.426,
+        "bones": 64,
+        "slots": 53,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 5.3333,
+            "timelines": 32
+          },
+          {
+            "name": "02 Ready_ef",
+            "duration": 2.6667,
+            "timelines": 79
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 2.8333,
+            "timelines": 52
+          },
+          {
+            "name": "04 Complete_Ready",
+            "duration": 5.3333,
+            "timelines": 72
+          },
+          {
+            "name": "05 Interaction2",
+            "duration": 0.8333,
+            "timelines": 39
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready_ef"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Customer15_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Customer15_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/customer/Ch_Customer15_SD.baked.json"
+    },
+    {
+      "name": "Ch_Maid01_Basic01_SD",
+      "category": "maid_base",
+      "baked_path": "res://assets/characters/maid_base/Ch_Maid01_Basic01_SD.baked.json",
+      "page_paths": {
+        "Ch_Maid01_Basic01_SD.png": "res://assets/characters/maid_base/Ch_Maid01_Basic01_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "-151fd2c0-e805e85",
+        "width": 262,
+        "height": 401,
+        "bones": 137,
+        "slots": 42,
+        "skins": [
+          "default",
+          "01 Idle",
+          "03 Interaction"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 2,
+            "timelines": 95
+          },
+          {
+            "name": "02 Ready",
+            "duration": 2,
+            "timelines": 94
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 2,
+            "timelines": 97
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Maid01_Basic01_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Maid01_Basic01_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_base/Ch_Maid01_Basic01_SD.baked.json"
+    },
+    {
+      "name": "Ch_Maid01_Basic01_SD_UI",
+      "category": "maid_base",
+      "baked_path": "res://assets/characters/maid_base/Ch_Maid01_Basic01_SD_UI.baked.json",
+      "page_paths": {
+        "Ch_Maid01_Basic01_SD_UI.png": "res://assets/characters/maid_base/Ch_Maid01_Basic01_SD_UI.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "-fa7614d-44eb67bb",
+        "width": 262,
+        "height": 294.289,
+        "bones": 137,
+        "slots": 43,
+        "skins": [
+          "default",
+          "01 Idle",
+          "03 Interaction"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 2,
+            "timelines": 73
+          },
+          {
+            "name": "02 Ready",
+            "duration": 2,
+            "timelines": 94
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 2,
+            "timelines": 75
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Maid01_Basic01_SD_UI.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Maid01_Basic01_SD_UI.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_base/Ch_Maid01_Basic01_SD_UI.baked.json"
+    },
+    {
+      "name": "Ch_Maid03_Basic01_LD",
+      "category": "maid_base",
+      "baked_path": "res://assets/characters/maid_base/Ch_Maid03_Basic01_LD.baked.json",
+      "page_paths": {
+        "Ch_Maid03_Basic01_LD.png": "res://assets/characters/maid_base/Ch_Maid03_Basic01_LD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "164b885466bc78ef",
+        "width": 1052.507,
+        "height": 2083.469,
+        "bones": 276,
+        "slots": 77,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 4,
+            "timelines": 179
+          },
+          {
+            "name": "01 Idle_Happy",
+            "duration": 4,
+            "timelines": 191
+          },
+          {
+            "name": "02 Happy",
+            "duration": 1.6667,
+            "timelines": 153
+          },
+          {
+            "name": "03 Surprise",
+            "duration": 4.3333,
+            "timelines": 207
+          },
+          {
+            "name": "04 Sad",
+            "duration": 4,
+            "timelines": 166
+          },
+          {
+            "name": "05 Angry",
+            "duration": 4,
+            "timelines": 183
+          },
+          {
+            "name": "06 Cry",
+            "duration": 4,
+            "timelines": 168
+          },
+          {
+            "name": "07 Signature",
+            "duration": 4,
+            "timelines": 186
+          },
+          {
+            "name": "08 Sigh",
+            "duration": 4,
+            "timelines": 188
+          },
+          {
+            "name": "09 Embarrassing",
+            "duration": 4,
+            "timelines": 188
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "01 Idle_Happy"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Maid03_Basic01_LD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Maid03_Basic01_LD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_base/Ch_Maid03_Basic01_LD.baked.json"
+    },
+    {
+      "name": "Ch_Maid03_Basic01_SD",
+      "category": "maid_base",
+      "baked_path": "res://assets/characters/maid_base/Ch_Maid03_Basic01_SD.baked.json",
+      "page_paths": {
+        "Ch_Maid03_Basic01_SD.png": "res://assets/characters/maid_base/Ch_Maid03_Basic01_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "5b0ceca6-4649b63d",
+        "width": 231.394,
+        "height": 432.491,
+        "bones": 158,
+        "slots": 39,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 2,
+            "timelines": 135
+          },
+          {
+            "name": "02 Ready",
+            "duration": 2,
+            "timelines": 135
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 2,
+            "timelines": 145
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Maid03_Basic01_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Maid03_Basic01_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_base/Ch_Maid03_Basic01_SD.baked.json"
+    },
+    {
+      "name": "Ch_Maid04_Basic01_SD",
+      "category": "maid_base",
+      "baked_path": "res://assets/characters/maid_base/Ch_Maid04_Basic01_SD.baked.json",
+      "page_paths": {
+        "Ch_Maid04_Basic01_SD.png": "res://assets/characters/maid_base/Ch_Maid04_Basic01_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "-55adcdea-21d70f27",
+        "width": 244.657,
+        "height": 405.909,
+        "bones": 172,
+        "slots": 41,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 2,
+            "timelines": 140
+          },
+          {
+            "name": "02 Ready",
+            "duration": 2,
+            "timelines": 140
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 2,
+            "timelines": 149
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Maid04_Basic01_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Maid04_Basic01_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_base/Ch_Maid04_Basic01_SD.baked.json"
+    },
+    {
+      "name": "Ch_Maid05_Basic01_LD",
+      "category": "maid_base",
+      "baked_path": "res://assets/characters/maid_base/Ch_Maid05_Basic01_LD.baked.json",
+      "page_paths": {
+        "Ch_Maid05_Basic01_LD.png": "res://assets/characters/maid_base/Ch_Maid05_Basic01_LD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "504d094a6a5bacb1",
+        "width": 819.386,
+        "height": 1902.565,
+        "bones": 285,
+        "slots": 69,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 6,
+            "timelines": 234
+          },
+          {
+            "name": "02 Happy",
+            "duration": 3,
+            "timelines": 248
+          },
+          {
+            "name": "03 Sad",
+            "duration": 3,
+            "timelines": 249
+          },
+          {
+            "name": "04 Angry",
+            "duration": 3,
+            "timelines": 249
+          },
+          {
+            "name": "05 Surp",
+            "duration": 3,
+            "timelines": 248
+          },
+          {
+            "name": "06 Embar",
+            "duration": 3,
+            "timelines": 246
+          },
+          {
+            "name": "07 Sigh",
+            "duration": 3,
+            "timelines": 250
+          },
+          {
+            "name": "08 Sig",
+            "duration": 3,
+            "timelines": 249
+          },
+          {
+            "name": "09 Interaction",
+            "duration": 1.3333,
+            "timelines": 248
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Happy"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Maid05_Basic01_LD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Maid05_Basic01_LD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_base/Ch_Maid05_Basic01_LD.baked.json"
+    },
+    {
+      "name": "Ch_Maid05_Basic01_SD",
+      "category": "maid_base",
+      "baked_path": "res://assets/characters/maid_base/Ch_Maid05_Basic01_SD.baked.json",
+      "page_paths": {
+        "Ch_Maid05_Basic01_SD.png": "res://assets/characters/maid_base/Ch_Maid05_Basic01_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "6467ad7f-444abb02",
+        "width": 271.236,
+        "height": 416.881,
+        "bones": 98,
+        "slots": 38,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 5.3333,
+            "timelines": 69
+          },
+          {
+            "name": "02 Ready",
+            "duration": 2.6667,
+            "timelines": 69
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 2.3333,
+            "timelines": 69
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Maid05_Basic01_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Maid05_Basic01_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_base/Ch_Maid05_Basic01_SD.baked.json"
+    },
+    {
+      "name": "Ch_Maid06_Basic01_LD",
+      "category": "maid_base",
+      "baked_path": "res://assets/characters/maid_base/Ch_Maid06_Basic01_LD.baked.json",
+      "page_paths": {
+        "Ch_Maid06_Basic01_LD.png": "res://assets/characters/maid_base/Ch_Maid06_Basic01_LD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "40b976044976d94",
+        "width": 835.112,
+        "height": 1962.448,
+        "bones": 191,
+        "slots": 144,
+        "skins": [
+          "default",
+          "Angry",
+          "Happy",
+          "Idle",
+          "Sad",
+          "Shame",
+          "Sigh",
+          "Signa",
+          "Signa2",
+          "Surprise"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 6.6667,
+            "timelines": 163
+          },
+          {
+            "name": "02 Interaction",
+            "duration": 3.3333,
+            "timelines": 163
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Interaction"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Maid06_Basic01_LD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Maid06_Basic01_LD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_base/Ch_Maid06_Basic01_LD.baked.json"
+    },
+    {
+      "name": "Ch_Maid06_Basic01_LD2",
+      "category": "maid_base",
+      "baked_path": "res://assets/characters/maid_base/Ch_Maid06_Basic01_LD2.baked.json",
+      "page_paths": {
+        "Ch_Maid06_Basic01_LD2.png": "res://assets/characters/maid_base/Ch_Maid06_Basic01_LD2.png",
+        "Ch_Maid06_Basic01_LD2_2.png": "res://assets/characters/maid_base/Ch_Maid06_Basic01_LD2_2.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "-392b4f2729b89946",
+        "width": 590.51,
+        "height": 550,
+        "bones": 55,
+        "slots": 26,
+        "skins": [
+          "default",
+          "Angry",
+          "Hairpin",
+          "Happy",
+          "Idle",
+          "Katyusha",
+          "Summer",
+          "Surp"
+        ],
+        "animations": [
+          {
+            "name": "Idle",
+            "duration": 2.6667,
+            "timelines": 36
+          },
+          {
+            "name": "Idle2",
+            "duration": 2.6667,
+            "timelines": 37
+          }
+        ]
+      },
+      "default_clip": "Idle",
+      "baked_clips": [
+        "Idle",
+        "Idle2"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Maid06_Basic01_LD2.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Maid06_Basic01_LD2.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_base/Ch_Maid06_Basic01_LD2.baked.json"
+    },
+    {
+      "name": "Ch_Maid06_Basic01_SD",
+      "category": "maid_base",
+      "baked_path": "res://assets/characters/maid_base/Ch_Maid06_Basic01_SD.baked.json",
+      "page_paths": {
+        "Ch_Maid06_Basic01_SD.png": "res://assets/characters/maid_base/Ch_Maid06_Basic01_SD.png",
+        "Ch_Maid06_Basic01_SD_2.png": "res://assets/characters/maid_base/Ch_Maid06_Basic01_SD_2.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "4c20d2ac-1d93033f",
+        "width": 274.469,
+        "height": 427.835,
+        "bones": 153,
+        "slots": 66,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 2.6667,
+            "timelines": 92
+          },
+          {
+            "name": "02 Ready",
+            "duration": 2.6667,
+            "timelines": 90
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 4.5,
+            "timelines": 226
+          },
+          {
+            "name": "03 Interaction2",
+            "duration": 1.1667,
+            "timelines": 105
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Maid06_Basic01_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Maid06_Basic01_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_base/Ch_Maid06_Basic01_SD.baked.json"
+    },
+    {
+      "name": "Ch_Maid07_Basic01_SD",
+      "category": "maid_base",
+      "baked_path": "res://assets/characters/maid_base/Ch_Maid07_Basic01_SD.baked.json",
+      "page_paths": {
+        "Ch_Maid07_Basic01_SD.png": "res://assets/characters/maid_base/Ch_Maid07_Basic01_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "-475549b54168614",
+        "width": 274.204,
+        "height": 410.657,
+        "bones": 103,
+        "slots": 39,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 5.3333,
+            "timelines": 67
+          },
+          {
+            "name": "02 Ready",
+            "duration": 2.6667,
+            "timelines": 66
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 2.3333,
+            "timelines": 90
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Maid07_Basic01_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Maid07_Basic01_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_base/Ch_Maid07_Basic01_SD.baked.json"
+    },
+    {
+      "name": "Cos_Maid01_Band01_LD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid01_Band01_LD.baked.json",
+      "page_paths": {
+        "Cos_Maid01_Band01_LD.png": "res://assets/characters/maid_costume/Cos_Maid01_Band01_LD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "-7635d80224766001",
+        "width": 748.212,
+        "height": 1963.838,
+        "bones": 189,
+        "slots": 169,
+        "skins": [
+          "default",
+          "Angry",
+          "Happy",
+          "Idle",
+          "Sad",
+          "Shame",
+          "Sigh",
+          "Signa",
+          "Surp"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 6,
+            "timelines": 143
+          },
+          {
+            "name": "02 Interaction",
+            "duration": 4.1667,
+            "timelines": 226
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Interaction"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid01_Band01_LD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid01_Band01_LD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid01_Band01_LD.baked.json"
+    },
+    {
+      "name": "Cos_Maid01_Band01_SD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid01_Band01_SD.baked.json",
+      "page_paths": {
+        "Cos_Maid01_Band01_SD.png": "res://assets/characters/maid_costume/Cos_Maid01_Band01_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "2f8750a9-6b943223",
+        "width": 250.016,
+        "height": 430.458,
+        "bones": 92,
+        "slots": 47,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 5.3333,
+            "timelines": 68
+          },
+          {
+            "name": "02 Ready",
+            "duration": 2.6667,
+            "timelines": 66
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 2.1667,
+            "timelines": 82
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid01_Band01_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid01_Band01_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid01_Band01_SD.baked.json"
+    },
+    {
+      "name": "Cos_Maid01_Casual01_LD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid01_Casual01_LD.baked.json",
+      "page_paths": {
+        "Cos_Maid01_Casual01_LD.png": "res://assets/characters/maid_costume/Cos_Maid01_Casual01_LD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "-56c0c3b83e062fef",
+        "width": 707.678,
+        "height": 1880.578,
+        "bones": 386,
+        "slots": 54,
+        "skins": [
+          "default",
+          "d/emote"
+        ],
+        "animations": [
+          {
+            "name": "01 idle",
+            "duration": 4,
+            "timelines": 99
+          },
+          {
+            "name": "02 happy",
+            "duration": 4,
+            "timelines": 102
+          },
+          {
+            "name": "03 angry",
+            "duration": 4,
+            "timelines": 99
+          },
+          {
+            "name": "04 sad",
+            "duration": 4,
+            "timelines": 132
+          },
+          {
+            "name": "05 surprise",
+            "duration": 4,
+            "timelines": 78
+          },
+          {
+            "name": "06 sigh",
+            "duration": 4,
+            "timelines": 102
+          },
+          {
+            "name": "07 shame",
+            "duration": 4,
+            "timelines": 103
+          },
+          {
+            "name": "08 signa",
+            "duration": 4,
+            "timelines": 104
+          },
+          {
+            "name": "09 Interaction",
+            "duration": 4.1,
+            "timelines": 124
+          }
+        ]
+      },
+      "default_clip": "01 idle",
+      "baked_clips": [
+        "01 idle",
+        "02 happy"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid01_Casual01_LD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid01_Casual01_LD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid01_Casual01_LD.baked.json"
+    },
+    {
+      "name": "Cos_Maid01_Casual01_SD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid01_Casual01_SD.baked.json",
+      "page_paths": {
+        "Cos_Maid01_Casual01_SD.png": "res://assets/characters/maid_costume/Cos_Maid01_Casual01_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "-2878a638-753d9744",
+        "width": 249.25,
+        "height": 397.25,
+        "bones": 83,
+        "slots": 45,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 4.6667,
+            "timelines": 54
+          },
+          {
+            "name": "02 Ready",
+            "duration": 2.3333,
+            "timelines": 52
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 1.6667,
+            "timelines": 70
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid01_Casual01_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid01_Casual01_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid01_Casual01_SD.baked.json"
+    },
+    {
+      "name": "Cos_Maid01_Christmas01_LD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid01_Christmas01_LD.baked.json",
+      "page_paths": {
+        "Cos_Maid01_Christmas01_LD.png": "res://assets/characters/maid_costume/Cos_Maid01_Christmas01_LD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "-500a7fa0-2502ffa6",
+        "width": 815.676,
+        "height": 1893.178,
+        "bones": 373,
+        "slots": 95,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 4,
+            "timelines": 257
+          },
+          {
+            "name": "02 Happy",
+            "duration": 2.6667,
+            "timelines": 296
+          },
+          {
+            "name": "03 Sad",
+            "duration": 4.6667,
+            "timelines": 303
+          },
+          {
+            "name": "04 Angry",
+            "duration": 4,
+            "timelines": 296
+          },
+          {
+            "name": "05 Sig",
+            "duration": 3.3333,
+            "timelines": 300
+          },
+          {
+            "name": "06 Embar",
+            "duration": 4,
+            "timelines": 270
+          },
+          {
+            "name": "07 Sigh",
+            "duration": 4,
+            "timelines": 269
+          },
+          {
+            "name": "08 Surp",
+            "duration": 4,
+            "timelines": 269
+          },
+          {
+            "name": "09 Interaction",
+            "duration": 2.8333,
+            "timelines": 422
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Happy"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid01_Christmas01_LD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid01_Christmas01_LD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid01_Christmas01_LD.baked.json"
+    },
+    {
+      "name": "Cos_Maid01_Christmas01_SD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid01_Christmas01_SD.baked.json",
+      "page_paths": {
+        "Cos_Maid01_Christmas01_SD.png": "res://assets/characters/maid_costume/Cos_Maid01_Christmas01_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "42612885-62b7e266",
+        "width": 290.72,
+        "height": 388.7,
+        "bones": 152,
+        "slots": 36,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 2,
+            "timelines": 129
+          },
+          {
+            "name": "02 Ready",
+            "duration": 2,
+            "timelines": 57
+          },
+          {
+            "name": "03 Interactive",
+            "duration": 1.5,
+            "timelines": 141
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid01_Christmas01_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid01_Christmas01_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid01_Christmas01_SD.baked.json"
+    },
+    {
+      "name": "Cos_Maid01_Summer01_LD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid01_Summer01_LD.baked.json",
+      "page_paths": {
+        "Cos_Maid01_Summer01_LD.png": "res://assets/characters/maid_costume/Cos_Maid01_Summer01_LD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "5fe6382d-3c73e2c6",
+        "width": 694.281,
+        "height": 1943.669,
+        "bones": 233,
+        "slots": 115,
+        "skins": [
+          "default",
+          "Angry",
+          "Happy",
+          "Idle",
+          "Sad",
+          "Shame",
+          "Sigh",
+          "Signa",
+          "Surp"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 5.3333,
+            "timelines": 197
+          },
+          {
+            "name": "02 Interaction",
+            "duration": 2.6667,
+            "timelines": 203
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Interaction"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid01_Summer01_LD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid01_Summer01_LD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid01_Summer01_LD.baked.json"
+    },
+    {
+      "name": "Cos_Maid01_Summer01_SD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid01_Summer01_SD.baked.json",
+      "page_paths": {
+        "Cos_Maid01_Summer01_SD.png": "res://assets/characters/maid_costume/Cos_Maid01_Summer01_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "-174d0e363e611290",
+        "width": 273.015,
+        "height": 402.391,
+        "bones": 108,
+        "slots": 43,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 5.3333,
+            "timelines": 70
+          },
+          {
+            "name": "02 Ready",
+            "duration": 2.6667,
+            "timelines": 69
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 1.8333,
+            "timelines": 87
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid01_Summer01_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid01_Summer01_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid01_Summer01_SD.baked.json"
+    },
+    {
+      "name": "Cos_Maid02_Casual01_LD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid02_Casual01_LD.baked.json",
+      "page_paths": {
+        "Cos_Maid02_Casual01_LD.png": "res://assets/characters/maid_costume/Cos_Maid02_Casual01_LD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "-53686c9c65440edf",
+        "width": 930.062,
+        "height": 1960.701,
+        "bones": 345,
+        "slots": 61,
+        "skins": [
+          "default",
+          "emote"
+        ],
+        "animations": [
+          {
+            "name": "1 idle",
+            "duration": 4.6667,
+            "timelines": 292
+          },
+          {
+            "name": "2 happy",
+            "duration": 4.3333,
+            "timelines": 299
+          },
+          {
+            "name": "3 angry",
+            "duration": 3.3333,
+            "timelines": 290
+          },
+          {
+            "name": "4 sad",
+            "duration": 4,
+            "timelines": 311
+          },
+          {
+            "name": "5 surp",
+            "duration": 4.6667,
+            "timelines": 272
+          },
+          {
+            "name": "6 sigh",
+            "duration": 4.6667,
+            "timelines": 295
+          },
+          {
+            "name": "7 signa",
+            "duration": 4.6667,
+            "timelines": 295
+          },
+          {
+            "name": "8 interaction",
+            "duration": 4.1667,
+            "timelines": 323
+          },
+          {
+            "name": "9 shame",
+            "duration": 4.6667,
+            "timelines": 269
+          }
+        ]
+      },
+      "default_clip": "1 idle",
+      "baked_clips": [
+        "1 idle",
+        "2 happy"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid02_Casual01_LD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid02_Casual01_LD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid02_Casual01_LD.baked.json"
+    },
+    {
+      "name": "Cos_Maid02_Casual01_SD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid02_Casual01_SD.baked.json",
+      "page_paths": {
+        "Cos_Maid02_Casual01_SD.png": "res://assets/characters/maid_costume/Cos_Maid02_Casual01_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "-5f6f6397-6e08bf59",
+        "width": 254.028,
+        "height": 407.738,
+        "bones": 136,
+        "slots": 49,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 2,
+            "timelines": 76
+          },
+          {
+            "name": "02 Ready",
+            "duration": 2,
+            "timelines": 76
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 1.8667,
+            "timelines": 91
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid02_Casual01_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid02_Casual01_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid02_Casual01_SD.baked.json"
+    },
+    {
+      "name": "Cos_Maid02_Christmas01_LD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid02_Christmas01_LD.baked.json",
+      "page_paths": {
+        "Cos_Maid02_Christmas01_LD.png": "res://assets/characters/maid_costume/Cos_Maid02_Christmas01_LD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "-3f608e10-581ef4de",
+        "width": 732.9,
+        "height": 1915.504,
+        "bones": 275,
+        "slots": 52,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "1 idle",
+            "duration": 4.6667,
+            "timelines": 141
+          },
+          {
+            "name": "2 happy",
+            "duration": 4,
+            "timelines": 151
+          },
+          {
+            "name": "3 angry",
+            "duration": 3.6667,
+            "timelines": 130
+          },
+          {
+            "name": "4 sad",
+            "duration": 4.3333,
+            "timelines": 145
+          },
+          {
+            "name": "5 surp",
+            "duration": 3.3333,
+            "timelines": 129
+          },
+          {
+            "name": "6 Interaction",
+            "duration": 3.1667,
+            "timelines": 156
+          },
+          {
+            "name": "7 Signiture",
+            "duration": 4.6667,
+            "timelines": 166
+          },
+          {
+            "name": "8 Sigh",
+            "duration": 4.6667,
+            "timelines": 147
+          }
+        ]
+      },
+      "default_clip": "1 idle",
+      "baked_clips": [
+        "1 idle",
+        "2 happy"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid02_Christmas01_LD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid02_Christmas01_LD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid02_Christmas01_LD.baked.json"
+    },
+    {
+      "name": "Cos_Maid02_Christmas01_SD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid02_Christmas01_SD.baked.json",
+      "page_paths": {
+        "Cos_Maid02_Christmas01_SD.png": "res://assets/characters/maid_costume/Cos_Maid02_Christmas01_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "74931ab65ba5882e",
+        "width": 245.14,
+        "height": 425,
+        "bones": 177,
+        "slots": 46,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 2.3333,
+            "timelines": 124
+          },
+          {
+            "name": "02 Ready",
+            "duration": 2.3333,
+            "timelines": 124
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 1.8333,
+            "timelines": 125
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid02_Christmas01_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid02_Christmas01_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid02_Christmas01_SD.baked.json"
+    },
+    {
+      "name": "Cos_Maid02_Halloween01_LD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid02_Halloween01_LD.baked.json",
+      "page_paths": {
+        "Cos_Maid02_Halloween01_LD.png": "res://assets/characters/maid_costume/Cos_Maid02_Halloween01_LD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "-1ca026df75275c07",
+        "width": 1126.67,
+        "height": 1952.61,
+        "bones": 206,
+        "slots": 130,
+        "skins": [
+          "default",
+          "Angry",
+          "Happy",
+          "Idle",
+          "Sad",
+          "Shame",
+          "Sigh",
+          "Signa",
+          "Surp"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 6,
+            "timelines": 131
+          },
+          {
+            "name": "02 Interaction",
+            "duration": 3.0021,
+            "timelines": 149
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Interaction"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid02_Halloween01_LD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid02_Halloween01_LD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid02_Halloween01_LD.baked.json"
+    },
+    {
+      "name": "Cos_Maid02_Halloween01_SD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid02_Halloween01_SD.baked.json",
+      "page_paths": {
+        "Cos_Maid02_Halloween01_SD.png": "res://assets/characters/maid_costume/Cos_Maid02_Halloween01_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "-4708962228931f77",
+        "width": 255.926,
+        "height": 405.409,
+        "bones": 87,
+        "slots": 42,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 5.3333,
+            "timelines": 54
+          },
+          {
+            "name": "02 Ready",
+            "duration": 2.6667,
+            "timelines": 52
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 2.0667,
+            "timelines": 70
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid02_Halloween01_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid02_Halloween01_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid02_Halloween01_SD.baked.json"
+    },
+    {
+      "name": "Cos_Maid02_Summer01_LD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid02_Summer01_LD.baked.json",
+      "page_paths": {
+        "Cos_Maid02_Summer01_LD.png": "res://assets/characters/maid_costume/Cos_Maid02_Summer01_LD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "491a19c7-726f85a5",
+        "width": 968.776,
+        "height": 1890.69,
+        "bones": 181,
+        "slots": 124,
+        "skins": [
+          "default",
+          "Angry",
+          "Happy",
+          "Idle",
+          "Sad",
+          "Shame",
+          "Sigh",
+          "Signa",
+          "Surp"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 5.3333,
+            "timelines": 135
+          },
+          {
+            "name": "02 Interaction",
+            "duration": 3.3333,
+            "timelines": 162
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Interaction"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid02_Summer01_LD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid02_Summer01_LD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid02_Summer01_LD.baked.json"
+    },
+    {
+      "name": "Cos_Maid02_Summer01_SD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid02_Summer01_SD.baked.json",
+      "page_paths": {
+        "Cos_Maid02_Summer01_SD.png": "res://assets/characters/maid_costume/Cos_Maid02_Summer01_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "1492e21b-121a62d2",
+        "width": 322.32,
+        "height": 401.115,
+        "bones": 99,
+        "slots": 52,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 5.3333,
+            "timelines": 63
+          },
+          {
+            "name": "02 Ready",
+            "duration": 2.6667,
+            "timelines": 61
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 2.5,
+            "timelines": 82
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid02_Summer01_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid02_Summer01_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid02_Summer01_SD.baked.json"
+    },
+    {
+      "name": "Cos_Maid03_Casual_LD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid03_Casual_LD.baked.json",
+      "page_paths": {
+        "Cos_Maid03_Casual_LD.png": "res://assets/characters/maid_costume/Cos_Maid03_Casual_LD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "6306385f-6e37e14e",
+        "width": 793.672,
+        "height": 2070.067,
+        "bones": 179,
+        "slots": 49,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 idle",
+            "duration": 4,
+            "timelines": 106
+          },
+          {
+            "name": "02 angry",
+            "duration": 3.6667,
+            "timelines": 84
+          },
+          {
+            "name": "03 sad",
+            "duration": 4.6667,
+            "timelines": 84
+          },
+          {
+            "name": "04 happy",
+            "duration": 3.3333,
+            "timelines": 84
+          },
+          {
+            "name": "05 surp",
+            "duration": 4.3333,
+            "timelines": 83
+          },
+          {
+            "name": "06 BadMood",
+            "duration": 4.3333,
+            "timelines": 84
+          },
+          {
+            "name": "07 Embarrassing",
+            "duration": 4,
+            "timelines": 84
+          },
+          {
+            "name": "08 Sigh",
+            "duration": 4,
+            "timelines": 84
+          },
+          {
+            "name": "09 interaction",
+            "duration": 3.1,
+            "timelines": 176
+          }
+        ]
+      },
+      "default_clip": "01 idle",
+      "baked_clips": [
+        "01 idle",
+        "02 angry"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid03_Casual_LD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid03_Casual_LD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid03_Casual_LD.baked.json"
+    },
+    {
+      "name": "Cos_Maid03_Casual01_SD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid03_Casual01_SD.baked.json",
+      "page_paths": {
+        "Cos_Maid03_Casual01_SD.png": "res://assets/characters/maid_costume/Cos_Maid03_Casual01_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "a2d29b95486de7e",
+        "width": 248.25,
+        "height": 431.151,
+        "bones": 71,
+        "slots": 30,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 2.6667,
+            "timelines": 43
+          },
+          {
+            "name": "02 Ready",
+            "duration": 2.6667,
+            "timelines": 43
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 1.3333,
+            "timelines": 45
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid03_Casual01_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid03_Casual01_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid03_Casual01_SD.baked.json"
+    },
+    {
+      "name": "Cos_Maid03_Christmas01_LD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid03_Christmas01_LD.baked.json",
+      "page_paths": {
+        "Cos_Maid03_Christmas01_LD.png": "res://assets/characters/maid_costume/Cos_Maid03_Christmas01_LD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "-7f74098a77c44c1f",
+        "width": 946.438,
+        "height": 2097.254,
+        "bones": 290,
+        "slots": 94,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 4,
+            "timelines": 251
+          },
+          {
+            "name": "02 Badmood",
+            "duration": 4,
+            "timelines": 262
+          },
+          {
+            "name": "03 Surp",
+            "duration": 2.6667,
+            "timelines": 291
+          },
+          {
+            "name": "04 Angry",
+            "duration": 3.3333,
+            "timelines": 260
+          },
+          {
+            "name": "05 Embar",
+            "duration": 3.3333,
+            "timelines": 289
+          },
+          {
+            "name": "06 Happy",
+            "duration": 4,
+            "timelines": 254
+          },
+          {
+            "name": "07 Sad",
+            "duration": 4,
+            "timelines": 254
+          },
+          {
+            "name": "08 Sigh",
+            "duration": 4,
+            "timelines": 254
+          },
+          {
+            "name": "09 Interaction",
+            "duration": 2.7333,
+            "timelines": 229
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Badmood"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid03_Christmas01_LD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid03_Christmas01_LD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid03_Christmas01_LD.baked.json"
+    },
+    {
+      "name": "Cos_Maid03_Christmas01_SD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid03_Christmas01_SD.baked.json",
+      "page_paths": {
+        "Cos_Maid03_Christmas01_SD.png": "res://assets/characters/maid_costume/Cos_Maid03_Christmas01_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "-459f89f2e00d0af",
+        "width": 256.046,
+        "height": 429.183,
+        "bones": 190,
+        "slots": 49,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 2,
+            "timelines": 143
+          },
+          {
+            "name": "02 Ready",
+            "duration": 2,
+            "timelines": 143
+          },
+          {
+            "name": "03 Interactive",
+            "duration": 1.8333,
+            "timelines": 148
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid03_Christmas01_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid03_Christmas01_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid03_Christmas01_SD.baked.json"
+    },
+    {
+      "name": "Cos_Maid03_Halloween01_LD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid03_Halloween01_LD.baked.json",
+      "page_paths": {
+        "Cos_Maid03_Halloween01_LD.png": "res://assets/characters/maid_costume/Cos_Maid03_Halloween01_LD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "7baf251452803f92",
+        "width": 1204.727,
+        "height": 2120.721,
+        "bones": 284,
+        "slots": 143,
+        "skins": [
+          "default",
+          "Angry",
+          "Happy",
+          "Idle",
+          "Sad",
+          "Shame",
+          "Sigh",
+          "Signa",
+          "Surp"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 6,
+            "timelines": 162
+          },
+          {
+            "name": "02 Interaction",
+            "duration": 2.6667,
+            "timelines": 281
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Interaction"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid03_Halloween01_LD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid03_Halloween01_LD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid03_Halloween01_LD.baked.json"
+    },
+    {
+      "name": "Cos_Maid03_Halloween01_SD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid03_Halloween01_SD.baked.json",
+      "page_paths": {
+        "Cos_Maid03_Halloween01_SD.png": "res://assets/characters/maid_costume/Cos_Maid03_Halloween01_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "-4c20ea8a1bd01010",
+        "width": 251.004,
+        "height": 442.75,
+        "bones": 119,
+        "slots": 48,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 5.3333,
+            "timelines": 76
+          },
+          {
+            "name": "02 Ready",
+            "duration": 2.6667,
+            "timelines": 74
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 2.6667,
+            "timelines": 107
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid03_Halloween01_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid03_Halloween01_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid03_Halloween01_SD.baked.json"
+    },
+    {
+      "name": "Cos_Maid03_SchoolUniform01_LD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid03_SchoolUniform01_LD.baked.json",
+      "page_paths": {
+        "Cos_Maid03_SchoolUniform01_LD.png": "res://assets/characters/maid_costume/Cos_Maid03_SchoolUniform01_LD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "1e806c204c7d52e9",
+        "width": 933.151,
+        "height": 2096.718,
+        "bones": 239,
+        "slots": 147,
+        "skins": [
+          "default",
+          "Angry",
+          "Happy",
+          "Idle",
+          "Sad",
+          "Shame",
+          "Sigh",
+          "Signa",
+          "Surp"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 6.1333,
+            "timelines": 158
+          },
+          {
+            "name": "02 Interaction",
+            "duration": 3.2667,
+            "timelines": 228
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Interaction"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid03_SchoolUniform01_LD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid03_SchoolUniform01_LD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid03_SchoolUniform01_LD.baked.json"
+    },
+    {
+      "name": "Cos_Maid03_SchoolUniform01_SD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid03_SchoolUniform01_SD.baked.json",
+      "page_paths": {
+        "Cos_Maid03_SchoolUniform01_SD.png": "res://assets/characters/maid_costume/Cos_Maid03_SchoolUniform01_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "61141698-2c6f29f7",
+        "width": 286.875,
+        "height": 436.56,
+        "bones": 141,
+        "slots": 60,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 5.3333,
+            "timelines": 98
+          },
+          {
+            "name": "02 Ready",
+            "duration": 2.6667,
+            "timelines": 96
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 2,
+            "timelines": 112
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid03_SchoolUniform01_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid03_SchoolUniform01_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid03_SchoolUniform01_SD.baked.json"
+    },
+    {
+      "name": "Cos_Maid03_Summer01_LD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid03_Summer01_LD.baked.json",
+      "page_paths": {
+        "Cos_Maid03_Summer01_LD.png": "res://assets/characters/maid_costume/Cos_Maid03_Summer01_LD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "388a069f3da5d9f1",
+        "width": 1091.521,
+        "height": 2098.801,
+        "bones": 219,
+        "slots": 156,
+        "skins": [
+          "default",
+          "Angry",
+          "Happy",
+          "Idle",
+          "Sad",
+          "Shame",
+          "Sigh",
+          "Signature",
+          "Surprise"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 6,
+            "timelines": 176
+          },
+          {
+            "name": "02 Interaction",
+            "duration": 2,
+            "timelines": 207
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Interaction"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid03_Summer01_LD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid03_Summer01_LD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid03_Summer01_LD.baked.json"
+    },
+    {
+      "name": "Cos_Maid03_Summer01_SD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid03_Summer01_SD.baked.json",
+      "page_paths": {
+        "Cos_Maid03_Summer01_SD.png": "res://assets/characters/maid_costume/Cos_Maid03_Summer01_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "572d6cd646bf738b",
+        "width": 298.917,
+        "height": 434.857,
+        "bones": 114,
+        "slots": 59,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 5.3333,
+            "timelines": 86
+          },
+          {
+            "name": "02 Ready",
+            "duration": 2.6667,
+            "timelines": 84
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 1.8667,
+            "timelines": 99
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid03_Summer01_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid03_Summer01_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid03_Summer01_SD.baked.json"
+    },
+    {
+      "name": "Cos_Maid04_Band01_LD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid04_Band01_LD.baked.json",
+      "page_paths": {
+        "Cos_Maid04_Band01_LD.png": "res://assets/characters/maid_costume/Cos_Maid04_Band01_LD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "-7956aca52b637ebc",
+        "width": 968.395,
+        "height": 1469.521,
+        "bones": 166,
+        "slots": 118,
+        "skins": [
+          "default",
+          "Angry",
+          "Happy",
+          "Idle",
+          "Sad",
+          "Sigh",
+          "Signa",
+          "Surp"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 6,
+            "timelines": 119
+          },
+          {
+            "name": "02 Interaction",
+            "duration": 2,
+            "timelines": 140
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Interaction"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid04_Band01_LD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid04_Band01_LD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid04_Band01_LD.baked.json"
+    },
+    {
+      "name": "Cos_Maid04_Band01_SD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid04_Band01_SD.baked.json",
+      "page_paths": {
+        "Cos_Maid04_Band01_SD.png": "res://assets/characters/maid_costume/Cos_Maid04_Band01_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "3317212d-59b36532",
+        "width": 248.243,
+        "height": 412.85,
+        "bones": 109,
+        "slots": 57,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 5.3333,
+            "timelines": 63
+          },
+          {
+            "name": "02 Ready",
+            "duration": 2.6667,
+            "timelines": 63
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 2,
+            "timelines": 87
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid04_Band01_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid04_Band01_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid04_Band01_SD.baked.json"
+    },
+    {
+      "name": "Cos_Maid04_Casual01_LD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid04_Casual01_LD.baked.json",
+      "page_paths": {
+        "Cos_Maid04_Casual01_LD.png": "res://assets/characters/maid_costume/Cos_Maid04_Casual01_LD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "7462320861872f99",
+        "width": 811.291,
+        "height": 1766.12,
+        "bones": 212,
+        "slots": 43,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "1 idle",
+            "duration": 4,
+            "timelines": 170
+          },
+          {
+            "name": "2 angry",
+            "duration": 3.6667,
+            "timelines": 157
+          },
+          {
+            "name": "3 sad",
+            "duration": 4.6667,
+            "timelines": 178
+          },
+          {
+            "name": "4 happy",
+            "duration": 3.3333,
+            "timelines": 152
+          },
+          {
+            "name": "5 surp",
+            "duration": 4.3333,
+            "timelines": 153
+          },
+          {
+            "name": "6 sigh",
+            "duration": 4,
+            "timelines": 145
+          },
+          {
+            "name": "7 tsundere",
+            "duration": 4,
+            "timelines": 175
+          },
+          {
+            "name": "8 interaction",
+            "duration": 3.8333,
+            "timelines": 174
+          }
+        ]
+      },
+      "default_clip": "1 idle",
+      "baked_clips": [
+        "1 idle",
+        "2 angry"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid04_Casual01_LD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid04_Casual01_LD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid04_Casual01_LD.baked.json"
+    },
+    {
+      "name": "Cos_Maid04_Casual01_SD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid04_Casual01_SD.baked.json",
+      "page_paths": {
+        "Cos_Maid04_Casual01_SD.png": "res://assets/characters/maid_costume/Cos_Maid04_Casual01_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "-680cbbb6-34aa2e82",
+        "width": 235.115,
+        "height": 400.068,
+        "bones": 127,
+        "slots": 40,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 5.3333,
+            "timelines": 99
+          },
+          {
+            "name": "02 Ready",
+            "duration": 2.6667,
+            "timelines": 94
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 2.3333,
+            "timelines": 147
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid04_Casual01_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid04_Casual01_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid04_Casual01_SD.baked.json"
+    },
+    {
+      "name": "Cos_Maid04_Christmas01_LD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid04_Christmas01_LD.baked.json",
+      "page_paths": {
+        "Cos_Maid04_Christmas01_LD.png": "res://assets/characters/maid_costume/Cos_Maid04_Christmas01_LD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "2b69de7d4526f331",
+        "width": 800.196,
+        "height": 1767.024,
+        "bones": 256,
+        "slots": 71,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 4,
+            "timelines": 249
+          },
+          {
+            "name": "02 Happy",
+            "duration": 3.3333,
+            "timelines": 239
+          },
+          {
+            "name": "03 Sad",
+            "duration": 4,
+            "timelines": 254
+          },
+          {
+            "name": "04 Tsundere",
+            "duration": 3.3333,
+            "timelines": 277
+          },
+          {
+            "name": "05 Angry",
+            "duration": 4,
+            "timelines": 252
+          },
+          {
+            "name": "06 Sigh",
+            "duration": 4,
+            "timelines": 225
+          },
+          {
+            "name": "07 Surprise",
+            "duration": 4,
+            "timelines": 225
+          },
+          {
+            "name": "08 Interaction",
+            "duration": 3,
+            "timelines": 270
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Happy"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid04_Christmas01_LD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid04_Christmas01_LD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid04_Christmas01_LD.baked.json"
+    },
+    {
+      "name": "Cos_Maid04_Christmas01_SD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid04_Christmas01_SD.baked.json",
+      "page_paths": {
+        "Cos_Maid04_Christmas01_SD.png": "res://assets/characters/maid_costume/Cos_Maid04_Christmas01_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "43ee6b5d-2bc28bc7",
+        "width": 237.047,
+        "height": 410.64,
+        "bones": 180,
+        "slots": 54,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 2.0667,
+            "timelines": 138
+          },
+          {
+            "name": "02 Ready",
+            "duration": 2.0667,
+            "timelines": 138
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 2,
+            "timelines": 147
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid04_Christmas01_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid04_Christmas01_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid04_Christmas01_SD.baked.json"
+    },
+    {
+      "name": "Cos_Maid04_SchoolUniform01_LD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid04_SchoolUniform01_LD.baked.json",
+      "page_paths": {
+        "Cos_Maid04_SchoolUniform01_LD.png": "res://assets/characters/maid_costume/Cos_Maid04_SchoolUniform01_LD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "-2e13f19371232f21",
+        "width": 760.856,
+        "height": 1757.663,
+        "bones": 128,
+        "slots": 133,
+        "skins": [
+          "default",
+          "Angry",
+          "Happy",
+          "Idle",
+          "Sad",
+          "Sigh",
+          "Signa",
+          "Surp"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 2.6667,
+            "timelines": 82
+          },
+          {
+            "name": "02 Interaction",
+            "duration": 2.8,
+            "timelines": 88
+          },
+          {
+            "name": "03 Interaction2",
+            "duration": 1.6667,
+            "timelines": 100
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Interaction"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid04_SchoolUniform01_LD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid04_SchoolUniform01_LD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid04_SchoolUniform01_LD.baked.json"
+    },
+    {
+      "name": "Cos_Maid04_SchoolUniform01_SD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid04_SchoolUniform01_SD.baked.json",
+      "page_paths": {
+        "Cos_Maid04_SchoolUniform01_SD.png": "res://assets/characters/maid_costume/Cos_Maid04_SchoolUniform01_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "-5eef6509f7ec960",
+        "width": 226.476,
+        "height": 399.843,
+        "bones": 92,
+        "slots": 50,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 5.3333,
+            "timelines": 59
+          },
+          {
+            "name": "02 Ready",
+            "duration": 2.6667,
+            "timelines": 57
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 2.8333,
+            "timelines": 100
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid04_SchoolUniform01_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid04_SchoolUniform01_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid04_SchoolUniform01_SD.baked.json"
+    },
+    {
+      "name": "Cos_Maid04_Summer01_LD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid04_Summer01_LD.baked.json",
+      "page_paths": {
+        "Cos_Maid04_Summer01_LD.png": "res://assets/characters/maid_costume/Cos_Maid04_Summer01_LD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "2a96a60e-2227d70",
+        "width": 904.68,
+        "height": 1783.618,
+        "bones": 183,
+        "slots": 110,
+        "skins": [
+          "default",
+          "Angry",
+          "Happy",
+          "Idle",
+          "Sad",
+          "Sigh",
+          "Signature",
+          "Surprise"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 6,
+            "timelines": 144
+          },
+          {
+            "name": "02 Interaction",
+            "duration": 3.1667,
+            "timelines": 161
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Interaction"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid04_Summer01_LD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid04_Summer01_LD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid04_Summer01_LD.baked.json"
+    },
+    {
+      "name": "Cos_Maid04_Summer01_SD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid04_Summer01_SD.baked.json",
+      "page_paths": {
+        "Cos_Maid04_Summer01_SD.png": "res://assets/characters/maid_costume/Cos_Maid04_Summer01_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "-2d123016-14d759ff",
+        "width": 249.075,
+        "height": 398.864,
+        "bones": 76,
+        "slots": 47,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 5.3333,
+            "timelines": 53
+          },
+          {
+            "name": "02 Ready",
+            "duration": 2.6667,
+            "timelines": 51
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 2.3333,
+            "timelines": 58
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid04_Summer01_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid04_Summer01_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid04_Summer01_SD.baked.json"
+    },
+    {
+      "name": "Cos_Maid05_Casual01_LD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid05_Casual01_LD.baked.json",
+      "page_paths": {
+        "Cos_Maid05_Casual01_LD.png": "res://assets/characters/maid_costume/Cos_Maid05_Casual01_LD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "-6442598cd73981",
+        "width": 939.052,
+        "height": 1970.418,
+        "bones": 164,
+        "slots": 77,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 5.4,
+            "timelines": 85
+          },
+          {
+            "name": "02 Happy",
+            "duration": 5.4,
+            "timelines": 86
+          },
+          {
+            "name": "03 Surp",
+            "duration": 5.4,
+            "timelines": 100
+          },
+          {
+            "name": "04 Sad",
+            "duration": 5.4,
+            "timelines": 103
+          },
+          {
+            "name": "05 Angry",
+            "duration": 5.4,
+            "timelines": 95
+          },
+          {
+            "name": "06 Laugh",
+            "duration": 5.4,
+            "timelines": 89
+          },
+          {
+            "name": "07 Embar",
+            "duration": 5.4,
+            "timelines": 96
+          },
+          {
+            "name": "08 Sigh",
+            "duration": 5.4,
+            "timelines": 100
+          },
+          {
+            "name": "09 Interaction",
+            "duration": 4.3,
+            "timelines": 110
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Happy"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid05_Casual01_LD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid05_Casual01_LD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid05_Casual01_LD.baked.json"
+    },
+    {
+      "name": "Cos_Maid05_Casual01_SD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid05_Casual01_SD.baked.json",
+      "page_paths": {
+        "Cos_Maid05_Casual01_SD.png": "res://assets/characters/maid_costume/Cos_Maid05_Casual01_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "6020c7304f017a1",
+        "width": 328.5,
+        "height": 425.079,
+        "bones": 108,
+        "slots": 47,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 2.6667,
+            "timelines": 60
+          },
+          {
+            "name": "02 Ready",
+            "duration": 2.6667,
+            "timelines": 58
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 2.9333,
+            "timelines": 69
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid05_Casual01_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid05_Casual01_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid05_Casual01_SD.baked.json"
+    },
+    {
+      "name": "Cos_Maid05_Christmas01_LD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid05_Christmas01_LD.baked.json",
+      "page_paths": {
+        "Cos_Maid05_Christmas01_LD.png": "res://assets/characters/maid_costume/Cos_Maid05_Christmas01_LD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "7f527d26770310a4",
+        "width": 815.268,
+        "height": 1994.09,
+        "bones": 253,
+        "slots": 157,
+        "skins": [
+          "default",
+          "Angry",
+          "Happy",
+          "Idle",
+          "Sad",
+          "Shame",
+          "Sigh",
+          "Signa",
+          "Surp"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 2.7333,
+            "timelines": 191
+          },
+          {
+            "name": "02 Interaction",
+            "duration": 2.5,
+            "timelines": 256
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Interaction"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid05_Christmas01_LD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid05_Christmas01_LD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid05_Christmas01_LD.baked.json"
+    },
+    {
+      "name": "Cos_Maid05_Christmas01_SD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid05_Christmas01_SD.baked.json",
+      "page_paths": {
+        "Cos_Maid05_Christmas01_SD.png": "res://assets/characters/maid_costume/Cos_Maid05_Christmas01_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "-412d9dd2334314b7",
+        "width": 258.137,
+        "height": 425.166,
+        "bones": 119,
+        "slots": 49,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 2.6667,
+            "timelines": 87
+          },
+          {
+            "name": "02 Ready",
+            "duration": 2.6667,
+            "timelines": 87
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 1.6667,
+            "timelines": 94
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid05_Christmas01_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid05_Christmas01_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid05_Christmas01_SD.baked.json"
+    },
+    {
+      "name": "Cos_Maid05_Halloween01_LD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid05_Halloween01_LD.baked.json",
+      "page_paths": {
+        "Cos_Maid05_Halloween01_LD.png": "res://assets/characters/maid_costume/Cos_Maid05_Halloween01_LD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "-347b3225-4f4897ea",
+        "width": 1204.502,
+        "height": 2006.778,
+        "bones": 190,
+        "slots": 110,
+        "skins": [
+          "default",
+          "Angry",
+          "Happy",
+          "Idle",
+          "Sad",
+          "Shame",
+          "Sigh",
+          "Signa",
+          "Surp"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 6,
+            "timelines": 153
+          },
+          {
+            "name": "02 Interaction",
+            "duration": 2.0018,
+            "timelines": 179
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Interaction"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid05_Halloween01_LD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid05_Halloween01_LD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid05_Halloween01_LD.baked.json"
+    },
+    {
+      "name": "Cos_Maid05_Halloween01_SD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid05_Halloween01_SD.baked.json",
+      "page_paths": {
+        "Cos_Maid05_Halloween01_SD.png": "res://assets/characters/maid_costume/Cos_Maid05_Halloween01_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "-5f649cad1589957b",
+        "width": 1373.708,
+        "height": 1846.998,
+        "bones": 119,
+        "slots": 62,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 5.3333,
+            "timelines": 89
+          },
+          {
+            "name": "02 Ready",
+            "duration": 2.6667,
+            "timelines": 87
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 1.5,
+            "timelines": 90
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid05_Halloween01_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid05_Halloween01_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid05_Halloween01_SD.baked.json"
+    },
+    {
+      "name": "Cos_Maid05_Summer01_LD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid05_Summer01_LD.baked.json",
+      "page_paths": {
+        "Cos_Maid05_Summer01_LD.png": "res://assets/characters/maid_costume/Cos_Maid05_Summer01_LD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "-22895d2e3706ee3c",
+        "width": 1178.723,
+        "height": 1934.73,
+        "bones": 218,
+        "slots": 105,
+        "skins": [
+          "default",
+          "Angry",
+          "Happy",
+          "Idle",
+          "Sad",
+          "Shame",
+          "Sigh",
+          "Signature",
+          "Surprise"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 6,
+            "timelines": 144
+          },
+          {
+            "name": "02 Interaction",
+            "duration": 2.1,
+            "timelines": 192
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Interaction"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid05_Summer01_LD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid05_Summer01_LD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid05_Summer01_LD.baked.json"
+    },
+    {
+      "name": "Cos_Maid05_Summer01_SD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid05_Summer01_SD.baked.json",
+      "page_paths": {
+        "Cos_Maid05_Summer01_SD.png": "res://assets/characters/maid_costume/Cos_Maid05_Summer01_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "119093e5-7f290352",
+        "width": 360.93,
+        "height": 426.964,
+        "bones": 97,
+        "slots": 49,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 5.3333,
+            "timelines": 70
+          },
+          {
+            "name": "02 Ready",
+            "duration": 2.6667,
+            "timelines": 71
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 1,
+            "timelines": 88
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid05_Summer01_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid05_Summer01_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid05_Summer01_SD.baked.json"
+    },
+    {
+      "name": "Cos_Maid06_Casual01_LD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid06_Casual01_LD.baked.json",
+      "page_paths": {
+        "Cos_Maid06_Casual01_LD.png": "res://assets/characters/maid_costume/Cos_Maid06_Casual01_LD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "7e6f7cf66aa663f5",
+        "width": 817.283,
+        "height": 1950.108,
+        "bones": 199,
+        "slots": 137,
+        "skins": [
+          "default",
+          "Angry",
+          "Happy",
+          "Idle",
+          "Sad",
+          "Shame",
+          "Sigh",
+          "Signa",
+          "Signa2",
+          "Surp"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 6,
+            "timelines": 152
+          },
+          {
+            "name": "02 Interaction",
+            "duration": 3.3333,
+            "timelines": 182
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Interaction"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid06_Casual01_LD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid06_Casual01_LD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid06_Casual01_LD.baked.json"
+    },
+    {
+      "name": "Cos_Maid06_Casual01_SD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid06_Casual01_SD.baked.json",
+      "page_paths": {
+        "Cos_Maid06_Casual01_SD.png": "res://assets/characters/maid_costume/Cos_Maid06_Casual01_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "-3a678eee-4cd5a271",
+        "width": 279.96,
+        "height": 418.018,
+        "bones": 126,
+        "slots": 63,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 5.3333,
+            "timelines": 99
+          },
+          {
+            "name": "02 Ready",
+            "duration": 2.6667,
+            "timelines": 97
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 2.6667,
+            "timelines": 118
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid06_Casual01_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid06_Casual01_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid06_Casual01_SD.baked.json"
+    },
+    {
+      "name": "Cos_Maid06_Summer01_LD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid06_Summer01_LD.baked.json",
+      "page_paths": {
+        "Cos_Maid06_Summer01_LD.png": "res://assets/characters/maid_costume/Cos_Maid06_Summer01_LD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "-7afa52fb-57d11e3",
+        "width": 972.246,
+        "height": 1970.03,
+        "bones": 165,
+        "slots": 126,
+        "skins": [
+          "default",
+          "Angry",
+          "Happy",
+          "Idle",
+          "Sad",
+          "Shame",
+          "Sigh",
+          "Signa",
+          "Signa2",
+          "Surp"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 6,
+            "timelines": 112
+          },
+          {
+            "name": "02 Interaction",
+            "duration": 5.2667,
+            "timelines": 197
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Interaction"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid06_Summer01_LD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid06_Summer01_LD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid06_Summer01_LD.baked.json"
+    },
+    {
+      "name": "Cos_Maid06_Summer01_SD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid06_Summer01_SD.baked.json",
+      "page_paths": {
+        "Cos_Maid06_Summer01_SD.png": "res://assets/characters/maid_costume/Cos_Maid06_Summer01_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "70d0770e-d282005",
+        "width": 269.766,
+        "height": 427.4,
+        "bones": 127,
+        "slots": 54,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 5.3333,
+            "timelines": 67
+          },
+          {
+            "name": "02 Ready",
+            "duration": 2.6667,
+            "timelines": 65
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 3.2333,
+            "timelines": 151
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid06_Summer01_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid06_Summer01_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid06_Summer01_SD.baked.json"
+    },
+    {
+      "name": "Cos_Maid07_Casual01_LD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid07_Casual01_LD.baked.json",
+      "page_paths": {
+        "Cos_Maid07_Casual01_LD.png": "res://assets/characters/maid_costume/Cos_Maid07_Casual01_LD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "30e060a2-1b5f1056",
+        "width": 734.318,
+        "height": 1803.986,
+        "bones": 171,
+        "slots": 125,
+        "skins": [
+          "default",
+          "Angry",
+          "Happy",
+          "Idle",
+          "Sad",
+          "Shame",
+          "Sigh",
+          "Signa",
+          "Signa2",
+          "Surp"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 3,
+            "timelines": 104
+          },
+          {
+            "name": "02 Interaction",
+            "duration": 2,
+            "timelines": 128
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Interaction"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid07_Casual01_LD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid07_Casual01_LD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid07_Casual01_LD.baked.json"
+    },
+    {
+      "name": "Cos_Maid07_Casual01_SD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid07_Casual01_SD.baked.json",
+      "page_paths": {
+        "Cos_Maid07_Casual01_SD.png": "res://assets/characters/maid_costume/Cos_Maid07_Casual01_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "4e8062ae-23a9763f",
+        "width": 284.27,
+        "height": 402.192,
+        "bones": 121,
+        "slots": 42,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 5.3333,
+            "timelines": 81
+          },
+          {
+            "name": "02 Ready",
+            "duration": 2.6667,
+            "timelines": 79
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 1.5,
+            "timelines": 88
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid07_Casual01_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid07_Casual01_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid07_Casual01_SD.baked.json"
+    },
+    {
+      "name": "Cos_Maid07_SchoolUniform01_LD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid07_SchoolUniform01_LD.baked.json",
+      "page_paths": {
+        "Cos_Maid07_SchoolUniform01_LD.png": "res://assets/characters/maid_costume/Cos_Maid07_SchoolUniform01_LD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "-56af1835-2a026f89",
+        "width": 760.757,
+        "height": 1803.037,
+        "bones": 225,
+        "slots": 153,
+        "skins": [
+          "default",
+          "Angry",
+          "Happy",
+          "Idle",
+          "Sad",
+          "Shame",
+          "Sigh",
+          "Signa",
+          "Signa2",
+          "Surp"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 6,
+            "timelines": 149
+          },
+          {
+            "name": "02 Interaction",
+            "duration": 3.3333,
+            "timelines": 232
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Interaction"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid07_SchoolUniform01_LD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid07_SchoolUniform01_LD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid07_SchoolUniform01_LD.baked.json"
+    },
+    {
+      "name": "Cos_Maid07_SchoolUniform01_SD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid07_SchoolUniform01_SD.baked.json",
+      "page_paths": {
+        "Cos_Maid07_SchoolUniform01_SD.png": "res://assets/characters/maid_costume/Cos_Maid07_SchoolUniform01_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "4003c19c-3b560701",
+        "width": 267.033,
+        "height": 402.192,
+        "bones": 134,
+        "slots": 62,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 5.3333,
+            "timelines": 94
+          },
+          {
+            "name": "02 Ready",
+            "duration": 2.6667,
+            "timelines": 90
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 2.9333,
+            "timelines": 123
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid07_SchoolUniform01_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid07_SchoolUniform01_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid07_SchoolUniform01_SD.baked.json"
+    },
+    {
+      "name": "Cos_Maid07_Summer01_LD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid07_Summer01_LD.baked.json",
+      "page_paths": {
+        "Cos_Maid07_Summer01_LD.png": "res://assets/characters/maid_costume/Cos_Maid07_Summer01_LD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "1dbb2784-795b55e0",
+        "width": 1020.565,
+        "height": 1831.573,
+        "bones": 214,
+        "slots": 147,
+        "skins": [
+          "default",
+          "Angry",
+          "Happy",
+          "Idle",
+          "Sad",
+          "Shame",
+          "Sigh",
+          "Signa",
+          "Signa2",
+          "Surp"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 6,
+            "timelines": 159
+          },
+          {
+            "name": "02 Interaction",
+            "duration": 2.6667,
+            "timelines": 237
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Interaction"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid07_Summer01_LD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid07_Summer01_LD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid07_Summer01_LD.baked.json"
+    },
+    {
+      "name": "Cos_Maid07_Summer01_SD",
+      "category": "maid_costume",
+      "baked_path": "res://assets/characters/maid_costume/Cos_Maid07_Summer01_SD.baked.json",
+      "page_paths": {
+        "Cos_Maid07_Summer01_SD.png": "res://assets/characters/maid_costume/Cos_Maid07_Summer01_SD.png"
+      },
+      "skeleton": {
+        "version": "4.2.43",
+        "hash": "-79458541-684d11a5",
+        "width": 270.591,
+        "height": 403.376,
+        "bones": 128,
+        "slots": 72,
+        "skins": [
+          "default"
+        ],
+        "animations": [
+          {
+            "name": "01 Idle",
+            "duration": 2.6667,
+            "timelines": 97
+          },
+          {
+            "name": "02 Ready",
+            "duration": 2.6667,
+            "timelines": 95
+          },
+          {
+            "name": "03 Interaction",
+            "duration": 2.8,
+            "timelines": 113
+          }
+        ]
+      },
+      "default_clip": "01 Idle",
+      "baked_clips": [
+        "01 Idle",
+        "02 Ready"
+      ],
+      "source_skel": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid07_Summer01_SD.skel.bytes",
+      "source_atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Cos_Maid07_Summer01_SD.atlas.bytes",
+      "output": "godot-project/assets/characters/maid_costume/Cos_Maid07_Summer01_SD.baked.json"
+    }
+  ],
+  "failures": [
+    {
+      "name": "Ch_Maid02_Basic01_SD",
+      "category": "maid_base",
+      "atlas": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Maid02_Basic01_SD.atlas.bytes",
+      "skeleton": "reverse-output/assets/assetripper-primary/Assets/TextAsset/Ch_Maid02_Basic01_SD.skel.bytes",
+      "error": "Region not found in atlas: leg_L _under (mesh attachment: leg_L _under)"
+    }
+  ]
+}

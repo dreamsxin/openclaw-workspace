@@ -1891,6 +1891,46 @@ Follow-up:
 - Resolve `UIFurnitureQuest` image layers to exact committed sprites.
 - Add accepted/rejected runtime RectTransform diagnostics to show which entry-prefab rects are used versus gated.
 
+## 2026-05-22 - All-Character Spine Preview Browser
+
+Inputs:
+- `reverse-output/assets/assetripper-primary/Assets/TextAsset/*.skel.bytes`
+- `reverse-output/assets/assetripper-primary/Assets/TextAsset/*.atlas.bytes`
+- `godot-project/assets/characters/**/*.png`
+- `tools/spine-baker-js/node_modules/@esotericsoftware/spine-core`
+
+Commands:
+```powershell
+node .\scripts\reverse\bake_character_spine_previews.mjs --fps=8 --max-duration=0.9 --max-clips=2
+.\tools\Godot\Godot_console.exe --headless --import --path .\godot-project
+.\capture-spine-browser.bat
+```
+
+Findings:
+- The committed `.skel.dat` and `.atlas.dat` files in `godot-project/assets/characters` are Unity/TextAsset wrapped, so they should not be passed directly to `spine-core`.
+- The AssetRipper primary raw TextAsset exports are parseable for character skeleton recovery. The `Ch_Maid01_Basic01_SD` sample parses as Spine 4.2.43 data with 137 bones, 42 slots, 3 skins, and animations `01 Idle`, `02 Ready`, and `03 Interaction`.
+- `bake_character_spine_previews.mjs` matched same-name raw `.skel.bytes`/`.atlas.bytes` files to committed Godot PNG atlas pages and baked low-frame preview clips to `*.baked.json`.
+- The bake produced 82/83 character previews. The only failed candidate is `maid_base/Ch_Maid02_Basic01_SD`, where the skeleton references `leg_L _under` but the matching atlas export does not define that region.
+- The generated preview data is intentionally low rate (`8 fps`, `0.9 s`, two clips max) to keep the committed browser dataset around 47 MB. This is a browsing/restoration aid, not a final full-fidelity animation export.
+- `CharacterSpineBrowserScreen` and `SpineBakedPreviewCanvas` now load `godot-project/data/character_spine_browser.json`, show all baked customer/maid/base/costume entries, switch baked clips, and draw original texture-mapped Spine triangles in Godot.
+- `capture-spine-browser.bat` verified `reverse-output/spine-browser-captures/18-character-spine-browser.png`.
+
+Outputs:
+- `scripts/reverse/bake_character_spine_previews.mjs`
+- `godot-project/data/character_spine_browser.json`
+- `godot-project/assets/characters/**/*.baked.json`
+- `godot-project/scripts/character_spine_browser_screen.gd`
+- `godot-project/scripts/spine_baked_preview_canvas.gd`
+- `run-spine-browser.bat`
+- `capture-spine-browser.bat`
+- `reverse-output/assets/derived/character_spine_preview_bake_manifest.json`
+- `reverse-output/spine-browser-captures/18-character-spine-browser.png`
+
+Follow-up:
+- Compare `Ch_Maid02_Basic01_SD` against AssetRipper main, AssetStudio all-assets, and UABEA exports to locate the missing atlas region or an alternate atlas page.
+- Reuse the same `SpineBakedPreviewCanvas` renderer in `UIOutGame/UIMaidLD`, `UIMaidLobby/SpinePos`, and `UIPopup_MaidLobbySelect` rows.
+- Add a higher-fidelity bake profile only for characters that are actually shown on a restored UI screen.
+
 Recommended next runs:
 
 1. Run Il2CppDumper or Cpp2IL on `libil2cpp.so` and `global-metadata.dat`.

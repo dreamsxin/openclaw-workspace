@@ -184,7 +184,7 @@ Planned services/models:
 | `DialogCatalog` | NPC and maid dialog lookup |
 | `CharacterAssetResolver` | Resolve LD/SD/static asset paths |
 | `CharacterProfileView` | First-pass profile and costume preview UI |
-| `SpineCharacterRenderer` | First pass exists for `UISceneLoading/kokomi_Loading`; official Spine runtime baking now emits `Idle` and `Interaction` clips consumed by Godot textured-polyon playback; reusable character renderer still pending |
+| `SpineCharacterRenderer` | First pass exists for `UISceneLoading/kokomi_Loading`; official Spine runtime baking now emits `Idle` and `Interaction` clips consumed by Godot textured-polyon playback; reusable preview renderer now drives the all-character browser, while direct UIOutGame/UIMaidLobby embedding is pending |
 
 ## Next Tasks
 
@@ -192,4 +192,4 @@ Planned services/models:
 2. Decode `Table_CustomerEpisode.dat`.
 3. Decode `Table_MaidChat.dat` and decide whether full chat branching belongs in the first vertical slice.
 4. Replace placeholder localization keys in profiles after localization tables are decoded.
-5. Generalize the `UISceneLoading` baked multi-clip renderer into a reusable Spine character render path for maid/customer atlas pages.
+5. Reuse `SpineBakedPreviewCanvas` in the actual UI screens that need live character display: `UIOutGame/UIMaidLD`, `UIMaidLobby/SpinePos`, and `UIPopup_MaidLobbySelect`.

@@ -216,7 +216,7 @@ Success criteria:
 | T024 | Build Godot character catalog data pipeline | done | first-pass resources copied; `Table_Npc` static lists decoded; Godot character JSON generated with static-vs-Spine asset classification |
 | T025 | Implement first-pass character/profile UI in Godot | done | right-side Maid/customer browser; static PNGs display directly, Spine atlas pages show metadata placeholders |
 | T026 | Decode mixed-format character dialog/customer tail lists | in progress | initial tail scan shows row 1400 enters mixed dialog/presentation payload before remaining list boundaries |
-| T027 | Implement Spine character render path | in progress | `kokomi_Loading.skel.bytes` is parsed by official `@esotericsoftware/spine-core@4.2.43`; `Idle` and `Interaction` are baked to exact world-vertex frames, rendered through Godot textured polygons with normalized UVs, and verified by startup screenshots; reusable renderer for other characters still pending |
+| T027 | Implement Spine character render path | in progress | `kokomi_Loading.skel.bytes` is parsed by official `@esotericsoftware/spine-core@4.2.43`; `Idle` and `Interaction` are baked to exact world-vertex frames, rendered through Godot textured polygons with normalized UVs, and verified by startup screenshots; the same bake/render path now previews 82 character skeletons in the browser, while direct in-scene LD maid integration is still pending |
 | T028 | Inventory original Unity UI prefab layouts | done | 1,137 UI prefabs and 84,034 RectTransforms indexed in `ui-layout-analysis.md` |
 | T029 | Map startup UI flow and Canvas scaling | in progress | startup focus layout details generated and converted into `godot-project/data/ui_layout_reference.json`; Canvas/SafeArea/CanvasScaler mount points indexed in `canvas_layout_inventory.*`; CanvasScaler reference-resolution fields still require runtime/native confirmation |
 | T030 | Build first Godot UI layout reference screens | in progress | `run-game.bat` restored startup mode now flows through recovered `UILoading`, `UISceneLoading`, clickable `UIOutGame`, and clickable first `UIInGame` shell; remaining screens still pending |
@@ -272,13 +272,15 @@ Success criteria:
 | T080 | Convert UIMaidLobby to focused prefab data | done | `MaidLobbyReferenceScreen` now receives `UIMaidLobby` focused layout data and uses source RectTransforms for `BG`, `White`, `SpinePos`, `Gradient`, `Npc_Dialog`, and `DialogBtn` |
 | T081 | Convert high-priority popups to prefab-first shells | in progress | `UIPopup_Inventory`, `UIPopup_MaidLobbySelect`, and `UIPopup_Shop` now receive focused prefab data, reference concrete RectTransform paths, and gate unsafe converted rects with screenshot-verified fallbacks |
 | T082 | Convert UIFurnitureQuest entry evidence to focused prefab data | done | `FurnitureQuestPopupReferenceScreen` now receives `UIFurnitureQuest` focused data and uses source RectTransforms for the original 200x200 entry button, icon/ring, notification badge, and optional text/main/sub evidence without treating the entry prefab as a full popup |
+| T083 | Add all-character Spine preview browser | done | `bake_character_spine_previews.mjs` uses AssetRipper raw TextAsset `.skel.bytes`/`.atlas.bytes` plus committed PNG pages to bake 82/83 character previews, writes `character_spine_browser.json`, adds `run-spine-browser.bat`, and verifies `18-character-spine-browser.png`; `Ch_Maid02_Basic01_SD` remains blocked by a missing atlas region |
 
 Immediate next implementation targets:
 
-1. Deepen `UIPopup_Shop` beyond the first focused shell: map `Grid_Package`, `BannerGroup`, `Grid_Costume`, `Grid_Daily`, and product row/list item children into visible Godot sections.
-2. Improve RectTransform normalization for popup roots whose serialized `BG` or scroll content spans outside the visible panel, so `UIPopup_Inventory` and `UIPopup_Shop` can use more source rectangles without fallback gating.
-3. Resolve Image sprite GUIDs from focused reports into exact AssetStudio/AssetRipper sprite names before replacing remaining geometric fallbacks.
-4. Expand the focused audit from path-count status to accepted-runtime-rect status, so unsafe prefab rectangles are visible in the report.
+1. Reuse `SpineBakedPreviewCanvas` inside `UIMaidLobby`, `UIMaidLD`, and `UIPopup_MaidLobbySelect` so those screens display the actual recovered LD/SD skeletons instead of static stand-ins.
+2. Resolve `Ch_Maid02_Basic01_SD` atlas mismatch by comparing AssetRipper primary/main and UABEA exports for the missing `leg_L _under` region.
+3. Deepen `UIPopup_Shop` beyond the first focused shell: map `Grid_Package`, `BannerGroup`, `Grid_Costume`, `Grid_Daily`, and product row/list item children into visible Godot sections.
+4. Improve RectTransform normalization for popup roots whose serialized `BG` or scroll content spans outside the visible panel, so `UIPopup_Inventory` and `UIPopup_Shop` can use more source rectangles without fallback gating.
+5. Resolve Image sprite GUIDs from focused reports into exact AssetStudio/AssetRipper sprite names before replacing remaining geometric fallbacks.
 
 ## Tool Acquisition Options
 
