@@ -1857,6 +1857,40 @@ Follow-up:
 - Resolve Shop image sprite GUIDs to committed Godot assets.
 - Add runtime accepted/rejected RectTransform diagnostics so staged Shop conversion can be audited beyond path coverage.
 
+## 2026-05-22 - UIFurnitureQuest Focused Entry Evidence Pass
+
+Inputs:
+- `godot-project/data/focused_ui_layout_reference.json`
+- `reverse-output/assets/assetripper-main/ExportedProject/Assets/Resources/prefabs/ui/UIFurnitureQuest.prefab`
+- `godot-project/scripts/furniture_quest_popup_reference_screen.gd`
+- `godot-project/scripts/main.gd`
+
+Commands:
+```powershell
+python .\scripts\reverse\extract_focused_ui_layout_reports.py
+.\tools\Godot\Godot_console.exe --headless --path .\godot-project --quit
+.\capture-outgame-popups.bat
+```
+
+Findings:
+- `UIFurnitureQuest.prefab` is a compact 20-RectTransform out-game entry component, not a full popup/detail screen.
+- `main.gd` now passes focused `UIFurnitureQuest` data into `FurnitureQuestPopupReferenceScreen`.
+- The Godot screen now references `UIFurnitureQuest/Button`, `Button/Image (2)`, `Button/Image`, `Button/Main`, `Button/Sub`, `Button/Text (TMP)`, and `Button/UFX_Noti_V2/Noti`.
+- The first screenshot showed the entry icon layer incorrectly replacing the detail progress panel; the final pass keeps the task detail shell stable and draws the prefab evidence as a small entry button in the header.
+- The audit now marks `UIFurnitureQuest` as `prefab_first_partial` with 7 referenced rect paths.
+
+Outputs:
+- `godot-project/scripts/main.gd`
+- `godot-project/scripts/furniture_quest_popup_reference_screen.gd`
+- `docs/reverse-godot/focused-ui-prefab-audit.md`
+- `godot-project/data/focused_ui_layout_reference.json`
+- `reverse-output/outgame-captures/13-outgame-furniture.png`
+
+Follow-up:
+- Search AssetRipper exports for a distinct furniture quest detail popup/screen prefab before treating the current task detail shell as original.
+- Resolve `UIFurnitureQuest` image layers to exact committed sprites.
+- Add accepted/rejected runtime RectTransform diagnostics to show which entry-prefab rects are used versus gated.
+
 Recommended next runs:
 
 1. Run Il2CppDumper or Cpp2IL on `libil2cpp.so` and `global-metadata.dat`.

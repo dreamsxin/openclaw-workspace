@@ -11,7 +11,7 @@ This audit checks the currently implemented Godot screens against focused AssetR
 | `UIPopup_Inventory` | high | prefab_first_partial | 64 | 131 | `godot-project/scripts/inventory_popup_reference_screen.gd` | 6 | low path coverage |
 | `UIPopup_Shop` | high | prefab_first_partial | 76 | 932 | `godot-project/scripts/shop_popup_reference_screen.gd` | 9 | low path coverage |
 | `UIPopup_MaidLobbySelect` | high | prefab_first_partial | 64 | 87 | `godot-project/scripts/maid_lobby_select_popup_reference_screen.gd` | 6 | source driven |
-| `UIFurnitureQuest` | medium | manual_shell | 10 | 20 | `godot-project/scripts/furniture_quest_popup_reference_screen.gd` | 0 | manual Rect2 shell, low path coverage, no set_source |
+| `UIFurnitureQuest` | medium | prefab_first_partial | 68 | 20 | `godot-project/scripts/furniture_quest_popup_reference_screen.gd` | 7 | source driven |
 | `UIVillageReBuild` | medium | prefab_first_partial | 64 | 6 | `godot-project/scripts/out_game_reference_screen.gd` | 6 | source driven |
 | `UIMaidLobbyLoading` | medium | prefab_reference_shell | 45 | 86 | `godot-project/scripts/maid_lobby_loading_reference_screen.gd` | 3 | low path coverage |
 | `UILoading` | baseline | mixed_unwired | 30 | 65 | `godot-project/scripts/loading_reference_screen.gd` | 7 | source driven |
@@ -209,13 +209,13 @@ Key serialized rect paths:
 
 - Prefab: `Assets/Resources/prefabs/ui/UIFurnitureQuest.prefab`
 - Godot: `godot-project/scripts/furniture_quest_popup_reference_screen.gd`
-- Status: `manual_shell`
+- Status: `prefab_first_partial`
 - RectTransforms: 20
 - Layout kinds: fixed_anchor=15, full_stretch=4, mixed=1
 - Components: CanvasRenderer=18, Image=12, MonoBehaviour:16c0ec1e=1, MonoBehaviour:18d0a906=1, MonoBehaviour:2f92a323=1, MonoBehaviour:6c71a908=1, MonoBehaviour:8b6b0933=1, MonoBehaviour:9aade2ae=1, RectTransform=20, TextMeshProUGUI=1
-- Godot has `set_source`: False
-- Godot has RectTransform helpers: False
-- Godot hard-coded `Rect2(...)` calls: 12
+- Godot has `set_source`: True
+- Godot has RectTransform helpers: True
+- Godot hard-coded `Rect2(...)` calls: 23
 
 Key serialized rect paths:
 

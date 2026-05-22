@@ -23159,18 +23159,26 @@
       "godot_script": {
         "path": "godot-project/scripts/furniture_quest_popup_reference_screen.gd",
         "exists": true,
-        "has_set_source": false,
-        "has_rect_transform_helpers": false,
-        "rect2_calls": 12,
-        "source_rect_paths": [],
+        "has_set_source": true,
+        "has_rect_transform_helpers": true,
+        "rect2_calls": 23,
+        "source_rect_paths": [
+          "UIFurnitureQuest/Button",
+          "UIFurnitureQuest/Button/Image",
+          "UIFurnitureQuest/Button/Image (2)",
+          "UIFurnitureQuest/Button/Main",
+          "UIFurnitureQuest/Button/Sub",
+          "UIFurnitureQuest/Button/Text (TMP)",
+          "UIFurnitureQuest/Button/UFX_Noti_V2/Noti"
+        ],
         "exact_rect_paths": [],
         "suffix_rect_paths": []
       },
       "score": {
-        "status": "manual_shell",
-        "score": 10,
-        "referenced_rect_paths": 0,
-        "rect_coverage_ratio": 0.0
+        "status": "prefab_first_partial",
+        "score": 68,
+        "referenced_rect_paths": 7,
+        "rect_coverage_ratio": 0.35
       }
     },
     {

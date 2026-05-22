@@ -969,6 +969,9 @@ func _apply_bag_menu_popup() -> void:
 func _apply_furniture_quest_popup() -> void:
 	if furniture_quest_popup_reference_screen == null:
 		return
+	var source: Dictionary = focused_ui_layout_sources.get("UIFurnitureQuest", {})
+	if not source.is_empty():
+		furniture_quest_popup_reference_screen.call("set_source", source)
 	furniture_quest_popup_reference_screen.call("set_popup_state", furniture_quest_popup_visible, board.wallet)
 
 func _apply_story_memory_popup() -> void:

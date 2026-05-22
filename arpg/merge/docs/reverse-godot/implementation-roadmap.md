@@ -271,6 +271,7 @@ Success criteria:
 | T079 | Audit all implemented screens against prefab-first rules | done | `scripts/reverse/extract_focused_ui_layout_reports.py` generates `docs/reverse-godot/focused-ui-prefab-audit.md` and `godot-project/data/focused_ui_layout_reference.json`; the first high-priority popup conversion pass now covers `UIPopup_Inventory`, `UIPopup_Shop`, and `UIPopup_MaidLobbySelect` |
 | T080 | Convert UIMaidLobby to focused prefab data | done | `MaidLobbyReferenceScreen` now receives `UIMaidLobby` focused layout data and uses source RectTransforms for `BG`, `White`, `SpinePos`, `Gradient`, `Npc_Dialog`, and `DialogBtn` |
 | T081 | Convert high-priority popups to prefab-first shells | in progress | `UIPopup_Inventory`, `UIPopup_MaidLobbySelect`, and `UIPopup_Shop` now receive focused prefab data, reference concrete RectTransform paths, and gate unsafe converted rects with screenshot-verified fallbacks |
+| T082 | Convert UIFurnitureQuest entry evidence to focused prefab data | done | `FurnitureQuestPopupReferenceScreen` now receives `UIFurnitureQuest` focused data and uses source RectTransforms for the original 200x200 entry button, icon/ring, notification badge, and optional text/main/sub evidence without treating the entry prefab as a full popup |
 
 Immediate next implementation targets:
 
