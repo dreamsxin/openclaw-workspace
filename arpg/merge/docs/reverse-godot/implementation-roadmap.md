@@ -262,6 +262,7 @@ Success criteria:
 | T070 | Clean up stretched UI frame artifacts | done | The new popup capture exposed stretched `Popup_Back`/gauge artifacts on wide HUD panels, so large panels and thin bars now use stable geometric fills while button/icon frames keep recovered sprites |
 | T071 | Import recovered UIOutGame entry icons | done | AssetStudio `InLobby`, `OutLobby`, `MergeMadeMark`, `Icon_MaidMark`, and `Icon_InGameCoffee` are copied into `godot-project/assets/outgame_entries`; Merge/Maid home buttons now use recovered entry art |
 | T072 | Use recovered UIOutGame entry composition art | done | The home village rebuild icon now uses `Icon_InGameCoffee`, and the Merge button layers `MainRoom5_Merge` behind the recovered `InLobby`/`MergeMadeMark` assets while keeping `OutLobby` on the Maid entry |
+| T073 | Import recovered FurnitureQuest home icons | done | AssetStudio `Icon_QuestList`, `Icon_UnlockFurniture`, and `Appicon_Remodeling` are copied into `godot-project/assets/outgame_quest`; the home FurnitureQuest entry now uses recovered icon art instead of a text-only box |
 
 Immediate next implementation targets:
 

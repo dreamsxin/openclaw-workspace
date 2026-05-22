@@ -17,6 +17,7 @@ const UI_ICON_DIR := "res://assets/ui_icons/"
 const CAFE_DIR := "res://assets/cafe/"
 const UI_FRAME_DIR := "res://assets/ui_frames/"
 const OUTGAME_ENTRY_DIR := "res://assets/outgame_entries/"
+const OUTGAME_QUEST_DIR := "res://assets/outgame_quest/"
 const WALLET_ICON_PATHS := {
 	"ap": SPRITE_DIR + "CURRENCY_AP.png",
 	"gold": SPRITE_DIR + "CURRENCY_GOLD.png",
@@ -63,6 +64,11 @@ const OUTGAME_ENTRY_PATHS := {
 	"coffee": OUTGAME_ENTRY_DIR + "Icon_InGameCoffee.png",
 	"merge_panel": OUTGAME_ENTRY_DIR + "MainRoom5_Merge.png",
 }
+const OUTGAME_QUEST_PATHS := {
+	"quest_list": OUTGAME_QUEST_DIR + "Icon_QuestList.png",
+	"unlock_furniture": OUTGAME_QUEST_DIR + "Icon_UnlockFurniture.png",
+	"remodeling": OUTGAME_QUEST_DIR + "Appicon_Remodeling.png",
+}
 
 var source: Dictionary = {}
 var wallet: Dictionary = {"ap": 0, "gold": 0, "jewel": 0}
@@ -74,6 +80,7 @@ var utility_icon_textures: Dictionary = {}
 var cafe_textures: Dictionary = {}
 var ui_frame_textures: Dictionary = {}
 var outgame_entry_textures: Dictionary = {}
+var outgame_quest_textures: Dictionary = {}
 var maid_interaction_mode := false
 
 func _ready() -> void:
@@ -84,6 +91,7 @@ func _ready() -> void:
 	cafe_textures = _load_texture_map(CAFE_TEXTURE_PATHS)
 	ui_frame_textures = _load_texture_map(UI_FRAME_PATHS)
 	outgame_entry_textures = _load_texture_map(OUTGAME_ENTRY_PATHS)
+	outgame_quest_textures = _load_texture_map(OUTGAME_QUEST_PATHS)
 	set_process(true)
 
 func _process(_delta: float) -> void:
@@ -260,10 +268,7 @@ func _draw_cafe_backdrop(screen_rect: Rect2, layout: Dictionary) -> void:
 	draw_rect(counter, Color(0.32, 0.18, 0.12, 0.44), false, 2.0 * s)
 
 	var furniture_rect: Rect2 = layout["furniture"]
-	var furniture_hover: bool = action_regions.get("furniture_quest", Rect2()).has_point(get_local_mouse_position())
-	draw_rect(furniture_rect, Color(0.18, 0.16, 0.13, 0.62), true)
-	draw_rect(furniture_rect, Color(1.0, 0.84, 0.48, 0.94) if furniture_hover else Color(0.95, 0.78, 0.45, 0.78), false, 2.0 * s)
-	draw_string(ThemeDB.fallback_font, furniture_rect.position + Vector2(0, furniture_rect.size.y * 0.58), "Quest", HORIZONTAL_ALIGNMENT_CENTER, furniture_rect.size.x, int(16.0 * s), Color(1.0, 0.92, 0.68, 0.92))
+	_draw_furniture_quest_entry(furniture_rect, s)
 
 func _draw_asset_backed_cafe(screen_rect: Rect2, layout: Dictionary) -> bool:
 	var hall: Texture2D = cafe_textures.get("hall", null)
@@ -280,16 +285,31 @@ func _draw_asset_backed_cafe(screen_rect: Rect2, layout: Dictionary) -> bool:
 	_draw_optional_cafe_texture("sofa_table", Rect2(screen_rect.position + Vector2(screen_rect.size.x * 0.32, screen_rect.size.y * 0.58), Vector2(screen_rect.size.x * 0.22, screen_rect.size.y * 0.1)), Color(1, 1, 1, 0.88))
 	_draw_optional_cafe_texture("counter", Rect2(screen_rect.position + Vector2(screen_rect.size.x * 0.01, screen_rect.size.y * 0.6), Vector2(screen_rect.size.x * 0.6, screen_rect.size.y * 0.28)), Color(1, 1, 1, 0.95))
 	var furniture_rect: Rect2 = layout["furniture"]
-	var furniture_hover: bool = action_regions.get("furniture_quest", Rect2()).has_point(get_local_mouse_position())
-	draw_rect(furniture_rect, Color(0.11, 0.09, 0.075, 0.66), true)
-	draw_rect(furniture_rect, Color(1.0, 0.84, 0.48, 0.94) if furniture_hover else Color(0.95, 0.78, 0.45, 0.78), false, 2.0 * s)
-	draw_string(ThemeDB.fallback_font, furniture_rect.position + Vector2(0, furniture_rect.size.y * 0.58), "Quest", HORIZONTAL_ALIGNMENT_CENTER, furniture_rect.size.x, int(16.0 * s), Color(1.0, 0.92, 0.68, 0.92))
+	_draw_furniture_quest_entry(furniture_rect, s)
 	return true
 
 func _draw_optional_cafe_texture(key: String, target: Rect2, modulate := Color.WHITE) -> void:
 	var texture: Texture2D = cafe_textures.get(key, null)
 	if texture != null:
 		_draw_texture_aspect_centered(texture, target, modulate)
+
+func _draw_furniture_quest_entry(rect: Rect2, s: float) -> void:
+	var hover: bool = action_regions.get("furniture_quest", Rect2()).has_point(get_local_mouse_position())
+	draw_rect(rect, Color(0.11, 0.09, 0.075, 0.74), true)
+	draw_rect(rect, Color(1.0, 0.84, 0.48, 0.96) if hover else Color(0.95, 0.78, 0.45, 0.78), false, 2.0 * s)
+	var icon_texture: Texture2D = outgame_quest_textures.get("unlock_furniture", null)
+	if icon_texture != null:
+		var icon_rect := Rect2(rect.position + Vector2(6.0 * s, 5.0 * s), Vector2(rect.size.y - 10.0 * s, rect.size.y - 10.0 * s))
+		_draw_texture_aspect_centered(icon_texture, icon_rect, Color(1, 1, 1, 0.94))
+	var quest_texture: Texture2D = outgame_quest_textures.get("quest_list", null)
+	if quest_texture != null:
+		var quest_rect := Rect2(rect.position + Vector2(7.0 * s, 7.0 * s), Vector2(22.0 * s, 22.0 * s))
+		_draw_texture_aspect_centered(quest_texture, quest_rect, Color(1, 1, 1, 0.92))
+	var remodel_texture: Texture2D = outgame_quest_textures.get("remodeling", null)
+	if remodel_texture != null:
+		var badge_rect := Rect2(rect.end - Vector2(31.0 * s, 31.0 * s), Vector2(25.0 * s, 25.0 * s))
+		_draw_texture_aspect_centered(remodel_texture, badge_rect, Color(1, 1, 1, 0.88))
+	draw_string(ThemeDB.fallback_font, rect.position + Vector2(rect.size.y * 0.86, rect.size.y * 0.56), "Quest", HORIZONTAL_ALIGNMENT_LEFT, rect.size.x - rect.size.y * 0.96, int(13.0 * s), Color(1.0, 0.92, 0.68, 0.94))
 
 func _draw_maid_layer(_screen_rect: Rect2, layout: Dictionary) -> void:
 	var s: float = layout["scale"]
