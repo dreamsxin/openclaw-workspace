@@ -13,6 +13,7 @@ const OUT_GAME_MAID_STANDIN := "res://assets/characters/maid_costume/Cos_Maid01_
 const SPRITE_DIR := "res://assets/sprites/"
 const CHARACTER_DIR := "res://assets/characters/"
 const LOADING_DIR := "res://assets/loading/"
+const UI_ICON_DIR := "res://assets/ui_icons/"
 const WALLET_ICON_PATHS := {
 	"ap": SPRITE_DIR + "CURRENCY_AP.png",
 	"gold": SPRITE_DIR + "CURRENCY_GOLD.png",
@@ -20,14 +21,14 @@ const WALLET_ICON_PATHS := {
 }
 const NAV_ICON_PATHS := {
 	"app_shop": CHARACTER_DIR + "maid_chat/AIChatIcon_Shopping.png",
-	"app_story": SPRITE_DIR + "SubStory_MemoryBox.png",
-	"maid_lobby": OUT_GAME_MAID_STANDIN,
-	"app_bag": SPRITE_DIR + "Bag1_1.png",
-	"app_menu": LOADING_DIR + "LoadingIcon64.png",
+	"app_story": UI_ICON_DIR + "Appicon_Story.png",
+	"maid_lobby": UI_ICON_DIR + "Appicon_Maid.png",
+	"app_bag": UI_ICON_DIR + "Appicon_Collection.png",
+	"app_menu": UI_ICON_DIR + "Appicon_Organize.png",
 }
 const UTILITY_ICON_PATHS := {
-	"app_mail": CHARACTER_DIR + "maid_chat/ProfileImg_QuestionMaiChat.png",
-	"app_settings": LOADING_DIR + "LoadingIcon64.png",
+	"app_mail": UI_ICON_DIR + "icon_mail.png",
+	"app_settings": UI_ICON_DIR + "icon_setting.png",
 }
 
 var source: Dictionary = {}

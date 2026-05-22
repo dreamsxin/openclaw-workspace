@@ -255,6 +255,7 @@ Success criteria:
 | T063 | Add first UIOutGame Mail/Settings shell | done | The top-right Mail and Settings entries now open `MailSettingsPopupReferenceScreen`, with inbox/reward/notice rows and sound/account/language rows staged for later table/runtime binding |
 | T064 | Add first UIOutGame Bag/Menu shell | done | The bottom Bag and Menu entries now open `BagMenuPopupReferenceScreen`, with item/chat/collection cards and profile/notice/support cards staged from current evidence |
 | T065 | Add asset-backed UIOutGame navigation icons | done | `OutGameReferenceScreen` now maps committed PNG resources onto Shop/Story/Maid/Bag/Menu and Mail/Settings buttons, with geometric fallback if an asset is missing |
+| T066 | Import recovered UIOutGame app icons | done | AssetStudio `Appicon_Story`, `Appicon_Maid`, `Appicon_Collection`, `Appicon_Organize`, `icon_mail`, and `icon_setting` are copied into `godot-project/assets/ui_icons` and used by the home navigation |
 
 Immediate next implementation targets:
 
