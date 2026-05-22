@@ -16,6 +16,7 @@ const LOADING_DIR := "res://assets/loading/"
 const UI_ICON_DIR := "res://assets/ui_icons/"
 const CAFE_DIR := "res://assets/cafe/"
 const UI_FRAME_DIR := "res://assets/ui_frames/"
+const OUTGAME_ENTRY_DIR := "res://assets/outgame_entries/"
 const WALLET_ICON_PATHS := {
 	"ap": SPRITE_DIR + "CURRENCY_AP.png",
 	"gold": SPRITE_DIR + "CURRENCY_GOLD.png",
@@ -54,6 +55,13 @@ const UI_FRAME_PATHS := {
 	"frame_square": UI_FRAME_DIR + "BasicFrame_Square01.png",
 	"frame_circle": UI_FRAME_DIR + "BasicFrame_Circle_78_White.png",
 }
+const OUTGAME_ENTRY_PATHS := {
+	"ingame": OUTGAME_ENTRY_DIR + "InLobby.png",
+	"maid_lobby": OUTGAME_ENTRY_DIR + "OutLobby.png",
+	"ingame_mark": OUTGAME_ENTRY_DIR + "MergeMadeMark.png",
+	"maid_mark": OUTGAME_ENTRY_DIR + "Icon_MaidMark.png",
+	"coffee": OUTGAME_ENTRY_DIR + "Icon_InGameCoffee.png",
+}
 
 var source: Dictionary = {}
 var wallet: Dictionary = {"ap": 0, "gold": 0, "jewel": 0}
@@ -64,6 +72,7 @@ var nav_icon_textures: Dictionary = {}
 var utility_icon_textures: Dictionary = {}
 var cafe_textures: Dictionary = {}
 var ui_frame_textures: Dictionary = {}
+var outgame_entry_textures: Dictionary = {}
 var maid_interaction_mode := false
 
 func _ready() -> void:
@@ -73,6 +82,7 @@ func _ready() -> void:
 	utility_icon_textures = _load_texture_map(UTILITY_ICON_PATHS)
 	cafe_textures = _load_texture_map(CAFE_TEXTURE_PATHS)
 	ui_frame_textures = _load_texture_map(UI_FRAME_PATHS)
+	outgame_entry_textures = _load_texture_map(OUTGAME_ENTRY_PATHS)
 	set_process(true)
 
 func _process(_delta: float) -> void:
@@ -368,17 +378,25 @@ func _draw_home_entries(layout: Dictionary) -> void:
 	if interaction_hover and not maid_interaction_mode:
 		draw_rect(interaction_rect, Color(0.94, 0.68, 0.82, 0.1), true)
 		draw_rect(interaction_rect, Color(0.95, 0.72, 0.88, 0.36), false, 1.0)
-	_draw_command_button(lobby_rect, "Maid", "Lobby", lobby_hover, Color(0.43, 0.54, 0.72, 1.0))
-	_draw_command_button(ingame_rect, "Merge", "Game", ingame_hover, Color(0.74, 0.38, 0.36, 1.0))
+	_draw_command_button(lobby_rect, "Maid", "Lobby", "maid_lobby", lobby_hover, Color(0.43, 0.54, 0.72, 1.0))
+	_draw_command_button(ingame_rect, "Merge", "Game", "ingame", ingame_hover, Color(0.74, 0.38, 0.36, 1.0))
 
-func _draw_command_button(rect: Rect2, title: String, subtitle: String, hover := false, accent := Color(0.74, 0.38, 0.36, 1.0)) -> void:
+func _draw_command_button(rect: Rect2, title: String, subtitle: String, icon_key: String, hover := false, accent := Color(0.74, 0.38, 0.36, 1.0)) -> void:
 	var s: float = rect.size.x / 150.0
 	var frame_key := "btn_green" if title == "Maid" else "btn_red"
 	_draw_frame_or_rect(frame_key, rect, Color(0.16, 0.17, 0.16, 0.94) if hover else Color(0.11, 0.12, 0.12, 0.88))
 	draw_rect(rect, Color(1.0, 0.88, 0.56, 0.95) if hover else Color(0.93, 0.78, 0.5, 0.84), false, 3.0 if hover else 2.0)
-	var badge_center := rect.position + Vector2(rect.size.x * 0.5, rect.size.y * 0.34)
-	draw_circle(badge_center, minf(rect.size.x, rect.size.y) * 0.23, accent)
-	draw_circle(badge_center + Vector2(0, -2.0 * s), minf(rect.size.x, rect.size.y) * 0.12, Color(1.0, 0.9, 0.65, 0.42))
+	var icon_texture: Texture2D = outgame_entry_textures.get(icon_key, null)
+	var icon_rect := Rect2(rect.position + Vector2(rect.size.x * 0.5 - 30.0 * s, 10.0 * s), Vector2(60.0 * s, 52.0 * s))
+	if icon_texture != null:
+		_draw_texture_aspect_centered(icon_texture, icon_rect, Color(1, 1, 1, 0.94))
+	else:
+		var badge_center := rect.position + Vector2(rect.size.x * 0.5, rect.size.y * 0.34)
+		draw_circle(badge_center, minf(rect.size.x, rect.size.y) * 0.23, accent)
+		draw_circle(badge_center + Vector2(0, -2.0 * s), minf(rect.size.x, rect.size.y) * 0.12, Color(1.0, 0.9, 0.65, 0.42))
+	var mark_texture: Texture2D = outgame_entry_textures.get("maid_mark" if icon_key == "maid_lobby" else "ingame_mark", null)
+	if mark_texture != null:
+		_draw_texture_aspect_centered(mark_texture, Rect2(rect.position + Vector2(10.0 * s, 10.0 * s), Vector2(30.0 * s, 30.0 * s)), Color(1, 1, 1, 0.86))
 	draw_string(ThemeDB.fallback_font, rect.position + Vector2(0, rect.size.y * 0.68), title, HORIZONTAL_ALIGNMENT_CENTER, rect.size.x, int(18.0 * s), Color(1, 0.94, 0.78, 0.96))
 	draw_string(ThemeDB.fallback_font, rect.position + Vector2(0, rect.size.y * 0.84), subtitle, HORIZONTAL_ALIGNMENT_CENTER, rect.size.x, int(13.0 * s), Color(0.95, 0.82, 0.58, 0.76))
 
