@@ -182,6 +182,8 @@ capture-godot-mvp.bat
 
 详细记录见 `docs/shaonv-godot-spine-verification-2026-05-22.md`。
 
+Godot Spine runtime 源码分析见 `docs/shaonv-godot-spine-runtime-analysis.md`。结论是：`spine-godot` 可通过 `SpineSprite + SpineSkeletonDataResource + SpineAtlasResource + SpineSkeletonFileResource` 播放动画，但当前 MVP 工程未安装 `.gdextension`，且游戏 skeleton 是 Spine `4.2.26`，与 `spine-godot 4.3` 存在版本风险；MVP 主路径继续使用 baked Spine。
+
 ## 8. 启动界面精修更新
 
 2026-05-22 从启动链路开始做第一轮精修：
