@@ -18,6 +18,7 @@ const CAFE_DIR := "res://assets/cafe/"
 const UI_FRAME_DIR := "res://assets/ui_frames/"
 const OUTGAME_ENTRY_DIR := "res://assets/outgame_entries/"
 const OUTGAME_QUEST_DIR := "res://assets/outgame_quest/"
+const OUTGAME_BADGE_DIR := "res://assets/outgame_badges/"
 const WALLET_ICON_PATHS := {
 	"ap": SPRITE_DIR + "CURRENCY_AP.png",
 	"gold": SPRITE_DIR + "CURRENCY_GOLD.png",
@@ -69,6 +70,12 @@ const OUTGAME_QUEST_PATHS := {
 	"unlock_furniture": OUTGAME_QUEST_DIR + "Icon_UnlockFurniture.png",
 	"remodeling": OUTGAME_QUEST_DIR + "Appicon_Remodeling.png",
 }
+const OUTGAME_BADGE_PATHS := {
+	"noti": OUTGAME_BADGE_DIR + "Noti.png",
+	"noti_pin": OUTGAME_BADGE_DIR + "Noti_pin.png",
+	"alert": OUTGAME_BADGE_DIR + "Icon_Alert.png",
+	"sub_noti": OUTGAME_BADGE_DIR + "subNoti.png",
+}
 
 var source: Dictionary = {}
 var wallet: Dictionary = {"ap": 0, "gold": 0, "jewel": 0}
@@ -81,6 +88,7 @@ var cafe_textures: Dictionary = {}
 var ui_frame_textures: Dictionary = {}
 var outgame_entry_textures: Dictionary = {}
 var outgame_quest_textures: Dictionary = {}
+var outgame_badge_textures: Dictionary = {}
 var maid_interaction_mode := false
 
 func _ready() -> void:
@@ -92,6 +100,7 @@ func _ready() -> void:
 	ui_frame_textures = _load_texture_map(UI_FRAME_PATHS)
 	outgame_entry_textures = _load_texture_map(OUTGAME_ENTRY_PATHS)
 	outgame_quest_textures = _load_texture_map(OUTGAME_QUEST_PATHS)
+	outgame_badge_textures = _load_texture_map(OUTGAME_BADGE_PATHS)
 	set_process(true)
 
 func _process(_delta: float) -> void:
@@ -309,6 +318,7 @@ func _draw_furniture_quest_entry(rect: Rect2, s: float) -> void:
 	if remodel_texture != null:
 		var badge_rect := Rect2(rect.end - Vector2(31.0 * s, 31.0 * s), Vector2(25.0 * s, 25.0 * s))
 		_draw_texture_aspect_centered(remodel_texture, badge_rect, Color(1, 1, 1, 0.88))
+	_draw_notification_badge(Rect2(rect.end - Vector2(22.0 * s, rect.size.y - 4.0 * s), Vector2(18.0 * s, 18.0 * s)), "noti")
 	draw_string(ThemeDB.fallback_font, rect.position + Vector2(rect.size.y * 0.86, rect.size.y * 0.56), "Quest", HORIZONTAL_ALIGNMENT_LEFT, rect.size.x - rect.size.y * 0.96, int(13.0 * s), Color(1.0, 0.92, 0.68, 0.94))
 
 func _draw_maid_layer(_screen_rect: Rect2, layout: Dictionary) -> void:
@@ -388,6 +398,7 @@ func _draw_village_progress(layout: Dictionary) -> void:
 		_draw_texture_aspect_centered(coffee_texture, icon_rect.grow(-5.0 * s), Color(1, 1, 1, 0.94))
 	else:
 		draw_string(ThemeDB.fallback_font, icon_rect.position + Vector2(0, icon_rect.size.y * 0.68), "!", HORIZONTAL_ALIGNMENT_CENTER, icon_rect.size.x, int(20.0 * s), Color(1, 0.96, 0.72, 0.96))
+	_draw_notification_badge(Rect2(bar_rect.position + Vector2(4.0 * s, 4.0 * s), Vector2(16.0 * s, 16.0 * s)), "noti_pin")
 	var inner := Rect2(bar_rect.position + Vector2(bar_rect.size.y, bar_rect.size.y * 0.48), Vector2(bar_rect.size.x - bar_rect.size.y - 14.0 * s, bar_rect.size.y * 0.22))
 	draw_rect(inner, Color(0.05, 0.06, 0.05, 0.7), true)
 	draw_rect(Rect2(inner.position, Vector2(inner.size.x * 0.57, inner.size.y)), Color(0.57, 0.86, 0.64, 0.92), true)
@@ -461,6 +472,8 @@ func _draw_bottom_navigation(layout: Dictionary) -> void:
 			_draw_texture_aspect_centered(icon_texture, icon_rect, Color(1, 1, 1, 0.95))
 		else:
 			draw_rect(Rect2(center - Vector2(8.0 * s, 8.0 * s), Vector2(16.0 * s, 16.0 * s)), Color(0.94, 0.78, 0.48, 0.74), false, 1.5 * s)
+		if action in ["app_story", "app_bag", "app_menu"]:
+			_draw_notification_badge(Rect2(icon_back.end - Vector2(16.0 * s, 44.0 * s), Vector2(15.0 * s, 15.0 * s)), "sub_noti")
 		draw_string(ThemeDB.fallback_font, cell.position + Vector2(0, cell.size.y - 14.0 * s), String(entries[index]["label"]), HORIZONTAL_ALIGNMENT_CENTER, cell.size.x, int(12.0 * s), Color(0.96, 0.87, 0.68, 0.9))
 
 func _draw_top_home_hud(screen_rect: Rect2, layout: Dictionary) -> void:
@@ -489,6 +502,8 @@ func _draw_top_home_hud(screen_rect: Rect2, layout: Dictionary) -> void:
 			_draw_texture_aspect_centered(utility_texture, icon_rect, Color(1, 1, 1, 0.92))
 		else:
 			draw_circle(btn.get_center() + Vector2(0, -2.0 * s), 5.0 * s, Color(0.92, 0.82, 0.62, 0.84))
+		if action == "app_mail":
+			_draw_notification_badge(Rect2(btn.end - Vector2(12.0 * s, 34.0 * s), Vector2(13.0 * s, 13.0 * s)), "alert")
 		draw_string(ThemeDB.fallback_font, btn.position + Vector2(0, btn.size.y - 4.0 * s), utility_labels[index], HORIZONTAL_ALIGNMENT_CENTER, btn.size.x, int(8.0 * s), Color(1, 0.92, 0.72, 0.92))
 
 func _draw_wallet_item(position: Vector2, key: String, value, s: float) -> void:
@@ -539,6 +554,13 @@ func _draw_texture_cover(texture: Texture2D, target: Rect2, modulate := Color.WH
 	var draw_size := texture_size * scale
 	var draw_rect := Rect2(target.position + (target.size - draw_size) * 0.5, draw_size)
 	draw_texture_rect(texture, draw_rect, false, modulate)
+
+func _draw_notification_badge(target: Rect2, key := "noti") -> void:
+	var texture: Texture2D = outgame_badge_textures.get(key, null)
+	if texture != null:
+		_draw_texture_aspect_centered(texture, target, Color(1, 1, 1, 0.96))
+	else:
+		draw_circle(target.get_center(), minf(target.size.x, target.size.y) * 0.45, Color(0.88, 0.16, 0.12, 0.94))
 
 func _reference_size() -> Vector2:
 	var resolution: Dictionary = source.get("reference_resolution", {})
