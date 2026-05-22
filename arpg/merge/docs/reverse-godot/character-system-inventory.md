@@ -65,6 +65,8 @@ missing=0
 
 The import includes static PNG files plus available Spine `.atlas.dat` and `.skel.dat` companion files for later animation reconstruction.
 
+Spine-backed character PNGs must be complete atlas pages. Several early copied PNGs came from sprite exports and were cropped; those are valid static preview sprites but invalid for Spine UV sampling. The current Spine browser uses AssetRipper `Assets/Texture2D` pages when a same-name `.atlas.bytes` declares a larger page size.
+
 The manifest records the exact source and target for every copied file:
 
 ```text
@@ -170,6 +172,7 @@ Godot integration:
 - The prototype has a right-side character browser with mode switching and previous/next controls.
 - Static PNG display now uses the generated `preview` metadata and only loads `static_png_only` assets directly.
 - PNGs with a same-name `.atlas.dat` are classified as Spine atlas pages, not complete static portraits.
+- Atlas-page PNG dimensions are validated against AssetRipper raw `.atlas.bytes`; mismatches must be replaced from `Assets/Texture2D` before baking.
 - Current classification: 47 `spine_atlas_page_with_skel`, 32 `spine_atlas_page_no_skel`, and 30 `static_png_only`.
 - Spine atlas pages expose atlas/skel paths, PNG size, region count, and sample region names in `asset_meta` / `preview`.
 - 109 character PNG `.import` files were generated so Godot can load the copied project assets at runtime.

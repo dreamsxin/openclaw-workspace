@@ -1931,6 +1931,41 @@ Follow-up:
 - Reuse the same `SpineBakedPreviewCanvas` renderer in `UIOutGame/UIMaidLD`, `UIMaidLobby/SpinePos`, and `UIPopup_MaidLobbySelect` rows.
 - Add a higher-fidelity bake profile only for characters that are actually shown on a restored UI screen.
 
+## 2026-05-22 - Character Spine Misalignment Fix
+
+Inputs:
+- `godot-project/assets/characters/**/*.baked.json`
+- `godot-project/assets/characters/**/*.png`
+- `reverse-output/assets/assetripper-primary/Assets/TextAsset/*.atlas.bytes`
+- `reverse-output/assets/assetripper-primary/Assets/Texture2D/*.png`
+
+Commands:
+```powershell
+node .\scripts\reverse\sync_character_atlas_pages.mjs
+node .\scripts\reverse\bake_character_spine_previews.mjs --fps=8 --max-duration=0.9 --max-clips=2
+.\tools\Godot\Godot_console.exe --headless --import --path .\godot-project
+.\capture-spine-browser.bat
+```
+
+Findings:
+- Some visible misalignment came from using the wrong Spine skin during baking. Several skeletons have animation-specific skins such as `01 Idle`, `03 Interaction`, or `Idle`; baking with only the default skin left face/eye/mouth attachments missing or mismatched.
+- A second misalignment source was wrong PNG provenance. Some committed character PNGs were AssetStudio sprite crops, while the Spine atlas expected complete `Texture2D` pages. Example: `Ch_Customer01_SD.atlas.bytes` declares `size:512,512`, but the previous committed PNG was `318x490`.
+- `sync_character_atlas_pages.mjs` replaced 18 mismatched character PNGs with complete AssetRipper `Assets/Texture2D` atlas pages after validating exact atlas dimensions.
+- The post-sync atlas audit reports zero PNG-size mismatches against raw `.atlas.bytes` declarations.
+- The refreshed browser capture shows `Ch_Customer01_SD` rendered as a coherent assembled character instead of disjoint atlas pieces.
+
+Outputs:
+- `scripts/reverse/sync_character_atlas_pages.mjs`
+- Updated `scripts/reverse/bake_character_spine_previews.mjs`
+- Updated 82 character baked preview JSON files with per-clip `skin`
+- Updated 18 full-size character atlas PNG pages and import metadata
+- `reverse-output/assets/derived/character_atlas_page_sync_manifest.json`
+- `reverse-output/spine-browser-captures/18-character-spine-browser.png`
+
+Follow-up:
+- Keep atlas-size validation in the regular character asset import path. Spine atlas pages must come from `Texture2D`, not sprite-crop exports.
+- If a future character still appears wrong after size and skin checks, inspect slot blend mode, clipping attachments, and multi-page atlas references next.
+
 Recommended next runs:
 
 1. Run Il2CppDumper or Cpp2IL on `libil2cpp.so` and `global-metadata.dat`.

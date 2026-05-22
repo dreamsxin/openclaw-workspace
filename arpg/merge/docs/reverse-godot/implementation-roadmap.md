@@ -273,14 +273,15 @@ Success criteria:
 | T081 | Convert high-priority popups to prefab-first shells | in progress | `UIPopup_Inventory`, `UIPopup_MaidLobbySelect`, and `UIPopup_Shop` now receive focused prefab data, reference concrete RectTransform paths, and gate unsafe converted rects with screenshot-verified fallbacks |
 | T082 | Convert UIFurnitureQuest entry evidence to focused prefab data | done | `FurnitureQuestPopupReferenceScreen` now receives `UIFurnitureQuest` focused data and uses source RectTransforms for the original 200x200 entry button, icon/ring, notification badge, and optional text/main/sub evidence without treating the entry prefab as a full popup |
 | T083 | Add all-character Spine preview browser | done | `bake_character_spine_previews.mjs` uses AssetRipper raw TextAsset `.skel.bytes`/`.atlas.bytes` plus committed PNG pages to bake 82/83 character previews, writes `character_spine_browser.json`, adds `run-spine-browser.bat`, and verifies `18-character-spine-browser.png`; `Ch_Maid02_Basic01_SD` remains blocked by a missing atlas region |
+| T084 | Fix character Spine atlas/skin misalignment | done | Character preview baking now chooses animation-specific skins, and `sync_character_atlas_pages.mjs` replaces cropped sprite PNGs with full AssetRipper `Texture2D` atlas pages; atlas-size audit is clean and `18-character-spine-browser.png` shows assembled previews |
 
 Immediate next implementation targets:
 
 1. Reuse `SpineBakedPreviewCanvas` inside `UIMaidLobby`, `UIMaidLD`, and `UIPopup_MaidLobbySelect` so those screens display the actual recovered LD/SD skeletons instead of static stand-ins.
 2. Resolve `Ch_Maid02_Basic01_SD` atlas mismatch by comparing AssetRipper primary/main and UABEA exports for the missing `leg_L _under` region.
-3. Deepen `UIPopup_Shop` beyond the first focused shell: map `Grid_Package`, `BannerGroup`, `Grid_Costume`, `Grid_Daily`, and product row/list item children into visible Godot sections.
-4. Improve RectTransform normalization for popup roots whose serialized `BG` or scroll content spans outside the visible panel, so `UIPopup_Inventory` and `UIPopup_Shop` can use more source rectangles without fallback gating.
-5. Resolve Image sprite GUIDs from focused reports into exact AssetStudio/AssetRipper sprite names before replacing remaining geometric fallbacks.
+3. Add atlas-size validation to future character asset copy steps so sprite-crop exports cannot replace full Spine atlas pages again.
+4. Deepen `UIPopup_Shop` beyond the first focused shell: map `Grid_Package`, `BannerGroup`, `Grid_Costume`, `Grid_Daily`, and product row/list item children into visible Godot sections.
+5. Improve RectTransform normalization for popup roots whose serialized `BG` or scroll content spans outside the visible panel, so `UIPopup_Inventory` and `UIPopup_Shop` can use more source rectangles without fallback gating.
 
 ## Tool Acquisition Options
 

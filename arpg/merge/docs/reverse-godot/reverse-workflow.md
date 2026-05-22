@@ -219,6 +219,7 @@ Use the character Spine browser when validating recovered maid/customer skeleton
 To regenerate the browser data from AssetRipper raw TextAssets:
 
 ```powershell
+node .\scripts\reverse\sync_character_atlas_pages.mjs
 node .\scripts\reverse\bake_character_spine_previews.mjs --fps=8 --max-duration=0.9 --max-clips=2
 ```
 
@@ -249,6 +250,7 @@ Checks:
 - `11-inventory.png` from `capture-gameplay.bat` should show the first-pass `UIPopup_Inventory` shell opened by the recovered Bag hit region, with separate `ProduceInventory` and `NormalInventory` slot sections.
 - `10-outgame-home.png` through `17-outgame-menu.png` from `capture-outgame-popups.bat` should cover the current asset-backed `UIOutGame` home screen and every split first-pass out-game popup.
 - `18-character-spine-browser.png` from `capture-spine-browser.bat` should show the list of recovered character skeletons on the left and a textured animated Spine preview in the main pane.
+- Character Spine atlas PNGs must match the raw `.atlas.bytes` page dimensions. If a preview shows body parts sampled from the wrong places, run `sync_character_atlas_pages.mjs` before rebaking; sprite-crop PNGs are not valid atlas pages.
 - The `UIOutGame/InGameBtn` hit region should be clickable in `run-game.bat` and should enter the playable merge-board prototype. For headless validation, run `.\tools\Godot\Godot_console.exe --path .\godot-project --headless --quit-after 6 -- --restored-startup --auto-enter-ingame`.
 - The `UIOutGame/MaidLobbyBtn` hit region should be clickable in `run-game.bat` and should enter the first `UIMaidLobby` shell. For headless validation, run `.\tools\Godot\Godot_console.exe --path .\godot-project --headless --quit-after 9 -- --restored-startup --auto-enter-maid-lobby`; with a startup capture directory it writes `10-maidlobby.png`, `11-maidlobbyselect.png`, and `12-maiddialog.png`.
 - If the second screen shows only the progress bar, first check UV handling. The baked Spine UVs are normalized `0..1`; do not multiply them by texture page size before passing them to Godot `draw_polygon`.

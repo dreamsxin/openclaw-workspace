@@ -153,6 +153,43 @@ function chooseClipNames(skeletonData) {
   return selected;
 }
 
+function normalizedName(value) {
+  return String(value)
+    .toLowerCase()
+    .replace(/^[0-9]+[\s_-]*/, "")
+    .replace(/[^a-z0-9]+/g, "");
+}
+
+function skinNameForClip(skeletonData, animationName) {
+  const skins = skeletonData.skins.map((skin) => skin.name);
+  if (skins.includes(animationName)) return animationName;
+
+  const normalizedAnimation = normalizedName(animationName);
+  const aliases = [];
+  if (normalizedAnimation.includes("idle")) aliases.push("idle");
+  if (normalizedAnimation.includes("interaction") || normalizedAnimation.includes("interactive")) {
+    aliases.push("interaction", "interactive");
+  }
+  if (normalizedAnimation.includes("ready")) aliases.push("ready");
+  if (normalizedAnimation.includes("happy")) aliases.push("happy");
+  if (normalizedAnimation.includes("sad")) aliases.push("sad");
+  if (normalizedAnimation.includes("angry") || normalizedAnimation.includes("tsundere")) aliases.push("angry");
+  if (normalizedAnimation.includes("sigh")) aliases.push("sigh");
+  if (normalizedAnimation.includes("surp")) aliases.push("surp", "surprise");
+  if (normalizedAnimation.includes("sig")) aliases.push("signa", "signature");
+  if (normalizedAnimation.includes("embar") || normalizedAnimation.includes("shame")) aliases.push("shame");
+
+  for (const alias of aliases) {
+    const skinName = skins.find((skin) => normalizedName(skin) === alias);
+    if (skinName) return skinName;
+  }
+  for (const alias of aliases) {
+    const skinName = skins.find((skin) => normalizedName(skin).includes(alias));
+    if (skinName) return skinName;
+  }
+  return skins.includes("default") ? "default" : (skins[0] ?? "");
+}
+
 function attachmentFrame(slot) {
   const attachment = slot.getAttachment();
   if (!attachment) return null;
@@ -277,6 +314,8 @@ function bakeAnimationClip(skeletonData, animationName) {
   const stateData = new AnimationStateData(skeletonData);
   const state = new AnimationState(stateData);
   const skeleton = new Skeleton(skeletonData);
+  const skinName = skinNameForClip(skeletonData, animationName);
+  if (skinName) skeleton.setSkinByName(skinName);
   state.setAnimation(0, animationName, true);
   const rawFrames = [];
   for (let frameIndex = 0; frameIndex < frameCount; frameIndex++) {
@@ -289,6 +328,7 @@ function bakeAnimationClip(skeletonData, animationName) {
   const compact = compactFrames(rawFrames);
   return {
     name: animationName,
+    skin: skinName,
     fps,
     duration: round(duration, 4),
     frameCount,
