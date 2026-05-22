@@ -8,6 +8,8 @@ const ICON_PATHS := {
 	"story": "res://assets/sprites/SubStory_MemoryBox.png",
 	"bag": "res://assets/characters/maid_chat/Appicon_MaidChatBot.png",
 	"menu": "res://assets/loading/LoadingIcon64.png",
+	"mail": "res://assets/characters/maid_chat/ProfileImg_QuestionMaiChat.png",
+	"settings": "res://assets/loading/LoadingIcon64.png",
 }
 
 var open := false
@@ -119,6 +121,8 @@ func _title() -> String:
 		"story": "Story / Memory",
 		"bag": "Cafe App",
 		"menu": "Menu",
+		"mail": "Mail",
+		"settings": "Settings",
 	}
 	return String(titles.get(app_key, "Cafe App"))
 
@@ -128,6 +132,8 @@ func _body_text() -> String:
 		"story": "Story, memory, event, and echo archive surfaces are visible in UI layout evidence. Content binding is pending.",
 		"bag": "This app surface will host inventory, maid chat, and collection-style entries outside the merge board.",
 		"menu": "Settings, mail, account, support, and other utility popups still need exact prefab and service mapping.",
+		"mail": "Mailbox and notification surfaces are restored here as a first UI shell. Message data and rewards still need table/runtime mapping.",
+		"settings": "Settings, account, support, language, and service toggles are grouped here until exact original popup prefabs are mapped.",
 	}
 	return String(bodies.get(app_key, "Out-game popup surface pending exact original prefab mapping."))
 
@@ -137,7 +143,8 @@ func _slot_label(index: int) -> String:
 		"story": ["Memory", "Event", "Archive"],
 		"bag": ["Items", "Chat", "Collection"],
 		"menu": ["Mail", "Config", "Info"],
+		"mail": ["Inbox", "Gift", "Notice"],
+		"settings": ["Sound", "Account", "Help"],
 	}
 	var selected_labels: Array = labels.get(app_key, ["Entry", "Entry", "Entry"])
 	return String(selected_labels[index])
-

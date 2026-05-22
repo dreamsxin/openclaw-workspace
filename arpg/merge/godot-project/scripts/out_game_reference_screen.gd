@@ -279,11 +279,16 @@ func _draw_top_home_hud(screen_rect: Rect2, layout: Dictionary) -> void:
 	x += 138.0 * s
 	_draw_wallet_item(Vector2(x, screen_rect.position.y + 10.0 * s), "jewel", wallet.get("jewel", 0), s)
 	var side_x := screen_rect.end.x - 92.0 * s
+	var utility_actions := ["app_mail", "app_settings"]
+	var utility_labels := ["Mail", "Set"]
 	for index in range(2):
 		var btn := Rect2(Vector2(side_x + float(index) * 40.0 * s, screen_rect.position.y + 12.0 * s), Vector2(30.0 * s, 30.0 * s))
-		draw_rect(btn, Color(0.16, 0.17, 0.16, 0.92), true)
-		draw_rect(btn, Color(0.88, 0.72, 0.46, 0.72), false, 1.5 * s)
-		draw_circle(btn.get_center(), 5.0 * s, Color(0.92, 0.82, 0.62, 0.84))
+		var action: String = utility_actions[index]
+		var hover: bool = action_regions.get(action, Rect2()).has_point(get_local_mouse_position())
+		draw_rect(btn, Color(0.23, 0.16, 0.1, 0.96) if hover else Color(0.16, 0.17, 0.16, 0.92), true)
+		draw_rect(btn, Color(1.0, 0.84, 0.5, 0.9) if hover else Color(0.88, 0.72, 0.46, 0.72), false, 1.5 * s)
+		draw_circle(btn.get_center() + Vector2(0, -2.0 * s), 5.0 * s, Color(0.92, 0.82, 0.62, 0.84))
+		draw_string(ThemeDB.fallback_font, btn.position + Vector2(0, btn.size.y - 4.0 * s), utility_labels[index], HORIZONTAL_ALIGNMENT_CENTER, btn.size.x, int(8.0 * s), Color(1, 0.92, 0.72, 0.92))
 
 func _draw_wallet_item(position: Vector2, key: String, value, s: float) -> void:
 	var rect := Rect2(position, Vector2(116.0 * s, 34.0 * s))
@@ -382,9 +387,13 @@ func _rebuild_action_regions() -> void:
 	var cell_w := bottom_rect.size.x / float(app_actions.size())
 	for index in range(app_actions.size()):
 		action_regions[app_actions[index]] = Rect2(bottom_rect.position + Vector2(cell_w * float(index), 0), Vector2(cell_w, bottom_rect.size.y))
+	var s: float = layout["scale"]
+	var side_x := screen_rect.end.x - 92.0 * s
+	action_regions["app_mail"] = Rect2(Vector2(side_x, screen_rect.position.y + 12.0 * s), Vector2(30.0 * s, 30.0 * s))
+	action_regions["app_settings"] = Rect2(Vector2(side_x + 40.0 * s, screen_rect.position.y + 12.0 * s), Vector2(30.0 * s, 30.0 * s))
 
 func _action_at(local_position: Vector2) -> String:
-	for action in ["ingame", "maid_lobby", "interaction", "app_shop", "app_story", "app_bag", "app_menu"]:
+	for action in ["ingame", "maid_lobby", "interaction", "app_mail", "app_settings", "app_shop", "app_story", "app_bag", "app_menu"]:
 		var rect: Rect2 = action_regions.get(action, Rect2())
 		if rect.has_point(local_position):
 			return action
