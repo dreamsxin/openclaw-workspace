@@ -45,6 +45,14 @@ var current_view := "boot"
 var gallery_filter := "all"
 
 func _ready() -> void:
+	anchor_left = 0.0
+	anchor_top = 0.0
+	anchor_right = 0.0
+	anchor_bottom = 0.0
+	position = Vector2.ZERO
+	size = Vector2(1280, 720)
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	print("Shaonv MVP _ready")
 	rng.randomize()
 	heroes = _read_json(HERO_DATA_PATH).get("heroes", [])
 	pools = _read_json(POOL_DATA_PATH).get("pools", [])
@@ -56,6 +64,16 @@ func _ready() -> void:
 	_load_save()
 	_build_root()
 	_show_launch()
+	if not OS.get_environment("SHAONV_MVP_CAPTURE").is_empty():
+		call_deferred("_capture_debug_screenshot")
+
+func _capture_debug_screenshot() -> void:
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var image := get_viewport().get_texture().get_image()
+	var path := OS.get_environment("SHAONV_MVP_CAPTURE")
+	image.save_png(path)
+	print("Shaonv MVP screenshot saved: %s" % path)
 
 func _read_json(path: String) -> Dictionary:
 	var text := FileAccess.get_file_as_string(path)
@@ -131,11 +149,13 @@ func _clear(title: String) -> void:
 
 func _show_launch() -> void:
 	current_view = "launch"
+	print("Shaonv MVP show launch: heroes=%d pools=%d" % [heroes.size(), pools.size()])
 	_set_chrome_visible(false)
 	_clear("啟動")
 	content.position = Vector2(0, 0)
 	content.size = Vector2(1280, 720)
-	content.add_child(_panel(Vector2(0, 0), Vector2(1280, 720), Color(0.045, 0.038, 0.038)))
+	content.add_child(_panel(Vector2(0, 0), Vector2(1280, 720), Color(0.18, 0.04, 0.05)))
+	content.add_child(_panel(Vector2(0, 0), Vector2(1280, 720), Color(0.02, 0.018, 0.016, 0.56)))
 	_draw_hero_stage(_hero_by_id(240055), Vector2(700, 82), Vector2(420, 560), false)
 	var title := _label("少女回戰", 54, HORIZONTAL_ALIGNMENT_CENTER)
 	title.position = Vector2(360, 210)

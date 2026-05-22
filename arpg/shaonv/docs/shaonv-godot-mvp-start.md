@@ -138,6 +138,14 @@ Windows 双击运行：
 run-godot-mvp.bat
 ```
 
+诊断截图：
+
+```bat
+capture-godot-mvp.bat
+```
+
+该脚本会让 Godot 直接从内部 viewport 保存截图到 `tmp/screenshots/godot-mvp-internal.png`。如果窗口显示异常但内部截图正常，说明资源和 UI 已加载，问题集中在本机窗口渲染后端或显卡驱动路径。
+
 命令行校验：
 
 ```powershell
