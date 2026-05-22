@@ -1,4 +1,4 @@
-const ART = "../../reverse-output/gacha-static/sample-export/b61d633c6f7beec5301d9f48ffb87909/by_container/Assets/Game/RawAssets/Spine/Hero/hero_003Dh/hero_003Dh.png";
+const ART = "./assets/spine/hero_003Dh/hero_003Dh.png";
 
 const HEROES = [
   { id: 240055, name: "天狐妲己", rarity: 4, spine: "hero_016", assets: "zhero_016 / bhero_016 / hero_016" },
