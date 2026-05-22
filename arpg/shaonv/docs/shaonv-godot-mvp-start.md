@@ -24,6 +24,7 @@ Godot 当前目标是“用原素材重制单机抽卡闭环”，不是直接�
 - Godot 不能直接使用 Unity UGUI prefab、AnimatorController、Material。
 - 现有 `skel.bytes + atlas.txt + png` 可以作为 Spine 运行输入，但需要 Godot Spine 插件或转换流程。
 - 当前 MVP 先用 atlas PNG 静态展示角色，保证抽卡/图鉴闭环可运行。
+- 注意：当前导入的 `hero_*.png` 多数是 Spine atlas 贴图，显示的是骨骼动画用的部件图，不等于 Unity 运行时已经摆好姿势的整张立绘。若要在 Godot 中达到原游戏角色展示效果，需要接入 Spine Godot 运行时，或先用 Spine/Unity/导出工具把指定动画帧渲染成整图再导入。
 - Unity/Web 文档保留为逆向分析和方案演进记录，不再作为实现目录。
 
 ## 3. 当前内容
@@ -52,6 +53,7 @@ standalone/godot-mvp/
 `scripts/main.gd` 已实现：
 
 - 启动链路：按原分析简化为 `LaunchView -> PreloadingView -> LoginView -> LoadingView -> MainUIView`，使用离线账号进入主界面。
+- 启动资源预览：Launch/Login/Loading 阶段显示代表角色资源；若资源路径缺失，会在界面显示 `res://...` 缺失路径，便于定位导入问题。
 - 主界面：按原 `MainUIView` 分析重排为顶部玩家/资源栏、壁纸看板区、右侧玩法入口、底部功能栏、章节任务信息。
 - 玩家信息：顶部 `pnlPlayerInfo/btnPlayerInfo` 可点击，显示等级、名称、战力、收集数、抽卡数和看板设置。
 - 设置：简化 `SystemSettingView/PlayerSetting`，支持看板自动播放、音乐、音效开关并写入存档。

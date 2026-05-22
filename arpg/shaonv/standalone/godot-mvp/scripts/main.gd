@@ -136,6 +136,7 @@ func _show_launch() -> void:
 	content.position = Vector2(0, 0)
 	content.size = Vector2(1280, 720)
 	content.add_child(_panel(Vector2(0, 0), Vector2(1280, 720), Color(0.045, 0.038, 0.038)))
+	_draw_hero_stage(_hero_by_id(240055), Vector2(700, 82), Vector2(420, 560), false)
 	var title := _label("少女回戰", 54, HORIZONTAL_ALIGNMENT_CENTER)
 	title.position = Vector2(360, 210)
 	title.size = Vector2(560, 82)
@@ -171,6 +172,7 @@ func _show_login() -> void:
 	content.position = Vector2(0, 0)
 	content.size = Vector2(1280, 720)
 	content.add_child(_panel(Vector2(0, 0), Vector2(1280, 720), Color(0.075, 0.062, 0.055)))
+	_draw_hero_stage(_hero_by_id(int(save.get("selected_hero_id", 240065))), Vector2(744, 92), Vector2(420, 540), false)
 	var title := _label("LoginView", 38, HORIZONTAL_ALIGNMENT_CENTER)
 	title.position = Vector2(390, 178)
 	title.size = Vector2(500, 58)
@@ -190,6 +192,7 @@ func _show_loading() -> void:
 	content.position = Vector2(0, 0)
 	content.size = Vector2(1280, 720)
 	content.add_child(_panel(Vector2(0, 0), Vector2(1280, 720), Color(0.045, 0.045, 0.052)))
+	_draw_hero_stage(_hero_by_id(int(save.get("selected_hero_id", 240065))), Vector2(780, 100), Vector2(360, 500), false)
 	var title := _label("LoadingView", 34, HORIZONTAL_ALIGNMENT_CENTER)
 	title.position = Vector2(390, 230)
 	title.size = Vector2(500, 54)
@@ -800,7 +803,14 @@ func _draw_hero_stage(hero: Dictionary, pos := Vector2(470, 0), size := Vector2(
 	texture.size = size
 	var resource_path := str(hero.get("artResource", ""))
 	if not resource_path.is_empty():
-		texture.texture = load("res://%s.png" % resource_path.replace("Art/Spine", "assets/spine"))
+		var godot_path := "res://%s.png" % resource_path.replace("Art/Spine", "assets/spine")
+		if ResourceLoader.exists(godot_path):
+			texture.texture = load(godot_path)
+		else:
+			var missing := _label("資源缺失\n%s" % godot_path, 16, HORIZONTAL_ALIGNMENT_CENTER)
+			missing.position = pos
+			missing.size = Vector2(size.x, 64)
+			content.add_child(missing)
 	content.add_child(texture)
 
 func _show_gacha_rate() -> void:
