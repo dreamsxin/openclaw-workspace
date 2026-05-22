@@ -3,9 +3,14 @@ extends Control
 const SAVE_PATH := "user://shaonv_godot_mvp_save.json"
 const HERO_DATA_PATH := "res://data/heroes_mvp.json"
 const POOL_DATA_PATH := "res://data/gacha_pools_mvp.json"
+const LIVE_OPS_DATA_PATH := "res://data/live_ops_mvp.json"
 
 var heroes: Array = []
 var pools: Array = []
+var tasks: Array = []
+var mails: Array = []
+var daily := {}
+var shop := {}
 var save := {
 	"tickets": 120,
 	"gems": 16800,
@@ -21,17 +26,6 @@ var save := {
 	"active_pool_id": "advanced"
 }
 
-const TASKS := [
-	{"id": "draw_1", "name": "初次喚靈", "desc": "完成 1 次喚靈", "target": 1, "tickets": 2, "gems": 160},
-	{"id": "draw_10", "name": "十次喚靈", "desc": "累計完成 10 次喚靈", "target": 10, "tickets": 5, "gems": 480},
-	{"id": "collect_3", "name": "武將收集", "desc": "收集 3 名武將", "target": 3, "tickets": 3, "gems": 300}
-]
-
-const MAILS := [
-	{"id": "launch_gift", "title": "單機版啟動補給", "body": "用於測試主界面、喚靈和圖鑑閉環。", "tickets": 10, "gems": 1600},
-	{"id": "return_gift", "title": "回歸補給", "body": "替代原遊戲郵件獎勵的 MVP 版本。", "tickets": 5, "gems": 800}
-]
-
 var rng := RandomNumberGenerator.new()
 var content: Control
 var title_label: Label
@@ -42,6 +36,11 @@ func _ready() -> void:
 	rng.randomize()
 	heroes = _read_json(HERO_DATA_PATH).get("heroes", [])
 	pools = _read_json(POOL_DATA_PATH).get("pools", [])
+	var live_ops := _read_json(LIVE_OPS_DATA_PATH)
+	tasks = live_ops.get("tasks", [])
+	mails = live_ops.get("mails", [])
+	daily = live_ops.get("daily", {"tickets": 3, "gems": 480})
+	shop = live_ops.get("shop", {"exchangeGemCost": 160, "ticketAmount": 1})
 	_load_save()
 	_build_root()
 	_show_home()
@@ -340,7 +339,7 @@ func _show_shop() -> void:
 	title.position = Vector2(44, 44)
 	title.size = Vector2(420, 52)
 	content.add_child(title)
-	var desc := _label("單機 MVP 暫定兌換規則：源石 160 = 喚靈券 1。日常、郵件和章節任務也會產出喚靈資源。", 20)
+	var desc := _label("單機 MVP 暫定兌換規則：源石 %d = 喚靈券 %d。日常、郵件和章節任務也會產出喚靈資源。" % [int(shop.get("exchangeGemCost", 160)), int(shop.get("ticketAmount", 1))], 20)
 	desc.position = Vector2(44, 112)
 	desc.size = Vector2(760, 72)
 	content.add_child(desc)
@@ -355,11 +354,13 @@ func _show_daily() -> void:
 	_clear("每日補給")
 	var today := Time.get_date_string_from_system()
 	var claimed := str(save.get("daily_claimed_date", "")) == today
-	var title := _label("每日補給", 34)
+	var reward_tickets := int(daily.get("tickets", 3))
+	var reward_gems := int(daily.get("gems", 480))
+	var title := _label(str(daily.get("name", "每日補給")), 34)
 	title.position = Vector2(44, 44)
 	title.size = Vector2(420, 52)
 	content.add_child(title)
-	var text := "今日補給\n喚靈券 x3\n源石 x480\n\n狀態：%s" % ["已領取" if claimed else "可領取"]
+	var text := "%s\n喚靈券 x%d\n源石 x%d\n\n狀態：%s" % [daily.get("desc", "今日補給"), reward_tickets, reward_gems, "已領取" if claimed else "可領取"]
 	var label := _label(text, 22)
 	label.position = Vector2(44, 126)
 	label.size = Vector2(520, 180)
@@ -367,7 +368,7 @@ func _show_daily() -> void:
 	if not claimed:
 		_add_action_button("領取", Vector2(44, 330), func() -> void:
 			save["daily_claimed_date"] = today
-			_grant_reward(3, 480)
+			_grant_reward(reward_tickets, reward_gems)
 			_show_daily()
 		)
 	_add_action_button("返回商店", Vector2(190, 330), _show_shop, Vector2(146, 44))
@@ -381,7 +382,7 @@ func _show_mail() -> void:
 	content.add_child(title)
 	var claimed: Dictionary = save.get("claimed_mail", {})
 	var y := 104.0
-	for mail in MAILS:
+	for mail in mails:
 		var mail_id := str(mail.get("id", ""))
 		var is_claimed := bool(claimed.get(mail_id, false))
 		var panel := _panel(Vector2(44, y), Vector2(760, 92), Color(0.095, 0.078, 0.065, 0.9))
@@ -410,7 +411,7 @@ func _show_tasks() -> void:
 	content.add_child(title)
 	var claimed: Dictionary = save.get("claimed_tasks", {})
 	var y := 104.0
-	for task in TASKS:
+	for task in tasks:
 		var task_id := str(task.get("id", ""))
 		var progress := _task_progress(task_id)
 		var target := int(task.get("target", 1))
@@ -445,11 +446,11 @@ func _show_tasks() -> void:
 	_add_action_button("前往喚靈", Vector2(204, 548), _show_gacha, Vector2(146, 44))
 
 func _buy_tickets(count: int) -> void:
-	var cost := count * 160
+	var cost := count * int(shop.get("exchangeGemCost", 160))
 	if int(save.get("gems", 0)) < cost:
 		return
 	save["gems"] = int(save.get("gems", 0)) - cost
-	save["tickets"] = int(save.get("tickets", 0)) + count
+	save["tickets"] = int(save.get("tickets", 0)) + count * int(shop.get("ticketAmount", 1))
 	_persist()
 	_show_shop()
 
@@ -584,15 +585,20 @@ func _grant_reward(tickets: int, gems: int) -> void:
 	_persist()
 
 func _task_progress(task_id: String) -> int:
-	if task_id == "draw_1" or task_id == "draw_10":
+	var metric := ""
+	for task in tasks:
+		if str(task.get("id", "")) == task_id:
+			metric = str(task.get("metric", ""))
+			break
+	if metric == "draw_count":
 		return int(save.get("draw_count", 0))
-	if task_id == "collect_3":
+	if metric == "owned_count":
 		return save.get("owned", {}).size()
 	return 0
 
 func _next_task_text() -> String:
 	var claimed: Dictionary = save.get("claimed_tasks", {})
-	for task in TASKS:
+	for task in tasks:
 		var task_id := str(task.get("id", ""))
 		if bool(claimed.get(task_id, false)):
 			continue
@@ -602,7 +608,7 @@ func _next_task_text() -> String:
 func _unclaimed_mail_count() -> int:
 	var claimed: Dictionary = save.get("claimed_mail", {})
 	var count := 0
-	for mail in MAILS:
+	for mail in mails:
 		if not bool(claimed.get(str(mail.get("id", "")), false)):
 			count += 1
 	return count

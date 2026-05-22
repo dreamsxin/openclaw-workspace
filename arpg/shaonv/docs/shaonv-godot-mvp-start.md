@@ -36,6 +36,7 @@ standalone/godot-mvp/
   data/
     heroes_mvp.json
     gacha_pools_mvp.json
+    live_ops_mvp.json
     draw_pool_summary.json
     hero_resource_map.json
   assets/spine/
@@ -60,6 +61,7 @@ standalone/godot-mvp/
 - 章节任务：按抽卡次数、收集数量发放喚靈券和源石，替代原 `InitPnlTask/ChapterTask` 的 MVP 版本。
 - 每日补给：按本地日期每日领取一次资源。
 - 邮件：提供启动补给和回归补给，模拟原游戏邮件奖励入口。
+- 运营资源规则：`data/live_ops_mvp.json` 驱动任务、邮件、每日补给和商店兑换，后续可替换为原游戏表导出数据。
 - 本地存档：`user://shaonv_godot_mvp_save.json`。
 
 当前存档字段：
@@ -82,6 +84,16 @@ standalone/godot-mvp/
 ```
 
 ## 5. 资源
+
+数据资源：
+
+| 文件 | 当前用途 |
+|---|---|
+| `data/heroes_mvp.json` | 角色基础信息、稀有度和立绘/Spine key |
+| `data/gacha_pools_mvp.json` | 卡池、UP、消耗、保底 |
+| `data/live_ops_mvp.json` | 每日补给、商店兑换、章节任务、邮件奖励 |
+| `data/draw_pool_summary.json` | 逆向导出的抽卡表摘要 |
+| `data/hero_resource_map.json` | 逆向导出的角色资源映射 |
 
 已导入 Godot 工程的角色资源：
 
@@ -149,4 +161,4 @@ standalone/godot-mvp/
 4. 用真实掉落表替换当前 MVP 概率。
 5. 将 `HeroRecruitView/LotteryDrawMainView/LotteryDrawFinishView` 的结构分析转成 Godot Control 节点重建清单。
 6. 把抽卡结果演出、角色详情页、商店和图鉴筛选做成独立 scene，降低 `main.gd` 复杂度。
-7. 将任务、邮件、每日补给拆成独立 scene，并继续对齐原 `QuestView/GameShopView/Welfare` 资源与文本。
+7. 将任务、邮件、每日补给拆成独立 scene，并继续把 `live_ops_mvp.json` 对齐到原 `QuestView/GameShopView/Welfare/Mail` 资源与文本。

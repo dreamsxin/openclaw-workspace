@@ -97,6 +97,7 @@ standalone/godot-mvp/
 - 章节任务：抽卡次数、收集数量达成后发放喚靈券和源石。
 - 每日补给：按本地日期每日领取一次资源。
 - 邮件：启动补给、回归补给，模拟原游戏邮件奖励。
+- 数据驱动：`standalone/godot-mvp/data/live_ops_mvp.json` 驱动每日补给、商店兑换、任务和邮件奖励。
 - 本地存档：`user://shaonv_godot_mvp_save.json`。
 
 资源接入：
@@ -186,4 +187,4 @@ python reverse-output\scripts\export-unitypy-all-assets.py `
 5. 追 `rewardRaw` 对应的掉落/概率表，确认真实概率、保底、UP、自选祈愿和重复转化规则。
 6. 整理 `LotteryDraw.spriteatlas`、抽卡背景图、按钮图、结果光效和音效，形成 `single-player asset manifest`。
 7. 将 `HeroRecruitView/LotteryDrawMainView/LotteryRewardShowView` 的结构映射成 Godot Control scene，并用真实 Spine/图集/音效替换当前静态 PNG 和基础按钮。
-8. 继续补原 `QuestView/GameShopView/Welfare/Mail` 对应资源和文本，把当前 MVP 任务、邮件、每日补给从硬编码规则迁移到数据表。
+8. 继续补原 `QuestView/GameShopView/Welfare/Mail` 对应资源和文本，把当前 `live_ops_mvp.json` 替换为从原游戏表导出的数据。

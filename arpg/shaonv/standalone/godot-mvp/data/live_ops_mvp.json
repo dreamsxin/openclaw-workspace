@@ -1,0 +1,58 @@
+{
+  "daily": {
+    "id": "daily_supply",
+    "name": "每日補給",
+    "desc": "每日可領取一次，用於維持單機抽卡循環。",
+    "tickets": 3,
+    "gems": 480
+  },
+  "shop": {
+    "exchangeGemCost": 160,
+    "ticketAmount": 1
+  },
+  "tasks": [
+    {
+      "id": "draw_1",
+      "name": "初次喚靈",
+      "desc": "完成 1 次喚靈",
+      "metric": "draw_count",
+      "target": 1,
+      "tickets": 2,
+      "gems": 160
+    },
+    {
+      "id": "draw_10",
+      "name": "十次喚靈",
+      "desc": "累計完成 10 次喚靈",
+      "metric": "draw_count",
+      "target": 10,
+      "tickets": 5,
+      "gems": 480
+    },
+    {
+      "id": "collect_3",
+      "name": "武將收集",
+      "desc": "收集 3 名武將",
+      "metric": "owned_count",
+      "target": 3,
+      "tickets": 3,
+      "gems": 300
+    }
+  ],
+  "mails": [
+    {
+      "id": "launch_gift",
+      "title": "單機版啟動補給",
+      "body": "用於測試主界面、喚靈和圖鑑閉環。",
+      "tickets": 10,
+      "gems": 1600
+    },
+    {
+      "id": "return_gift",
+      "title": "回歸補給",
+      "body": "替代原遊戲郵件獎勵的 MVP 版本。",
+      "tickets": 5,
+      "gems": 800
+    }
+  ]
+}
