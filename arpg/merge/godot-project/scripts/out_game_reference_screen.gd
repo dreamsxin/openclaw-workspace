@@ -14,6 +14,7 @@ const SPRITE_DIR := "res://assets/sprites/"
 const CHARACTER_DIR := "res://assets/characters/"
 const LOADING_DIR := "res://assets/loading/"
 const UI_ICON_DIR := "res://assets/ui_icons/"
+const CAFE_DIR := "res://assets/cafe/"
 const WALLET_ICON_PATHS := {
 	"ap": SPRITE_DIR + "CURRENCY_AP.png",
 	"gold": SPRITE_DIR + "CURRENCY_GOLD.png",
@@ -30,6 +31,17 @@ const UTILITY_ICON_PATHS := {
 	"app_mail": UI_ICON_DIR + "icon_mail.png",
 	"app_settings": UI_ICON_DIR + "icon_setting.png",
 }
+const CAFE_TEXTURE_PATHS := {
+	"hall": CAFE_DIR + "CafeHall.png",
+	"wall": CAFE_DIR + "cafe_inside_wall_basic_01.png",
+	"wall_light": CAFE_DIR + "cafe_inside_wall_light_basic_01.png",
+	"door": CAFE_DIR + "cafe_door_basic_01.png",
+	"window": CAFE_DIR + "cafe_outside_big_window_basic_01.png",
+	"counter": CAFE_DIR + "cafe_inside_counter_basic_01.png",
+	"dessert_bar": CAFE_DIR + "cafe_inside_dessertbar_basic_01.png",
+	"sofa": CAFE_DIR + "cafe_inside_sofa_basic_01.png",
+	"sofa_table": CAFE_DIR + "cafe_inside_sofa_table_basic_01.png",
+}
 
 var source: Dictionary = {}
 var wallet: Dictionary = {"ap": 0, "gold": 0, "jewel": 0}
@@ -38,6 +50,7 @@ var maid_standin_texture: Texture2D
 var wallet_icon_textures: Dictionary = {}
 var nav_icon_textures: Dictionary = {}
 var utility_icon_textures: Dictionary = {}
+var cafe_textures: Dictionary = {}
 var maid_interaction_mode := false
 
 func _ready() -> void:
@@ -45,6 +58,7 @@ func _ready() -> void:
 	wallet_icon_textures = _load_texture_map(WALLET_ICON_PATHS)
 	nav_icon_textures = _load_texture_map(NAV_ICON_PATHS)
 	utility_icon_textures = _load_texture_map(UTILITY_ICON_PATHS)
+	cafe_textures = _load_texture_map(CAFE_TEXTURE_PATHS)
 	set_process(true)
 
 func _process(_delta: float) -> void:
@@ -182,6 +196,8 @@ func _home_layout(screen_rect: Rect2) -> Dictionary:
 
 func _draw_cafe_backdrop(screen_rect: Rect2, layout: Dictionary) -> void:
 	var s: float = layout["scale"]
+	if _draw_asset_backed_cafe(screen_rect, layout):
+		return
 	var wall_rect := Rect2(screen_rect.position, Vector2(screen_rect.size.x, screen_rect.size.y * 0.6))
 	var floor_rect := Rect2(
 		Vector2(screen_rect.position.x, screen_rect.position.y + screen_rect.size.y * 0.58),
@@ -223,6 +239,32 @@ func _draw_cafe_backdrop(screen_rect: Rect2, layout: Dictionary) -> void:
 	draw_rect(furniture_rect, Color(0.18, 0.16, 0.13, 0.62), true)
 	draw_rect(furniture_rect, Color(1.0, 0.84, 0.48, 0.94) if furniture_hover else Color(0.95, 0.78, 0.45, 0.78), false, 2.0 * s)
 	draw_string(ThemeDB.fallback_font, furniture_rect.position + Vector2(0, furniture_rect.size.y * 0.58), "Quest", HORIZONTAL_ALIGNMENT_CENTER, furniture_rect.size.x, int(16.0 * s), Color(1.0, 0.92, 0.68, 0.92))
+
+func _draw_asset_backed_cafe(screen_rect: Rect2, layout: Dictionary) -> bool:
+	var hall: Texture2D = cafe_textures.get("hall", null)
+	if hall == null:
+		return false
+	var s: float = layout["scale"]
+	_draw_texture_cover(hall, screen_rect, Color(1, 1, 1, 0.96))
+	draw_rect(screen_rect, Color(0.14, 0.11, 0.08, 0.16), true)
+	_draw_optional_cafe_texture("window", Rect2(screen_rect.position + Vector2(screen_rect.size.x * 0.57, screen_rect.size.y * 0.12), Vector2(screen_rect.size.x * 0.34, screen_rect.size.y * 0.25)), Color(1, 1, 1, 0.82))
+	_draw_optional_cafe_texture("wall_light", Rect2(screen_rect.position + Vector2(screen_rect.size.x * 0.49, screen_rect.size.y * 0.13), Vector2(screen_rect.size.x * 0.1, screen_rect.size.y * 0.09)), Color(1, 1, 1, 0.8))
+	_draw_optional_cafe_texture("door", Rect2(screen_rect.position + Vector2(screen_rect.size.x * 0.78, screen_rect.size.y * 0.34), Vector2(screen_rect.size.x * 0.18, screen_rect.size.y * 0.28)), Color(1, 1, 1, 0.82))
+	_draw_optional_cafe_texture("dessert_bar", Rect2(screen_rect.position + Vector2(screen_rect.size.x * 0.58, screen_rect.size.y * 0.45), Vector2(screen_rect.size.x * 0.28, screen_rect.size.y * 0.23)), Color(1, 1, 1, 0.9))
+	_draw_optional_cafe_texture("sofa", Rect2(screen_rect.position + Vector2(screen_rect.size.x * 0.1, screen_rect.size.y * 0.48), Vector2(screen_rect.size.x * 0.34, screen_rect.size.y * 0.2)), Color(1, 1, 1, 0.86))
+	_draw_optional_cafe_texture("sofa_table", Rect2(screen_rect.position + Vector2(screen_rect.size.x * 0.32, screen_rect.size.y * 0.58), Vector2(screen_rect.size.x * 0.22, screen_rect.size.y * 0.1)), Color(1, 1, 1, 0.88))
+	_draw_optional_cafe_texture("counter", Rect2(screen_rect.position + Vector2(screen_rect.size.x * 0.01, screen_rect.size.y * 0.6), Vector2(screen_rect.size.x * 0.6, screen_rect.size.y * 0.28)), Color(1, 1, 1, 0.95))
+	var furniture_rect: Rect2 = layout["furniture"]
+	var furniture_hover: bool = action_regions.get("furniture_quest", Rect2()).has_point(get_local_mouse_position())
+	draw_rect(furniture_rect, Color(0.11, 0.09, 0.075, 0.66), true)
+	draw_rect(furniture_rect, Color(1.0, 0.84, 0.48, 0.94) if furniture_hover else Color(0.95, 0.78, 0.45, 0.78), false, 2.0 * s)
+	draw_string(ThemeDB.fallback_font, furniture_rect.position + Vector2(0, furniture_rect.size.y * 0.58), "Quest", HORIZONTAL_ALIGNMENT_CENTER, furniture_rect.size.x, int(16.0 * s), Color(1.0, 0.92, 0.68, 0.92))
+	return true
+
+func _draw_optional_cafe_texture(key: String, target: Rect2, modulate := Color.WHITE) -> void:
+	var texture: Texture2D = cafe_textures.get(key, null)
+	if texture != null:
+		_draw_texture_aspect_centered(texture, target, modulate)
 
 func _draw_maid_layer(_screen_rect: Rect2, layout: Dictionary) -> void:
 	var s: float = layout["scale"]
@@ -412,6 +454,15 @@ func _draw_texture_aspect_centered(texture: Texture2D, target: Rect2, modulate :
 	if texture_size.x <= 0 or texture_size.y <= 0:
 		return
 	var scale := minf(target.size.x / texture_size.x, target.size.y / texture_size.y)
+	var draw_size := texture_size * scale
+	var draw_rect := Rect2(target.position + (target.size - draw_size) * 0.5, draw_size)
+	draw_texture_rect(texture, draw_rect, false, modulate)
+
+func _draw_texture_cover(texture: Texture2D, target: Rect2, modulate := Color.WHITE) -> void:
+	var texture_size := Vector2(texture.get_width(), texture.get_height())
+	if texture_size.x <= 0 or texture_size.y <= 0:
+		return
+	var scale := maxf(target.size.x / texture_size.x, target.size.y / texture_size.y)
 	var draw_size := texture_size * scale
 	var draw_rect := Rect2(target.position + (target.size - draw_size) * 0.5, draw_size)
 	draw_texture_rect(texture, draw_rect, false, modulate)

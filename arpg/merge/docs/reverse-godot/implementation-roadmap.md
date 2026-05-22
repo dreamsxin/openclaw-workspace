@@ -256,11 +256,12 @@ Success criteria:
 | T064 | Add first UIOutGame Bag/Menu shell | done | The bottom Bag and Menu entries now open `BagMenuPopupReferenceScreen`, with item/chat/collection cards and profile/notice/support cards staged from current evidence |
 | T065 | Add asset-backed UIOutGame navigation icons | done | `OutGameReferenceScreen` now maps committed PNG resources onto Shop/Story/Maid/Bag/Menu and Mail/Settings buttons, with geometric fallback if an asset is missing |
 | T066 | Import recovered UIOutGame app icons | done | AssetStudio `Appicon_Story`, `Appicon_Maid`, `Appicon_Collection`, `Appicon_Organize`, `icon_mail`, and `icon_setting` are copied into `godot-project/assets/ui_icons` and used by the home navigation |
+| T067 | Import recovered cafe home background assets | done | AssetStudio `CafeHall` and basic cafe furniture sprites are copied into `godot-project/assets/cafe`; `OutGameReferenceScreen` now draws an asset-backed cafe background with geometric fallback |
 
 Immediate next implementation targets:
 
 1. Bind more recovered sprite assets into the Shop, Mail/Settings, Bag/Menu, Story/Memory, and FurnitureQuest shells, then map table/config IDs where available.
-2. Continue main UI exactness work: cafe/furniture background sprites, exact button frames, and LD maid Spine rendering.
+2. Continue main UI exactness work: exact button frames, tighter cafe/furniture placement, and LD maid Spine rendering.
 3. Replace structural placeholders with source-derived request/task/shop/mail/settings/menu rules as table/runtime evidence is mapped.
 4. Add regression captures for the newly split `UIOutGame` popups.
 
