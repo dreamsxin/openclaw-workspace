@@ -53,7 +53,6 @@ const UI_FRAME_PATHS := {
 	"gauge_in": UI_FRAME_DIR + "Gaugebar_In.png",
 	"frame_square": UI_FRAME_DIR + "BasicFrame_Square01.png",
 	"frame_circle": UI_FRAME_DIR + "BasicFrame_Circle_78_White.png",
-	"panel": UI_FRAME_DIR + "Popup_Back.png",
 }
 
 var source: Dictionary = {}
@@ -349,14 +348,14 @@ func _draw_village_progress(layout: Dictionary) -> void:
 	var s: float = layout["scale"]
 	var bar_rect: Rect2 = layout["progress"]
 	var progress_hover: bool = action_regions.get("village_rebuild", Rect2()).has_point(get_local_mouse_position())
-	_draw_frame_or_rect("panel", bar_rect, Color(0.12, 0.11, 0.1, 0.88))
+	draw_rect(bar_rect, Color(0.12, 0.11, 0.1, 0.88), true)
 	draw_rect(bar_rect, Color(1.0, 0.84, 0.48, 0.96) if progress_hover else Color(0.94, 0.78, 0.45, 0.9), false, 2.0 * s)
 	var icon_rect := Rect2(bar_rect.position + Vector2(8.0 * s, 8.0 * s), Vector2(bar_rect.size.y - 16.0 * s, bar_rect.size.y - 16.0 * s))
 	_draw_frame_or_rect("frame_circle", icon_rect, Color(0.86, 0.58, 0.28, 0.9))
 	draw_string(ThemeDB.fallback_font, icon_rect.position + Vector2(0, icon_rect.size.y * 0.68), "!", HORIZONTAL_ALIGNMENT_CENTER, icon_rect.size.x, int(20.0 * s), Color(1, 0.96, 0.72, 0.96))
 	var inner := Rect2(bar_rect.position + Vector2(bar_rect.size.y, bar_rect.size.y * 0.48), Vector2(bar_rect.size.x - bar_rect.size.y - 14.0 * s, bar_rect.size.y * 0.22))
-	_draw_frame_or_rect("gauge_out", inner, Color(0.05, 0.06, 0.05, 0.7))
-	_draw_frame_or_rect("gauge_in", Rect2(inner.position, Vector2(inner.size.x * 0.57, inner.size.y)), Color(0.57, 0.86, 0.64, 0.92))
+	draw_rect(inner, Color(0.05, 0.06, 0.05, 0.7), true)
+	draw_rect(Rect2(inner.position, Vector2(inner.size.x * 0.57, inner.size.y)), Color(0.57, 0.86, 0.64, 0.92), true)
 	draw_string(ThemeDB.fallback_font, bar_rect.position + Vector2(bar_rect.size.y, 22.0 * s), "Village ReBuild", HORIZONTAL_ALIGNMENT_LEFT, bar_rect.size.x - bar_rect.size.y, int(15.0 * s), Color(1.0, 0.92, 0.68, 0.95))
 
 func _draw_home_entries(layout: Dictionary) -> void:
@@ -386,7 +385,7 @@ func _draw_command_button(rect: Rect2, title: String, subtitle: String, hover :=
 func _draw_bottom_navigation(layout: Dictionary) -> void:
 	var bottom_rect: Rect2 = layout["bottom"]
 	var s: float = layout["scale"]
-	_draw_frame_or_rect("panel", bottom_rect, Color(0.08, 0.08, 0.075, 0.9))
+	draw_rect(bottom_rect, Color(0.08, 0.08, 0.075, 0.9), true)
 	draw_rect(bottom_rect, Color(0.86, 0.72, 0.46, 0.66), false, 1.5 * s)
 	var entries := [
 		{"label": "Shop", "action": "app_shop", "color": Color(0.5, 0.28, 0.42, 0.92)},
@@ -416,7 +415,7 @@ func _draw_bottom_navigation(layout: Dictionary) -> void:
 func _draw_top_home_hud(screen_rect: Rect2, layout: Dictionary) -> void:
 	var top_rect: Rect2 = layout["top"]
 	var s: float = layout["scale"]
-	_draw_frame_or_rect("panel", top_rect, Color(0.07, 0.075, 0.07, 0.92))
+	draw_rect(top_rect, Color(0.07, 0.075, 0.07, 0.92), true)
 	draw_rect(Rect2(top_rect.position + Vector2(0, top_rect.size.y - 2.0 * s), Vector2(top_rect.size.x, 2.0 * s)), Color(0.91, 0.76, 0.45, 0.72), true)
 	var x := screen_rect.position.x + 10.0 * s
 	_draw_wallet_item(Vector2(x, screen_rect.position.y + 10.0 * s), "ap", wallet.get("ap", 0), s)
@@ -443,7 +442,7 @@ func _draw_top_home_hud(screen_rect: Rect2, layout: Dictionary) -> void:
 
 func _draw_wallet_item(position: Vector2, key: String, value, s: float) -> void:
 	var rect := Rect2(position, Vector2(116.0 * s, 34.0 * s))
-	_draw_frame_or_rect("panel", rect, Color(0.02, 0.025, 0.025, 0.56))
+	draw_rect(rect, Color(0.02, 0.025, 0.025, 0.56), true)
 	draw_rect(rect, Color(0.77, 0.63, 0.38, 0.46), false, 1.0 * s)
 	var icon_texture: Texture2D = wallet_icon_textures.get(key, null)
 	var icon_rect := Rect2(rect.position + Vector2(5.0 * s, 4.0 * s), Vector2(26.0 * s, 26.0 * s))

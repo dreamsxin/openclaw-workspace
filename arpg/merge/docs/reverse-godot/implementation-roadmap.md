@@ -259,6 +259,7 @@ Success criteria:
 | T067 | Import recovered cafe home background assets | done | AssetStudio `CafeHall` and basic cafe furniture sprites are copied into `godot-project/assets/cafe`; `OutGameReferenceScreen` now draws an asset-backed cafe background with geometric fallback |
 | T068 | Import recovered UIOutGame frame assets | done | AssetStudio button, panel, circle-frame, and gauge sprites are copied into `godot-project/assets/ui_frames` and used by home buttons, top HUD, bottom nav, and rebuild progress |
 | T069 | Add UIOutGame popup regression capture | done | `capture-outgame-popups.bat` and `--auto-capture-outgame-popups` now capture the home screen plus Shop, Story, FurnitureQuest, Mail, Settings, Bag, and Menu popup states |
+| T070 | Clean up stretched UI frame artifacts | done | The new popup capture exposed stretched `Popup_Back`/gauge artifacts on wide HUD panels, so large panels and thin bars now use stable geometric fills while button/icon frames keep recovered sprites |
 
 Immediate next implementation targets:
 
