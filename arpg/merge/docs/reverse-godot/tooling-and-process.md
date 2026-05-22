@@ -1783,6 +1783,45 @@ Follow-up:
 - Convert `UIPopup_MaidLobbySelect` before further visual polish in the maid lobby flow.
 - Treat `UIPopup_Shop` as a staged conversion because it has 932 RectTransforms.
 
+## 2026-05-22 - Focused Popup Prefab Conversion Pass
+
+Inputs:
+- `godot-project/data/focused_ui_layout_reference.json`
+- `reverse-output/assets/assetripper-main/ExportedProject/Assets/Resources/prefabs/ui/popup/UIPopup_Inventory.prefab`
+- `reverse-output/assets/assetripper-main/ExportedProject/Assets/Resources/prefabs/ui/popup/outgame/UIPopup_MaidLobbySelect.prefab`
+- `godot-project/scripts/inventory_popup_reference_screen.gd`
+- `godot-project/scripts/maid_lobby_select_popup_reference_screen.gd`
+
+Commands:
+```powershell
+python .\scripts\reverse\extract_focused_ui_layout_reports.py
+.\tools\Godot\Godot_console.exe --headless --path .\godot-project --quit
+.\capture-gameplay.bat
+.\tools\Godot\Godot_console.exe --path .\godot-project --resolution 540x960 --quit-after 520 -- --restored-startup --auto-enter-maid-lobby --startup-capture-dir=D:\work\openclaw-workspace\arpg\merge\reverse-output\maid-lobby-captures
+```
+
+Findings:
+- `main.gd` now passes focused prefab records into both `InventoryPopupReferenceScreen` and `MaidLobbySelectPopupReferenceScreen`.
+- `UIPopup_Inventory` references `BG`, `ProduceInventory/Cover/Iron/Text (TMP)`, `NormalInventory/BGGroup/Text (TMP)`, `ProduceInventory/ScrollViewMask`, `NormalInventory/BGGroup`, and `Btn_Close`.
+- The raw converted `UIPopup_Inventory/BG` is valid but too tall for the current visible portrait popup. The Godot screen keeps the stable fallback root and uses a runtime sanity gate for source child rectangles until popup-root normalization is improved.
+- `UIPopup_MaidLobbySelect` references `Panel`, `TextTitle`, `MaidList`, `BtnArea/Btn`, `Btn_Close`, and list-item prefab rows.
+- Screenshot verification caught an unsafe `Btn_Close` placement over the list; the same sanity gate now rejects source rectangles that land far outside the intended fallback region.
+
+Outputs:
+- `godot-project/scripts/main.gd`
+- `godot-project/scripts/inventory_popup_reference_screen.gd`
+- `godot-project/scripts/maid_lobby_select_popup_reference_screen.gd`
+- `scripts/reverse/extract_focused_ui_layout_reports.py`
+- `docs/reverse-godot/focused-ui-prefab-audit.md`
+- `godot-project/data/focused_ui_layout_reference.json`
+- `reverse-output/gameplay-captures/11-inventory.png`
+- `reverse-output/maid-lobby-captures/11-maidlobbyselect.png`
+
+Follow-up:
+- Convert `UIPopup_Shop` next using the same focused-data path.
+- Add accepted/rejected runtime RectTransform diagnostics to the focused audit.
+- Normalize popup roots against their own visible panel parents before replacing more fallback rectangles.
+
 Recommended next runs:
 
 1. Run Il2CppDumper or Cpp2IL on `libil2cpp.so` and `global-metadata.dat`.

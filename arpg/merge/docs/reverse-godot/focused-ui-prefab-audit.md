@@ -8,9 +8,9 @@ This audit checks the currently implemented Godot screens against focused AssetR
 | --- | --- | --- | ---: | ---: | --- | ---: | --- |
 | `UIInGame` | high | prefab_reference_shell | 25 | 1351 | `godot-project/scripts/ingame_reference_shell.gd` | 0 | low path coverage |
 | `UIMaidLobby` | high | prefab_first_partial | 64 | 10 | `godot-project/scripts/maid_lobby_reference_screen.gd` | 6 | source driven |
-| `UIPopup_Inventory` | high | manual_shell | 10 | 131 | `godot-project/scripts/inventory_popup_reference_screen.gd` | 0 | manual Rect2 shell, low path coverage, no set_source |
+| `UIPopup_Inventory` | high | prefab_first_partial | 64 | 131 | `godot-project/scripts/inventory_popup_reference_screen.gd` | 6 | low path coverage |
 | `UIPopup_Shop` | high | manual_shell | 10 | 932 | `godot-project/scripts/shop_popup_reference_screen.gd` | 0 | manual Rect2 shell, low path coverage, no set_source |
-| `UIPopup_MaidLobbySelect` | high | manual_shell | 10 | 87 | `godot-project/scripts/maid_lobby_select_popup_reference_screen.gd` | 0 | manual Rect2 shell, low path coverage, no set_source |
+| `UIPopup_MaidLobbySelect` | high | prefab_first_partial | 64 | 87 | `godot-project/scripts/maid_lobby_select_popup_reference_screen.gd` | 6 | source driven |
 | `UIFurnitureQuest` | medium | manual_shell | 10 | 20 | `godot-project/scripts/furniture_quest_popup_reference_screen.gd` | 0 | manual Rect2 shell, low path coverage, no set_source |
 | `UIVillageReBuild` | medium | prefab_first_partial | 64 | 6 | `godot-project/scripts/out_game_reference_screen.gd` | 6 | source driven |
 | `UIMaidLobbyLoading` | medium | prefab_reference_shell | 45 | 86 | `godot-project/scripts/maid_lobby_loading_reference_screen.gd` | 3 | low path coverage |
@@ -89,13 +89,13 @@ Key serialized rect paths:
 
 - Prefab: `Assets/Resources/prefabs/ui/popup/UIPopup_Inventory.prefab`
 - Godot: `godot-project/scripts/inventory_popup_reference_screen.gd`
-- Status: `manual_shell`
+- Status: `prefab_first_partial`
 - RectTransforms: 131
 - Layout kinds: fixed_anchor=48, full_stretch=56, mixed=27
 - Components: CanvasRenderer=108, Image=101, MonoBehaviour:16c0ec1e=25, MonoBehaviour:18d0a906=11, MonoBehaviour:19fbb4a3=5, MonoBehaviour:1be30ab7=2, MonoBehaviour:21c79540=5, MonoBehaviour:25b8ef92=1, MonoBehaviour:2cbaf7f9=2, MonoBehaviour:4293fd42=24, MonoBehaviour:598ca59b=3, MonoBehaviour:76ccfb4b=4, MonoBehaviour:8ffc7d92=2, MonoBehaviour:da9b4ee3=1, MonoBehaviour:e7250304=1, MonoBehaviour:f18f2cc2=2, RectTransform=131, TextMeshProUGUI=5
-- Godot has `set_source`: False
-- Godot has RectTransform helpers: False
-- Godot hard-coded `Rect2(...)` calls: 9
+- Godot has `set_source`: True
+- Godot has RectTransform helpers: True
+- Godot hard-coded `Rect2(...)` calls: 15
 
 Key serialized rect paths:
 
@@ -169,13 +169,13 @@ Key serialized rect paths:
 
 - Prefab: `Assets/Resources/prefabs/ui/popup/outgame/UIPopup_MaidLobbySelect.prefab`
 - Godot: `godot-project/scripts/maid_lobby_select_popup_reference_screen.gd`
-- Status: `manual_shell`
+- Status: `prefab_first_partial`
 - RectTransforms: 87
 - Layout kinds: fixed_anchor=42, full_stretch=41, mixed=4
 - Components: CanvasRenderer=64, Image=53, MonoBehaviour:16c0ec1e=10, MonoBehaviour:18d0a906=10, MonoBehaviour:19fbb4a3=1, MonoBehaviour:1be30ab7=3, MonoBehaviour:21c79540=1, MonoBehaviour:4293fd42=3, MonoBehaviour:5eccd90b=2, MonoBehaviour:8da296ca=1, MonoBehaviour:8ffc7d92=1, MonoBehaviour:bc52f174=1, MonoBehaviour:e43d41b3=7, MonoBehaviour:f18f2cc2=1, MonoBehaviour:ff326197=8, RectTransform=87, TextMeshProUGUI=3
-- Godot has `set_source`: False
-- Godot has RectTransform helpers: False
-- Godot hard-coded `Rect2(...)` calls: 8
+- Godot has `set_source`: True
+- Godot has RectTransform helpers: True
+- Godot hard-coded `Rect2(...)` calls: 14
 
 Key serialized rect paths:
 

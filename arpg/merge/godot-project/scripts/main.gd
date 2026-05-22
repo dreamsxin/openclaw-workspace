@@ -988,6 +988,9 @@ func _apply_maid_lobby_reference_visibility() -> void:
 func _apply_maid_lobby_select_popup() -> void:
 	if maid_lobby_select_popup_reference_screen == null:
 		return
+	var source: Dictionary = focused_ui_layout_sources.get("UIPopup_MaidLobbySelect", {})
+	if not source.is_empty():
+		maid_lobby_select_popup_reference_screen.call("set_source", source)
 	maid_lobby_select_popup_reference_screen.call("set_maids", maids, character_index)
 	maid_lobby_select_popup_reference_screen.call("set_popup_open", maid_lobby_select_popup_visible)
 
@@ -1304,6 +1307,9 @@ func _hide_inventory_popup() -> void:
 func _apply_inventory_popup() -> void:
 	if inventory_popup_reference_screen == null:
 		return
+	var source: Dictionary = focused_ui_layout_sources.get("UIPopup_Inventory", {})
+	if not source.is_empty():
+		inventory_popup_reference_screen.call("set_source", source)
 	inventory_popup_reference_screen.call("set_inventory_state", _selected_block_summary(), _board_block_summaries(), board.wallet)
 	inventory_popup_reference_screen.call("set_popup_open", inventory_popup_visible)
 

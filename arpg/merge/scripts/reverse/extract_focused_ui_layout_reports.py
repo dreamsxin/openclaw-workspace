@@ -278,6 +278,8 @@ def analyze_godot_script(script_name: str) -> dict:
         return {"path": script_name, "exists": False}
     text = path.read_text(encoding="utf-8", errors="ignore")
     source_paths = sorted(set(re.findall(r'_source_rect\("([^"]+)"', text)))
+    source_paths.extend(re.findall(r'_source_or_fallback\("([^"]+)"', text))
+    source_paths = sorted(set(source_paths))
     exact_paths = sorted(set(re.findall(r'_rect_by_path\("([^"]+)"', text)))
     suffix_paths = sorted(set(re.findall(r'_rect_by_suffix\("([^"]+)"', text)))
     return {

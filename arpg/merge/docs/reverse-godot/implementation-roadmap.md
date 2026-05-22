@@ -270,14 +270,14 @@ Success criteria:
 | T078 | Re-align Godot UIOutGame to recovered RectTransforms | in progress | `OutGameReferenceScreen` now loads the focused UIOutGame reference and uses source RectTransforms for `Npc_Dialog`, `InGameBtn`, `MaidLobbyBtn`, `Btn_ToInteraction`, `FurnitureQuest`, and `UIVillageReBuild/Fillbar`; inactive parent surfaces remain flagged for runtime mount/state confirmation |
 | T079 | Audit all implemented screens against prefab-first rules | done | `scripts/reverse/extract_focused_ui_layout_reports.py` generates `docs/reverse-godot/focused-ui-prefab-audit.md` and `godot-project/data/focused_ui_layout_reference.json`; current high-priority gaps are `UIPopup_Inventory`, `UIPopup_Shop`, and `UIPopup_MaidLobbySelect` |
 | T080 | Convert UIMaidLobby to focused prefab data | done | `MaidLobbyReferenceScreen` now receives `UIMaidLobby` focused layout data and uses source RectTransforms for `BG`, `White`, `SpinePos`, `Gradient`, `Npc_Dialog`, and `DialogBtn` |
-| T081 | Convert high-priority popups to prefab-first shells | pending | Use `focused_ui_layout_reference.json` to replace hand-built `Rect2` layouts for `UIPopup_Inventory`, `UIPopup_Shop`, and `UIPopup_MaidLobbySelect` |
+| T081 | Convert high-priority popups to prefab-first shells | in progress | `UIPopup_Inventory` and `UIPopup_MaidLobbySelect` now receive focused prefab data, reference concrete RectTransform paths, and gate unsafe converted rects with screenshot-verified fallbacks; `UIPopup_Shop` remains pending |
 
 Immediate next implementation targets:
 
-1. Convert `UIPopup_Inventory` to load focused prefab data and derive `BG`, `ProduceInventory`, `NormalInventory`, `ScrollViewMask`, close/button regions, and slot grids from RectTransforms.
-2. Convert `UIPopup_MaidLobbySelect` to load focused prefab data for `Panel`, `TextTitle`, `Btn_Close`, `MaidList`, and list-item rows.
-3. Start `UIPopup_Shop` focused conversion after the smaller popups, because its 932 RectTransforms need a staged target list.
-4. Resolve Image sprite GUIDs from focused reports into exact AssetStudio/AssetRipper sprite names before replacing remaining geometric fallbacks.
+1. Convert `UIPopup_Shop` to load focused prefab data, starting with `BG`, tab/header regions, wallet, product list, ad reward, package, and close controls.
+2. Improve RectTransform normalization for popup roots whose serialized `BG` spans outside the visible panel, so `UIPopup_Inventory` can use more source rectangles without fallback gating.
+3. Resolve Image sprite GUIDs from focused reports into exact AssetStudio/AssetRipper sprite names before replacing remaining geometric fallbacks.
+4. Expand the focused audit from path-count status to accepted-runtime-rect status, so unsafe prefab rectangles are visible in the report.
 
 ## Tool Acquisition Options
 

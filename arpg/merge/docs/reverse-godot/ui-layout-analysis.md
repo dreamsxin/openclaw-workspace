@@ -143,9 +143,12 @@ Current audit status:
 
 - `UIOutGame`, `UIVillageReBuild`, and `UIMaidLobby` are `prefab_first_partial`.
 - `UIMaidLobbyLoading`, `UISceneLoading`, and `UIInGame` are `prefab_reference_shell` or lower because they still have low exact path coverage.
-- `UIPopup_Inventory`, `UIPopup_Shop`, `UIPopup_MaidLobbySelect`, and `UIFurnitureQuest` remain `manual_shell` and should not be considered correctly restored.
+- `UIPopup_Inventory` now loads focused prefab data and references `BG`, `ProduceInventory`, `NormalInventory`, `ScrollViewMask`, and `Btn_Close`, but the visible popup keeps a fallback root because the serialized `BG` spans beyond the practical portrait panel.
+- `UIPopup_MaidLobbySelect` now loads focused prefab data and references `Panel`, `TextTitle`, `MaidList`, `BtnArea/Btn`, `Btn_Close`, and list-item rows; screenshot verification confirms the close button is no longer misplaced over the list.
+- `UIPopup_Shop` and `UIFurnitureQuest` remain manual shells and should not be considered correctly restored.
 
 The focused audit is the gate for future UI completion labels: a screen must load focused prefab data and reference concrete RectTransform paths before it can be marked as prefab-first.
+Converted source rectangles are additionally sanity-checked at runtime. If a recovered RectTransform is valid but lands far outside the current fallback panel, Godot keeps the stable fallback region and leaves the source path in the audit for later normalization.
 
 Latest startup recheck:
 
@@ -222,8 +225,9 @@ Runtime class evidence from the IL2CPP dump links the popup to `InvenDataManager
 
 Current Godot state:
 
-- `UIInGame` Bag opens a first-pass top-level `UIPopup_Inventory` shell.
-- The shell separates producer candidates into `ProduceInventory` and normal blocks into `NormalInventory`.
+- `UIInGame` Bag opens a focused-data `UIPopup_Inventory` shell.
+- The shell separates producer candidates into `ProduceInventory` and normal blocks into `NormalInventory`, using recovered prefab node paths where the converted rectangles pass runtime sanity checks.
+- The popup root currently rejects the serialized `UIPopup_Inventory/BG` as a visible rect because the converted root is taller than the portrait panel; this is tracked as a RectTransform normalization follow-up rather than a missing prefab reference.
 - Exact slot scroll/list layout, persistent `InvenDataManager` data, and drag-out/put-in behavior remain pending.
 
 ## Largest UI Prefabs
