@@ -291,23 +291,11 @@ func _draw_and_show(count: int) -> void:
 		_add_action_button("返回", Vector2(360, 226), _show_gacha)
 		return
 	_draw_result_stage(results[0])
-	var x := 66.0
-	var y := 440.0
-	for result in results:
-		var hero: Dictionary = result.get("hero", {})
-		var hero_id := int(hero.get("id", 0))
-		var card := Button.new()
-		card.text = "%s\n%s\n%s" % [_stars(int(result.get("rolled_rarity", 1))), hero.get("name", ""), "NEW" if result.get("is_new", false) else "碎片 +%d" % int(result.get("shards", 0))]
-		card.position = Vector2(x, y)
-		card.size = Vector2(108, 74)
-		card.pressed.connect(func() -> void:
-			_show_hero_detail(hero_id)
-		)
-		content.add_child(card)
-		x += 118
-	_add_action_button("再抽一次", Vector2(850, 538), func() -> void: _draw_and_show(count), Vector2(132, 46))
-	_add_action_button("返回卡池", Vector2(994, 538), _show_gacha, Vector2(132, 46))
-	_add_action_button("圖鑑", Vector2(1138, 538), _show_gallery, Vector2(92, 46))
+	_draw_result_grid(results)
+	_add_action_button("跳過", Vector2(706, 538), _show_gacha, Vector2(112, 46))
+	_add_action_button("再抽一次", Vector2(838, 538), func() -> void: _draw_and_show(count), Vector2(132, 46))
+	_add_action_button("返回卡池", Vector2(990, 538), _show_gacha, Vector2(132, 46))
+	_add_action_button("圖鑑", Vector2(1142, 538), _show_gallery, Vector2(92, 46))
 
 func _show_gallery() -> void:
 	_clear("圖鑑")
@@ -707,17 +695,52 @@ func _draw_home_status() -> void:
 func _draw_result_stage(result: Dictionary) -> void:
 	var hero: Dictionary = result.get("hero", _hero_by_id(240065))
 	var rarity := int(result.get("rolled_rarity", hero.get("rarity", 1)))
-	var bg_color := Color(0.33, 0.25, 0.13) if rarity >= 4 else Color(0.13, 0.11, 0.17)
+	var bg_color := Color(0.34, 0.25, 0.12) if rarity >= 4 else Color(0.12, 0.105, 0.16)
 	content.add_child(_panel(Vector2(0, 0), Vector2(1280, 646), bg_color))
-	var title := _label("喚靈結果", 40, HORIZONTAL_ALIGNMENT_CENTER)
-	title.position = Vector2(400, 24)
+	content.add_child(_panel(Vector2(254, 40), Vector2(772, 360), _rarity_color(rarity, 0.16)))
+	content.add_child(_panel(Vector2(320, 72), Vector2(640, 292), _rarity_color(rarity, 0.12)))
+	var title_text := "源神降臨" if rarity >= 4 else "喚靈結果"
+	var title := _label(title_text, 40, HORIZONTAL_ALIGNMENT_CENTER)
+	title.position = Vector2(400, 22)
 	title.size = Vector2(480, 56)
 	content.add_child(title)
+
+	var tag := _label("NEW" if result.get("is_new", false) else "碎片 +%d" % int(result.get("shards", 0)), 24, HORIZONTAL_ALIGNMENT_CENTER)
+	tag.position = Vector2(520, 82)
+	tag.size = Vector2(240, 36)
+	tag.modulate = _rarity_color(rarity, 1.0)
+	content.add_child(tag)
+
 	var name := _label("%s  %s" % [_stars(rarity), hero.get("name", "")], 34, HORIZONTAL_ALIGNMENT_CENTER)
 	name.position = Vector2(382, 352)
 	name.size = Vector2(520, 56)
 	content.add_child(name)
 	_draw_hero_stage(hero, Vector2(420, 70), Vector2(440, 340), false)
+
+	var hint := _label("點擊下方獎勵格查看角色", 18, HORIZONTAL_ALIGNMENT_CENTER)
+	hint.position = Vector2(432, 396)
+	hint.size = Vector2(416, 32)
+	content.add_child(hint)
+
+func _draw_result_grid(results: Array) -> void:
+	var strip := _panel(Vector2(42, 430), Vector2(1196, 92), Color(0.04, 0.033, 0.031, 0.72))
+	content.add_child(strip)
+	var x := 66.0
+	for result in results:
+		var hero: Dictionary = result.get("hero", {})
+		var hero_id := int(hero.get("id", 0))
+		var rarity := int(result.get("rolled_rarity", hero.get("rarity", 1)))
+		var frame := _panel(Vector2(x - 4, 436), Vector2(116, 82), _rarity_color(rarity, 0.58))
+		content.add_child(frame)
+		var card := Button.new()
+		card.text = "%s\n%s\n%s" % [_stars(rarity), hero.get("name", ""), "NEW" if result.get("is_new", false) else "碎片 +%d" % int(result.get("shards", 0))]
+		card.position = Vector2(x, 440)
+		card.size = Vector2(108, 74)
+		card.pressed.connect(func() -> void:
+			_show_hero_detail(hero_id)
+		)
+		content.add_child(card)
+		x += 118
 
 func _draw_hero_stage(hero: Dictionary, pos := Vector2(470, 0), size := Vector2(500, 560), show_text := true) -> void:
 	if show_text:
@@ -916,6 +939,13 @@ func _draw_progress_bar(pos: Vector2, size: Vector2, ratio: float) -> void:
 	content.add_child(bg)
 	var fill := _panel(pos + Vector2(2, 2), Vector2((size.x - 4) * clamp(ratio, 0.0, 1.0), size.y - 4), Color(0.82, 0.62, 0.28))
 	content.add_child(fill)
+
+func _rarity_color(rarity: int, alpha := 1.0) -> Color:
+	if rarity >= 4:
+		return Color(1.0, 0.72, 0.22, alpha)
+	if rarity == 3:
+		return Color(0.78, 0.42, 1.0, alpha)
+	return Color(0.32, 0.62, 1.0, alpha)
 
 func _add_action_button(text: String, pos: Vector2, callback: Callable, size := Vector2(132, 44)) -> void:
 	var button := Button.new()

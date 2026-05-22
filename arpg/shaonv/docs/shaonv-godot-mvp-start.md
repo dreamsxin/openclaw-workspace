@@ -57,7 +57,7 @@ standalone/godot-mvp/
 - 设置：简化 `SystemSettingView/PlayerSetting`，支持看板自动播放、音乐、音效开关并写入存档。
 - 抽卡：按 `LotteryDrawMainView -> LotteryDrawPanel` 分析重排为左侧卡池 tab、中部 UP/保底信息、右侧角色展示、底部单抽/十连/概率/记录按钮。
 - 抽卡规则：`data/gacha_pools_mvp.json` 驱动概率、UP 权重、保底、重复碎片和 Static 来源字段。
-- 结果页：按 `HeroRecruitView/LotteryRewardShowView` 职责拆分，显示主出货角色、稀有度标题、十连结果格、新角色和重复碎片，点击结果进入角色详情。
+- 结果页：按 `LotteryDrawFinishView -> HeroRecruitView/LotteryRewardShowView` 职责拆分，显示主出货角色、稀有度标题、模拟稀有度光效层、十连结果格稀有度色框、新角色和重复碎片，点击结果进入角色详情。
 - 图鉴：按 `GalCollectionView` 的分页/筛选/进度职责补了收集进度、全部/已获得/未获得/稀有度筛选、已获得优先和稀有度排序，未获得角色灰显。
 - 角色详情：按 `CommonHeroView` 的角色信息页职责显示获得状态、稀有度、碎片、获得途径、资源路径和 Spine key；未获得角色叠加锁定遮罩，已获得角色可设为看板。
 - 记录：抽卡历史。
@@ -156,6 +156,7 @@ standalone/godot-mvp/
 - `MainUIView.InitPnlTask()` 中的章节任务刷新、领取事件和 `ReqGetChapterTask` 行为，被简化为本地 `TASKS` 表和 `claimed_tasks` 存档。
 - `pnlCommercialization/btnWelfare/btnShop` 被简化为每日补给、邮件和商店入口。
 - `docs/shaonv-p0-continuation-2026-05-22.md` 中抽卡调用链：`LotteryDrawMainView -> LotteryDrawPanel -> LotteryDrawModel -> LotteryDrawFinishView/HeroRecruitView`。
+- `reverse-output/managed/Assembly-CSharp-index/gacha-character-methods.csv` 中 `LotteryDrawFinishView.GetLightEffect/GetMaskPic/Launch/ShowReward` 与 `HeroRecruitView.InitAnimationView/CreateSpine`，用于确定结果页需要按稀有度切光效、主角色演出层和结果奖励格。
 - `reverse-output/gacha-static/tables/drawconfig.json` 和 `draw_pool_summary.csv` 中的 `cnt3/rateUp` 字段，用于标注当前 MVP 卡池规则来源。
 - `docs/shaonv-yooasset-physical-mapping-fix.md` 中已定位的抽卡 prefab 物理映射。
 - `reverse-output/managed/Assembly-CSharp-index/methods.csv` 中 `GalCollectionView` 的 `OnSelectHero/GetGridCount/OnBtnNextClick/OnBtnPreviousClick/UpdateProgress` 和 `CommonHeroView` 的 `OnOpen/OnTabChange/UpdateSkill`，用于确定图鉴页需要进度、筛选、选择角色和角色详情信息区。
@@ -165,7 +166,7 @@ standalone/godot-mvp/
 
 - 启动视频 `launch.mp4`、真实热更进度、服务器/SDK 登录仍未接入；当前为离线可跳过流程。
 - 原 `MainUIView`、`LotteryDrawMainView`、`GalCollectionView`、`CommonHeroView` prefab 的完整 RectTransform 层级尚未转换为 Godot scene。
-- 抽卡 UI 图集、按钮图、结果光效、音效仍未批量导入 Godot。
+- 抽卡 UI 图集、按钮图、真实结果光效、音效仍未批量导入 Godot；当前结果页用 Godot 半透明色块模拟稀有度光效。
 - Spine 运行时尚未接入，当前仍是 PNG 静态展示。
 - 原游戏 reward 掉落表仍需继续展开；当前概率和重复碎片已数据化，但仍是基于 `drawconfig/ac_limit_draw` 字段的 MVP 近似规则。
 
