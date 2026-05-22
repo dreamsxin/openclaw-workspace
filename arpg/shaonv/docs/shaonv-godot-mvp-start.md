@@ -51,6 +51,7 @@ standalone/godot-mvp/
 
 `scripts/main.gd` 已实现：
 
+- 启动链路：按原分析简化为 `LaunchView -> PreloadingView -> LoginView -> LoadingView -> MainUIView`，使用离线账号进入主界面。
 - 主界面：按原 `MainUIView` 分析重排为顶部玩家/资源栏、壁纸看板区、右侧玩法入口、底部功能栏、章节任务信息。
 - 抽卡：按 `LotteryDrawMainView -> LotteryDrawPanel` 分析重排为左侧卡池 tab、中部 UP/保底信息、右侧角色展示、底部单抽/十连/概率/记录按钮。
 - 结果页：按 `HeroRecruitView/LotteryRewardShowView` 职责拆分，显示主出货角色、稀有度标题、十连结果格、新角色和重复碎片，点击结果进入角色详情。
@@ -133,12 +134,11 @@ standalone/godot-mvp/
 .\Godot\Godot.exe --path standalone\godot-mvp --scene res://scenes/main.tscn
 ```
 
-## 7. 下一步
-
 ## 7. 当前还原依据和缺口
 
 本轮 Godot UI 还原依据：
 
+- `docs/shaonv-hotfix-ui-lifecycle-analysis.md` 中启动顺序：`LaunchView.OnOpen/Awake -> LoginView -> LoadingView.UpdateProcess -> GameHelper.LoadMainScene -> MainUIView`。
 - `docs/shaonv-hotfix-ui-lifecycle-analysis.md` 中 `MainUIView` 字段分组：`pnlPlayerInfo`、`_topBar`、`pnlFunny`、`pnlBottom`、`WallpaperPanel`、`btnDraw`、`btnPrayer`、`btnHero`、`btnBagpack`、`btnTask` 等。
 - `MainUIView.InitPnlTask()` 中的章节任务刷新、领取事件和 `ReqGetChapterTask` 行为，被简化为本地 `TASKS` 表和 `claimed_tasks` 存档。
 - `pnlCommercialization/btnWelfare/btnShop` 被简化为每日补给、邮件和商店入口。
@@ -148,6 +148,7 @@ standalone/godot-mvp/
 
 当前仍未完全还原：
 
+- 启动视频 `launch.mp4`、真实热更进度、服务器/SDK 登录仍未接入；当前为离线可跳过流程。
 - 原 `MainUIView`、`LotteryDrawMainView` prefab 的完整 RectTransform 层级尚未转换为 Godot scene。
 - 抽卡 UI 图集、按钮图、结果光效、音效仍未批量导入 Godot。
 - Spine 运行时尚未接入，当前仍是 PNG 静态展示。

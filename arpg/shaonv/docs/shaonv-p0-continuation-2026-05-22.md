@@ -87,6 +87,7 @@ standalone/godot-mvp/
 
 已实现：
 
+- 启动链路：`LaunchView -> PreloadingView -> LoginView -> LoadingView -> MainUIView` 的离线简化版。
 - 主界面：显示本地货币、看板娘、入口、保底状态。
 - 抽卡：普通/高级/进阶/源神祈愿池切换，单抽和十连。
 - 结果：结果卡片、新角色标记、重复转化提示，点击结果可设为看板。

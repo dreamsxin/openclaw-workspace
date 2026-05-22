@@ -31,6 +31,7 @@ var content: Control
 var title_label: Label
 var wallet_label: Label
 var top_bar: Control
+var current_view := "boot"
 
 func _ready() -> void:
 	rng.randomize()
@@ -43,7 +44,7 @@ func _ready() -> void:
 	shop = live_ops.get("shop", {"exchangeGemCost": 160, "ticketAmount": 1})
 	_load_save()
 	_build_root()
-	_show_home()
+	_show_launch()
 
 func _read_json(path: String) -> Dictionary:
 	var text := FileAccess.get_file_as_string(path)
@@ -104,16 +105,103 @@ func _build_root() -> void:
 	content.size = Vector2(1280, 646)
 	add_child(content)
 
+func _set_chrome_visible(visible: bool) -> void:
+	top_bar.visible = visible
+	title_label.visible = visible
+	wallet_label.visible = visible
+
 func _clear(title: String) -> void:
 	title_label.text = title
 	for child in content.get_children():
 		child.queue_free()
 	_refresh_wallet()
 
+func _show_launch() -> void:
+	current_view = "launch"
+	_set_chrome_visible(false)
+	_clear("啟動")
+	content.position = Vector2(0, 0)
+	content.size = Vector2(1280, 720)
+	content.add_child(_panel(Vector2(0, 0), Vector2(1280, 720), Color(0.045, 0.038, 0.038)))
+	var title := _label("少女回戰", 54, HORIZONTAL_ALIGNMENT_CENTER)
+	title.position = Vector2(360, 210)
+	title.size = Vector2(560, 82)
+	content.add_child(title)
+	var sub := _label("單機版 MVP", 24, HORIZONTAL_ALIGNMENT_CENTER)
+	sub.position = Vector2(430, 302)
+	sub.size = Vector2(420, 40)
+	content.add_child(sub)
+	_add_action_button("開始", Vector2(574, 420), _show_preloading, Vector2(132, 48))
+
+func _show_preloading() -> void:
+	current_view = "preloading"
+	_set_chrome_visible(false)
+	_clear("預載入")
+	content.position = Vector2(0, 0)
+	content.size = Vector2(1280, 720)
+	content.add_child(_panel(Vector2(0, 0), Vector2(1280, 720), Color(0.06, 0.052, 0.048)))
+	var title := _label("PreloadingView", 34, HORIZONTAL_ALIGNMENT_CENTER)
+	title.position = Vector2(390, 230)
+	title.size = Vector2(500, 54)
+	content.add_child(title)
+	var info := _label("載入本地資料、角色資源與喚靈配置", 22, HORIZONTAL_ALIGNMENT_CENTER)
+	info.position = Vector2(330, 304)
+	info.size = Vector2(620, 42)
+	content.add_child(info)
+	_draw_progress_bar(Vector2(360, 380), Vector2(560, 22), 0.65)
+	_add_action_button("繼續", Vector2(574, 438), _show_login, Vector2(132, 48))
+
+func _show_login() -> void:
+	current_view = "login"
+	_set_chrome_visible(false)
+	_clear("登入")
+	content.position = Vector2(0, 0)
+	content.size = Vector2(1280, 720)
+	content.add_child(_panel(Vector2(0, 0), Vector2(1280, 720), Color(0.075, 0.062, 0.055)))
+	var title := _label("LoginView", 38, HORIZONTAL_ALIGNMENT_CENTER)
+	title.position = Vector2(390, 178)
+	title.size = Vector2(500, 58)
+	content.add_child(title)
+	var panel := _panel(Vector2(430, 260), Vector2(420, 190), Color(0.11, 0.09, 0.075, 0.95))
+	content.add_child(panel)
+	var account := _label("離線帳號\nPlayer\n伺服器：Local MainScene", 21, HORIZONTAL_ALIGNMENT_CENTER)
+	account.position = Vector2(456, 292)
+	account.size = Vector2(368, 86)
+	content.add_child(account)
+	_add_action_button("離線登入", Vector2(574, 392), _show_loading, Vector2(132, 48))
+
+func _show_loading() -> void:
+	current_view = "loading"
+	_set_chrome_visible(false)
+	_clear("載入")
+	content.position = Vector2(0, 0)
+	content.size = Vector2(1280, 720)
+	content.add_child(_panel(Vector2(0, 0), Vector2(1280, 720), Color(0.045, 0.045, 0.052)))
+	var title := _label("LoadingView", 34, HORIZONTAL_ALIGNMENT_CENTER)
+	title.position = Vector2(390, 230)
+	title.size = Vector2(500, 54)
+	content.add_child(title)
+	var info := _label("GameHelper.LoadMainScene -> MainUIView", 22, HORIZONTAL_ALIGNMENT_CENTER)
+	info.position = Vector2(330, 304)
+	info.size = Vector2(620, 42)
+	content.add_child(info)
+	_draw_progress_bar(Vector2(360, 380), Vector2(560, 22), 1.0)
+	_add_action_button("進入主界面", Vector2(554, 438), _enter_main_scene, Vector2(172, 48))
+
+func _enter_main_scene() -> void:
+	content.position = Vector2(0, 74)
+	content.size = Vector2(1280, 646)
+	_set_chrome_visible(true)
+	_show_home()
+
 func _refresh_wallet() -> void:
 	wallet_label.text = "郵件 %d   喚靈券 %s   源石 %s" % [_unclaimed_mail_count(), save.get("tickets", 0), save.get("gems", 0)]
 
 func _show_home() -> void:
+	current_view = "main"
+	content.position = Vector2(0, 74)
+	content.size = Vector2(1280, 646)
+	_set_chrome_visible(true)
 	_clear("主界面")
 	var hero := _hero_by_id(int(save.get("selected_hero_id", 240065)))
 	_draw_wallpaper_stage(hero)
@@ -629,6 +717,12 @@ func _panel(pos: Vector2, size: Vector2, color: Color) -> ColorRect:
 	panel.size = size
 	panel.color = color
 	return panel
+
+func _draw_progress_bar(pos: Vector2, size: Vector2, ratio: float) -> void:
+	var bg := _panel(pos, size, Color(0.025, 0.022, 0.02))
+	content.add_child(bg)
+	var fill := _panel(pos + Vector2(2, 2), Vector2((size.x - 4) * clamp(ratio, 0.0, 1.0), size.y - 4), Color(0.82, 0.62, 0.28))
+	content.add_child(fill)
 
 func _add_action_button(text: String, pos: Vector2, callback: Callable, size := Vector2(132, 44)) -> void:
 	var button := Button.new()
