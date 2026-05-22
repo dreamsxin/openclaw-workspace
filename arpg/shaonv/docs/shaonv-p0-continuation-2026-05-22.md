@@ -92,6 +92,7 @@ standalone/godot-mvp/
 - 玩家信息：顶部玩家入口显示等级、名称、战力，并进入玩家信息面板。
 - 设置：支持看板自动播放、音乐、音效开关，写入本地存档。
 - 抽卡：普通/高级/进阶/源神祈愿池切换，单抽和十连。
+- 抽卡规则：`gacha_pools_mvp.json` 驱动概率、UP 权重、保底、重复碎片和 Static 来源标注。
 - 结果：结果卡片、新角色标记、重复转化提示，点击结果可设为看板。
 - 图鉴：已获得角色高亮，未获得灰显，显示持有数量和碎片。
 - 角色详情：展示获得状态、碎片、资源路径和 Spine key，可设为看板。
@@ -187,7 +188,7 @@ python reverse-output\scripts\export-unitypy-all-assets.py `
 2. 批量导出 `hero_001/003/005/016/017` 的 Spine、立绘、头像、半身像和皮肤资源。
 3. 导出 `HeroRecruitView/LotteryDrawMainView/LotteryDrawPanel/LotteryDrawFinishView/LotteryRewardShowView/PrayerRewardView` 主 prefab 和依赖 prefab。
 4. 对上述 View 的 MonoBehaviour 字段做定向 IL/反编译，补齐按钮、动画、结果格、特效节点绑定。
-5. 追 `rewardRaw` 对应的掉落/概率表，确认真实概率、保底、UP、自选祈愿和重复转化规则。
+5. 继续追 `rewardRaw` 对应的掉落/概率表，确认真实概率和掉落组；当前 Godot MVP 已把概率、保底、UP、重复转化规则数据化为近似配置。
 6. 整理 `LotteryDraw.spriteatlas`、抽卡背景图、按钮图、结果光效和音效，形成 `single-player asset manifest`。
 7. 将 `HeroRecruitView/LotteryDrawMainView/LotteryRewardShowView` 的结构映射成 Godot Control scene，并用真实 Spine/图集/音效替换当前静态 PNG 和基础按钮。
 8. 继续补原 `QuestView/GameShopView/Welfare/Mail` 对应资源和文本，把当前 `live_ops_mvp.json` 替换为从原游戏表导出的数据。

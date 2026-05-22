@@ -1,8 +1,48 @@
 {
   "pools": [
-    { "id": "normal", "name": "普通喚靈", "ticketCost": 1, "pityLimit": 2000, "featuredHeroIds": [240065, 240069, 240068, 240045] },
-    { "id": "advanced", "name": "高級喚靈", "ticketCost": 1, "pityLimit": 60, "featuredHeroIds": [240055, 240065, 240069, 240082] },
-    { "id": "epic", "name": "進階喚靈", "ticketCost": 1, "pityLimit": 60, "featuredHeroIds": [240055, 240069, 240068, 240045] },
-    { "id": "prayer", "name": "源神祈願", "ticketCost": 1, "pityLimit": 20, "featuredHeroIds": [240055] }
+    {
+      "id": "normal",
+      "name": "普通喚靈",
+      "ticketCost": 1,
+      "pityLimit": 2000,
+      "rates": { "4": 0.001, "3": 0.08, "2": 0.919 },
+      "upRate": 0.5,
+      "duplicateShards": { "4": 25, "3": 8, "2": 3 },
+      "featuredHeroIds": [240065, 240069, 240068, 240045],
+      "sourceStatic": { "table": "drawconfig", "id": 1201, "cnt3": 2000, "rateUp": 50 }
+    },
+    {
+      "id": "advanced",
+      "name": "高級喚靈",
+      "ticketCost": 1,
+      "pityLimit": 60,
+      "rates": { "4": 0.02, "3": 0.14, "2": 0.84 },
+      "upRate": 1.0,
+      "duplicateShards": { "4": 25, "3": 8, "2": 3 },
+      "featuredHeroIds": [240055, 240065, 240069, 240082],
+      "sourceStatic": { "table": "drawconfig", "id": 1100, "cnt3": 60, "rateUp": 100 }
+    },
+    {
+      "id": "epic",
+      "name": "進階喚靈",
+      "ticketCost": 1,
+      "pityLimit": 60,
+      "rates": { "4": 0.02, "3": 0.14, "2": 0.84 },
+      "upRate": 0.0,
+      "duplicateShards": { "4": 25, "3": 8, "2": 3 },
+      "featuredHeroIds": [240055, 240069, 240068, 240045],
+      "sourceStatic": { "table": "drawconfig", "id": 1300, "cnt3": 60, "rateUp": 0 }
+    },
+    {
+      "id": "prayer",
+      "name": "源神祈願",
+      "ticketCost": 1,
+      "pityLimit": 20,
+      "rates": { "4": 0.05, "3": 0.14, "2": 0.81 },
+      "upRate": 0.0,
+      "duplicateShards": { "4": 25, "3": 8, "2": 3 },
+      "featuredHeroIds": [240055],
+      "sourceStatic": { "table": "drawconfig", "id": 1101, "cnt3": 20, "rateUp": 0 }
+    }
   ]
 }

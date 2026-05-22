@@ -259,7 +259,17 @@ func _show_gacha() -> void:
 	var featured_names := []
 	for id in pool.get("featuredHeroIds", []):
 		featured_names.append(_hero_by_id(int(id)).get("name", str(id)))
-	var detail := _label("UP 角色\n%s\n\n保底 %d/%d\n消耗 喚靈券 x%d" % [" / ".join(featured_names), _pity(pool.get("id", "advanced")), int(pool.get("pityLimit", 60)), int(pool.get("ticketCost", 1))], 21)
+	var rates: Dictionary = pool.get("rates", {})
+	var detail := _label("UP 角色\n%s\n\n保底 %d/%d\n消耗 喚靈券 x%d\n%s %.1f%%  %s %.1f%%" % [
+		" / ".join(featured_names),
+		_pity(pool.get("id", "advanced")),
+		int(pool.get("pityLimit", 60)),
+		int(pool.get("ticketCost", 1)),
+		_stars(4),
+		float(rates.get("4", 0.02)) * 100.0,
+		_stars(3),
+		float(rates.get("3", 0.14)) * 100.0
+	], 21)
 	detail.position = Vector2(326, 132)
 	detail.size = Vector2(430, 170)
 	content.add_child(detail)
@@ -389,10 +399,13 @@ func _draw_one(pool: Dictionary) -> Dictionary:
 	var pity := _pity(pool_id) + 1
 	var rarity := 2
 	var roll := rng.randf()
-	if pity >= int(pool.get("pityLimit", 60)) or roll < 0.02:
+	var rates: Dictionary = pool.get("rates", {"4": 0.02, "3": 0.14, "2": 0.84})
+	var rare4_rate := float(rates.get("4", 0.02))
+	var rare3_rate := float(rates.get("3", 0.14))
+	if pity >= int(pool.get("pityLimit", 60)) or roll < rare4_rate:
 		rarity = 4
 		pity = 0
-	elif roll < 0.16:
+	elif roll < rare4_rate + rare3_rate:
 		rarity = 3
 	_set_pity(pool_id, pity)
 
@@ -411,14 +424,14 @@ func _draw_one(pool: Dictionary) -> Dictionary:
 	for hero in candidates:
 		if pool.get("featuredHeroIds", []).has(int(hero.get("id", 0))):
 			featured.append(hero)
-	var list := featured if rarity >= 3 and not featured.is_empty() and rng.randf() < 0.55 else candidates
+	var list := featured if rarity >= 3 and not featured.is_empty() and rng.randf() < float(pool.get("upRate", 0.55)) else candidates
 	var hero: Dictionary = list[rng.randi_range(0, list.size() - 1)]
 	var owned: Dictionary = save.get("owned", {})
 	var shards: Dictionary = save.get("shards", {})
 	var key := str(hero.get("id", 0))
 	var is_new := not owned.has(key)
 	owned[key] = int(owned.get(key, 0)) + 1
-	var shard_gain := 0 if is_new else _duplicate_shards(int(hero.get("rarity", 1)))
+	var shard_gain := 0 if is_new else _duplicate_shards(pool, int(hero.get("rarity", 1)))
 	if shard_gain > 0:
 		shards[key] = int(shards.get(key, 0)) + shard_gain
 	save["owned"] = owned
@@ -601,12 +614,9 @@ func _buy_tickets(count: int) -> void:
 	_persist()
 	_show_shop()
 
-func _duplicate_shards(rarity: int) -> int:
-	if rarity >= 4:
-		return 25
-	if rarity == 3:
-		return 8
-	return 3
+func _duplicate_shards(pool: Dictionary, rarity: int) -> int:
+	var shards: Dictionary = pool.get("duplicateShards", {"4": 25, "3": 8, "2": 3})
+	return int(shards.get(str(rarity), shards.get("2", 3)))
 
 func _draw_wallpaper_stage(hero: Dictionary) -> void:
 	var sky := _panel(Vector2(0, 0), Vector2(1280, 646), Color(0.11, 0.095, 0.085))
@@ -700,7 +710,30 @@ func _draw_hero_stage(hero: Dictionary, pos := Vector2(470, 0), size := Vector2(
 func _show_gacha_rate() -> void:
 	_clear("概率")
 	var pool := _pool_by_id(str(save.get("active_pool_id", "advanced")))
-	var text := "卡池：%s\n\nMVP 暫定概率：\n%s 2%%，保底 %d 抽\n%s 14%%\n其餘為普通角色\n\nUP 權重：高稀有命中後 55%% 從 UP 列表取角色" % [pool.get("name", ""), _stars(4), int(pool.get("pityLimit", 60)), _stars(3)]
+	var rates: Dictionary = pool.get("rates", {})
+	var source: Dictionary = pool.get("sourceStatic", {})
+	var shards: Dictionary = pool.get("duplicateShards", {})
+	var text := "卡池：%s\n\nMVP 概率：\n%s %.2f%%，保底 %d 抽\n%s %.2f%%\n%s %.2f%%\n\nUP 權重：%.0f%%\n重複碎片：%s=%d  %s=%d  %s=%d\n\n來源：%s %s / cnt3=%s / rateUp=%s" % [
+		pool.get("name", ""),
+		_stars(4),
+		float(rates.get("4", 0.02)) * 100.0,
+		int(pool.get("pityLimit", 60)),
+		_stars(3),
+		float(rates.get("3", 0.14)) * 100.0,
+		_stars(2),
+		float(rates.get("2", 0.84)) * 100.0,
+		float(pool.get("upRate", 0.55)) * 100.0,
+		_stars(4),
+		int(shards.get("4", 25)),
+		_stars(3),
+		int(shards.get("3", 8)),
+		_stars(2),
+		int(shards.get("2", 3)),
+		source.get("table", "mvp"),
+		str(source.get("id", "")),
+		str(source.get("cnt3", "")),
+		str(source.get("rateUp", ""))
+	]
 	var label := _label(text, 22)
 	label.position = Vector2(54, 60)
 	label.size = Vector2(760, 260)

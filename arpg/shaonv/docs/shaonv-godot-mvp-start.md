@@ -56,6 +56,7 @@ standalone/godot-mvp/
 - 玩家信息：顶部 `pnlPlayerInfo/btnPlayerInfo` 可点击，显示等级、名称、战力、收集数、抽卡数和看板设置。
 - 设置：简化 `SystemSettingView/PlayerSetting`，支持看板自动播放、音乐、音效开关并写入存档。
 - 抽卡：按 `LotteryDrawMainView -> LotteryDrawPanel` 分析重排为左侧卡池 tab、中部 UP/保底信息、右侧角色展示、底部单抽/十连/概率/记录按钮。
+- 抽卡规则：`data/gacha_pools_mvp.json` 驱动概率、UP 权重、保底、重复碎片和 Static 来源字段。
 - 结果页：按 `HeroRecruitView/LotteryRewardShowView` 职责拆分，显示主出货角色、稀有度标题、十连结果格、新角色和重复碎片，点击结果进入角色详情。
 - 图鉴：角色收集状态、持有数量、重复碎片，点击进入角色详情。
 - 角色详情：显示获得状态、碎片、资源路径和 Spine key，可设为看板。
@@ -103,7 +104,7 @@ standalone/godot-mvp/
 | 文件 | 当前用途 |
 |---|---|
 | `data/heroes_mvp.json` | 角色基础信息、稀有度和立绘/Spine key |
-| `data/gacha_pools_mvp.json` | 卡池、UP、消耗、保底 |
+| `data/gacha_pools_mvp.json` | 卡池、UP、消耗、保底、概率、UP 权重、重复碎片、Static 来源 |
 | `data/live_ops_mvp.json` | 每日补给、商店兑换、章节任务、邮件奖励 |
 | `data/draw_pool_summary.json` | 逆向导出的抽卡表摘要 |
 | `data/hero_resource_map.json` | 逆向导出的角色资源映射 |
@@ -155,6 +156,7 @@ standalone/godot-mvp/
 - `MainUIView.InitPnlTask()` 中的章节任务刷新、领取事件和 `ReqGetChapterTask` 行为，被简化为本地 `TASKS` 表和 `claimed_tasks` 存档。
 - `pnlCommercialization/btnWelfare/btnShop` 被简化为每日补给、邮件和商店入口。
 - `docs/shaonv-p0-continuation-2026-05-22.md` 中抽卡调用链：`LotteryDrawMainView -> LotteryDrawPanel -> LotteryDrawModel -> LotteryDrawFinishView/HeroRecruitView`。
+- `reverse-output/gacha-static/tables/drawconfig.json` 和 `draw_pool_summary.csv` 中的 `cnt3/rateUp` 字段，用于标注当前 MVP 卡池规则来源。
 - `docs/shaonv-yooasset-physical-mapping-fix.md` 中已定位的抽卡 prefab 物理映射。
 - 已导入 Godot 的 5 个代表角色 Spine 三件套中的 PNG，用作看板和抽卡展示。
 
@@ -164,7 +166,7 @@ standalone/godot-mvp/
 - 原 `MainUIView`、`LotteryDrawMainView` prefab 的完整 RectTransform 层级尚未转换为 Godot scene。
 - 抽卡 UI 图集、按钮图、结果光效、音效仍未批量导入 Godot。
 - Spine 运行时尚未接入，当前仍是 PNG 静态展示。
-- 原游戏真实掉落表、商城/任务/邮件资源产出规则仍需继续补齐；当前任务/邮件/每日补给是可玩性 MVP 规则。
+- 原游戏 reward 掉落表仍需继续展开；当前概率和重复碎片已数据化，但仍是基于 `drawconfig/ac_limit_draw` 字段的 MVP 近似规则。
 
 ## 8. 下一步
 
