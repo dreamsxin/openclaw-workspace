@@ -116,11 +116,11 @@ standalone/godot-mvp/
 
 | 角色 | 路径 | 当前用途 |
 |---|---|---|
-| 哪吒/hero_001 | `assets/spine/hero_001` | 静态展示，保留 Spine 三件套 |
-| 莉莉絲/hero_003Dh | `assets/spine/hero_003Dh` | 静态展示，保留 Spine 三件套 |
-| 蔡文姬/hero_005 | `assets/spine/hero_005` | 静态展示，保留 Spine 三件套 |
-| 天狐妲己/hero_016 | `assets/spine/hero_016` | 静态展示，保留 Spine 三件套 |
-| 女帝/hero_017 | `assets/spine/hero_017` | 静态展示，保留 Spine 三件套 |
+| 哪吒/hero_001 | `assets/spine/hero_001` | 已生成 `hero_001.baked.json`，播放 `wait/wait1` |
+| 莉莉絲/hero_003Dh | `assets/spine/hero_003Dh` | 已生成 `hero_003Dh.baked.json`，播放 `wait/wait1` |
+| 蔡文姬/hero_005 | `assets/spine/hero_005` | 已生成 `hero_005.baked.json`，播放 `wait/wait1` |
+| 天狐妲己/hero_016 | `assets/spine/hero_016` | 已生成 `hero_016.baked.json`，播放 `wait/wait1` |
+| 女帝/hero_017 | `assets/spine/hero_017` | 已生成 `hero_017.baked.json`，优先播放 `wait/wait1` |
 
 每个角色包含：
 
@@ -170,18 +170,35 @@ capture-godot-mvp.bat
 
 ## 7. Spine 动画验证更新
 
-2026-05-22 已完成 `hero_016` 的 Spine MVP 验证：
+2026-05-22 已完成 Spine MVP 验证：
 
 - `hero_016.skel.bytes` 为 Spine binary `4.2.26`。
 - 可用动画为 `wait`、`wait1`，没有名为 `idle` 的 clip；当前把 `wait` 作为待机动画。
 - `D:\work\openclaw-workspace\arpg\merge` 的可运行方案是预烘焙 Spine 帧，再在 Godot 中用 `draw_polygon()` 绘制 attachment mesh。
-- 已为本项目新增 `scripts/spine/bake_hero_spine_preview.mjs`、`standalone/godot-mvp/scripts/spine_baked_preview_canvas.gd` 和 `standalone/godot-mvp/assets/spine/hero_016/hero_016.baked.json`。
+- 已为本项目新增 `scripts/spine/bake_hero_spine_preview.mjs`、`standalone/godot-mvp/scripts/spine_baked_preview_canvas.gd`。
+- 已为 `hero_001`、`hero_003Dh`、`hero_005`、`hero_016`、`hero_017` 生成 baked JSON，启动、登录、加载和主界面不再把 Spine atlas PNG 当作静态立绘展示。
 - `main.gd` 会优先加载 `<hero>.baked.json` 播放 baked 动画；没有 baked 数据时继续退回 PNG 静态展示。
 - 官方 Spine GDExtension zip 已探测，但命令行 `ClassDB` 没有注册出 Spine 类，本轮不作为 MVP 依赖提交。
 
 详细记录见 `docs/shaonv-godot-spine-verification-2026-05-22.md`。
 
-## 8. 当前还原依据和缺口
+## 8. 启动界面精修更新
+
+2026-05-22 从启动链路开始做第一轮精修：
+
+- `LaunchView`：按反编译结果保留可跳过启动视频页概念，界面标注 `launch.mp4`，没有视频资源时用代表角色和暗色视频框承接。
+- `PreloadingView`：按 `processTxt/processSlider` 字段还原早期预加载页，显示本地资源校验进度。
+- `LoginView`：按字段 `btnNotice/btnRepair/btnSwitchAccount/btnSelect/btnServerSel/togAgree/pnlVersion/imgLogo` 重建登录页，保留公告、修复、账号弹层和服务器选择区域。
+- `LoadingView`：按 `txtPercent/sldSpeed/imgBg` 和 `GameHelper.LoadMainScene("MainScene")` 行为重建进入主城加载页。
+- 新增 `SHAONV_MVP_START_VIEW=launch|preloading|login|loading|main` 调试入口，便于逐屏截图回归。
+
+资源补查结果：
+
+- `Assets/Game/RawAssets/Sprite/Login/*.png` 已从 manifest 定位到 `assets_game_rawassets_sprite_login*.bundle`、`logo.bundle`、`server_bg_011.bundle` 等物理文件。
+- 当前 UnityPy 对这些 bundle 返回空对象，暂未能直接导出 Login sprite；本轮先按结构和字段还原布局，后续需要用 AssetStudio 或补完整 YooAsset bundle 解码路径继续导出原图。
+- `loading_tip.bytes` 已确认含 `loading_1_1...loading_6_9` 等加载图 key，可作为后续加载提示和背景映射依据。
+
+## 9. 当前还原依据和缺口
 
 本轮 Godot UI 还原依据：
 
@@ -194,20 +211,20 @@ capture-godot-mvp.bat
 - `reverse-output/gacha-static/tables/drawconfig.json` 和 `draw_pool_summary.csv` 中的 `cnt3/rateUp` 字段，用于标注当前 MVP 卡池规则来源。
 - `docs/shaonv-yooasset-physical-mapping-fix.md` 中已定位的抽卡 prefab 物理映射。
 - `reverse-output/managed/Assembly-CSharp-index/methods.csv` 中 `GalCollectionView` 的 `OnSelectHero/GetGridCount/OnBtnNextClick/OnBtnPreviousClick/UpdateProgress` 和 `CommonHeroView` 的 `OnOpen/OnTabChange/UpdateSkill`，用于确定图鉴页需要进度、筛选、选择角色和角色详情信息区。
-- 已导入 Godot 的 5 个代表角色 Spine 三件套中的 PNG，用作看板和抽卡展示；`hero_016` 已进一步验证 baked Spine 动画播放。
+- 已导入 Godot 的 5 个代表角色 Spine 三件套，并全部生成 baked Spine 动画数据，用作看板、登录、加载和抽卡展示。
 
 当前仍未完全还原：
 
 - 启动视频 `launch.mp4`、真实热更进度、服务器/SDK 登录仍未接入；当前为离线可跳过流程。
 - 原 `MainUIView`、`LotteryDrawMainView`、`GalCollectionView`、`CommonHeroView` prefab 的完整 RectTransform 层级尚未转换为 Godot scene。
-- 抽卡 UI 图集、按钮图、真实结果光效、音效仍未批量导入 Godot；当前结果页用 Godot 半透明色块模拟稀有度光效。
-- Spine GDExtension 运行时尚未接入；当前 `hero_016` 已支持 baked Spine 动画，其余角色仍是 PNG 静态展示。
+- 登录 UI 图集、抽卡 UI 图集、按钮图、真实结果光效、音效仍未批量导入 Godot；当前结果页用 Godot 半透明色块模拟稀有度光效。
+- Spine GDExtension 运行时尚未接入；当前采用 baked Spine 动画，适合 MVP 展示，但不支持运行时换装和混合动画。
 - 原游戏 reward 掉落表仍需继续展开；当前概率和重复碎片已数据化，但仍是基于 `drawconfig/ac_limit_draw` 字段的 MVP 近似规则。
 
-## 9. 下一步
+## 10. 下一步
 
 1. 用 Godot 编辑器检查布局并调整主题、字体、按钮样式。
-2. 批量为主推角色烘焙 `wait/idle/show` 等 Spine clip，并把抽卡结果页切到 animated hero stage。
+2. 使用 AssetStudio 或继续修 YooAsset 解码，导出 `Assets/Game/RawAssets/Sprite/Login` 原图，替换当前登录页几何占位。
 3. 将抽卡 UI 图集、结果光效和音效导入 Godot，并建立 Godot 资源命名规范。
 4. 用真实掉落表替换当前 MVP 概率。
 5. 将 `HeroRecruitView/LotteryDrawMainView/LotteryDrawFinishView` 的结构分析转成 Godot Control 节点重建清单。

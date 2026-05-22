@@ -64,7 +64,7 @@ func _ready() -> void:
 	shop = live_ops.get("shop", {"exchangeGemCost": 160, "ticketAmount": 1})
 	_load_save()
 	_build_root()
-	_show_launch()
+	_show_start_view_from_env()
 	if not OS.get_environment("SHAONV_MVP_CAPTURE").is_empty():
 		call_deferred("_capture_debug_screenshot")
 
@@ -147,6 +147,19 @@ func _build_root() -> void:
 	content.size = Vector2(1280, 646)
 	add_child(content)
 
+func _show_start_view_from_env() -> void:
+	var start_view := OS.get_environment("SHAONV_MVP_START_VIEW").to_lower()
+	if start_view == "preloading":
+		_show_preloading()
+	elif start_view == "login":
+		_show_login()
+	elif start_view == "loading":
+		_show_loading()
+	elif start_view == "main":
+		_enter_main_scene()
+	else:
+		_show_launch()
+
 func _set_chrome_visible(visible: bool) -> void:
 	top_bar.visible = visible
 	title_label.visible = visible
@@ -165,18 +178,25 @@ func _show_launch() -> void:
 	_clear("啟動")
 	content.position = Vector2(0, 0)
 	content.size = Vector2(1280, 720)
-	content.add_child(_panel(Vector2(0, 0), Vector2(1280, 720), Color(0.18, 0.04, 0.05)))
-	content.add_child(_panel(Vector2(0, 0), Vector2(1280, 720), Color(0.02, 0.018, 0.016, 0.56)))
-	_draw_hero_stage(_hero_by_id(240055), Vector2(700, 82), Vector2(420, 560), false)
-	var title := _label("少女回戰", 54, HORIZONTAL_ALIGNMENT_CENTER)
-	title.position = Vector2(360, 210)
-	title.size = Vector2(560, 82)
+	_draw_startup_backdrop(Color(0.18, 0.025, 0.035), Color(0.055, 0.014, 0.02, 0.72))
+	var video_frame := _panel(Vector2(158, 72), Vector2(964, 542), Color(0.02, 0.015, 0.012, 0.50))
+	content.add_child(video_frame)
+	var video_line := _panel(Vector2(162, 76), Vector2(956, 2), Color(0.95, 0.78, 0.46, 0.52))
+	content.add_child(video_line)
+	_draw_hero_stage(_hero_by_id(240055), Vector2(706, 52), Vector2(430, 590), false)
+	var title := _label("少女回戰", 58, HORIZONTAL_ALIGNMENT_CENTER)
+	title.position = Vector2(228, 198)
+	title.size = Vector2(456, 86)
 	content.add_child(title)
-	var sub := _label("單機版 MVP", 24, HORIZONTAL_ALIGNMENT_CENTER)
-	sub.position = Vector2(430, 302)
-	sub.size = Vector2(420, 40)
+	var sub := _label("啟動影片 / launch.mp4", 20, HORIZONTAL_ALIGNMENT_CENTER)
+	sub.position = Vector2(274, 292)
+	sub.size = Vector2(360, 34)
 	content.add_child(sub)
-	_add_action_button("開始", Vector2(574, 420), _show_preloading, Vector2(132, 48))
+	var hint := _label("點擊跳過", 20, HORIZONTAL_ALIGNMENT_CENTER)
+	hint.position = Vector2(520, 654)
+	hint.size = Vector2(240, 34)
+	content.add_child(hint)
+	_add_action_button("跳過", Vector2(574, 590), _show_preloading, Vector2(132, 46))
 
 func _show_preloading() -> void:
 	current_view = "preloading"
@@ -184,17 +204,26 @@ func _show_preloading() -> void:
 	_clear("預載入")
 	content.position = Vector2(0, 0)
 	content.size = Vector2(1280, 720)
-	content.add_child(_panel(Vector2(0, 0), Vector2(1280, 720), Color(0.06, 0.052, 0.048)))
-	var title := _label("PreloadingView", 34, HORIZONTAL_ALIGNMENT_CENTER)
-	title.position = Vector2(390, 230)
-	title.size = Vector2(500, 54)
-	content.add_child(title)
-	var info := _label("載入本地資料、角色資源與喚靈配置", 22, HORIZONTAL_ALIGNMENT_CENTER)
-	info.position = Vector2(330, 304)
-	info.size = Vector2(620, 42)
+	_draw_startup_backdrop(Color(0.062, 0.047, 0.04), Color(0.02, 0.018, 0.016, 0.78))
+	_draw_hero_stage(_hero_by_id(240055), Vector2(764, 86), Vector2(360, 500), false)
+	var mark := _label("少女回戰", 44, HORIZONTAL_ALIGNMENT_CENTER)
+	mark.position = Vector2(390, 186)
+	mark.size = Vector2(500, 66)
+	content.add_child(mark)
+	var info := _label("正在校驗本地資源", 24, HORIZONTAL_ALIGNMENT_CENTER)
+	info.position = Vector2(360, 292)
+	info.size = Vector2(560, 40)
 	content.add_child(info)
-	_draw_progress_bar(Vector2(360, 380), Vector2(560, 22), 0.65)
-	_add_action_button("繼續", Vector2(574, 438), _show_login, Vector2(132, 48))
+	_draw_progress_bar(Vector2(376, 374), Vector2(528, 20), 0.65)
+	var percent := _label("65%", 18, HORIZONTAL_ALIGNMENT_CENTER)
+	percent.position = Vector2(586, 404)
+	percent.size = Vector2(108, 28)
+	content.add_child(percent)
+	var tip := _label("預載入角色、喚靈與靜態表資料", 18, HORIZONTAL_ALIGNMENT_CENTER)
+	tip.position = Vector2(330, 456)
+	tip.size = Vector2(620, 34)
+	content.add_child(tip)
+	_add_action_button("繼續", Vector2(574, 522), _show_login, Vector2(132, 46))
 
 func _show_login() -> void:
 	current_view = "login"
@@ -202,19 +231,45 @@ func _show_login() -> void:
 	_clear("登入")
 	content.position = Vector2(0, 0)
 	content.size = Vector2(1280, 720)
-	content.add_child(_panel(Vector2(0, 0), Vector2(1280, 720), Color(0.075, 0.062, 0.055)))
-	_draw_hero_stage(_hero_by_id(int(save.get("selected_hero_id", 240065))), Vector2(744, 92), Vector2(420, 540), false)
-	var title := _label("LoginView", 38, HORIZONTAL_ALIGNMENT_CENTER)
-	title.position = Vector2(390, 178)
-	title.size = Vector2(500, 58)
-	content.add_child(title)
-	var panel := _panel(Vector2(430, 260), Vector2(420, 190), Color(0.11, 0.09, 0.075, 0.95))
-	content.add_child(panel)
-	var account := _label("離線帳號\nPlayer\n伺服器：Local MainScene", 21, HORIZONTAL_ALIGNMENT_CENTER)
-	account.position = Vector2(456, 292)
-	account.size = Vector2(368, 86)
-	content.add_child(account)
-	_add_action_button("離線登入", Vector2(574, 392), _show_loading, Vector2(132, 48))
+	_draw_startup_backdrop(Color(0.08, 0.056, 0.046), Color(0.018, 0.014, 0.012, 0.50))
+	_draw_hero_stage(_hero_by_id(int(save.get("selected_hero_id", 240065))), Vector2(660, 64), Vector2(560, 586), false)
+	var logo := _label("少女回戰", 54, HORIZONTAL_ALIGNMENT_CENTER)
+	logo.position = Vector2(108, 112)
+	logo.size = Vector2(430, 82)
+	content.add_child(logo)
+	var version := _label("ver 1.0.0   app offline   res local", 16)
+	version.position = Vector2(24, 676)
+	version.size = Vector2(420, 28)
+	content.add_child(version)
+	var server_card := _panel(Vector2(116, 246), Vector2(440, 72), Color(0.09, 0.065, 0.052, 0.88))
+	content.add_child(server_card)
+	var server_title := _label("推薦伺服器", 18)
+	server_title.position = Vector2(144, 254)
+	server_title.size = Vector2(150, 26)
+	content.add_child(server_title)
+	var server := _label("Local MainScene", 24)
+	server.position = Vector2(144, 280)
+	server.size = Vector2(260, 34)
+	content.add_child(server)
+	var server_state := _label("流暢", 18, HORIZONTAL_ALIGNMENT_CENTER)
+	server_state.position = Vector2(438, 270)
+	server_state.size = Vector2(82, 30)
+	content.add_child(server_state)
+	_add_action_button("切換", Vector2(572, 256), _show_login, Vector2(92, 46))
+	_add_action_button("開始遊戲", Vector2(214, 382), _show_loading, Vector2(238, 56))
+	_add_action_button("公告", Vector2(90, 34), _show_login_notice_popup, Vector2(92, 42))
+	_add_action_button("修復", Vector2(194, 34), _show_repair_popup, Vector2(92, 42))
+	_add_action_button("帳號", Vector2(298, 34), _show_login_account_popup, Vector2(92, 42))
+	var agree := CheckBox.new()
+	agree.text = "我已閱讀並同意隱私政策與使用者協議"
+	agree.button_pressed = true
+	agree.position = Vector2(156, 462)
+	agree.size = Vector2(420, 34)
+	content.add_child(agree)
+	var copyright := _label("Copyright © Offline MVP. 本地單機資料僅用於還原驗證。", 15, HORIZONTAL_ALIGNMENT_CENTER)
+	copyright.position = Vector2(374, 676)
+	copyright.size = Vector2(532, 28)
+	content.add_child(copyright)
 
 func _show_loading() -> void:
 	current_view = "loading"
@@ -222,18 +277,26 @@ func _show_loading() -> void:
 	_clear("載入")
 	content.position = Vector2(0, 0)
 	content.size = Vector2(1280, 720)
-	content.add_child(_panel(Vector2(0, 0), Vector2(1280, 720), Color(0.045, 0.045, 0.052)))
-	_draw_hero_stage(_hero_by_id(int(save.get("selected_hero_id", 240065))), Vector2(780, 100), Vector2(360, 500), false)
-	var title := _label("LoadingView", 34, HORIZONTAL_ALIGNMENT_CENTER)
-	title.position = Vector2(390, 230)
-	title.size = Vector2(500, 54)
+	_draw_startup_backdrop(Color(0.042, 0.043, 0.052), Color(0.012, 0.014, 0.018, 0.62))
+	_draw_hero_stage(_hero_by_id(240055), Vector2(746, 64), Vector2(396, 552), false)
+	var title := _label("正在進入主城", 34, HORIZONTAL_ALIGNMENT_CENTER)
+	title.position = Vector2(358, 248)
+	title.size = Vector2(560, 54)
 	content.add_child(title)
-	var info := _label("GameHelper.LoadMainScene -> MainUIView", 22, HORIZONTAL_ALIGNMENT_CENTER)
-	info.position = Vector2(330, 304)
-	info.size = Vector2(620, 42)
+	var info := _label("讀取 MainScene 與主界面資料", 21, HORIZONTAL_ALIGNMENT_CENTER)
+	info.position = Vector2(330, 316)
+	info.size = Vector2(620, 40)
 	content.add_child(info)
-	_draw_progress_bar(Vector2(360, 380), Vector2(560, 22), 1.0)
-	_add_action_button("進入主界面", Vector2(554, 438), _enter_main_scene, Vector2(172, 48))
+	_draw_progress_bar(Vector2(360, 404), Vector2(560, 22), 1.0)
+	var percent := _label("100%", 18, HORIZONTAL_ALIGNMENT_CENTER)
+	percent.position = Vector2(588, 438)
+	percent.size = Vector2(104, 28)
+	content.add_child(percent)
+	var tip := _label("提示：喚靈可獲得新武將，重複武將將轉換為碎片。", 18, HORIZONTAL_ALIGNMENT_CENTER)
+	tip.position = Vector2(266, 514)
+	tip.size = Vector2(748, 34)
+	content.add_child(tip)
+	_add_action_button("進入", Vector2(574, 580), _enter_main_scene, Vector2(132, 46))
 
 func _enter_main_scene() -> void:
 	content.position = Vector2(0, 74)
@@ -1017,6 +1080,40 @@ func _add_toggle_button(label: String, key: String, pos: Vector2, value: bool) -
 		_persist()
 		_show_settings()
 	, Vector2(220, 44))
+
+func _draw_startup_backdrop(base_color: Color, shade_color: Color) -> void:
+	content.add_child(_panel(Vector2(0, 0), Vector2(1280, 720), base_color))
+	content.add_child(_panel(Vector2(0, 0), Vector2(1280, 720), shade_color))
+	content.add_child(_panel(Vector2(0, 0), Vector2(1280, 96), Color(0.01, 0.008, 0.007, 0.36)))
+	content.add_child(_panel(Vector2(0, 624), Vector2(1280, 96), Color(0.01, 0.008, 0.007, 0.46)))
+	for index in range(5):
+		var x := 90.0 + float(index) * 236.0
+		content.add_child(_panel(Vector2(x, 118), Vector2(1, 486), Color(0.92, 0.74, 0.44, 0.08)))
+
+func _show_login_notice_popup() -> void:
+	_show_login()
+	_draw_overlay_popup("公告", "離線 MVP 已載入本地抽卡、角色與主界面資料。\n後續將接入原公告與活動表。")
+
+func _show_repair_popup() -> void:
+	_show_login()
+	_draw_overlay_popup("資源修復", "當前資源來自已提交的 Godot MVP 目錄。\n若圖片缺失，請重新執行資源導出與同步。")
+
+func _show_login_account_popup() -> void:
+	_show_login()
+	_draw_overlay_popup("帳號", "Player\nOpenId: offline-player\n登入方式：本地單機")
+
+func _draw_overlay_popup(title: String, message: String) -> void:
+	content.add_child(_panel(Vector2(0, 0), Vector2(1280, 720), Color(0, 0, 0, 0.42)))
+	content.add_child(_panel(Vector2(390, 220), Vector2(500, 260), Color(0.10, 0.075, 0.06, 0.96)))
+	var heading := _label(title, 28, HORIZONTAL_ALIGNMENT_CENTER)
+	heading.position = Vector2(430, 244)
+	heading.size = Vector2(420, 46)
+	content.add_child(heading)
+	var body := _label(message, 19, HORIZONTAL_ALIGNMENT_CENTER)
+	body.position = Vector2(430, 308)
+	body.size = Vector2(420, 88)
+	content.add_child(body)
+	_add_action_button("確定", Vector2(574, 416), _show_login, Vector2(132, 44))
 
 func _label(text: String, size: int, align := HORIZONTAL_ALIGNMENT_LEFT) -> Label:
 	var label := Label.new()

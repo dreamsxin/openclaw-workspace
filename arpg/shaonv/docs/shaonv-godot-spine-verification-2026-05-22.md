@@ -104,7 +104,11 @@ scripts/spine/bake_hero_spine_preview.mjs
 新增 baked 动画数据：
 
 ```text
+standalone/godot-mvp/assets/spine/hero_001/hero_001.baked.json
+standalone/godot-mvp/assets/spine/hero_003Dh/hero_003Dh.baked.json
+standalone/godot-mvp/assets/spine/hero_005/hero_005.baked.json
 standalone/godot-mvp/assets/spine/hero_016/hero_016.baked.json
+standalone/godot-mvp/assets/spine/hero_017/hero_017.baked.json
 ```
 
 新增 Godot baked Spine 渲染器：
@@ -136,14 +140,16 @@ cd D:\work\openclaw-workspace\arpg\shaonv\tools\spine-baker-js
 npm install
 ```
 
-烘焙 `hero_016`：
+烘焙当前 MVP 的五个代表角色：
 
 ```powershell
 cd D:\work\openclaw-workspace\arpg\shaonv
-node .\scripts\spine\bake_hero_spine_preview.mjs --hero=hero_016 --fps=8 --max-duration=1.2 --max-clips=2
+foreach ($hero in @('hero_001','hero_003Dh','hero_005','hero_016','hero_017')) {
+  node .\scripts\spine\bake_hero_spine_preview.mjs --hero=$hero --fps=8 --max-duration=1.2 --max-clips=2
+}
 ```
 
-输出：
+代表输出：
 
 ```text
 baked hero_016: wait, wait1 -> standalone\godot-mvp\assets\spine\hero_016\hero_016.baked.json
