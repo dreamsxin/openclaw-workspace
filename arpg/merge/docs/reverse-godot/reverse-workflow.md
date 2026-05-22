@@ -178,6 +178,25 @@ Use the gameplay capture helper after any change to `UIOutGame` transitions, `UI
 
 It runs the same restored startup flow with `--auto-enter-ingame` and writes `10-ingame.png` plus the Bag popup regression frame `11-inventory.png` under `reverse-output/gameplay-captures/`.
 
+Use the out-game popup capture helper after changes to `UIOutGame` home layout or any split out-game popup:
+
+```powershell
+.\capture-outgame-popups.bat
+```
+
+It runs the restored startup flow with `--auto-capture-outgame-popups` and writes these frames under `reverse-output/outgame-captures/`:
+
+```text
+10-outgame-home.png
+11-outgame-shop.png
+12-outgame-story.png
+13-outgame-furniture.png
+14-outgame-mail.png
+15-outgame-settings.png
+16-outgame-bag.png
+17-outgame-menu.png
+```
+
 Checks:
 
 - `01-bootservices.png` should show the recovered pre-UI service order: runtime initialize hooks, `GameManager`, high score service, login/network gates, `ReloadManager`, and `UIManager`.
@@ -191,6 +210,7 @@ Checks:
 - `09-outgame.png` should show the first `UIOutGame` home shell after startup: top wallet HUD, cafe backdrop, village rebuild progress, maid stand-in/dialog, Merge/Maid entry buttons, and bottom app navigation.
 - `10-ingame.png` from `capture-gameplay.bat` should show the first portrait gameplay shell after `UIOutGame/InGameBtn`, with the board centered, a producer auto-selected for regression, the recovered top `Request/RequestList` strip visible, and the recovered bottom operation bar showing Bag, Cafe, `UIBlockInfo`, `Btn_BoxOpen`, `Btn_Use`, and `Btn_CoolTime` instead of standalone debug buttons.
 - `11-inventory.png` from `capture-gameplay.bat` should show the first-pass `UIPopup_Inventory` shell opened by the recovered Bag hit region, with separate `ProduceInventory` and `NormalInventory` slot sections.
+- `10-outgame-home.png` through `17-outgame-menu.png` from `capture-outgame-popups.bat` should cover the current asset-backed `UIOutGame` home screen and every split first-pass out-game popup.
 - The `UIOutGame/InGameBtn` hit region should be clickable in `run-game.bat` and should enter the playable merge-board prototype. For headless validation, run `.\tools\Godot\Godot_console.exe --path .\godot-project --headless --quit-after 6 -- --restored-startup --auto-enter-ingame`.
 - The `UIOutGame/MaidLobbyBtn` hit region should be clickable in `run-game.bat` and should enter the first `UIMaidLobby` shell. For headless validation, run `.\tools\Godot\Godot_console.exe --path .\godot-project --headless --quit-after 9 -- --restored-startup --auto-enter-maid-lobby`; with a startup capture directory it writes `10-maidlobby.png`, `11-maidlobbyselect.png`, and `12-maiddialog.png`.
 - If the second screen shows only the progress bar, first check UV handling. The baked Spine UVs are normalized `0..1`; do not multiply them by texture page size before passing them to Godot `draw_polygon`.

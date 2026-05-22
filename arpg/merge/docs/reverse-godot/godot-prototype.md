@@ -46,6 +46,12 @@ Capture the restored startup flow and automatically enter the first gameplay she
 .\capture-gameplay.bat
 ```
 
+Capture `UIOutGame` home and popup states:
+
+```powershell
+.\capture-outgame-popups.bat
+```
+
 Equivalent direct command:
 
 ```powershell
@@ -180,6 +186,19 @@ reverse-output/startup-captures/09-outgame.png
 ```text
 reverse-output/gameplay-captures/10-ingame.png
 reverse-output/gameplay-captures/11-inventory.png
+```
+
+`capture-outgame-popups.bat` uses `--auto-capture-outgame-popups` and writes the first out-game regression set to `reverse-output/outgame-captures/`, including:
+
+```text
+reverse-output/outgame-captures/10-outgame-home.png
+reverse-output/outgame-captures/11-outgame-shop.png
+reverse-output/outgame-captures/12-outgame-story.png
+reverse-output/outgame-captures/13-outgame-furniture.png
+reverse-output/outgame-captures/14-outgame-mail.png
+reverse-output/outgame-captures/15-outgame-settings.png
+reverse-output/outgame-captures/16-outgame-bag.png
+reverse-output/outgame-captures/17-outgame-menu.png
 ```
 
 Use this whenever loading-screen layout or Spine rendering changes. The direct equivalent is:

@@ -258,13 +258,14 @@ Success criteria:
 | T066 | Import recovered UIOutGame app icons | done | AssetStudio `Appicon_Story`, `Appicon_Maid`, `Appicon_Collection`, `Appicon_Organize`, `icon_mail`, and `icon_setting` are copied into `godot-project/assets/ui_icons` and used by the home navigation |
 | T067 | Import recovered cafe home background assets | done | AssetStudio `CafeHall` and basic cafe furniture sprites are copied into `godot-project/assets/cafe`; `OutGameReferenceScreen` now draws an asset-backed cafe background with geometric fallback |
 | T068 | Import recovered UIOutGame frame assets | done | AssetStudio button, panel, circle-frame, and gauge sprites are copied into `godot-project/assets/ui_frames` and used by home buttons, top HUD, bottom nav, and rebuild progress |
+| T069 | Add UIOutGame popup regression capture | done | `capture-outgame-popups.bat` and `--auto-capture-outgame-popups` now capture the home screen plus Shop, Story, FurnitureQuest, Mail, Settings, Bag, and Menu popup states |
 
 Immediate next implementation targets:
 
 1. Bind more recovered sprite assets into the Shop, Mail/Settings, Bag/Menu, Story/Memory, and FurnitureQuest shells, then map table/config IDs where available.
 2. Continue main UI exactness work: tighter cafe/furniture placement, original button text/icon composition, and LD maid Spine rendering.
 3. Replace structural placeholders with source-derived request/task/shop/mail/settings/menu rules as table/runtime evidence is mapped.
-4. Add regression captures for the newly split `UIOutGame` popups.
+4. Use `capture-outgame-popups.bat` frames to tighten per-popup layout and detect visual regressions.
 
 ## Tool Acquisition Options
 

@@ -40,6 +40,7 @@ const RESTORED_MAID_LOBBY_LOADING_SECONDS := 1.1
 const STARTUP_CAPTURE_ARG := "--startup-capture-dir="
 const AUTO_ENTER_INGAME_ARG := "--auto-enter-ingame"
 const AUTO_ENTER_MAID_LOBBY_ARG := "--auto-enter-maid-lobby"
+const AUTO_CAPTURE_OUTGAME_POPUPS_ARG := "--auto-capture-outgame-popups"
 const SPRITE_DIR := "res://assets/sprites/"
 const CHARACTER_DIR := "res://data/characters/"
 const UI_LAYOUT_REFERENCE := "res://data/ui_layout_reference.json"
@@ -136,12 +137,15 @@ var auto_enter_ingame := false
 var auto_enter_ingame_done := false
 var auto_enter_maid_lobby := false
 var auto_enter_maid_lobby_done := false
+var auto_capture_outgame_popups := false
+var auto_capture_outgame_popups_done := false
 
 func _ready() -> void:
 	var user_args := OS.get_cmdline_user_args()
 	restored_startup_mode = user_args.has("--restored-startup")
 	auto_enter_ingame = user_args.has(AUTO_ENTER_INGAME_ARG)
 	auto_enter_maid_lobby = user_args.has(AUTO_ENTER_MAID_LOBBY_ARG)
+	auto_capture_outgame_popups = user_args.has(AUTO_CAPTURE_OUTGAME_POPUPS_ARG)
 	for arg in user_args:
 		if arg.begins_with(STARTUP_CAPTURE_ARG):
 			startup_capture_dir = arg.substr(STARTUP_CAPTURE_ARG.length())
@@ -402,6 +406,9 @@ func _process(delta: float) -> void:
 		elif auto_enter_maid_lobby and not auto_enter_maid_lobby_done:
 			auto_enter_maid_lobby_done = true
 			call_deferred("_auto_enter_maid_lobby_after_capture")
+		elif auto_capture_outgame_popups and not auto_capture_outgame_popups_done:
+			auto_capture_outgame_popups_done = true
+			call_deferred("_auto_capture_outgame_popups_after_startup")
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_RESIZED:
@@ -991,6 +998,32 @@ func _auto_enter_maid_lobby_after_capture() -> void:
 	_hide_maid_lobby_select_popup()
 	_show_maid_dialog_popup()
 
+func _auto_capture_outgame_popups_after_startup() -> void:
+	await RenderingServer.frame_post_draw
+	_maybe_capture_named_frame("10-outgame-home")
+	var sequence := [
+		{"key": "shop", "label": "11-outgame-shop"},
+		{"key": "story", "label": "12-outgame-story"},
+		{"key": "furniture", "label": "13-outgame-furniture"},
+		{"key": "mail", "label": "14-outgame-mail"},
+		{"key": "settings", "label": "15-outgame-settings"},
+		{"key": "bag", "label": "16-outgame-bag"},
+		{"key": "menu", "label": "17-outgame-menu"},
+	]
+	for entry in sequence:
+		_hide_all_out_game_popups()
+		await RenderingServer.frame_post_draw
+		var key := String(entry.get("key", ""))
+		if key == "furniture":
+			_show_furniture_quest_popup()
+		else:
+			_show_out_game_app_popup(key)
+		await RenderingServer.frame_post_draw
+		_maybe_capture_named_frame(String(entry.get("label", key)))
+		await RenderingServer.frame_post_draw
+	_hide_all_out_game_popups()
+	_set_status("Captured UIOutGame popup regression set.")
+
 func _enter_gameplay_from_out_game_without_capture() -> void:
 	out_game_reference_visible = false
 	_apply_out_game_reference_visibility()
@@ -1042,6 +1075,14 @@ func _show_out_game_app_popup(app_key: String) -> void:
 func _hide_out_game_app_popup() -> void:
 	out_game_app_popup_visible = false
 	_apply_out_game_app_popup()
+
+func _hide_all_out_game_popups() -> void:
+	_hide_out_game_app_popup()
+	_hide_shop_popup()
+	_hide_mail_settings_popup()
+	_hide_bag_menu_popup()
+	_hide_furniture_quest_popup()
+	_hide_story_memory_popup()
 
 func _show_shop_popup() -> void:
 	_hide_out_game_app_popup()
@@ -1449,6 +1490,12 @@ func _maybe_capture_maid_dialog_frame() -> void:
 		return
 	startup_capture_flags["12-maiddialog"] = true
 	call_deferred("_capture_startup_frame", "12-maiddialog")
+
+func _maybe_capture_named_frame(label: String) -> void:
+	if startup_capture_dir.is_empty() or startup_capture_flags.has(label):
+		return
+	startup_capture_flags[label] = true
+	call_deferred("_capture_startup_frame", label)
 
 func _capture_startup_frame(label: String) -> void:
 	await RenderingServer.frame_post_draw
