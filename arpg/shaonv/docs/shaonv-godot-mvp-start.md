@@ -146,6 +146,8 @@ capture-godot-mvp.bat
 
 该脚本会让 Godot 直接从内部 viewport 保存截图到 `tmp/screenshots/godot-mvp-internal.png`。如果窗口显示异常但内部截图正常，说明资源和 UI 已加载，问题集中在本机窗口渲染后端或显卡驱动路径。
 
+注意：`Godot_console.exe --headless` 可以执行脚本逻辑，但没有可读取的渲染 viewport texture，不能用于当前 UI 截图。自动截图应使用 `Godot_console.exe` 非 headless 模式创建窗口后，由 `SHAONV_MVP_CAPTURE` 触发内部 viewport 保存。
+
 命令行校验：
 
 ```powershell

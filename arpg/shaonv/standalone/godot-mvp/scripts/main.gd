@@ -70,7 +70,17 @@ func _ready() -> void:
 func _capture_debug_screenshot() -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
-	var image := get_viewport().get_texture().get_image()
+	if DisplayServer.get_name() == "headless":
+		push_warning("Shaonv MVP screenshot skipped: --headless has no renderable viewport texture.")
+		return
+	var viewport_texture := get_viewport().get_texture()
+	if viewport_texture == null:
+		push_warning("Shaonv MVP screenshot skipped: viewport texture is null, likely running with --headless.")
+		return
+	var image := viewport_texture.get_image()
+	if image == null or image.is_empty():
+		push_warning("Shaonv MVP screenshot skipped: viewport image is empty, likely running with --headless.")
+		return
 	var path := OS.get_environment("SHAONV_MVP_CAPTURE")
 	image.save_png(path)
 	print("Shaonv MVP screenshot saved: %s" % path)
