@@ -155,3 +155,29 @@ vite.config.ts.timestamp-*
 /arpg/nvshenres_decrypted_full/*_test.png
 /arpg/nvshenres_decrypted_full/*_debug.png
 /arpg/nvshenres_decrypted_full/*_regression.png
+
+# Shaonv local reverse-engineering caches and generated captures
+/arpg/shaonv/.workbuddy/
+/arpg/shaonv/Godot/
+/arpg/shaonv/files/
+/arpg/shaonv/resources/
+/arpg/shaonv/reverse-output/
+/arpg/shaonv/sources/
+/arpg/shaonv/apk/
+/arpg/shaonv/tmp/screenshots/
+/arpg/shaonv/tools/
+/arpg/shaonv/spine-runtimes-4.3/
+/arpg/shaonv/spine-runtimes-4.3.zip
+/arpg/shaonv/standalone/unity-mvp/
+/arpg/shaonv/_run_unity.bat
+/arpg/shaonv/init-unity-project.bat
+/arpg/shaonv/run-unity-batch.bat
+/arpg/shaonv/run-unity-batch.vbs
+/arpg/shaonv/run-unity-mvp.bat
+
+# Shared ARPG analysis/tool caches kept outside the Godot MVP
+/arpg/apk/
+/arpg/merge/
+/arpg/nvshenres/
+/arpg/tools/
+/arpg/uabeanext-windows/
