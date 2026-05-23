@@ -14,21 +14,22 @@ const UI_MAIN_TOP_ACCENT = "res://assets/ui/mainui/mainui_img_10.png"
 const UI_MAIN_SEPARATOR = "res://assets/ui/mainui/mainui_img_11.png"
 const UI_MAIN_ASSIST = "res://assets/ui/mainui/mainui_img_19.png"
 const UI_MAIN_STORY_BG = "res://assets/ui/mainui/mainui_txt_01.png"
-const UI_MAIN_FUNNY_ARENA = "res://assets/ui/mainui/mainui_txt_02.png"
-const UI_MAIN_FUNNY_PRAYER = "res://assets/ui/mainui/mainui_txt_03.png"
-const UI_MAIN_FUNNY_ADVENTURE = "res://assets/ui/mainui/mainui_txt_05.png"
-const UI_MAIN_FUNNY_DRAW = "res://assets/ui/mainui/mainui_txt_06.png"
+const UI_MAIN_FUNNY_ARENA = "res://assets/ui/mainui/mainui_txt_03.png"
+const UI_MAIN_FUNNY_PRAYER = "res://assets/ui/mainui/mainui_txt_06.png"
+const UI_MAIN_FUNNY_ADVENTURE = "res://assets/ui/mainui/mainui_txt_02.png"
+const UI_MAIN_FUNNY_DRAW = "res://assets/ui/mainui/mainui_txt_05.png"
 const UI_MAIN_CHAPTER_BG = "res://assets/ui/mainui/mainui_img_35.png"
 const UI_MAIN_CHAT_BG = "res://assets/ui/mainui/mainui_btn_04.png"
 const UI_MAIN_GAL = "res://assets/ui/mainui/mainui_txt_09.png"
 const UI_MAIN_BOTTOM_BTN = "res://assets/ui/mainui/mainui_btn_01.png"
 const UI_MAIN_MENU = "res://assets/ui/mainui/mainui_btn_06.png"
+const UI_MAIN_AUTO_FIGHT = "res://assets/ui/mainui/mainui_img_36.png"
 const UI_MAIN_CHARGE_ICONS = [
-	"res://assets/ui/mainui/mainui_btn_07.png",
-	"res://assets/ui/mainui/mainui_btn_08.png",
-	"res://assets/ui/mainui/mainui_btn_09.png",
-	"res://assets/ui/mainui/mainui_btn_10.png",
-	"res://assets/ui/mainui/mainui_btn_11.png"
+	"res://assets/ui/mainui/mainui_btn_06.png",   # btnActivity 活动
+	"res://assets/ui/mainui/mainui_btn_07.png",   # btnWelfare 福利
+	"res://assets/ui/mainui/mainui_btn_10.png",   # btnCard 月卡
+	"res://assets/ui/mainui/mainui_btn_08.png",   # btnCharge 充值
+	"res://assets/ui/mainui/mainui_btn_09.png"    # btnShop 商店
 ]
 
 var app

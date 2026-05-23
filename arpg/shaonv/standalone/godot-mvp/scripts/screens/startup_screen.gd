@@ -3,8 +3,17 @@ extends RefCounted
 
 const UI_LOGIN_BG = "res://assets/ui/background/login_bg_01.png"
 const UI_LOGIN_BTN = "res://assets/ui/login/login_btn_03.png"
-const UI_LOGIN_LOGO = "res://assets/ui/login/logo.png"
+const UI_LOGIN_LOGO = "res://assets/ui/login/login_txt_02.png"  # prefab: imgLogo → login_txt_02
 const UI_LOGIN_SERVER_BG = "res://assets/ui/login/server_bg_03.png"
+# Function buttons (pnlFunction)
+const UI_LOGIN_BTN_NOTICE = "res://assets/ui/login/login_btn_01.png"    # btnNotice
+const UI_LOGIN_BTN_REPAIR = "res://assets/ui/login/login_btn_02.png"    # btnRepair
+const UI_LOGIN_BTN_SWITCH = "res://assets/ui/login/login_btn_05.png"    # btnSwitchAccount
+const UI_LOGIN_BTN_SELECT = "res://assets/ui/login/login_btn_06.png"    # btnSelect
+const UI_LOGIN_INPUT_BG = "res://assets/ui/login/login_img_03.png"      # inputAccount bg
+const UI_LOGIN_INPUT_ICON = "res://assets/ui/login/login_img_04.png"    # input icon
+const UI_LOGIN_AGE = "res://assets/ui/login/login_txt_03.png"           # btnAge 12+
+const UI_LOGIN_TIP = "res://assets/ui/login/login_img_01.png"           # imgTipLogin
 
 var app
 
