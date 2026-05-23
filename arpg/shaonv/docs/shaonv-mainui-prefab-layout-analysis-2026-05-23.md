@@ -863,3 +863,142 @@ TopResGrid 200×40 anchor=(0.5,0.5)
 | 5 | **@pnlRd 是共享 Prefab** | Godot 中可创建单一 RedDot scene 复用 |
 | 6 | **@richBottom 跨 View 共享** | 底部版权可在多个 Screen 复用 |
 | 7 | **命名约定一致** | pnl+功能名, btn+动作名的规范可在代码注释中标注 |
+
+---
+
+## 12. 游戏逻辑深度分析 (2026-05-23)
+
+基于 `MainUIView.il.txt` + `ViewBehaviour.il.txt` + `UIControl.il.txt` 交叉分析。
+
+### 12.1 视图生命周期
+
+```
+ViewBehaviour (基类)
+  ├─ Start()           → 初始化 _allViews 列表
+  ├─ Open(parameter)   → OnOpen → DG.Tweening 动画 → OnOpened
+  ├─ Close(immediate)  → 动画 → OnClose → Destroy
+  ├─ Hide() / Show()   → SetActive
+  ├─ TopView()         → 返回栈顶 View
+  ├─ GetShowFullScreenView() → 找全屏 View
+  ├─ DestroyAllView()  → 清空栈
+  └─ OnBack()          → virtual, 各 View override
+```
+
+MainUIView 继承 ViewBehaviour，覆写:
+- `OnOpen()`: 初始化所有面板
+- `OnBack()`: 切换到 wallpaper_focus 模式
+- `OnEnable()` / `OnDisable()`: 注册/注销事件
+
+### 12.2 ShowOrHide 状态机 (完整逻辑)
+
+```
+ShowOrHide():
+  _wallpaperPanel.ActivateCtlBar(false, -1)  // 隐藏控制条
+  _wallpaperPanel.AutoHideTime = 5            // 5秒自动隐藏
+
+  if hidePanels:          // HIDE 模式 → 壁纸聚焦
+    btnBodyMask.SetActive(false)   // 隐藏遮罩按钮
+    _topBar.Hide()                 // 隐藏顶栏
+    foreach t in listPanel:        // 隐藏全部面板
+      t.SetActive(false)           // [pnlChat, pnlFunny, pnlPlayerInfo,
+                                   //  pnlCommercialization, btnChapterInfo, pnlBottom]
+  else:                   // SHOW 模式 → 主界面正常
+    btnBodyMask.SetActive(true)    // 显示遮罩按钮
+    _topBar.Show()                 // 显示顶栏
+    foreach t in listPanel:        // 显示全部面板
+      t.SetActive(true)
+
+  hidePanels = !hidePanels         // TOGGLE 状态
+  UpdateBodyButtonVisible()        // 更新 btnEye/btnChange 显隐
+```
+
+**触发路径**:
+| 触发 | hidePanels 变化 | 结果 |
+|------|:--:|------|
+| `OnBack()` | 设为 true → ShowOrHide → 切换为 false | 隐藏面板 (wallpaper_focus) |
+| `btnEye` 点击 | (toggle) | 隐藏面板 (wallpaper_focus) |
+| `btnBodyMask` 点击 | (toggle) | 显示面板 (main_normal) |
+| `btnChange` 点击 | (独立逻辑) | 打开图鉴换壁纸 |
+
+### 12.3 完整红点键映射 (InitRedDot)
+
+从 IL 中提取的全部 `RedDotHelper::BindWeightRedDot` 调用:
+
+| 按钮 | 红点键 | 对应系统 |
+|------|--------|---------|
+| btnHarvest | `Expedition.Hook.84317` | 远征/挂机收益 |
+| btnShop | `GameShopCollection.Page.1748` | 商店 |
+| btnActivity | `Activities.Activity.34064` | 活动 |
+| btnWelfare | `Activities.Welfare.83923` | 福利 |
+| btnCharge | `Activities.ReCharge.99752` | 充值 |
+| btnCard | `Activities.Card.5353` | 月卡 |
+| btnAdventure | `Adventure.AdventureMainView.43704` | 冒险 |
+| btnDraw | `LotteryDraw.LotteryDrawHero.7805` | 唤灵/抽卡 |
+| btnArena | `Arena.ArenaRedDot.89949` | 竞技 |
+| btnDevelop | `Develop.DevelopEnter.78015` | 养成 |
+| btnBagpack | `Bag.BagRedDot.73517` | 背包 |
+| btnTask | `Quest.QuestEnter.42775` | 任务 |
+| btnLegion | `Alliance.AllianceEnter.6965` | 军团 |
+| btnPet | `Remnants.RemnantsEnter.1728` | 宠物/遗迹 |
+| btnHero | `Hero.HeroEnter.30218` | 武将 |
+| btnPrayer | `LotteryDraw.Prayer.4036` | 祈愿 |
+| btnGal | `Gal.GalEntry.5799` | 约会 |
+| btnMenu | `MainUIView.BtnMenu.84538` | 菜单 |
+| btnChapterInfo | `ChapterTask.ChapterTaskEnter.32541` | 章节任务 |
+
+> 🔑 红点键命名揭示完整的游戏功能模块树: Hero/Bag/Remnants(宠物)/Develop/Quest/Alliance/LotteryDraw/Arena/Adventure/Expedition/Activities/Gal。
+
+### 12.4 SetUIInfo 数据流
+
+```
+SetUIInfo():
+  ModelCenter.Get<UserModel>()        → 用户数据
+  UserModel.UserLv → imgExp.fillAmount → EXP 环进度
+  UserModel.UserName → txtName         → 名字
+  UserHelper.GetPower() → txtPower     → 战力
+  ConditionHelper.IsUnlock("C60102")   → pnlCommercialization 显隐
+  ExpeditionModel.GetCurStageId()      → 远征进度
+  ExpeditionStatic.GetItem(stageId)    → 阶段名
+  Scx.Lang.Get("UI1000015")            → "主线 {0}" 本地化
+  Format(stageName) → txtStory         → pnlStory 文字
+  UpdatePnlBottom()                    → 底部栏刷新
+  UpdateFunny()                        → Funny 区刷新
+  UpdateBodyButtonVisible()            → btnEye/btnChange 显隐
+  ExpeditionHelper.ShowSoftGuide()     → pnlExpeditionSoftGuide 显隐
+  RefreshAutoFight(EventParam)         → 自动战斗状态
+```
+
+### 12.5 顶部栏数据 (RefreshTopBar)
+
+```
+RefreshTopBar():
+  ConditionHelper.IsUnlock("C60088") → 检查功能解锁
+  [动态创建 ItemResources 子对象到 svRes/Content]
+  每个 ItemResources: imgIcon(图标) + txtNum(数量)
+  → 邮件数、唤灵券数、源石数
+```
+
+### 12.6 视图栈管理 (ViewBehaviour)
+
+```
+Open(view)     → 压栈, 播放打开动画, 可能隐藏下层全屏 View
+Close(view)    → 出栈, 播放关闭动画, 可能恢复下层 View
+OnBack()       → Android back 键处理
+TopView()      → 获取当前顶层 View
+GetShowFullScreenView() → 获取全屏 View (可能是 wallpaper focus)
+DestroyAllView() → 清空所有 View (场景切换)
+```
+
+### 12.7 对 Godot MVP 的状态机验证
+
+| 原始逻辑 | Godot 实现 | 状态 |
+|:---------|:----------|:----:|
+| `hidePanels` 布尔 toggle | `_main_state` 三态 (normal/focus/gal) | ✅ 增强版 |
+| `ShowOrHide()` toggle 调用 | `enter_normal_state` / `enter_wallpaper_focus` 显式切换 | ✅ |
+| `btnBodyMask` 控制 wallpaper 切换 | `draw_body_mask()` 全屏透明 Button | ✅ |
+| `btnEye` / `btnChange` | `draw_player_info()` 内实现 | ✅ |
+| `listPanel` = [6 Transform] | `_main_panels` Array | ✅ |
+| TopBar 独立 show/hide | 通过 `_main_panels` 统一管理 | ✅ |
+| `SetUIInfo()` 数据刷新 | `_next_task_text()` / `_afk_claimed_today()` 模拟 | ⚠️ 简化版 |
+| `InitRedDot()` 19 个红点绑定 | 部分按钮有 `_draw_red_dot()` | ⚠️ 覆盖率不足 |
+| `RefreshTopBar()` → ItemResources | 纯文本 "邮件 %d" | ❌ 需 TopResGrid 结构 |
