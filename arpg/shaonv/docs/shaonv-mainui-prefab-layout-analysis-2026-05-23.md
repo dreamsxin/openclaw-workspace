@@ -633,6 +633,123 @@ pnlChat pos=(-64,-94) size=(410,40) anchor=(1,1)
 
 ---
 
+## 10. 深度组件分析 (2026-05-23 补充)
+
+基于 `layout.json` 的 `componentTypes` + `MainUIView.il.txt` 的 `FIELD` 声明交叉分析。
+
+### 10.1 组件分布统计
+
+| 组件类型 | 数量 | 说明 |
+|----------|:----:|------|
+| RectTransform | 212 | 所有节点 |
+| CanvasRenderer | 171 | 所有可见渲染节点 |
+| MonoBehaviour | 357 | UI 行为脚本 |
+| CanvasGroup | 34 | 显隐/alpha 控制面板 |
+| ParticleSystem | 10 | 粒子特效 |
+| Animator | 4 | 动画状态机 |
+| Canvas | 1 | 根画布 |
+| VideoPlayer | 1 | 视频播放 (pnlVideo) |
+| MonoScript | 33 | 脚本类型变体 |
+
+### 10.2 CanvasGroup 面板 (34个)
+
+CanvasGroup 控制整组显隐。以下 34 个 CanvasGroup 节点实际构成 `listPanel`:
+
+```
+irole, @TopBar, pnlPlayerInfo, 
+pnlFunnyContent, pnlStory, pnlCharge, btnMenu, btnAssist,
+pnlCommercialization, @pnlAlternate, pnlGift,
+btnChapterInfo, pnlBottom, pnlChat, btnGal,
+btnEye, btnChange, btnHarvest,
+@LimitIconView01~12, @Question, @BuryGift, @DiscountLimitGift
+```
+
+### 10.3 粒子特效 (10个 ParticleSystem)
+
+| 特效 | 位置 | 用途 |
+|------|------|------|
+| gyunlizi2 (×2) | btnGal/@fx05 | 约会按钮主体/粒子 |
+| gyunxuanwo (×3) | btnGal/@fx05 | 约会按钮漩涡旋转 |
+| glowdi | btnGal/@fx05 | 约会按钮发光 |
+| gyun (×2) | pnlExpeditionSoftGuide/@vfx | 远征引导箭头 |
+| gyun2 (×2) | pnlExpeditionSoftGuide/pnlHookSoftGuide | 红点光芒 |
+
+**btnGal 总共 5 层粒子特效！** 这是整个 prefab 中最特效密度最高的按钮。
+
+### 10.4 Animator 节点 (4个)
+
+| 节点 | 说明 |
+|------|------|
+| MainUIView | 根节点 Animator（可能控制状态机切换动画） |
+| @TopBar | 顶栏动画（滑动/淡入） |
+| pnlExpeditionSoftGuide | 远征引导动画（OFF） |
+| pnlHookSoftGuide | 挂机钩子引导动画（OFF） |
+
+### 10.5 IL Field 类型对照
+
+从 `MainUIView.il.txt` FIELD 声明可知每个命名节点的精确 Unity 组件类型:
+
+| 节点 | Unity 类型 | 说明 |
+|------|-----------|------|
+| btnBodyMask, btnPlayerInfo, btnEye, btnChange, btnHarvest, btnStory, btnArena, btnPrayer, btnAdventure, btnJumpAutoFight, btnDraw, btnAssist, btnActivity, btnWelfare, btnCard, btnCharge, btnShop, btnMenu, btnChapterInfo, btnGal, btnHero, btnBagpack, btnPet, btnDevelop, btnTask, btnLegion, btnClose, btnDetail, btnLeft, btnRight, btnPause, btnPlay | **UnityEngine.UI.Button** | 全部按钮 |
+| imgHeadBg, imgExp, imgHookTime | **UnityEngine.UI.Image** | 图片 |
+| txtLevel, txtName, txtPower, txtStory, txtHookTime, txtAssist, txtAssistProject, txtChapterTitle | **UnityEngine.UI.Text** | 文字 |
+| pnlAdapter, pnlPlayerInfo, pnlFunny, pnlStory, pnlFunnyContent, pnlCharge, pnlCommercialization, pnlGift, pnlBottom, pnlGal | **UnityEngine.Transform** | 容器面板 |
+| svChapterReward | **Scx.GridScroller** | 自定义滚动组件 |
+| svRes | **ScrollRect**(推测, MonoBx5) | 资源滚动区 |
+
+### 10.6 交互节点 MonoB 模式
+
+| MonoB 数量 | 含义 | 节点示例 |
+|:----------:|------|---------|
+| 2 | Button(+Image) 或 Transform 容器 | 所有 btn* 按钮, pnlStory, pnlGift 等面板 |
+| 3 | Button+Image+Layout 或 Text 组件 | btnActivity~Shop(pnlCharge), irole, pnlBottom |
+| 5 | ScrollRect 复合 | svRes (Viewport+Content+Grid+Scrollbar) |
+
+### 10.7 默认隐藏节点 (active=False)
+
+| 节点 | 触发条件 |
+|------|---------|
+| **pnlCtl** | 壁纸聚焦模式 (wallpaper_focus) |
+| btnPlay | pnlCtl 内的播放按钮（开始播放 Spine） |
+| btnClose/btnDetail | TopBar 左侧 — 始终 OFF |
+| pnlExpeditionSoftGuide | 远征任务引导箭头 |
+| pnlHookSoftGuide | 挂机钩子引导动画 |
+| imgSpeak | 角色对话气泡（事件触发） |
+| pnlStandbyContainer | @pnlAlternate 轮播待机容器 |
+| gyun2 (in pnlHookSoftGuide) | 红点光芒默认关闭 |
+
+### 10.8 svRes 深度分析
+
+`svRes` 有 5 个 MonoBehaviour (MonoBx5)，层级:
+```
+svRes (-790,-42) 1367×60 anchor=(1,1) [ScrollRect + Layout + ...]
+  Viewport (0,0) 0×0 [Mask + Image]
+    Content (0,0) 0×60 anchor=(0,1) [GridLayout + ContentSizeFitter]
+      → 内部 ItemResources 子对象（资源图标+数量，动态生成）
+```
+
+当前 Godot 使用纯文本模拟，缺少 ScrollRect + Grid 动态图标布局。
+
+### 10.9 btnGal 特效全貌
+
+```
+btnGal (0,40) 115×129 anchor=(0.5,0.5)
+  ├─ Image (0,74) 150×170 ← 约会图标背景
+  ├─ @fx05 (-4,68) 100×50 ← 5层粒子系统!
+  │   └─ gyunlizi2(1) (0,0) 100×100
+  │       ├─ gyunlizi2      ← 粒子主体
+  │       ├─ gyunxuanwo(2)  ← 漩涡2
+  │       ├─ gyunxuanwo(1)  ← 漩涡1
+  │       ├─ glowdi(1)      ← 发光点
+  │       └─ gyunxuanwo     ← 漩涡
+  ├─ Text (0,25) 70×30 ← "约会"文字
+  ├─ @pnlRd (45,129) ← 红点 Gal.GalEntry.5799
+  └─ @btnGalClickRrea (0,101) 100×100 ← 独立点击热区
+```
+
+---
+
 ## 9. 下一步建议
 
 按优先级排列：
@@ -652,5 +769,6 @@ pnlChat pos=(-64,-94) size=(410,40) anchor=(1,1)
 
 ### 8.2 P2：补充资源
 1. **svRes 图标** — 导出 ItemResources 精灵
+
 2. **pnlCommercialization** — 独立区域 + LimitIconView 图标
 3. **Common 图集** — 底部栏和其他按钮的真实图标
