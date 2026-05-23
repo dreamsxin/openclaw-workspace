@@ -253,10 +253,14 @@ reverse-output/godot-resource-export/
 ```text
 standalone/godot-mvp/assets/ui/
   background/
+  common/
+  gallery/
+  hero/half/
   hero/recruit/
   login/
   lottery/
   mainui/
+  skill/
 ```
 
 已接入 Godot 的 PNG：
@@ -289,6 +293,10 @@ standalone/godot-mvp/assets/ui/
 | `assets/ui/hero/recruit` | `zhero_016.png` | 天狐妲己招募头像，图鉴/抽卡结果静态头像 |
 | `assets/ui/hero/recruit` | `zhero_017.png` | 女帝招募头像，图鉴/抽卡结果静态头像 |
 | `assets/ui/hero/recruit` | `zhero_022.png` | 阿修羅对应招募头像，图鉴/抽卡结果静态头像 |
+| `assets/ui/hero/half` | `phero_003r*.png` | 莉莉絲图鉴半身候选 |
+| `assets/ui/gallery` | `gal_gallery_pic_240065*.png` | 莉莉絲图鉴背景候选 |
+| `assets/ui/common` | `lottery_btn_05.png`、`lottery_btn_06.png` | 抽卡按钮底图 |
+| `assets/ui/skill` | `skill_icon_240037/045/055/065/068/069*.png` | 角色详情页技能图标 |
 
 2026-05-23 追加了可复用导出工具和计划文件：
 
@@ -303,12 +311,14 @@ python scripts\assets\export_unity_bundle_images.py `
 
 - `main.gd` 新增 UI 资源常量和 `_draw_image()` helper。
 - `heroes_mvp.json` 新增 `portraitResource` 字段，当前 6 个已有招募头像的角色可直接显示原始静态头像。
+- `heroes_mvp.json` 追加 `skillResources`、`detailPortraitResource`、`galleryBackgroundResource`，角色详情页开始使用原游戏技能图标和图鉴资源。
 - `LoginView` 优先显示 `login_bg_01.png`、`logo.png`、`server_bg_03.png`。
 - `MainUIView` 背景替换为 `mainui_bg_01.png`，并叠加 `mainui_img_10.png` 装饰。
 - `LotteryDrawMainView` 背景替换为 `lottery_img_01.png`，并叠加 `lottery_img_alpha_l/r.png`。
 - 喚靈演出和结果页使用 `lottery_img_60.png`、`lottery_img_60_l/r.png`。
 - 图鉴卡片、抽卡结果格和缺少 baked Spine 的角色展示会使用 `portraitResource` 作为静态兜底。
-- 新增 `SHAONV_MVP_START_VIEW=gacha` 调试入口，便于直接回归抽卡页。
+- `LotteryDrawMainView` 的单抽/十连按钮叠加原 `lottery_btn_05/06` 底图。
+- 新增 `SHAONV_MVP_START_VIEW=gacha|gallery|hero_detail` 调试入口，`hero_detail` 可配合 `SHAONV_MVP_HERO_ID=240065` 直接回归角色详情页。
 
 截图验证：
 

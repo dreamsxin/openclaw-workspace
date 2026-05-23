@@ -16,6 +16,8 @@ const UI_LOTTERY_LIGHT_R := "res://assets/ui/lottery/lottery_img_60_r.png"
 const UI_LOTTERY_ALPHA_L := "res://assets/ui/lottery/lottery_img_alpha_l.png"
 const UI_LOTTERY_ALPHA_R := "res://assets/ui/lottery/lottery_img_alpha_r.png"
 const UI_MAIN_TOP_ACCENT := "res://assets/ui/mainui/mainui_img_10.png"
+const UI_LOTTERY_BTN_SINGLE := "res://assets/ui/common/lottery_btn_05.png"
+const UI_LOTTERY_BTN_TEN := "res://assets/ui/common/lottery_btn_06.png"
 
 var heroes: Array = []
 var pools: Array = []
@@ -171,6 +173,12 @@ func _show_start_view_from_env() -> void:
 	elif start_view == "gacha":
 		_enter_main_scene()
 		_show_gacha()
+	elif start_view == "gallery":
+		_enter_main_scene()
+		_show_gallery()
+	elif start_view == "hero_detail":
+		_enter_main_scene()
+		_show_hero_detail(int(OS.get_environment("SHAONV_MVP_HERO_ID")) if not OS.get_environment("SHAONV_MVP_HERO_ID").is_empty() else int(save.get("selected_hero_id", 240065)))
 	else:
 		_show_launch()
 
@@ -393,6 +401,8 @@ func _show_gacha() -> void:
 
 	_add_action_button("概率", Vector2(326, 334), _show_gacha_rate)
 	_add_action_button("記錄", Vector2(472, 334), _show_history)
+	_draw_image(UI_LOTTERY_BTN_SINGLE, Vector2(320, 462), Vector2(150, 62), false, Color(1, 1, 1, 0.72))
+	_draw_image(UI_LOTTERY_BTN_TEN, Vector2(486, 462), Vector2(174, 62), false, Color(1, 1, 1, 0.72))
 	_add_action_button("喚靈 1 次", Vector2(326, 468), func() -> void: _show_draw_animation(1))
 	_add_action_button("喚靈 10 次", Vector2(492, 468), func() -> void: _show_draw_animation(10), Vector2(156, 50))
 	_add_action_button("返回主界面", Vector2(22, 546), _show_home, Vector2(210, 44))
@@ -623,6 +633,10 @@ func _draw_one(pool: Dictionary) -> Dictionary:
 func _show_hero_detail(hero_id: int) -> void:
 	var hero := _hero_by_id(hero_id)
 	_clear(str(hero.get("name", "角色")))
+	var gallery_bg := str(hero.get("galleryBackgroundResource", ""))
+	if not gallery_bg.is_empty():
+		_draw_image(_godot_resource_path(gallery_bg), Vector2(0, 0), Vector2(1280, 646), true, Color(1, 1, 1, 0.38))
+		content.add_child(_panel(Vector2(0, 0), Vector2(1280, 646), Color(0.02, 0.016, 0.014, 0.54)))
 	_draw_hero_stage(hero, Vector2(706, 10), Vector2(520, 560))
 	var key := str(hero.get("id", 0))
 	var copies := int(save.get("owned", {}).get(key, 0))
@@ -632,6 +646,8 @@ func _show_hero_detail(hero_id: int) -> void:
 	detail.position = Vector2(54, 108)
 	detail.size = Vector2(610, 210)
 	content.add_child(detail)
+	_draw_detail_portrait(hero)
+	_draw_skill_icons(hero)
 	if copies <= 0:
 		var mask := _panel(Vector2(706, 10), Vector2(520, 560), Color(0.0, 0.0, 0.0, 0.42))
 		content.add_child(mask)
@@ -1029,13 +1045,16 @@ func _hero_portrait_path(hero: Dictionary) -> String:
 	var path := str(hero.get("portraitResource", ""))
 	if path.is_empty():
 		return ""
-	return path if path.begins_with("res://") else "res://%s" % path
+	return _godot_resource_path(path)
 
 func _hero_portrait_texture(hero: Dictionary) -> Texture2D:
 	var path := _hero_portrait_path(hero)
 	if path.is_empty():
 		return null
 	return _load_png_source_texture(path)
+
+func _godot_resource_path(path: String) -> String:
+	return path if path.begins_with("res://") else "res://%s" % path
 
 func _draw_hero_portrait(hero: Dictionary, pos: Vector2, draw_size: Vector2, tint := Color(1, 1, 1, 1)) -> TextureRect:
 	var source_texture := _hero_portrait_texture(hero)
@@ -1050,6 +1069,37 @@ func _draw_hero_portrait(hero: Dictionary, pos: Vector2, draw_size: Vector2, tin
 	rect.modulate = tint
 	content.add_child(rect)
 	return rect
+
+func _draw_detail_portrait(hero: Dictionary) -> void:
+	var path := str(hero.get("detailPortraitResource", ""))
+	if path.is_empty():
+		return
+	var frame := _panel(Vector2(428, 104), Vector2(206, 216), Color(0.08, 0.058, 0.048, 0.72))
+	content.add_child(frame)
+	_draw_image(_godot_resource_path(path), Vector2(442, 116), Vector2(178, 190), false, Color(1, 1, 1, 0.92))
+
+func _draw_skill_icons(hero: Dictionary) -> void:
+	var skill_paths: Array = hero.get("skillResources", [])
+	if skill_paths.is_empty():
+		return
+	var panel := _panel(Vector2(54, 404), Vector2(560, 122), Color(0.052, 0.040, 0.034, 0.82))
+	content.add_child(panel)
+	var title := _label("技能", 20)
+	title.position = Vector2(76, 414)
+	title.size = Vector2(160, 30)
+	content.add_child(title)
+	var x := 78.0
+	var index := 1
+	for raw_path in skill_paths:
+		var icon_frame := _panel(Vector2(x - 4, 452), Vector2(78, 74), _rarity_color(int(hero.get("rarity", 1)), 0.28))
+		content.add_child(icon_frame)
+		_draw_image(_godot_resource_path(str(raw_path)), Vector2(x, 456), Vector2(70, 56), false)
+		var label := _label("技能%d" % index, 13, HORIZONTAL_ALIGNMENT_CENTER)
+		label.position = Vector2(x, 510)
+		label.size = Vector2(70, 18)
+		content.add_child(label)
+		x += 92
+		index += 1
 
 func _draw_image(path: String, pos: Vector2, draw_size: Vector2, cover := false, tint := Color(1, 1, 1, 1)) -> TextureRect:
 	var source_texture := _load_png_source_texture(path)

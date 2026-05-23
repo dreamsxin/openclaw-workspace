@@ -39,3 +39,17 @@ The tool resolves `reverse-output/assets/yoo-physical-map/physical-asset-map.csv
 | `hero/recruit/zhero_016.png` | `Assets/Game/RawAssets/Sprite/Head/Recruit/zhero_016.png` |
 | `hero/recruit/zhero_017.png` | `Assets/Game/RawAssets/Sprite/Head/Recruit/zhero_017.png` |
 | `hero/recruit/zhero_022.png` | `Assets/Game/RawAssets/Sprite/Head/Recruit/zhero_022.png` |
+
+Additional MVP batch:
+
+| Godot folder | Original asset group |
+|---|---|
+| `common/lottery_btn_05.png`, `common/lottery_btn_06.png` | `Assets/Game/RawAssets/Sprite/Common/lottery_btn_*.png` |
+| `gallery/gal_gallery_pic_24006501.png`, `gallery/gal_gallery_pic_24006502.png` | `Assets/Game/RawAssets/Sprite/BackGround/Gal/gal_gallery_pic_240065*.png` |
+| `hero/half/phero_003r*.png` | `Assets/Game/RawAssets/Sprite/Head/Half2/phero_003r*.png` |
+| `skill/skill_icon_240037*.png` | `Assets/Game/RawAssets/Sprite/Skill/Common/skill_icon_240037*.png` |
+| `skill/skill_icon_240045*.png` | `Assets/Game/RawAssets/Sprite/Skill/Common/skill_icon_240045*.png` |
+| `skill/skill_icon_240055*.png` | `Assets/Game/RawAssets/Sprite/Skill/Common/skill_icon_240055*.png` |
+| `skill/skill_icon_240065*.png` | `Assets/Game/RawAssets/Sprite/Skill/Common/skill_icon_240065*.png` |
+| `skill/skill_icon_240068*.png` | `Assets/Game/RawAssets/Sprite/Skill/Common/skill_icon_240068*.png` |
+| `skill/skill_icon_240069*.png` | `Assets/Game/RawAssets/Sprite/Skill/Common/skill_icon_240069*.png` |

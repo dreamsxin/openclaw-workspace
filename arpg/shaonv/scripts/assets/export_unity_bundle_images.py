@@ -102,7 +102,9 @@ def export_plan(args: argparse.Namespace) -> int:
     physical_map = read_physical_map((repo_root / args.physical_map).resolve())
     items = read_plan((repo_root / args.plan).resolve())
     manifest_rows: list[dict[str, str]] = []
-    cache: dict[tuple[Path, tuple[str, ...]], dict[str, Path]] = {}
+    resolved_items: list[dict[str, str | Path]] = []
+    wanted_by_bundle: dict[Path, set[str]] = {}
+    export_dir_by_bundle: dict[Path, Path] = {}
     failures = 0
 
     for item in items:
@@ -125,13 +127,38 @@ def export_plan(args: argparse.Namespace) -> int:
 
         bundle_path = (repo_root / physical_path).resolve()
         image_name = item.get("name") or Path(asset).stem
-        export_dir = export_root / safe_name(Path(asset).stem)
-        cache_key = (bundle_path, (image_name.lower(),))
+        wanted_by_bundle.setdefault(bundle_path, set()).add(image_name)
+        export_dir_by_bundle.setdefault(bundle_path, export_root / safe_name(bundle_path.stem))
+        resolved_items.append(
+            {
+                "asset": asset,
+                "target": target,
+                "bundle_path": bundle_path,
+                "image_name": image_name,
+            }
+        )
+
+    exported_by_bundle: dict[Path, dict[str, Path]] = {}
+    for bundle_path, wanted_names in wanted_by_bundle.items():
         try:
-            exported = cache.get(cache_key)
-            if exported is None:
-                exported = export_bundle(bundle_path, export_dir, args.xor_prefix, args.xor_key, {image_name})
-                cache[cache_key] = exported
+            exported_by_bundle[bundle_path] = export_bundle(
+                bundle_path,
+                export_dir_by_bundle[bundle_path],
+                args.xor_prefix,
+                args.xor_key,
+                wanted_names,
+            )
+        except Exception as exc:
+            print(f"failed bundle: {bundle_path}: {exc}")
+            failures += len(wanted_names)
+
+    for item in resolved_items:
+        asset = str(item["asset"])
+        target = str(item["target"])
+        bundle_path = item["bundle_path"]
+        image_name = str(item["image_name"])
+        try:
+            exported = exported_by_bundle.get(bundle_path, {})
             source_image = exported.get(image_name.lower())
             if source_image is None:
                 print(f"missing image in bundle: {asset} name={image_name}")
