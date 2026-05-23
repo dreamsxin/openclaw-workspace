@@ -19,6 +19,15 @@ const UI_LOTTERY_ALPHA_R := "res://assets/ui/lottery/lottery_img_alpha_r.png"
 const UI_MAIN_TOP_ACCENT := "res://assets/ui/mainui/mainui_img_10.png"
 const UI_LOTTERY_BTN_SINGLE := "res://assets/ui/common/lottery_btn_05.png"
 const UI_LOTTERY_BTN_TEN := "res://assets/ui/common/lottery_btn_06.png"
+const UI_LOTTERY_BG_NORMAL := "res://assets/ui/lottery/bg/lottery_bg_02.png"
+const UI_LOTTERY_BG_ADVANCED := "res://assets/ui/lottery/bg/lottery_bg_01.png"
+const UI_LOTTERY_BG_EPIC := "res://assets/ui/lottery/bg/lottery_bg_03.png"
+const UI_LOTTERY_BG_PRAYER := "res://assets/ui/lottery/bg/lottery_bg_08.png"
+const UI_LOTTERY_SIDE_1 := "res://assets/ui/lottery/lottery_img_11.png"
+const UI_LOTTERY_SIDE_2 := "res://assets/ui/lottery/lottery_img_12.png"
+const UI_LOTTERY_POOL_FRAME := "res://assets/ui/lottery/lottery_img_55.png"
+const UI_LOTTERY_PRAYER_FRAME := "res://assets/ui/lottery/lottery_img_57.png"
+const UI_LOTTERY_TICKET_ICON := "res://assets/ui/item/draw_03.png"
 
 var heroes: Array = []
 var pools: Array = []
@@ -183,6 +192,9 @@ func _show_start_view_from_env() -> void:
 	elif start_view == "gacha":
 		_enter_main_scene()
 		_show_gacha()
+	elif start_view == "prayer":
+		_enter_main_scene()
+		_open_prayer_pool()
 	elif start_view == "battle":
 		_enter_main_scene()
 		_show_battle()
@@ -360,37 +372,44 @@ func _show_home() -> void:
 	_draw_home_status()
 
 func _show_gacha() -> void:
-	_clear("抽卡")
-	_draw_image(UI_LOTTERY_BG, Vector2(0, 0), Vector2(1280, 646), true)
-	content.add_child(_panel(Vector2(0, 0), Vector2(1280, 646), Color(0.02, 0.015, 0.016, 0.22)))
-	_draw_image(UI_LOTTERY_ALPHA_L, Vector2(286, 74), Vector2(360, 132), false, Color(1, 1, 1, 0.62))
-	_draw_image(UI_LOTTERY_ALPHA_R, Vector2(824, 78), Vector2(360, 110), false, Color(1, 1, 1, 0.62))
+	var pool := _pool_by_id(str(save.get("active_pool_id", "advanced")))
+	var realm := _active_gacha_realm()
+	_clear("現世" if realm == "present" else "幻靈")
+	_draw_image(_lottery_bg_for_pool(str(pool.get("id", "advanced"))), Vector2(0, 0), Vector2(1280, 646), true)
+	content.add_child(_panel(Vector2(0, 0), Vector2(1280, 646), Color(0.018, 0.014, 0.016, 0.16)))
+	_draw_image(UI_LOTTERY_ALPHA_L, Vector2(250, 56), Vector2(410, 142), false, Color(1, 1, 1, 0.58))
+	_draw_image(UI_LOTTERY_ALPHA_R, Vector2(818, 58), Vector2(410, 128), false, Color(1, 1, 1, 0.58))
+	_draw_image(UI_LOTTERY_SIDE_1, Vector2(0, 0), Vector2(84, 646), true, Color(1, 1, 1, 0.70))
+	_draw_image(UI_LOTTERY_SIDE_2, Vector2(1196, 0), Vector2(84, 646), true, Color(1, 1, 1, 0.70))
 
-	var left_panel := _panel(Vector2(22, 22), Vector2(264, 586), Color(0.045, 0.032, 0.030, 0.78))
+	var left_panel := _panel(Vector2(22, 22), Vector2(252, 586), Color(0.025, 0.019, 0.018, 0.62))
 	content.add_child(left_panel)
+	_add_realm_button("現世", "present", Vector2(42, 46))
+	_add_realm_button("幻靈", "prayer", Vector2(154, 46))
 
-	var x := 42.0
-	var y := 52.0
-	for pool in pools:
-		var pool_id := str(pool.get("id", "advanced"))
+	var y := 120.0
+	for pool_item in pools:
+		var pool_id := str(pool_item.get("id", "advanced"))
+		if not _pool_in_realm(pool_id, realm):
+			continue
+		_draw_image(UI_LOTTERY_POOL_FRAME if realm == "present" else UI_LOTTERY_PRAYER_FRAME, Vector2(44, y - 8), Vector2(184, 52), false, Color(1, 1, 1, 0.62))
 		var button := Button.new()
-		button.text = "%s%s" % ["✓ " if pool_id == str(save.get("active_pool_id", "advanced")) else "", str(pool.get("name", "Pool"))]
-		button.position = Vector2(x, y)
-		button.size = Vector2(210, 46)
+		button.text = "%s%s" % ["✓ " if pool_id == str(save.get("active_pool_id", "advanced")) else "", str(pool_item.get("name", "Pool"))]
+		button.position = Vector2(50, y)
+		button.size = Vector2(174, 38)
 		button.pressed.connect(func() -> void:
 			save["active_pool_id"] = pool_id
 			_persist()
 			_show_gacha()
 		)
 		content.add_child(button)
-		y += 58
+		y += 62
 
-	var pool := _pool_by_id(str(save.get("active_pool_id", "advanced")))
 	var hero := _hero_by_id(int(pool.get("featuredHeroIds", [240055])[0]))
-	_draw_hero_stage(hero, Vector2(690, 14), Vector2(520, 560), false)
+	_draw_hero_stage(hero, Vector2(676, -10), Vector2(548, 598), false)
 
-	var title := _label(str(pool.get("name", "高級喚靈")), 42)
-	title.position = Vector2(326, 44)
+	var title := _label("%s  %s" % ["現世" if realm == "present" else "幻靈", pool.get("name", "高級喚靈")], 42)
+	title.position = Vector2(310, 42)
 	title.size = Vector2(500, 56)
 	content.add_child(title)
 
@@ -398,7 +417,9 @@ func _show_gacha() -> void:
 	for id in pool.get("featuredHeroIds", []):
 		featured_names.append(_hero_by_id(int(id)).get("name", str(id)))
 	var rates: Dictionary = pool.get("rates", {})
-	var detail := _label("UP 角色\n%s\n\n保底 %d/%d\n消耗 喚靈券 x%d\n%s %.1f%%  %s %.1f%%" % [
+	content.add_child(_panel(Vector2(310, 120), Vector2(404, 184), Color(0.018, 0.014, 0.012, 0.50)))
+	_draw_image(UI_LOTTERY_TICKET_ICON, Vector2(408, 232), Vector2(34, 38), false)
+	var detail := _label("UP 角色\n%s\n\n保底 %d/%d\n消耗喚靈券       x%d\n%s %.1f%%  %s %.1f%%" % [
 		" / ".join(featured_names),
 		_pity(pool.get("id", "advanced")),
 		int(pool.get("pityLimit", 60)),
@@ -408,16 +429,16 @@ func _show_gacha() -> void:
 		_stars(3),
 		float(rates.get("3", 0.14)) * 100.0
 	], 21)
-	detail.position = Vector2(326, 132)
-	detail.size = Vector2(430, 170)
+	detail.position = Vector2(330, 132)
+	detail.size = Vector2(360, 170)
 	content.add_child(detail)
 
-	_add_action_button("概率", Vector2(326, 334), _show_gacha_rate)
-	_add_action_button("記錄", Vector2(472, 334), _show_history)
-	_draw_image(UI_LOTTERY_BTN_SINGLE, Vector2(320, 462), Vector2(150, 62), false, Color(1, 1, 1, 0.72))
-	_draw_image(UI_LOTTERY_BTN_TEN, Vector2(486, 462), Vector2(174, 62), false, Color(1, 1, 1, 0.72))
-	_add_action_button("喚靈 1 次", Vector2(326, 468), func() -> void: _show_draw_animation(1))
-	_add_action_button("喚靈 10 次", Vector2(492, 468), func() -> void: _show_draw_animation(10), Vector2(156, 50))
+	_add_action_button("概率", Vector2(326, 330), _show_gacha_rate)
+	_add_action_button("記錄", Vector2(472, 330), _show_history)
+	_draw_image(UI_LOTTERY_BTN_SINGLE, Vector2(316, 460), Vector2(152, 64), false, Color(1, 1, 1, 0.82))
+	_draw_image(UI_LOTTERY_BTN_TEN, Vector2(492, 460), Vector2(178, 64), false, Color(1, 1, 1, 0.82))
+	_add_action_button("召喚 1 次", Vector2(326, 468), func() -> void: _show_draw_animation(1))
+	_add_action_button("召喚 10 次", Vector2(506, 468), func() -> void: _show_draw_animation(10), Vector2(156, 50))
 	_add_action_button("返回主界面", Vector2(22, 546), _show_home, Vector2(210, 44))
 
 func _show_draw_animation(count: int) -> void:
@@ -929,9 +950,9 @@ func _draw_home_side_entries() -> void:
 	content.add_child(funny_panel)
 	var entries := [
 		["戰役", _show_battle],
-		["喚靈", _show_gacha],
+		["現世", _open_present_pool],
 		["競技", _show_home],
-		["祈願", _open_prayer_pool],
+		["幻靈", _open_prayer_pool],
 		["冒險", _show_battle],
 		["收穫", _claim_afk_reward],
 		["援助", _show_mail]
@@ -946,6 +967,12 @@ func _draw_home_side_entries() -> void:
 func _open_prayer_pool() -> void:
 	save["active_pool_id"] = "prayer"
 	_persist()
+	_show_gacha()
+
+func _open_present_pool() -> void:
+	if str(save.get("active_pool_id", "advanced")) == "prayer":
+		save["active_pool_id"] = "advanced"
+		_persist()
 	_show_gacha()
 
 func _draw_home_bottom_bar() -> void:
@@ -972,6 +999,38 @@ func _draw_home_bottom_bar() -> void:
 	chat.position = Vector2(28, 610)
 	chat.size = Vector2(430, 28)
 	content.add_child(chat)
+
+func _active_gacha_realm() -> String:
+	return "prayer" if str(save.get("active_pool_id", "advanced")) == "prayer" else "present"
+
+func _pool_in_realm(pool_id: String, realm: String) -> bool:
+	return pool_id == "prayer" if realm == "prayer" else pool_id != "prayer"
+
+func _lottery_bg_for_pool(pool_id: String) -> String:
+	match pool_id:
+		"normal":
+			return UI_LOTTERY_BG_NORMAL
+		"epic":
+			return UI_LOTTERY_BG_EPIC
+		"prayer":
+			return UI_LOTTERY_BG_PRAYER
+		_:
+			return UI_LOTTERY_BG_ADVANCED
+
+func _add_realm_button(text: String, realm: String, pos: Vector2) -> void:
+	var button := Button.new()
+	button.text = "%s%s" % ["✓ " if _active_gacha_realm() == realm else "", text]
+	button.position = pos
+	button.size = Vector2(96, 44)
+	button.pressed.connect(func() -> void:
+		if realm == "prayer":
+			save["active_pool_id"] = "prayer"
+		elif str(save.get("active_pool_id", "advanced")) == "prayer":
+			save["active_pool_id"] = "advanced"
+		_persist()
+		_show_gacha()
+	)
+	content.add_child(button)
 
 func _draw_home_status() -> void:
 	var panel := _panel(Vector2(24, 116), Vector2(306, 168), Color(0.042, 0.034, 0.030, 0.82))

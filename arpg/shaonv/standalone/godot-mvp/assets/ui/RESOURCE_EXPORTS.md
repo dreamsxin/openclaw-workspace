@@ -53,3 +53,9 @@ Additional MVP batch:
 | `skill/skill_icon_240065*.png` | `Assets/Game/RawAssets/Sprite/Skill/Common/skill_icon_240065*.png` |
 | `skill/skill_icon_240068*.png` | `Assets/Game/RawAssets/Sprite/Skill/Common/skill_icon_240068*.png` |
 | `skill/skill_icon_240069*.png` | `Assets/Game/RawAssets/Sprite/Skill/Common/skill_icon_240069*.png` |
+| `lottery/bg/lottery_bg_01..09.png` | `Assets/Game/RawAssets/Sprite/BackGround/lottery_bg_*.png` |
+| `lottery/lottery_img_11..14.png` | `Assets/Game/RawAssets/Sprite/LotteryDraw/lottery_img_11..14.png` |
+| `lottery/lottery_img_55..58.png` | `Assets/Game/RawAssets/Sprite/LotteryDraw/lottery_img_55..58.png` |
+| `lottery/lottery_img_61..62.png` | `Assets/Game/RawAssets/Sprite/LotteryDraw/lottery_img_61..62.png` |
+| `lottery/fx_lottery_img_60_l/r.png` | `Assets/Game/RawAssets/Sprite/LotteryDraw/fx_lottery_img_60_l/r.png` |
+| `item/draw_01..07.png` | `Assets/Game/RawAssets/Sprite/Item/ItemResources/draw_*.png` |

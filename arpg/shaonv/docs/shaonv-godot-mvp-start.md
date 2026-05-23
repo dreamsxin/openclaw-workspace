@@ -267,6 +267,7 @@ standalone/godot-mvp/assets/ui/
   hero/recruit/
   login/
   lottery/
+  lottery/bg/
   mainui/
   skill/
 ```
@@ -304,6 +305,8 @@ standalone/godot-mvp/assets/ui/
 | `assets/ui/hero/half` | `phero_003r*.png` | 莉莉絲图鉴半身候选 |
 | `assets/ui/gallery` | `gal_gallery_pic_240065*.png` | 莉莉絲图鉴背景候选 |
 | `assets/ui/common` | `lottery_btn_05.png`、`lottery_btn_06.png` | 抽卡按钮底图 |
+| `assets/ui/lottery/bg` | `lottery_bg_01..09.png` | 現世/幻靈抽卡界面背景候选 |
+| `assets/ui/item` | `draw_01..07.png` | 抽卡道具图标候选 |
 | `assets/ui/skill` | `skill_icon_240037/045/055/065/068/069*.png` | 角色详情页技能图标 |
 
 2026-05-23 追加了可复用导出工具和计划文件：
@@ -326,7 +329,8 @@ python scripts\assets\export_unity_bundle_images.py `
 - 喚靈演出和结果页使用 `lottery_img_60.png`、`lottery_img_60_l/r.png`。
 - 图鉴卡片、抽卡结果格和缺少 baked Spine 的角色展示会使用 `portraitResource` 作为静态兜底。
 - `LotteryDrawMainView` 的单抽/十连按钮叠加原 `lottery_btn_05/06` 底图。
-- 新增 `SHAONV_MVP_START_VIEW=gacha|battle|gallery|hero_detail` 调试入口，`hero_detail` 可配合 `SHAONV_MVP_HERO_ID=240065` 直接回归角色详情页。
+- `MainUIView` 的抽卡入口拆为“現世”和“幻靈”：現世显示普通/高级/进阶池，幻靈显示源神祈願池；两条入口使用不同真实 `lottery_bg_*` 背景，角色展示继续使用 baked Spine 动画。
+- 新增 `SHAONV_MVP_START_VIEW=gacha|prayer|battle|gallery|hero_detail` 调试入口，`hero_detail` 可配合 `SHAONV_MVP_HERO_ID=240065` 直接回归角色详情页。
 
 截图验证：
 
