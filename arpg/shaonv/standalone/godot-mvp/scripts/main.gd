@@ -72,7 +72,11 @@ var save := {
 }
 
 var rng := RandomNumberGenerator.new()
-var content: Control
+# ── CanvasLayer 视图栈 ──
+var _mid_layer: CanvasLayer
+var _high_layer: CanvasLayer
+var _all_views: Array[Control] = []       # 视图栈 [最底, ..., 最顶]
+var _view_names: Array[String] = []       # 并行名称栈
 var title_label: Label
 var wallet_label: Label
 var top_bar: Control
@@ -82,6 +86,11 @@ var startup_screen
 var home_screen
 var gacha_screen
 var gacha_result_screen
+
+func _view_container() -> Control:
+	if _all_views.is_empty():
+		return self  # fallback: draw on root before first push
+	return _all_views.back()
 
 func _ready() -> void:
 	anchor_left = 0.0
@@ -187,10 +196,80 @@ func _build_root() -> void:
 	wallet_label.size = Vector2(440, 36)
 	add_child(wallet_label)
 
-	content = Control.new()
-	content.position = Vector2(0, 74)
-	content.size = Vector2(1280, 646)
-	add_child(content)
+	_setup_layers()
+
+func _setup_layers() -> void:
+	# Layer 0: 锁屏 (最底)
+	var lock_layer := CanvasLayer.new()
+	lock_layer.layer = 0
+	lock_layer.name = "lock_layer"
+	add_child(lock_layer)
+	# Layer 10: 根背景
+	var root_layer := CanvasLayer.new()
+	root_layer.layer = 10
+	root_layer.name = "root_layer"
+	add_child(root_layer)
+	# Layer 20: 备用底层
+	var low_layer := CanvasLayer.new()
+	low_layer.layer = 20
+	low_layer.name = "low_layer"
+	add_child(low_layer)
+	# Layer 30: 主界面 View (mid)
+	_mid_layer = CanvasLayer.new()
+	_mid_layer.layer = 30
+	_mid_layer.name = "mid_layer"
+	add_child(_mid_layer)
+	# Layer 40: PopUp/弹窗
+	_high_layer = CanvasLayer.new()
+	_high_layer.layer = 40
+	_high_layer.name = "high_layer"
+	add_child(_high_layer)
+	# Layer 50: 系统弹窗
+	var highest_layer := CanvasLayer.new()
+	highest_layer.layer = 50
+	highest_layer.name = "highest_layer"
+	add_child(highest_layer)
+
+func _push_view(view_name: String, params: Dictionary = {}) -> void:
+	if not _all_views.is_empty():
+		_all_views.back().hide()
+	var container := Control.new()
+	container.position = Vector2(0, 0)
+	container.size = Vector2(1280, 720)
+	container.name = "view_%s_%d" % [view_name, _all_views.size()]
+	_mid_layer.add_child(container)
+	_all_views.push_back(container)
+	_view_names.push_back(view_name)
+	title_label.text = view_name
+	_refresh_wallet()
+
+func _replace_view(view_name: String, params: Dictionary = {}) -> void:
+	if not _all_views.is_empty():
+		var old = _all_views.pop_back()
+		_view_names.pop_back()
+		old.queue_free()
+	_push_view(view_name, params)
+
+func _pop_view() -> void:
+	if _all_views.size() <= 1:
+		print("[view_stack] cannot pop last view (%s)" % (_view_names.back() if not _view_names.is_empty() else "none"))
+		return
+	var old = _all_views.pop_back()
+	_view_names.pop_back()
+	old.queue_free()
+	var prev = _all_views.back()
+	prev.show()
+	title_label.text = _view_names.back()
+	_refresh_wallet()
+
+func _clear_mid_layer() -> void:
+	for view in _all_views:
+		view.queue_free()
+	_all_views.clear()
+	_view_names.clear()
+
+func _current_view_name() -> String:
+	return _view_names.back() if not _view_names.is_empty() else "none"
 
 func _show_start_view_from_env() -> void:
 	var start_view := OS.get_environment("SHAONV_MVP_START_VIEW").to_lower()
@@ -232,10 +311,7 @@ func _set_chrome_visible(visible: bool) -> void:
 	wallet_label.visible = visible
 
 func _clear(title: String) -> void:
-	title_label.text = title
-	for child in content.get_children():
-		child.queue_free()
-	_refresh_wallet()
+	_replace_view(title)
 
 func _show_launch() -> void:
 	startup_screen.show_launch()
@@ -250,8 +326,6 @@ func _show_loading() -> void:
 	startup_screen.show_loading()
 
 func _enter_main_scene() -> void:
-	content.position = Vector2(0, 0)
-	content.size = Vector2(1280, 720)
 	_set_chrome_visible(false)
 	_show_home()
 
@@ -264,12 +338,15 @@ func _show_home() -> void:
 	home_screen.show_home()
 
 func _show_gacha() -> void:
+	_push_view("喚靈")
 	gacha_screen.show_gacha()
 
 func _show_draw_animation(count: int) -> void:
+	_push_view("招募演出")
 	gacha_result_screen.show_draw_animation(count)
 
 func _draw_and_show(count: int) -> void:
+	_push_view("喚灵结果")
 	gacha_result_screen.draw_and_show(count)
 
 func _show_gallery() -> void:
@@ -277,13 +354,13 @@ func _show_gallery() -> void:
 	var header := _label("武將圖鑑", 34)
 	header.position = Vector2(40, 24)
 	header.size = Vector2(280, 50)
-	content.add_child(header)
+	_view_container().add_child(header)
 
 	var owned_count: int = save.get("owned", {}).size()
 	var progress := _label("收集進度  %d / %d" % [owned_count, heroes.size()], 20, HORIZONTAL_ALIGNMENT_RIGHT)
 	progress.position = Vector2(782, 30)
 	progress.size = Vector2(420, 34)
-	content.add_child(progress)
+	_view_container().add_child(progress)
 
 	_add_gallery_filter_button("全部", "all", Vector2(40, 82))
 	_add_gallery_filter_button("已獲得", "owned", Vector2(148, 82))
@@ -297,7 +374,7 @@ func _show_gallery() -> void:
 		var empty := _label("暫無符合條件的角色", 22, HORIZONTAL_ALIGNMENT_CENTER)
 		empty.position = Vector2(280, 270)
 		empty.size = Vector2(720, 40)
-		content.add_child(empty)
+		_view_container().add_child(empty)
 		return
 
 	var x := 40.0
@@ -309,13 +386,13 @@ func _show_gallery() -> void:
 		var display_name := str(hero.get("name", "Unknown")) if copies > 0 else "未獲得"
 		var rarity := int(hero.get("rarity", 1))
 		var frame := _panel(Vector2(x, y), Vector2(176, 104), _rarity_color(rarity, 0.20))
-		content.add_child(frame)
+		_view_container().add_child(frame)
 		var tint := Color(0.46, 0.46, 0.46, 1.0) if copies <= 0 else Color(1, 1, 1, 1)
 		_draw_hero_portrait(hero, Vector2(x + 8, y + 8), Vector2(58, 88), tint)
 		var label := _label("%s\n%s\n持有%d  碎%d" % [display_name, _stars(rarity), copies, shards], 16)
 		label.position = Vector2(x + 72, y + 12)
 		label.size = Vector2(96, 78)
-		content.add_child(label)
+		_view_container().add_child(label)
 		var button := Button.new()
 		button.text = ""
 		button.flat = true
@@ -326,7 +403,7 @@ func _show_gallery() -> void:
 		button.pressed.connect(func() -> void:
 			_show_hero_detail(hero_id)
 		)
-		content.add_child(button)
+		_view_container().add_child(button)
 		x += 194
 		if x > 1080:
 			x = 40
@@ -340,7 +417,7 @@ func _show_history() -> void:
 	var label := _label("\n\n".join(lines) if not lines.is_empty() else "暫無抽卡記錄", 18)
 	label.position = Vector2(44, 44)
 	label.size = Vector2(1080, 440)
-	content.add_child(label)
+	_view_container().add_child(label)
 	_add_action_button("重置存檔", Vector2(44, 524), func() -> void:
 		save = {
 			"tickets": 120,
@@ -443,7 +520,7 @@ func _show_hero_detail(hero_id: int) -> void:
 	var gallery_bg := str(hero.get("galleryBackgroundResource", ""))
 	if not gallery_bg.is_empty():
 		_draw_image(_godot_resource_path(gallery_bg), Vector2(0, 0), Vector2(1280, 646), true, Color(1, 1, 1, 0.38))
-		content.add_child(_panel(Vector2(0, 0), Vector2(1280, 646), Color(0.02, 0.016, 0.014, 0.54)))
+		_view_container().add_child(_panel(Vector2(0, 0), Vector2(1280, 646), Color(0.02, 0.016, 0.014, 0.54)))
 	_draw_hero_stage(hero, Vector2(706, 10), Vector2(520, 560))
 	var key := str(hero.get("id", 0))
 	var copies := int(save.get("owned", {}).get(key, 0))
@@ -452,16 +529,16 @@ func _show_hero_detail(hero_id: int) -> void:
 	var detail := _label("%s\n稀有度: %s\n持有: %d\n碎片: %d\n獲得途徑: 喚靈 / 祈願\n資源: %s\nSpine: %s" % [state, _stars(int(hero.get("rarity", 1))), copies, shards, hero.get("artResource", ""), hero.get("spine", "")], 20)
 	detail.position = Vector2(54, 108)
 	detail.size = Vector2(610, 210)
-	content.add_child(detail)
+	_view_container().add_child(detail)
 	_draw_detail_portrait(hero)
 	_draw_skill_icons(hero)
 	if copies <= 0:
 		var mask := _panel(Vector2(706, 10), Vector2(520, 560), Color(0.0, 0.0, 0.0, 0.42))
-		content.add_child(mask)
+		_view_container().add_child(mask)
 		var locked := _label("未獲得", 36, HORIZONTAL_ALIGNMENT_CENTER)
 		locked.position = Vector2(706, 242)
 		locked.size = Vector2(520, 56)
-		content.add_child(locked)
+		_view_container().add_child(locked)
 		_add_action_button("前往喚靈", Vector2(54, 360), _show_gacha)
 	else:
 		_add_action_button("設為看板", Vector2(54, 360), func() -> void:
@@ -476,7 +553,7 @@ func _show_player_info() -> void:
 	var profile: Dictionary = save.get("profile", {})
 	var settings: Dictionary = save.get("settings", {})
 	var panel := _panel(Vector2(44, 44), Vector2(620, 360), Color(0.095, 0.078, 0.065, 0.94))
-	content.add_child(panel)
+	_view_container().add_child(panel)
 	var info := _label("玩家資料\n名稱：%s\n等級：%d\n戰力：%d\n\n收集武將：%d\n累計喚靈：%d\n看板自動播放：%s" % [
 		profile.get("name", "Player"),
 		int(profile.get("level", 1)),
@@ -487,7 +564,7 @@ func _show_player_info() -> void:
 	], 21)
 	info.position = Vector2(70, 70)
 	info.size = Vector2(520, 230)
-	content.add_child(info)
+	_view_container().add_child(info)
 	_add_action_button("設定", Vector2(70, 330), _show_settings)
 	_add_action_button("返回主界面", Vector2(216, 330), _show_home, Vector2(146, 44))
 
@@ -495,11 +572,11 @@ func _show_settings() -> void:
 	_clear("設定")
 	var settings: Dictionary = save.get("settings", {})
 	var panel := _panel(Vector2(44, 44), Vector2(700, 370), Color(0.095, 0.078, 0.065, 0.94))
-	content.add_child(panel)
+	_view_container().add_child(panel)
 	var title := _label("SystemSettingView MVP", 30)
 	title.position = Vector2(70, 70)
 	title.size = Vector2(440, 44)
-	content.add_child(title)
+	_view_container().add_child(title)
 	_add_toggle_button("看板自動播放", "wallpaper_auto_play", Vector2(70, 140), bool(settings.get("wallpaper_auto_play", true)))
 	_add_toggle_button("音樂", "music", Vector2(70, 202), bool(settings.get("music", true)))
 	_add_toggle_button("音效", "effects", Vector2(70, 264), bool(settings.get("effects", true)))
@@ -511,11 +588,11 @@ func _show_shop() -> void:
 	var title := _label("資源補給", 34)
 	title.position = Vector2(44, 44)
 	title.size = Vector2(420, 52)
-	content.add_child(title)
+	_view_container().add_child(title)
 	var desc := _label("單機 MVP 暫定兌換規則：源石 %d = 喚靈券 %d。日常、郵件和章節任務也會產出喚靈資源。" % [int(shop.get("exchangeGemCost", 160)), int(shop.get("ticketAmount", 1))], 20)
 	desc.position = Vector2(44, 112)
 	desc.size = Vector2(760, 72)
-	content.add_child(desc)
+	_view_container().add_child(desc)
 	_add_action_button("兌換 1 張", Vector2(44, 210), func() -> void: _buy_tickets(1))
 	_add_action_button("兌換 10 張", Vector2(190, 210), func() -> void: _buy_tickets(10))
 	_add_action_button("每日補給", Vector2(336, 210), _show_daily)
@@ -532,12 +609,12 @@ func _show_daily() -> void:
 	var title := _label(str(daily.get("name", "每日補給")), 34)
 	title.position = Vector2(44, 44)
 	title.size = Vector2(420, 52)
-	content.add_child(title)
+	_view_container().add_child(title)
 	var text := "%s\n喚靈券 x%d\n源石 x%d\n\n狀態：%s" % [daily.get("desc", "今日補給"), reward_tickets, reward_gems, "已領取" if claimed else "可領取"]
 	var label := _label(text, 22)
 	label.position = Vector2(44, 126)
 	label.size = Vector2(520, 180)
-	content.add_child(label)
+	_view_container().add_child(label)
 	if not claimed:
 		_add_action_button("領取", Vector2(44, 330), func() -> void:
 			save["daily_claimed_date"] = today
@@ -552,18 +629,18 @@ func _show_mail() -> void:
 	var title := _label("郵件", 34)
 	title.position = Vector2(44, 32)
 	title.size = Vector2(420, 52)
-	content.add_child(title)
+	_view_container().add_child(title)
 	var claimed: Dictionary = save.get("claimed_mail", {})
 	var y := 104.0
 	for mail in mails:
 		var mail_id := str(mail.get("id", ""))
 		var is_claimed := bool(claimed.get(mail_id, false))
 		var panel := _panel(Vector2(44, y), Vector2(760, 92), Color(0.095, 0.078, 0.065, 0.9))
-		content.add_child(panel)
+		_view_container().add_child(panel)
 		var row := _label("%s\n%s\n獎勵：喚靈券 x%d  源石 x%d   %s" % [mail.get("title", ""), mail.get("body", ""), int(mail.get("tickets", 0)), int(mail.get("gems", 0)), "已領取" if is_claimed else "可領取"], 17)
 		row.position = Vector2(60, y + 8)
 		row.size = Vector2(600, 78)
-		content.add_child(row)
+		_view_container().add_child(row)
 		if not is_claimed:
 			_add_action_button("領取", Vector2(670, y + 24), func(id := mail_id, tickets := int(mail.get("tickets", 0)), gems := int(mail.get("gems", 0))) -> void:
 				var mail_claimed: Dictionary = save.get("claimed_mail", {})
@@ -581,7 +658,7 @@ func _show_tasks() -> void:
 	var title := _label("章節任務", 34)
 	title.position = Vector2(44, 32)
 	title.size = Vector2(420, 52)
-	content.add_child(title)
+	_view_container().add_child(title)
 	var claimed: Dictionary = save.get("claimed_tasks", {})
 	var y := 104.0
 	for task in tasks:
@@ -591,16 +668,16 @@ func _show_tasks() -> void:
 		var done := progress >= target
 		var is_claimed := bool(claimed.get(task_id, false))
 		var panel := _panel(Vector2(44, y), Vector2(820, 86), Color(0.095, 0.078, 0.065, 0.9))
-		content.add_child(panel)
+		_view_container().add_child(panel)
 		var row := _label("%s\n%s  %d/%d\n獎勵：喚靈券 x%d  源石 x%d" % [task.get("name", ""), task.get("desc", ""), progress, target, int(task.get("tickets", 0)), int(task.get("gems", 0))], 17)
 		row.position = Vector2(60, y + 8)
 		row.size = Vector2(630, 72)
-		content.add_child(row)
+		_view_container().add_child(row)
 		if is_claimed:
 			var claimed_label := _label("已領取", 18, HORIZONTAL_ALIGNMENT_CENTER)
 			claimed_label.position = Vector2(724, y + 22)
 			claimed_label.size = Vector2(110, 42)
-			content.add_child(claimed_label)
+			_view_container().add_child(claimed_label)
 		elif done:
 			_add_action_button("領取", Vector2(724, y + 22), func(id := task_id, tickets := int(task.get("tickets", 0)), gems := int(task.get("gems", 0))) -> void:
 				var task_claimed: Dictionary = save.get("claimed_tasks", {})
@@ -613,7 +690,7 @@ func _show_tasks() -> void:
 			var todo := _label("進行中", 18, HORIZONTAL_ALIGNMENT_CENTER)
 			todo.position = Vector2(724, y + 22)
 			todo.size = Vector2(110, 42)
-			content.add_child(todo)
+			_view_container().add_child(todo)
 		y += 102
 	_add_action_button("返回主界面", Vector2(44, 548), _show_home, Vector2(146, 44))
 	_add_action_button("前往喚靈", Vector2(204, 548), _show_gacha, Vector2(146, 44))
@@ -621,11 +698,11 @@ func _show_tasks() -> void:
 func _show_battle(message := "") -> void:
 	_clear("戰役")
 	_draw_image(UI_MAIN_BG, Vector2(0, 0), Vector2(1280, 646), true, Color(1, 1, 1, 0.42))
-	content.add_child(_panel(Vector2(0, 0), Vector2(1280, 646), Color(0.018, 0.014, 0.012, 0.50)))
+	_view_container().add_child(_panel(Vector2(0, 0), Vector2(1280, 646), Color(0.018, 0.014, 0.012, 0.50)))
 	var title := _label("戰役推進", 34)
 	title.position = Vector2(44, 32)
 	title.size = Vector2(360, 52)
-	content.add_child(title)
+	_view_container().add_child(title)
 	var current_stage := _next_stage()
 	var player_power := _player_power()
 	var stage_power := int(current_stage.get("power", 0))
@@ -641,22 +718,22 @@ func _show_battle(message := "") -> void:
 	], 20)
 	summary.position = Vector2(58, 102)
 	summary.size = Vector2(430, 150)
-	content.add_child(summary)
+	_view_container().add_child(summary)
 	if not message.is_empty():
 		var result := _label(message, 19)
 		result.position = Vector2(58, 268)
 		result.size = Vector2(520, 92)
 		result.modulate = Color(1.0, 0.86, 0.48, 1.0)
-		content.add_child(result)
+		_view_container().add_child(result)
 
 	var y := 94.0
 	for chapter in chapters:
 		var panel := _panel(Vector2(586, y), Vector2(598, 120), Color(0.048, 0.038, 0.033, 0.82))
-		content.add_child(panel)
+		_view_container().add_child(panel)
 		var name := _label(str(chapter.get("name", "")), 22)
 		name.position = Vector2(606, y + 12)
 		name.size = Vector2(360, 30)
-		content.add_child(name)
+		_view_container().add_child(name)
 		var stage_text := []
 		for stage in chapter.get("stages", []):
 			var sid := int(stage.get("id", 0))
@@ -665,7 +742,7 @@ func _show_battle(message := "") -> void:
 		var rows := _label("\n".join(stage_text), 15)
 		rows.position = Vector2(606, y + 48)
 		rows.size = Vector2(548, 64)
-		content.add_child(rows)
+		_view_container().add_child(rows)
 		y += 136
 
 	if not current_stage.is_empty():
@@ -737,7 +814,7 @@ func _add_realm_button(text: String, realm: String, pos: Vector2) -> void:
 		_persist()
 		_show_gacha()
 	)
-	content.add_child(button)
+	_view_container().add_child(button)
 
 func _draw_home_status() -> void:
 	home_screen.draw_home_status()
@@ -747,49 +824,49 @@ func _draw_result_stage(result: Dictionary) -> void:
 	var rarity := int(result.get("rolled_rarity", hero.get("rarity", 1)))
 	var bg_path := UI_LOTTERY_STAGE_BG if rarity >= 4 else UI_LOTTERY_BG
 	_draw_image(bg_path, Vector2(0, 0), Vector2(1280, 646), true)
-	content.add_child(_panel(Vector2(0, 0), Vector2(1280, 646), Color(0.02, 0.014, 0.016, 0.40)))
+	_view_container().add_child(_panel(Vector2(0, 0), Vector2(1280, 646), Color(0.02, 0.014, 0.016, 0.40)))
 	_draw_image(UI_LOTTERY_LIGHT_L, Vector2(0, 0), Vector2(640, 430), true, Color(1, 1, 1, 0.42))
 	_draw_image(UI_LOTTERY_LIGHT_R, Vector2(640, 0), Vector2(640, 430), true, Color(1, 1, 1, 0.42))
-	content.add_child(_panel(Vector2(254, 40), Vector2(772, 360), _rarity_color(rarity, 0.16)))
-	content.add_child(_panel(Vector2(320, 72), Vector2(640, 292), _rarity_color(rarity, 0.12)))
+	_view_container().add_child(_panel(Vector2(254, 40), Vector2(772, 360), _rarity_color(rarity, 0.16)))
+	_view_container().add_child(_panel(Vector2(320, 72), Vector2(640, 292), _rarity_color(rarity, 0.12)))
 	var title_text := "源神降臨" if rarity >= 4 else "喚靈結果"
 	var title := _label(title_text, 40, HORIZONTAL_ALIGNMENT_CENTER)
 	title.position = Vector2(400, 22)
 	title.size = Vector2(480, 56)
-	content.add_child(title)
+	_view_container().add_child(title)
 
 	var tag := _label("NEW" if result.get("is_new", false) else "碎片 +%d" % int(result.get("shards", 0)), 24, HORIZONTAL_ALIGNMENT_CENTER)
 	tag.position = Vector2(520, 82)
 	tag.size = Vector2(240, 36)
 	tag.modulate = _rarity_color(rarity, 1.0)
-	content.add_child(tag)
+	_view_container().add_child(tag)
 
 	var name := _label("%s  %s" % [_stars(rarity), hero.get("name", "")], 34, HORIZONTAL_ALIGNMENT_CENTER)
 	name.position = Vector2(382, 352)
 	name.size = Vector2(520, 56)
-	content.add_child(name)
+	_view_container().add_child(name)
 	_draw_hero_stage(hero, Vector2(420, 70), Vector2(440, 340), false)
 
 	var hint := _label("點擊下方獎勵格查看角色", 18, HORIZONTAL_ALIGNMENT_CENTER)
 	hint.position = Vector2(432, 396)
 	hint.size = Vector2(416, 32)
-	content.add_child(hint)
+	_view_container().add_child(hint)
 
 func _draw_result_grid(results: Array) -> void:
 	var strip := _panel(Vector2(42, 430), Vector2(1196, 92), Color(0.04, 0.033, 0.031, 0.72))
-	content.add_child(strip)
+	_view_container().add_child(strip)
 	var x := 66.0
 	for result in results:
 		var hero: Dictionary = result.get("hero", {})
 		var hero_id := int(hero.get("id", 0))
 		var rarity := int(result.get("rolled_rarity", hero.get("rarity", 1)))
 		var frame := _panel(Vector2(x - 4, 436), Vector2(116, 82), _rarity_color(rarity, 0.58))
-		content.add_child(frame)
+		_view_container().add_child(frame)
 		_draw_hero_portrait(hero, Vector2(x, 440), Vector2(44, 74), Color(1, 1, 1, 1))
 		var card_label := _label("%s\n%s\n%s" % [_stars(rarity), hero.get("name", ""), "NEW" if result.get("is_new", false) else "碎片 +%d" % int(result.get("shards", 0))], 13)
 		card_label.position = Vector2(x + 48, 442)
 		card_label.size = Vector2(56, 68)
-		content.add_child(card_label)
+		_view_container().add_child(card_label)
 		var card := Button.new()
 		card.text = ""
 		card.flat = true
@@ -798,7 +875,7 @@ func _draw_result_grid(results: Array) -> void:
 		card.pressed.connect(func() -> void:
 			_show_hero_detail(hero_id)
 		)
-		content.add_child(card)
+		_view_container().add_child(card)
 		x += 118
 
 func _draw_hero_stage(hero: Dictionary, pos := Vector2(470, 0), size := Vector2(500, 560), show_text := true) -> void:
@@ -806,12 +883,12 @@ func _draw_hero_stage(hero: Dictionary, pos := Vector2(470, 0), size := Vector2(
 		var name_label := _label(str(hero.get("name", "")), 42)
 		name_label.position = Vector2(54, 28)
 		name_label.size = Vector2(420, 58)
-		content.add_child(name_label)
+		_view_container().add_child(name_label)
 
 		var meta := _label("%s / %s" % [_stars(int(hero.get("rarity", 1))), hero.get("spine", "")], 20)
 		meta.position = Vector2(54, 92)
 		meta.size = Vector2(520, 40)
-		content.add_child(meta)
+		_view_container().add_child(meta)
 
 	var texture := TextureRect.new()
 	texture.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
@@ -826,7 +903,7 @@ func _draw_hero_stage(hero: Dictionary, pos := Vector2(470, 0), size := Vector2(
 			var canvas: Control = BAKED_SPINE_CANVAS.new()
 			canvas.position = pos
 			canvas.size = size
-			content.add_child(canvas)
+			_view_container().add_child(canvas)
 			canvas.set_baked_path(baked_path, "wait")
 			return
 		print("[spine] baked not found: %s, falling back to PNG" % baked_path)
@@ -842,12 +919,12 @@ func _draw_hero_stage(hero: Dictionary, pos := Vector2(470, 0), size := Vector2(
 				var missing := _label("資源缺失\n%s" % godot_path, 16, HORIZONTAL_ALIGNMENT_CENTER)
 				missing.position = pos
 				missing.size = Vector2(size.x, 64)
-				content.add_child(missing)
+				_view_container().add_child(missing)
 	else:
 		var fallback_texture := _hero_portrait_texture(hero)
 		if fallback_texture != null:
 			texture.texture = fallback_texture
-	content.add_child(texture)
+	_view_container().add_child(texture)
 
 func _load_png_source_texture(path: String) -> Texture2D:
 	if not FileAccess.file_exists(path):
@@ -886,7 +963,7 @@ func _draw_hero_portrait(hero: Dictionary, pos: Vector2, draw_size: Vector2, tin
 	rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	rect.modulate = tint
-	content.add_child(rect)
+	_view_container().add_child(rect)
 	return rect
 
 func _draw_detail_portrait(hero: Dictionary) -> void:
@@ -894,7 +971,7 @@ func _draw_detail_portrait(hero: Dictionary) -> void:
 	if path.is_empty():
 		return
 	var frame := _panel(Vector2(428, 104), Vector2(206, 216), Color(0.08, 0.058, 0.048, 0.72))
-	content.add_child(frame)
+	_view_container().add_child(frame)
 	_draw_image(_godot_resource_path(path), Vector2(442, 116), Vector2(178, 190), false, Color(1, 1, 1, 0.92))
 
 func _draw_skill_icons(hero: Dictionary) -> void:
@@ -902,21 +979,21 @@ func _draw_skill_icons(hero: Dictionary) -> void:
 	if skill_paths.is_empty():
 		return
 	var panel := _panel(Vector2(54, 404), Vector2(560, 122), Color(0.052, 0.040, 0.034, 0.82))
-	content.add_child(panel)
+	_view_container().add_child(panel)
 	var title := _label("技能", 20)
 	title.position = Vector2(76, 414)
 	title.size = Vector2(160, 30)
-	content.add_child(title)
+	_view_container().add_child(title)
 	var x := 78.0
 	var index := 1
 	for raw_path in skill_paths:
 		var icon_frame := _panel(Vector2(x - 4, 452), Vector2(78, 74), _rarity_color(int(hero.get("rarity", 1)), 0.28))
-		content.add_child(icon_frame)
+		_view_container().add_child(icon_frame)
 		_draw_image(_godot_resource_path(str(raw_path)), Vector2(x, 456), Vector2(70, 56), false)
 		var label := _label("技能%d" % index, 13, HORIZONTAL_ALIGNMENT_CENTER)
 		label.position = Vector2(x, 510)
 		label.size = Vector2(70, 18)
-		content.add_child(label)
+		_view_container().add_child(label)
 		x += 92
 		index += 1
 
@@ -931,7 +1008,7 @@ func _draw_image(path: String, pos: Vector2, draw_size: Vector2, cover := false,
 	rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED if cover else TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	rect.modulate = tint
-	content.add_child(rect)
+	_view_container().add_child(rect)
 	return rect
 
 func _show_gacha_rate() -> void:
@@ -964,7 +1041,7 @@ func _show_gacha_rate() -> void:
 	var label := _label(text, 22)
 	label.position = Vector2(54, 60)
 	label.size = Vector2(760, 260)
-	content.add_child(label)
+	_view_container().add_child(label)
 	_add_action_button("返回卡池", Vector2(54, 360), _show_gacha)
 
 func _hero_by_id(id: int) -> Dictionary:
@@ -996,7 +1073,7 @@ func _add_gallery_filter_button(text: String, filter: String, pos: Vector2) -> v
 		gallery_filter = filter
 		_show_gallery()
 	)
-	content.add_child(button)
+	_view_container().add_child(button)
 
 func _gallery_filtered_heroes() -> Array:
 	var list := []
@@ -1174,13 +1251,13 @@ func _add_toggle_button(label: String, key: String, pos: Vector2, value: bool) -
 	, Vector2(220, 44))
 
 func _draw_startup_backdrop(base_color: Color, shade_color: Color) -> void:
-	content.add_child(_panel(Vector2(0, 0), Vector2(1280, 720), base_color))
-	content.add_child(_panel(Vector2(0, 0), Vector2(1280, 720), shade_color))
-	content.add_child(_panel(Vector2(0, 0), Vector2(1280, 96), Color(0.01, 0.008, 0.007, 0.36)))
-	content.add_child(_panel(Vector2(0, 624), Vector2(1280, 96), Color(0.01, 0.008, 0.007, 0.46)))
+	_view_container().add_child(_panel(Vector2(0, 0), Vector2(1280, 720), base_color))
+	_view_container().add_child(_panel(Vector2(0, 0), Vector2(1280, 720), shade_color))
+	_view_container().add_child(_panel(Vector2(0, 0), Vector2(1280, 96), Color(0.01, 0.008, 0.007, 0.36)))
+	_view_container().add_child(_panel(Vector2(0, 624), Vector2(1280, 96), Color(0.01, 0.008, 0.007, 0.46)))
 	for index in range(5):
 		var x := 90.0 + float(index) * 236.0
-		content.add_child(_panel(Vector2(x, 118), Vector2(1, 486), Color(0.92, 0.74, 0.44, 0.08)))
+		_view_container().add_child(_panel(Vector2(x, 118), Vector2(1, 486), Color(0.92, 0.74, 0.44, 0.08)))
 
 func _show_login_notice_popup() -> void:
 	_show_login()
@@ -1195,16 +1272,16 @@ func _show_login_account_popup() -> void:
 	_draw_overlay_popup("帳號", "Player\nOpenId: offline-player\n登入方式：本地單機")
 
 func _draw_overlay_popup(title: String, message: String) -> void:
-	content.add_child(_panel(Vector2(0, 0), Vector2(1280, 720), Color(0, 0, 0, 0.42)))
-	content.add_child(_panel(Vector2(390, 220), Vector2(500, 260), Color(0.10, 0.075, 0.06, 0.96)))
+	_view_container().add_child(_panel(Vector2(0, 0), Vector2(1280, 720), Color(0, 0, 0, 0.42)))
+	_view_container().add_child(_panel(Vector2(390, 220), Vector2(500, 260), Color(0.10, 0.075, 0.06, 0.96)))
 	var heading := _label(title, 28, HORIZONTAL_ALIGNMENT_CENTER)
 	heading.position = Vector2(430, 244)
 	heading.size = Vector2(420, 46)
-	content.add_child(heading)
+	_view_container().add_child(heading)
 	var body := _label(message, 19, HORIZONTAL_ALIGNMENT_CENTER)
 	body.position = Vector2(430, 308)
 	body.size = Vector2(420, 88)
-	content.add_child(body)
+	_view_container().add_child(body)
 	_add_action_button("確定", Vector2(574, 416), _show_login, Vector2(132, 44))
 
 func _label(text: String, size: int, align := HORIZONTAL_ALIGNMENT_LEFT) -> Label:
@@ -1226,13 +1303,13 @@ func _panel(pos: Vector2, size: Vector2, color: Color) -> ColorRect:
 
 func _draw_progress_bar(pos: Vector2, size: Vector2, ratio: float) -> void:
 	var bg := _panel(pos, size, Color(0.025, 0.022, 0.02))
-	content.add_child(bg)
+	_view_container().add_child(bg)
 	var fill := _panel(pos + Vector2(2, 2), Vector2((size.x - 4) * clamp(ratio, 0.0, 1.0), size.y - 4), Color(0.82, 0.62, 0.28))
-	content.add_child(fill)
+	_view_container().add_child(fill)
 
 func _draw_red_dot(pos: Vector2) -> void:
 	var dot := _panel(pos, Vector2(12, 12), Color(0.86, 0.08, 0.06, 0.95))
-	content.add_child(dot)
+	_view_container().add_child(dot)
 
 func _rarity_color(rarity: int, alpha := 1.0) -> Color:
 	if rarity >= 4:
@@ -1247,7 +1324,7 @@ func _add_action_button(text: String, pos: Vector2, callback: Callable, size := 
 	button.position = pos
 	button.size = size
 	button.pressed.connect(callback)
-	content.add_child(button)
+	_view_container().add_child(button)
 
 func _stars(count: int) -> String:
 	return "★".repeat(clamp(count, 1, 5))

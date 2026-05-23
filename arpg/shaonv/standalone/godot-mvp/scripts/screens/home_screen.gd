@@ -45,8 +45,6 @@ func _init(app_ref) -> void:
 
 func show_home() -> void:
 	app.current_view = "main"
-	app.content.position = Vector2(0, 0)
-	app.content.size = Vector2(1280, 720)
 	app._set_chrome_visible(false)
 	app._clear("主界面")
 	_main_panels.clear()
@@ -101,22 +99,22 @@ func enter_gal_entry() -> void:
 	app._clear("约会")
 	# Dimmed wallpaper as backdrop
 	app._draw_image(UI_MAIN_BG, Vector2(1, 0), Vector2(1278, 720), true, Color(1, 1, 1, 0.22))
-	app.content.add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.016, 0.012, 0.020, 0.90)))
+	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.016, 0.012, 0.020, 0.90)))
 	var hero = app._hero_by_id(int(app.save.get("selected_hero_id", 240065)))
 	# ── Top bar ──
 	var top = app._panel(Vector2(0, 0), Vector2(1280, 60), Color(0.024, 0.018, 0.028, 0.72))
-	app.content.add_child(top)
-	app.content.add_child(app._panel(Vector2(0, 58), Vector2(1280, 2), Color(0.76, 0.54, 0.28, 0.28)))
+	app._view_container().add_child(top)
+	app._view_container().add_child(app._panel(Vector2(0, 58), Vector2(1280, 2), Color(0.76, 0.54, 0.28, 0.28)))
 	app._add_action_button("← 返回", Vector2(18, 8), enter_normal_state, Vector2(100, 44))
 	var title = app._label("约 会", 28, HORIZONTAL_ALIGNMENT_CENTER)
 	title.position = Vector2(440, 12)
 	title.size = Vector2(400, 36)
 	title.modulate = Color(0.94, 0.86, 0.64)
-	app.content.add_child(title)
+	app._view_container().add_child(title)
 	# ── Hero card ──
 	var cx = 315.0; var cy = 85.0; var cw = 650.0; var ch = 420.0
-	app.content.add_child(app._panel(Vector2(cx, cy), Vector2(cw, ch), Color(0.030, 0.022, 0.036, 0.68)))
-	app.content.add_child(app._panel(Vector2(cx + 4, cy + 4), Vector2(cw - 8, ch - 8), Color(0.045, 0.034, 0.052, 0.40)))
+	app._view_container().add_child(app._panel(Vector2(cx, cy), Vector2(cw, ch), Color(0.030, 0.022, 0.036, 0.68)))
+	app._view_container().add_child(app._panel(Vector2(cx + 4, cy + 4), Vector2(cw - 8, ch - 8), Color(0.045, 0.034, 0.052, 0.40)))
 	app._draw_hero_stage(hero, Vector2(cx + 30, cy + 30), Vector2(320, 360), false)
 	app._draw_image(UI_MAIN_AVATAR_RING, Vector2(cx + 148, cy + 26), Vector2(84, 84), false, Color(1, 1, 1, 0.78))
 	app._draw_image(UI_MAIN_EXP_RING, Vector2(cx + 142, cy + 20), Vector2(96, 96), false, Color(1, 0.84, 0.28, 0.72))
@@ -124,40 +122,40 @@ func enter_gal_entry() -> void:
 	var ix = cx + 370; var iy = cy + 40
 	var hname = app._label(str(hero.get("name", "???")) if hero else "???", 24)
 	hname.position = Vector2(ix, iy); hname.size = Vector2(240, 32); hname.modulate = Color(0.98, 0.94, 0.80)
-	app.content.add_child(hname)
+	app._view_container().add_child(hname)
 	var htitle = app._label(str(hero.get("title", "")) if hero else "", 16)
 	htitle.position = Vector2(ix, iy + 36); htitle.size = Vector2(240, 22); htitle.modulate = Color(0.72, 0.66, 0.52)
-	app.content.add_child(htitle)
+	app._view_container().add_child(htitle)
 	# Affection bar
 	var bl = app._label("好感度", 14, HORIZONTAL_ALIGNMENT_CENTER)
 	bl.position = Vector2(ix, iy + 72); bl.size = Vector2(56, 18); bl.modulate = Color(0.64, 0.58, 0.48)
-	app.content.add_child(bl)
-	app.content.add_child(app._panel(Vector2(ix + 60, iy + 74), Vector2(160, 12), Color(0.08, 0.06, 0.12, 0.70)))
-	app.content.add_child(app._panel(Vector2(ix + 60, iy + 74), Vector2(54, 12), Color(0.92, 0.38, 0.56, 0.78)))
+	app._view_container().add_child(bl)
+	app._view_container().add_child(app._panel(Vector2(ix + 60, iy + 74), Vector2(160, 12), Color(0.08, 0.06, 0.12, 0.70)))
+	app._view_container().add_child(app._panel(Vector2(ix + 60, iy + 74), Vector2(54, 12), Color(0.92, 0.38, 0.56, 0.78)))
 	var hlvl = app._label("Lv.%d" % int(hero.get("level", 1)) if hero else "Lv.1", 14)
 	hlvl.position = Vector2(ix, iy + 100); hlvl.size = Vector2(80, 18); hlvl.modulate = Color(0.86, 0.80, 0.56)
-	app.content.add_child(hlvl)
+	app._view_container().add_child(hlvl)
 	# Navigation
 	app._add_action_button("◀", Vector2(cx - 56, cy + 180), app._show_home, Vector2(44, 56))
 	app._add_action_button("▶", Vector2(cx + cw + 12, cy + 180), app._show_home, Vector2(44, 56))
-	app.content.add_child(app._panel(Vector2(cx, cy + ch + 14), Vector2(cw, 1), Color(0.76, 0.54, 0.28, 0.18)))
+	app._view_container().add_child(app._panel(Vector2(cx, cy + ch + 14), Vector2(cw, 1), Color(0.76, 0.54, 0.28, 0.18)))
 	# Action buttons
 	var abtn = [["💬 对话", app._show_mail], ["🎁 赠礼", app._show_shop], ["💕 邀约", app._show_home]]
 	var aw = 170.0; var ah = 72.0; var ag = 22.0
 	var ax0 = (1280.0 - (3*aw+2*ag)) * 0.5; var ay = 535.0
 	for i in range(abtn.size()):
 		var ax = ax0 + i*(aw+ag)
-		app.content.add_child(app._panel(Vector2(ax, ay), Vector2(aw, ah), Color(0.040, 0.030, 0.048, 0.74)))
+		app._view_container().add_child(app._panel(Vector2(ax, ay), Vector2(aw, ah), Color(0.040, 0.030, 0.048, 0.74)))
 		var albl = app._label(str(abtn[i][0]), 16, HORIZONTAL_ALIGNMENT_CENTER)
 		albl.position = Vector2(ax, ay + 14); albl.size = Vector2(aw, 22); albl.modulate = Color(0.86, 0.80, 0.68)
-		app.content.add_child(albl)
+		app._view_container().add_child(albl)
 		app._add_action_button("互动" if i==0 else ("送礼" if i==1 else "约会"), Vector2(ax + 2, ay + 38), abtn[i][1], Vector2(aw - 4, 32))
 		if i == 2: app._draw_red_dot(Vector2(ax + aw - 22, ay + 8))
 	# Status
-	app.content.add_child(app._panel(Vector2(0, 688), Vector2(1280, 32), Color(0.020, 0.016, 0.028, 0.64)))
+	app._view_container().add_child(app._panel(Vector2(0, 688), Vector2(1280, 32), Color(0.020, 0.016, 0.028, 0.64)))
 	var st = app._label("Gal 约会系统  |  键: Gal.GalEntry.5799  |  完整实现待反向", 12, HORIZONTAL_ALIGNMENT_CENTER)
 	st.position = Vector2(140, 694); st.size = Vector2(1000, 22); st.modulate = Color(0.52, 0.48, 0.42)
-	app.content.add_child(st)
+	app._view_container().add_child(st)
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -167,7 +165,7 @@ func enter_gal_entry() -> void:
 func draw_wallpaper(hero: Dictionary) -> void:
 	# Prefab: @WallpaperPanel anchor=(0.5,0.5) 1668x750 → fullscreen scaled
 	app._draw_image(UI_MAIN_BG, Vector2(1, 0), Vector2(1278, 720), true)
-	app.content.add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.012, 0.010, 0.008, 0.05)))
+	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.012, 0.010, 0.008, 0.05)))
 	# irole: 958x750 centered → (273,0) 734x720
 	app._draw_hero_stage(hero, Vector2(273, 0), Vector2(734, 720), false)
 
@@ -178,7 +176,7 @@ func draw_body_mask() -> void:
 	mask.position = Vector2(0, 0); mask.size = Vector2(1280, 720)
 	mask.modulate = Color(1, 1, 1, 0.0)
 	mask.pressed.connect(enter_wallpaper_focus)
-	app.content.add_child(mask)
+	app._view_container().add_child(mask)
 
 
 func draw_top_bar() -> void:
@@ -194,11 +192,11 @@ func draw_top_bar() -> void:
 	]
 	for item in resources:
 		var icon = app._panel(Vector2(x, 26), Vector2(22, 22), Color(0.58, 0.45, 0.22, 0.74))
-		app.content.add_child(icon)
+		app._view_container().add_child(icon)
 		var text = app._label("%s %s" % [item[0], item[1]], 16)
 		text.position = Vector2(x + 28, 24); text.size = Vector2(130, 28)
 		text.modulate = Color(0.96, 0.90, 0.80)
-		app.content.add_child(text)
+		app._view_container().add_child(text)
 		x += 150
 
 
@@ -214,22 +212,22 @@ func draw_player_info(hero: Dictionary) -> void:
 	# Level label
 	var lv = app._label("Lv.%d" % int(profile.get("level", 1)), 12, HORIZONTAL_ALIGNMENT_CENTER)
 	lv.position = Vector2(82, 90); lv.size = Vector2(52, 14); lv.modulate = Color(0.96, 0.88, 0.52)
-	app.content.add_child(lv)
+	app._view_container().add_child(lv)
 	# txtName (118,26) 66x28
 	var pname = app._label(str(profile.get("name", "Player")), 18)
 	pname.position = Vector2(118, 26); pname.size = Vector2(66, 28)
-	app.content.add_child(pname)
+	app._view_container().add_child(pname)
 	# txtPower (139,50) 133x32
 	var power = app._label("战力 %d" % app._player_power(), 14)
 	power.position = Vector2(139, 50); power.size = Vector2(133, 32)
 	power.modulate = Color(0.84, 0.74, 0.24)
-	app.content.add_child(power)
+	app._view_container().add_child(power)
 	# btnPlayerInfo (0,13) 271x76
 	var player_btn = Button.new()
 	player_btn.text = ""; player_btn.flat = true
 	player_btn.position = Vector2(0, 13); player_btn.size = Vector2(271, 76)
 	player_btn.pressed.connect(app._show_player_info)
-	app.content.add_child(player_btn)
+	app._view_container().add_child(player_btn)
 	# btnChange (308,48) 57x71  /  btnEye (366,48) 57x71
 	app._add_action_button("换", Vector2(308, 48), app._show_gallery, Vector2(57, 71))
 	app._add_action_button("眼", Vector2(366, 48), enter_wallpaper_focus, Vector2(57, 71))
@@ -262,7 +260,7 @@ func draw_story_harvest() -> void:
 	_main_panels.append(bg)
 	var story = app._label("主线 %s\n挂机收益 %s" % [app._next_task_text(), "可收取" if not app._afk_claimed_today() else "已收取"], 15)
 	story.position = Vector2(sx + 14, sy + 14); story.size = Vector2(sw - 16, 44)
-	app.content.add_child(story)
+	app._view_container().add_child(story)
 	# btnHarvest: 106x106 → 81x102, inside pnlStory at (51,1)
 	app._add_action_button("收获", Vector2(sx + 51, sy + 1), app._claim_afk_reward, Vector2(81, 102))
 	app._draw_red_dot(Vector2(sx + sw - 20, sy + 2))
@@ -301,7 +299,7 @@ func draw_commercialization() -> void:
 	app._draw_image(UI_MAIN_BANNER, Vector2(px, py), Vector2(231, 104), false, Color(1, 1, 1, 0.92))
 	# pnlGift: 409x300 (→313x288), below banner
 	var gx = px + 5; var gy = py + 108 + 12
-	app.content.add_child(app._panel(Vector2(gx, gy), Vector2(313, 288), Color(0.030, 0.023, 0.018, 0.56)))
+	app._view_container().add_child(app._panel(Vector2(gx, gy), Vector2(313, 288), Color(0.030, 0.023, 0.018, 0.56)))
 	var gifts = [
 		["补给", app._show_daily], ["邮件", app._show_mail], ["签到", app._show_daily],
 		["奖励", app._show_tasks], ["问答", app._show_home], ["礼包", app._show_shop],
@@ -310,7 +308,7 @@ func draw_commercialization() -> void:
 	var gsx = gx + 8.0; var gsy = gy + 12.0; var gi = 0
 	for gift in gifts:
 		var slot = app._panel(Vector2(gsx, gsy), Vector2(68, 64), Color(0.040, 0.034, 0.030, 0.74))
-		app.content.add_child(slot)
+		app._view_container().add_child(slot)
 		app._add_action_button(str(gift[0]), Vector2(gsx + 4, gsy + 14), gift[1], Vector2(60, 38))
 		app._draw_red_dot(Vector2(gsx + 54, gsy + 4))
 		gi += 1; gsx += 74
@@ -325,7 +323,7 @@ func draw_chapter_info() -> void:
 	_main_panels.append(bg)
 	var info = app._label("章节  %s\n奖励  收集 %d / 抽卡 %d" % [app._next_task_text(), app.save.get("owned", {}).size(), int(app.save.get("draw_count", 0))], 15)
 	info.position = Vector2(px + 14, py + 16); info.size = Vector2(180, 60)
-	app.content.add_child(info)
+	app._view_container().add_child(info)
 	app._add_action_button("", Vector2(px, py), app._show_tasks, Vector2(212, 96))
 	app._draw_red_dot(Vector2(px + 8, py + 4))
 
@@ -334,8 +332,8 @@ func draw_bottom_bar() -> void:
 	# pnlBottom: (49,625) height=48, width=1231
 	var bar_y = 625.0; var bar_h = 48.0
 	var bar = app._panel(Vector2(49, bar_y), Vector2(1231, bar_h), Color(0.026, 0.022, 0.020, 0.90))
-	app.content.add_child(bar); _main_panels.append(bar)
-	app.content.add_child(app._panel(Vector2(49, bar_y - 2), Vector2(1231, 2), Color(0.86, 0.65, 0.32, 0.26)))
+	app._view_container().add_child(bar); _main_panels.append(bar)
+	app._view_container().add_child(app._panel(Vector2(49, bar_y - 2), Vector2(1231, 2), Color(0.86, 0.65, 0.32, 0.26)))
 	# 6 buttons: 86x50 each (→66x48), starting after pnlGal (115x50→88x48)
 	var buttons = [
 		["武将", app._show_gallery, true],
@@ -370,7 +368,7 @@ func draw_chat_bar() -> void:
 	var chat = app._label("世界  离线模式已启用", 14)
 	chat.position = Vector2(cx + 49, cy + 8); chat.size = Vector2(255, 22)
 	chat.modulate = Color(0.68, 0.64, 0.58)
-	app.content.add_child(chat)
+	app._view_container().add_child(chat)
 	app._add_action_button("", Vector2(cx, cy), app._show_mail, Vector2(314, 38))
 
 
@@ -386,4 +384,4 @@ func draw_cover_portrait(hero: Dictionary, pos: Vector2, draw_size: Vector2, tin
 	rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	rect.stretch_mode = TextureRect.STRETCH_SCALE
 	rect.modulate = tint
-	app.content.add_child(rect)
+	app._view_container().add_child(rect)
