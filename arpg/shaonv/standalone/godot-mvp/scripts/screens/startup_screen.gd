@@ -125,18 +125,13 @@ func show_login() -> void:
 	# Server select bar: anchor(0.5,0.5) pos(0,-99) size(500,34)
 	# Godot: y=360+99*0.96=455, x=640-500*0.7665/2=640-192=448, size=(383,33)
 	var svr_y := 455.0
-	if app._draw_image(UI_LOGIN_SERVER_BG, Vector2(448, svr_y), Vector2(383, 33), false) == null:
-		app._view_container().add_child(app._panel(Vector2(448, svr_y), Vector2(383, 33), Color(0.09, 0.065, 0.052, 0.88)))
-	var server_label = app._label("推荐服务器    Local MainScene", 18, HORIZONTAL_ALIGNMENT_CENTER)
-	server_label.position = Vector2(468, svr_y + 2)
-	server_label.size = Vector2(343, 30)
-	app._view_container().add_child(server_label)
-	app._view_container().add_child(app._panel(Vector2(818, svr_y + 8), Vector2(18, 18), Color(0.18, 0.88, 0.28, 0.95)))
-	var state_label = app._label("流畅", 14, HORIZONTAL_ALIGNMENT_CENTER)
-	state_label.position = Vector2(828, svr_y + 8)
-	state_label.size = Vector2(46, 18)
-	state_label.modulate = Color(0.22, 0.88, 0.32)
-	app._view_container().add_child(state_label)
+	# btnServerSel: prefab 中 active=false（隐藏），MVP 不应显示
+	# 改为离线提示标签覆盖该区域
+	var offline_note = app._label("（离线模式 · 本地验证用）", 14, HORIZONTAL_ALIGNMENT_CENTER)
+	offline_note.position = Vector2(468, svr_y + 6)
+	offline_note.size = Vector2(343, 24)
+	offline_note.modulate = Color(0.46, 0.43, 0.40)
+	app._view_container().add_child(offline_note)
 
 	# imgTipLogin: anchor(0.5,1) pivot(0.5,1) size(536,30) pos(0,-553)
 	# Godot: y=553*0.96=531, x=center=640, size=(411,29), pos=(435,531)

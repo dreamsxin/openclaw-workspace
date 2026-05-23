@@ -244,14 +244,28 @@ func draw_funny_content() -> void:
 		[UI_MAIN_FUNNY_DRAW, "唤灵", app._open_present_pool]
 	]
 	var bw = 67.0; var bh = 98.0; var gap = 5.0
-	var start_x = 1020.0  # prefab: 1280 - 339*0.7665
+	var start_x = 1020.0
 	var by = 67.0
+	var aidx = 0
 	for item in actions:
 		var bg = app._draw_image(str(item[0]), Vector2(start_x, by), Vector2(bw, bh), false, Color(1, 1, 1, 0.84))
 		_main_panels.append(bg)
 		app._add_action_button(str(item[1]), Vector2(start_x + 2, by + 64), item[2], Vector2(bw - 4, 34))
 		app._draw_red_dot(Vector2(start_x + bw - 16, by + 4))
+		# btnJumpAutoFight: prefab 仅在 btnAdventure 下有子面板 (pos 0,-32 size 138,86)
+		if aidx == 2:
+			var afx = start_x - 36; var afy = by + bh + 4
+			app._view_container().add_child(app._panel(Vector2(afx, afy), Vector2(138, 32), Color(0.025, 0.018, 0.014, 0.72)))
+			var assist = app._label("<i>自动挑战中...</i>", 12, HORIZONTAL_ALIGNMENT_CENTER)
+			assist.position = Vector2(afx, afy + 2); assist.size = Vector2(138, 14)
+			assist.modulate = Color(0.72, 0.66, 0.48)
+			app._view_container().add_child(assist)
+			var assist_proj = app._label("历战尖塔-单队", 11, HORIZONTAL_ALIGNMENT_CENTER)
+			assist_proj.position = Vector2(afx, afy + 16); assist_proj.size = Vector2(138, 14)
+			assist_proj.modulate = Color(0.58, 0.52, 0.40)
+			app._view_container().add_child(assist_proj)
 		start_x += bw + gap
+		aidx += 1
 
 
 func draw_story_harvest() -> void:
@@ -266,6 +280,13 @@ func draw_story_harvest() -> void:
 	app._view_container().add_child(story)
 	# btnHarvest: 106x106 → 81x102, inside pnlStory at (51,1)
 	app._add_action_button("收获", Vector2(sx + 51, sy + 1), app._claim_afk_reward, Vector2(81, 102))
+	# btnHarvest sub-elements: imgHookTime + txtHookTime
+	var hook_time = app._label(app._afk_time_display(), 12, HORIZONTAL_ALIGNMENT_CENTER)
+	hook_time.position = Vector2(sx + 55, sy + 104); hook_time.size = Vector2(71, 18)
+	hook_time.modulate = Color(0.92, 0.84, 0.52)
+	app._view_container().add_child(hook_time)
+	# btnStory: prefab has transparent overlay button (132×99) covering story area
+	app._add_action_button("", Vector2(sx, sy), app._show_tasks, Vector2(sw, sh))
 	app._draw_red_dot(Vector2(sx + sw - 20, sy + 2))
 
 

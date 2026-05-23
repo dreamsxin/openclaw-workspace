@@ -1178,6 +1178,13 @@ func _fight_next_stage() -> void:
 func _afk_claimed_today() -> bool:
 	return str(save.get("afk_claimed_date", "")) == Time.get_date_string_from_system()
 
+func _afk_time_display() -> String:
+	var elapsed = int(Time.get_unix_time_from_system() - float(save.get("afk_last_claim", Time.get_unix_time_from_system())))
+	var hours = elapsed / 3600
+	var mins = (elapsed % 3600) / 60
+	var secs = elapsed % 60
+	return "%02d:%02d:%02d" % [min(hours, 99), mins, secs]
+
 func _claim_afk_reward() -> void:
 	if _afk_claimed_today():
 		_show_battle("今日掛機收益已收取。")
