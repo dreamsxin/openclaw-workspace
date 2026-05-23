@@ -486,12 +486,22 @@ func _show_gallery() -> void:
 	var x := 40.0
 	var y := 146.0
 	for hero in filtered:
-		var button := Button.new()
 		var hero_id := int(hero.get("id", 0))
 		var copies := int(save.get("owned", {}).get(str(hero_id), 0))
 		var shards := int(save.get("shards", {}).get(str(hero_id), 0))
 		var display_name := str(hero.get("name", "Unknown")) if copies > 0 else "未獲得"
-		button.text = "%s\n%s\n持有%d  碎%d" % [display_name, _stars(int(hero.get("rarity", 1))), copies, shards]
+		var rarity := int(hero.get("rarity", 1))
+		var frame := _panel(Vector2(x, y), Vector2(176, 104), _rarity_color(rarity, 0.20))
+		content.add_child(frame)
+		var tint := Color(0.46, 0.46, 0.46, 1.0) if copies <= 0 else Color(1, 1, 1, 1)
+		_draw_hero_portrait(hero, Vector2(x + 8, y + 8), Vector2(58, 88), tint)
+		var label := _label("%s\n%s\n持有%d  碎%d" % [display_name, _stars(rarity), copies, shards], 16)
+		label.position = Vector2(x + 72, y + 12)
+		label.size = Vector2(96, 78)
+		content.add_child(label)
+		var button := Button.new()
+		button.text = ""
+		button.flat = true
 		button.position = Vector2(x, y)
 		button.size = Vector2(176, 104)
 		if copies <= 0:
@@ -941,8 +951,14 @@ func _draw_result_grid(results: Array) -> void:
 		var rarity := int(result.get("rolled_rarity", hero.get("rarity", 1)))
 		var frame := _panel(Vector2(x - 4, 436), Vector2(116, 82), _rarity_color(rarity, 0.58))
 		content.add_child(frame)
+		_draw_hero_portrait(hero, Vector2(x, 440), Vector2(44, 74), Color(1, 1, 1, 1))
+		var card_label := _label("%s\n%s\n%s" % [_stars(rarity), hero.get("name", ""), "NEW" if result.get("is_new", false) else "碎片 +%d" % int(result.get("shards", 0))], 13)
+		card_label.position = Vector2(x + 48, 442)
+		card_label.size = Vector2(56, 68)
+		content.add_child(card_label)
 		var card := Button.new()
-		card.text = "%s\n%s\n%s" % [_stars(rarity), hero.get("name", ""), "NEW" if result.get("is_new", false) else "碎片 +%d" % int(result.get("shards", 0))]
+		card.text = ""
+		card.flat = true
 		card.position = Vector2(x, 440)
 		card.size = Vector2(108, 74)
 		card.pressed.connect(func() -> void:
@@ -985,10 +1001,18 @@ func _draw_hero_stage(hero: Dictionary, pos := Vector2(470, 0), size := Vector2(
 		if source_texture != null:
 			texture.texture = source_texture
 		else:
-			var missing := _label("資源缺失\n%s" % godot_path, 16, HORIZONTAL_ALIGNMENT_CENTER)
-			missing.position = pos
-			missing.size = Vector2(size.x, 64)
-			content.add_child(missing)
+			var portrait_texture := _hero_portrait_texture(hero)
+			if portrait_texture != null:
+				texture.texture = portrait_texture
+			else:
+				var missing := _label("資源缺失\n%s" % godot_path, 16, HORIZONTAL_ALIGNMENT_CENTER)
+				missing.position = pos
+				missing.size = Vector2(size.x, 64)
+				content.add_child(missing)
+	else:
+		var fallback_texture := _hero_portrait_texture(hero)
+		if fallback_texture != null:
+			texture.texture = fallback_texture
 	content.add_child(texture)
 
 func _load_png_source_texture(path: String) -> Texture2D:
@@ -1000,6 +1024,32 @@ func _load_png_source_texture(path: String) -> Texture2D:
 		push_warning("Failed to load PNG source: %s error=%d" % [path, error])
 		return null
 	return ImageTexture.create_from_image(image)
+
+func _hero_portrait_path(hero: Dictionary) -> String:
+	var path := str(hero.get("portraitResource", ""))
+	if path.is_empty():
+		return ""
+	return path if path.begins_with("res://") else "res://%s" % path
+
+func _hero_portrait_texture(hero: Dictionary) -> Texture2D:
+	var path := _hero_portrait_path(hero)
+	if path.is_empty():
+		return null
+	return _load_png_source_texture(path)
+
+func _draw_hero_portrait(hero: Dictionary, pos: Vector2, draw_size: Vector2, tint := Color(1, 1, 1, 1)) -> TextureRect:
+	var source_texture := _hero_portrait_texture(hero)
+	if source_texture == null:
+		return null
+	var rect := TextureRect.new()
+	rect.texture = source_texture
+	rect.position = pos
+	rect.size = draw_size
+	rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	rect.modulate = tint
+	content.add_child(rect)
+	return rect
 
 func _draw_image(path: String, pos: Vector2, draw_size: Vector2, cover := false, tint := Color(1, 1, 1, 1)) -> TextureRect:
 	var source_texture := _load_png_source_texture(path)

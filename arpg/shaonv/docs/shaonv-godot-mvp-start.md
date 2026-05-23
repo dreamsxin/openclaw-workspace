@@ -253,6 +253,7 @@ reverse-output/godot-resource-export/
 ```text
 standalone/godot-mvp/assets/ui/
   background/
+  hero/recruit/
   login/
   lottery/
   mainui/
@@ -282,14 +283,31 @@ standalone/godot-mvp/assets/ui/
 | `assets/ui/mainui` | `mainui_img_10.png` | 当前 MainUI 顶部装饰条 |
 | `assets/ui/mainui` | `mainui_img_12.png` | 后续主界面装饰候选 |
 | `assets/ui/mainui` | `mainui_img_44.png` | 后续主界面整屏候选 |
+| `assets/ui/hero/recruit` | `zhero_001.png` | 哪吒招募头像，图鉴/抽卡结果静态头像 |
+| `assets/ui/hero/recruit` | `zhero_003.png` | 莉莉絲招募头像，图鉴/抽卡结果静态头像 |
+| `assets/ui/hero/recruit` | `zhero_005.png` | 蔡文姬招募头像，图鉴/抽卡结果静态头像 |
+| `assets/ui/hero/recruit` | `zhero_016.png` | 天狐妲己招募头像，图鉴/抽卡结果静态头像 |
+| `assets/ui/hero/recruit` | `zhero_017.png` | 女帝招募头像，图鉴/抽卡结果静态头像 |
+| `assets/ui/hero/recruit` | `zhero_022.png` | 阿修羅对应招募头像，图鉴/抽卡结果静态头像 |
+
+2026-05-23 追加了可复用导出工具和计划文件：
+
+```powershell
+python scripts\assets\export_unity_bundle_images.py `
+  --plan scripts\assets\godot_mvp_resource_plan.json
+```
+
+该工具按 `physical-asset-map.csv` 反查物理包、自动处理 YooAsset 前 222 字节 XOR、只导出计划内图片，并复制到 Godot 工程。后续同类资源替换只需扩展 `scripts/assets/godot_mvp_resource_plan.json`，避免重复人工查找和手工复制。
 
 代码接入：
 
 - `main.gd` 新增 UI 资源常量和 `_draw_image()` helper。
+- `heroes_mvp.json` 新增 `portraitResource` 字段，当前 6 个已有招募头像的角色可直接显示原始静态头像。
 - `LoginView` 优先显示 `login_bg_01.png`、`logo.png`、`server_bg_03.png`。
 - `MainUIView` 背景替换为 `mainui_bg_01.png`，并叠加 `mainui_img_10.png` 装饰。
 - `LotteryDrawMainView` 背景替换为 `lottery_img_01.png`，并叠加 `lottery_img_alpha_l/r.png`。
 - 喚靈演出和结果页使用 `lottery_img_60.png`、`lottery_img_60_l/r.png`。
+- 图鉴卡片、抽卡结果格和缺少 baked Spine 的角色展示会使用 `portraitResource` 作为静态兜底。
 - 新增 `SHAONV_MVP_START_VIEW=gacha` 调试入口，便于直接回归抽卡页。
 
 截图验证：
