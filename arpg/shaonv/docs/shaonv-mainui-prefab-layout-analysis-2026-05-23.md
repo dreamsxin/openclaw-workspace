@@ -525,7 +525,115 @@ pnlGift 包含 15 个子面板（12 个 LimitIconView + Question + BuryGift + Di
 
 ---
 
-## 8. 下一步建议
+## 8. 完整 Prefab 树补充 (2026-05-23)
+
+以下从 `MainUIView.layout.json` 提取的完整 RectTransform 层级。所有坐标 Unity pixel, Canvas 1670×750。
+
+### 8.1 @WallpaperPanel
+```
+@WallpaperPanel pos=(0,0) size=(1668,750) anchor=(0.5,0.5) ON
+  pnlVideo OFF
+  imgBackGround pos=(0,0) size=(1668,750) anchor=(0.5,0.5) ON
+  irole pos=(0,0) size=(958,750) anchor=(0.5,0.5) ON
+    btn pos=(0,272) size=(418,804) anchor=(0.5,0.5) ON
+    spBg/spHero/spFg → 各 100×100 三层 Spine Renderer
+    imgMask pos=(0,0) size=(324,274) anchor=(0.5,0.5) ON
+    imgSpeak pos=(0,85) size=(668,154) OFF ← 对话气泡
+  pnlCtl pos=(0,-181) size=(68,68) anchor=(0.5,0.5) OFF ← 默认隐藏
+    btnPlay(pos=(0,0),68×68) OFF / btnPause(pos=(0,0),68×68) ON
+    btnLeft(pos=(-73,0),92×50) / btnRight(pos=(73,0),92×50)
+```
+
+### 8.2 @TopBar
+```
+@TopBar pos=(0,-12) size=(0,60) anchor=(0,1) ON ← 全宽60px顶部
+  svRes pos=(-790,-42) size=(1367,60) anchor=(1,1) ON ← 资源ScrollRect
+  pnlLeftTop: btnClose(55,-6,177×80) OFF / btnDetail(234,-14,72×62) OFF
+```
+
+### 8.3 pnlPlayerInfo
+```
+pnlPlayerInfo pos=(0,-5) size=(354,113) anchor=(0,1) ON
+  imgHeadBg pos=(104,8) size=(80,79) / imgExp(0,0,90×90) / txtLevel(全锚居中)
+  txtName pos=(154,22) size=(200,28) anchor=(0,0.5)
+  Image pos=(166,-6) size=(22,21) ← 名字旁图标
+  txtPower pos=(181,-4) size=(173,37) anchor=(0,0.5)
+  btnPlayerInfo pos=(0,8) size=(354,79) anchor=(0.5,0.5)
+  btnEye pos=(478,-47) size=(74,74) anchor=(0,1)
+  btnChange pos=(402,-47) size=(74,74) anchor=(0,1)
+```
+
+### 8.4 pnlFunny 子区域
+```
+pnlFunnyContent pos=(-339,70) size=(0,102) anchor=(1,0)
+  btnArena/btnPrayer/btnAdventure/btnDraw: 各 88×102, @pnlRd(-19,-20)
+  btnAdventure 有额外 btnJumpAutoFight(0,33,180×90)
+
+pnlStory pos=(-60,19) size=(278,98) anchor=(1,0)
+  txtStory / btnHarvest(67,1,106×106) / btnStory(51,0,132×99)
+  pnlExpeditionSoftGuide OFF / @pnlRd(13,-2)
+
+btnAssist pos=(413,-164) size=(78,96) anchor=(0,1)
+btnMenu pos=(-94,-54) size=(78,78) anchor=(1,1), fxbtnMenu 特效
+
+pnlCharge pos=(-55,-277) size=(158,258) anchor=(1,1)
+  btnActivity/btnWelfare/btnCard/btnCharge/btnShop: 各 size=(0,0), VLG 自动
+  每个有 @pnlRd(-18,-18)
+```
+
+### 8.5 pnlCommercialization
+```
+pnlCommercialization pos=(265,-333) size=(416,420) anchor=(0,1)
+  @pnlAlternate pos=(-0,0) size=(301,108) ← 横幅轮播
+  pnlGift pos=(7,-120) size=(409,300)
+    @LimitIconView01~12: 各 size=(0,0), btnIcon(86,86)+txtName+txtTime
+    @Question / @BuryGift / @DiscountLimitGift: 特殊入口
+```
+
+### 8.6 btnChapterInfo
+```
+btnChapterInfo pos=(-34,150) size=(276,100) anchor=(1,0)
+  txtChapterTitle(26,33,224×32) / svChapterReward(3,-14,190×60)
+  @pnlRd(-31,-1)
+```
+
+### 8.7 pnlBottom — 关键修正
+```
+pnlBottom pos=(64,49) size=(0,50) anchor=(0,0) ON
+  pnlGal pos=(0,0) size=(115,50)
+    btnGal pos=(0,40) size=(115,129) ← 向上突出79px!
+      Image(0,74,150×170) + @fx05(-4,68) 5层粒子 + @pnlRd(45,129)
+      @btnGalClickRrea(0,101,100×100)
+  btnHero/btnBagpack/btnPet/btnDevelop/btnTask/btnLegion:
+    各 size=(86,50) anchor=(0,0) ← **不是 86×86! 是 86×50!**
+    Text(70,30) + @pnlRd(32,25) + Image(2,18)分隔线
+```
+
+### 8.8 pnlChat
+```
+pnlChat pos=(-64,-94) size=(410,40) anchor=(1,1)
+  @btnChat size=(0,0) anchor=(0,0)-(1,1) ← 全锚按钮
+  @txtChat pos=(64,0) size=(341,40) anchor=(0,0.5)
+```
+
+### 8.9 新发现摘要
+| # | 发现 | 说明 |
+|---|------|------|
+| 1 | **btnBottom 86×50** | 当前代码用 86×86，高度错了 +72% |
+| 2 | **btnChapterInfo anchor=(1,0)** | 右边锚，pos=(-34,150) |
+| 3 | **pnlChat anchor=(1,1) pos=(-64,-94)** | 当前位置完全错误 |
+| 4 | **WallpaperPanel anchor=(0.5,0.5)** | 居中 fullscreen |
+| 5 | **pnlCommercialization anchor=(0,1)** | pos=(265,-333)，当前 (57,123) 完全错 |
+| 6 | **btnGal @fx05 5层粒子** | 当前无特效 |
+| 7 | **btnGal @btnGalClickRrea** | 独立点击区 |
+| 8 | **pnlGift 含 @Question/@BuryGift/@DiscountLimitGift** | 当前仅普通 grid |
+| 9 | **pnlCtl 默认 OFF** | wallpaper_focus 时显示，含 btnPause/btnLeft/btnRight |
+| 10 | **irole/imgMask 324×274** | 前景遮罩，当前缺失 |
+| 11 | **irole/imgSpeak 668×154 OFF** | 对话气泡，触发时显示 |
+
+---
+
+## 9. 下一步建议
 
 按优先级排列：
 

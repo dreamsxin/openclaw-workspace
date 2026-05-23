@@ -823,13 +823,13 @@ func _draw_hero_stage(hero: Dictionary, pos := Vector2(470, 0), size := Vector2(
 		var spine_base_path := "res://%s" % resource_path.replace("Art/Spine", "assets/spine")
 		var baked_path := "%s.baked.json" % spine_base_path
 		if FileAccess.file_exists(baked_path):
-			var canvas := Control.new()
-			canvas.set_script(BAKED_SPINE_CANVAS)
+			var canvas: Control = BAKED_SPINE_CANVAS.new()
 			canvas.position = pos
 			canvas.size = size
 			content.add_child(canvas)
-			canvas.call("set_baked_path", baked_path, "wait")
+			canvas.set_baked_path(baked_path, "wait")
 			return
+		print("[spine] baked not found: %s, falling back to PNG" % baked_path)
 		var godot_path := "%s.png" % spine_base_path
 		var source_texture := _load_png_source_texture(godot_path)
 		if source_texture != null:

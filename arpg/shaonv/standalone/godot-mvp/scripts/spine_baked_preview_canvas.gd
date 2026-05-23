@@ -19,24 +19,30 @@ func set_baked_path(baked_path: String, preferred_clip := "") -> void:
 
 	if not FileAccess.file_exists(baked_path):
 		load_error = "Missing baked file: %s" % baked_path
+		print("[baked-canvas] %s" % load_error)
 		queue_redraw()
 		return
 	var file := FileAccess.open(baked_path, FileAccess.READ)
 	if file == null:
 		load_error = "Cannot open baked file: %s" % baked_path
+		print("[baked-canvas] %s" % load_error)
 		queue_redraw()
 		return
 	var parsed = JSON.parse_string(file.get_as_text())
 	if typeof(parsed) != TYPE_DICTIONARY:
 		load_error = "Invalid baked JSON: %s" % baked_path
+		print("[baked-canvas] %s" % load_error)
 		queue_redraw()
 		return
 	baked = parsed
 	var pages: Dictionary = baked.get("character", {}).get("pages", {})
+	var loaded_pages := 0
 	for page_name in pages.keys():
 		var texture := _load_png_source_texture(String(pages[page_name]))
 		if texture != null:
 			textures[String(page_name)] = texture
+			loaded_pages += 1
+	print("[baked-canvas] loaded %s: pages=%d/%d clips=%d" % [baked_path, loaded_pages, pages.size(), baked.get("clips", {}).size()])
 	if clip_name.is_empty():
 		clip_name = String(baked.get("bake", {}).get("defaultClip", ""))
 	var clips: Dictionary = baked.get("clips", {})
