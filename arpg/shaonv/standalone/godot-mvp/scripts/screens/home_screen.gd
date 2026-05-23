@@ -206,9 +206,10 @@ func draw_player_info(hero: Dictionary) -> void:
 	var panel = app._draw_image(UI_MAIN_PLAYER_FRAME, Vector2(0, 5), Vector2(271, 108), false, Color(1, 1, 1, 0.94))
 	_main_panels.append(panel)
 	# imgHeadBg (80,8) 61x76 → imgExp (74,14) 69x86
-	app._draw_image(UI_MAIN_AVATAR_RING, Vector2(80, 13), Vector2(61, 76), false, Color(1, 1, 1, 0.94))
-	draw_cover_portrait(hero, Vector2(86, 23), Vector2(50, 56), Color(1, 1, 1, 0.95))
-	app._draw_image(UI_MAIN_EXP_RING, Vector2(74, 19), Vector2(69, 86), false, Color(1, 0.84, 0.28, 0.88))
+	# imgHeadBg: pos(104,8) size(80,79) → Godot: (80,8) (61,76)
+	app._draw_image(UI_MAIN_AVATAR_RING, Vector2(80, 8), Vector2(61, 76), false, Color(1, 1, 1, 0.94))
+	draw_cover_portrait(hero, Vector2(86, 18), Vector2(50, 56), Color(1, 1, 1, 0.95))
+	app._draw_image(UI_MAIN_EXP_RING, Vector2(74, 14), Vector2(69, 86), false, Color(1, 0.84, 0.28, 0.88))
 	# Level label
 	var lv = app._label("Lv.%d" % int(profile.get("level", 1)), 12, HORIZONTAL_ALIGNMENT_CENTER)
 	lv.position = Vector2(82, 90); lv.size = Vector2(52, 14); lv.modulate = Color(0.96, 0.88, 0.52)
@@ -234,7 +235,8 @@ func draw_player_info(hero: Dictionary) -> void:
 
 
 func draw_funny_content() -> void:
-	# pnlFunnyContent: 4 buttons 88x102 (→67x98), right-aligned at y=70
+	# pnlFunnyContent: 4 buttons 88x102 (→67x98), right-anchored pos(-339,70)
+	# Godot: start_x = 1280 - 339*0.7665 = 1020, by = 70*0.96 = 67
 	var actions = [
 		[UI_MAIN_FUNNY_ARENA, "竞技", app._show_battle],
 		[UI_MAIN_FUNNY_PRAYER, "祈愿", app._open_prayer_pool],
@@ -242,7 +244,7 @@ func draw_funny_content() -> void:
 		[UI_MAIN_FUNNY_DRAW, "唤灵", app._open_present_pool]
 	]
 	var bw = 67.0; var bh = 98.0; var gap = 5.0
-	var start_x = 1280.0 - 4*bw - 3*gap - 46  # right-anchored
+	var start_x = 1020.0  # prefab: 1280 - 339*0.7665
 	var by = 67.0
 	for item in actions:
 		var bg = app._draw_image(str(item[0]), Vector2(start_x, by), Vector2(bw, bh), false, Color(1, 1, 1, 0.84))
@@ -253,9 +255,10 @@ func draw_funny_content() -> void:
 
 
 func draw_story_harvest() -> void:
-	# pnlStory: 278x98 (→213x94), right-anchored at y=18
+	# pnlStory: 278x98 (→213x94), right-anchored pos(-60,19)
+	# Godot: x = 1280 - 60*0.7665 = 1234, y = 19*0.96 = 18
 	var sw = 213.0; var sh = 94.0
-	var sx = 1280.0 - sw - 46; var sy = 18.0
+	var sx = 1234.0; var sy = 18.0
 	var bg = app._draw_image(UI_MAIN_STORY_BG, Vector2(sx, sy), Vector2(sw, sh), false, Color(1, 1, 1, 0.88))
 	_main_panels.append(bg)
 	var story = app._label("主线 %s\n挂机收益 %s" % [app._next_task_text(), "可收取" if not app._afk_claimed_today() else "已收取"], 15)
@@ -267,9 +270,10 @@ func draw_story_harvest() -> void:
 
 
 func draw_charge_column() -> void:
-	# pnlCharge: 158x258 (→121x248), right-bottom corner
+	# pnlCharge: 158x258 (→121x248), right-top pos(-55,-277)
+	# Godot: x = 1280 - 55*0.7665 = 1238, y = 277*0.96 = 266
 	var labels = [["活动", app._show_daily], ["福利", app._show_daily], ["月卡", app._show_shop], ["充值", app._show_shop], ["商店", app._show_shop]]
-	var cx = 1280.0 - 121 - 42; var cy = 720.0 - 248 - 30
+	var cx = 1238.0; var cy = 266.0
 	for i in range(labels.size()):
 		var icon = app._draw_image(str(UI_MAIN_CHARGE_ICONS[i]), Vector2(cx, cy), Vector2(60, 60), false, Color(1, 1, 1, 0.86))
 		_main_panels.append(icon)
@@ -279,17 +283,19 @@ func draw_charge_column() -> void:
 
 
 func draw_menu_button() -> void:
-	# btnMenu: 78x78 (→60x72), right-bottom corner
-	var mx = 1280.0 - 60 - 72; var my = 720.0 - 72 - 42
-	app._draw_image(UI_MAIN_MENU, Vector2(mx, my), Vector2(60, 72), false, Color(1, 1, 1, 0.92))
-	app._add_action_button("", Vector2(mx, my), app._show_home, Vector2(60, 72))
+	# btnMenu: 78x78 (→60x75), right-top pos(-94,-54)
+	# Godot: x = 1280 - 94*0.7665 = 1208, y = 54*0.96 = 52
+	var mx = 1208.0; var my = 52.0
+	app._draw_image(UI_MAIN_MENU, Vector2(mx, my), Vector2(60, 75), false, Color(1, 1, 1, 0.92))
+	app._add_action_button("", Vector2(mx, my), app._show_settings, Vector2(60, 75))
 	app._draw_red_dot(Vector2(mx + 46, my + 4))
 
 
 func draw_assist_button() -> void:
-	# btnAssist: 78x96 (→60x92), left-bottom area
-	app._draw_image(UI_MAIN_ASSIST, Vector2(317, 117), Vector2(60, 92), false, Color(1, 1, 1, 0.84))
-	app._add_action_button("援助", Vector2(317, 193), app._show_mail, Vector2(60, 26))
+	# btnAssist: 78x96 (→60x92), left pos(413,-164)
+	# Godot: x = 413*0.7665 = 317, y = 164*0.96 = 157
+	app._draw_image(UI_MAIN_ASSIST, Vector2(317, 157), Vector2(60, 92), false, Color(1, 1, 1, 0.84))
+	app._add_action_button("援助", Vector2(317, 233), app._show_mail, Vector2(60, 26))
 
 
 func draw_commercialization() -> void:
@@ -317,8 +323,10 @@ func draw_commercialization() -> void:
 
 
 func draw_chapter_info() -> void:
-	# btnChapterInfo: 276x100 (→212x96), right-mid
-	var px = 1280.0 - 212 - 26; var py = 144.0
+	# btnChapterInfo: right-anchored pos(-34,150), 276x100 (→212x96)
+	# Godot: right edge = 1280 - 34*0.7665 = 1254, left = 1254 - 212 = 1042
+	# y: 150*0.96 = 144 (from top, this is the center-y for center anchor)
+	var px = 1042.0; var py = 144.0
 	var bg = app._draw_image(UI_MAIN_CHAPTER_BG, Vector2(px, py), Vector2(212, 96), false, Color(1, 1, 1, 0.90))
 	_main_panels.append(bg)
 	var info = app._label("章节  %s\n奖励  收集 %d / 抽卡 %d" % [app._next_task_text(), app.save.get("owned", {}).size(), int(app.save.get("draw_count", 0))], 15)
@@ -329,8 +337,8 @@ func draw_chapter_info() -> void:
 
 
 func draw_bottom_bar() -> void:
-	# pnlBottom: (49,625) height=48, width=1231
-	var bar_y = 625.0; var bar_h = 48.0
+	# pnlBottom: anchor(0,1) pos(64,-673) height=50 → Godot: x=49, y=720-646=74→673 from top
+	var bar_y = 673.0; var bar_h = 48.0
 	var bar = app._panel(Vector2(49, bar_y), Vector2(1231, bar_h), Color(0.026, 0.022, 0.020, 0.90))
 	app._view_container().add_child(bar); _main_panels.append(bar)
 	app._view_container().add_child(app._panel(Vector2(49, bar_y - 2), Vector2(1231, 2), Color(0.86, 0.65, 0.32, 0.26)))
@@ -353,16 +361,18 @@ func draw_bottom_bar() -> void:
 
 
 func draw_gal_button() -> void:
-	# pnlGal + btnGal: (49,546) 88x124, protruding 79px above pnlBottom
-	var gx = 49.0; var gy = 625.0 - 79
+	# pnlGal + btnGal: 115x129 (→88x124), pos(0,40) protruding above pnlBottom(673)
+	# Godot: gal top = 673 - 40*0.96 - 124 + bar_h... prefab: gal protrudes 79px (40+129-50=119 → 91px in Godot)
+	var gx = 49.0; var gy = 673.0 - 79
 	app._draw_image(UI_MAIN_GAL, Vector2(gx, gy), Vector2(88, 124), false, Color(1, 1, 1, 0.92))
 	app._add_action_button("约会", Vector2(gx + 8, gy + 88), enter_gal_entry, Vector2(72, 36))
 	app._draw_red_dot(Vector2(gx + 68, gy + 8))
 
 
 func draw_chat_bar() -> void:
-	# pnlChat: right-bottom corner, 410x40 (→314x38)
-	var cx = 1280.0 - 314 - 49; var cy = 720.0 - 38 - 90
+	# pnlChat: right-anchored pos(-64,-94), 410x40 (→314x38)
+	# Godot: x = 1280 - 64*0.7665 = 1231, y = 94*0.96 = 90 (from top)
+	var cx = 1231.0 - 157; var cy = 90.0  # center-anchored: left = center - width/2
 	var bg = app._draw_image(UI_MAIN_CHAT_BG, Vector2(cx, cy), Vector2(314, 38), false, Color(1, 1, 1, 0.72))
 	_main_panels.append(bg)
 	var chat = app._label("世界  离线模式已启用", 14)

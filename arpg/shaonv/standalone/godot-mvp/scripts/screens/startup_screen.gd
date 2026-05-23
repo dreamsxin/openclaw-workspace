@@ -60,79 +60,106 @@ func show_login() -> void:
 	app._set_chrome_visible(false)
 	app._clear("登入")
 
-	# LoginView/imgBg: 1670x750 center background.
-	app._draw_image(UI_LOGIN_BG, Vector2(-195, -4), Vector2(1670, 728), true, Color(1, 1, 1, 0.94))
+	# imgBg: anchor(0.5,0.5) pivot(0.5,0.5) size(1670,750) pos(0,0) — centered fullscreen
+	app._draw_image(UI_LOGIN_BG, Vector2(0, 0), Vector2(1280, 720), true, Color(1, 1, 1, 0.94))
 	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.018, 0.014, 0.012, 0.08)))
 
-	if app._draw_image(UI_LOGIN_LOGO, Vector2(48, 90), Vector2(258, 86), false) == null:
+	# imgLogo: anchor(0,1) pivot(0,0) size(260,104) pos(61,-129) scale(0.8)
+	# Godot: (47, 124) × (199, 100)
+	if app._draw_image(UI_LOGIN_LOGO, Vector2(47, 124), Vector2(199, 100), false) == null:
 		var logo = app._label("少女回战", 54, HORIZONTAL_ALIGNMENT_CENTER)
-		logo.position = Vector2(46, 102)
-		logo.size = Vector2(300, 82)
+		logo.position = Vector2(47, 124)
+		logo.size = Vector2(199, 100)
 		app._view_container().add_child(logo)
 
+	# btnAge: anchor(0,0) pivot(0.5,0.5) size(83,104) pos(90,154) scale(0.8)
+	# Godot: (69, 572) × (64, 100)
 	var age_btn = Button.new()
 	age_btn.text = "12+"
-	age_btn.position = Vector2(106, 214)
-	age_btn.size = Vector2(64, 70)
+	age_btn.position = Vector2(69, 572)
+	age_btn.size = Vector2(64, 100)
 	age_btn.pressed.connect(app._show_login)
 	app._view_container().add_child(age_btn)
 
+	# pnlVersion: anchor(1,0) pivot(1,0) size(100,126.8) pos(-13,114)
+	# Godot: x=1280-13*0.7665=1270, y=720-114*0.96=611, size=(77,122)
 	var ver = app._label("版本 1.0.0\n程序 v1.18\n资源 v1.18", 14, HORIZONTAL_ALIGNMENT_RIGHT)
-	ver.position = Vector2(934, 80)
-	ver.size = Vector2(230, 78)
+	ver.position = Vector2(1270, 611)
+	ver.size = Vector2(77, 122)
 	ver.modulate = Color(0.68, 0.64, 0.58)
 	app._view_container().add_child(ver)
 
-	app._view_container().add_child(app._panel(Vector2(376, 418), Vector2(38, 38), Color(0.14, 0.11, 0.09, 0.9)))
+	# inputAccount: anchor(0.5,0.5) pivot(0.5,0.5) size(543,64) pos(0,-114.5)
+	# Godot: center=(640,360-114.5*0.96=250), pos=(640-416/2=432, 250-61/2=219), size=(416,61)
+	var icon_x := 432.0
+	var input_y := 219.0
+	var input_w := 416.0
+	var input_h := 61.0
+	app._view_container().add_child(app._panel(Vector2(icon_x, input_y), Vector2(38, 38), Color(0.14, 0.11, 0.09, 0.9)))
 	var icon_label = app._label("人", 22, HORIZONTAL_ALIGNMENT_CENTER)
-	icon_label.position = Vector2(378, 423)
-	icon_label.size = Vector2(34, 30)
+	icon_label.position = Vector2(icon_x + 4, input_y + 4)
+	icon_label.size = Vector2(30, 30)
 	app._view_container().add_child(icon_label)
 
 	var account = LineEdit.new()
 	account.text = "LocalPlayer"
 	account.placeholder_text = "输入玩家名称"
-	account.position = Vector2(426, 418)
-	account.size = Vector2(376, 62)
+	account.position = Vector2(icon_x + 42, input_y)
+	account.size = Vector2(input_w - 42, input_h)
 	app._view_container().add_child(account)
 
-	app._draw_image(UI_LOGIN_BTN, Vector2(498, 340), Vector2(284, 82), false)
-	app._add_action_button("开始游戏", Vector2(526, 358), app._show_loading, Vector2(228, 54))
+	# Login button: centered below input, no exact prefab position (btnLogin fills screen)
+	app._draw_image(UI_LOGIN_BTN, Vector2(498, 300), Vector2(284, 82), false)
+	app._add_action_button("开始游戏", Vector2(526, 318), app._show_loading, Vector2(228, 54))
 
-	app._add_action_button("公告", Vector2(1138, 178), app._show_login_notice_popup, Vector2(60, 60))
-	app._add_action_button("修复", Vector2(1138, 250), app._show_repair_popup, Vector2(60, 60))
-	app._add_action_button("账号", Vector2(1138, 322), app._show_login_account_popup, Vector2(60, 60))
-	app._add_action_button("切换", Vector2(1138, 394), app._show_login, Vector2(60, 60))
+	# pnlFunction: anchor(1,0)→(1,1) size(131,0) pos(-65.7,0) — right column
+	# Godot: x=1280-101=1179, buttons at x=1180, each 46x58, y spaced
+	var func_x := 1180.0
+	var func_start_y := 160.0
+	var func_step := 72.0
+	app._add_action_button("公告", Vector2(func_x, func_start_y), app._show_login_notice_popup, Vector2(60, 60))
+	app._add_action_button("修复", Vector2(func_x, func_start_y + func_step), app._show_repair_popup, Vector2(60, 60))
+	app._add_action_button("账号", Vector2(func_x, func_start_y + func_step*2), app._show_login_account_popup, Vector2(60, 60))
+	app._add_action_button("切换", Vector2(func_x, func_start_y + func_step*3), app._show_login, Vector2(60, 60))
 
-	if app._draw_image(UI_LOGIN_SERVER_BG, Vector2(390, 486), Vector2(500, 42), false) == null:
-		app._view_container().add_child(app._panel(Vector2(390, 486), Vector2(500, 42), Color(0.09, 0.065, 0.052, 0.88)))
+	# Server select bar: anchor(0.5,0.5) pos(0,-99) size(500,34)
+	# Godot: y=360+99*0.96=455, x=640-500*0.7665/2=640-192=448, size=(383,33)
+	var svr_y := 455.0
+	if app._draw_image(UI_LOGIN_SERVER_BG, Vector2(448, svr_y), Vector2(383, 33), false) == null:
+		app._view_container().add_child(app._panel(Vector2(448, svr_y), Vector2(383, 33), Color(0.09, 0.065, 0.052, 0.88)))
 	var server_label = app._label("推荐服务器    Local MainScene", 18, HORIZONTAL_ALIGNMENT_CENTER)
-	server_label.position = Vector2(410, 490)
-	server_label.size = Vector2(460, 34)
+	server_label.position = Vector2(468, svr_y + 2)
+	server_label.size = Vector2(343, 30)
 	app._view_container().add_child(server_label)
-	app._view_container().add_child(app._panel(Vector2(888, 494), Vector2(18, 18), Color(0.18, 0.88, 0.28, 0.95)))
+	app._view_container().add_child(app._panel(Vector2(818, svr_y + 8), Vector2(18, 18), Color(0.18, 0.88, 0.28, 0.95)))
 	var state_label = app._label("流畅", 14, HORIZONTAL_ALIGNMENT_CENTER)
-	state_label.position = Vector2(912, 492)
-	state_label.size = Vector2(46, 26)
+	state_label.position = Vector2(828, svr_y + 8)
+	state_label.size = Vector2(46, 18)
 	state_label.modulate = Color(0.22, 0.88, 0.32)
 	app._view_container().add_child(state_label)
 
+	# imgTipLogin: anchor(0.5,1) pivot(0.5,1) size(536,30) pos(0,-553)
+	# Godot: y=553*0.96=531, x=center=640, size=(411,29), pos=(435,531)
 	var tip = app._label("离线单机模式，数据仅供本地验证使用", 15, HORIZONTAL_ALIGNMENT_CENTER)
-	tip.position = Vector2(390, 548)
-	tip.size = Vector2(500, 30)
+	tip.position = Vector2(435, 531)
+	tip.size = Vector2(411, 29)
 	tip.modulate = Color(0.62, 0.58, 0.52, 0.85)
 	app._view_container().add_child(tip)
 
+	# @richUrl: anchor(0.5,1) pivot(0.5,1) pos(19.9,-620) — agree checkbox + hyperlink
+	# Godot: y=620*0.96=595, centered x≈640
 	var agree = CheckBox.new()
 	agree.text = "我已阅读并同意隐私政策与使用者协议"
 	agree.button_pressed = true
-	agree.position = Vector2(426, 594)
-	agree.size = Vector2(428, 34)
+	agree.position = Vector2(426, 595)
+	agree.size = Vector2(428, 31)
 	app._view_container().add_child(agree)
 
+	# @richBottom: anchor(0.5,1) pivot(0.5,1) size(1670,78) pos(0,-667)
+	# Godot: y=667*0.96=640, x=0, size=(1280,75)
 	var copyright = app._label("Copyright © Offline MVP. 本地喚灵资料仅用于还原验证。", 14, HORIZONTAL_ALIGNMENT_CENTER)
-	copyright.position = Vector2(340, 654)
-	copyright.size = Vector2(600, 28)
+	copyright.position = Vector2(0, 640)
+	copyright.size = Vector2(1280, 75)
 	copyright.modulate = Color(0.46, 0.43, 0.4)
 	app._view_container().add_child(copyright)
 
