@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """Export selected Unity bundle images and place them in the Godot MVP.
 
 The original shaonv YooAsset bundles XOR the first bytes of each bundle.  The

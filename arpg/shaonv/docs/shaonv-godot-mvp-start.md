@@ -399,7 +399,87 @@ tmp/screenshots/prefab-main-restart.png
 
 当前仍会输出 Godot 对 `Image.load()` 直接载入 PNG 的导出警告，这与既有 MVP 源 PNG 载入策略一致，不影响本地验证。
 
-## 13. 下一步
+## 13. 2026-05-23 screen split and LotteryDraw restart
+
+按“界面一个文件”的方向开始拆分 Godot 脚本，避免 `main.gd` 继续膨胀：
+
+```text
+standalone/godot-mvp/scripts/main.gd
+standalone/godot-mvp/scripts/screens/startup_screen.gd
+standalone/godot-mvp/scripts/screens/home_screen.gd
+standalone/godot-mvp/scripts/screens/gacha_screen.gd
+```
+
+当前分工：
+
+- `main.gd`：保留数据读取、存档、路由、抽卡逻辑、通用 UI helper，以及暂未拆分的结果页/图鉴/角色详情/商店/任务/战役。
+- `startup_screen.gd`：负责 `LaunchView`、预载入、`LoginView`、`LoadingView`。
+- `home_screen.gd`：负责 `MainUIView` 第一屏。
+- `gacha_screen.gd`：负责 `LotteryDrawMainView` 第一屏。
+
+为避免 Windows 下中文注释和 UI 文案被误读，本轮给新增/常用脚本补了 UTF-8 标记：
+
+```text
+scripts/assets/export_unity_bundle_images.py
+scripts/assets/inspect_unity_prefab_layout.py
+standalone/godot-mvp/scripts/main.gd
+standalone/godot-mvp/scripts/screens/startup_screen.gd
+standalone/godot-mvp/scripts/screens/home_screen.gd
+standalone/godot-mvp/scripts/screens/gacha_screen.gd
+```
+
+抽卡界面复刻重启依据：
+
+```powershell
+python scripts\assets\inspect_unity_prefab_layout.py `
+  "Assets/Game/RawAssets/Prefabs/UI/LotteryDraw/LotteryDrawMainView.prefab" `
+  "Assets/Game/RawAssets/Prefabs/UI/LotteryDraw/HeroRecruitView.prefab" `
+  "Assets/Game/RawAssets/Prefabs/UI/LotteryDraw/LotteryDrawFinishView.prefab" `
+  --repo-root . `
+  --markdown docs\shaonv-lottery-prefab-layout-2026-05-23.md `
+  --markdown-depth 3
+```
+
+输出：
+
+```text
+reverse-output/godot-layout-inspect/LotteryDrawMainView.layout.json
+reverse-output/godot-layout-inspect/HeroRecruitView.layout.json
+reverse-output/godot-layout-inspect/LotteryDrawFinishView.layout.json
+docs/shaonv-lottery-prefab-layout-2026-05-23.md
+```
+
+本轮修正了 `LotteryDrawMainView` 的第一屏方向：卡池 tab 属于右侧 `pnlLeft/tabView`，单抽/十连按钮属于 `@LotteryDrawPanel/pnlRoot` 下方偏左区域，`pnlNormalWish/pnlEpicWish` 是祈愿角色位，不再沿用左侧卡池列表的错误布局。
+
+补充修正：`startup_screen.gd` 的第一版只是结构占位，不是原始启动界面的完整复刻。根据 `LaunchView/LoginView/LoadingView` prefab 重新收敛后，已移除启动、登录、加载页里错误加入的看板角色展示：
+
+- `LaunchView` 回到黑底/视频占位、跳过按钮的形态；真实 `launch.mp4` 仍未在当前资源中定位到。
+- `LoginView` 使用 `login_bg_01.png`、`logo.png`、`login_btn_03.png`、`server_bg_03.png`，右侧保留公告/修复/账号/切换入口。
+- `LoadingView` 使用登录背景和底部进度条，不再显示角色。
+
+本轮新增截图：
+
+```text
+tmp/screenshots/startup-launch-refine.png
+tmp/screenshots/startup-login-refine.png
+tmp/screenshots/startup-loading-refine.png
+```
+
+验证命令：
+
+```powershell
+python -m py_compile scripts\assets\inspect_unity_prefab_layout.py scripts\assets\export_unity_bundle_images.py
+.\Godot\Godot_console.exe --headless --path standalone\godot-mvp --quit-after 2
+$env:SHAONV_MVP_START_VIEW='gacha'; .\Godot\Godot_console.exe --headless --path standalone\godot-mvp --quit-after 2
+```
+
+截图：
+
+```text
+tmp/screenshots/prefab-gacha-restart.png
+```
+
+## 14. 下一步
 
 1. 用 Godot 编辑器检查布局并调整主题、字体、按钮样式。
 2. 继续接入登录页按钮、服务器选择弹层、公告/修复弹层的真实 UI 切片。

@@ -1,0 +1,9 @@
+[gd_resource type="SpineSkeletonDataResource" load_steps=4 format=3]
+
+[ext_resource type="SpineAtlasResource" path="res://assets/spine/hero_001/hero_001.atlas.txt.tres" id="1"]
+[ext_resource type="SpineSkeletonFileResource" path="res://assets/spine/hero_001/hero_001.skel.bytes.tres" id="2"]
+
+[resource]
+atlas_res = ExtResource("1")
+skeleton_file_res = ExtResource("2")
+default_mix = 0.1

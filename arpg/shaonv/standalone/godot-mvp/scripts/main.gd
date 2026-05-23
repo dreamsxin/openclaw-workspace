@@ -1,3 +1,4 @@
+# UTF-8 source. Keep Chinese UI labels readable when editing on Windows.
 extends Control
 
 const SAVE_PATH := "user://shaonv_godot_mvp_save.json"
@@ -6,6 +7,10 @@ const POOL_DATA_PATH := "res://data/gacha_pools_mvp.json"
 const LIVE_OPS_DATA_PATH := "res://data/live_ops_mvp.json"
 const ADVENTURE_DATA_PATH := "res://data/adventure_mvp.json"
 const BAKED_SPINE_CANVAS := preload("res://scripts/spine_baked_preview_canvas.gd")
+const STARTUP_SCREEN := preload("res://scripts/screens/startup_screen.gd")
+const HOME_SCREEN := preload("res://scripts/screens/home_screen.gd")
+const GACHA_SCREEN := preload("res://scripts/screens/gacha_screen.gd")
+const GACHA_RESULT_SCREEN := preload("res://scripts/screens/gacha_result_screen.gd")
 const UI_LOGIN_BG := "res://assets/ui/background/login_bg_01.png"
 const UI_MAIN_BG := "res://assets/ui/background/mainui_bg_01.png"
 const UI_LOGIN_LOGO := "res://assets/ui/login/logo.png"
@@ -73,6 +78,10 @@ var wallet_label: Label
 var top_bar: Control
 var current_view := "boot"
 var gallery_filter := "all"
+var startup_screen
+var home_screen
+var gacha_screen
+var gacha_result_screen
 
 func _ready() -> void:
 	anchor_left = 0.0
@@ -96,6 +105,10 @@ func _ready() -> void:
 	afk_reward = adventure.get("afkReward", {"tickets": 1, "gems": 240, "shards": {}})
 	_load_save()
 	_build_root()
+	startup_screen = STARTUP_SCREEN.new(self)
+	home_screen = HOME_SCREEN.new(self)
+	gacha_screen = GACHA_SCREEN.new(self)
+	gacha_result_screen = GACHA_RESULT_SCREEN.new(self)
 	_show_start_view_from_env()
 	if not OS.get_environment("SHAONV_MVP_CAPTURE").is_empty():
 		call_deferred("_capture_debug_screenshot")
@@ -192,6 +205,12 @@ func _show_start_view_from_env() -> void:
 	elif start_view == "gacha":
 		_enter_main_scene()
 		_show_gacha()
+	elif start_view == "draw_animation":
+		_show_draw_animation(int(OS.get_environment("SHAONV_MVP_DRAW_COUNT")) if not OS.get_environment("SHAONV_MVP_DRAW_COUNT").is_empty() else 10)
+	elif start_view == "draw_reveal":
+		gacha_result_screen.show_recruit_reveal(int(OS.get_environment("SHAONV_MVP_DRAW_COUNT")) if not OS.get_environment("SHAONV_MVP_DRAW_COUNT").is_empty() else 10)
+	elif start_view == "draw_result":
+		_draw_and_show(int(OS.get_environment("SHAONV_MVP_DRAW_COUNT")) if not OS.get_environment("SHAONV_MVP_DRAW_COUNT").is_empty() else 10)
 	elif start_view == "prayer":
 		_enter_main_scene()
 		_open_prayer_pool()
@@ -219,132 +238,16 @@ func _clear(title: String) -> void:
 	_refresh_wallet()
 
 func _show_launch() -> void:
-	current_view = "launch"
-	print("Shaonv MVP show launch: heroes=%d pools=%d" % [heroes.size(), pools.size()])
-	_set_chrome_visible(false)
-	_clear("啟動")
-	content.position = Vector2(0, 0)
-	content.size = Vector2(1280, 720)
-	_draw_startup_backdrop(Color(0.075, 0.022, 0.026), Color(0.012, 0.010, 0.011, 0.42))
-	_draw_image(UI_LOGIN_BG, Vector2(-160, 0), Vector2(1600, 720), true, Color(1, 1, 1, 0.56))
-	content.add_child(_panel(Vector2(0, 0), Vector2(1280, 720), Color(0.018, 0.012, 0.012, 0.34)))
-	var raw_image := _panel(Vector2(-200, -480), Vector2(1680, 1680), Color(0.98, 0.70, 0.34, 0.045))
-	content.add_child(raw_image)
-	_draw_hero_stage(_hero_by_id(240055), Vector2(706, 42), Vector2(440, 610), false)
-	var title := _label("少女回戰", 56, HORIZONTAL_ALIGNMENT_CENTER)
-	title.position = Vector2(212, 218)
-	title.size = Vector2(456, 80)
-	content.add_child(title)
-	var sub := _label("讀取啟動影像", 18, HORIZONTAL_ALIGNMENT_CENTER)
-	sub.position = Vector2(274, 300)
-	sub.size = Vector2(360, 34)
-	content.add_child(sub)
-	var hint := _label("點擊跳過", 20, HORIZONTAL_ALIGNMENT_CENTER)
-	hint.position = Vector2(520, 654)
-	hint.size = Vector2(240, 34)
-	content.add_child(hint)
-	_add_action_button("跳過", Vector2(574, 590), _show_preloading, Vector2(132, 46))
+	startup_screen.show_launch()
 
 func _show_preloading() -> void:
-	current_view = "preloading"
-	_set_chrome_visible(false)
-	_clear("預載入")
-	content.position = Vector2(0, 0)
-	content.size = Vector2(1280, 720)
-	_draw_startup_backdrop(Color(0.062, 0.047, 0.04), Color(0.02, 0.018, 0.016, 0.78))
-	_draw_hero_stage(_hero_by_id(240055), Vector2(764, 86), Vector2(360, 500), false)
-	var mark := _label("少女回戰", 44, HORIZONTAL_ALIGNMENT_CENTER)
-	mark.position = Vector2(390, 186)
-	mark.size = Vector2(500, 66)
-	content.add_child(mark)
-	var info := _label("正在校驗本地資源", 24, HORIZONTAL_ALIGNMENT_CENTER)
-	info.position = Vector2(360, 292)
-	info.size = Vector2(560, 40)
-	content.add_child(info)
-	_draw_progress_bar(Vector2(376, 374), Vector2(528, 20), 0.65)
-	var percent := _label("65%", 18, HORIZONTAL_ALIGNMENT_CENTER)
-	percent.position = Vector2(586, 404)
-	percent.size = Vector2(108, 28)
-	content.add_child(percent)
-	var tip := _label("預載入角色、喚靈與靜態表資料", 18, HORIZONTAL_ALIGNMENT_CENTER)
-	tip.position = Vector2(330, 456)
-	tip.size = Vector2(620, 34)
-	content.add_child(tip)
-	_add_action_button("繼續", Vector2(574, 522), _show_login, Vector2(132, 46))
+	startup_screen.show_preloading()
 
 func _show_login() -> void:
-	current_view = "login"
-	_set_chrome_visible(false)
-	_clear("登入")
-	content.position = Vector2(0, 0)
-	content.size = Vector2(1280, 720)
-	_draw_image(UI_LOGIN_BG, Vector2(-160, 0), Vector2(1600, 720), true)
-	content.add_child(_panel(Vector2(0, 0), Vector2(1280, 720), Color(0.018, 0.014, 0.012, 0.18)))
-	_draw_hero_stage(_hero_by_id(int(save.get("selected_hero_id", 240065))), Vector2(696, 58), Vector2(520, 600), false)
-	if _draw_image(UI_LOGIN_LOGO, Vector2(455, 165), Vector2(280, 112), false) == null:
-		var logo := _label("少女回戰", 54, HORIZONTAL_ALIGNMENT_CENTER)
-		logo.position = Vector2(426, 184)
-		logo.size = Vector2(430, 82)
-		content.add_child(logo)
-	var version := _label("ver 1.0.0\napp offline\nres local", 14, HORIZONTAL_ALIGNMENT_LEFT)
-	version.position = Vector2(656, 108)
-	version.size = Vector2(255, 92)
-	content.add_child(version)
-	var account := LineEdit.new()
-	account.text = "LocalPlayer"
-	account.position = Vector2(370, 326)
-	account.size = Vector2(416, 62)
-	content.add_child(account)
-	if _draw_image(UI_LOGIN_SERVER_BG, Vector2(448, 414), Vector2(384, 44), false) == null:
-		var server_card := _panel(Vector2(448, 414), Vector2(384, 44), Color(0.09, 0.065, 0.052, 0.88))
-		content.add_child(server_card)
-	var server := _label("推薦伺服器    Local MainScene", 20, HORIZONTAL_ALIGNMENT_CENTER)
-	server.position = Vector2(470, 420)
-	server.size = Vector2(338, 34)
-	content.add_child(server)
-	var server_state := _label("流暢", 16, HORIZONTAL_ALIGNMENT_CENTER)
-	server_state.position = Vector2(772, 422)
-	server_state.size = Vector2(54, 28)
-	content.add_child(server_state)
-	_add_action_button("開始遊戲", Vector2(522, 276), _show_loading, Vector2(238, 58))
-	_add_action_button("公告", Vector2(430, 80), _show_login_notice_popup, Vector2(82, 42))
-	_add_action_button("修復", Vector2(522, 80), _show_repair_popup, Vector2(82, 42))
-	_add_action_button("帳號", Vector2(614, 80), _show_login_account_popup, Vector2(82, 42))
-	_add_action_button("切換", Vector2(706, 80), _show_login, Vector2(82, 42))
-	var agree := CheckBox.new()
-	agree.text = "我已閱讀並同意隱私政策與使用者協議"
-	agree.button_pressed = true
-	agree.position = Vector2(492, 592)
-	agree.size = Vector2(420, 34)
-	content.add_child(agree)
-	var copyright := _label("Copyright © Offline MVP. 本地單機資料僅用於還原驗證。", 15, HORIZONTAL_ALIGNMENT_CENTER)
-	copyright.position = Vector2(340, 662)
-	copyright.size = Vector2(600, 28)
-	content.add_child(copyright)
+	startup_screen.show_login()
 
 func _show_loading() -> void:
-	current_view = "loading"
-	_set_chrome_visible(false)
-	_clear("載入")
-	content.position = Vector2(0, 0)
-	content.size = Vector2(1280, 720)
-	_draw_image(UI_LOGIN_BG, Vector2(-160, 0), Vector2(1600, 720), true, Color(1, 1, 1, 0.72))
-	content.add_child(_panel(Vector2(0, 0), Vector2(1280, 720), Color(0.012, 0.014, 0.018, 0.34)))
-	_draw_hero_stage(_hero_by_id(240055), Vector2(746, 48), Vector2(396, 568), false)
-	var info := _label("正在進入主城", 24, HORIZONTAL_ALIGNMENT_CENTER)
-	info.position = Vector2(330, 540)
-	info.size = Vector2(620, 40)
-	content.add_child(info)
-	_draw_progress_bar(Vector2(428, 646), Vector2(424, 22), 1.0)
-	var percent := _label("100%", 18, HORIZONTAL_ALIGNMENT_CENTER)
-	percent.position = Vector2(588, 610)
-	percent.size = Vector2(104, 28)
-	content.add_child(percent)
-	var tip := _label("提示：喚靈可獲得新武將，重複武將將轉換為碎片。", 18, HORIZONTAL_ALIGNMENT_CENTER)
-	tip.position = Vector2(266, 576)
-	tip.size = Vector2(748, 34)
-	content.add_child(tip)
-	_add_action_button("進入", Vector2(574, 670), _enter_main_scene, Vector2(132, 38))
+	startup_screen.show_loading()
 
 func _enter_main_scene() -> void:
 	content.position = Vector2(0, 0)
@@ -358,144 +261,16 @@ func _refresh_wallet() -> void:
 	wallet_label.text = "郵件 %d   喚靈券 %s   源石 %s" % [_unclaimed_mail_count(), save.get("tickets", 0), save.get("gems", 0)]
 
 func _show_home() -> void:
-	current_view = "main"
-	content.position = Vector2(0, 0)
-	content.size = Vector2(1280, 720)
-	_set_chrome_visible(false)
-	_clear("主界面")
-	var hero := _hero_by_id(int(save.get("selected_hero_id", 240065)))
-	_draw_wallpaper_stage(hero)
-	_draw_home_side_entries()
-	_draw_home_bottom_bar()
-	_draw_home_status()
+	home_screen.show_home()
 
 func _show_gacha() -> void:
-	var pool := _pool_by_id(str(save.get("active_pool_id", "advanced")))
-	var realm := _active_gacha_realm()
-	_clear("現世" if realm == "present" else "幻靈")
-	_draw_image(_lottery_bg_for_pool(str(pool.get("id", "advanced"))), Vector2(0, 0), Vector2(1280, 646), true)
-	content.add_child(_panel(Vector2(0, 0), Vector2(1280, 646), Color(0.018, 0.014, 0.016, 0.16)))
-	_draw_image(UI_LOTTERY_ALPHA_L, Vector2(250, 56), Vector2(410, 142), false, Color(1, 1, 1, 0.58))
-	_draw_image(UI_LOTTERY_ALPHA_R, Vector2(818, 58), Vector2(410, 128), false, Color(1, 1, 1, 0.58))
-	_draw_image(UI_LOTTERY_SIDE_1, Vector2(0, 0), Vector2(84, 646), true, Color(1, 1, 1, 0.70))
-	_draw_image(UI_LOTTERY_SIDE_2, Vector2(1196, 0), Vector2(84, 646), true, Color(1, 1, 1, 0.70))
-
-	var left_panel := _panel(Vector2(22, 22), Vector2(252, 586), Color(0.025, 0.019, 0.018, 0.62))
-	content.add_child(left_panel)
-	_add_realm_button("現世", "present", Vector2(42, 46))
-	_add_realm_button("幻靈", "prayer", Vector2(154, 46))
-
-	var y := 120.0
-	for pool_item in pools:
-		var pool_id := str(pool_item.get("id", "advanced"))
-		if not _pool_in_realm(pool_id, realm):
-			continue
-		_draw_image(UI_LOTTERY_POOL_FRAME if realm == "present" else UI_LOTTERY_PRAYER_FRAME, Vector2(44, y - 8), Vector2(184, 52), false, Color(1, 1, 1, 0.62))
-		var button := Button.new()
-		button.text = "%s%s" % ["✓ " if pool_id == str(save.get("active_pool_id", "advanced")) else "", str(pool_item.get("name", "Pool"))]
-		button.position = Vector2(50, y)
-		button.size = Vector2(174, 38)
-		button.pressed.connect(func() -> void:
-			save["active_pool_id"] = pool_id
-			_persist()
-			_show_gacha()
-		)
-		content.add_child(button)
-		y += 62
-
-	var hero := _hero_by_id(int(pool.get("featuredHeroIds", [240055])[0]))
-	_draw_hero_stage(hero, Vector2(676, -10), Vector2(548, 598), false)
-
-	var title := _label("%s  %s" % ["現世" if realm == "present" else "幻靈", pool.get("name", "高級喚靈")], 42)
-	title.position = Vector2(310, 42)
-	title.size = Vector2(500, 56)
-	content.add_child(title)
-
-	var featured_names := []
-	for id in pool.get("featuredHeroIds", []):
-		featured_names.append(_hero_by_id(int(id)).get("name", str(id)))
-	var rates: Dictionary = pool.get("rates", {})
-	content.add_child(_panel(Vector2(310, 120), Vector2(404, 184), Color(0.018, 0.014, 0.012, 0.50)))
-	_draw_image(UI_LOTTERY_TICKET_ICON, Vector2(408, 232), Vector2(34, 38), false)
-	var detail := _label("UP 角色\n%s\n\n保底 %d/%d\n消耗喚靈券       x%d\n%s %.1f%%  %s %.1f%%" % [
-		" / ".join(featured_names),
-		_pity(pool.get("id", "advanced")),
-		int(pool.get("pityLimit", 60)),
-		int(pool.get("ticketCost", 1)),
-		_stars(4),
-		float(rates.get("4", 0.02)) * 100.0,
-		_stars(3),
-		float(rates.get("3", 0.14)) * 100.0
-	], 21)
-	detail.position = Vector2(330, 132)
-	detail.size = Vector2(360, 170)
-	content.add_child(detail)
-
-	_add_action_button("概率", Vector2(326, 330), _show_gacha_rate)
-	_add_action_button("記錄", Vector2(472, 330), _show_history)
-	_draw_image(UI_LOTTERY_BTN_SINGLE, Vector2(316, 460), Vector2(152, 64), false, Color(1, 1, 1, 0.82))
-	_draw_image(UI_LOTTERY_BTN_TEN, Vector2(492, 460), Vector2(178, 64), false, Color(1, 1, 1, 0.82))
-	_add_action_button("召喚 1 次", Vector2(326, 468), func() -> void: _show_draw_animation(1))
-	_add_action_button("召喚 10 次", Vector2(506, 468), func() -> void: _show_draw_animation(10), Vector2(156, 50))
-	_add_action_button("返回主界面", Vector2(22, 546), _show_home, Vector2(210, 44))
+	gacha_screen.show_gacha()
 
 func _show_draw_animation(count: int) -> void:
-	var pool := _pool_by_id(str(save.get("active_pool_id", "advanced")))
-	var cost := count * int(pool.get("ticketCost", 1))
-	_clear("喚靈演出")
-	_draw_image(UI_LOTTERY_STAGE_BG, Vector2(0, 0), Vector2(1280, 646), true)
-	content.add_child(_panel(Vector2(0, 0), Vector2(1280, 646), Color(0.018, 0.014, 0.018, 0.46)))
-	_draw_image(UI_LOTTERY_LIGHT_L, Vector2(0, 0), Vector2(640, 646), true, Color(1, 1, 1, 0.54))
-	_draw_image(UI_LOTTERY_LIGHT_R, Vector2(640, 0), Vector2(640, 646), true, Color(1, 1, 1, 0.54))
-	content.add_child(_panel(Vector2(252, 70), Vector2(776, 420), Color(0.055, 0.042, 0.042, 0.78)))
-	content.add_child(_panel(Vector2(300, 116), Vector2(680, 240), Color(0.75, 0.48, 0.18, 0.12)))
-
-	var title := _label("喚靈儀式", 42, HORIZONTAL_ALIGNMENT_CENTER)
-	title.position = Vector2(390, 92)
-	title.size = Vector2(500, 62)
-	content.add_child(title)
-
-	var info := _label("%s\n\n本次喚靈：%d 次\n消耗喚靈券：%d / %d\n保底進度：%d / %d\n\n演出完成後進入結果展示" % [
-		pool.get("name", "喚靈"),
-		count,
-		cost,
-		int(save.get("tickets", 0)),
-		_pity(pool.get("id", "advanced")),
-		int(pool.get("pityLimit", 60))
-	], 22, HORIZONTAL_ALIGNMENT_CENTER)
-	info.position = Vector2(380, 156)
-	info.size = Vector2(520, 210)
-	content.add_child(info)
-
-	var orb := _panel(Vector2(560, 374), Vector2(160, 22), Color(1.0, 0.72, 0.22, 0.72))
-	content.add_child(orb)
-	if int(save.get("tickets", 0)) < cost:
-		var warning := _label("喚靈券不足", 28, HORIZONTAL_ALIGNMENT_CENTER)
-		warning.position = Vector2(430, 408)
-		warning.size = Vector2(420, 42)
-		content.add_child(warning)
-		_add_action_button("返回卡池", Vector2(574, 510), _show_gacha, Vector2(132, 46))
-		return
-
-	_add_action_button("開始喚靈", Vector2(486, 510), func() -> void: _draw_and_show(count), Vector2(132, 46))
-	_add_action_button("跳過演出", Vector2(646, 510), func() -> void: _draw_and_show(count), Vector2(132, 46))
-	_add_action_button("返回卡池", Vector2(806, 510), _show_gacha, Vector2(132, 46))
+	gacha_result_screen.show_draw_animation(count)
 
 func _draw_and_show(count: int) -> void:
-	var results := _perform_draw(count)
-	_clear("結果")
-	if results.is_empty():
-		var warning := _label("喚靈券不足", 30)
-		warning.position = Vector2(360, 150)
-		content.add_child(warning)
-		_add_action_button("返回", Vector2(360, 226), _show_gacha)
-		return
-	_draw_result_stage(results[0])
-	_draw_result_grid(results)
-	_add_action_button("跳過", Vector2(706, 538), _show_gacha, Vector2(112, 46))
-	_add_action_button("再抽一次", Vector2(838, 538), func() -> void: _show_draw_animation(count), Vector2(132, 46))
-	_add_action_button("返回卡池", Vector2(990, 538), _show_gacha, Vector2(132, 46))
-	_add_action_button("圖鑑", Vector2(1142, 538), _show_gallery, Vector2(92, 46))
+	gacha_result_screen.draw_and_show(count)
 
 func _show_gallery() -> void:
 	_clear("圖鑑")
@@ -913,70 +688,10 @@ func _duplicate_shards(pool: Dictionary, rarity: int) -> int:
 	return int(shards.get(str(rarity), shards.get("2", 3)))
 
 func _draw_wallpaper_stage(hero: Dictionary) -> void:
-	_draw_image(UI_MAIN_BG, Vector2(0, 0), Vector2(1280, 720), true)
-	content.add_child(_panel(Vector2(0, 0), Vector2(1280, 720), Color(0.018, 0.014, 0.012, 0.14)))
-	var top_bar_shadow := _panel(Vector2(0, 0), Vector2(1280, 70), Color(0.015, 0.012, 0.010, 0.28))
-	content.add_child(top_bar_shadow)
-	var wallpaper_panel := _panel(Vector2(258, 0), Vector2(734, 720), Color(0.118, 0.090, 0.073, 0.18))
-	content.add_child(wallpaper_panel)
-	_draw_image(UI_MAIN_TOP_ACCENT, Vector2(396, 18), Vector2(430, 38), false, Color(1, 1, 1, 0.70))
-	_draw_hero_stage(hero, Vector2(502, 0), Vector2(590, 680), false)
-	var profile_panel := _panel(Vector2(0, 5), Vector2(272, 108), Color(0.032, 0.025, 0.022, 0.72))
-	content.add_child(profile_panel)
-	_draw_hero_portrait(hero, Vector2(16, 22), Vector2(58, 58), Color(1, 1, 1, 0.95))
-	var profile: Dictionary = save.get("profile", {})
-	var player := _label("%s\nLv.%d  戰力 %d" % [profile.get("name", "Player"), int(profile.get("level", 1)), _player_power()], 17)
-	player.position = Vector2(84, 22)
-	player.size = Vector2(180, 58)
-	content.add_child(player)
-	var player_btn := Button.new()
-	player_btn.text = ""
-	player_btn.flat = true
-	player_btn.position = Vector2(0, 5)
-	player_btn.size = Vector2(272, 84)
-	player_btn.pressed.connect(_show_player_info)
-	content.add_child(player_btn)
-	_add_action_button("壁紙", Vector2(366, 52), _show_gallery, Vector2(74, 34))
-	_add_action_button("隱藏", Vector2(448, 52), _show_home, Vector2(74, 34))
+	home_screen.draw_wallpaper_stage(hero)
 
 func _draw_home_side_entries() -> void:
-	var top_res := _panel(Vector2(454, 6), Vector2(600, 46), Color(0.030, 0.024, 0.020, 0.68))
-	content.add_child(top_res)
-	var res_text := _label("郵件 %d     喚靈券 %s     源石 %s" % [_unclaimed_mail_count(), save.get("tickets", 0), save.get("gems", 0)], 18, HORIZONTAL_ALIGNMENT_RIGHT)
-	res_text.position = Vector2(474, 14)
-	res_text.size = Vector2(560, 30)
-	content.add_child(res_text)
-	var commerce := _panel(Vector2(1032, 312), Vector2(196, 266), Color(0.036, 0.030, 0.027, 0.72))
-	content.add_child(commerce)
-	_add_action_button("活動", Vector2(1048, 328), _show_daily, Vector2(74, 36))
-	_add_action_button("福利", Vector2(1138, 328), _show_daily, Vector2(74, 36))
-	_add_action_button("商店", Vector2(1048, 374), _show_shop, Vector2(74, 36))
-	_add_action_button("月卡", Vector2(1138, 374), _show_shop, Vector2(74, 36))
-	_add_action_button("充值", Vector2(1048, 420), _show_shop, Vector2(74, 36))
-
-	var funny_panel := _panel(Vector2(930, 108), Vector2(298, 178), Color(0.036, 0.030, 0.027, 0.66))
-	content.add_child(funny_panel)
-	var entries := [
-		["戰役", _show_battle],
-		["現世", _open_present_pool],
-		["競技", _show_home],
-		["幻靈", _open_prayer_pool],
-		["冒險", _show_battle],
-		["收穫", _claim_afk_reward],
-		["援助", _show_mail]
-	]
-	var x := 954.0
-	var y := 128.0
-	var index := 0
-	for item in entries:
-		_add_action_button(str(item[0]), Vector2(x, y), item[1], Vector2(82, 46))
-		index += 1
-		x += 92
-		if index % 3 == 0:
-			x = 954
-			y += 58
-	_draw_red_dot(Vector2(1108, 122))
-	_draw_red_dot(Vector2(1108, 180))
+	home_screen.draw_home_side_entries()
 
 func _open_prayer_pool() -> void:
 	save["active_pool_id"] = "prayer"
@@ -990,29 +705,7 @@ func _open_present_pool() -> void:
 	_show_gacha()
 
 func _draw_home_bottom_bar() -> void:
-	var bottom := _panel(Vector2(0, 622), Vector2(1280, 98), Color(0.032, 0.027, 0.024, 0.95))
-	content.add_child(bottom)
-	content.add_child(_panel(Vector2(0, 622), Vector2(1280, 2), Color(0.86, 0.65, 0.32, 0.24)))
-	var buttons := [
-		["約會", _show_home],
-		["武將", _show_gallery],
-		["背包", _show_shop],
-		["寵物", _show_home],
-		["養成", _show_gallery],
-		["任務", _show_tasks],
-		["軍團", _show_home]
-	]
-	var x := 288.0
-	for item in buttons:
-		_add_action_button(str(item[0]), Vector2(x, 642), item[1], Vector2(94, 50))
-		x += 108
-	_draw_red_dot(Vector2(470, 640))
-	_draw_red_dot(Vector2(794, 640))
-
-	var chat := _label("世界  離線模式已啟用，資源與抽卡均使用本地資料", 16)
-	chat.position = Vector2(28, 580)
-	chat.size = Vector2(430, 28)
-	content.add_child(chat)
+	home_screen.draw_home_bottom_bar()
 
 func _active_gacha_realm() -> String:
 	return "prayer" if str(save.get("active_pool_id", "advanced")) == "prayer" else "present"
@@ -1047,23 +740,7 @@ func _add_realm_button(text: String, realm: String, pos: Vector2) -> void:
 	content.add_child(button)
 
 func _draw_home_status() -> void:
-	var panel := _panel(Vector2(0, 384), Vector2(276, 100), Color(0.042, 0.034, 0.030, 0.78))
-	content.add_child(panel)
-	var next_task := _next_task_text()
-	var info := _label("章節任務  %s\n收集 %d / 抽卡 %d\n通關 %s" % [next_task, save.get("owned", {}).size(), int(save.get("draw_count", 0)), _stage_name(int(save.get("max_stage_id", 0)))], 16)
-	info.position = Vector2(18, 394)
-	info.size = Vector2(238, 72)
-	content.add_child(info)
-	_add_action_button("任務", Vector2(18, 490), _show_tasks, Vector2(82, 38))
-	_add_action_button("更換", Vector2(112, 490), _show_gallery, Vector2(82, 38))
-
-	var hook := _panel(Vector2(44, 150), Vector2(212, 74), Color(0.040, 0.033, 0.030, 0.72))
-	content.add_child(hook)
-	var hook_text := _label("掛機收益\n喚靈券 x%d / 源石 x%d\n%s" % [int(afk_reward.get("tickets", 1)), int(afk_reward.get("gems", 240)), "今日已收取" if _afk_claimed_today() else "今日可收取"], 16)
-	hook_text.position = Vector2(58, 158)
-	hook_text.size = Vector2(170, 52)
-	content.add_child(hook_text)
-	_add_action_button("收取", Vector2(264, 168), _claim_afk_reward, Vector2(76, 38))
+	home_screen.draw_home_status()
 
 func _draw_result_stage(result: Dictionary) -> void:
 	var hero: Dictionary = result.get("hero", _hero_by_id(240065))
@@ -1205,6 +882,7 @@ func _draw_hero_portrait(hero: Dictionary, pos: Vector2, draw_size: Vector2, tin
 	rect.texture = source_texture
 	rect.position = pos
 	rect.size = draw_size
+	rect.clip_contents = true
 	rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	rect.modulate = tint
