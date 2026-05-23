@@ -772,3 +772,94 @@ btnGal (0,40) 115×129 anchor=(0.5,0.5)
 
 2. **pnlCommercialization** — 独立区域 + LimitIconView 图标
 3. **Common 图集** — 底部栏和其他按钮的真实图标
+
+---
+
+## 11. 跨 Prefab 模式分析 (2026-05-23)
+
+分析 8 个 layout.json (MainUIView, LoginView, LaunchView, LoadingView, LotteryDrawMainView, LotteryDrawFinishView, HeroRecruitView, TopResGrid) 发现通用 UI 模式。
+
+### 11.1 按钮尺寸标准化
+
+| 尺寸 | 出现次数 | 用途 |
+|------|:--:|------|
+| 86×86 | 15 | LimitIconView 图标按钮（pnlGift 等） |
+| 60×60 | 10 | 小图标按钮（Login pnlFunction, Lottery pnlBtn） |
+| 418×804 | 8 | 全高 Hero 点击区（irole/btn, 5 个 hero slot） |
+| **86×50** | 6 | **底部栏按钮**（btnHero/Bagpack/Pet/Develop/Task/Legion） |
+| 88×102 | 4 | MainUI pnlFunnyContent 入口按钮 |
+| 80×80 | 3 | 抽卡按钮（btnReward/Shop/Wish） |
+| 74×74 | 2 | btnEye / btnChange |
+| 68×68 | 2 | btnPlay / btnPause（pnlCtl 内） |
+| 92×50 | 2 | btnLeft / btnRight（pnlCtl 内） |
+| 115×129 | 1 | btnGal（最大突出独立按钮） |
+| 106×106 | 1 | btnHarvest（收获大按钮） |
+| 78×78 | 1 | btnMenu（右下角菜单） |
+| 78×96 | 1 | btnAssist（援助按钮） |
+
+> 🔑 **关键发现**: 底部栏按钮在 prefab 中是 **86×50**（非 86×86），这是跨 prefab 的标准化尺寸。
+
+### 11.2 TopResGrid — svRes 的真实结构
+
+`TopResGrid` 是 MainUIView 中 `svRes/Content` 的子 prefab 实例，每个资源项（邮件、唤灵券、源石）都是一个 TopResGrid:
+
+```
+TopResGrid 200×40 anchor=(0.5,0.5)
+  imgBg     200×40  ← 半透明圆角背景
+  imgIcon   (-5,1) 50×50  ← 资源图标（左对齐）
+  txtNum    (27,0) 130×40  ← 数量文本（居中）
+  btnClick  (0,0) 200×40 OFF ← 点击区（默认禁用）
+  txtTitle  (11,0) 160×30 OFF ← 标题（默认禁用）
+```
+
+当前 Godot 使用纯文本 `"邮件 %d"` 模拟，应改为图标+数量的 TopResGrid 风格。
+
+### 11.3 @ 前缀 Prefab 实例 (75 个)
+
+所有 prefab 共享 75 种 `@` 前缀 Prefab 实例。MainUIView 最常用的:
+
+| @Prefab | 出现次数 | 说明 |
+|---------|:--:|------|
+| @pnlRd | 21 | 红点 — 单一 prefab 全局复用，每个实例锚点不同 |
+| @LimitIconView01~12 | 12 | pnlGift 内图标项 — 统一 btnIcon(86×86)+txtName+txtTime |
+| @WallpaperPanel | 1 | 壁纸面板 — 可能在多个 View 间共享 |
+| @TopBar | 1 | 顶部栏 — 可能与 LoadingView 共享 |
+| @pnlAlternate | 1 | 轮播横幅容器 |
+| @fx05 | 1 | btnGal 的 5 层粒子特效 |
+| @vfx | 2 | 引导特效（远征、挂机钩子） |
+| @richBottom | 1 | 底部版权信息（LoginView 也有） |
+
+### 11.4 面板命名约定
+
+| 命名模式 | 示例 | 含义 |
+|----------|------|------|
+| `pnlAdapter` | MainUIView | 根适配器容器（(0,0)-(1,1) 全屏拉伸） |
+| `pnlRoot` | LotteryDrawMainView | 抽卡根容器 |
+| `pnlFunction` | LoginView | 右上角功能按钮行 |
+| `pnlBtn` | Lottery | 底部按钮行 |
+| `pnlBottom` | MainUI/Lottery | 底部栏 |
+| `pnlLeft` | Lottery | 左侧面板 |
+| `pnlPlayerInfo` | MainUI | 玩家信息 |
+| `pnlCommercialization` | MainUI | 商业化面板 |
+| `pnlChat` | MainUI | 聊天条 |
+| `@richBottom` | Login/MainUI | 底部版权区 |
+
+### 11.5 红点系统 (@pnlRd) 分析
+
+`@pnlRd` 是跨所有 prefab 共享的单一 Red Dot Prefab Instance:
+- 21 个实例仅在 MainUIView 中
+- 每个实例通过不同的 `anchoredPosition` 定位在按钮旁
+- 锚点模式: (1,1) 表示父元素右上角，(-18,-18) 表示左上偏移
+- 红点键通过代码动态绑定（如 `Gal.GalEntry.5799`），不是 prefab 数据
+
+### 11.6 对 MainUI Godot MVP 的启示
+
+| # | 发现 | Godot 应用 |
+|---|------|-----------|
+| 1 | **btnBottom=86×50 标准化** | ✅ 已修正为 66×48 |
+| 2 | **TopResGrid 图标+数量布局** | 🔧 svRes 应改为图标+数字，非纯文本 |
+| 3 | **86×86 是 LimitIconView 标准** | ☑️ pnlGift 应使用此尺寸 |
+| 4 | **60×60 是辅助按钮标准** | 可能用于将来的 pnlFunction 等辅助行 |
+| 5 | **@pnlRd 是共享 Prefab** | Godot 中可创建单一 RedDot scene 复用 |
+| 6 | **@richBottom 跨 View 共享** | 底部版权可在多个 Screen 复用 |
+| 7 | **命名约定一致** | pnl+功能名, btn+动作名的规范可在代码注释中标注 |
