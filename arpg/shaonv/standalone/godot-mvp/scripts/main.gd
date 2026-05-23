@@ -4,6 +4,7 @@ const SAVE_PATH := "user://shaonv_godot_mvp_save.json"
 const HERO_DATA_PATH := "res://data/heroes_mvp.json"
 const POOL_DATA_PATH := "res://data/gacha_pools_mvp.json"
 const LIVE_OPS_DATA_PATH := "res://data/live_ops_mvp.json"
+const ADVENTURE_DATA_PATH := "res://data/adventure_mvp.json"
 const BAKED_SPINE_CANVAS := preload("res://scripts/spine_baked_preview_canvas.gd")
 const UI_LOGIN_BG := "res://assets/ui/background/login_bg_01.png"
 const UI_MAIN_BG := "res://assets/ui/background/mainui_bg_01.png"
@@ -25,6 +26,8 @@ var tasks: Array = []
 var mails: Array = []
 var daily := {}
 var shop := {}
+var chapters: Array = []
+var afk_reward := {}
 var save := {
 	"profile": {
 		"name": "Player",
@@ -47,7 +50,11 @@ var save := {
 	"claimed_mail": {},
 	"daily_claimed_date": "",
 	"selected_hero_id": 240065,
-	"active_pool_id": "advanced"
+	"active_pool_id": "advanced",
+	"battle_count": 0,
+	"max_stage_id": 0,
+	"next_stage_id": 101,
+	"afk_claimed_date": ""
 }
 
 var rng := RandomNumberGenerator.new()
@@ -75,6 +82,9 @@ func _ready() -> void:
 	mails = live_ops.get("mails", [])
 	daily = live_ops.get("daily", {"tickets": 3, "gems": 480})
 	shop = live_ops.get("shop", {"exchangeGemCost": 160, "ticketAmount": 1})
+	var adventure := _read_json(ADVENTURE_DATA_PATH)
+	chapters = adventure.get("chapters", [])
+	afk_reward = adventure.get("afkReward", {"tickets": 1, "gems": 240, "shards": {}})
 	_load_save()
 	_build_root()
 	_show_start_view_from_env()
@@ -173,6 +183,9 @@ func _show_start_view_from_env() -> void:
 	elif start_view == "gacha":
 		_enter_main_scene()
 		_show_gacha()
+	elif start_view == "battle":
+		_enter_main_scene()
+		_show_battle()
 	elif start_view == "gallery":
 		_enter_main_scene()
 		_show_gallery()
@@ -811,6 +824,62 @@ func _show_tasks() -> void:
 	_add_action_button("返回主界面", Vector2(44, 548), _show_home, Vector2(146, 44))
 	_add_action_button("前往喚靈", Vector2(204, 548), _show_gacha, Vector2(146, 44))
 
+func _show_battle(message := "") -> void:
+	_clear("戰役")
+	_draw_image(UI_MAIN_BG, Vector2(0, 0), Vector2(1280, 646), true, Color(1, 1, 1, 0.42))
+	content.add_child(_panel(Vector2(0, 0), Vector2(1280, 646), Color(0.018, 0.014, 0.012, 0.50)))
+	var title := _label("戰役推進", 34)
+	title.position = Vector2(44, 32)
+	title.size = Vector2(360, 52)
+	content.add_child(title)
+	var current_stage := _next_stage()
+	var player_power := _player_power()
+	var stage_power := int(current_stage.get("power", 0))
+	var status := "可挑戰" if player_power >= stage_power else "戰力不足"
+	if current_stage.is_empty():
+		status = "章節已完成"
+	var summary := _label("目前戰力: %d\n已通關: %s\n下一關: %s\n推薦戰力: %d\n狀態: %s" % [
+		player_power,
+		_stage_name(int(save.get("max_stage_id", 0))),
+		current_stage.get("name", "全部完成"),
+		stage_power,
+		status
+	], 20)
+	summary.position = Vector2(58, 102)
+	summary.size = Vector2(430, 150)
+	content.add_child(summary)
+	if not message.is_empty():
+		var result := _label(message, 19)
+		result.position = Vector2(58, 268)
+		result.size = Vector2(520, 92)
+		result.modulate = Color(1.0, 0.86, 0.48, 1.0)
+		content.add_child(result)
+
+	var y := 94.0
+	for chapter in chapters:
+		var panel := _panel(Vector2(586, y), Vector2(598, 120), Color(0.048, 0.038, 0.033, 0.82))
+		content.add_child(panel)
+		var name := _label(str(chapter.get("name", "")), 22)
+		name.position = Vector2(606, y + 12)
+		name.size = Vector2(360, 30)
+		content.add_child(name)
+		var stage_text := []
+		for stage in chapter.get("stages", []):
+			var sid := int(stage.get("id", 0))
+			var mark := "已通關" if sid <= int(save.get("max_stage_id", 0)) else ("下一關" if sid == int(current_stage.get("id", 0)) else "未解鎖")
+			stage_text.append("%s  %s  戰力%d" % [mark, stage.get("name", ""), int(stage.get("power", 0))])
+		var rows := _label("\n".join(stage_text), 15)
+		rows.position = Vector2(606, y + 48)
+		rows.size = Vector2(548, 64)
+		content.add_child(rows)
+		y += 136
+
+	if not current_stage.is_empty():
+		_add_action_button("挑戰", Vector2(58, 386), _fight_next_stage, Vector2(132, 46))
+	_add_action_button("收取掛機", Vector2(210, 386), _claim_afk_reward, Vector2(132, 46))
+	_add_action_button("前往喚靈", Vector2(362, 386), _show_gacha, Vector2(132, 46))
+	_add_action_button("返回主界面", Vector2(58, 548), _show_home, Vector2(146, 44))
+
 func _buy_tickets(count: int) -> void:
 	var cost := count * int(shop.get("exchangeGemCost", 160))
 	if int(save.get("gems", 0)) < cost:
@@ -859,12 +928,12 @@ func _draw_home_side_entries() -> void:
 	var funny_panel := _panel(Vector2(1032, 154), Vector2(206, 332), Color(0.036, 0.030, 0.027, 0.72))
 	content.add_child(funny_panel)
 	var entries := [
-		["戰役", _show_home],
+		["戰役", _show_battle],
 		["喚靈", _show_gacha],
 		["競技", _show_home],
 		["祈願", _open_prayer_pool],
-		["冒險", _show_home],
-		["收穫", _show_shop],
+		["冒險", _show_battle],
+		["收穫", _claim_afk_reward],
 		["援助", _show_mail]
 	]
 	var y := 172.0
@@ -908,7 +977,7 @@ func _draw_home_status() -> void:
 	var panel := _panel(Vector2(24, 116), Vector2(306, 168), Color(0.042, 0.034, 0.030, 0.82))
 	content.add_child(panel)
 	var next_task := _next_task_text()
-	var info := _label("章節任務\n%s\n\n已收集 %d   抽卡 %d\n高級喚靈保底 %d/60" % [next_task, save.get("owned", {}).size(), int(save.get("draw_count", 0)), _pity("advanced")], 17)
+	var info := _label("章節任務\n%s\n\n已收集 %d   抽卡 %d\n通關 %s" % [next_task, save.get("owned", {}).size(), int(save.get("draw_count", 0)), _stage_name(int(save.get("max_stage_id", 0)))], 17)
 	info.position = Vector2(44, 128)
 	info.size = Vector2(266, 132)
 	content.add_child(info)
@@ -918,11 +987,11 @@ func _draw_home_status() -> void:
 
 	var hook := _panel(Vector2(24, 358), Vector2(260, 74), Color(0.040, 0.033, 0.030, 0.76))
 	content.add_child(hook)
-	var hook_text := _label("掛機收益\n銅幣 18.2萬 / 經驗 9.6萬", 16)
+	var hook_text := _label("掛機收益\n喚靈券 x%d / 源石 x%d\n%s" % [int(afk_reward.get("tickets", 1)), int(afk_reward.get("gems", 240)), "今日已收取" if _afk_claimed_today() else "今日可收取"], 16)
 	hook_text.position = Vector2(42, 366)
 	hook_text.size = Vector2(210, 52)
 	content.add_child(hook_text)
-	_add_action_button("收取", Vector2(292, 374), _show_shop, Vector2(76, 38))
+	_add_action_button("收取", Vector2(292, 374), _claim_afk_reward, Vector2(76, 38))
 
 func _draw_result_stage(result: Dictionary) -> void:
 	var hero: Dictionary = result.get("hero", _hero_by_id(240065))
@@ -1222,6 +1291,88 @@ func _grant_reward(tickets: int, gems: int) -> void:
 	save["gems"] = int(save.get("gems", 0)) + gems
 	_persist()
 
+func _grant_shards(shards: Dictionary) -> void:
+	var shard_save: Dictionary = save.get("shards", {})
+	for raw_id in shards.keys():
+		var key := str(raw_id)
+		shard_save[key] = int(shard_save.get(key, 0)) + int(shards.get(raw_id, 0))
+	save["shards"] = shard_save
+
+func _next_stage() -> Dictionary:
+	var next_id := int(save.get("next_stage_id", 101))
+	for chapter in chapters:
+		for stage in chapter.get("stages", []):
+			if int(stage.get("id", 0)) == next_id:
+				return stage
+	return {}
+
+func _stage_after(stage_id: int) -> int:
+	var found := false
+	for chapter in chapters:
+		for stage in chapter.get("stages", []):
+			var sid := int(stage.get("id", 0))
+			if found:
+				return sid
+			if sid == stage_id:
+				found = true
+	return 0
+
+func _stage_name(stage_id: int) -> String:
+	if stage_id <= 0:
+		return "尚未通關"
+	for chapter in chapters:
+		for stage in chapter.get("stages", []):
+			if int(stage.get("id", 0)) == stage_id:
+				return str(stage.get("name", stage_id))
+	return str(stage_id)
+
+func _fight_next_stage() -> void:
+	var stage := _next_stage()
+	if stage.is_empty():
+		_show_battle("所有 MVP 關卡已通關。")
+		return
+	var required_power := int(stage.get("power", 0))
+	if _player_power() < required_power:
+		_show_battle("挑戰失敗：推薦戰力 %d，請先喚靈或領取資源提升收集。" % required_power)
+		return
+	_grant_reward(int(stage.get("tickets", 0)), int(stage.get("gems", 0)))
+	_grant_shards(stage.get("shards", {}))
+	save["battle_count"] = int(save.get("battle_count", 0)) + 1
+	save["max_stage_id"] = max(int(save.get("max_stage_id", 0)), int(stage.get("id", 0)))
+	save["next_stage_id"] = _stage_after(int(stage.get("id", 0)))
+	_persist()
+	_show_battle("通關 %s\n獲得 喚靈券 x%d / 源石 x%d / 碎片 %s" % [
+		stage.get("name", ""),
+		int(stage.get("tickets", 0)),
+		int(stage.get("gems", 0)),
+		_shard_reward_text(stage.get("shards", {}))
+	])
+
+func _afk_claimed_today() -> bool:
+	return str(save.get("afk_claimed_date", "")) == Time.get_date_string_from_system()
+
+func _claim_afk_reward() -> void:
+	if _afk_claimed_today():
+		_show_battle("今日掛機收益已收取。")
+		return
+	_grant_reward(int(afk_reward.get("tickets", 1)), int(afk_reward.get("gems", 240)))
+	_grant_shards(afk_reward.get("shards", {}))
+	save["afk_claimed_date"] = Time.get_date_string_from_system()
+	_persist()
+	_show_battle("收取掛機收益\n獲得 喚靈券 x%d / 源石 x%d / 碎片 %s" % [
+		int(afk_reward.get("tickets", 1)),
+		int(afk_reward.get("gems", 240)),
+		_shard_reward_text(afk_reward.get("shards", {}))
+	])
+
+func _shard_reward_text(shards: Dictionary) -> String:
+	if shards.is_empty():
+		return "無"
+	var parts := []
+	for raw_id in shards.keys():
+		parts.append("%s x%d" % [_hero_by_id(int(raw_id)).get("name", raw_id), int(shards.get(raw_id, 0))])
+	return " / ".join(parts)
+
 func _task_progress(task_id: String) -> int:
 	var metric := ""
 	for task in tasks:
@@ -1232,6 +1383,10 @@ func _task_progress(task_id: String) -> int:
 		return int(save.get("draw_count", 0))
 	if metric == "owned_count":
 		return save.get("owned", {}).size()
+	if metric == "battle_count":
+		return int(save.get("battle_count", 0))
+	if metric == "max_stage_id":
+		return int(save.get("max_stage_id", 0))
 	return 0
 
 func _next_task_text() -> String:
@@ -1257,7 +1412,7 @@ func _profile_summary() -> String:
 
 func _player_power() -> int:
 	var profile: Dictionary = save.get("profile", {})
-	return int(profile.get("base_power", 0)) + save.get("owned", {}).size() * 24000 + int(save.get("draw_count", 0)) * 120
+	return int(profile.get("base_power", 0)) + save.get("owned", {}).size() * 24000 + int(save.get("draw_count", 0)) * 120 + int(save.get("battle_count", 0)) * 18000
 
 func _add_toggle_button(label: String, key: String, pos: Vector2, value: bool) -> void:
 	_add_action_button("%s：%s" % [label, "開" if value else "關"], pos, func() -> void:

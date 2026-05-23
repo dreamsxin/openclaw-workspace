@@ -38,6 +38,7 @@ standalone/godot-mvp/
     heroes_mvp.json
     gacha_pools_mvp.json
     live_ops_mvp.json
+    adventure_mvp.json
     draw_pool_summary.json
     hero_resource_map.json
   assets/spine/
@@ -65,6 +66,8 @@ standalone/godot-mvp/
 - 角色详情：按 `CommonHeroView` 的角色信息页职责显示获得状态、稀有度、碎片、获得途径、资源路径和 Spine key；未获得角色叠加锁定遮罩，已获得角色可设为看板。
 - 记录：抽卡历史。
 - 商店：源石兑换喚靈券，并跳转每日补给、邮件、任务。
+- 战役：`adventure_mvp.json` 驱动离线章节，按玩家战力判定挑战，胜利推进关卡并发放喚靈券、源石和角色碎片。
+- 挂机收益：每日可收取一次喚靈券、源石和碎片，作为单机循环的稳定资源入口。
 - 章节任务：按抽卡次数、收集数量发放喚靈券和源石，替代原 `InitPnlTask/ChapterTask` 的 MVP 版本。
 - 每日补给：按本地日期每日领取一次资源。
 - 邮件：提供启动补给和回归补给，模拟原游戏邮件奖励入口。
@@ -92,9 +95,13 @@ standalone/godot-mvp/
   "pity": {},
   "history": [],
   "draw_count": 0,
+  "battle_count": 0,
+  "max_stage_id": 0,
+  "next_stage_id": 101,
   "claimed_tasks": {},
   "claimed_mail": {},
   "daily_claimed_date": "",
+  "afk_claimed_date": "",
   "selected_hero_id": 240065,
   "active_pool_id": "advanced"
 }
@@ -109,6 +116,7 @@ standalone/godot-mvp/
 | `data/heroes_mvp.json` | 角色基础信息、稀有度和立绘/Spine key |
 | `data/gacha_pools_mvp.json` | 卡池、UP、消耗、保底、概率、UP 权重、重复碎片、Static 来源 |
 | `data/live_ops_mvp.json` | 每日补给、商店兑换、章节任务、邮件奖励 |
+| `data/adventure_mvp.json` | 单机战役章节、关卡推荐战力、通关奖励、每日挂机收益 |
 | `data/draw_pool_summary.json` | 逆向导出的抽卡表摘要 |
 | `data/hero_resource_map.json` | 逆向导出的角色资源映射 |
 
@@ -318,7 +326,7 @@ python scripts\assets\export_unity_bundle_images.py `
 - 喚靈演出和结果页使用 `lottery_img_60.png`、`lottery_img_60_l/r.png`。
 - 图鉴卡片、抽卡结果格和缺少 baked Spine 的角色展示会使用 `portraitResource` 作为静态兜底。
 - `LotteryDrawMainView` 的单抽/十连按钮叠加原 `lottery_btn_05/06` 底图。
-- 新增 `SHAONV_MVP_START_VIEW=gacha|gallery|hero_detail` 调试入口，`hero_detail` 可配合 `SHAONV_MVP_HERO_ID=240065` 直接回归角色详情页。
+- 新增 `SHAONV_MVP_START_VIEW=gacha|battle|gallery|hero_detail` 调试入口，`hero_detail` 可配合 `SHAONV_MVP_HERO_ID=240065` 直接回归角色详情页。
 
 截图验证：
 
