@@ -202,7 +202,55 @@ MainUIView (全屏, anchor 0-0 → 1-1)
 
 ---
 
-## 4. 关键区域精确坐标
+## 4. C# IL 分析：状态机与面板分组
+
+> 2026-05-23 补充：从 `reverse-output/managed/Assembly-CSharp-ui-callgraph/MainUIView.il.txt` 反编译 IL 中提取。
+
+### 4.1 `listPanel` 面板组
+
+原游戏中 `MainUIView` 并不是所有面板同时显示。以下 6 个面板被收集到 `listPanel` 中，作为一个整体控制显隐：
+
+```
+listPanel = [pnlChat, pnlFunny, pnlPlayerInfo, pnlCommercialization, btnChapterInfo, pnlBottom]
+```
+
+### 4.2 `ShowOrHide()` 方法
+
+`ShowOrHide()` 执行以下逻辑：
+
+1. 遍历 `listPanel`，对整个组调用 `SetActive(false/true)`
+2. 同步隐藏/显示 `@TopBar`
+3. 同步隐藏/显示 `btnBodyMask`
+4. 更新 `btnEye` 和 `btnChange` 状态
+
+这意味着原游戏有一个**壁纸聚焦模式**：隐藏所有 UI 面板，仅展示 WallpaperPanel 和角色，用户通过 `btnEye`/`btnBodyMask` 切换。
+
+### 4.3 `btnGal` 独立入口
+
+`btnGal` 不是普通底栏按钮，有以下特殊标识：
+
+| 特征 | 值 |
+|------|-----|
+| 红点键 | `Gal.GalEntry.5799`（独立于底部栏其他按钮的红点体系）|
+| 尺寸 | 115×129（其他底栏按钮 86×50）|
+| 向上突出 | 79px（pos=(0,40)，父容器 pnlGal 仅 115×50）|
+| 特效 | @fx05（gyunlizi2 等粒子特效）|
+
+这表明 `btnGal` 是一个**独立入口按钮**，会打开/切换到 Gal/约会相关界面，不应和底栏其他 6 个按钮（武将/背包/宠物/养成/任务/军团）混在同一交互层。
+
+### 4.4 状态机设计
+
+基于以上发现，MainUIView 应实现 **3 个状态**：
+
+| 状态 | 显示内容 | 触发方式 |
+|------|---------|---------|
+| `main_normal` | listPanel 全显示 + TopBar + btnGal | 默认状态 |
+| `wallpaper_focus` | 仅 WallpaperPanel + 角色 + pnlCtl | btnEye / btnBodyMask / 点击角色 |
+| `gal_entry` | Gal/约会首屏（覆盖或切换） | btnGal 点击 |
+
+---
+
+## 5. 关键区域精确坐标
 
 所有坐标为 (anchoredPosition.x, anchoredPosition.y) + (sizeDelta.x, sizeDelta.y)，原始 Canvas 1670×750。
 
@@ -340,13 +388,22 @@ pnlGift 包含 15 个子面板（12 个 LimitIconView + Question + BuryGift + Di
 
 ---
 
-## 5. Godot MVP vs Prefab 对比
+## 6. Godot MVP vs Prefab 对比
 
 对比对象：
 - **原始**：MainUIView.prefab (1670×750)
 - **当前**：home_screen.gd (1280×720)
 
-### 5.1 十大偏差
+> **重要前提**：原游戏通过 `listPanel` + `ShowOrHide()` 实现状态切换，不是所有面板同时显示。以下偏差中部分"布局重叠"实际是 Godot 未实现状态切换导致的。
+
+### 6.1 架构级偏差（状态机缺失）
+
+| # | 问题 | 原逻辑 | Godot 当前 | 影响 |
+|---|------|--------|-----------|------|
+| 0 | **无状态切换** | ShowOrHide() 控制 listPanel 整组显隐 + btnEye/btnBodyMask 切换 | 全部组件画在同一状态 | 🔴 所有面板重叠，壁纸无法独占全屏 |
+| — | **btnGal 混入底栏** | 独立入口，独立红点 Gal.GalEntry.5799，115×129 突出 | 和底栏其他按钮等大 (100×52) | 🔴 约会入口降级为普通按钮 |
+
+### 6.2 布局级偏差
 
 | # | 问题 | 原 prefab | Godot 当前 | 影响 |
 |---|------|-----------|-----------|------|
@@ -355,13 +412,15 @@ pnlGift 包含 15 个子面板（12 个 LimitIconView + Question + BuryGift + Di
 | 3 | **btnHarvest 尺寸** | 106×106 大按钮(带时间显示) | 104×42 小文本按钮 | 收获入口缺失真实布局 |
 | 4 | **svRes 资源栏** | ScrollRect + 图标(ItemResources) | 纯文本 "邮件%d 喚靈券%s" | 顶部资源区缺失真实图标 |
 | 5 | **pnlCommercialization** | 独立区域 416×420, 12 LimitIconView | 混入 pnlFunny, 文本替代 | 商业化区域缺失 |
+
+### 6.2 布局级偏差
 | 6 | **btnChapterInfo 挂机** | 挂机收益在 btnHarvest 内 | 额外添加独立区域 | 结构冗余 |
 | 7 | **btnGal 尺寸** | 115×129 向上突出到画面内 | 100×52 等大 | 约会入口尺寸/位置错误 |
 | 8 | **pnlBottom 高度** | **50px** | **102px**(高一倍) | 底部栏过高 |
 | 9 | **红点覆盖** | 所有按钮都有 @pnlRd | 仅部分有 | 系统反馈缺失 |
 | 10 | **按钮分隔线** | 底部栏按钮间 2×18 Image | 全缺 | 视觉不精确 |
 
-### 5.2 按区域详细对比
+### 6.3 按区域详细对比
 
 #### WallpaperPanel
 | 项 | Prefab | Godot | 状态 |
@@ -444,7 +503,7 @@ pnlGift 包含 15 个子面板（12 个 LimitIconView + Question + BuryGift + Di
 
 ---
 
-## 6. 缺失资源清单（需从 bundle 补充导出）
+## 7. 缺失资源清单（需从 bundle 补充导出）
 
 ### 6.1 TopResGrid 资源图标
 
@@ -466,11 +525,24 @@ pnlGift 包含 15 个子面板（12 个 LimitIconView + Question + BuryGift + Di
 
 ---
 
-## 7. 下一步建议
+## 8. 下一步建议
 
-1. **修正 home_screen.gd 坐标** — 按 prefab 精确 RectTransform 逐区域调整
-2. **补充缺失资源** — 导出 ItemResources、Common 图集、活动图标
-3. **pnlFunnyContent 重排** — 4 个 88×102 等大按钮水平布局
-4. **pnlCharge 改垂直** — 5 个按钮 VLG 垂直堆叠
-5. **pnlBottom 精简** — 高度从 102 缩到 50，btnGal 向上突出
-6. **红点全覆盖** — 每个功能按钮旁添加 @pnlRd
+按优先级排列：
+
+### 8.1 P0：实现状态机
+1. **拆 `main_normal` 状态** — listPanel 6 面板 + TopBar + btnGal 作为独立入口
+2. **拆 `wallpaper_focus` 状态** — 隐藏 listPanel，btnEye/btnBodyMask 切换，仅显示角色+壁纸
+3. **拆 `gal_entry` 状态** — btnGal 点击后进入 Gal/约会首屏覆盖层
+4. **btnGal 独立处理** — 不再混入底栏按钮组，独立渲染 115×129 突出尺寸
+
+### 8.2 P1：修正布局坐标
+1. **pnlFunnyContent 重排** — 4 个 88×102 等大按钮水平布局
+2. **pnlCharge 改垂直** — 5 个按钮 VLG 垂直堆叠
+3. **pnlBottom 精简** — 高度从 102 缩到 50，btnGal 向上突出
+4. **红点全覆盖** — 每个功能按钮旁添加 @pnlRd
+5. **按钮分隔线** — 底部栏按钮间 2×18 分隔线
+
+### 8.2 P2：补充资源
+1. **svRes 图标** — 导出 ItemResources 精灵
+2. **pnlCommercialization** — 独立区域 + LimitIconView 图标
+3. **Common 图集** — 底部栏和其他按钮的真实图标
