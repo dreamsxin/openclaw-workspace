@@ -236,11 +236,83 @@ Godot Spine runtime 源码分析见 `docs/shaonv-godot-spine-runtime-analysis.md
 - Spine GDExtension 运行时尚未接入；当前采用 baked Spine 动画，适合 MVP 展示，但不支持运行时换装和混合动画。
 - 原游戏 reward 掉落表仍需继续展开；当前概率和重复碎片已数据化，但仍是基于 `drawconfig/ac_limit_draw` 字段的 MVP 近似规则。
 
-## 11. 下一步
+## 11. 原游戏资源接入更新
+
+2026-05-23 已完成第一批原游戏 UI 资源接入 Godot MVP。
+
+资源导出来源：
+
+```text
+reverse-output/assets/yoo-physical-map/physical-asset-map.csv
+reverse-output/scripts/export-unitypy-all-assets.py
+reverse-output/godot-resource-export/
+```
+
+本轮用 `physical-asset-map.csv` 反查已闭合物理包，并用 UnityPy 按 `--xor-prefix 222 --xor-key 0x16 --container-paths` 导出图片资源。中间导出目录为 `reverse-output/godot-resource-export/`，最终纳入 Godot 工程的资源目录为：
+
+```text
+standalone/godot-mvp/assets/ui/
+  background/
+  login/
+  lottery/
+  mainui/
+```
+
+已接入 Godot 的 PNG：
+
+| 目录 | 文件 | 用途 |
+|---|---|---|
+| `assets/ui/background` | `login_bg_01.png` | `LoginView` 背景 |
+| `assets/ui/background` | `mainui_bg_01.png` | `MainUIView` 主城背景 |
+| `assets/ui/background` | `mainui_bg_02.png` | 后续 MainUI 背景候选 |
+| `assets/ui/login` | `logo.png` | 登录页 logo |
+| `assets/ui/login` | `server_bg_03.png` | 登录页服务器栏 |
+| `assets/ui/login` | `server_bg_011.png` | 后续服务器选择背景候选 |
+| `assets/ui/login` | `server_bg_107.png` | 后续服务器状态条候选 |
+| `assets/ui/login` | `login_btn_03.png` | 后续登录按钮图候选 |
+| `assets/ui/lottery` | `lottery_img_01.png` | `LotteryDrawMainView` 背景 |
+| `assets/ui/lottery` | `lottery_img_02.png` | 抽卡背景候选 |
+| `assets/ui/lottery` | `lottery_img_03.png` | 抽卡横向装饰候选 |
+| `assets/ui/lottery` | `lottery_img_60.png` | 抽卡演出/结果背景 |
+| `assets/ui/lottery` | `lottery_img_60_l.png` | 抽卡演出左侧光效 |
+| `assets/ui/lottery` | `lottery_img_60_r.png` | 抽卡演出右侧光效 |
+| `assets/ui/lottery` | `lottery_img_alpha_l.png` | 抽卡页左侧装饰光 |
+| `assets/ui/lottery` | `lottery_img_alpha_r.png` | 抽卡页右侧装饰光 |
+| `assets/ui/mainui` | `mainui_img_01.png` | 后续主界面装饰候选 |
+| `assets/ui/mainui` | `mainui_img_10.png` | 当前 MainUI 顶部装饰条 |
+| `assets/ui/mainui` | `mainui_img_12.png` | 后续主界面装饰候选 |
+| `assets/ui/mainui` | `mainui_img_44.png` | 后续主界面整屏候选 |
+
+代码接入：
+
+- `main.gd` 新增 UI 资源常量和 `_draw_image()` helper。
+- `LoginView` 优先显示 `login_bg_01.png`、`logo.png`、`server_bg_03.png`。
+- `MainUIView` 背景替换为 `mainui_bg_01.png`，并叠加 `mainui_img_10.png` 装饰。
+- `LotteryDrawMainView` 背景替换为 `lottery_img_01.png`，并叠加 `lottery_img_alpha_l/r.png`。
+- 喚靈演出和结果页使用 `lottery_img_60.png`、`lottery_img_60_l/r.png`。
+- 新增 `SHAONV_MVP_START_VIEW=gacha` 调试入口，便于直接回归抽卡页。
+
+截图验证：
+
+```text
+tmp/screenshots/resource-login.png
+tmp/screenshots/resource-main.png
+tmp/screenshots/resource-gacha.png
+```
+
+命令行校验：
+
+```powershell
+.\Godot\Godot_console.exe --headless --path standalone\godot-mvp --quit-after 2
+```
+
+校验可通过。当前仍会出现源码运行阶段直接 `Image.load()` PNG 的 Godot 警告，这是此前为避免缺少 `.godot/imported/*.ctex` 所采用的运行策略；导出正式包前再切回 Godot 导入资源流程。
+
+## 12. 下一步
 
 1. 用 Godot 编辑器检查布局并调整主题、字体、按钮样式。
-2. 使用 AssetStudio 或继续修 YooAsset 解码，导出 `Assets/Game/RawAssets/Sprite/Login` 原图，替换当前登录页几何占位。
-3. 导出 `Assets/Game/RawAssets/Sprite/MainUI`、`Prefabs/UI/MainUI/MainUIView` 相关图片和 RectTransform，替换当前 MainUIView 几何占位。
+2. 继续接入登录页按钮、服务器选择弹层、公告/修复弹层的真实 UI 切片。
+3. 导出 `Prefabs/UI/MainUI/MainUIView` 的 RectTransform 与按钮图，替换当前 MainUIView 几何按钮。
 4. 用真实掉落表替换当前 MVP 概率。
 5. 将 `HeroRecruitView/LotteryDrawMainView/LotteryDrawFinishView` 的结构分析转成 Godot Control 节点重建清单。
 6. 把抽卡结果演出、角色详情页、商店和图鉴筛选做成独立 scene，降低 `main.gd` 复杂度。

@@ -165,3 +165,41 @@ python reverse-output\scripts\export-unitypy-all-assets.py `
 2. 对 `ui-prefab-export` 中导出的 `GameObject/MonoBehaviour/RectTransform` 做结构分析，整理按钮、节点、动画字段。
 3. 用 `physical-asset-map.csv` 批量导出当前已经存在的头像、方形头像、道具图标、`LotteryDrawMainView` 依赖资源。
 4. 将已导出的 `hero_001/005/016/017` Spine 三件套纳入单机版资源清单。
+
+## 8. Godot UI 资源导出更新
+
+时间：2026-05-23
+
+本轮已用修复后的物理映射继续导出一批可直接接入 Godot 的 UI 图片。导出命令模式：
+
+```powershell
+python reverse-output\scripts\export-unitypy-all-assets.py `
+  <physicalPath> `
+  reverse-output\godot-resource-export\<asset-key> `
+  --xor-prefix 222 --xor-key 0x16 --container-paths `
+  --types Texture2D,Sprite,TextAsset,AudioClip
+```
+
+已验证导出的关键资源：
+
+| asset | physicalPath | Godot 落盘 |
+|---|---|---|
+| `Assets/Game/RawAssets/Sprite/BackGround/login_bg_01.png` | `files/yoo/Default/UnpackBundleFiles/64/647bb3f8d07da0f5cd3a427cfe667d46/__data` | `standalone/godot-mvp/assets/ui/background/login_bg_01.png` |
+| `Assets/Game/RawAssets/Sprite/BackGround/mainui_bg_01.png` | `files/yoo/Default/UnpackBundleFiles/49/49b67212a5ba7c5e4687eac6a8a4be81/__data` | `standalone/godot-mvp/assets/ui/background/mainui_bg_01.png` |
+| `Assets/Game/RawAssets/Sprite/BackGround/mainui_bg_02.png` | `files/yoo/Default/BundleFiles/a2/a274e17038bc58235f710bf98e4df2af/__data` | `standalone/godot-mvp/assets/ui/background/mainui_bg_02.png` |
+| `Assets/Game/RawAssets/Sprite/Login/logo.png` | `files/yoo/Default/BundleFiles/9a/9a3ce25ebc12cd55eb20007f97759139/__data` | `standalone/godot-mvp/assets/ui/login/logo.png` |
+| `Assets/Game/RawAssets/Sprite/Login/server_bg_011.png` | `files/yoo/Default/BundleFiles/ec/ec1e093af2768ed42aa90abb8eb8ab17/__data` | `standalone/godot-mvp/assets/ui/login/server_bg_011.png` |
+| `Assets/Game/RawAssets/Sprite/Login/server_bg_03.png` | `resources/assets/yoo/Default/8cfe4e0148670640e919adc92c841d6c.bundle` | `standalone/godot-mvp/assets/ui/login/server_bg_03.png` |
+| `Assets/Game/RawAssets/Sprite/LotteryDraw/lottery_img_01.png` | `files/yoo/Default/BundleFiles/cb/cb842e65b448fd2ec0239d59ac06ec4e/__data` | `standalone/godot-mvp/assets/ui/lottery/lottery_img_01.png` |
+| `Assets/Game/RawAssets/Sprite/LotteryDraw/lottery_img_60.png` | `files/yoo/Default/BundleFiles/6f/6f3e9fad14c7d3f7a80030bce905ca31/__data` | `standalone/godot-mvp/assets/ui/lottery/lottery_img_60.png` |
+| `Assets/Game/RawAssets/Sprite/LotteryDraw/lottery_img_60_l.png` | `files/yoo/Default/BundleFiles/34/347e79afc81c357688dd4e227245cf40/__data` | `standalone/godot-mvp/assets/ui/lottery/lottery_img_60_l.png` |
+| `Assets/Game/RawAssets/Sprite/LotteryDraw/lottery_img_60_r.png` | `files/yoo/Default/BundleFiles/fd/fd3599bc4553b4b7038540e13ef1b276/__data` | `standalone/godot-mvp/assets/ui/lottery/lottery_img_60_r.png` |
+| `Assets/Game/RawAssets/Sprite/LotteryDraw/lottery_img_alpha_l.png` | `files/yoo/Default/BundleFiles/e6/e6883b47610377ea2569656d24e93dd3/__data` | `standalone/godot-mvp/assets/ui/lottery/lottery_img_alpha_l.png` |
+| `Assets/Game/RawAssets/Sprite/LotteryDraw/lottery_img_alpha_r.png` | `files/yoo/Default/BundleFiles/8d/8dc442e5b977e42220a8af07e1940cfc/__data` | `standalone/godot-mvp/assets/ui/lottery/lottery_img_alpha_r.png` |
+| `Assets/Game/RawAssets/Sprite/MainUI/mainui_img_10.png` | `files/yoo/Default/UnpackBundleFiles/81/81efe3519683f820516e21458a06ca24/__data` | `standalone/godot-mvp/assets/ui/mainui/mainui_img_10.png` |
+
+结论更新：
+
+- `physical-asset-map.csv` 已足够支撑一批 Login/MainUI/LotteryDraw 图片导出。
+- 这些资源已经接入 Godot MVP，登录页、主界面、抽卡页和抽卡演出/结果页不再只依赖几何色块。
+- 中间导出目录 `reverse-output/godot-resource-export/` 仅作为可复现导出记录；Godot 实际运行依赖 `standalone/godot-mvp/assets/ui/`。

@@ -270,3 +270,63 @@ assetPath -> bundleID -> bundleName -> 当前磁盘物理文件
 - 骨骼动画能实现，已验证 `hero_003Dh` 拥有完整 Spine 三件套。
 - 下一步导出优先级是角色 Spine 三件套、角色静态图、抽卡 UI prefab 结构、抽卡 UI 图集、结果特效、音效、真实掉落表。
 - 在 manifest 物理映射补齐前，不应大规模写死 bundle hash；应以 dry-run 结果和已验证导出为准。
+
+## 8. Unity Hub 已安装后的方案再评估
+
+时间：2026-05-23
+
+本机已经安装 Unity Hub 后，Unity 方案的可行性提高，但不建议立刻把当前单机 MVP 主线从 Godot 切回 Unity。
+
+### 是否会更快
+
+短期“做出能玩闭环”不一定更快。当前 Godot MVP 已经跑通：
+
+```text
+启动/登录 -> 主界面 -> 抽卡 -> 结果 -> 图鉴/角色详情 -> 记录/商店/任务/邮件 -> 本地存档
+```
+
+并且已经接入：
+
+- 5 个代表角色 baked Spine 动画。
+- Login/MainUI/LotteryDraw 第一批原游戏 PNG。
+- 本地 JSON 数据驱动的卡池、运营补给和存档。
+
+如果切到 Unity，需要重新搭工程、搭本地数据层、重写 UI 流程、处理导入设置、处理 Spine Runtime 版本、处理 Android/PC 打包配置。即使 Unity 对原始资源格式更友好，第一轮迁移成本会抵消这部分优势。
+
+### 是否会更好
+
+Unity 在“高还原”方向有优势：
+
+- 更容易复用 Unity 原资源类型：Prefab、UGUI、AnimatorController、Material、ParticleSystem。
+- Spine-Unity 运行时生态成熟，理论上更适合直接播放 `.skel.bytes + .atlas.txt + .png` 并做动画混合、事件、换装。
+- 如果后续目标是高度贴近原手游 UI 动效和材质表现，Unity 是更自然的还原环境。
+
+但当前项目的实际约束仍然存在：
+
+- YooAsset 包虽然已能解密和映射，但 Unity 工程不能直接“打开原项目”；仍要从导出的 AssetBundle/Prefab/Texture/MonoBehaviour 数据重建可编辑工程。
+- 原游戏热更 C# 逻辑依赖大量线上服务、SDK、RPC、StaticCenter、ModelCenter、EventCenter，不能简单复制进 Unity 后直接运行。
+- Unity 授权、版本、发布链路和项目体积仍比 Godot 重。
+- 当前 Godot baked Spine 路线已经满足 MVP 展示，不支持运行时换装/混合动画的问题可以后置。
+
+### 建议决策
+
+当前主线建议保持：
+
+```text
+Godot = 单机 MVP 和可运行产品主线
+Unity = 高还原验证/资源还原实验线
+```
+
+更具体地说：
+
+1. 不要中断 Godot MVP。继续把真实 Login/MainUI/LotteryDraw/角色资源接进去，并拆分 scene 降低 `main.gd` 复杂度。
+2. 可以新建一个小型 Unity 验证工程，只做两件事：
+   - 导入一个已导出的角色 Spine 三件套，验证 Spine-Unity 直接播放 `wait/wait1`。
+   - 导入 `LotteryDrawMainView` / `HeroRecruitView` 的导出 prefab 数据，评估 RectTransform/UGUI 还原成本。
+3. 只有当 Unity 验证工程证明“prefab + Spine + UI 图集”能明显低成本还原，并且能稳定离线运行时，再考虑把 Unity 升为主线。
+
+因此当前结论是：
+
+- 想更快完成可玩的单机版：继续 Godot。
+- 想更高还原原手游表现：并行做 Unity 技术验证。
+- 不建议现在整体迁移到 Unity；最佳下一步是保留 Godot 主线，同时用 Unity Hub 做一个小规模验证分支。

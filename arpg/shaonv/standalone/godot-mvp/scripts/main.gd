@@ -5,6 +5,17 @@ const HERO_DATA_PATH := "res://data/heroes_mvp.json"
 const POOL_DATA_PATH := "res://data/gacha_pools_mvp.json"
 const LIVE_OPS_DATA_PATH := "res://data/live_ops_mvp.json"
 const BAKED_SPINE_CANVAS := preload("res://scripts/spine_baked_preview_canvas.gd")
+const UI_LOGIN_BG := "res://assets/ui/background/login_bg_01.png"
+const UI_MAIN_BG := "res://assets/ui/background/mainui_bg_01.png"
+const UI_LOGIN_LOGO := "res://assets/ui/login/logo.png"
+const UI_LOGIN_SERVER_BG := "res://assets/ui/login/server_bg_03.png"
+const UI_LOTTERY_BG := "res://assets/ui/lottery/lottery_img_01.png"
+const UI_LOTTERY_STAGE_BG := "res://assets/ui/lottery/lottery_img_60.png"
+const UI_LOTTERY_LIGHT_L := "res://assets/ui/lottery/lottery_img_60_l.png"
+const UI_LOTTERY_LIGHT_R := "res://assets/ui/lottery/lottery_img_60_r.png"
+const UI_LOTTERY_ALPHA_L := "res://assets/ui/lottery/lottery_img_alpha_l.png"
+const UI_LOTTERY_ALPHA_R := "res://assets/ui/lottery/lottery_img_alpha_r.png"
+const UI_MAIN_TOP_ACCENT := "res://assets/ui/mainui/mainui_img_10.png"
 
 var heroes: Array = []
 var pools: Array = []
@@ -157,6 +168,9 @@ func _show_start_view_from_env() -> void:
 		_show_loading()
 	elif start_view == "main":
 		_enter_main_scene()
+	elif start_view == "gacha":
+		_enter_main_scene()
+		_show_gacha()
 	else:
 		_show_launch()
 
@@ -231,18 +245,21 @@ func _show_login() -> void:
 	_clear("登入")
 	content.position = Vector2(0, 0)
 	content.size = Vector2(1280, 720)
-	_draw_startup_backdrop(Color(0.08, 0.056, 0.046), Color(0.018, 0.014, 0.012, 0.50))
+	_draw_image(UI_LOGIN_BG, Vector2(0, 0), Vector2(1280, 720), true)
+	content.add_child(_panel(Vector2(0, 0), Vector2(1280, 720), Color(0.018, 0.014, 0.012, 0.22)))
 	_draw_hero_stage(_hero_by_id(int(save.get("selected_hero_id", 240065))), Vector2(660, 64), Vector2(560, 586), false)
-	var logo := _label("少女回戰", 54, HORIZONTAL_ALIGNMENT_CENTER)
-	logo.position = Vector2(108, 112)
-	logo.size = Vector2(430, 82)
-	content.add_child(logo)
+	if _draw_image(UI_LOGIN_LOGO, Vector2(124, 92), Vector2(340, 146), false) == null:
+		var logo := _label("少女回戰", 54, HORIZONTAL_ALIGNMENT_CENTER)
+		logo.position = Vector2(108, 112)
+		logo.size = Vector2(430, 82)
+		content.add_child(logo)
 	var version := _label("ver 1.0.0   app offline   res local", 16)
 	version.position = Vector2(24, 676)
 	version.size = Vector2(420, 28)
 	content.add_child(version)
-	var server_card := _panel(Vector2(116, 246), Vector2(440, 72), Color(0.09, 0.065, 0.052, 0.88))
-	content.add_child(server_card)
+	if _draw_image(UI_LOGIN_SERVER_BG, Vector2(106, 238), Vector2(468, 90), false) == null:
+		var server_card := _panel(Vector2(116, 246), Vector2(440, 72), Color(0.09, 0.065, 0.052, 0.88))
+		content.add_child(server_card)
 	var server_title := _label("推薦伺服器", 18)
 	server_title.position = Vector2(144, 254)
 	server_title.size = Vector2(150, 26)
@@ -323,10 +340,12 @@ func _show_home() -> void:
 
 func _show_gacha() -> void:
 	_clear("抽卡")
-	var bg := _panel(Vector2(0, 0), Vector2(1280, 646), Color(0.09, 0.075, 0.075))
-	content.add_child(bg)
+	_draw_image(UI_LOTTERY_BG, Vector2(0, 0), Vector2(1280, 646), true)
+	content.add_child(_panel(Vector2(0, 0), Vector2(1280, 646), Color(0.02, 0.015, 0.016, 0.22)))
+	_draw_image(UI_LOTTERY_ALPHA_L, Vector2(286, 74), Vector2(360, 132), false, Color(1, 1, 1, 0.62))
+	_draw_image(UI_LOTTERY_ALPHA_R, Vector2(824, 78), Vector2(360, 110), false, Color(1, 1, 1, 0.62))
 
-	var left_panel := _panel(Vector2(22, 22), Vector2(264, 586), Color(0.13, 0.105, 0.095, 0.92))
+	var left_panel := _panel(Vector2(22, 22), Vector2(264, 586), Color(0.045, 0.032, 0.030, 0.78))
 	content.add_child(left_panel)
 
 	var x := 42.0
@@ -382,9 +401,12 @@ func _show_draw_animation(count: int) -> void:
 	var pool := _pool_by_id(str(save.get("active_pool_id", "advanced")))
 	var cost := count * int(pool.get("ticketCost", 1))
 	_clear("喚靈演出")
-	content.add_child(_panel(Vector2(0, 0), Vector2(1280, 646), Color(0.035, 0.028, 0.032, 1.0)))
-	content.add_child(_panel(Vector2(252, 70), Vector2(776, 420), Color(0.11, 0.088, 0.08, 0.92)))
-	content.add_child(_panel(Vector2(300, 116), Vector2(680, 240), Color(0.65, 0.42, 0.16, 0.14)))
+	_draw_image(UI_LOTTERY_STAGE_BG, Vector2(0, 0), Vector2(1280, 646), true)
+	content.add_child(_panel(Vector2(0, 0), Vector2(1280, 646), Color(0.018, 0.014, 0.018, 0.46)))
+	_draw_image(UI_LOTTERY_LIGHT_L, Vector2(0, 0), Vector2(640, 646), true, Color(1, 1, 1, 0.54))
+	_draw_image(UI_LOTTERY_LIGHT_R, Vector2(640, 0), Vector2(640, 646), true, Color(1, 1, 1, 0.54))
+	content.add_child(_panel(Vector2(252, 70), Vector2(776, 420), Color(0.055, 0.042, 0.042, 0.78)))
+	content.add_child(_panel(Vector2(300, 116), Vector2(680, 240), Color(0.75, 0.48, 0.18, 0.12)))
 
 	var title := _label("喚靈儀式", 42, HORIZONTAL_ALIGNMENT_CENTER)
 	title.position = Vector2(390, 92)
@@ -777,14 +799,15 @@ func _duplicate_shards(pool: Dictionary, rarity: int) -> int:
 	return int(shards.get(str(rarity), shards.get("2", 3)))
 
 func _draw_wallpaper_stage(hero: Dictionary) -> void:
-	var sky := _panel(Vector2(0, 0), Vector2(1280, 646), Color(0.070, 0.058, 0.050))
-	content.add_child(sky)
+	_draw_image(UI_MAIN_BG, Vector2(0, 0), Vector2(1280, 646), true)
+	content.add_child(_panel(Vector2(0, 0), Vector2(1280, 646), Color(0.018, 0.014, 0.012, 0.18)))
 	var upper_shadow := _panel(Vector2(0, 0), Vector2(1280, 110), Color(0.015, 0.012, 0.010, 0.34))
 	content.add_child(upper_shadow)
 	var floor := _panel(Vector2(0, 444), Vector2(1280, 202), Color(0.043, 0.037, 0.034))
 	content.add_child(floor)
 	var wallpaper := _panel(Vector2(258, 14), Vector2(752, 548), Color(0.118, 0.090, 0.073, 0.38))
 	content.add_child(wallpaper)
+	_draw_image(UI_MAIN_TOP_ACCENT, Vector2(366, 26), Vector2(430, 38), false, Color(1, 1, 1, 0.72))
 	content.add_child(_panel(Vector2(258, 560), Vector2(752, 2), Color(0.86, 0.65, 0.32, 0.28)))
 	_draw_hero_stage(hero, Vector2(574, -18), Vector2(548, 600), false)
 
@@ -878,8 +901,11 @@ func _draw_home_status() -> void:
 func _draw_result_stage(result: Dictionary) -> void:
 	var hero: Dictionary = result.get("hero", _hero_by_id(240065))
 	var rarity := int(result.get("rolled_rarity", hero.get("rarity", 1)))
-	var bg_color := Color(0.34, 0.25, 0.12) if rarity >= 4 else Color(0.12, 0.105, 0.16)
-	content.add_child(_panel(Vector2(0, 0), Vector2(1280, 646), bg_color))
+	var bg_path := UI_LOTTERY_STAGE_BG if rarity >= 4 else UI_LOTTERY_BG
+	_draw_image(bg_path, Vector2(0, 0), Vector2(1280, 646), true)
+	content.add_child(_panel(Vector2(0, 0), Vector2(1280, 646), Color(0.02, 0.014, 0.016, 0.40)))
+	_draw_image(UI_LOTTERY_LIGHT_L, Vector2(0, 0), Vector2(640, 430), true, Color(1, 1, 1, 0.42))
+	_draw_image(UI_LOTTERY_LIGHT_R, Vector2(640, 0), Vector2(640, 430), true, Color(1, 1, 1, 0.42))
 	content.add_child(_panel(Vector2(254, 40), Vector2(772, 360), _rarity_color(rarity, 0.16)))
 	content.add_child(_panel(Vector2(320, 72), Vector2(640, 292), _rarity_color(rarity, 0.12)))
 	var title_text := "源神降臨" if rarity >= 4 else "喚靈結果"
@@ -974,6 +1000,20 @@ func _load_png_source_texture(path: String) -> Texture2D:
 		push_warning("Failed to load PNG source: %s error=%d" % [path, error])
 		return null
 	return ImageTexture.create_from_image(image)
+
+func _draw_image(path: String, pos: Vector2, draw_size: Vector2, cover := false, tint := Color(1, 1, 1, 1)) -> TextureRect:
+	var source_texture := _load_png_source_texture(path)
+	if source_texture == null:
+		return null
+	var rect := TextureRect.new()
+	rect.texture = source_texture
+	rect.position = pos
+	rect.size = draw_size
+	rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED if cover else TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	rect.modulate = tint
+	content.add_child(rect)
+	return rect
 
 func _show_gacha_rate() -> void:
 	_clear("概率")
