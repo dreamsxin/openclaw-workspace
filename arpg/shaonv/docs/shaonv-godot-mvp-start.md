@@ -348,7 +348,58 @@ tmp/screenshots/resource-gacha.png
 
 校验可通过。当前仍会出现源码运行阶段直接 `Image.load()` PNG 的 Godot 警告，这是此前为避免缺少 `.godot/imported/*.ctex` 所采用的运行策略；导出正式包前再切回 Godot 导入资源流程。
 
-## 12. 下一步
+## 12. 2026-05-23 prefab layout restart
+
+因前一轮对“现世”入口后续界面的判断存在偏差，本轮开始把还原顺序重置为：
+
+1. 先以 Unity prefab 的 `RectTransform` 层级为事实源，复刻启动页与 `MainUIView` 第一屏布局。
+2. 再按主界面已存在菜单入口，逐个复刻子界面。
+3. 抽卡“现世/幻灵”子界面暂停主观推断，后续必须先抽取对应 prefab、真实 UI 图集与 Spine 展示链路。
+
+新增可复用工具：
+
+```powershell
+python scripts\assets\inspect_unity_prefab_layout.py `
+  --repo-root . `
+  --markdown docs\shaonv-prefab-layout-restart-2026-05-23.md `
+  --markdown-depth 4
+```
+
+该工具会通过 `reverse-output/assets/yoo-physical-map/physical-asset-map.csv` 解析 prefab 物理包，处理 YooAsset 前 222 bytes XOR，输出：
+
+```text
+reverse-output/godot-layout-inspect/LaunchView.layout.json
+reverse-output/godot-layout-inspect/LoginView.layout.json
+reverse-output/godot-layout-inspect/LoadingView.layout.json
+reverse-output/godot-layout-inspect/MainUIView.layout.json
+reverse-output/godot-layout-inspect/TopResGrid.layout.json
+docs/shaonv-prefab-layout-restart-2026-05-23.md
+```
+
+本次抽取到的关键结论：
+
+- `LaunchView.prefab` 实际只有 `LaunchView/Image/RawImage/video` 四个节点，Godot 启动页已改为以全屏 RawImage/video 占位为主。
+- `LoginView.prefab` 包含 `imgBg`、`pnl`、`btnLogin`、`pnlFunction`、`pnlVersion`、`imgLogo`、`btnServerSel`、`inputAccount`、`@richUrl/togAgree` 等节点；Godot 登录页已按中轴布局重排。
+- `LoadingView.prefab` 是 `imgBg + txtPercent + sldSpeed`，进度条在底部；Godot 载入页已改到底部进度条布局。
+- `MainUIView.prefab` 不是外挂顶栏加内容区，而是 `MainUIView/pnlAdapter` 全屏布局；核心一层节点为 `@WallpaperPanel`、`@TopBar`、`pnlPlayerInfo`、`pnlFunny`、`pnlCommercialization`、`btnChapterInfo`、`pnlBottom`、`pnlChat`。
+- Godot 首屏已改为全屏 `MainUIView` 方式：隐藏旧的独立 `top_bar/title_label/wallet_label`，把玩家信息、资源栏、右侧玩法入口、商业入口、章节任务、底栏和聊天条放回同一张 1280x720 画布。
+
+验证命令：
+
+```powershell
+.\Godot\Godot_console.exe --headless --path standalone\godot-mvp --quit-after 2
+$env:SHAONV_MVP_START_VIEW='main'; .\Godot\Godot_console.exe --headless --path standalone\godot-mvp --quit-after 2
+```
+
+两条命令均可完成启动。本轮还用非 headless 方式保存了主界面截图：
+
+```text
+tmp/screenshots/prefab-main-restart.png
+```
+
+当前仍会输出 Godot 对 `Image.load()` 直接载入 PNG 的导出警告，这与既有 MVP 源 PNG 载入策略一致，不影响本地验证。
+
+## 13. 下一步
 
 1. 用 Godot 编辑器检查布局并调整主题、字体、按钮样式。
 2. 继续接入登录页按钮、服务器选择弹层、公告/修复弹层的真实 UI 切片。
