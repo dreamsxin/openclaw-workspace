@@ -345,10 +345,9 @@ func draw_commercialization() -> void:
 
 
 func draw_chapter_info() -> void:
-	# btnChapterInfo: right-anchored pos(-34,150), 276x100 (→212x96)
-	# Godot: right edge = 1280 - 34*0.7665 = 1254, left = 1254 - 212 = 1042
-	# y: 150*0.96 = 144 (from top, this is the center-y for center anchor)
-	var px = 1042.0; var py = 144.0
+	# btnChapterInfo: anchor(1,0) pivot(1,0) pos(-34,150) size(276,100)
+	# Godot: right=1280-34*0.7665=1254, bottom=720+150*0.96=864→pivot=cornner→bottom=576→top=480
+	var px = 1042.0; var py = 480.0
 	var bg = app._draw_image(UI_MAIN_CHAPTER_BG, Vector2(px, py), Vector2(212, 96), false, Color(1, 1, 1, 0.90))
 	_main_panels.append(bg)
 	var info = app._label("章节  %s\n奖励  收集 %d / 抽卡 %d" % [app._next_task_text(), app.save.get("owned", {}).size(), int(app.save.get("draw_count", 0))], 15)
