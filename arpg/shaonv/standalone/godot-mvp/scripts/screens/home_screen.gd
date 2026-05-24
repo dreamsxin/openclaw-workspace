@@ -449,15 +449,15 @@ func draw_gal_button() -> void:
 
 func draw_chat_bar() -> void:
 	# pnlChat: right-anchored pos(-64,-94), 410x40 (→314x38)
-	# Godot: x = 1280 - 64*0.7665 = 1231, y = 94*0.96 = 90 (from top)
-	var cx = 1231.0 - 157; var cy = 90.0  # center-anchored: left = center - width/2
+	# Godot: left = 1280 - 64*0.7665 - 410*0.7665 ≈ 917, y = 94*0.96.
+	var cx = 916.0; var cy = 90.0
 	var bg = app._draw_image(UI_MAIN_CHAT_BG, Vector2(cx, cy), Vector2(314, 38), false, Color(1, 1, 1, 0.72))
 	_main_panels.append(bg)
-	var chat = app._label("世界  离线模式已启用", 14)
+	var chat = app._label("[世界] 尘世：?", 14)
 	chat.position = Vector2(cx + 49, cy + 8); chat.size = Vector2(255, 22)
-	chat.modulate = Color(0.68, 0.64, 0.58)
+	chat.modulate = Color(0.54, 0.92, 0.54)
 	app._view_container().add_child(chat)
-	app._add_action_button("", Vector2(cx, cy), app._show_mail, Vector2(314, 38))
+	add_hit_button(Vector2(cx, cy), Vector2(314, 38), app._show_mail)
 
 
 # ═══════════════════════════════════════════════════════════════
