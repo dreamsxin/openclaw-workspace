@@ -6,7 +6,7 @@ var clip_name := ""
 var time := 0.0
 var playing := true
 var load_error := ""
-var _last_frame := -1  # avoid redundant redraws
+var _last_frame: int = -1  # avoid redundant redraws
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -76,11 +76,11 @@ func _process(delta: float) -> void:
 		return
 	var fps := float(clip.get("fps", baked.get("bake", {}).get("fps", 8.0)))
 	var duration := float(clip.get("duration", 1.2))
-	var frame_count := clip.get("frames", []).size()
+	var frame_count: int = clip.get("frames", []).size()
 	if frame_count <= 0:
 		return
 	var clip_time := fposmod(time, maxf(duration, 1.0 / maxf(fps, 1.0)))
-	var frame_index := int(floor(clip_time * fps)) % frame_count
+	var frame_index: int = int(floor(clip_time * fps)) % frame_count
 	if frame_index != _last_frame:
 		_last_frame = frame_index
 		queue_redraw()
