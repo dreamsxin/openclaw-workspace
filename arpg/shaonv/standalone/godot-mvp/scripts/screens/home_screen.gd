@@ -398,10 +398,19 @@ func draw_chapter_info() -> void:
 	var px = 1042.0; var py = 480.0
 	var bg = app._draw_image(UI_MAIN_CHAPTER_BG, Vector2(px, py), Vector2(212, 96), false, Color(1, 1, 1, 0.90))
 	_main_panels.append(bg)
-	var info = app._label("章节  %s\n奖励  收集 %d / 抽卡 %d" % [app._next_task_text(), app.save.get("owned", {}).size(), int(app.save.get("draw_count", 0))], 15)
-	info.position = Vector2(px + 14, py + 16); info.size = Vector2(180, 60)
-	app._view_container().add_child(info)
-	app._add_action_button("", Vector2(px, py), app._show_tasks, Vector2(212, 96))
+	add_ui_text("第1章尘世裂痕 0/1", Vector2(px + 26, py + 9), Vector2(168, 20), 15, HORIZONTAL_ALIGNMENT_CENTER, Color(1.0, 0.90, 0.62))
+	var rewards = [
+		[UI_ITEM_TICKET, "5", Color(0.96, 0.48, 0.38, 0.72)],
+		["res://assets/ui/item/draw_06.png", "10", Color(0.28, 0.40, 0.72, 0.72)],
+		[UI_ITEM_GEM, "100", Color(0.92, 0.72, 0.34, 0.72)]
+	]
+	var rx = px + 25.0
+	for reward in rewards:
+		app._view_container().add_child(app._panel(Vector2(rx, py + 38), Vector2(42, 42), reward[2]))
+		add_scaled_image(str(reward[0]), Vector2(rx + 4, py + 40), Vector2(34, 34), Color(1, 1, 1, 0.96))
+		add_ui_text(str(reward[1]), Vector2(rx + 23, py + 64), Vector2(18, 14), 9, HORIZONTAL_ALIGNMENT_RIGHT, Color(1, 1, 1, 0.95))
+		rx += 50
+	add_hit_button(Vector2(px, py), Vector2(212, 96), app._show_tasks)
 	app._draw_red_dot(Vector2(px + 8, py + 4))
 
 
