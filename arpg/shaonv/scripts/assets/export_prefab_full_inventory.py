@@ -29,6 +29,12 @@ KNOWN_PREFABS = {
     "GalDormitoryView": "Assets/Game/RawAssets/Prefabs/UI/Gal/Dormitory/GalDormitoryView.prefab",
     "GalDormitoryMainPanel": "Assets/Game/RawAssets/Prefabs/UI/Gal/Dormitory/GalDormitoryMainPanel.prefab",
     "GalDateSelectView": "Assets/Game/RawAssets/Prefabs/UI/Gal/GalDateSelectView.prefab",
+    "HeroDetailInfoView": "Assets/Game/RawAssets/Prefabs/UI/Hero/HeroDetailInfoView.prefab",
+    "HeroListOrdinationTabGrid": "Assets/Game/RawAssets/Prefabs/UI/Hero/HeroListOrdinationTabGrid.prefab",
+    "HeroListTabGrid": "Assets/Game/RawAssets/Prefabs/UI/Hero/HeroListTabGrid.prefab",
+    "HeroListView": "Assets/Game/RawAssets/Prefabs/UI/Hero/HeroListView.prefab",
+    "HeroMainSelectHeroGrid": "Assets/Game/RawAssets/Prefabs/UI/Hero/HeroMainSelectHeroGrid.prefab",
+    "HeroMainView": "Assets/Game/RawAssets/Prefabs/UI/Hero/HeroMainView.prefab",
     "LotteryDrawMainView": "Assets/Game/RawAssets/Prefabs/UI/LotteryDraw/LotteryDrawMainView.prefab",
 }
 

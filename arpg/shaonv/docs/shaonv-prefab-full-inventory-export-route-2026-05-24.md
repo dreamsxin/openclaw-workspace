@@ -18,6 +18,7 @@ scripts/assets/export_prefab_full_inventory.py
 python scripts\assets\export_prefab_full_inventory.py CityView --repo-root .
 python scripts\assets\export_prefab_full_inventory.py ActivityMainView --repo-root .
 python scripts\assets\export_prefab_full_inventory.py GalDormitoryMainPanel --repo-root .
+python scripts\assets\export_prefab_full_inventory.py HeroMainView --repo-root .
 ```
 
 脚本会输出：
@@ -48,6 +49,12 @@ python scripts\assets\export_prefab_full_inventory.py GalDormitoryMainPanel --re
 | `GalDormitoryView` | 4 | 0 / 0 / 0 | 0 | 跑通。该 prefab 是约会/宿舍主壳，只放 `pnlBottom/pnlMiddle/pnlTop` 挂载点和 `GalDormitoryView` 逻辑。 |
 | `GalDormitoryMainPanel` | 59 | 31 / 13 / 17 | 26 | 跑通。字段反推修正后可识别 `btnDate/btnGoOut/btnGift/btnDressUp` 等主按钮，并解析 `gal_btn_*` / `gal_img_*` 到对应 bundle。 |
 | `GalDateSelectView` | 10 | 4 / 4 / 3 | 4 | 跑通。约会选择子界面使用 `gal_bg_06` 背景，按钮资源为 `gal_btn_25/33/36`。 |
+| `HeroMainView` | 233 | 146 / 48 / 43 | 29 | 跑通。英雄详情主屏，包含背景 `hero_bg_01/hero_bg_10`、右侧详情面板、核心/装备/属性等多状态面板。 |
+| `HeroDetailInfoView` | 73 | 25 / 36 / 4 | 8 | 跑通。英雄属性详情弹层，背景 `guessing_bg_03`，头像示例 `thero_052`，属性/技能文本完整导出。 |
+| `HeroMainSelectHeroGrid` | 15 | 12 / 1 / 1 | 7 | 跑通。详情页左侧/选择用英雄头像格，包含圆头像、星级、等级、选中高亮和透明按钮。 |
+| `HeroListTabGrid` | 6 | 4 / 2 / 1 | 1 | 跑通。英雄列表分类 Tab 模板，使用 `common_btn_07` 高亮图。 |
+| `HeroListOrdinationTabGrid` | 3 | 1 / 2 / 1 | 0 | 跑通。英雄列表排序 Tab 模板，根 Image 为透明点击区。 |
+| `HeroListView` | - | - | - | 未导出。manifest 有 `assets_game_rawassets_prefabs_ui_hero_herolistview.bundle` / `6ee0abcfd37a8ba5a54acfc9003167ca.bundle`，但当前物理集合缺该文件，`physical-asset-map.csv` 无可用路径。 |
 
 ## 修正经验
 
@@ -55,6 +62,7 @@ python scripts\assets\export_prefab_full_inventory.py GalDormitoryMainPanel --re
 - `Unknown` 组件不一定不可解析。若 typetree 仍包含 Unity UI 稳定字段，应按字段反推 `Image/Text/Button`，否则像 `GalDormitoryMainPanel` 这种 stripped/script 外部化的面板会误报为 0 图 0 文本 0 按钮。
 - `Image:none` 不等于资源缺失，常见于透明点击热区、运行时替换入口、raycast-only 节点。
 - external CAB 未定位时，优先检查当前物理资源集合是否真的包含该 CAB，而不是先怀疑 `Image.sprite` 解析失败。
+- 若 `manifest-parsed-assets.csv` 中 `physicalExists=False`，说明地址和 bundle hash 已知但本地物理包缺失；这种情况不能生成 prefab 全量节点清单，应先补物理包再重跑，或只导出当前存在的子 prefab 模板。
 - PowerShell 查看结果固定使用 UTF-8：
 
 ```powershell
