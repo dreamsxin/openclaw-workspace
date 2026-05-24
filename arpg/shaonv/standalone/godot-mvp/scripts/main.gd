@@ -118,7 +118,7 @@ func _ready() -> void:
 	home_screen = HOME_SCREEN.new(self)
 	gacha_screen = GACHA_SCREEN.new(self)
 	gacha_result_screen = GACHA_RESULT_SCREEN.new(self)
-	_show_start_view_from_env()
+	_startup_sequence()
 	if not OS.get_environment("SHAONV_MVP_CAPTURE").is_empty():
 		call_deferred("_capture_debug_screenshot")
 
@@ -270,6 +270,44 @@ func _clear_mid_layer() -> void:
 
 func _current_view_name() -> String:
 	return _view_names.back() if not _view_names.is_empty() else "none"
+
+var _startup_stage := 0
+var _startup_timer: Timer
+
+func _startup_sequence() -> void:
+	# Check env override
+	var start_view := OS.get_environment("SHAONV_MVP_START_VIEW").to_lower()
+	if not start_view.is_empty():
+		_show_start_view_from_env()
+		return
+	
+	# Default: Launch → Login → Loading → Main 全自动
+	_startup_stage = 0
+	_startup_timer = Timer.new()
+	_startup_timer.name = "startup_state_timer"
+	_startup_timer.one_shot = true
+	_startup_timer.process_mode = Node.PROCESS_MODE_ALWAYS
+	_startup_timer.timeout.connect(_startup_tick)
+	add_child(_startup_timer)
+	_startup_tick()
+
+func _startup_step_timer(duration: float) -> Signal:
+	return get_tree().create_timer(duration).timeout
+
+func _startup_tick() -> void:
+	match _startup_stage:
+		0:
+			_show_launch()
+			_startup_stage = 1
+			_startup_timer.start(1.5)
+		1:
+			_show_login()
+			_startup_stage = 2
+			_startup_timer.start(2.0)
+		2:
+			_show_loading()
+		_:
+			pass
 
 func _show_start_view_from_env() -> void:
 	var start_view := OS.get_environment("SHAONV_MVP_START_VIEW").to_lower()

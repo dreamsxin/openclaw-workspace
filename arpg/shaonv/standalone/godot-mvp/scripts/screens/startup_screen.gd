@@ -37,9 +37,6 @@ func show_launch() -> void:
 	hint.size = Vector2(400, 36)
 	hint.modulate = Color(0.78, 0.72, 0.62, 1.0)
 	app._view_container().add_child(hint)
-	app._add_action_button("跳过", Vector2(1128, 32), app._show_login, Vector2(104, 40))
-	# 自动推进：1.5 秒后进入登录
-	_auto_advance(app._show_login, 1.5)
 
 func show_preloading() -> void:
 	app.current_view = "preloading"
@@ -67,8 +64,6 @@ func show_preloading() -> void:
 	tip.modulate = Color(0.78, 0.72, 0.62)
 	app._view_container().add_child(tip)
 	app._add_action_button("继续", Vector2(574, 522), app._show_login, Vector2(132, 46))
-	# 自动推进：1 秒后进入登录
-	_auto_advance(app._show_login, 1.0)
 
 func show_login() -> void:
 	app.current_view = "login"
@@ -126,8 +121,6 @@ func show_login() -> void:
 	# Login button: centered below input, no exact prefab position (btnLogin fills screen)
 	app._draw_image(UI_LOGIN_BTN, Vector2(498, 300), Vector2(284, 82), false)
 	app._add_action_button("开始游戏", Vector2(526, 318), app._show_loading, Vector2(228, 54))
-	# 自动登录：2 秒后自动进入加载（模拟服务器返回成功）
-	_auto_advance(app._show_loading, 2.0)
 
 	# pnlFunction: anchor(1,0)→(1,1) size(131,0) pos(-65.7,0) — right column
 	# Godot: x=1280-101=1179, buttons at x=1180, each 46x58, y spaced
@@ -238,38 +231,15 @@ func show_loading() -> void:
 	_animate_loading_progress(fill, handle, pct, slider_margin, slider_w, slider_y, slider_h)
 
 func _animate_loading_progress(fill: ColorRect, handle: ColorRect, pct: Label, margin: float, width: float, y: float, h: float) -> void:
-	var elapsed := 0.0
-	var duration := 2.0  # Slower than original 0.5s for MVP readability
-	var timer := Timer.new()
-	timer.name = "loading_timer"
-	timer.wait_time = 0.016  # ~60fps
-	timer.one_shot = false
-	timer.timeout.connect(func():
-		elapsed += 0.016
-		var t = min(elapsed / duration, 1.0)
+	var steps := 40
+	var step_time := 2.0 / steps  # 2 seconds in 40 steps = 50ms per step
+	for i in range(steps + 1):
+		var t = float(i) / steps
 		var val = int(t * 100)
 		fill.size = Vector2(width * t, h)
 		handle.position = Vector2(margin + width * t - 32, y - 23)
 		pct.text = "%d%%" % val
-		if t >= 1.0:
-			timer.stop()
-			# Small delay then load main scene (original: immediate LoadMainScene)
-			var delay := Timer.new()
-			delay.name = "loading_delay"
-			delay.wait_time = 0.3
-			delay.one_shot = true
-			delay.timeout.connect(app._enter_main_scene)
-			app._view_container().add_child(delay)
-			delay.start()
-	)
-	app._view_container().add_child(timer)
-	timer.start()
-
-func _auto_advance(callback: Callable, delay_sec: float) -> void:
-	var timer := Timer.new()
-	timer.name = "auto_advance_timer"
-	timer.wait_time = delay_sec
-	timer.one_shot = true
-	timer.timeout.connect(callback)
-	app._view_container().add_child(timer)
-	timer.start()
+		if i < steps:
+			await app._startup_step_timer(step_time)
+	await app._startup_step_timer(0.5)
+	app._enter_main_scene()
