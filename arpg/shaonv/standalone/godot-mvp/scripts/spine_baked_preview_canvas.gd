@@ -9,6 +9,10 @@ var load_error := ""
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	# PMA (Pre-Multiplied Alpha) blend mode — Spine atlas uses pma:true
+	var mat := CanvasItemMaterial.new()
+	mat.blend_mode = CanvasItemMaterial.BLEND_MODE_PREMULT_ALPHA
+	material = mat
 
 func set_baked_path(baked_path: String, preferred_clip := "") -> void:
 	baked.clear()
