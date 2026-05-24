@@ -32,18 +32,20 @@ func show_launch() -> void:
 	# RawImage: 1680×1680 center-anchored → Godot: 1287×1613 centered at (640,360) → top-left (-3,-446)
 	app._view_container().add_child(app._panel(Vector2(-3, -446), Vector2(1287, 1613), Color(0.05, 0.032, 0.026, 0.38)))
 
-	var hint = app._label("点击跳过", 18, HORIZONTAL_ALIGNMENT_CENTER)
-	hint.position = Vector2(520, 650)
-	hint.size = Vector2(240, 34)
-	hint.modulate = Color(0.86, 0.80, 0.70, 1.0)
+	var hint = app._label("少女回战 · 离线单机版", 18, HORIZONTAL_ALIGNMENT_CENTER)
+	hint.position = Vector2(440, 640)
+	hint.size = Vector2(400, 36)
+	hint.modulate = Color(0.78, 0.72, 0.62, 1.0)
 	app._view_container().add_child(hint)
-	app._add_action_button("跳过", Vector2(1128, 32), app._show_preloading, Vector2(104, 40))
+	app._add_action_button("跳过", Vector2(1128, 32), app._show_login, Vector2(104, 40))
+	# 自动推进：1.5 秒后进入登录
+	_auto_advance(app._show_login, 1.5)
 
 func show_preloading() -> void:
 	app.current_view = "preloading"
 	app._set_chrome_visible(false)
 	app._clear("预载入")
-	app._draw_image(UI_LOGIN_BG, Vector2(-195, -4), Vector2(1670, 728), true, Color(1, 1, 1, 0.64))
+	app._draw_image(UI_LOGIN_BG, Vector2(0, 0), Vector2(1280, 720), true, Color(1, 1, 1, 0.64))
 	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.012, 0.014, 0.018, 0.48)))
 
 	var mark = app._label("少女回战", 44, HORIZONTAL_ALIGNMENT_CENTER)
@@ -65,6 +67,8 @@ func show_preloading() -> void:
 	tip.modulate = Color(0.78, 0.72, 0.62)
 	app._view_container().add_child(tip)
 	app._add_action_button("继续", Vector2(574, 522), app._show_login, Vector2(132, 46))
+	# 自动推进：1 秒后进入登录
+	_auto_advance(app._show_login, 1.0)
 
 func show_login() -> void:
 	app.current_view = "login"
@@ -122,6 +126,8 @@ func show_login() -> void:
 	# Login button: centered below input, no exact prefab position (btnLogin fills screen)
 	app._draw_image(UI_LOGIN_BTN, Vector2(498, 300), Vector2(284, 82), false)
 	app._add_action_button("开始游戏", Vector2(526, 318), app._show_loading, Vector2(228, 54))
+	# 自动登录：2 秒后自动进入加载（模拟服务器返回成功）
+	_auto_advance(app._show_loading, 2.0)
 
 	# pnlFunction: anchor(1,0)→(1,1) size(131,0) pos(-65.7,0) — right column
 	# Godot: x=1280-101=1179, buttons at x=1180, each 46x58, y spaced
@@ -256,5 +262,14 @@ func _animate_loading_progress(fill: ColorRect, handle: ColorRect, pct: Label, m
 			app._view_container().add_child(delay)
 			delay.start()
 	)
+	app._view_container().add_child(timer)
+	timer.start()
+
+func _auto_advance(callback: Callable, delay_sec: float) -> void:
+	var timer := Timer.new()
+	timer.name = "auto_advance_timer"
+	timer.wait_time = delay_sec
+	timer.one_shot = true
+	timer.timeout.connect(callback)
 	app._view_container().add_child(timer)
 	timer.start()
