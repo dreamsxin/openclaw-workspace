@@ -415,11 +415,11 @@ func draw_chapter_info() -> void:
 
 
 func draw_bottom_bar() -> void:
-	# pnlBottom: anchor(0,1) pos(64,-673) height=50 → Godot: x=49, y=720-646=74→673 from top
-	var bar_y = 673.0; var bar_h = 48.0
+	# MainUIView screenshot calibration at 1280x720: keep this row slightly above the bottom edge.
+	var bar_y = 657.0; var bar_h = 48.0
 	var bar = app._draw_image(UI_MAIN_BOTTOM_BG, Vector2(49, bar_y), Vector2(430, bar_h), false, Color(1, 1, 1, 0.72))
 	_main_panels.append(bar)
-	# 6 buttons: 86x50 each (→66x48), starting after pnlGal (115x50→88x48)
+	# 6 buttons: compact row starts immediately after the enlarged Gal portal.
 	var buttons = [
 		["幻灵", app._show_gallery, true],
 		["背包", app._show_shop, false],
@@ -428,23 +428,22 @@ func draw_bottom_bar() -> void:
 		["任务", app._show_tasks, true],
 		["公会", app._show_home, false]
 	]
-	var bw = 66.0; var bx = 49.0 + 88  # after gal slot
+	var bw = 62.0; var bx = 135.0
 	for item in buttons:
 		add_ui_text(str(item[0]), Vector2(bx, bar_y + 8), Vector2(bw, 30), 19, HORIZONTAL_ALIGNMENT_CENTER, Color(1, 1, 1, 0.92))
 		add_hit_button(Vector2(bx, bar_y), Vector2(bw, bar_h), item[1])
 		app._draw_image(UI_MAIN_SEPARATOR, Vector2(bx + bw + 2, bar_y + 16), Vector2(2, 16), false, Color(1, 1, 1, 0.55))
 		if item[2]: app._draw_red_dot(Vector2(bx + bw - 18, bar_y))
-		bx += bw + 8
+		bx += 67
 
 
 func draw_gal_button() -> void:
-	# pnlGal + btnGal: 115x129 (→88x124), pos(0,40) protruding above pnlBottom(673)
-	# Godot: gal top = 673 - 40*0.96 - 124 + bar_h... prefab: gal protrudes 79px (40+129-50=119 → 91px in Godot)
-	var gx = 49.0; var gy = 673.0 - 79
-	app._draw_image(UI_MAIN_GAL, Vector2(gx, gy), Vector2(88, 124), false, Color(1, 1, 1, 0.92))
-	add_ui_text("现世", Vector2(gx + 9, gy + 86), Vector2(70, 30), 20, HORIZONTAL_ALIGNMENT_CENTER, Color(1, 1, 1, 0.96))
-	add_hit_button(Vector2(gx, gy), Vector2(88, 124), enter_gal_entry)
-	app._draw_red_dot(Vector2(gx + 68, gy + 8))
+	# mainui_btn_25 source is 150x170; force-scale it so it cannot cover btnHero.
+	var gx = 38.0; var gy = 562.0
+	add_scaled_image(UI_MAIN_GAL, Vector2(gx, gy), Vector2(108, 132), Color(1, 1, 1, 0.94))
+	add_ui_text("现世", Vector2(gx + 19, gy + 88), Vector2(70, 30), 20, HORIZONTAL_ALIGNMENT_CENTER, Color(1, 1, 1, 0.96))
+	add_hit_button(Vector2(gx, gy), Vector2(108, 132), enter_gal_entry)
+	app._draw_red_dot(Vector2(gx + 82, gy + 8))
 
 
 func draw_chat_bar() -> void:
