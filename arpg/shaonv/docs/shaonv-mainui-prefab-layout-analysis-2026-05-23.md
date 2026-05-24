@@ -1,5 +1,7 @@
 # MainUIView Prefab 提取、分析与对比
 
+> **2026-05-24 补充**：`screenshot/登录后界面主屏.jpg` 已与 `MainUIView.prefab` 对齐复核。结论见 `docs/shaonv-mainui-screenshot-layout-comparison-2026-05-24.md`：截图对应 `MainUIView` 的 `main_normal` 状态，背景是 `mainui_bg_01.png`，左侧活动块是 `pnlCommercialization`，右下大按钮是 `pnlStory`，其上奖励条是 `btnChapterInfo`。
+
 时间：2026-05-23  
 目标：精确提取 MainUIView.prefab 的 RectTransform 层级，分析布局结构，并与 Godot MVP home_screen.gd 对比找出偏差。
 

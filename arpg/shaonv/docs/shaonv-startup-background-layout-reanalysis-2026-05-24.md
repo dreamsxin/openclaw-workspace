@@ -133,5 +133,6 @@ New layout conclusions:
 ## Artifacts From This Pass
 
 - Sampled prefab layouts: `docs/shaonv-background-prefab-sampling-2026-05-24.md`
+- MainUI screenshot comparison: `docs/shaonv-mainui-screenshot-layout-comparison-2026-05-24.md`
 - Generated JSON layouts: `reverse-output/background-layout-inspect/*.layout.json` currently includes 20 successful prefab layout snapshots.
 - Local scratch visual sheets: `tmp/background-analysis/*.png` (not part of the committed source set).
