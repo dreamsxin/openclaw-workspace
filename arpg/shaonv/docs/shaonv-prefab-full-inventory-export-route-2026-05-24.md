@@ -54,7 +54,7 @@ python scripts\assets\export_prefab_full_inventory.py HeroMainView --repo-root .
 | `HeroMainSelectHeroGrid` | 15 | 12 / 1 / 1 | 7 | 跑通。详情页左侧/选择用英雄头像格，包含圆头像、星级、等级、选中高亮和透明按钮。 |
 | `HeroListTabGrid` | 6 | 4 / 2 / 1 | 1 | 跑通。英雄列表分类 Tab 模板，使用 `common_btn_07` 高亮图。 |
 | `HeroListOrdinationTabGrid` | 3 | 1 / 2 / 1 | 0 | 跑通。英雄列表排序 Tab 模板，根 Image 为透明点击区。 |
-| `HeroListView` | - | - | - | 未导出。manifest 有 `assets_game_rawassets_prefabs_ui_hero_herolistview.bundle` / `6ee0abcfd37a8ba5a54acfc9003167ca.bundle`，但当前物理集合缺该文件，`physical-asset-map.csv` 无可用路径。 |
+| `HeroListView` | - | - | - | 未导出。manifest 有 `assets_game_rawassets_prefabs_ui_hero_herolistview.bundle` / `6ee0abcfd37a8ba5a54acfc9003167ca.bundle`，但当前物理集合缺该文件；已复核 `apk/base.apk`、`apk/split_config.arm64_v8a.apk`、`apk/split_install_time_asset_pack.apk`，仍未包含目标 bundle。 |
 
 ## 修正经验
 
@@ -63,6 +63,7 @@ python scripts\assets\export_prefab_full_inventory.py HeroMainView --repo-root .
 - `Image:none` 不等于资源缺失，常见于透明点击热区、运行时替换入口、raycast-only 节点。
 - external CAB 未定位时，优先检查当前物理资源集合是否真的包含该 CAB，而不是先怀疑 `Image.sprite` 解析失败。
 - 若 `manifest-parsed-assets.csv` 中 `physicalExists=False`，说明地址和 bundle hash 已知但本地物理包缺失；这种情况不能生成 prefab 全量节点清单，应先补物理包再重跑，或只导出当前存在的子 prefab 模板。
+- 完整 APK 也可能只包含 install-time asset pack。若 APK 内 `assets/yoo/Default` 与 `resources/assets/yoo/Default` 一致且仍缺目标 hash，需要转向已安装客户端缓存、热更新 manifest 或网络下载源，而不是继续在本地 install 包里穷举。
 - PowerShell 查看结果固定使用 UTF-8：
 
 ```powershell
@@ -75,3 +76,4 @@ Get-Content -Encoding UTF8 -Path docs\shaonv-cityview-full-control-resource-inve
 
 - 对节点较多的 `BagView` 或 `LotteryDrawMainView` 再跑一次，验证脚本在复杂滚动列表和多 atlas 依赖下的性能。
 - 如果要补齐 `CityView` 的建筑局部图，需要先找到或补入 `CAB-fe0668bdcadfeccb1da0b36c9fbe13a5` 对应的物理 bundle，再重跑脚本。
+- 如果要补齐 `HeroListView` 主 prefab，需要从设备运行时缓存或热更下载源找到 `6ee0abcfd37a8ba5a54acfc9003167ca.bundle`，再重跑 `python scripts\assets\export_prefab_full_inventory.py HeroListView --repo-root .`。
