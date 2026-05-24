@@ -5,7 +5,7 @@
 extends RefCounted
 
 # ── Sprite constants ──
-const UI_MAIN_BG = "res://assets/ui/mainui/mainui_img_01.png"
+const UI_MAIN_BG = "res://assets/ui/background/mainui_bg_01.png"   # 1670x750 fullscreen wallpaper
 const UI_MAIN_PLAYER_FRAME = "res://assets/ui/mainui/mainui_img_02.png"
 const UI_MAIN_AVATAR_RING = "res://assets/ui/mainui/mainui_img_03.png"
 const UI_MAIN_EXP_RING = "res://assets/ui/mainui/mainui_img_04.png"
