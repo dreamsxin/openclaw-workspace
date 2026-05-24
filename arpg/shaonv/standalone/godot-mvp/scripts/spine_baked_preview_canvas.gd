@@ -6,6 +6,7 @@ var clip_name := ""
 var time := 0.0
 var playing := true
 var load_error := ""
+var _last_frame := -1  # avoid redundant redraws
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -68,7 +69,21 @@ func _process(delta: float) -> void:
 	if not visible or not playing:
 		return
 	time += delta
-	queue_redraw()
+	if baked.is_empty():
+		return
+	var clip := _active_clip()
+	if clip.is_empty():
+		return
+	var fps := float(clip.get("fps", baked.get("bake", {}).get("fps", 8.0)))
+	var duration := float(clip.get("duration", 1.2))
+	var frame_count := clip.get("frames", []).size()
+	if frame_count <= 0:
+		return
+	var clip_time := fposmod(time, maxf(duration, 1.0 / maxf(fps, 1.0)))
+	var frame_index := int(floor(clip_time * fps)) % frame_count
+	if frame_index != _last_frame:
+		_last_frame = frame_index
+		queue_redraw()
 
 func _draw() -> void:
 	if not load_error.is_empty():
@@ -108,7 +123,7 @@ func _draw_baked_clip(clip: Dictionary, target: Rect2) -> void:
 	var bounds := _baked_animation_bounds(clip)
 	if bounds.size.x <= 0.0 or bounds.size.y <= 0.0:
 		return
-	var scale_factor := minf(target.size.x / bounds.size.x, target.size.y / bounds.size.y) * 0.94
+	var scale_factor := minf(target.size.x / bounds.size.x, target.size.y / bounds.size.y) * 0.98
 	var center := target.position + target.size * 0.5
 
 	var items: Array = frame.get("items", [])
