@@ -24,6 +24,9 @@ const UI_MAIN_GAL = "res://assets/ui/mainui/mainui_txt_09.png"
 const UI_MAIN_BOTTOM_BTN = "res://assets/ui/mainui/mainui_btn_01.png"
 const UI_MAIN_MENU = "res://assets/ui/mainui/mainui_btn_06.png"
 const UI_MAIN_AUTO_FIGHT = "res://assets/ui/mainui/mainui_img_36.png"
+const UI_MAIN_BTN_EYE = "res://assets/ui/mainui/mainui_btn_12.png"       # btnEye
+const UI_MAIN_BTN_CHANGE = "res://assets/ui/mainui/mainui_btn_13.png"    # btnChange
+const UI_MAIN_BTN_HARVEST = "res://assets/ui/mainui/mainui_img_18.png"   # btnHarvest
 const UI_MAIN_CHARGE_ICONS = [
 	"res://assets/ui/mainui/mainui_btn_06.png",   # btnActivity 活动
 	"res://assets/ui/mainui/mainui_btn_07.png",   # btnWelfare 福利
@@ -229,9 +232,11 @@ func draw_player_info(hero: Dictionary) -> void:
 	player_btn.position = Vector2(0, 13); player_btn.size = Vector2(271, 76)
 	player_btn.pressed.connect(app._show_player_info)
 	app._view_container().add_child(player_btn)
-	# btnChange (308,48) 57x71  /  btnEye (366,48) 57x71
-	app._add_action_button("换", Vector2(308, 48), app._show_gallery, Vector2(57, 71))
-	app._add_action_button("眼", Vector2(366, 48), enter_wallpaper_focus, Vector2(57, 71))
+	# btnChange (308,48) 57x71 / btnEye (366,48) 57x71 — use actual sprites
+	app._draw_image(UI_MAIN_BTN_CHANGE, Vector2(308, 48), Vector2(57, 71), false, Color(1, 1, 1, 0.90))
+	app._add_action_button("", Vector2(308, 48), app._show_gallery, Vector2(57, 71))
+	app._draw_image(UI_MAIN_BTN_EYE, Vector2(366, 48), Vector2(57, 71), false, Color(1, 1, 1, 0.90))
+	app._add_action_button("", Vector2(366, 48), enter_wallpaper_focus, Vector2(57, 71))
 
 
 func draw_funny_content() -> void:
@@ -278,8 +283,9 @@ func draw_story_harvest() -> void:
 	var story = app._label("主线 %s\n挂机收益 %s" % [app._next_task_text(), "可收取" if not app._afk_claimed_today() else "已收取"], 15)
 	story.position = Vector2(sx + 14, sy + 14); story.size = Vector2(sw - 16, 44)
 	app._view_container().add_child(story)
-	# btnHarvest: 106x106 → 81x102, inside pnlStory at (51,1)
-	app._add_action_button("收获", Vector2(sx + 51, sy + 1), app._claim_afk_reward, Vector2(81, 102))
+	# btnHarvest: 106x106 → 81x102, inside pnlStory at (51,1) — uses mainui_img_18
+	app._draw_image(UI_MAIN_BTN_HARVEST, Vector2(sx + 51, sy + 1), Vector2(81, 102), false, Color(1, 1, 1, 0.88))
+	app._add_action_button("", Vector2(sx + 51, sy + 1), app._claim_afk_reward, Vector2(81, 102))
 	# btnHarvest sub-elements: imgHookTime + txtHookTime
 	var hook_time = app._label(app._afk_time_display(), 12, HORIZONTAL_ALIGNMENT_CENTER)
 	hook_time.position = Vector2(sx + 55, sy + 104); hook_time.size = Vector2(71, 18)
