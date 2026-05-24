@@ -248,8 +248,8 @@ func _animate_loading_progress(fill: ColorRect, handle: ColorRect, pct: Label, m
 		elapsed += 0.016
 		var t = min(elapsed / duration, 1.0)
 		var val = int(t * 100)
-		fill.size.x = width * t
-		handle.position.x = margin + width * t - 32
+		fill.size = Vector2(width * t, h)
+		handle.position = Vector2(margin + width * t - 32, y - 23)
 		pct.text = "%d%%" % val
 		if t >= 1.0:
 			timer.stop()
