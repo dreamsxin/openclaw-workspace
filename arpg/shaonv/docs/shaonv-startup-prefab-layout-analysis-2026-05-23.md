@@ -3,6 +3,8 @@
 时间：2026-05-23  
 目标：提取 LaunchView → PreloadingView → LoginView → LoadingView 的 RectTransform 层级并与 Godot MVP startup_screen.gd 对比。
 
+> **2026-05-24 勘误**：本文件中的 prefab 坐标仍可作为布局事实源，但背景映射以 `docs/shaonv-startup-background-layout-reanalysis-2026-05-24.md` 为准：`LoginView = login_bg_01`，`LoadingView = loading_bg_01`，AOT 资源初始化/热更页 `UpdateView = update_bg_01`。旧文档里把 LoadingView 临时对到 `login_bg_01` 的内容已被新分析修正。
+
 > **注意**：原游戏启动链为 LaunchView → LoginView → LoadingView；PreloadingView 仅在早期版本存在，当前 prefab 包中仅有 3 个界面。Godot MVP 中添加了简化的 PreloadingView 占位。
 
 ---

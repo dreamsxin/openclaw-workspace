@@ -455,7 +455,7 @@ docs/shaonv-lottery-prefab-layout-2026-05-23.md
 
 - `LaunchView` 回到黑底/视频占位、跳过按钮的形态；真实 `launch.mp4` 仍未在当前资源中定位到。
 - `LoginView` 使用 `login_bg_01.png`、`logo.png`、`login_btn_03.png`、`server_bg_03.png`，右侧保留公告/修复/账号/切换入口。
-- `LoadingView` 使用登录背景和底部进度条，不再显示角色。
+- `LoadingView` 使用底部进度条，不再显示角色。2026-05-24 复核后背景应改为 `loading_bg_01.png`，不是登录页的 `login_bg_01.png`。
 
 本轮新增截图：
 

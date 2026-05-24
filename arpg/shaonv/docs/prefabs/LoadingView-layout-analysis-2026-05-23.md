@@ -5,6 +5,8 @@
 **Bundle File**: `3eda611616b92cfdb2af7f8c183b1e50/__data`
 **Analysis Type**: Deep Layout + IL Lifecycle Analysis
 
+> **2026-05-24 correction**: The layout and IL notes remain valid, but the background mapping has been corrected. In this build, `LoadingView.imgBg` should be associated with `loading_bg_01.png`, not `login_bg_01.png`. See `docs/shaonv-startup-background-layout-reanalysis-2026-05-24.md`.
+
 ---
 
 ## 1. Basic Information
