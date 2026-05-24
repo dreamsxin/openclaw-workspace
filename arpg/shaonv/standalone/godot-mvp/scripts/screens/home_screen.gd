@@ -51,10 +51,9 @@ func show_home() -> void:
 	_main_panels.clear()
 	enter_normal_state()
 
-
 func enter_normal_state() -> void:
 	_main_state = "normal"
-	app._clear("主界面")
+	# 不再调 _clear — show_home 已经做了
 	var hero = app._hero_by_id(int(app.save.get("selected_hero_id", 240065)))
 	# Layer 0: Wallpaper (always below everything)
 	draw_wallpaper(hero)
