@@ -14,6 +14,7 @@ const UI_LOGIN_INPUT_BG = "res://assets/ui/login/login_img_03.png"      # inputA
 const UI_LOGIN_INPUT_ICON = "res://assets/ui/login/login_img_04.png"    # input icon
 const UI_LOGIN_AGE = "res://assets/ui/login/login_txt_03.png"           # btnAge 12+
 const UI_LOGIN_TIP = "res://assets/ui/login/login_img_01.png"           # imgTipLogin
+const UI_LOADING_BG = "res://assets/ui/background/loading_bg_01.png"
 
 var app
 
@@ -26,9 +27,10 @@ func show_launch() -> void:
 	app._set_chrome_visible(false)
 	app._clear("启动")
 
-	# LaunchView is mostly a full-screen VideoPlayer/RawImage.
+	# LaunchView: Image (fullscreen black) + RawImage (1680×1680, anchor 0.5-0.5 居中)
 	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.0, 0.0, 0.0, 1.0)))
-	app._view_container().add_child(app._panel(Vector2(-200, -120), Vector2(1680, 1680), Color(0.05, 0.032, 0.026, 0.38)))
+	# RawImage: 1680×1680 center-anchored → Godot: 1287×1613 centered at (640,360) → top-left (-3,-446)
+	app._view_container().add_child(app._panel(Vector2(-3, -446), Vector2(1287, 1613), Color(0.05, 0.032, 0.026, 0.38)))
 
 	var hint = app._label("点击跳过", 18, HORIZONTAL_ALIGNMENT_CENTER)
 	hint.position = Vector2(520, 650)
@@ -172,27 +174,87 @@ func show_loading() -> void:
 	app._set_chrome_visible(false)
 	app._clear("载入")
 
-	app._draw_image(UI_LOGIN_BG, Vector2(-195, -4), Vector2(1670, 728), true, Color(1, 1, 1, 0.92))
+	# imgBg: centering (0.5,0.5), 1670x750 → Godot: (0,0) fullscreen
+	# Prefab uses loading_bg_01.png (not login_bg_01), loaded via FixHarmoniousPic("6")
+	app._draw_image(UI_LOADING_BG, Vector2(0, 0), Vector2(1280, 720), true, Color(1, 1, 1, 0.92))
 	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.012, 0.014, 0.018, 0.16)))
 
-	var info = app._label("正在进入主城", 22, HORIZONTAL_ALIGNMENT_CENTER)
-	info.position = Vector2(340, 550)
-	info.size = Vector2(600, 36)
-	app._view_container().add_child(info)
-
-	var tip = app._label("提示：喚灵可获得新武将，重复武将将转换为碎片。", 16, HORIZONTAL_ALIGNMENT_CENTER)
-	tip.position = Vector2(290, 596)
-	tip.size = Vector2(700, 30)
-	tip.modulate = Color(0.7, 0.66, 0.6)
-	app._view_container().add_child(tip)
-
-	var slider_y = 624
-	var slider_margin = 90
-	app._draw_progress_bar(Vector2(slider_margin, slider_y), Vector2(1280 - slider_margin * 2, 22), 0.88)
-
-	var pct = app._label("88%", 20, HORIZONTAL_ALIGNMENT_RIGHT)
-	pct.position = Vector2(1280 - slider_margin + 12, slider_y - 20)
-	pct.size = Vector2(60, 28)
+	# sldSpeed: anchor(0,0.5)→(1,0.5), pos(3.96,-356.8), size(-181,34)
+	# Godot: full-width with margin, y from center = -356.8*0.96 = -342 → y = 360-342 = 18... no
+	# anchoredPosition.y=-356.8 with anchor(0,0.5): from center = -356.8*0.96 = -342.5
+	# center_y = 360, so pos.y = 360 + (-342.5) = 17.5... that's near top.
+	# Hmm, that's wrong. Let me recalculate.
+	# anchor(0,0.5): x anchored left, y anchored at center
+	# pos(3.96, -356.8): x near left edge, y below center by 356.8*0.96=342.5
+	# So slider center at (3.96*0.7665=3, 360+342.5=702.5) — near bottom!
+	# Wait, 702.5 is below 720. That's off-screen. 
+	# Ah — the y is NEGATIVE: -356.8. With anchor y=0.5, y_center = 360 + (-356.8)*0.96 = 360 - 342.5 = 17.5. Near top.
+	
+	# Actually, let me reconsider. For Unity, pos.y=-356.8 with anchor(0,0.5):
+	# The anchor is at center of parent (y=375 in 750 canvas)
+	# The anchored position is relative to the anchor: -356.8 means BELOW center
+	# In Godot: y = 360 + 356.8*0.96 = 360 + 343 = 703. Bottom area.
+	# But that's below 720. Hmm. Let me recheck.
+	
+	# Actually no. Looking at the LoadingView prefab imgBg is 1670x750 (same as Login).
+	# sldSpeed is near the bottom. pos=(3.96, -356.8) with anchor(0,0.5):
+	# Godot y: 360 + 356.8*0.96 = 360 + 343 = 703. Size height is 34*0.96=33.
+	# So slider spans y=703-16 to 703+16 = 687 to 719. Bottom of screen. OK that makes sense.
+	
+	# txtPercent: anchor(1,0.5), pos(-11.39,-355.03), size(123,37)
+	# Godot: right edge, center-y=360+355*0.96=701, x=1280-11.39*0.7665=1271, width=123*0.7665=94
+	# Position: (1271-94/2=1224, 701-37*0.96/2=701-18=683), size=(94,36)
+	
+	# Simpler: use a bottom area for the progress bar
+	var slider_y := 680.0
+	var slider_margin := 180.0  # margin from edges for stretched slider (-181 in Unity)
+	var slider_w := 1280.0 - slider_margin * 2
+	var slider_h := 34.0
+	
+	# Background track
+	app._view_container().add_child(app._panel(Vector2(slider_margin, slider_y), Vector2(slider_w, slider_h), Color(0.06, 0.05, 0.04, 0.70)))
+	# Fill (animated)
+	var fill = app._panel(Vector2(slider_margin, slider_y), Vector2(0, slider_h), Color(0.86, 0.65, 0.28, 0.88))
+	app._view_container().add_child(fill)
+	# Handle: prefab 82×82 → Godot 63×79
+	var handle = app._panel(Vector2(slider_margin - 32, slider_y - 23), Vector2(64, 80), Color(0.94, 0.78, 0.42, 0.92))
+	handle.name = "loading_handle"
+	app._view_container().add_child(handle)
+	
+	# txtPercent: right-anchored near slider
+	var pct = app._label("0%", 20, HORIZONTAL_ALIGNMENT_RIGHT)
+	pct.name = "loading_percent"
+	pct.position = Vector2(slider_margin + slider_w + 8, slider_y - 12)
+	pct.size = Vector2(80, 36)
 	app._view_container().add_child(pct)
+	
+	# Auto-transition: animate 0→100, then auto-load main scene
+	_animate_loading_progress(fill, handle, pct, slider_margin, slider_w, slider_y, slider_h)
 
-	app._add_action_button("进入", Vector2(574, 664), app._enter_main_scene, Vector2(132, 38))
+func _animate_loading_progress(fill: ColorRect, handle: ColorRect, pct: Label, margin: float, width: float, y: float, h: float) -> void:
+	var elapsed := 0.0
+	var duration := 2.0  # Slower than original 0.5s for MVP readability
+	var timer := Timer.new()
+	timer.name = "loading_timer"
+	timer.wait_time = 0.016  # ~60fps
+	timer.one_shot = false
+	timer.timeout.connect(func():
+		elapsed += 0.016
+		var t = min(elapsed / duration, 1.0)
+		var val = int(t * 100)
+		fill.size.x = width * t
+		handle.position.x = margin + width * t - 32
+		pct.text = "%d%%" % val
+		if t >= 1.0:
+			timer.stop()
+			# Small delay then load main scene (original: immediate LoadMainScene)
+			var delay := Timer.new()
+			delay.name = "loading_delay"
+			delay.wait_time = 0.3
+			delay.one_shot = true
+			delay.timeout.connect(app._enter_main_scene)
+			app._view_container().add_child(delay)
+			delay.start()
+	)
+	app._view_container().add_child(timer)
+	timer.start()
