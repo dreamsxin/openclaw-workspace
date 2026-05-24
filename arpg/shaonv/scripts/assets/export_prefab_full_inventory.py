@@ -26,6 +26,9 @@ KNOWN_PREFABS = {
     "CityView": "Assets/Game/RawAssets/Prefabs/UI/City/CityView.prefab",
     "ActivityMainView": "Assets/Game/RawAssets/Prefabs/UI/Activity/ActivityMainView.prefab",
     "BagView": "Assets/Game/RawAssets/Prefabs/UI/Bag/BagView.prefab",
+    "GalDormitoryView": "Assets/Game/RawAssets/Prefabs/UI/Gal/Dormitory/GalDormitoryView.prefab",
+    "GalDormitoryMainPanel": "Assets/Game/RawAssets/Prefabs/UI/Gal/Dormitory/GalDormitoryMainPanel.prefab",
+    "GalDateSelectView": "Assets/Game/RawAssets/Prefabs/UI/Gal/GalDateSelectView.prefab",
     "LotteryDrawMainView": "Assets/Game/RawAssets/Prefabs/UI/LotteryDraw/LotteryDrawMainView.prefab",
 }
 
@@ -69,6 +72,30 @@ def get_mb_class_name(obj: Any) -> str:
         return str(getattr(script.read(), "m_ClassName", "Unknown"))
     except Exception:
         return "Unknown"
+
+
+def infer_ui_class_name(class_name: str, tree: dict[str, Any]) -> str:
+    """Recover stripped Unity UI class names from stable serialized fields."""
+    if class_name != "Unknown":
+        return class_name
+    keys = set(tree)
+    if {"m_Sprite", "m_RaycastTarget", "m_Type"}.issubset(keys):
+        return "Image"
+    if {"m_Text", "m_FontData", "m_RaycastTarget"}.issubset(keys):
+        return "Text"
+    if {"m_Interactable", "m_TargetGraphic", "m_OnClick"}.issubset(keys):
+        return "Button"
+    return class_name
+
+
+def get_inferred_mb_class_name(obj: Any) -> str:
+    class_name = get_mb_class_name(obj)
+    if class_name != "Unknown":
+        return class_name
+    try:
+        return infer_ui_class_name(class_name, obj.read_typetree())
+    except Exception:
+        return class_name
 
 
 def object_name(obj: Any, data: Any) -> str:
@@ -145,7 +172,7 @@ def inspect_layout(env: Any, address: str, source: Path) -> dict[str, Any]:
     type_counts = Counter(obj.type.name for obj in env.objects)
     component_type_by_path = {int(obj.path_id): obj.type.name for obj in env.objects}
     mb_class_by_path = {
-        int(obj.path_id): get_mb_class_name(obj)
+        int(obj.path_id): get_inferred_mb_class_name(obj)
         for obj in env.objects
         if obj.type.name == "MonoBehaviour"
     }
@@ -340,6 +367,7 @@ def extract_bindings(env: Any) -> dict[str, Any]:
         except Exception:
             other[f"{class_name}(read_fail)"] += 1
             continue
+        class_name = infer_ui_class_name(class_name, tree)
 
         if class_name == "Image":
             sprite_ref = tree.get("m_Sprite", {}) or {}

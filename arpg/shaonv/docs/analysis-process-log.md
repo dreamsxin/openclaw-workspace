@@ -45,6 +45,7 @@ export_unity_ui_resources.py    → 从 bundle 批量导出 PNG sprite → asset
 - `imgBackGround` 在 prefab 中无 sprite 是运行时注入背景的正常结构；主界面截图确认当前使用 `mainui_bg_01.png`。
 - 通用导出脚本见 `scripts/assets/export_prefab_full_inventory.py`。已用 `CityView` 和 `ActivityMainView` 验证：`ActivityMainView` 图片全解析，`CityView` 背景已解析但建筑局部图依赖的 `CAB-fe0668bd...` 当前物理集合未定位。
 - CAB 名称需要统一成 `CAB-` + 小写 hash；否则 `m_Dependencies` 的 `cab-*` 与 SerializedFile external 的 `CAB-*` 会在回挂 `m_FileID` 时错开。
+- 约会主界面由 `GalDormitoryView` 主壳 + `GalDormitoryMainPanel` 主面板构成，`GalDateSelectView` 是 `btnDate` 后续选择界面。部分 Unity UI 组件的 `m_Script` 类名会解析成 `Unknown`，但 typetree 仍有 `m_Sprite/m_Text/m_OnClick` 等稳定字段；脚本已加入字段反推 Image/Text/Button 的修正。
 
 ## 已删除/归档的原始文档
 

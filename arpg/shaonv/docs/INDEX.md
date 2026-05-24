@@ -46,6 +46,9 @@ docs/
 ├── shaonv-prefab-full-inventory-export-route-2026-05-24.md    [05-24] 通用全量清单脚本路线 + City/Activity 验证
 ├── shaonv-cityview-full-control-resource-inventory-2026-05-24.md [05-24] CityView 全控件资源清单
 ├── shaonv-activitymainview-full-control-resource-inventory-2026-05-24.md [05-24] ActivityMainView 全控件资源清单
+├── shaonv-galdormitoryview-full-control-resource-inventory-2026-05-24.md [05-24] 约会/宿舍主壳全控件资源清单
+├── shaonv-galdormitorymainpanel-full-control-resource-inventory-2026-05-24.md [05-24] 约会/宿舍主面板全控件资源清单
+├── shaonv-galdateselectview-full-control-resource-inventory-2026-05-24.md [05-24] 约会选择界面全控件资源清单
 ├── shaonv-mainui-data-mapping-2026-05-23.md                  [05-23] Node→Sprite/Text/Button 映射
 ├── shaonv-gacha-prefab-layout-analysis-2026-05-23.md          [05-23] 抽卡 2 屏布局
 ├── shaonv-background-prefab-sampling-2026-05-24.md            [05-24] 20 额外 prefab 采样
