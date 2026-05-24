@@ -14,6 +14,7 @@
 | 查看主界面布局 | `shaonv-mainui-prefab-layout-analysis-2026-05-23.md` |
 | 查看主界面截图对照 | `shaonv-mainui-screenshot-layout-comparison-2026-05-24.md` |
 | 查看 MainUIView 全控件资源清单 | `shaonv-mainui-full-control-resource-inventory-2026-05-24.md` |
+| 查看 Prefab 全量清单导出路线 | `shaonv-prefab-full-inventory-export-route-2026-05-24.md` |
 | 查看抽卡布局 | `shaonv-gacha-prefab-layout-analysis-2026-05-23.md` |
 | 查 sprite 绑定 | `prefabs/monobehaviour-fields-report-2026-05-23.md` |
 | 查节点数量审计 | `prefabs/node-count-audit-2026-05-23.md` |
@@ -42,6 +43,9 @@ docs/
 ├── shaonv-mainui-prefab-layout-analysis-2026-05-23.md         [05-23] MainUI 212 节点 + C# IL 状态机
 ├── shaonv-mainui-screenshot-layout-comparison-2026-05-24.md   [05-24] MainUI 截图对照 + 完整可见布局
 ├── shaonv-mainui-full-control-resource-inventory-2026-05-24.md [05-24] MainUIView 212 节点 + Image/Text/Button + bundle 清单
+├── shaonv-prefab-full-inventory-export-route-2026-05-24.md    [05-24] 通用全量清单脚本路线 + City/Activity 验证
+├── shaonv-cityview-full-control-resource-inventory-2026-05-24.md [05-24] CityView 全控件资源清单
+├── shaonv-activitymainview-full-control-resource-inventory-2026-05-24.md [05-24] ActivityMainView 全控件资源清单
 ├── shaonv-mainui-data-mapping-2026-05-23.md                  [05-23] Node→Sprite/Text/Button 映射
 ├── shaonv-gacha-prefab-layout-analysis-2026-05-23.md          [05-23] 抽卡 2 屏布局
 ├── shaonv-background-prefab-sampling-2026-05-24.md            [05-24] 20 额外 prefab 采样
