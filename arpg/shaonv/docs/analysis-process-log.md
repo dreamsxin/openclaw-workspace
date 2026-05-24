@@ -28,7 +28,7 @@ export_unity_ui_resources.py    → 从 bundle 批量导出 PNG sprite → asset
 |------|--------|
 | 05-22 | 初始任务拆分、YooAsset 解密、IL 反编译验证、Spine 运行时分析 |
 | 05-23 | 7 prefab layout 全量提取、IL 生命周期分析、MainUI 数据映射、sprite 绑定提取、MVP 缺口分析、Godot 视图栈实现 |
-| 05-24 | 启动链背景映射修正、LoadingView 修复、20 额外 prefab 采样、sprite 绑定修正、节点审计 |
+| 05-24 | 启动链背景映射修正、LoadingView 修复、20 额外 prefab 采样、sprite 绑定修正、节点审计、MainUIView 全量控件与资源清单 |
 
 ## 核心决策
 
@@ -36,6 +36,13 @@ export_unity_ui_resources.py    → 从 bundle 批量导出 PNG sprite → asset
 - Spine 使用 baked JSON 方案 (非 GDExtension)，因 API 兼容性问题
 - 视图栈使用 CanvasLayer 架构，映射 Unity UIRoot2d 5 层体系
 - 布局使用 layout.json 锚点换算 (1670→1280)，不凭感觉放
+
+## 修正经验
+
+- PowerShell 读取 UTF-8 文档时显式设置 `[Console]::OutputEncoding`，并用 `Get-Content -Encoding UTF8`，否则中文可能显示成 `?`。
+- 生成含中文说明的 Markdown 时，避免把中文说明放进 PowerShell here-string 再交给 Python 写入；优先用 `apply_patch` 写说明文本，或只让脚本写从 UTF-8 JSON 读取出来的原始文本。
+- MainUIView 的 `Image.sprite` 解析不能只看 `MainUI.spriteatlas`。需要同时处理 prefab bundle 内置 Sprite、SerializedFile external CAB 依赖、`physical-asset-map.csv` 的物理 bundle 反查。
+- `imgBackGround` 在 prefab 中无 sprite 是运行时注入背景的正常结构；主界面截图确认当前使用 `mainui_bg_01.png`。
 
 ## 已删除/归档的原始文档
 

@@ -1,6 +1,8 @@
 # MainUIView Prefab 提取、分析与对比
 
 > **2026-05-24 补充**：`screenshot/登录后界面主屏.jpg` 已与 `MainUIView.prefab` 对齐复核。结论见 `docs/shaonv-mainui-screenshot-layout-comparison-2026-05-24.md`：截图对应 `MainUIView` 的 `main_normal` 状态，背景是 `mainui_bg_01.png`，左侧活动块是 `pnlCommercialization`，右下大按钮是 `pnlStory`，其上奖励条是 `btnChapterInfo`。
+>
+> **2026-05-24 全量清单**：`docs/shaonv-mainui-full-control-resource-inventory-2026-05-24.md` 已导出 `MainUIView` 全 212 个节点，并把 `Image.sprite`、`Text`、`Button` 绑定回节点，同时补齐 MainUI atlas、外部 CAB、prefab 内置 Sprite 与 `mainui_bg_01.png` 运行时背景的 bundle 对照。
 
 时间：2026-05-23  
 目标：精确提取 MainUIView.prefab 的 RectTransform 层级，分析布局结构，并与 Godot MVP home_screen.gd 对比找出偏差。
