@@ -24,17 +24,26 @@ const UI_MAIN_CHAPTER_BG = "res://assets/ui/mainui/mainui_img_35.png"
 const UI_MAIN_CHAT_BG = "res://assets/ui/mainui/mainui_btn_04.png"
 const UI_MAIN_GAL = "res://assets/ui/mainui/mainui_btn_25.png"
 const UI_MAIN_MENU = "res://assets/ui/mainui/mainui_btn_11.png"
-const UI_MAIN_LIMIT_ICON = "res://assets/ui/mainui/mainui_btn_14.png"
 const UI_MAIN_AUTO_FIGHT = "res://assets/ui/mainui/mainui_img_36.png"
 const UI_MAIN_BTN_EYE = "res://assets/ui/mainui/mainui_btn_12.png"       # btnEye
 const UI_MAIN_BTN_CHANGE = "res://assets/ui/mainui/mainui_btn_13.png"    # btnChange
 const UI_MAIN_BTN_HARVEST = "res://assets/ui/mainui/mainui_img_18.png"   # btnHarvest
+const UI_ITEM_TICKET = "res://assets/ui/item/draw_07.png"
+const UI_ITEM_GEM = "res://assets/ui/item/draw_05.png"
 const UI_MAIN_CHARGE_ICONS = [
 	"res://assets/ui/mainui/mainui_btn_06.png",   # btnActivity 活动
 	"res://assets/ui/mainui/mainui_btn_07.png",   # btnWelfare 福利
 	"res://assets/ui/mainui/mainui_btn_10.png",   # btnCard 月卡
 	"res://assets/ui/mainui/mainui_btn_08.png",   # btnCharge 充值
 	"res://assets/ui/mainui/mainui_btn_09.png"    # btnShop 商店
+]
+const UI_MAIN_LIMIT_ICONS = [
+	"res://assets/ui/mainui/mainui_btn_15.png",
+	"res://assets/ui/mainui/mainui_btn_16.png",
+	"res://assets/ui/mainui/mainui_btn_17.png",
+	"res://assets/ui/mainui/mainui_btn_20.png",
+	"res://assets/ui/mainui/mainui_btn_18.png",
+	"res://assets/ui/mainui/mainui_btn_19.png"
 ]
 
 var app
@@ -65,6 +74,25 @@ func add_ui_text(text: String, pos: Vector2, text_size: Vector2, font_size: int,
 	label.modulate = color
 	app._view_container().add_child(label)
 	return label
+
+
+func add_scaled_image(path: String, pos: Vector2, draw_size: Vector2, tint := Color(1, 1, 1, 1)) -> TextureRect:
+	var image := Image.new()
+	var error := image.load(path)
+	if error != OK:
+		return null
+	image.resize(int(draw_size.x), int(draw_size.y), Image.INTERPOLATE_LANCZOS)
+	var texture := ImageTexture.create_from_image(image)
+	var rect := TextureRect.new()
+	rect.texture = texture
+	rect.position = pos
+	rect.size = draw_size
+	rect.expand_mode = TextureRect.EXPAND_FIT_WIDTH
+	rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	rect.modulate = tint
+	app._view_container().add_child(rect)
+	return rect
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -193,8 +221,8 @@ func draw_wallpaper(hero: Dictionary) -> void:
 	# Prefab: @WallpaperPanel anchor=(0.5,0.5) 1668x750 → fullscreen scaled
 	app._draw_image(UI_MAIN_BG, Vector2(0, 0), Vector2(1280, 720), true)
 	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.012, 0.010, 0.008, 0.05)))
-	# irole: 958x750 centered → (273,0) 734x720
-	app._draw_hero_stage(hero, Vector2(273, 0), Vector2(734, 720), false)
+	# Keep the interactive role in the center-right lane so left activity entries remain readable.
+	app._draw_hero_stage(hero, Vector2(390, 82), Vector2(560, 620), false)
 
 
 func draw_body_mask() -> void:
@@ -213,12 +241,11 @@ func draw_top_bar() -> void:
 	_main_panels.append(strip)
 	var x = 866.0
 	var resources = [
-		["行动", "%d/50" % clamp(int(app.save.get("tickets", 0)), 0, 50)],
-		["源石", app.save.get("gems", 0)]
+		[UI_ITEM_TICKET, "%d/50" % clamp(int(app.save.get("tickets", 0)), 0, 50)],
+		[UI_ITEM_GEM, app.save.get("gems", 0)]
 	]
 	for item in resources:
-		var icon = app._panel(Vector2(x, 30), Vector2(22, 18), Color(0.58, 0.45, 0.22, 0.78))
-		app._view_container().add_child(icon)
+		add_scaled_image(str(item[0]), Vector2(x - 8, 23), Vector2(34, 34), Color(1, 1, 1, 0.92))
 		add_ui_text(str(item[1]), Vector2(x + 30, 23), Vector2(72, 30), 17, HORIZONTAL_ALIGNMENT_LEFT, Color(0.96, 0.92, 0.78))
 		add_ui_text("+", Vector2(x + 106, 18), Vector2(24, 34), 28, HORIZONTAL_ALIGNMENT_CENTER, Color(1.0, 0.86, 0.34))
 		x += 156
@@ -332,11 +359,11 @@ func draw_assist_button() -> void:
 
 func draw_commercialization() -> void:
 	# pnlCommercialization: banner + 4-column LimitIconView grid from MainUIView.
-	var px = 203.0; var py = 317.0
+	var px = 50.0; var py = 120.0
 	# @pnlAlternate: 301x108 (→231x104) banner
 	app._draw_image(UI_MAIN_BANNER, Vector2(px, py), Vector2(231, 104), false, Color(1, 1, 1, 0.92))
 	# pnlGift: 409x300 (→313x288), below banner
-	var gx = px + 5; var gy = py + 104
+	var gx = px + 5; var gy = py + 113
 	var gifts = [
 		["唤灵福利", "4d01h", app._show_daily],
 		["幻海邀约", "6d01h", enter_gal_entry],
@@ -353,7 +380,7 @@ func draw_commercialization() -> void:
 	]
 	var gsx = gx + 2.0; var gsy = gy + 5.0; var gi = 0
 	for gift in gifts:
-		app._draw_image(UI_MAIN_LIMIT_ICON, Vector2(gsx, gsy), Vector2(66, 66), false, Color(1, 1, 1, 0.88))
+		add_scaled_image(str(UI_MAIN_LIMIT_ICONS[gi % UI_MAIN_LIMIT_ICONS.size()]), Vector2(gsx, gsy), Vector2(66, 66), Color(1, 1, 1, 0.9))
 		add_ui_text(str(gift[0]), Vector2(gsx - 7, gsy + 48), Vector2(80, 20), 13, HORIZONTAL_ALIGNMENT_CENTER, Color(1, 1, 1, 0.94))
 		if not str(gift[1]).is_empty():
 			add_ui_text(str(gift[1]), Vector2(gsx - 4, gsy + 64), Vector2(74, 18), 12, HORIZONTAL_ALIGNMENT_CENTER, Color(1.0, 0.80, 0.28))
@@ -362,7 +389,7 @@ func draw_commercialization() -> void:
 			app._draw_red_dot(Vector2(gsx + 52, gsy + 2))
 		gi += 1; gsx += 74
 		if gi % 4 == 0:
-			gsx = gx + 2; gsy += 76
+			gsx = gx + 2; gsy += 96
 
 
 func draw_chapter_info() -> void:
