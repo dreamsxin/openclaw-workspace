@@ -264,3 +264,17 @@ Measure-Command { & $py scripts\assets\export_unity_bundle_images.py --plan tmp\
 
 - `export_unity_bundle_images.py` 在传入 `wanted` 时会跳过 `Texture2D`，只读取目标 `Sprite`，这是避免头像大图集卡死的关键。
 - 仍然不要一次性全量导出大型 atlas；优先从 prefab 清单或 manifest 中列计划文件，10-50 个一批导出更安全。
+
+## 13. 英雄详情左侧头像外圈
+
+英雄详情左侧头像条对应 `HeroMainSelectHeroGrid`，外圈不是单个资源，而是至少三层组合：
+
+- `HeroMainSelectHeroGrid/imgHightLight`：`hero_img_119`，Rect 为 `100x100`，用于选中状态的大绿色外圈。PNG 本体是 `68x68`，运行时会拉伸到 100。
+- `HeroMainSelectHeroGrid/imgHero`：`Head/Round/yhero_*`，Rect 为 `70x70`，用于圆头像。
+- `HeroMainSelectHeroGrid/imgFrame`：`common_img_64`，Rect 为 `70x70`，用于常驻头像框/品质色层。它中心 alpha 为 0，单独预览时像红块，但叠在头像上是外沿颜色框，不应低透明到几乎不可见。
+
+Godot MVP 已按 prefab 尺寸调整详情左侧头像条：头像 `70x70`，`common_img_64` 同位置 `70x70` 覆盖，选中时 `hero_img_119` 以 `100x100` 居中铺底。
+
+新增验证截图：
+
+- `tmp/screenshots/godot-remnant-detail-head-frame.png`

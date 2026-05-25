@@ -774,20 +774,20 @@ func _draw_remnant_detail_left_strip(selected_id: int) -> void:
 	_draw_image(UI_HERO_SELECTOR_TOP, Vector2(26, 646), Vector2(76, 42), false, Color(1, 1, 1, 0.82))
 	for i in range(visible.size()):
 		var hero: Dictionary = visible[i]
-		var pos := Vector2(38, 78 + i * 82.0)
+		var pos := Vector2(33, 73 + i * 82.0)
 		var is_selected := int(hero.get("id", 0)) == selected_id
 		if is_selected:
-			_draw_image(UI_HERO_HIGHLIGHT, pos - Vector2(20, -1), Vector2(100, 100), false, Color(1, 1, 1, 0.78))
-		_draw_hero_round_thumb(hero, pos, Vector2(60, 60), Color(1, 1, 1, 1))
-		_draw_image(UI_COMMON_HERO_HEAD_FRAME, pos - Vector2(5, 5), Vector2(70, 70), false, Color(1, 1, 1, 0.18))
-		_draw_image(UI_COMMON_HERO_STAR_BAR, pos + Vector2(-5, 55), Vector2(70, 12), false, Color(1, 1, 1, 0.36))
+			_draw_image(UI_HERO_HIGHLIGHT, pos - Vector2(15, 15), Vector2(100, 100), false, Color(1, 1, 1, 0.86))
+		_draw_hero_round_thumb(hero, pos, Vector2(70, 70), Color(1, 1, 1, 1))
+		_draw_image(UI_COMMON_HERO_HEAD_FRAME, pos, Vector2(70, 70), false, Color(1, 1, 1, 0.92))
+		_draw_image(UI_COMMON_HERO_STAR_BAR, pos + Vector2(0, 62), Vector2(70, 12), false, Color(1, 1, 1, 0.42))
 		var stars := _label("★★★★★", 8, HORIZONTAL_ALIGNMENT_CENTER)
-		stars.position = pos + Vector2(-5, 54)
+		stars.position = pos + Vector2(0, 61)
 		stars.size = Vector2(70, 12)
 		stars.modulate = Color(1.0, 1.0, 1.0, 0.72)
 		_view_container().add_child(stars)
 		var level := _label(str(_remnant_level(hero)), 11, HORIZONTAL_ALIGNMENT_RIGHT)
-		level.position = pos + Vector2(31, -3)
+		level.position = pos + Vector2(36, 2)
 		level.size = Vector2(26, 16)
 		level.modulate = Color(1.0, 0.96, 0.76)
 		_view_container().add_child(level)
