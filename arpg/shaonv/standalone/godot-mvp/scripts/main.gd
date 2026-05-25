@@ -5,6 +5,7 @@ const SAVE_PATH := "user://shaonv_godot_mvp_save.json"
 const DEFAULT_HERO_ID := 240037
 const LEGACY_DEFAULT_HERO_ID := 240065
 const HERO_DATA_PATH := "res://data/heroes_mvp.json"
+const HERO_RESOURCE_MAP_PATH := "res://data/hero_resource_map.json"
 const POOL_DATA_PATH := "res://data/gacha_pools_mvp.json"
 const LIVE_OPS_DATA_PATH := "res://data/live_ops_mvp.json"
 const ADVENTURE_DATA_PATH := "res://data/adventure_mvp.json"
@@ -62,6 +63,7 @@ const UI_REMNANTS_BG := "res://assets/ui/background/mainui_bg_01.png"
 const UI_REMNANT_STAGE_BG := "res://assets/spine/hero_017/hero_017_bg.png"
 
 var heroes: Array = []
+var hero_resource_map: Array = []
 var pools: Array = []
 var tasks: Array = []
 var mails: Array = []
@@ -133,6 +135,7 @@ func _ready() -> void:
 	print("Shaonv MVP _ready")
 	rng.randomize()
 	heroes = _read_json(HERO_DATA_PATH).get("heroes", [])
+	hero_resource_map = _read_json_array(HERO_RESOURCE_MAP_PATH)
 	pools = _read_json(POOL_DATA_PATH).get("pools", [])
 	var live_ops := _read_json(LIVE_OPS_DATA_PATH)
 	tasks = live_ops.get("tasks", [])
@@ -181,6 +184,19 @@ func _read_json(path: String) -> Dictionary:
 		push_warning("Invalid JSON object: %s" % path)
 		return {}
 	return parsed
+
+
+func _read_json_array(path: String) -> Array:
+	var text := FileAccess.get_file_as_string(path)
+	if text.is_empty():
+		push_warning("Missing or empty JSON array: %s" % path)
+		return []
+	var parsed = JSON.parse_string(text)
+	if typeof(parsed) != TYPE_ARRAY:
+		push_warning("Invalid JSON array: %s" % path)
+		return []
+	return parsed
+
 
 func _load_save() -> void:
 	if not FileAccess.file_exists(SAVE_PATH):
@@ -378,7 +394,11 @@ func _show_start_view_from_env() -> void:
 		_show_remnant_detail(int(OS.get_environment("SHAONV_MVP_HERO_ID")) if not OS.get_environment("SHAONV_MVP_HERO_ID").is_empty() else int(_remnants_primary_heroes()[0].get("id", DEFAULT_HERO_ID)))
 	elif start_view == "gal":
 		_enter_main_scene()
-		_show_gal()
+		var gal_view := OS.get_environment("SHAONV_MVP_GAL_VIEW").to_lower()
+		if gal_view.is_empty():
+			_show_gal()
+		else:
+			gal_screen.show_view(gal_view)
 	elif start_view == "hero_detail":
 		_enter_main_scene()
 		_show_hero_detail(int(OS.get_environment("SHAONV_MVP_HERO_ID")) if not OS.get_environment("SHAONV_MVP_HERO_ID").is_empty() else int(save.get("selected_hero_id", DEFAULT_HERO_ID)))

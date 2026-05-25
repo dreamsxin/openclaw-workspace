@@ -4,6 +4,11 @@ extends RefCounted
 const VIEW_MAIN := "main"
 const VIEW_DATE_SELECT := "date_select"
 const VIEW_CHARACTER := "character"
+const VIEW_DRESS_UP := "dress_up"
+const VIEW_FILES := "files"
+const VIEW_ALBUM := "album"
+const VIEW_MEMORY := "memory"
+const VIEW_SPECIAL_TOUCH := "special_touch"
 const DEFAULT_GAL_HERO_ID := 240030
 
 # Main panel resources
@@ -25,6 +30,7 @@ const GAL_BTN_DRESS := "res://assets/ui/gal/gal_btn_03.png"
 const GAL_BTN_PRIV := "res://assets/ui/gal/gal_btn_04.png"
 const GAL_IMG_LABEL_BG := "res://assets/ui/gal/gal_img_05.png"
 const GAL_IMG_ROLE_BG := "res://assets/ui/gal/gal_img_06.png"
+const GAL_IMG_ROLE_SELECT_BG := "res://assets/ui/gal/gal_img_09.png"
 const GAL_BTN_CHANGE_ICON := "res://assets/ui/gal/gal_btn_11.png"
 
 # Shared / child view resources
@@ -69,6 +75,9 @@ var _voice_index := 0
 var _gift_voice_index := 0
 var _idle_voice_timer: Timer
 var _audio_cache: Dictionary = {}
+var _role_selector_expanded := false
+var _ui_hidden := false
+var _files_tab := "voice"
 
 const GAL_PREFAB_SCALE := Vector2(1280.0 / 1670.0, 720.0 / 750.0)
 const GAL_INFO_PANEL_CENTER := Vector2(190, -46)
@@ -79,6 +88,10 @@ func _init(app_ref) -> void:
 
 
 func show_gal() -> void:
+	var gal_hero_id := OS.get_environment("SHAONV_MVP_GAL_HERO_ID")
+	if not gal_hero_id.is_empty():
+		app.save["selected_gal_hero_id"] = int(gal_hero_id)
+	_role_selector_expanded = OS.get_environment("SHAONV_MVP_GAL_ROLE_LIST") == "1"
 	show_view(VIEW_MAIN)
 
 
@@ -92,6 +105,16 @@ func show_view(view_name: String) -> void:
 			_draw_date_select_view()
 		VIEW_CHARACTER:
 			_draw_character_view()
+		VIEW_DRESS_UP:
+			_draw_dress_up_view()
+		VIEW_FILES:
+			_draw_files_view()
+		VIEW_ALBUM:
+			_draw_album_view()
+		VIEW_MEMORY:
+			_draw_memory_view()
+		VIEW_SPECIAL_TOUCH:
+			_draw_special_touch_view()
 		_:
 			_draw_main_view()
 	_restart_idle_voice_timer()
@@ -103,15 +126,92 @@ func _selected_hero() -> Dictionary:
 		hero = app._hero_by_id(DEFAULT_GAL_HERO_ID)
 	if not hero.is_empty():
 		hero = hero.duplicate(true)
-		var spine := str(hero.get("spine", ""))
-		if spine == "hero_037":
+		var gal_entry := _gal_resource_entry(int(hero.get("id", 0)))
+		if not gal_entry.is_empty():
+			_apply_gal_entry(hero, gal_entry)
+		elif int(hero.get("id", 0)) == DEFAULT_GAL_HERO_ID:
 			hero["name"] = "墨菏"
 			hero["title"] = "玄武"
 			hero["spine"] = "hero_037r_s01"
 			hero["artResource"] = "Art/Spine/hero_037r_s01/hero_037r_s01"
-			hero["galSpine"] = "hero_037r_s01|hero_037r"
-			hero["portraitResource"] = "assets/ui/hero/recruit/zhero_037.png"
+			hero["galSpine"] = "hero_037r_s01|hero_037r|hero_037"
+			hero["roundHeadResource"] = "assets/ui/hero/round/yhero_037r_s01.png"
 	return hero
+
+
+func _gal_resource_entry(hero_id: int) -> Dictionary:
+	for raw_entry in app.hero_resource_map:
+		var entry: Dictionary = raw_entry
+		if int(entry.get("heroId", 0)) == hero_id:
+			return entry
+	return {}
+
+
+func _apply_gal_entry(hero: Dictionary, entry: Dictionary) -> void:
+	var gal_spine := _first_existing_spine(str(entry.get("galSpine", "")))
+	if gal_spine.is_empty():
+		gal_spine = _first_spine_token(str(entry.get("galSpine", "")))
+	if gal_spine.is_empty():
+		return
+	hero["name"] = str(entry.get("nameText", hero.get("name", "")))
+	hero["spine"] = gal_spine
+	hero["artResource"] = "Art/Spine/%s/%s" % [gal_spine, gal_spine]
+	hero["galSpine"] = str(entry.get("galSpine", gal_spine))
+	var round_head := _first_existing_round_head(gal_spine, str(entry.get("galSpine", "")))
+	if not round_head.is_empty():
+		hero["roundHeadResource"] = round_head
+
+
+func _first_spine_token(spine_list: String) -> String:
+	for raw_name in spine_list.split("|", false):
+		var spine_name := raw_name.strip_edges()
+		if not spine_name.is_empty():
+			return spine_name
+	return ""
+
+
+func _first_existing_spine(spine_list: String) -> String:
+	for raw_name in spine_list.split("|", false):
+		var spine_name := raw_name.strip_edges()
+		if spine_name.is_empty():
+			continue
+		var baked_path := "res://assets/spine/%s/%s.baked.json" % [spine_name, spine_name]
+		var png_path := "res://assets/spine/%s/%s.png" % [spine_name, spine_name]
+		if FileAccess.file_exists(baked_path) or FileAccess.file_exists(png_path):
+			return spine_name
+	return ""
+
+
+func _first_existing_round_head(primary_spine: String, spine_list: String) -> String:
+	var candidates: Array[String] = []
+	if not primary_spine.is_empty():
+		candidates.append(primary_spine)
+	for raw_name in spine_list.split("|", false):
+		var spine_name := raw_name.strip_edges()
+		if not spine_name.is_empty() and not candidates.has(spine_name):
+			candidates.append(spine_name)
+	for spine_name in candidates:
+		if not spine_name.begins_with("hero_"):
+			continue
+		var suffix := spine_name.trim_prefix("hero_")
+		var path := "res://assets/ui/hero/round/yhero_%s.png" % suffix
+		if FileAccess.file_exists(path):
+			return path
+	return ""
+
+
+func _gal_roster() -> Array[Dictionary]:
+	var roster: Array[Dictionary] = []
+	for raw_entry in app.hero_resource_map:
+		var entry: Dictionary = raw_entry
+		if str(entry.get("galSpine", "")).is_empty():
+			continue
+		var hero: Dictionary = app._hero_by_id(int(entry.get("heroId", 0))).duplicate(true)
+		if hero.is_empty():
+			hero = {"id": int(entry.get("heroId", 0)), "rarity": int(entry.get("rare", 1))}
+		_apply_gal_entry(hero, entry)
+		roster.append(hero)
+	return roster
 
 
 func _gal_size(prefab_size: Vector2) -> Vector2:
@@ -154,9 +254,12 @@ func _draw_main_view() -> void:
 
 	app._draw_image(GAL_ROOM_BG, Vector2(0, 0), Vector2(1280, 720), true)
 	app._draw_image(GAL_BG, Vector2(0, 0), Vector2(1280, 720), true)
-	app._view_container().add_child(app._panel(Vector2(0, 540), Vector2(1280, 180), Color(0.04, 0.025, 0.045, 0.22)))
+	app._view_container().add_child(app._panel(Vector2(0, 540), Vector2(1280, 180), Color(0.04, 0.025, 0.045, 0.10)))
 
 	_draw_hero_stage(hero)
+	if _ui_hidden:
+		_draw_hidden_restore_button()
+		return
 	_draw_top_bar()
 	_draw_hero_info_panel(hero)
 	_draw_level_ring()
@@ -167,8 +270,8 @@ func _draw_main_view() -> void:
 
 
 func _draw_hero_stage(hero: Dictionary) -> void:
-	app._draw_hero_stage(hero, Vector2(330, 28), Vector2(540, 662), false)
-	_add_hit_button(Vector2(360, 40), Vector2(470, 610), func() -> void:
+	app._draw_hero_stage(hero, Vector2(318, 18), Vector2(560, 674), false)
+	_add_hit_button(Vector2(335, 36), Vector2(500, 620), func() -> void:
 		_play_touch_voice("touch")
 		_show_touch_hint("摸到了。%s 的心情似乎變好了。" % str(hero.get("name", "她")))
 	)
@@ -199,17 +302,13 @@ func _draw_top_bar() -> void:
 	var fav_pos := _gal_top_left_pos(Vector2(186, -18))
 	app._draw_image(GAL_BTN_FAV, fav_pos, section_size, false, Color(1, 1, 1, 0.92))
 	_add_hit_button(fav_pos, section_size, func() -> void:
-		app._show_gallery()
+		_show_touch_hint("已設為最愛看板")
 	)
 
 
 func _draw_hero_info_panel(hero: Dictionary) -> void:
 	var panel_pos := _gal_left_middle_pos(GAL_INFO_PANEL_CENTER, GAL_INFO_PANEL_SIZE)
 	var panel_size := _gal_size(GAL_INFO_PANEL_SIZE)
-	var px := panel_pos.x
-	var py := panel_pos.y
-	var pw := panel_size.x
-	var ph := panel_size.y
 
 	app._draw_image(GAL_HERO_PANEL, panel_pos, panel_size, false, Color(1, 1, 1, 1.0))
 	app._draw_image(GAL_HERO_PANEL, _gal_left_middle_pos(GAL_INFO_PANEL_CENTER + Vector2(146, 0), GAL_INFO_PANEL_SIZE), panel_size, false, Color(1, 1, 1, 0.35))
@@ -219,48 +318,48 @@ func _draw_hero_info_panel(hero: Dictionary) -> void:
 	var label_text := str(hero.get("personality", "天真天然邪"))
 
 	var title_label = app._label(title_text, 18)
-	title_label.position = _gal_info_child_pos(Vector2(298.3, 275.0), Vector2(180, 30), true)
-	title_label.size = _gal_size(Vector2(180, 30))
+	title_label.position = Vector2(54, 92)
+	title_label.size = Vector2(180, 30)
 	title_label.modulate = Color(1.0, 0.92, 0.66)
 	app._view_container().add_child(title_label)
 
 	var name_label = app._label(name_text, 30)
-	name_label.position = _gal_info_child_pos(Vector2(298.3, 231.5), Vector2(210, 57), true)
-	name_label.size = _gal_size(Vector2(210, 57))
+	name_label.position = Vector2(54, 124)
+	name_label.size = Vector2(210, 48)
 	name_label.modulate = Color(1.0, 1.0, 1.0)
 	app._view_container().add_child(name_label)
 
-	app._draw_image(GAL_IMG_LABEL_BG, _gal_info_child_pos(Vector2(66, 157), Vector2(126, 36), true), _gal_size(Vector2(126, 36)), false, Color(1, 0.62, 0.86, 0.92))
+	var personality_pos := Vector2(54, 176)
+	var personality_size := _gal_size(Vector2(168, 48))
+	app._draw_image("res://assets/ui/gal/gal_img_04.png", personality_pos, personality_size, false, Color(1, 1, 1, 0.95))
+	app._draw_image("res://assets/ui/gal/gal_btn_02.png", personality_pos + Vector2(104, -2), _gal_size(Vector2(50, 50)), false)
 	var tag_label = app._label(label_text, 14)
-	tag_label.position = _gal_info_child_pos(Vector2(66, 157), Vector2(126, 30), true)
-	tag_label.size = _gal_size(Vector2(126, 30))
+	tag_label.position = personality_pos + Vector2(4, 9)
+	tag_label.size = Vector2(112, 26)
 	tag_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	tag_label.modulate = Color(1.0, 0.92, 1.0)
 	app._view_container().add_child(tag_label)
-
-	var dress_pos := _gal_info_child_pos(Vector2(-4, 72), Vector2(98, 98), true)
-	app._draw_image(GAL_BTN_DRESS, dress_pos, _gal_size(Vector2(98, 98)), false)
-	app._draw_image(GAL_IMG_LABEL_BG, _gal_info_child_pos(Vector2(-4, 18), Vector2(126, 36), true), _gal_size(Vector2(126, 36)), false, Color(1, 1, 1, 0.74))
-	_add_gal_text("裝扮", _gal_info_child_pos(Vector2(-4, 18), Vector2(126, 30), true), _gal_size(Vector2(126, 30)), 14)
-	_add_hit_button(dress_pos, _gal_size(Vector2(98, 98)), func() -> void:
-		show_view(VIEW_CHARACTER)
-	)
-	app._draw_red_dot(_gal_info_child_pos(Vector2(27.3, 100.5), Vector2(0, 0), true))
-
-	var priv_pos := _gal_info_child_pos(Vector2(-4, -58), Vector2(98, 98), true)
-	app._draw_image(GAL_BTN_PRIV, priv_pos, _gal_size(Vector2(98, 98)), false)
-	app._draw_image(GAL_IMG_LABEL_BG, _gal_info_child_pos(Vector2(-4, -112), Vector2(126, 36), true), _gal_size(Vector2(126, 36)), false, Color(1, 1, 1, 0.74))
-	_add_gal_text("甜蜜互動", _gal_info_child_pos(Vector2(-4, -112), Vector2(126, 30), true), _gal_size(Vector2(126, 30)), 14)
-	_add_hit_button(priv_pos, _gal_size(Vector2(98, 98)), func() -> void:
+	_add_hit_button(personality_pos, personality_size, func() -> void:
 		show_view(VIEW_CHARACTER)
 	)
 
-	var personality_pos := _gal_info_child_pos(Vector2(66, 157), Vector2(168, 48), true)
-	app._draw_image("res://assets/ui/gal/gal_img_04.png", personality_pos, _gal_size(Vector2(168, 48)), false, Color(1, 1, 1, 0.95))
-	app._draw_image("res://assets/ui/gal/gal_btn_02.png", _gal_info_child_pos(Vector2(150, 157), Vector2(50, 50), true), _gal_size(Vector2(50, 50)), false)
-	_add_gal_text("性格", _gal_info_child_pos(Vector2(55, 157), Vector2(120, 30), true), _gal_size(Vector2(120, 30)), 15)
-	_add_hit_button(personality_pos, _gal_size(Vector2(168, 48)), func() -> void:
-		show_view(VIEW_CHARACTER)
+	var small_button_size := _gal_size(Vector2(98, 98))
+	var small_label_size := _gal_size(Vector2(126, 36))
+	var dress_pos := Vector2(48, 252)
+	app._draw_image(GAL_BTN_DRESS, dress_pos, small_button_size, false)
+	app._draw_image(GAL_IMG_LABEL_BG, dress_pos + Vector2(-11, 82), small_label_size, false, Color(1, 1, 1, 0.74))
+	_add_gal_text("裝扮", dress_pos + Vector2(-11, 84), small_label_size, 14)
+	_add_hit_button(dress_pos, small_button_size, func() -> void:
+		show_view(VIEW_DRESS_UP)
+	)
+	app._draw_red_dot(dress_pos + Vector2(58, 8))
+
+	var priv_pos := Vector2(48, 382)
+	app._draw_image(GAL_BTN_PRIV, priv_pos, small_button_size, false)
+	app._draw_image(GAL_IMG_LABEL_BG, priv_pos + Vector2(-11, 82), small_label_size, false, Color(1, 1, 1, 0.74))
+	_add_gal_text("甜蜜互動", priv_pos + Vector2(-11, 84), small_label_size, 14)
+	_add_hit_button(priv_pos, small_button_size, func() -> void:
+		show_view(VIEW_SPECIAL_TOUCH)
 	)
 
 
@@ -289,7 +388,7 @@ func _draw_level_ring() -> void:
 	exp_text.modulate = Color(1.0, 0.72, 0.72)
 	app._view_container().add_child(exp_text)
 
-	var lbl = app._label("好感等級", 13)
+	var lbl = app._label("親密等級", 13)
 	lbl.position = lv_pos + _gal_size(Vector2(0, 38))
 	lbl.size = _gal_size(Vector2(322, 30))
 	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -322,15 +421,17 @@ func _draw_action_buttons() -> void:
 	_add_gal_text("禮物", gift_pos + _gal_size(Vector2(0, 60)), _gal_size(Vector2(88, 22)), 14)
 	_add_hit_button(gift_pos, small_size, func() -> void:
 		_play_gift_voice()
-		_show_touch_hint("禮物已送出，好感 +5")
-		show_view(VIEW_DATE_SELECT)
+		app.save["gal_exp"] = mini(int(app.save.get("gal_exp", 0)) + 5, 250)
+		show_view(VIEW_MAIN)
+		_show_touch_hint("禮物已送出，親密 +5")
 	)
 
 	var file_pos := _gal_right_bottom_pos(Vector2(-623, 19), Vector2(88, 88))
 	app._draw_image(GAL_BTN_FILE, file_pos, small_size, false, Color(1, 1, 1, 0.90))
 	_add_gal_text("檔案", file_pos + _gal_size(Vector2(0, 60)), _gal_size(Vector2(88, 22)), 14)
 	_add_hit_button(file_pos, small_size, func() -> void:
-		show_view(VIEW_CHARACTER)
+		_files_tab = "profile"
+		show_view(VIEW_FILES)
 	)
 
 
@@ -343,7 +444,7 @@ func _draw_side_buttons() -> void:
 	app._draw_image(GAL_IMG_LABEL_BG, album_pos + _gal_size(Vector2(-14, 89)), label_size, false, Color(1, 1, 1, 0.72))
 	_add_gal_text("相冊", album_pos + _gal_size(Vector2(-14, 89)), label_size, 14)
 	_add_hit_button(album_pos, button_size, func() -> void:
-		show_view(VIEW_DATE_SELECT)
+		show_view(VIEW_ALBUM)
 	)
 	app._draw_red_dot(_gal_right_bottom_pos(Vector2(-51.7, 221.5), Vector2(0, 0)))
 
@@ -352,7 +453,7 @@ func _draw_side_buttons() -> void:
 	app._draw_image(GAL_IMG_LABEL_BG, mem_pos + _gal_size(Vector2(-14, 89)), label_size, false, Color(1, 1, 1, 0.72))
 	_add_gal_text("心動回憶", mem_pos + _gal_size(Vector2(-14, 89)), label_size, 14)
 	_add_hit_button(mem_pos, button_size, func() -> void:
-		show_view(VIEW_DATE_SELECT)
+		show_view(VIEW_MEMORY)
 	)
 	app._draw_red_dot(_gal_right_bottom_pos(Vector2(-51.7, 351.5), Vector2(0, 0)))
 
@@ -362,7 +463,8 @@ func _draw_hide_button() -> void:
 	var hide_size := _gal_size(Vector2(90, 90))
 	app._draw_image("res://assets/ui/gal/gal_btn_46.png", hide_pos, hide_size, false, Color(1, 1, 1, 0.72))
 	_add_hit_button(hide_pos, hide_size, func() -> void:
-		show_view(VIEW_DATE_SELECT)
+		_ui_hidden = true
+		show_view(VIEW_MAIN)
 	)
 
 
@@ -388,9 +490,288 @@ func _draw_role_selector(hero: Dictionary) -> void:
 
 	app._draw_image(GAL_BTN_CHANGE_ICON, _gal_left_middle_pos(Vector2(219, -279), Vector2(50, 50)), _gal_size(Vector2(50, 50)), false, Color(1, 1, 1, 0.90))
 	_add_hit_button(selector_pos, selector_size, func() -> void:
-		show_view(VIEW_CHARACTER)
+		_role_selector_expanded = not _role_selector_expanded
+		show_view(VIEW_MAIN)
 	)
+	if _role_selector_expanded:
+		_draw_gal_role_list(hero)
 	app._draw_red_dot(_gal_left_middle_pos(Vector2(230.9, -246.4), Vector2(0, 0)))
+
+
+func _draw_gal_role_list(current_hero: Dictionary) -> void:
+	var roster := _gal_roster()
+	if roster.is_empty():
+		return
+	var panel_pos := Vector2(165, 500)
+	var panel_size := Vector2(660, 138)
+	app._view_container().add_child(app._panel(panel_pos + Vector2(8, 8), panel_size, Color(0, 0, 0, 0.22)))
+	app._view_container().add_child(app._panel(panel_pos, panel_size, Color(0.05, 0.04, 0.08, 0.82)))
+	var title = app._label("選擇看板角色", 16)
+	title.position = panel_pos + Vector2(18, 10)
+	title.size = Vector2(180, 24)
+	title.modulate = Color(1.0, 0.88, 0.96)
+	app._view_container().add_child(title)
+	for index in range(roster.size()):
+		var item: Dictionary = roster[index]
+		var item_pos := panel_pos + Vector2(18 + index * 90, 40)
+		var item_size := Vector2(78, 88)
+		var selected := int(item.get("id", 0)) == int(current_hero.get("id", 0))
+		app._view_container().add_child(app._panel(item_pos, item_size, Color(1.0, 0.72, 0.92, 0.18 if selected else 0.07)))
+		app._draw_image(GAL_IMG_ROLE_BG, item_pos + Vector2(7, 2), Vector2(64, 64), false, Color(1, 1, 1, 0.86))
+		var tex = app._hero_round_head_texture(item)
+		if tex != null:
+			var head := TextureRect.new()
+			head.texture = tex
+			head.position = item_pos + Vector2(10, 5)
+			head.size = Vector2(58, 58)
+			head.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			head.stretch_mode = TextureRect.STRETCH_SCALE
+			head.modulate = Color(1, 1, 1, 0.96)
+			app._view_container().add_child(head)
+		var name_label = app._label(str(item.get("name", "角色")), 12, HORIZONTAL_ALIGNMENT_CENTER)
+		name_label.position = item_pos + Vector2(0, 64)
+		name_label.size = Vector2(78, 22)
+		name_label.modulate = Color(1.0, 0.92, 0.98)
+		app._view_container().add_child(name_label)
+		var hero_id := int(item.get("id", 0))
+		var hero_name := str(item.get("name", "角色"))
+		_add_hit_button(item_pos, item_size, func() -> void:
+			app.save["selected_gal_hero_id"] = hero_id
+			_role_selector_expanded = false
+			show_view(VIEW_MAIN)
+			_show_touch_hint("已切換看板：%s" % hero_name)
+		)
+
+
+func _draw_hidden_restore_button() -> void:
+	var restore_pos := Vector2(20, 318)
+	var restore_size := Vector2(74, 86)
+	app._draw_image("res://assets/ui/gal/gal_btn_46.png", restore_pos, restore_size, false, Color(1, 1, 1, 0.78))
+	_add_gal_text("顯示", restore_pos + Vector2(0, 54), Vector2(74, 24), 14)
+	_add_hit_button(restore_pos, restore_size, func() -> void:
+		_ui_hidden = false
+		show_view(VIEW_MAIN)
+	)
+
+
+func _draw_child_panel_shell(title_text: String, subtitle_text: String) -> Dictionary:
+	var hero := _selected_hero()
+	app._draw_image(GAL_ROOM_BG, Vector2(0, 0), Vector2(1280, 720), true)
+	app._draw_image(GAL_BG, Vector2(0, 0), Vector2(1280, 720), true)
+	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.02, 0.015, 0.035, 0.42)))
+
+	var close_pos := _gal_top_left_pos(Vector2(60, -18))
+	var close_size := _gal_size(Vector2(120, 80))
+	app._draw_image(GAL_BTN_CLOSE, close_pos, close_size, false, Color(1, 1, 1, 0.94))
+	_add_hit_button(close_pos, close_size, func() -> void:
+		show_view(VIEW_MAIN)
+	)
+
+	var card_pos := Vector2(250, 58)
+	var card_size := Vector2(900, 604)
+	app._view_container().add_child(app._panel(card_pos + Vector2(12, 12), card_size, Color(0.0, 0.0, 0.0, 0.20)))
+	app._view_container().add_child(app._panel(card_pos, card_size, Color(0.08, 0.06, 0.12, 0.82)))
+
+	var title = app._label(title_text, 30)
+	title.position = card_pos + Vector2(36, 28)
+	title.size = Vector2(260, 42)
+	title.modulate = Color(1.0, 0.80, 0.96)
+	app._view_container().add_child(title)
+
+	var subtitle = app._label(subtitle_text, 16)
+	subtitle.position = card_pos + Vector2(38, 70)
+	subtitle.size = Vector2(card_size.x - 76, 28)
+	subtitle.modulate = Color(0.95, 0.88, 0.94, 0.78)
+	app._view_container().add_child(subtitle)
+
+	return {"hero": hero, "card_pos": card_pos, "card_size": card_size}
+
+
+func _draw_dress_up_view() -> void:
+	var ctx := _draw_child_panel_shell("裝扮", "切換看板服裝與房間背景。當前 MVP 先接通入口與選擇狀態，後續可替換為原版換裝格。")
+	var card_pos: Vector2 = ctx["card_pos"]
+	var hero: Dictionary = ctx["hero"]
+	app._draw_hero_stage(hero, card_pos + Vector2(-72, 96), Vector2(420, 480), false)
+
+	var sections := [
+		{"name": "默認看板", "desc": "使用 Gal 專用動態看板", "key": "default"},
+		{"name": "日常服裝", "desc": "已發現於普通 Spine/換裝資源", "key": "daily"},
+		{"name": "房間背景", "desc": "切換現世界房間背景", "key": "room"}
+	]
+	for index in range(sections.size()):
+		var item: Dictionary = sections[index]
+		var pos := card_pos + Vector2(360, 128 + index * 128)
+		var selected := str(app.save.get("gal_dress_selection", "default")) == str(item.get("key", ""))
+		app._view_container().add_child(app._panel(pos, Vector2(430, 96), Color(1.0, 0.72, 0.92, 0.18 if selected else 0.08)))
+		app._draw_image(GAL_IMG_CHAR_TAG, pos + Vector2(18, 16), Vector2(150, 34), false, Color(1, 1, 1, 0.82))
+		_add_gal_text(str(item.get("name", "")), pos + Vector2(22, 16), Vector2(142, 30), 16)
+		var desc = app._label(str(item.get("desc", "")), 15)
+		desc.position = pos + Vector2(184, 16)
+		desc.size = Vector2(220, 46)
+		desc.modulate = Color(0.96, 0.88, 0.94)
+		app._view_container().add_child(desc)
+		if selected:
+			_add_gal_text("使用中", pos + Vector2(304, 58), Vector2(92, 24), 14)
+		var selection_key := str(item.get("key", ""))
+		var selection_name := str(item.get("name", ""))
+		_add_hit_button(pos, Vector2(430, 96), func() -> void:
+			app.save["gal_dress_selection"] = selection_key
+			show_view(VIEW_DRESS_UP)
+			_show_touch_hint("已切換：%s" % selection_name)
+		)
+
+
+func _draw_files_view() -> void:
+	var ctx := _draw_child_panel_shell("檔案", "角色語音、資料與親密記錄入口。")
+	var card_pos: Vector2 = ctx["card_pos"]
+	var hero: Dictionary = ctx["hero"]
+	var tabs := [{"key": "voice", "text": "語音"}, {"key": "profile", "text": "檔案"}]
+	for index in range(tabs.size()):
+		var tab: Dictionary = tabs[index]
+		var tab_pos := card_pos + Vector2(42, 126 + index * 82)
+		var active := _files_tab == str(tab.get("key", ""))
+		app._draw_image(GAL_IMG_CHAR_TAG, tab_pos, Vector2(168, 46), false, Color(1, 1, 1, 0.95 if active else 0.55))
+		_add_gal_text(str(tab.get("text", "")), tab_pos, Vector2(168, 42), 18)
+		var tab_key := str(tab.get("key", ""))
+		_add_hit_button(tab_pos, Vector2(168, 46), func() -> void:
+			_files_tab = tab_key
+			show_view(VIEW_FILES)
+		)
+
+	var content_pos := card_pos + Vector2(250, 126)
+	app._view_container().add_child(app._panel(content_pos, Vector2(560, 408), Color(0.03, 0.025, 0.055, 0.62)))
+	if _files_tab == "profile":
+		_draw_profile_content(hero, content_pos)
+	else:
+		_draw_voice_content(content_pos)
+
+
+func _draw_voice_content(content_pos: Vector2) -> void:
+	var voices := [
+		{"name": "問候", "path": GAL_AUDIO_GREET},
+		{"name": "待機 1", "path": GAL_AUDIO_WAIT[0]},
+		{"name": "待機 2", "path": GAL_AUDIO_WAIT[1]},
+		{"name": "待機 3", "path": GAL_AUDIO_WAIT[2]},
+		{"name": "觸摸", "path": GAL_AUDIO_TOUCH[1]},
+		{"name": "禮物", "path": GAL_AUDIO_GIFT[0]}
+	]
+	for index in range(voices.size()):
+		var item: Dictionary = voices[index]
+		var row := index / 2
+		var col := index % 2
+		var pos := content_pos + Vector2(28 + col * 258, 28 + row * 82)
+		app._view_container().add_child(app._panel(pos, Vector2(226, 58), Color(1.0, 0.68, 0.90, 0.12)))
+		_add_gal_text(str(item.get("name", "")), pos + Vector2(12, 6), Vector2(116, 30), 16)
+		_add_gal_text("播放", pos + Vector2(132, 8), Vector2(70, 28), 14)
+		var voice_path := str(item.get("path", ""))
+		var voice_name := str(item.get("name", ""))
+		_add_hit_button(pos, Vector2(226, 58), func() -> void:
+			_play_gal_sound(voice_path, 0.92)
+			_show_touch_hint("播放語音：%s" % voice_name)
+		)
+
+
+func _draw_profile_content(hero: Dictionary, content_pos: Vector2) -> void:
+	var portrait = app._hero_portrait_texture(hero)
+	if portrait != null:
+		var head := TextureRect.new()
+		head.texture = portrait
+		head.position = content_pos + Vector2(34, 34)
+		head.size = Vector2(132, 132)
+		head.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		head.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		app._view_container().add_child(head)
+	var profile := [
+		["稱號", str(hero.get("title", "玄武"))],
+		["姓名", str(hero.get("name", "角色"))],
+		["性格", str(hero.get("personality", "天真天然邪"))],
+		["親密", "%d / 250" % int(app.save.get("gal_exp", 0))],
+		["狀態", "看板互動已開啟"]
+	]
+	for index in range(profile.size()):
+		var row: Array = profile[index]
+		var pos := content_pos + Vector2(196, 34 + index * 58)
+		app._draw_image(GAL_IMG_TRAIT_1, pos, Vector2(310, 34), false, Color(1, 1, 1, 0.72))
+		var label = app._label("%s   %s" % [str(row[0]), str(row[1])], 17)
+		label.position = pos + Vector2(18, 2)
+		label.size = Vector2(276, 30)
+		label.modulate = Color(1, 0.92, 0.96)
+		app._view_container().add_child(label)
+
+
+func _draw_album_view() -> void:
+	var ctx := _draw_child_panel_shell("相冊", "展示已解鎖的 Gal 圖像回憶。")
+	var card_pos: Vector2 = ctx["card_pos"]
+	for index in range(6):
+		var col := index % 3
+		var row := index / 3
+		var pos := card_pos + Vector2(70 + col * 250, 132 + row * 190)
+		app._view_container().add_child(app._panel(pos, Vector2(208, 132), Color(1.0, 0.82, 0.94, 0.10)))
+		app._view_container().add_child(app._panel(pos + Vector2(8, 8), Vector2(192, 88), Color(0.02, 0.018, 0.04, 0.56)))
+		app._draw_image(GAL_IMG_CHAR_TAG, pos + Vector2(36, 36), Vector2(136, 30), false, Color(1, 1, 1, 0.44))
+		_add_gal_text("未解鎖", pos + Vector2(44, 34), Vector2(120, 28), 14)
+		_add_gal_text("回憶相片 %02d" % (index + 1), pos + Vector2(8, 100), Vector2(192, 26), 14)
+		var album_index := index + 1
+		_add_hit_button(pos, Vector2(208, 132), func() -> void:
+			_show_touch_hint("查看相片 %02d" % album_index)
+		)
+
+
+func _draw_memory_view() -> void:
+	var ctx := _draw_child_panel_shell("心動回憶", "回看親密事件與約會記錄。")
+	var card_pos: Vector2 = ctx["card_pos"]
+	var memories := [
+		{"title": "初次問候", "desc": "她在房間裡向你打招呼。", "unlocked": true},
+		{"title": "送禮反應", "desc": "收到禮物時的特別語音。", "unlocked": true},
+		{"title": "外出邀約", "desc": "約會功能接通後可繼續補全。", "unlocked": false},
+		{"title": "甜蜜互動", "desc": "特殊觸摸事件入口。", "unlocked": true}
+	]
+	for index in range(memories.size()):
+		var item: Dictionary = memories[index]
+		var pos := card_pos + Vector2(74, 124 + index * 106)
+		var unlocked := bool(item.get("unlocked", false))
+		app._view_container().add_child(app._panel(pos, Vector2(740, 78), Color(1.0, 0.72, 0.92, 0.14 if unlocked else 0.06)))
+		var title = app._label(str(item.get("title", "")), 20)
+		title.position = pos + Vector2(28, 10)
+		title.size = Vector2(220, 30)
+		title.modulate = Color(1, 0.92, 0.98) if unlocked else Color(0.72, 0.68, 0.72)
+		app._view_container().add_child(title)
+		var desc = app._label(str(item.get("desc", "")), 15)
+		desc.position = pos + Vector2(28, 42)
+		desc.size = Vector2(560, 24)
+		desc.modulate = Color(0.94, 0.86, 0.92, 0.82)
+		app._view_container().add_child(desc)
+		if unlocked:
+			var memory_title := str(item.get("title", ""))
+			_add_hit_button(pos, Vector2(740, 78), func() -> void:
+				_show_touch_hint("回看：%s" % memory_title)
+			)
+
+
+func _draw_special_touch_view() -> void:
+	var ctx := _draw_child_panel_shell("甜蜜互動", "點擊互動區域播放對應語音與反饋。")
+	var card_pos: Vector2 = ctx["card_pos"]
+	var hero: Dictionary = ctx["hero"]
+	app._draw_hero_stage(hero, card_pos + Vector2(40, 92), Vector2(430, 486), false)
+	var zones := [
+		{"name": "問候", "pos": Vector2(552, 150), "kind": "greet"},
+		{"name": "輕觸", "pos": Vector2(552, 240), "kind": "touch"},
+		{"name": "送禮", "pos": Vector2(552, 330), "kind": "gift"}
+	]
+	for zone in zones:
+		var item: Dictionary = zone
+		var pos: Vector2 = card_pos + Vector2(item.get("pos", Vector2.ZERO))
+		app._view_container().add_child(app._panel(pos, Vector2(220, 62), Color(1.0, 0.70, 0.92, 0.14)))
+		_add_gal_text(str(item.get("name", "")), pos + Vector2(18, 10), Vector2(120, 34), 18)
+		var kind := str(item.get("kind", "touch"))
+		var label := str(item.get("name", "互動"))
+		_add_hit_button(pos, Vector2(220, 62), func() -> void:
+			if kind == "gift":
+				_play_gift_voice()
+			else:
+				_play_touch_voice(kind)
+			_show_touch_hint("%s成功" % label)
+		)
 
 
 func _draw_date_select_view() -> void:
