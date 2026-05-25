@@ -15,6 +15,7 @@
 | 查看主界面截图对照 | `shaonv-mainui-screenshot-layout-comparison-2026-05-24.md` |
 | 查看 MainUIView 全控件资源清单 | `shaonv-mainui-full-control-resource-inventory-2026-05-24.md` |
 | 修 Godot Home 对齐 MainUIView | `shaonv-mainui-godot-home-fix-experience-2026-05-25.md` |
+| 预览角色战斗 prefab/音效资源 | `shaonv-hero-battle-preview-2026-05-25.md` |
 | 查看 Prefab 全量清单导出路线 | `shaonv-prefab-full-inventory-export-route-2026-05-24.md` |
 | 查看抽卡布局 | `shaonv-gacha-prefab-layout-analysis-2026-05-23.md` |
 | 查 sprite 绑定 | `prefabs/monobehaviour-fields-report-2026-05-23.md` |
@@ -62,6 +63,7 @@ docs/
 ├── shaonv-herolisttabgrid-full-control-resource-inventory-2026-05-24.md [05-24] 英雄列表分类 Tab 清单
 ├── shaonv-herolistordinationtabgrid-full-control-resource-inventory-2026-05-24.md [05-24] 英雄列表排序 Tab 清单
 ├── shaonv-herolistview-physical-bundle-gap-2026-05-24.md [05-24] HeroListView 物理 bundle 缺口记录
+├── shaonv-hero-battle-preview-2026-05-25.md [05-25] 角色战斗 prefab/Skill prefab/音效索引与 Godot 预览器
 ├── shaonv-mainui-data-mapping-2026-05-23.md                  [05-23] Node→Sprite/Text/Button 映射
 ├── shaonv-gacha-prefab-layout-analysis-2026-05-23.md          [05-23] 抽卡 2 屏布局
 ├── shaonv-background-prefab-sampling-2026-05-24.md            [05-24] 20 额外 prefab 采样
