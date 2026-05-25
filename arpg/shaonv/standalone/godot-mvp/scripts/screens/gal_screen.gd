@@ -40,6 +40,8 @@ const GAL_BTN_CHANGE_ICON := "res://assets/ui/gal/gal_btn_11.png"
 
 # Shared / child view resources
 const GAL_BTN_CLOSE_SMALL := "res://assets/ui/gal/gal_btn_33.png"
+const GAL_BTN_DRESS_ACTIVE := "res://assets/ui/gal/gal_btn_24.png"
+const GAL_BTN_DRESS_GETWAY := "res://assets/ui/gal/gal_btn_25.png"
 const GAL_BG_DATE_SELECT := "res://assets/ui/background/gal_bg_06.png"
 const GAL_BTN_DATE_CONFIRM := "res://assets/ui/gal/gal_btn_25.png"
 const GAL_BTN_DATE_RECORD := "res://assets/ui/gal/gal_btn_36.png"
@@ -56,6 +58,14 @@ const GAL_IMG_TRAIT_1 := "res://assets/ui/gal/gal_img_115.png"
 const GAL_IMG_TRAIT_2 := "res://assets/ui/gal/gal_img_116.png"
 const GAL_IMG_TRAIT_3 := "res://assets/ui/gal/gal_img_117.png"
 const GAL_IMG_TRAIT_4 := "res://assets/ui/gal/gal_img_118.png"
+const GAL_DRESS_UNLOCK_BG := "res://assets/ui/gal/gal_img_28.png"
+const GAL_DRESS_PANEL := "res://assets/ui/gal/gal_img_30.png"
+const GAL_DRESS_DIVIDER := "res://assets/ui/gal/gal_img_31.png"
+const GAL_DRESS_GRID_SELECT := "res://assets/ui/gal/gal_img_32.png"
+const GAL_DRESS_GRID_NAME := "res://assets/ui/gal/gal_img_33.png"
+const GAL_DRESS_GRID_BG := "res://assets/ui/gal/gal_img_34.png"
+const GAL_DRESS_GRID_LOCK := "res://assets/ui/gal/gal_img_36.png"
+const GAL_DRESS_ACTIVE_DECOR := "res://assets/ui/gal/gal_img_41.png"
 const GAL_AUDIO_CLICK := "res://assets/audio/gal/hero_037_er.wav"
 const GAL_AUDIO_GREET := "res://assets/audio/gal/hero_037_greet.wav"
 const GAL_AUDIO_WAIT := [
@@ -83,6 +93,7 @@ var _audio_cache: Dictionary = {}
 var _role_selector_expanded := false
 var _ui_hidden := false
 var _files_tab := "voice"
+var _dress_tab := "skin"
 
 const GAL_PREFAB_SCALE := Vector2(1280.0 / 1670.0, 720.0 / 750.0)
 const GAL_INFO_PANEL_CENTER := Vector2(190, -46)
@@ -135,11 +146,15 @@ func _selected_hero() -> Dictionary:
 		if not gal_entry.is_empty():
 			_apply_gal_entry(hero, gal_entry)
 		elif int(hero.get("id", 0)) == DEFAULT_GAL_HERO_ID:
+			var fallback_spines := "hero_037r_s01|hero_037r|hero_037"
+			var fallback_spine := _selected_dress_spine(int(hero.get("id", 0)), fallback_spines)
+			if fallback_spine.is_empty():
+				fallback_spine = "hero_037r_s01"
 			hero["name"] = "墨菏"
 			hero["title"] = "玄武"
-			hero["spine"] = "hero_037r_s01"
-			hero["artResource"] = "Art/Spine/hero_037r_s01/hero_037r_s01"
-			hero["galSpine"] = "hero_037r_s01|hero_037r|hero_037"
+			hero["spine"] = fallback_spine
+			hero["artResource"] = "Art/Spine/%s/%s" % [fallback_spine, fallback_spine]
+			hero["galSpine"] = fallback_spines
 			hero["roundHeadResource"] = "assets/ui/hero/round/yhero_037r_s01.png"
 	return hero
 
@@ -153,9 +168,12 @@ func _gal_resource_entry(hero_id: int) -> Dictionary:
 
 
 func _apply_gal_entry(hero: Dictionary, entry: Dictionary) -> void:
-	var gal_spine := _first_existing_spine(str(entry.get("galSpine", "")))
+	var spine_list := str(entry.get("galSpine", ""))
+	var gal_spine := _selected_dress_spine(int(entry.get("heroId", hero.get("id", 0))), spine_list)
 	if gal_spine.is_empty():
-		gal_spine = _first_spine_token(str(entry.get("galSpine", "")))
+		gal_spine = _first_existing_spine(spine_list)
+	if gal_spine.is_empty():
+		gal_spine = _first_spine_token(spine_list)
 	if gal_spine.is_empty():
 		return
 	hero["name"] = str(entry.get("nameText", hero.get("name", "")))
@@ -180,11 +198,29 @@ func _first_existing_spine(spine_list: String) -> String:
 		var spine_name := raw_name.strip_edges()
 		if spine_name.is_empty():
 			continue
-		var baked_path := "res://assets/spine/%s/%s.baked.json" % [spine_name, spine_name]
-		var png_path := "res://assets/spine/%s/%s.png" % [spine_name, spine_name]
-		if FileAccess.file_exists(baked_path) or FileAccess.file_exists(png_path):
+		if _spine_exists(spine_name):
 			return spine_name
 	return ""
+
+
+func _spine_exists(spine_name: String) -> bool:
+	var baked_path := "res://assets/spine/%s/%s.baked.json" % [spine_name, spine_name]
+	var png_path := "res://assets/spine/%s/%s.png" % [spine_name, spine_name]
+	return FileAccess.file_exists(baked_path) or FileAccess.file_exists(png_path)
+
+
+func _selected_dress_spine(hero_id: int, spine_list: String) -> String:
+	var saved_spine := str(app.save.get(_dress_skin_save_key(hero_id), ""))
+	if saved_spine.is_empty() or not _spine_exists(saved_spine):
+		return ""
+	for raw_name in spine_list.split("|", false):
+		if raw_name.strip_edges() == saved_spine:
+			return saved_spine
+	return ""
+
+
+func _dress_skin_save_key(hero_id: int) -> String:
+	return "gal_dress_spine_%d" % hero_id
 
 
 func _first_existing_round_head(primary_spine: String, spine_list: String) -> String:
@@ -239,6 +275,10 @@ func _gal_right_top_pos(center: Vector2, size: Vector2) -> Vector2:
 	return Vector2((1670.0 + center.x - size.x) * GAL_PREFAB_SCALE.x, -center.y * GAL_PREFAB_SCALE.y)
 
 
+func _gal_right_middle_pos(center: Vector2, size: Vector2) -> Vector2:
+	return Vector2((1670.0 + center.x - size.x * 0.5) * GAL_PREFAB_SCALE.x, (375.0 - center.y - size.y * 0.5) * GAL_PREFAB_SCALE.y)
+
+
 func _gal_center_pos(center: Vector2, size: Vector2) -> Vector2:
 	return Vector2((835.0 + center.x - size.x * 0.5) * GAL_PREFAB_SCALE.x, (375.0 - center.y - size.y * 0.5) * GAL_PREFAB_SCALE.y)
 
@@ -257,8 +297,7 @@ func _gal_info_child_pos(child_pos: Vector2, child_size: Vector2, pivot_left := 
 func _draw_main_view() -> void:
 	var hero := _selected_hero()
 
-	app._draw_image(GAL_ROOM_BG, Vector2(0, 0), Vector2(1280, 720), true)
-	app._draw_image(GAL_BG, Vector2(0, 0), Vector2(1280, 720), true)
+	_draw_gal_background()
 	app._view_container().add_child(app._panel(Vector2(0, 540), Vector2(1280, 180), Color(0.04, 0.025, 0.045, 0.10)))
 
 	_draw_hero_stage(hero)
@@ -272,6 +311,16 @@ func _draw_main_view() -> void:
 	_draw_side_buttons()
 	_draw_hide_button()
 	_draw_role_selector(hero)
+
+
+func _draw_gal_background() -> void:
+	var bg_key := str(app.save.get("gal_dress_background", "room"))
+	if bg_key == "star":
+		app._draw_image(GAL_BG, Vector2(0, 0), Vector2(1280, 720), true)
+		app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.02, 0.03, 0.07, 0.12)))
+		return
+	app._draw_image(GAL_ROOM_BG, Vector2(0, 0), Vector2(1280, 720), true)
+	app._draw_image(GAL_BG, Vector2(0, 0), Vector2(1280, 720), true)
 
 
 func _draw_hero_stage(hero: Dictionary) -> void:
@@ -662,37 +711,241 @@ func _draw_child_panel_shell(title_text: String, subtitle_text: String) -> Dicti
 
 
 func _draw_dress_up_view() -> void:
-	var ctx := _draw_child_panel_shell("裝扮", "切換看板服裝與房間背景。當前 MVP 先接通入口與選擇狀態，後續可替換為原版換裝格。")
-	var card_pos: Vector2 = ctx["card_pos"]
-	var hero: Dictionary = ctx["hero"]
-	app._draw_hero_stage(hero, card_pos + Vector2(-72, 96), Vector2(420, 480), false)
+	var hero := _selected_hero()
+	_draw_gal_background()
+	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.02, 0.02, 0.05, 0.12)))
 
-	var sections := [
-		{"name": "默認看板", "desc": "使用 Gal 專用動態看板", "key": "default"},
-		{"name": "日常服裝", "desc": "已發現於普通 Spine/換裝資源", "key": "daily"},
-		{"name": "房間背景", "desc": "切換現世界房間背景", "key": "room"}
+	_draw_gal_child_close_button()
+	_draw_clipped_gal_stage(hero, Vector2(186, -38), Vector2(760, 930), Vector2(108, 0), Vector2(720, 720))
+
+	var panel_size := _gal_size(Vector2(564, 750))
+	var panel_pos := _gal_right_middle_pos(Vector2(-282, 0), Vector2(564, 750))
+	if app._draw_image(GAL_DRESS_PANEL, panel_pos, panel_size, false, Color(1, 1, 1, 0.96)) == null:
+		app._view_container().add_child(app._panel(panel_pos, panel_size, Color(0.04, 0.045, 0.09, 0.82)))
+		app._view_container().add_child(app._panel(panel_pos + Vector2(10, 10), panel_size - Vector2(20, 20), Color(0.06, 0.065, 0.12, 0.74)))
+
+	_draw_dress_tab_button(panel_pos + Vector2(-54, 152), "服裝", "skin")
+	_draw_dress_tab_button(panel_pos + Vector2(-54, 232), "背景", "bg")
+
+	var title := "服裝更換" if _dress_tab == "skin" else "背景更換"
+	var title_label = app._label(title, 24)
+	title_label.position = panel_pos + Vector2(42, 58)
+	title_label.size = Vector2(280, 36)
+	title_label.modulate = Color(1.0, 0.96, 0.82)
+	app._view_container().add_child(title_label)
+	_draw_dress_divider(panel_pos + Vector2(62, 104), Vector2(318, 2))
+	_draw_dress_divider(panel_pos + Vector2(62, 514), Vector2(318, 2))
+
+	if _dress_tab == "bg":
+		_draw_dress_background_grid(panel_pos)
+	else:
+		_draw_dress_skin_grid(hero, panel_pos)
+
+
+func _draw_gal_child_close_button() -> void:
+	var close_pos := _gal_top_left_pos(Vector2(60, -18))
+	var close_size := _gal_size(Vector2(120, 80))
+	app._draw_image(GAL_BTN_CLOSE, close_pos, close_size, false, Color(1, 1, 1, 0.94))
+	_add_hit_button(close_pos, close_size, func() -> void:
+		show_view(VIEW_MAIN)
+	)
+
+
+func _draw_dress_tab_button(pos: Vector2, label_text: String, tab_key: String) -> void:
+	var active := _dress_tab == tab_key
+	app._view_container().add_child(app._panel(pos, Vector2(78, 52), Color(0.78, 1.0, 0.22, 0.20 if active else 0.07)))
+	app._draw_image(GAL_IMG_CHAR_TAG, pos + Vector2(4, 7), Vector2(70, 38), false, Color(1, 1, 1, 0.9 if active else 0.56))
+	_add_gal_text(label_text, pos + Vector2(4, 6), Vector2(70, 38), 17)
+	_add_hit_button(pos, Vector2(78, 52), func() -> void:
+		_dress_tab = tab_key
+		show_view(VIEW_DRESS_UP)
+	)
+
+
+func _draw_dress_divider(pos: Vector2, size: Vector2) -> void:
+	if app._draw_image(GAL_DRESS_DIVIDER, pos, size, false, Color(1, 1, 1, 0.82)) == null:
+		app._view_container().add_child(app._panel(pos, size, Color(1.0, 1.0, 1.0, 0.18)))
+
+
+func _draw_dress_skin_grid(hero: Dictionary, panel_pos: Vector2) -> void:
+	var options := _dress_skin_options(hero)
+	var selected_spine := str(hero.get("spine", ""))
+	for index in range(options.size()):
+		var item: Dictionary = options[index]
+		var col := index % 2
+		var row := index / 2
+		var card_pos := panel_pos + Vector2(36 + col * 184, 124 + row * 236)
+		_draw_dress_skin_card(hero, item, card_pos, str(item.get("spine", "")) == selected_spine)
+
+	_draw_skin_effect_panel(panel_pos)
+	_draw_dress_action_area(hero, panel_pos)
+
+
+func _dress_skin_options(hero: Dictionary) -> Array[Dictionary]:
+	var options: Array[Dictionary] = []
+	var spine_list := str(hero.get("galSpine", hero.get("spine", "")))
+	var names := ["默認看板", "日常裝扮", "原始立繪", "備用看板"]
+	for raw_name in spine_list.split("|", false):
+		var spine_name := raw_name.strip_edges()
+		if spine_name.is_empty():
+			continue
+		var label: String = names[min(options.size(), names.size() - 1)]
+		options.append({
+			"name": label,
+			"spine": spine_name,
+			"unlocked": _spine_exists(spine_name)
+		})
+	if options.is_empty():
+		options.append({"name": "默認看板", "spine": str(hero.get("spine", "")), "unlocked": true})
+	return options
+
+
+func _draw_dress_skin_card(hero: Dictionary, item: Dictionary, pos: Vector2, selected: bool) -> void:
+	var card_size := Vector2(152, 220)
+	if app._draw_image(GAL_DRESS_GRID_BG, pos, card_size, false, Color(1, 1, 1, 0.96)) == null:
+		app._view_container().add_child(app._panel(pos, card_size, Color(0.09, 0.10, 0.16, 0.86)))
+		app._view_container().add_child(app._panel(pos + Vector2(5, 5), card_size - Vector2(10, 10), Color(0.16, 0.18, 0.25, 0.48)))
+
+	var spine_name := str(item.get("spine", ""))
+	var preview_hero := hero.duplicate(true)
+	preview_hero["spine"] = spine_name
+	preview_hero["artResource"] = "Art/Spine/%s/%s" % [spine_name, spine_name]
+	_draw_clipped_dress_preview(preview_hero, pos + Vector2(7, 10), Vector2(138, 150))
+
+	if app._draw_image(GAL_DRESS_GRID_NAME, pos + Vector2(11, 166), Vector2(130, 28), false, Color(1, 1, 1, 0.9)) == null:
+		app._view_container().add_child(app._panel(pos + Vector2(11, 166), Vector2(130, 28), Color(0.02, 0.02, 0.04, 0.72)))
+	_add_gal_text(str(item.get("name", "")), pos + Vector2(12, 165), Vector2(128, 30), 15)
+
+	if selected:
+		if app._draw_image(GAL_DRESS_GRID_SELECT, pos - Vector2(6, 8), card_size + Vector2(12, 16), false, Color(1, 1, 1, 0.96)) == null:
+			app._view_container().add_child(app._panel(pos - Vector2(4, 6), card_size + Vector2(8, 12), Color(0.72, 1.0, 0.24, 0.24)))
+		_add_gal_text("使用中", pos + Vector2(38, 194), Vector2(76, 22), 13)
+
+	if not bool(item.get("unlocked", true)):
+		if app._draw_image(GAL_DRESS_GRID_LOCK, pos + Vector2(7, 8), Vector2(138, 204), false, Color(1, 1, 1, 0.86)) == null:
+			app._view_container().add_child(app._panel(pos + Vector2(7, 8), Vector2(138, 204), Color(0, 0, 0, 0.55)))
+		_add_gal_text("未解鎖", pos + Vector2(38, 88), Vector2(76, 30), 16)
+
+	var hero_id := int(hero.get("id", 0))
+	var target_spine := spine_name
+	var target_name := str(item.get("name", "裝扮"))
+	_add_hit_button(pos, card_size, func() -> void:
+		if not bool(item.get("unlocked", true)):
+			_show_touch_hint("尚未解鎖：%s" % target_name)
+			return
+		app.save[_dress_skin_save_key(hero_id)] = target_spine
+		show_view(VIEW_DRESS_UP)
+		_show_touch_hint("已切換裝扮：%s" % target_name)
+	)
+
+
+func _dress_half_icon_path(spine_name: String) -> String:
+	if not spine_name.begins_with("hero_"):
+		return ""
+	var suffix := spine_name.trim_prefix("hero_")
+	var candidates: Array[String] = [suffix]
+	var parts := suffix.split("_")
+	if parts.size() > 0 and not candidates.has(parts[0]):
+		candidates.append(parts[0])
+	for candidate in candidates:
+		var half_path := "res://assets/ui/hero/half/phero_%s.png" % candidate
+		if FileAccess.file_exists(half_path):
+			return half_path
+		var round_path := "res://assets/ui/hero/round/yhero_%s.png" % candidate
+		if FileAccess.file_exists(round_path):
+			return round_path
+	return ""
+
+
+func _draw_clipped_dress_preview(hero: Dictionary, pos: Vector2, preview_size: Vector2) -> void:
+	var clip := Control.new()
+	clip.position = pos
+	clip.size = preview_size
+	clip.clip_contents = true
+	clip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	app._view_container().add_child(clip)
+
+	var resource_path := str(hero.get("artResource", ""))
+	if not resource_path.is_empty():
+		var spine_base_path := "res://%s" % resource_path.replace("Art/Spine", "assets/spine")
+		var baked_path := "%s.baked.json" % spine_base_path
+		if FileAccess.file_exists(baked_path):
+			var canvas_script = load("res://scripts/spine_baked_preview_canvas.gd")
+			var canvas: Control = canvas_script.new()
+			canvas.position = Vector2(-42, -52)
+			canvas.size = Vector2(226, 252)
+			clip.add_child(canvas)
+			canvas.set_baked_path(baked_path, "wait")
+			return
+
+	var half_path := _dress_half_icon_path(str(hero.get("spine", "")))
+	if half_path.is_empty():
+		half_path = str(hero.get("roundHeadResource", ""))
+	if not half_path.is_empty():
+		var tex: Texture2D = app._load_png_source_texture(half_path)
+		if tex != null:
+			var rect := TextureRect.new()
+			rect.texture = tex
+			rect.position = Vector2.ZERO
+			rect.size = preview_size
+			rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+			clip.add_child(rect)
+
+
+func _draw_skin_effect_panel(panel_pos: Vector2) -> void:
+	var effect_pos := panel_pos + Vector2(44, 532)
+	app._view_container().add_child(app._panel(effect_pos, Vector2(338, 74), Color(0.02, 0.025, 0.055, 0.58)))
+	var effects := ["看板互動", "甜蜜觸摸", "專屬語音"]
+	for index in range(effects.size()):
+		var chip_pos := effect_pos + Vector2(14 + index * 104, 18)
+		app._draw_image(GAL_IMG_CHAR_TAG, chip_pos, Vector2(92, 34), false, Color(1, 1, 1, 0.66))
+		_add_gal_text(effects[index], chip_pos, Vector2(92, 32), 13)
+
+
+func _draw_dress_action_area(hero: Dictionary, panel_pos: Vector2) -> void:
+	var selected_spine := str(hero.get("spine", ""))
+	var cost_pos := panel_pos + Vector2(168, 624)
+	_add_gal_text("0/1", cost_pos, Vector2(72, 28), 18)
+	app._view_container().add_child(app._panel(cost_pos - Vector2(48, 5), Vector2(36, 36), Color(0.86, 0.74, 0.38, 0.84)))
+
+	var button_pos := panel_pos + Vector2(86, 666)
+	var button_size := Vector2(260, 46)
+	var button_path := GAL_BTN_DRESS_ACTIVE if FileAccess.file_exists(GAL_BTN_DRESS_ACTIVE) else GAL_BTN_DRESS_GETWAY
+	if app._draw_image(button_path, button_pos, button_size, false, Color(1, 1, 1, 0.96)) == null:
+		app._view_container().add_child(app._panel(button_pos, button_size, Color(0.72, 0.82, 0.28, 0.72)))
+	_add_gal_text("已啟用：%s" % selected_spine, button_pos, button_size, 16)
+	_add_hit_button(button_pos, button_size, func() -> void:
+		_show_touch_hint("當前裝扮已設為 Gal 看板")
+	)
+
+
+func _draw_dress_background_grid(panel_pos: Vector2) -> void:
+	var backgrounds := [
+		{"name": "現世界房間", "path": GAL_ROOM_BG, "key": "room"},
+		{"name": "星屑夜空", "path": GAL_BG, "key": "star"},
 	]
-	for index in range(sections.size()):
-		var item: Dictionary = sections[index]
-		var pos := card_pos + Vector2(360, 128 + index * 128)
-		var selected := str(app.save.get("gal_dress_selection", "default")) == str(item.get("key", ""))
-		app._view_container().add_child(app._panel(pos, Vector2(430, 96), Color(1.0, 0.72, 0.92, 0.18 if selected else 0.08)))
-		app._draw_image(GAL_IMG_CHAR_TAG, pos + Vector2(18, 16), Vector2(150, 34), false, Color(1, 1, 1, 0.82))
-		_add_gal_text(str(item.get("name", "")), pos + Vector2(22, 16), Vector2(142, 30), 16)
-		var desc = app._label(str(item.get("desc", "")), 15)
-		desc.position = pos + Vector2(184, 16)
-		desc.size = Vector2(220, 46)
-		desc.modulate = Color(0.96, 0.88, 0.94)
-		app._view_container().add_child(desc)
-		if selected:
-			_add_gal_text("使用中", pos + Vector2(304, 58), Vector2(92, 24), 14)
-		var selection_key := str(item.get("key", ""))
-		var selection_name := str(item.get("name", ""))
-		_add_hit_button(pos, Vector2(430, 96), func() -> void:
-			app.save["gal_dress_selection"] = selection_key
+	var current := str(app.save.get("gal_dress_background", "room"))
+	for index in range(backgrounds.size()):
+		var item: Dictionary = backgrounds[index]
+		var pos := panel_pos + Vector2(44, 130 + index * 154)
+		app._view_container().add_child(app._panel(pos, Vector2(338, 124), Color(0.02, 0.025, 0.055, 0.62)))
+		app._draw_image(str(item.get("path", "")), pos + Vector2(10, 10), Vector2(150, 104), true)
+		_add_gal_text(str(item.get("name", "")), pos + Vector2(176, 18), Vector2(130, 30), 17)
+		if current == str(item.get("key", "")):
+			_add_gal_text("使用中", pos + Vector2(176, 66), Vector2(86, 28), 14)
+		var bg_key := str(item.get("key", ""))
+		var bg_name := str(item.get("name", "背景"))
+		_add_hit_button(pos, Vector2(338, 124), func() -> void:
+			app.save["gal_dress_background"] = bg_key
 			show_view(VIEW_DRESS_UP)
-			_show_touch_hint("已切換：%s" % selection_name)
+			_show_touch_hint("已切換背景：%s" % bg_name)
 		)
+
+	var unlock_pos := panel_pos + Vector2(44, 492)
+	if app._draw_image(GAL_DRESS_UNLOCK_BG, unlock_pos, Vector2(338, 106), false, Color(1, 1, 1, 0.82)) == null:
+		app._view_container().add_child(app._panel(unlock_pos, Vector2(338, 106), Color(0.04, 0.05, 0.10, 0.66)))
+	_add_gal_text("更多背景可通過親密任務與活動解鎖", unlock_pos + Vector2(18, 16), Vector2(302, 66), 16)
 
 
 func _draw_files_view() -> void:
@@ -823,29 +1076,68 @@ func _draw_memory_view() -> void:
 
 
 func _draw_special_touch_view() -> void:
-	var ctx := _draw_child_panel_shell("甜蜜互動", "點擊互動區域播放對應語音與反饋。")
-	var card_pos: Vector2 = ctx["card_pos"]
-	var hero: Dictionary = ctx["hero"]
-	app._draw_hero_stage(hero, card_pos + Vector2(40, 92), Vector2(430, 486), false)
+	var hero := _selected_hero()
+	_draw_gal_background()
+	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.02, 0.02, 0.05, 0.08)))
+	_draw_gal_child_close_button()
+
+	_draw_clipped_gal_stage(hero, Vector2(272, -74), Vector2(790, 990), Vector2(184, 0), Vector2(760, 720))
+	_draw_special_touch_front_layer(hero)
+
+
+func _draw_special_touch_front_layer(hero: Dictionary) -> void:
+	var count := int(app.save.get("gal_touch_count", 0))
+	var level := int(app.save.get("gal_level", 2))
+	app._view_container().add_child(app._panel(Vector2(982, 96), Vector2(224, 188), Color(0.02, 0.025, 0.055, 0.48)))
+	_add_gal_text("甜蜜互動", Vector2(1002, 112), Vector2(184, 34), 22)
+	_add_gal_text("今日觸摸 %d 次" % count, Vector2(1010, 154), Vector2(168, 26), 15)
+	_add_gal_text("親密等級 Lv.%d" % level, Vector2(1010, 184), Vector2(168, 26), 15)
+	_add_gal_text("點擊角色不同區域，觸發語音和好感反饋。", Vector2(1004, 218), Vector2(180, 48), 13)
+
 	var zones := [
-		{"name": "問候", "pos": Vector2(552, 150), "kind": "greet"},
-		{"name": "輕觸", "pos": Vector2(552, 240), "kind": "touch"},
-		{"name": "送禮", "pos": Vector2(552, 330), "kind": "gift"}
+		{"name": "問候", "rect": Rect2(500, 72, 180, 130), "kind": "greet", "gain": 1},
+		{"name": "輕觸", "rect": Rect2(490, 204, 220, 166), "kind": "touch", "gain": 2},
+		{"name": "牽手", "rect": Rect2(362, 288, 154, 174), "kind": "touch", "gain": 2},
+		{"name": "靠近", "rect": Rect2(522, 382, 190, 160), "kind": "wait", "gain": 1},
 	]
 	for zone in zones:
 		var item: Dictionary = zone
-		var pos: Vector2 = card_pos + Vector2(item.get("pos", Vector2.ZERO))
-		app._view_container().add_child(app._panel(pos, Vector2(220, 62), Color(1.0, 0.70, 0.92, 0.14)))
-		_add_gal_text(str(item.get("name", "")), pos + Vector2(18, 10), Vector2(120, 34), 18)
-		var kind := str(item.get("kind", "touch"))
-		var label := str(item.get("name", "互動"))
-		_add_hit_button(pos, Vector2(220, 62), func() -> void:
-			if kind == "gift":
-				_play_gift_voice()
-			else:
-				_play_touch_voice(kind)
-			_show_touch_hint("%s成功" % label)
-		)
+		_draw_touch_zone(item)
+
+	_draw_gift_button(hero)
+
+
+func _draw_touch_zone(item: Dictionary) -> void:
+	var rect: Rect2 = item.get("rect", Rect2())
+	var label := str(item.get("name", "互動"))
+	var kind := str(item.get("kind", "touch"))
+	var gain := int(item.get("gain", 1))
+	_add_hit_button(rect.position, rect.size, func() -> void:
+		_register_touch_action(kind, label, gain)
+	)
+
+
+func _draw_gift_button(hero: Dictionary) -> void:
+	var gift_pos := Vector2(986, 588)
+	var gift_size := Vector2(210, 58)
+	app._view_container().add_child(app._panel(gift_pos, gift_size, Color(0.95, 0.78, 0.35, 0.18)))
+	app._draw_image(GAL_IMG_CHAR_TAG, gift_pos + Vector2(14, 11), Vector2(104, 36), false, Color(1, 1, 1, 0.78))
+	_add_gal_text("送禮", gift_pos + Vector2(18, 11), Vector2(96, 34), 17)
+	_add_gal_text("好感 +4", gift_pos + Vector2(120, 15), Vector2(76, 28), 14)
+	_add_hit_button(gift_pos, gift_size, func() -> void:
+		_register_touch_action("gift", "送禮", 4)
+		_show_touch_hint("%s 收下了禮物" % str(hero.get("name", "她")))
+	)
+
+
+func _register_touch_action(kind: String, label_text: String, gain: int) -> void:
+	if kind == "gift":
+		_play_gift_voice()
+	else:
+		_play_touch_voice(kind)
+	app.save["gal_touch_count"] = int(app.save.get("gal_touch_count", 0)) + 1
+	app.save["gal_exp"] = int(app.save.get("gal_exp", 0)) + gain
+	_show_touch_hint("%s成功，好感 +%d" % [label_text, gain])
 
 
 func _draw_date_select_view() -> void:

@@ -347,3 +347,30 @@ $py='C:\Users\admin\AppData\Local\Python\pythoncore-3.14-64\python.exe'
 - 角色中间区域增加触摸命中，轮播 `greet/arm/wait` 语音并显示短飘字。
 - 礼物按钮播放 `gift/gift_fav` 语音。
 - Gal 主界面启动后会播放问候语音，并开启待机语音定时器。
+
+## 16. Gal 装扮与甜蜜互动恢复
+
+`GalDormitoryDressUpPanel` 的界面不是普通子面板，而是全屏 Gal 背景上叠右侧换装面板：
+
+- 根背景 `gal_img_122` 全屏，右侧 `Image` 节点用 `gal_img_30`，prefab 尺寸 `564x750`，锚在右中。
+- `pnlSkin/tabSkin` 承载皮肤格，格子 prefab 是 `GalDormitoryDressUpSkinGrid`，原始尺寸 `198x288`。
+- 皮肤格绑定资源包括 `gal_img_34` 卡底、`gal_img_33` 名称底、`gal_img_32` 选中框、`gal_img_36` 锁定层、`phero_037r` 半身图。
+- 当前 Godot 侧尚缺 `gal_img_28/30/31/32/33/34/36/41` 与 `gal_btn_24` 时，代码应保留这些常量路径并做程序绘制兜底，后续补导出 sprite 后会自动命中。
+
+资源使用坑：
+
+- `assets/spine/hero_xxx/hero_xxx.png` 是 Spine atlas 页，不是 UI 缩略图。不能直接当换装卡图片贴，否则会出现倒置/局部巨大贴图。
+- 换装格优先使用 `phero_*` 半身图；没有半身图时，用 baked spine preview 在卡片内裁剪；最后才回退 `Head/Round/yhero_*`。
+- Gal 看板装扮状态建议按角色保存为 `gal_dress_spine_<heroId>`，并在 `_apply_gal_entry()` 中优先从 `galSpine` 候选链校验后套用，确保主界面、装扮页、甜蜜互动页都显示同一套 spine。
+
+`GalSpecialTouchView` 的 prefab 只有少量 UI 节点，核心是 `@spineTouchManager` 下的 `BgCtl`、`CharacterCtl`、`FrontCtl` 三层 SkeletonGraphic。恢复时不要做成普通卡片页，应按全屏触摸层处理：
+
+- 背景使用 Gal 当前房间/星空背景。
+- 角色使用 Gal 专用 spine，大尺寸居中显示。
+- 触摸区域使用透明 Button 命中，视觉上只保留右侧说明和送礼按钮，避免出现调试色块。
+- 点击不同区域轮播 `greet/wait/touch/gift` 语音，并更新 `gal_touch_count` 与 `gal_exp`。
+
+本轮验证截图：
+
+- `tmp/screenshots/gal-dress-up-impl-v3.png`
+- `tmp/screenshots/gal-special-touch-impl-v3.png`
