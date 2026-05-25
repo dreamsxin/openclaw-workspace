@@ -197,6 +197,7 @@ func draw_top_bar() -> void:
 		add_scaled_image(str(item[0]), Vector2(x - 8, 23), Vector2(34, 34), Color(1, 1, 1, 0.92))
 		add_ui_text(str(item[1]), Vector2(x + 30, 23), Vector2(72, 30), 17, HORIZONTAL_ALIGNMENT_LEFT, Color(0.96, 0.92, 0.78))
 		add_ui_text("+", Vector2(x + 106, 18), Vector2(24, 34), 28, HORIZONTAL_ALIGNMENT_CENTER, Color(1.0, 0.86, 0.34))
+		add_hit_button(Vector2(x - 8, 18), Vector2(134, 42), app._show_shop)
 		x += 156
 
 
@@ -227,7 +228,7 @@ func draw_player_info(hero: Dictionary) -> void:
 	# btnChange/btnEye: center near x=402/478, top y about 15 on a 1280x720 target.
 	app._draw_image(UI_MAIN_BTN_CHANGE, Vector2(280, 15), Vector2(57, 57), false, Color(1, 1, 1, 0.92))
 	add_ui_text("壁紙", Vector2(281, 69), Vector2(56, 20), 13, HORIZONTAL_ALIGNMENT_CENTER, Color(1, 1, 1, 0.94))
-	add_hit_button(Vector2(280, 15), Vector2(57, 74), app._show_gallery)
+	add_hit_button(Vector2(280, 15), Vector2(57, 74), app._show_wallpaper_select)
 	app._draw_image(UI_MAIN_BTN_EYE, Vector2(338, 15), Vector2(57, 57), false, Color(1, 1, 1, 0.92))
 	add_ui_text("互動", Vector2(339, 69), Vector2(56, 20), 13, HORIZONTAL_ALIGNMENT_CENTER, Color(1, 1, 1, 0.94))
 	add_hit_button(Vector2(338, 15), Vector2(57, 74), enter_wallpaper_focus)
@@ -236,7 +237,7 @@ func draw_player_info(hero: Dictionary) -> void:
 func draw_funny_content() -> void:
 	# pnlFunnyContent: bottom-right row, prefab screenshot box x≈972..1331 y≈629..731.
 	var actions = [
-		[UI_MAIN_FUNNY_ARENA, "競技", app._show_battle],
+		[UI_MAIN_FUNNY_ARENA, "競技", app._show_competition],
 		[UI_MAIN_FUNNY_PRAYER, "祈願", app._open_prayer_pool],
 		[UI_MAIN_FUNNY_ADVENTURE, "冒險", app._show_battle],
 		[UI_MAIN_FUNNY_DRAW, "喚靈", app._open_present_pool]
@@ -285,10 +286,10 @@ func draw_charge_column() -> void:
 	# pnlCharge: right-side commerce grid, screenshot x≈1117..1238 y≈142..390.
 	var entries = [
 		[UI_MAIN_CHARGE_ICONS[3], "儲值", app._show_shop, Vector2(1118, 142)],
-		[UI_MAIN_CHARGE_ICONS[0], "活動", app._show_daily, Vector2(1178, 142)],
+		[UI_MAIN_CHARGE_ICONS[0], "活動", app._show_activity_center, Vector2(1178, 142)],
 		[UI_MAIN_CHARGE_ICONS[4], "商店", app._show_shop, Vector2(1118, 230)],
-		[UI_MAIN_CHARGE_ICONS[1], "福利", app._show_daily, Vector2(1178, 230)],
-		[UI_MAIN_CHARGE_ICONS[2], "月卡", app._show_shop, Vector2(1178, 318)]
+		[UI_MAIN_CHARGE_ICONS[1], "福利", app._show_welfare, Vector2(1178, 230)],
+		[UI_MAIN_CHARGE_ICONS[2], "月卡", app._show_month_card, Vector2(1178, 318)]
 	]
 	for entry in entries:
 		var icon = app._draw_image(str(entry[0]), entry[3], Vector2(52, 52), false, Color(1, 1, 1, 0.88))
@@ -311,7 +312,7 @@ func draw_assist_button() -> void:
 	# Godot: x = 413*0.7665 = 317, y = 164*0.96 = 157
 	app._draw_image(UI_MAIN_ASSIST, Vector2(317, 157), Vector2(60, 74), false, Color(1, 1, 1, 0.84))
 	add_ui_text("小助手", Vector2(298, 220), Vector2(98, 20), 13, HORIZONTAL_ALIGNMENT_CENTER, Color(1, 1, 1, 0.94))
-	add_hit_button(Vector2(317, 157), Vector2(60, 92), app._show_mail)
+	add_hit_button(Vector2(317, 157), Vector2(60, 92), app._show_assist)
 
 
 func draw_commercialization() -> void:
@@ -322,18 +323,18 @@ func draw_commercialization() -> void:
 	# pnlGift: 409x300 (→313x288), below banner
 	var gx = px + 5; var gy = py + 113
 	var gifts = [
-		["喚靈福利", "4d01h", app._show_daily],
+		["喚靈福利", "4d01h", app._show_welfare],
 		["幻海邀约", "6d01h", enter_gal_entry],
-		["簽到福利", "", app._show_daily],
-		["新服庆典", "11d01h", app._show_tasks],
-		["交流大厅", "", app._show_mail],
-		["开服冲榜", "7d01h", app._show_daily],
+		["簽到福利", "", app._show_welfare],
+		["新服庆典", "11d01h", app._show_activity_center],
+		["交流大厅", "", app._show_chat],
+		["开服冲榜", "7d01h", app._show_activity_center],
 		["限时皮肤", "11d01h", app._show_shop],
 		["露箔闪光", "11d01h", app._show_shop],
 		["首储", "", app._show_shop],
 		["萬象喚靈", "4d01h", app._open_present_pool],
 		["周末企划", "1d01h", app._show_tasks],
-		["神域馈赠", "11d01h", app._show_daily]
+		["神域馈赠", "11d01h", app._show_welfare]
 	]
 	var gsx = gx + 2.0; var gsy = gy + 5.0; var gi = 0
 	for gift in gifts:
@@ -380,11 +381,11 @@ func draw_bottom_bar() -> void:
 	# 繁體中文: via lang_extra.bytes UI1000001-UI1000013
 	var buttons = [
 		["幻靈", app._show_remnants_list, true],
-		["背包", app._show_shop, false],
-		["遺器", app._show_home, false],
-		["養成", app._show_gallery, true],
+		["背包", app._show_bag, false],
+		["遺器", app._show_relics, false],
+		["養成", app._show_develop, true],
 		["任務", app._show_tasks, true],
-		["公會", app._show_home, false]
+		["公會", app._show_guild, false]
 	]
 	var bw = 62.0; var bx = 135.0
 	for item in buttons:
@@ -414,7 +415,7 @@ func draw_chat_bar() -> void:
 	chat.position = Vector2(cx + 49, cy + 8); chat.size = Vector2(255, 22)
 	chat.modulate = Color(0.54, 0.92, 0.54)
 	app._view_container().add_child(chat)
-	add_hit_button(Vector2(cx, cy), Vector2(314, 38), app._show_mail)
+	add_hit_button(Vector2(cx, cy), Vector2(314, 38), app._show_chat)
 
 
 # ═══════════════════════════════════════════════════════════════

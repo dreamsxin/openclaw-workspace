@@ -100,3 +100,44 @@ Unity `Image` 的 `Simple/Sliced/Filled` 和 Godot `TextureRect` 的 `stretch_mo
 3. 遇到 `Image:none`，先判断是不是透明点击区或运行时注入，不要直接认为资源缺失。
 4. 小图标统一使用固定像素缩放 helper，避免 Godot 保持原图尺寸。
 5. 每轮修改都用 `SHAONV_MVP_START_VIEW=main` 截图验证；截图比清单更能发现运行时错位。
+
+## 2026-05-26 Home 按钮功能闭环
+
+本轮重点不是重新排主屏，而是把截图中可见的按钮从“占位跳转”改成可用功能页：
+
+- 顶部资源条的 `+` 点击区进入商店。
+- `壁紙` 进入 `wallpaper_select`，可选择主屏看板角色；`互動` 仍进入纯看板模式。
+- 底栏 `背包 / 遺器 / 養成 / 公會` 分别接到 `_show_bag()`、`_show_relics()`、`_show_develop()`、`_show_guild()`，不再复用商店/图库/主页占位。
+- 右下 `競技` 接 `_show_competition()`；`祈願 / 冒險 / 喚靈` 继续接已有祈愿、战役、喚靈链路。
+- 右侧 `活動 / 福利 / 月卡` 分别接活动中心、福利中心、月卡页；`商店 / 儲值` 仍进商店。
+- `小助手` 进入 `_show_assist()`；聊天条进入 `_show_chat()`。
+- 左侧限时入口统一收束到活动、福利、商店、聊天、Gal、任务、喚靈等已有链路，避免按钮点击无反馈。
+
+新增调试启动入口用于后续快速回归：
+
+- `SHAONV_MVP_START_VIEW=bag`
+- `SHAONV_MVP_START_VIEW=relics`
+- `SHAONV_MVP_START_VIEW=develop`
+- `SHAONV_MVP_START_VIEW=guild`
+- `SHAONV_MVP_START_VIEW=activity`
+- `SHAONV_MVP_START_VIEW=welfare`
+- `SHAONV_MVP_START_VIEW=month_card`
+- `SHAONV_MVP_START_VIEW=competition`
+- `SHAONV_MVP_START_VIEW=assist`
+- `SHAONV_MVP_START_VIEW=chat`
+- `SHAONV_MVP_START_VIEW=wallpaper_select`
+
+验证截图：
+
+- `tmp/screenshots/home-buttons-main.png`
+- `tmp/screenshots/home-bag-view.png`
+- `tmp/screenshots/home-develop-view.png`
+- `tmp/screenshots/home-activity-view.png`
+- `tmp/screenshots/home-wallpaper-select-v2.png`
+- `tmp/screenshots/home-relics-view.png`
+- `tmp/screenshots/home-guild-view.png`
+- `tmp/screenshots/home-welfare-view.png`
+- `tmp/screenshots/home-competition-view.png`
+- `tmp/screenshots/home-month-card-view.png`
+- `tmp/screenshots/home-assist-view.png`
+- `tmp/screenshots/home-chat-view.png`
