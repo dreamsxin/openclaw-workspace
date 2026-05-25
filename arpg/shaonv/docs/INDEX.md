@@ -50,6 +50,7 @@ docs/
 ├── shaonv-activitymainview-full-control-resource-inventory-2026-05-24.md [05-24] ActivityMainView 全控件资源清单
 ├── shaonv-galdormitoryview-full-control-resource-inventory-2026-05-24.md [05-24] 约会/宿舍主壳全控件资源清单
 ├── shaonv-galdormitorymainpanel-full-control-resource-inventory-2026-05-24.md [05-24] 约会/宿舍主面板全控件资源清单
+├── shaonv-gal-main-panel-wireframe-2026-05-25.md [05-25] Gal 主界面线框 + Godot 对照修正
 ├── shaonv-galdateselectview-full-control-resource-inventory-2026-05-24.md [05-24] 约会选择界面全控件资源清单
 ├── shaonv-heromainview-full-control-resource-inventory-2026-05-24.md [05-24] 英雄详情主屏全控件资源清单
 ├── shaonv-herodetailinfoview-full-control-resource-inventory-2026-05-24.md [05-24] 英雄详情信息弹层全控件资源清单

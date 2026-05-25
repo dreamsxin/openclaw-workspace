@@ -344,6 +344,9 @@ func _show_start_view_from_env() -> void:
 	elif start_view == "gallery":
 		_enter_main_scene()
 		_show_gallery()
+	elif start_view == "gal":
+		_enter_main_scene()
+		_show_gal()
 	elif start_view == "hero_detail":
 		_enter_main_scene()
 		_show_hero_detail(int(OS.get_environment("SHAONV_MVP_HERO_ID")) if not OS.get_environment("SHAONV_MVP_HERO_ID").is_empty() else int(save.get("selected_hero_id", DEFAULT_HERO_ID)))

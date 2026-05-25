@@ -25,6 +25,8 @@ const UI_MAIN_CHAT_BG = "res://assets/ui/mainui/mainui_btn_04.png"
 const UI_MAIN_GAL = "res://assets/ui/mainui/mainui_btn_25.png"
 const UI_MAIN_MENU = "res://assets/ui/mainui/mainui_btn_11.png"
 const UI_MAIN_AUTO_FIGHT = "res://assets/ui/mainui/mainui_img_36.png"
+const UI_MAIN_HOOK_TIME_BG = "res://assets/ui/mainui/mainui_img_08.png"    # imgHookTime plate
+const UI_MAIN_FULLSCREEN_OVERLAY = "res://assets/ui/mainui/mainui_img_44.png"
 const UI_MAIN_BTN_EYE = "res://assets/ui/mainui/mainui_btn_12.png"       # btnEye
 const UI_MAIN_BTN_CHANGE = "res://assets/ui/mainui/mainui_btn_13.png"    # btnChange
 const UI_MAIN_BTN_HARVEST = "res://assets/ui/mainui/mainui_img_18.png"   # btnHarvest
@@ -114,6 +116,8 @@ func enter_normal_state() -> void:
 	draw_wallpaper(hero)
 	# Layer 1: Full-screen transparent button (wallpaper toggle)
 	draw_body_mask()
+	# Layer 1b: Fullscreen overlay (mainui_img_44)
+	draw_fullscreen_overlay()
 	# Layer 2: TopBar (full-width, 12px from top, h=60→58)
 	draw_top_bar()
 	# Layer 3: pnlPlayerInfo (top-left, 354×113→271×108)
@@ -172,6 +176,11 @@ func draw_body_mask() -> void:
 	mask.modulate = Color(1, 1, 1, 0.0)
 	mask.pressed.connect(enter_wallpaper_focus)
 	app._view_container().add_child(mask)
+
+
+func draw_fullscreen_overlay() -> void:
+	# pnlAdapter/Image: mainui_img_44 fullscreen overlay layer
+	app._draw_image(UI_MAIN_FULLSCREEN_OVERLAY, Vector2(0, 0), Vector2(1280, 720), true, Color(1, 1, 1, 0.12))
 
 
 func draw_top_bar() -> void:
@@ -242,6 +251,14 @@ func draw_funny_content() -> void:
 		add_hit_button(Vector2(start_x, by), Vector2(bw, bh), item[2])
 		app._draw_red_dot(Vector2(start_x + bw - 16, by + 4))
 		start_x += bw + gap
+	# btnJumpAutoFight above btnAdventure (prefab pos(0,33) size(180,90))
+	# 3rd button (冒險): x=889, y=604; banner centered, 86px above
+	var adv_x = 745.0 + 2 * (bw + gap)
+	var auto_x = adv_x - 35
+	var auto_y = by - 90
+	app._draw_image(UI_MAIN_AUTO_FIGHT, Vector2(auto_x, auto_y), Vector2(138, 86), false, Color(1, 1, 1, 0.88))
+	add_ui_text("自動挑戰中", Vector2(auto_x + 2, auto_y + 10), Vector2(134, 20), 13, HORIZONTAL_ALIGNMENT_CENTER, Color(0.96, 0.88, 0.52))
+	add_ui_text("歷戰尖塔-單隊", Vector2(auto_x + 2, auto_y + 38), Vector2(134, 18), 12, HORIZONTAL_ALIGNMENT_CENTER, Color(0.96, 0.88, 0.52))
 
 
 func draw_story_harvest() -> void:
@@ -257,7 +274,7 @@ func draw_story_harvest() -> void:
 	app._draw_image(UI_MAIN_BTN_HARVEST, Vector2(sx + 10, sy + 13), Vector2(74, 74), false, Color(1, 1, 1, 0.90))
 	add_hit_button(Vector2(sx + 10, sy + 13), Vector2(74, 74), app._claim_afk_reward)
 	# btnHarvest sub-elements: imgHookTime + txtHookTime
-	app._draw_image(UI_MAIN_AUTO_FIGHT, Vector2(sx + 5, sy + 67), Vector2(84, 24), false, Color(1, 1, 1, 0.70))
+	app._draw_image(UI_MAIN_HOOK_TIME_BG, Vector2(sx + 5, sy + 67), Vector2(84, 24), false, Color(1, 1, 1, 0.70))
 	add_ui_text(app._afk_time_display(), Vector2(sx + 13, sy + 69), Vector2(68, 18), 11, HORIZONTAL_ALIGNMENT_CENTER, Color(0.92, 0.84, 0.52))
 	# btnStory: prefab has transparent overlay button (132×99) covering story area
 	add_hit_button(Vector2(sx + 86, sy), Vector2(sw - 86, sh), app._show_tasks)
