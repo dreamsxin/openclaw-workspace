@@ -100,6 +100,14 @@ KNOWN_PREFABS = {
     "HeroMainSelectHeroGrid": "Assets/Game/RawAssets/Prefabs/UI/Hero/HeroMainSelectHeroGrid.prefab",
     "HeroMainView": "Assets/Game/RawAssets/Prefabs/UI/Hero/HeroMainView.prefab",
     "LotteryDrawMainView": "Assets/Game/RawAssets/Prefabs/UI/LotteryDraw/LotteryDrawMainView.prefab",
+    # ── Remnants / 幻靈 ──
+    "RemnantInfoGrid": "Assets/Game/RawAssets/Prefabs/UI/Remnants/RemnantInfoGrid.prefab",
+    "RemnantsListGrid": "Assets/Game/RawAssets/Prefabs/UI/Remnants/RemnantsListGrid.prefab",
+    "RemnantsListView": "Assets/Game/RawAssets/Prefabs/UI/Remnants/RemnantsListView.prefab",
+    "RemnantsMainShowPanel": "Assets/Game/RawAssets/Prefabs/UI/Remnants/RemnantsMainShowPanel.prefab",
+    "RemnantsMainView": "Assets/Game/RawAssets/Prefabs/UI/Remnants/RemnantsMainView.prefab",
+    "RemnantsUpdateTabGrid": "Assets/Game/RawAssets/Prefabs/UI/Remnants/RemnantsUpdateTabGrid.prefab",
+    "RemnantsUpdateView": "Assets/Game/RawAssets/Prefabs/UI/Remnants/RemnantsUpdateView.prefab",
 }
 
 IMAGE_TYPE = {0: "Simple", 1: "Sliced", 2: "Tiled", 3: "Filled"}

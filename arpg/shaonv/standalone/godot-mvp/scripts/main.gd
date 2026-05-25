@@ -36,6 +36,30 @@ const UI_LOTTERY_SIDE_2 := "res://assets/ui/lottery/lottery_img_12.png"
 const UI_LOTTERY_POOL_FRAME := "res://assets/ui/lottery/lottery_img_55.png"
 const UI_LOTTERY_PRAYER_FRAME := "res://assets/ui/lottery/lottery_img_57.png"
 const UI_LOTTERY_TICKET_ICON := "res://assets/ui/item/draw_03.png"
+const UI_HERO_BG_MAIN := "res://assets/ui/background/hero_bg_01.png"
+const UI_HERO_BG_DETAIL := "res://assets/ui/background/hero_bg_10.png"
+const UI_HERO_DETAIL_INFO_BG := "res://assets/ui/background/guessing_bg_03.png"
+const UI_HERO_SELECTOR_BG := "res://assets/ui/hero/hero_img_36.png"
+const UI_HERO_SELECTOR_TOP := "res://assets/ui/hero/hero_img_36a.png"
+const UI_HERO_SORT_BTN := "res://assets/ui/hero/hero_btn_05.png"
+const UI_HERO_FILTER_BG := "res://assets/ui/hero/hero_img_108.png"
+const UI_HERO_HIGHLIGHT := "res://assets/ui/hero/hero_img_119.png"
+const UI_HERO_STAR_SMALL := "res://assets/ui/hero/hero_img_60.png"
+const UI_HERO_TAB_HOME := "res://assets/ui/hero/hero_img_37.png"
+const UI_HERO_TAB_CULTIVATE := "res://assets/ui/hero/hero_img_43.png"
+const UI_HERO_TAB_EQUIP := "res://assets/ui/hero/hero_img_44.png"
+const UI_HERO_TAB_STAGE := "res://assets/ui/hero/hero_img_45.png"
+const UI_COMMON_TAB_HIGHLIGHT := "res://assets/ui/common/common_btn_07.png"
+const UI_COMMON_HEAD_FRAME := "res://assets/ui/common/common_img_07.png"
+const UI_COMMON_HERO_HEAD_FRAME := "res://assets/ui/common/common_img_64.png"
+const UI_COMMON_HERO_STAR_BAR := "res://assets/ui/common/common_img_62.png"
+const UI_COMMON_STAR := "res://assets/ui/common/common_img_73.png"
+const UI_COMMON_STAR_OFF := "res://assets/ui/common/common_img_74.png"
+const UI_COMMON_RARE := "res://assets/ui/common/common_img_163.png"
+const UI_COMMON_SECTION := "res://assets/ui/common/common_img_199.png"
+const UI_COMMON_SKILL_FRAME := "res://assets/ui/common/common_img_208.png"
+const UI_REMNANTS_BG := "res://assets/ui/background/mainui_bg_01.png"
+const UI_REMNANT_STAGE_BG := "res://assets/spine/hero_017/hero_017_bg.png"
 
 var heroes: Array = []
 var pools: Array = []
@@ -85,6 +109,8 @@ var wallet_label: Label
 var top_bar: Control
 var current_view := "boot"
 var gallery_filter := "all"
+var remnants_page := 0
+var selected_remnant_id := DEFAULT_HERO_ID
 var startup_screen
 var home_screen
 var gal_screen
@@ -344,6 +370,12 @@ func _show_start_view_from_env() -> void:
 	elif start_view == "gallery":
 		_enter_main_scene()
 		_show_gallery()
+	elif start_view == "remnants":
+		_enter_main_scene()
+		_show_remnants_list()
+	elif start_view == "remnant_detail":
+		_enter_main_scene()
+		_show_remnant_detail(int(OS.get_environment("SHAONV_MVP_HERO_ID")) if not OS.get_environment("SHAONV_MVP_HERO_ID").is_empty() else int(_remnants_primary_heroes()[0].get("id", DEFAULT_HERO_ID)))
 	elif start_view == "gal":
 		_enter_main_scene()
 		_show_gal()
@@ -402,64 +434,569 @@ func _show_gal() -> void:
 
 
 func _show_gallery() -> void:
-	_clear("圖鑑")
-	var header := _label("武將圖鑑", 34)
-	header.position = Vector2(40, 24)
-	header.size = Vector2(280, 50)
+	_clear("英雄列表")
+	_draw_hero_list_background()
+	_draw_hero_list_header()
+	_draw_hero_list_filters()
+	_draw_hero_list_cards()
+
+func _draw_hero_list_background() -> void:
+	_draw_image(UI_HERO_BG_MAIN, Vector2(0, 0), Vector2(1280, 720), true, Color(1, 1, 1, 0.84))
+	_view_container().add_child(_panel(Vector2(0, 0), Vector2(1280, 720), Color(0.018, 0.016, 0.025, 0.36)))
+	_draw_image(UI_HERO_BG_DETAIL, Vector2(0, 0), Vector2(1280, 720), true, Color(1, 1, 1, 0.18))
+	_view_container().add_child(_panel(Vector2(20, 84), Vector2(218, 576), Color(0.04, 0.035, 0.052, 0.62)))
+	_view_container().add_child(_panel(Vector2(260, 86), Vector2(980, 574), Color(0.038, 0.032, 0.050, 0.58)))
+
+
+func _draw_hero_list_header() -> void:
+	var header := _label("英雄圖鑑", 34)
+	header.position = Vector2(38, 22)
+	header.size = Vector2(240, 50)
+	header.modulate = Color(1.0, 0.92, 0.76)
 	_view_container().add_child(header)
 
 	var owned_count: int = save.get("owned", {}).size()
 	var progress := _label("收集進度  %d / %d" % [owned_count, heroes.size()], 20, HORIZONTAL_ALIGNMENT_RIGHT)
-	progress.position = Vector2(782, 30)
-	progress.size = Vector2(420, 34)
+	progress.position = Vector2(806, 30)
+	progress.size = Vector2(396, 34)
+	progress.modulate = Color(0.96, 0.90, 0.82)
 	_view_container().add_child(progress)
 
-	_add_gallery_filter_button("全部", "all", Vector2(40, 82))
-	_add_gallery_filter_button("已獲得", "owned", Vector2(148, 82))
-	_add_gallery_filter_button("未獲得", "unowned", Vector2(256, 82))
-	_add_gallery_filter_button("★★★★", "r4", Vector2(364, 82))
-	_add_gallery_filter_button("★★★", "r3", Vector2(472, 82))
-	_add_gallery_filter_button("★★", "r2", Vector2(580, 82))
+	_draw_image(UI_HERO_FILTER_BG, Vector2(836, 82), Vector2(360, 130), false, Color(1, 1, 1, 0.86))
+	var sort_hint := _label("排序  戰力", 18, HORIZONTAL_ALIGNMENT_CENTER)
+	sort_hint.position = Vector2(978, 94)
+	sort_hint.size = Vector2(130, 28)
+	_view_container().add_child(sort_hint)
+	_draw_image(UI_HERO_SORT_BTN, Vector2(1142, 116), Vector2(42, 42), false, Color(1, 1, 1, 0.92))
 
+
+func _draw_hero_list_filters() -> void:
+	var tabs := [
+		{"text": "總覽", "filter": "all"},
+		{"text": "已獲得", "filter": "owned"},
+		{"text": "未獲得", "filter": "unowned"},
+		{"text": "四星", "filter": "r4"},
+		{"text": "三星", "filter": "r3"},
+		{"text": "二星", "filter": "r2"},
+	]
+	var y := 116.0
+	for tab in tabs:
+		_draw_hero_list_tab(str(tab.get("text", "")), str(tab.get("filter", "")), Vector2(42, y))
+		y += 72.0
+
+
+func _draw_hero_list_tab(text: String, filter: String, pos: Vector2) -> void:
+	var selected := gallery_filter == filter
+	if selected:
+		_draw_image(UI_COMMON_TAB_HIGHLIGHT, pos, Vector2(176, 56), false, Color(1, 1, 1, 0.96))
+	else:
+		_view_container().add_child(_panel(pos + Vector2(8, 4), Vector2(160, 48), Color(0.10, 0.075, 0.10, 0.48)))
+
+	var label := _label(text, 20, HORIZONTAL_ALIGNMENT_CENTER)
+	label.position = pos + Vector2(50, 8)
+	label.size = Vector2(104, 38)
+	label.modulate = Color(1.0, 0.92, 0.78) if selected else Color(0.86, 0.82, 0.78)
+	_view_container().add_child(label)
+	var dot_color := Color(1.0, 0.64, 0.30, 0.95) if selected else Color(0.42, 0.36, 0.44, 0.75)
+	_view_container().add_child(_panel(pos + Vector2(22, 18), Vector2(18, 18), dot_color))
+
+	var button := Button.new()
+	button.text = ""
+	button.flat = true
+	button.position = pos
+	button.size = Vector2(176, 56)
+	button.focus_mode = Control.FOCUS_NONE
+	button.pressed.connect(func() -> void:
+		gallery_filter = filter
+		_show_gallery()
+	)
+	_view_container().add_child(button)
+
+
+func _draw_hero_list_cards() -> void:
 	var filtered := _gallery_filtered_heroes()
 	if filtered.is_empty():
 		var empty := _label("暫無符合條件的角色", 22, HORIZONTAL_ALIGNMENT_CENTER)
-		empty.position = Vector2(280, 270)
+		empty.position = Vector2(382, 330)
 		empty.size = Vector2(720, 40)
 		_view_container().add_child(empty)
 		return
 
-	var x := 40.0
-	var y := 146.0
+	var x := 290.0
+	var y := 132.0
+	var col := 0
 	for hero in filtered:
-		var hero_id := int(hero.get("id", 0))
-		var copies := int(save.get("owned", {}).get(str(hero_id), 0))
-		var shards := int(save.get("shards", {}).get(str(hero_id), 0))
-		var display_name := str(hero.get("name", "Unknown")) if copies > 0 else "未獲得"
-		var rarity := int(hero.get("rarity", 1))
-		var frame := _panel(Vector2(x, y), Vector2(176, 104), _rarity_color(rarity, 0.20))
-		_view_container().add_child(frame)
-		var tint := Color(0.46, 0.46, 0.46, 1.0) if copies <= 0 else Color(1, 1, 1, 1)
-		_draw_hero_portrait(hero, Vector2(x + 8, y + 8), Vector2(58, 88), tint)
-		var label := _label("%s\n%s\n持有%d  碎%d" % [display_name, _stars(rarity), copies, shards], 16)
-		label.position = Vector2(x + 72, y + 12)
-		label.size = Vector2(96, 78)
+		_draw_hero_list_card(hero, Vector2(x, y))
+		col += 1
+		x += 228.0
+		if col >= 4:
+			col = 0
+			x = 290.0
+			y += 178.0
+
+
+func _draw_hero_list_card(hero: Dictionary, pos: Vector2) -> void:
+	var hero_id := int(hero.get("id", 0))
+	var rarity := int(hero.get("rarity", 1))
+	var copies := int(save.get("owned", {}).get(str(hero_id), 0))
+	var shards := int(save.get("shards", {}).get(str(hero_id), 0))
+	var owned := copies > 0
+	var frame_color := _rarity_color(rarity, 0.26 if owned else 0.12)
+	_view_container().add_child(_panel(pos, Vector2(196, 142), Color(0.045, 0.038, 0.058, 0.78)))
+	_view_container().add_child(_panel(pos + Vector2(2, 2), Vector2(192, 138), frame_color))
+	_draw_image(UI_HERO_HIGHLIGHT, pos + Vector2(10, 8), Vector2(80, 80), false, Color(1, 1, 1, 0.55))
+
+	var tint := Color(1, 1, 1, 1) if owned else Color(0.42, 0.42, 0.45, 1)
+	_draw_hero_thumb(hero, pos + Vector2(18, 16), Vector2(68, 72), tint)
+	_draw_hero_card_stars(rarity, pos + Vector2(16, 94), 13)
+
+	var display_name := str(hero.get("name", "Unknown")) if owned else "未獲得"
+	var name_label := _label(display_name, 19)
+	name_label.position = pos + Vector2(96, 18)
+	name_label.size = Vector2(88, 28)
+	name_label.modulate = Color(1.0, 0.94, 0.82) if owned else Color(0.72, 0.70, 0.72)
+	_view_container().add_child(name_label)
+
+	var state_text := "持有 %d  碎片 %d" % [copies, shards] if owned else "線索未解鎖"
+	var state := _label(state_text, 14)
+	state.position = pos + Vector2(96, 52)
+	state.size = Vector2(88, 42)
+	state.modulate = Color(0.92, 0.86, 0.82)
+	_view_container().add_child(state)
+
+	var power := _hero_power(hero)
+	var power_label := _label("戰力 %d" % power, 14)
+	power_label.position = pos + Vector2(96, 98)
+	power_label.size = Vector2(88, 26)
+	power_label.modulate = Color(1.0, 0.82, 0.52)
+	_view_container().add_child(power_label)
+
+	var button := Button.new()
+	button.text = ""
+	button.flat = true
+	button.position = pos
+	button.size = Vector2(196, 142)
+	button.focus_mode = Control.FOCUS_NONE
+	button.pressed.connect(func() -> void:
+		_show_hero_detail(hero_id)
+	)
+	_view_container().add_child(button)
+
+func _show_remnants_list() -> void:
+	current_view = "remnants"
+	_set_chrome_visible(false)
+	_clear("幻靈列表")
+	_draw_remnants_background()
+	_draw_remnants_top_bar()
+	_draw_remnants_side_filters()
+	var list: Array = _remnants_primary_heroes()
+	var page_size: int = 10
+	var page_count: int = max(1, int(ceil(float(list.size()) / float(page_size))))
+	remnants_page = clamp(remnants_page, 0, page_count - 1)
+	var start: int = remnants_page * page_size
+	var page_items: Array = list.slice(start, min(start + page_size, list.size()))
+	_draw_remnants_section("靈能原體", Vector2(260, 82), page_items, true)
+	_draw_remnants_sync_section(Vector2(260, 586), list.size(), page_count)
+
+
+func _draw_remnants_background() -> void:
+	_draw_image(UI_REMNANTS_BG, Vector2(0, 0), Vector2(1280, 720), true, Color(0.70, 0.76, 0.92, 0.86))
+	_view_container().add_child(_panel(Vector2(0, 0), Vector2(1280, 720), Color(0.010, 0.018, 0.035, 0.40)))
+	_view_container().add_child(_panel(Vector2(0, 548), Vector2(1280, 172), Color(0.34, 0.43, 0.60, 0.30)))
+	for i in range(7):
+		var y := 80.0 + i * 80.0
+		_view_container().add_child(_panel(Vector2(38, y), Vector2(2, 58), Color(0.45, 0.55, 0.72, 0.36)))
+		_view_container().add_child(_panel(Vector2(31, y + 22), Vector2(14, 14), Color(0.90, 0.96, 1.0, 0.60)))
+
+
+func _draw_remnants_top_bar() -> void:
+	_add_action_button("返回", Vector2(46, 18), _show_home, Vector2(116, 38))
+	_add_action_button("?", Vector2(176, 18), _show_player_info, Vector2(42, 38))
+	var tabs := ["編隊", "陣容推薦", "戰力", "品質", "星級", "等級"]
+	var x := 506.0
+	for i in range(tabs.size()):
+		var selected := i == 2
+		_view_container().add_child(_panel(Vector2(x, 20), Vector2(96, 30), Color(0.10, 0.12, 0.18, 0.62)))
+		var label := _label(str(tabs[i]), 15, HORIZONTAL_ALIGNMENT_CENTER)
+		label.position = Vector2(x, 24)
+		label.size = Vector2(96, 22)
+		label.modulate = Color(0.80, 1.0, 0.18) if selected else Color(0.95, 0.95, 0.98)
 		_view_container().add_child(label)
+		x += 96
+
+
+func _draw_remnants_side_filters() -> void:
+	var filters := [
+		["全部", Color(0.66, 0.94, 0.20, 1)],
+		["水相", Color(0.82, 0.92, 1.0, 1)],
+		["風相", Color(0.82, 1.0, 0.88, 1)],
+		["火相", Color(1.0, 0.78, 0.62, 1)],
+		["土相", Color(0.98, 0.90, 0.72, 1)],
+		["輝星", Color(0.88, 0.90, 1.0, 1)]
+	]
+	var y := 120.0
+	for i in range(filters.size()):
+		var selected := i == 0
+		if selected:
+			_view_container().add_child(_panel(Vector2(58, y - 12), Vector2(108, 30), Color(0.38, 0.58, 0.12, 0.72)))
+		var bullet := _panel(Vector2(72, y - 5), Vector2(16, 16), filters[i][1])
+		_view_container().add_child(bullet)
+		var label := _label(str(filters[i][0]), 17)
+		label.position = Vector2(106, y - 9)
+		label.size = Vector2(86, 26)
+		label.modulate = Color(0.88, 1.0, 0.58) if selected else Color(0.96, 0.96, 1.0)
+		_view_container().add_child(label)
+		y += 64
+
+
+func _draw_remnants_section(title: String, pos: Vector2, list: Array, featured: bool) -> void:
+	_draw_remnants_section_header(title, pos)
+	var columns := 5
+	var start_x := pos.x + 98
+	for i in range(list.size()):
+		var col := i % columns
+		var row := i / columns
+		_draw_remnants_card(list[i], Vector2(start_x + col * 132.0, pos.y + 48 + row * 214.0), featured)
+
+
+func _draw_remnants_sync_section(pos: Vector2, total_count: int, page_count: int) -> void:
+	_draw_remnants_section_header("同調者", pos)
+	var tip := _label("當前共用養成：幻靈等級-86級  靈階-0星  靈裝-紫色Lv.30  靈裝強化-20級", 16)
+	tip.position = pos + Vector2(190, 7)
+	tip.size = Vector2(730, 26)
+	tip.modulate = Color(1.0, 0.94, 0.58)
+	_view_container().add_child(tip)
+	var count := _label("全部幻靈：%d  第 %d/%d 頁" % [total_count, remnants_page + 1, page_count], 15, HORIZONTAL_ALIGNMENT_RIGHT)
+	count.position = pos + Vector2(606, 7)
+	count.size = Vector2(224, 24)
+	count.modulate = Color(0.82, 0.94, 1.0)
+	_view_container().add_child(count)
+	_add_action_button("上一頁", pos + Vector2(646, 42), func() -> void:
+		remnants_page = max(0, remnants_page - 1)
+		_show_remnants_list()
+	, Vector2(82, 36))
+	_add_action_button("下一頁", pos + Vector2(742, 42), func() -> void:
+		remnants_page = min(page_count - 1, remnants_page + 1)
+		_show_remnants_list()
+	, Vector2(82, 36))
+
+
+func _draw_remnants_section_header(title: String, pos: Vector2) -> void:
+	_view_container().add_child(_panel(pos, Vector2(846, 30), Color(0.08, 0.10, 0.18, 0.76)))
+	var marker := _panel(pos + Vector2(12, 7), Vector2(18, 16), Color(0.68, 0.96, 0.22, 0.95))
+	_view_container().add_child(marker)
+	var label := _label(title, 18)
+	label.position = pos + Vector2(42, 3)
+	label.size = Vector2(180, 26)
+	label.modulate = Color(0.78, 1.0, 0.32)
+	_view_container().add_child(label)
+
+
+func _draw_remnants_card(hero: Dictionary, pos: Vector2, featured: bool) -> void:
+	var rarity := int(hero.get("rarity", 1))
+	var hero_id := int(hero.get("id", 0))
+	var level := 78 + rarity * 4 + hero_id % 13
+	var card_size := Vector2(118, 202)
+	var frame_color := Color(0.92, 0.64, 0.20, 0.90) if rarity >= 4 else Color(0.34, 0.62, 0.92, 0.86)
+	_view_container().add_child(_panel(pos, card_size, Color(0.04, 0.055, 0.085, 0.88)))
+	_view_container().add_child(_panel(pos + Vector2(2, 2), card_size - Vector2(4, 4), Color(frame_color.r, frame_color.g, frame_color.b, 0.22)))
+	_draw_hero_thumb(hero, pos + Vector2(6, 6), Vector2(106, 142), Color(1, 1, 1, 1))
+	_view_container().add_child(_panel(pos + Vector2(4, 150), Vector2(110, 48), Color(0.45, 0.25, 0.06, 0.84)))
+	var rare := _label("SSR", 24)
+	rare.position = pos + Vector2(10, 154)
+	rare.size = Vector2(58, 30)
+	rare.modulate = Color(1.0, 0.82, 0.36)
+	_view_container().add_child(rare)
+	var level_label := _label("等級%d" % level, 12, HORIZONTAL_ALIGNMENT_RIGHT)
+	level_label.position = pos + Vector2(58, 154)
+	level_label.size = Vector2(54, 18)
+	level_label.modulate = Color(1.0, 0.96, 0.88)
+	_view_container().add_child(level_label)
+	var name := _label(str(hero.get("name", "幻靈")), 13, HORIZONTAL_ALIGNMENT_RIGHT)
+	name.position = pos + Vector2(48, 174)
+	name.size = Vector2(62, 20)
+	name.modulate = Color(1.0, 0.96, 0.88)
+	_view_container().add_child(name)
+	if featured:
+		_draw_red_dot(pos + Vector2(104, -6))
+		var tag := _label("特薦", 13, HORIZONTAL_ALIGNMENT_CENTER)
+		tag.position = pos + Vector2(75, 4)
+		tag.size = Vector2(38, 18)
+		tag.modulate = Color(1.0, 0.98, 0.20)
+		_view_container().add_child(tag)
+	var button := Button.new()
+	button.text = ""
+	button.flat = true
+	button.position = pos
+	button.size = card_size
+	button.focus_mode = Control.FOCUS_NONE
+	button.pressed.connect(func() -> void:
+		_show_remnant_detail(hero_id)
+	)
+	_view_container().add_child(button)
+
+
+func _show_remnant_detail(hero_id: int) -> void:
+	selected_remnant_id = hero_id
+	current_view = "remnant_detail"
+	_set_chrome_visible(false)
+	var hero := _hero_by_id(hero_id)
+	_clear("幻靈詳情")
+	_draw_remnant_detail_background(hero)
+	_draw_remnant_detail_left_strip(hero_id)
+	_draw_remnant_detail_tabs()
+	_draw_hero_stage(hero, Vector2(160, -74), Vector2(760, 840), false)
+	_draw_remnant_detail_panel(hero)
+
+
+func _draw_remnant_detail_background(hero: Dictionary) -> void:
+	_draw_image(UI_HERO_BG_DETAIL, Vector2(0, 0), Vector2(1280, 720), true, Color(0.92, 0.94, 1.0, 0.96))
+	_view_container().add_child(_panel(Vector2(0, 0), Vector2(1280, 720), Color(0.012, 0.018, 0.030, 0.32)))
+	if int(hero.get("id", 0)) == 240069:
+		_draw_image(UI_REMNANT_STAGE_BG, Vector2(154, -394), Vector2(700, 1400), false, Color(1.0, 1.0, 1.0, 0.90))
+		_view_container().add_child(_panel(Vector2(760, 0), Vector2(520, 720), Color(0.010, 0.014, 0.026, 0.38)))
+	_view_container().add_child(_panel(Vector2(250, 0), Vector2(520, 720), Color(0.92, 0.78, 0.42, 0.05)))
+	_view_container().add_child(_panel(Vector2(846, 26), Vector2(352, 520), Color(0.020, 0.024, 0.038, 0.42)))
+	_add_action_button("返回", Vector2(46, 18), _show_remnants_list, Vector2(116, 38))
+	_add_action_button("?", Vector2(176, 18), _show_player_info, Vector2(42, 38))
+
+
+func _draw_remnant_detail_left_strip(selected_id: int) -> void:
+	var list := _remnants_primary_heroes()
+	var selected_index := 0
+	for i in range(list.size()):
+		if int(list[i].get("id", 0)) == selected_id:
+			selected_index = i
+			break
+	var start: int = clamp(selected_index - 2, 0, max(0, list.size() - 7))
+	var visible := list.slice(start, min(start + 7, list.size()))
+	_draw_image(UI_HERO_SELECTOR_BG, Vector2(26, 66), Vector2(76, 628), false, Color(1, 1, 1, 0.90))
+	_draw_image(UI_HERO_SELECTOR_TOP, Vector2(26, 646), Vector2(76, 42), false, Color(1, 1, 1, 0.82))
+	for i in range(visible.size()):
+		var hero: Dictionary = visible[i]
+		var pos := Vector2(38, 78 + i * 82.0)
+		var is_selected := int(hero.get("id", 0)) == selected_id
+		if is_selected:
+			_draw_image(UI_HERO_HIGHLIGHT, pos - Vector2(20, -1), Vector2(100, 100), false, Color(1, 1, 1, 0.78))
+		_draw_hero_round_thumb(hero, pos, Vector2(60, 60), Color(1, 1, 1, 1))
+		_draw_image(UI_COMMON_HERO_HEAD_FRAME, pos - Vector2(5, 5), Vector2(70, 70), false, Color(1, 1, 1, 0.18))
+		_draw_image(UI_COMMON_HERO_STAR_BAR, pos + Vector2(-5, 55), Vector2(70, 12), false, Color(1, 1, 1, 0.36))
+		var stars := _label("★★★★★", 8, HORIZONTAL_ALIGNMENT_CENTER)
+		stars.position = pos + Vector2(-5, 54)
+		stars.size = Vector2(70, 12)
+		stars.modulate = Color(1.0, 1.0, 1.0, 0.72)
+		_view_container().add_child(stars)
+		var level := _label(str(_remnant_level(hero)), 11, HORIZONTAL_ALIGNMENT_RIGHT)
+		level.position = pos + Vector2(31, -3)
+		level.size = Vector2(26, 16)
+		level.modulate = Color(1.0, 0.96, 0.76)
+		_view_container().add_child(level)
+		var hero_id := int(hero.get("id", 0))
 		var button := Button.new()
 		button.text = ""
 		button.flat = true
-		button.position = Vector2(x, y)
-		button.size = Vector2(176, 104)
-		if copies <= 0:
-			button.modulate = Color(0.52, 0.52, 0.52, 1.0)
+		button.position = pos - Vector2(6, 6)
+		button.size = Vector2(70, 78)
+		button.focus_mode = Control.FOCUS_NONE
 		button.pressed.connect(func() -> void:
-			_show_hero_detail(hero_id)
+			_show_remnant_detail(hero_id)
 		)
 		_view_container().add_child(button)
-		x += 194
-		if x > 1080:
-			x = 40
-			y += 120
+
+
+func _draw_remnant_detail_tabs() -> void:
+	var tabs := [
+		["主頁", UI_HERO_TAB_HOME, Color(0.70, 1.0, 0.22)],
+		["養成", UI_HERO_TAB_CULTIVATE, Color(1, 1, 1)],
+		["靈裝", UI_HERO_TAB_EQUIP, Color(1, 1, 1)],
+		["靈階", UI_HERO_TAB_STAGE, Color(1, 1, 1)]
+	]
+	var y := 104.0
+	for i in range(tabs.size()):
+		var selected := i == 0
+		if selected:
+			_view_container().add_child(_panel(Vector2(130, y - 19), Vector2(104, 48), Color(0.08, 0.14, 0.09, 0.58)))
+		_draw_image(str(tabs[i][1]), Vector2(132, y - 26), Vector2(54, 54), false, Color(0.78, 1.0, 0.22, 1.0) if selected else Color(0.92, 0.96, 1.0, 0.96))
+		var label := _label(str(tabs[i][0]), 21)
+		label.position = Vector2(190, y - 12)
+		label.size = Vector2(86, 28)
+		label.modulate = tabs[i][2]
+		_view_container().add_child(label)
+		y += 72
+
+
+func _draw_remnant_detail_panel(hero: Dictionary) -> void:
+	var rarity := int(hero.get("rarity", 1))
+	var hero_id := int(hero.get("id", 0))
+	var level := _remnant_level(hero)
+	var pos := Vector2(876, 54)
+	var type_name := _remnant_element_name(hero_id)
+	var role := _remnant_role_name(hero_id)
+	var small := _label(_remnant_title_name(hero_id), 16)
+	small.position = pos
+	small.size = Vector2(180, 24)
+	small.modulate = Color(1.0, 0.82, 0.34)
+	_view_container().add_child(small)
+	var name := _label(str(hero.get("name", "幻靈")), 30)
+	name.position = pos + Vector2(0, 26)
+	name.size = Vector2(210, 42)
+	name.modulate = Color(1.0, 1.0, 1.0)
+	_view_container().add_child(name)
+	var ssr := _label("SSR", 36, HORIZONTAL_ALIGNMENT_RIGHT)
+	ssr.position = pos + Vector2(224, 2)
+	ssr.size = Vector2(96, 50)
+	ssr.modulate = Color(1.0, 0.76, 0.24)
+	_view_container().add_child(ssr)
+	_view_container().add_child(_panel(pos + Vector2(0, 88), Vector2(284, 2), Color(0.84, 0.90, 1.0, 0.22)))
+	_draw_remnant_stars(_remnant_star_level(hero), pos + Vector2(12, 108))
+	var role_label := _label("狂刃" if role == "attack" else "守護", 17, HORIZONTAL_ALIGNMENT_CENTER)
+	role_label.position = pos + Vector2(176, 112)
+	role_label.size = Vector2(70, 24)
+	_view_container().add_child(role_label)
+	var element := _label(type_name, 17, HORIZONTAL_ALIGNMENT_CENTER)
+	element.position = pos + Vector2(260, 112)
+	element.size = Vector2(70, 24)
+	_view_container().add_child(element)
+	var desc := _label("反擊疊暴    暴擊輸出", 15)
+	desc.position = pos + Vector2(12, 150)
+	desc.size = Vector2(260, 24)
+	desc.modulate = Color(0.92, 0.92, 1.0)
+	_view_container().add_child(desc)
+	_view_container().add_child(_panel(pos + Vector2(0, 188), Vector2(284, 2), Color(0.84, 0.90, 1.0, 0.18)))
+
+	var power := _remnant_power(hero)
+	var level_label := _label("等級", 17)
+	level_label.position = pos + Vector2(10, 214)
+	level_label.size = Vector2(90, 24)
+	_view_container().add_child(level_label)
+	var level_value := _label("%d/180" % level, 22)
+	level_value.position = pos + Vector2(10, 240)
+	level_value.size = Vector2(130, 30)
+	level_value.modulate = Color(0.72, 1.0, 0.18)
+	_view_container().add_child(level_value)
+	var power_title := _label("戰力", 20, HORIZONTAL_ALIGNMENT_CENTER)
+	power_title.position = pos + Vector2(178, 214)
+	power_title.size = Vector2(106, 28)
+	power_title.modulate = Color(1.0, 0.95, 0.48)
+	_view_container().add_child(power_title)
+	var power_label := _label(str(power), 20, HORIZONTAL_ALIGNMENT_CENTER)
+	power_label.position = pos + Vector2(178, 244)
+	power_label.size = Vector2(106, 30)
+	power_label.modulate = Color(1.0, 0.90, 0.40)
+	_view_container().add_child(power_label)
+	var attrs := _remnant_attrs(hero)
+	_draw_remnant_attr("攻擊", str(attrs["攻擊"]), pos + Vector2(10, 294))
+	_draw_remnant_attr("生命", str(attrs["生命"]), pos + Vector2(178, 294))
+	_draw_remnant_attr("防禦", str(attrs["防禦"]), pos + Vector2(10, 326))
+	_draw_remnant_attr("速度", str(attrs["速度"]), pos + Vector2(178, 326))
+	_add_action_button("詳情屬性", pos + Vector2(0, 372), _show_player_info, Vector2(284, 28))
+	_draw_remnant_skill_badges(hero, pos + Vector2(8, 408))
+
+
+func _draw_remnant_stars(rarity: int, pos: Vector2) -> void:
+	for i in range(5):
+		var path := UI_COMMON_STAR if i < rarity else UI_COMMON_STAR_OFF
+		_draw_image(path, pos + Vector2(i * 28.0, 0), Vector2(26, 26), false, Color(1, 1, 1, 0.96))
+
+
+func _draw_remnant_skill_badges(hero: Dictionary, pos: Vector2) -> void:
+	var skill_paths: Array = hero.get("skillResources", [])
+	for i in range(4):
+		var icon_pos := pos + Vector2(i * 68.0, 0)
+		_draw_image(UI_COMMON_SKILL_FRAME, icon_pos, Vector2(62, 62), false, Color(1.0, 0.86, 0.28, 0.36))
+		if i < skill_paths.size():
+			_draw_image(_godot_resource_path(str(skill_paths[i])), icon_pos + Vector2(3, 3), Vector2(56, 56), false, Color(1, 1, 1, 0.98))
+		else:
+			var icon := _label("威", 24, HORIZONTAL_ALIGNMENT_CENTER)
+			icon.position = icon_pos + Vector2(3, 16)
+			icon.size = Vector2(56, 30)
+			icon.modulate = Color(1.0, 0.96, 0.62)
+			_view_container().add_child(icon)
+
+
+func _draw_remnant_attr(label_text: String, value_text: String, pos: Vector2) -> void:
+	var label := _label(label_text, 15)
+	label.position = pos
+	label.size = Vector2(58, 22)
+	label.modulate = Color(0.94, 0.94, 1.0)
+	_view_container().add_child(label)
+	var value := _label(value_text, 16, HORIZONTAL_ALIGNMENT_RIGHT)
+	value.position = pos + Vector2(60, 0)
+	value.size = Vector2(72, 22)
+	value.modulate = Color(1.0, 1.0, 1.0)
+	_view_container().add_child(value)
+
+
+func _remnant_power(hero: Dictionary) -> int:
+	var rarity := int(hero.get("rarity", 1))
+	var hero_id := int(hero.get("id", 0))
+	if hero_id == 240069:
+		return 274369
+	return 88000 + rarity * 42000 + (hero_id % 100) * 1137
+
+
+func _remnant_attrs(hero: Dictionary) -> Dictionary:
+	var rarity := int(hero.get("rarity", 1))
+	var hero_id := int(hero.get("id", 0))
+	if hero_id == 240069:
+		return {
+			"攻擊": 23746,
+			"生命": 212970,
+			"防禦": 1805,
+			"速度": 104,
+		}
+	return {
+		"攻擊": 16400 + rarity * 1800 + hero_id % 900,
+		"生命": 145000 + rarity * 18500 + (hero_id % 100) * 210,
+		"防禦": 1300 + rarity * 120 + hero_id % 90,
+		"速度": 96 + rarity * 2 + hero_id % 5,
+	}
+
+
+func _remnant_level(hero: Dictionary) -> int:
+	var hero_id := int(hero.get("id", 0))
+	if hero_id == 240069:
+		return 100
+	return 78 + int(hero.get("rarity", 1)) * 4 + hero_id % 13
+
+
+func _remnant_star_level(hero: Dictionary) -> int:
+	var hero_id := int(hero.get("id", 0))
+	if hero_id == 240069:
+		return 2
+	return int(hero.get("rarity", 1))
+
+
+func _remnant_title_name(hero_id: int) -> String:
+	if hero_id == 240069:
+		return "昭陽"
+	return _remnant_element_name(hero_id)
+
+
+func _remnant_element_name(hero_id: int) -> String:
+	if hero_id == 240069:
+		return "土相"
+	var names := ["水相", "風相", "火相", "土相", "輝星"]
+	return names[hero_id % names.size()]
+
+
+func _remnant_role_name(hero_id: int) -> String:
+	if hero_id == 240069:
+		return "attack"
+	return "attack" if hero_id % 2 == 0 else "guard"
+
+
+func _remnants_primary_heroes() -> Array:
+	var list := heroes.duplicate(true)
+	list.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		return int(a.get("rarity", 1)) > int(b.get("rarity", 1)) if int(a.get("rarity", 1)) != int(b.get("rarity", 1)) else int(a.get("id", 0)) < int(b.get("id", 0))
+	)
+	return list
+
+
+func _remnants_sync_heroes() -> Array:
+	var list := _remnants_primary_heroes()
+	return list.slice(2, min(list.size(), 10))
 
 func _show_history() -> void:
 	_clear("記錄")
@@ -569,36 +1106,240 @@ func _draw_one(pool: Dictionary) -> Dictionary:
 func _show_hero_detail(hero_id: int) -> void:
 	var hero := _hero_by_id(hero_id)
 	_clear(str(hero.get("name", "角色")))
-	var gallery_bg := str(hero.get("galleryBackgroundResource", ""))
-	if not gallery_bg.is_empty():
-		_draw_image(_godot_resource_path(gallery_bg), Vector2(0, 0), Vector2(1280, 646), true, Color(1, 1, 1, 0.38))
-		_view_container().add_child(_panel(Vector2(0, 0), Vector2(1280, 646), Color(0.02, 0.016, 0.014, 0.54)))
-	_draw_hero_stage(hero, Vector2(706, 10), Vector2(520, 560))
+	_draw_hero_detail_background()
+	_draw_hero_selector_strip(hero_id)
+	_draw_hero_stage(hero, Vector2(300, 34), Vector2(500, 650), false)
+	_draw_hero_detail_tabs(Vector2(720, 38), "總覽")
+	_draw_hero_detail_summary(hero, Vector2(720, 104))
+	_draw_hero_detail_info_panel(hero, Vector2(706, 382))
+
 	var key := str(hero.get("id", 0))
 	var copies := int(save.get("owned", {}).get(key, 0))
-	var shards := int(save.get("shards", {}).get(key, 0))
-	var state := "已獲得" if copies > 0 else "未獲得"
-	var detail := _label("%s\n稀有度: %s\n持有: %d\n碎片: %d\n獲得途徑: 喚靈 / 祈願\n資源: %s\nSpine: %s" % [state, _stars(int(hero.get("rarity", 1))), copies, shards, hero.get("artResource", ""), hero.get("spine", "")], 20)
-	detail.position = Vector2(54, 108)
-	detail.size = Vector2(610, 210)
-	_view_container().add_child(detail)
-	_draw_detail_portrait(hero)
-	_draw_skill_icons(hero)
 	if copies <= 0:
-		var mask := _panel(Vector2(706, 10), Vector2(520, 560), Color(0.0, 0.0, 0.0, 0.42))
+		var mask := _panel(Vector2(300, 34), Vector2(500, 650), Color(0.0, 0.0, 0.0, 0.42))
 		_view_container().add_child(mask)
 		var locked := _label("未獲得", 36, HORIZONTAL_ALIGNMENT_CENTER)
-		locked.position = Vector2(706, 242)
-		locked.size = Vector2(520, 56)
+		locked.position = Vector2(300, 304)
+		locked.size = Vector2(500, 56)
 		_view_container().add_child(locked)
-		_add_action_button("前往喚靈", Vector2(54, 360), _show_gacha)
+		_add_action_button("前往喚靈", Vector2(1004, 636), _show_gacha, Vector2(132, 44))
 	else:
-		_add_action_button("設為看板", Vector2(54, 360), func() -> void:
+		_add_action_button("設為看板", Vector2(1004, 636), func() -> void:
 			save["selected_hero_id"] = hero_id
 			_persist()
 			_show_home()
-		)
-	_add_action_button("返回圖鑑", Vector2(200, 360), _show_gallery)
+		, Vector2(132, 44))
+	_add_action_button("返回列表", Vector2(858, 636), _show_gallery, Vector2(132, 44))
+
+
+func _draw_hero_detail_background() -> void:
+	_draw_image(UI_HERO_BG_MAIN, Vector2(0, 0), Vector2(1280, 720), true, Color(1, 1, 1, 0.76))
+	_draw_image(UI_HERO_BG_DETAIL, Vector2(0, 0), Vector2(1280, 720), true, Color(1, 1, 1, 0.32))
+	_view_container().add_child(_panel(Vector2(0, 0), Vector2(1280, 720), Color(0.014, 0.012, 0.020, 0.30)))
+	_view_container().add_child(_panel(Vector2(36, 80), Vector2(100, 560), Color(0.035, 0.030, 0.050, 0.68)))
+	_draw_image(UI_HERO_SELECTOR_BG, Vector2(36, 80), Vector2(100, 560), true, Color(1, 1, 1, 0.76))
+	_draw_image(UI_HERO_SELECTOR_TOP, Vector2(36, 80), Vector2(100, 48), false, Color(1, 1, 1, 0.92))
+	_view_container().add_child(_panel(Vector2(690, 22), Vector2(548, 676), Color(0.030, 0.024, 0.040, 0.62)))
+
+
+func _draw_hero_selector_strip(selected_hero_id: int) -> void:
+	var y := 142.0
+	for hero in _hero_selector_heroes():
+		var hero_id := int(hero.get("id", 0))
+		var selected = hero_id == selected_hero_id
+		_draw_hero_selector_grid(hero, Vector2(52, y), selected)
+		y += 82.0
+
+
+func _hero_selector_heroes() -> Array:
+	var list := heroes.duplicate(true)
+	list.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		return int(a.get("rarity", 1)) > int(b.get("rarity", 1)) if int(a.get("rarity", 1)) != int(b.get("rarity", 1)) else int(a.get("id", 0)) < int(b.get("id", 0))
+	)
+	return list.slice(0, min(6, list.size()))
+
+
+func _draw_hero_selector_grid(hero: Dictionary, pos: Vector2, selected: bool) -> void:
+	var hero_id := int(hero.get("id", 0))
+	var rarity := int(hero.get("rarity", 1))
+	if selected:
+		_draw_image(UI_HERO_HIGHLIGHT, pos - Vector2(10, 10), Vector2(90, 90), false, Color(1, 1, 1, 0.72))
+	else:
+		_view_container().add_child(_panel(pos - Vector2(4, 4), Vector2(78, 78), Color(0.08, 0.065, 0.09, 0.58)))
+	_draw_hero_thumb(hero, pos, Vector2(70, 70), Color(1, 1, 1, 1))
+	_draw_hero_card_stars(rarity, pos + Vector2(8, 58), 10)
+
+	var button := Button.new()
+	button.text = ""
+	button.flat = true
+	button.position = pos - Vector2(6, 6)
+	button.size = Vector2(82, 82)
+	button.focus_mode = Control.FOCUS_NONE
+	button.pressed.connect(func() -> void:
+		_show_hero_detail(hero_id)
+	)
+	_view_container().add_child(button)
+
+
+func _draw_hero_detail_tabs(pos: Vector2, selected: String) -> void:
+	var tabs := ["總覽", "屬性", "技能", "羈絆"]
+	var x := pos.x
+	for tab in tabs:
+		var is_selected = tab == selected
+		if is_selected:
+			_draw_image(UI_COMMON_TAB_HIGHLIGHT, Vector2(x, pos.y), Vector2(132, 48), false, Color(1, 1, 1, 0.92))
+		else:
+			_view_container().add_child(_panel(Vector2(x + 8, pos.y + 6), Vector2(116, 36), Color(0.075, 0.058, 0.083, 0.62)))
+		var label := _label(tab, 18, HORIZONTAL_ALIGNMENT_CENTER)
+		label.position = Vector2(x + 18, pos.y + 8)
+		label.size = Vector2(96, 28)
+		label.modulate = Color(1.0, 0.92, 0.74) if is_selected else Color(0.82, 0.78, 0.78)
+		_view_container().add_child(label)
+		x += 126.0
+
+
+func _draw_hero_detail_summary(hero: Dictionary, pos: Vector2) -> void:
+	var hero_id := int(hero.get("id", 0))
+	var rarity := int(hero.get("rarity", 1))
+	var key := str(hero_id)
+	var copies := int(save.get("owned", {}).get(key, 0))
+	var shards := int(save.get("shards", {}).get(key, 0))
+	var owned := copies > 0
+
+	_draw_image(UI_COMMON_HEAD_FRAME, pos, Vector2(118, 118), false, Color(1, 1, 1, 0.92))
+	_draw_hero_thumb(hero, pos + Vector2(10, 10), Vector2(98, 98), Color(1, 1, 1, 1) if owned else Color(0.48, 0.48, 0.50, 1))
+
+	var title := _label(str(hero.get("name", "角色")), 34)
+	title.position = pos + Vector2(136, 4)
+	title.size = Vector2(240, 48)
+	title.modulate = Color(1.0, 0.92, 0.76)
+	_view_container().add_child(title)
+
+	var spine := _label("Spine  %s" % str(hero.get("spine", "")), 17)
+	spine.position = pos + Vector2(138, 52)
+	spine.size = Vector2(280, 26)
+	spine.modulate = Color(0.90, 0.84, 0.78)
+	_view_container().add_child(spine)
+
+	_view_container().add_child(_panel(pos + Vector2(388, 10), Vector2(98, 44), _rarity_color(rarity, 0.50)))
+	var rare_label := _label("R%d" % rarity, 20, HORIZONTAL_ALIGNMENT_CENTER)
+	rare_label.position = pos + Vector2(388, 18)
+	rare_label.size = Vector2(98, 28)
+	rare_label.modulate = Color(1.0, 0.92, 0.72)
+	_view_container().add_child(rare_label)
+	_draw_hero_card_stars(rarity, pos + Vector2(136, 86), 28)
+
+	var state_text := "已獲得  持有 %d  碎片 %d" % [copies, shards] if owned else "未獲得  碎片 %d" % shards
+	var state := _label(state_text, 18)
+	state.position = pos + Vector2(300, 88)
+	state.size = Vector2(220, 28)
+	state.modulate = Color(1.0, 0.82, 0.58)
+	_view_container().add_child(state)
+
+	var power_panel := _panel(pos + Vector2(0, 144), Vector2(496, 52), Color(0.07, 0.052, 0.075, 0.78))
+	_view_container().add_child(power_panel)
+	var power := _label("戰力  %d" % _hero_power(hero), 24)
+	power.position = pos + Vector2(22, 152)
+	power.size = Vector2(190, 36)
+	power.modulate = Color(1.0, 0.82, 0.45)
+	_view_container().add_child(power)
+	var route := _label("獲得途徑  喚靈 / 祈願 / 活動", 17, HORIZONTAL_ALIGNMENT_RIGHT)
+	route.position = pos + Vector2(214, 156)
+	route.size = Vector2(260, 30)
+	route.modulate = Color(0.92, 0.86, 0.82)
+	_view_container().add_child(route)
+
+
+func _draw_hero_detail_info_panel(hero: Dictionary, pos: Vector2) -> void:
+	_draw_image(UI_HERO_DETAIL_INFO_BG, pos, Vector2(540, 240), true, Color(1, 1, 1, 0.86))
+	_view_container().add_child(_panel(pos, Vector2(540, 240), Color(0.025, 0.020, 0.035, 0.30)))
+
+	_draw_hero_section_header("屬性詳情", pos + Vector2(18, 18), Vector2(250, 30))
+	_draw_hero_section_header("技能列表", pos + Vector2(276, 18), Vector2(246, 30))
+
+	var attrs := _hero_attrs(hero)
+	var x1 := pos.x + 34
+	var y := pos.y + 66
+	var index := 0
+	for key in attrs.keys():
+		var col := index / 4
+		var row := index % 4
+		var ax := x1 + col * 128.0
+		var ay := y + row * 32.0
+		var label := _label(str(key), 15)
+		label.position = Vector2(ax, ay)
+		label.size = Vector2(66, 24)
+		label.modulate = Color(0.92, 0.86, 0.80)
+		_view_container().add_child(label)
+		var value := _label(str(attrs[key]), 15, HORIZONTAL_ALIGNMENT_RIGHT)
+		value.position = Vector2(ax + 58, ay)
+		value.size = Vector2(52, 24)
+		value.modulate = Color(1.0, 0.86, 0.60)
+		_view_container().add_child(value)
+		index += 1
+
+	var skill_paths: Array = hero.get("skillResources", [])
+	var sx := pos.x + 294
+	for i in range(4):
+		var icon_pos := Vector2(sx + i * 56.0, pos.y + 68)
+		_draw_image(UI_COMMON_SKILL_FRAME, icon_pos, Vector2(48, 48), false, Color(1, 1, 1, 0.78))
+		if i < skill_paths.size():
+			_draw_image(_godot_resource_path(str(skill_paths[i])), icon_pos + Vector2(4, 4), Vector2(40, 40), false)
+		var skill_label := _label("技能%d" % (i + 1), 11, HORIZONTAL_ALIGNMENT_CENTER)
+		skill_label.position = icon_pos + Vector2(-4, 48)
+		skill_label.size = Vector2(56, 20)
+		_view_container().add_child(skill_label)
+
+	_draw_hero_section_header("靈裝 / 源神 / 神具", pos + Vector2(276, 150), Vector2(246, 30))
+	var equip := _label("MVP 裝備槽位已按 HeroDetailInfoView 區塊預留，後續接裝備表即可填充。", 14)
+	equip.position = pos + Vector2(292, 184)
+	equip.size = Vector2(216, 42)
+	equip.modulate = Color(0.92, 0.86, 0.82)
+	_view_container().add_child(equip)
+
+
+func _draw_hero_section_header(text: String, pos: Vector2, size: Vector2) -> void:
+	_draw_image(UI_COMMON_SECTION, pos, size, true, Color(1, 1, 1, 0.78))
+	var label := _label(text, 15, HORIZONTAL_ALIGNMENT_CENTER)
+	label.position = pos
+	label.size = size
+	label.modulate = Color(1.0, 0.92, 0.78)
+	_view_container().add_child(label)
+
+
+func _draw_hero_card_stars(rarity: int, pos: Vector2, size: int) -> void:
+	if size < 20:
+		var badge := _label("R%d" % clamp(rarity, 1, 5), size + 2, HORIZONTAL_ALIGNMENT_CENTER)
+		badge.position = pos
+		badge.size = Vector2(38, size + 10)
+		badge.modulate = Color(1.0, 0.86, 0.52)
+		_view_container().add_child(badge)
+		return
+	for i in range(clamp(rarity, 1, 5)):
+		var star_path := UI_COMMON_STAR if size >= 20 else UI_HERO_STAR_SMALL
+		_draw_image(star_path, pos + Vector2(i * (size * 0.74), 0), Vector2(size, size), false, Color(1, 1, 1, 0.96))
+
+
+func _hero_power(hero: Dictionary) -> int:
+	var rarity := int(hero.get("rarity", 1))
+	var hero_id := int(hero.get("id", 0))
+	var owned := int(save.get("owned", {}).get(str(hero_id), 0))
+	return 2600 + rarity * 920 + max(owned, 1) * 360 + (hero_id % 100) * 13
+
+
+func _hero_attrs(hero: Dictionary) -> Dictionary:
+	var rarity := int(hero.get("rarity", 1))
+	var power := _hero_power(hero)
+	return {
+		"攻擊": 900 + rarity * 220,
+		"防禦": 520 + rarity * 150,
+		"生命": 5200 + rarity * 1280,
+		"速度": 92 + rarity * 7,
+		"命中": "%d%%" % (82 + rarity * 3),
+		"暴擊": "%d%%" % (12 + rarity * 4),
+		"抗暴": "%d%%" % (8 + rarity * 3),
+		"戰力": power,
+	}
 
 func _show_player_info() -> void:
 	_clear("玩家信息")
@@ -1000,6 +1741,24 @@ func _hero_portrait_texture(hero: Dictionary) -> Texture2D:
 		return null
 	return _load_png_source_texture(path)
 
+func _hero_round_head_path(hero: Dictionary) -> String:
+	var explicit := str(hero.get("roundHeadResource", ""))
+	if not explicit.is_empty():
+		return _godot_resource_path(explicit)
+	var spine := str(hero.get("spine", ""))
+	if spine.begins_with("hero_"):
+		var suffix := spine.trim_prefix("hero_")
+		var path := "res://assets/ui/hero/round/yhero_%s.png" % suffix
+		if FileAccess.file_exists(path):
+			return path
+	return ""
+
+func _hero_round_head_texture(hero: Dictionary) -> Texture2D:
+	var path := _hero_round_head_path(hero)
+	if path.is_empty():
+		return null
+	return _load_png_source_texture(path)
+
 func _godot_resource_path(path: String) -> String:
 	return path if path.begins_with("res://") else "res://%s" % path
 
@@ -1014,6 +1773,40 @@ func _draw_hero_portrait(hero: Dictionary, pos: Vector2, draw_size: Vector2, tin
 	rect.clip_contents = true
 	rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	rect.modulate = tint
+	_view_container().add_child(rect)
+	return rect
+
+func _draw_hero_thumb(hero: Dictionary, pos: Vector2, draw_size: Vector2, tint := Color(1, 1, 1, 1)) -> Control:
+	var source_texture = _hero_portrait_texture(hero)
+	if source_texture == null:
+		return null
+	var clip := Control.new()
+	clip.position = pos
+	clip.size = draw_size
+	clip.clip_contents = true
+	_view_container().add_child(clip)
+
+	var rect := TextureRect.new()
+	rect.texture = source_texture
+	rect.position = Vector2.ZERO
+	rect.size = draw_size
+	rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	rect.modulate = tint
+	clip.add_child(rect)
+	return clip
+
+func _draw_hero_round_thumb(hero: Dictionary, pos: Vector2, draw_size: Vector2, tint := Color(1, 1, 1, 1)) -> Control:
+	var source_texture := _hero_round_head_texture(hero)
+	if source_texture == null:
+		return _draw_hero_thumb(hero, pos + Vector2(4, 4), draw_size - Vector2(8, 8), Color(tint.r, tint.g, tint.b, tint.a * 0.72))
+	var rect := TextureRect.new()
+	rect.texture = source_texture
+	rect.position = pos
+	rect.size = draw_size
+	rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	rect.stretch_mode = TextureRect.STRETCH_SCALE
 	rect.modulate = tint
 	_view_container().add_child(rect)
 	return rect
@@ -1058,10 +1851,29 @@ func _draw_image(path: String, pos: Vector2, draw_size: Vector2, cover := false,
 	rect.position = pos
 	rect.size = draw_size
 	rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED if cover else TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED if cover else TextureRect.STRETCH_SCALE
 	rect.modulate = tint
 	_view_container().add_child(rect)
 	return rect
+
+func _draw_clipped_image(path: String, pos: Vector2, draw_size: Vector2, cover := false, tint := Color(1, 1, 1, 1)) -> Control:
+	var source_texture := _load_png_source_texture(path)
+	if source_texture == null:
+		return null
+	var clip := Control.new()
+	clip.position = pos
+	clip.size = draw_size
+	clip.clip_contents = true
+	_view_container().add_child(clip)
+	var rect := TextureRect.new()
+	rect.texture = source_texture
+	rect.position = Vector2.ZERO
+	rect.size = draw_size
+	rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED if cover else TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	rect.modulate = tint
+	clip.add_child(rect)
+	return clip
 
 func _show_gacha_rate() -> void:
 	_clear("概率")

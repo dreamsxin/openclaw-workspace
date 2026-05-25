@@ -379,7 +379,7 @@ func draw_bottom_bar() -> void:
 	# 6 buttons: compact row starts immediately after the enlarged Gal portal.
 	# 繁體中文: via lang_extra.bytes UI1000001-UI1000013
 	var buttons = [
-		["幻靈", app._show_gallery, true],
+		["幻靈", app._show_remnants_list, true],
 		["背包", app._show_shop, false],
 		["遺器", app._show_home, false],
 		["養成", app._show_gallery, true],

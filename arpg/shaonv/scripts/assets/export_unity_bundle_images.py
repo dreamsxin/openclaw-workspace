@@ -64,6 +64,8 @@ def export_bundle(source: Path, destination: Path, xor_prefix: int = 0, xor_key:
     for obj in env.objects:
         if obj.type.name not in {"Texture2D", "Sprite"}:
             continue
+        if wanted_lower and obj.type.name == "Texture2D":
+            continue
         data = obj.read()
         name = safe_name(object_name(obj, data))
         if wanted_lower and name.lower() not in wanted_lower:
