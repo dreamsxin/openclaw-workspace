@@ -93,7 +93,7 @@ $env:SHAONV_MVP_START_VIEW='gal'
 
 1. 先查全量控件清单：`docs/shaonv-*-full-control-resource-inventory-*.md`。节点表里的 `Image:xxx -> bundle` 是 UI 按钮、框、头像格的第一可信来源。
 2. 再查角色资源索引：`standalone/godot-mvp/data/hero_resource_map.json` 或 `reverse-output/gacha-static/hero_resource_map.csv`。这里负责回答同一个 `heroId` 在普通英雄、招募、Gal 看板、Gal 半身中分别该用哪套资源。
-3. 需要导出原始图时查物理映射：`reverse-output/assets/yoo-physical-map/physical-asset-map.csv`。确认 `assetPath`、`bundleName`、`physicalPath`、`physicalExists`，不要只看 manifest 地址。
+3. 需要导出原始图时查物理映射：`reverse-output/assets/yoo-physical-map/physical-asset-map.csv`。确认 `address` / `assetPath`、`bundleName`、`physicalPath`、`physicalExists`，不要只看 manifest 地址。注意 `Head/Round/yhero_*` 这类 Sprite 路径在 `address` 列，`assetPath` 可能为空。
 4. 最后核对 Godot 落地路径：`standalone/godot-mvp/assets/...`。代码里用的是 `res://assets/...`，例如 `Assets/Game/RawAssets/Sprite/Head/Round/yhero_023.png` 对应 `res://assets/ui/hero/round/yhero_023.png`。
 
 Gal 默认角色 `240030` 的例子：
@@ -107,7 +107,19 @@ Gal 默认角色 `240030` 的例子：
 | 圆头像 | `HeroMainSelectHeroGrid/imgHero` 等节点 | `Head/Round/yhero_*` | `res://assets/ui/hero/round/yhero_*.png` |
 | Gal 顶部返回/详情/收藏 | `GalDormitoryMainPanel/pnlTopBar` | `gal_btn_01 / gal_btn_30 / gal_btn_31` | `res://assets/ui/gal/gal_btn_01.png` 等 |
 
-圆头像命名要特别小心：Gal Spine 往往带皮肤/场景后缀，例如 `hero_037r_s01`。Godot 现在的候选链是 `yhero_037r_s01 -> yhero_037r -> yhero_037`；当前工作区没有 `yhero_037*.png`，所以 Gal 左下头像只能回退到 `zhero_037` 裁切。这是资源缺口，不是布局问题。
+圆头像命名要特别小心：Gal Spine 往往带皮肤/场景后缀，例如 `hero_037r_s01`。Godot 现在的候选链是 `yhero_037r_s01 -> yhero_037r -> yhero_037`；`Head/Round/yhero_*` 已全量导出后，Gal 默认角色会命中第一优先级 `yhero_037r_s01`，不再回退到 `zhero_037` 裁切。
+
+本轮已从 `assets_game_rawassets_sprite_head_round.bundle` 全量导出 `141` 个 `yhero_*` 圆头像到 `standalone/godot-mvp/assets/ui/hero/round/`，导出计划为 `tmp/all-yhero-round-head-export-plan.json`，导出 manifest 为 `reverse-output/godot-resource-export/all-yhero-round-heads/godot-plan-export-manifest.json`。Gal 角色头像命中结果：
+
+| heroId | 角色 | galSpine | 圆头像命中 |
+|------:|------|----------|------------|
+| `240030` | 妲己 | `hero_037r_s01|hero_037r` | `yhero_037r_s01` |
+| `240043` | 奇美拉 | `hero_021r_s01|hero_021r` | `yhero_021r_s01` |
+| `240065` | 莉莉絲 | `hero_003r_s01|hero_003r` | `yhero_003r_s01` |
+| `240093` | 朱雀 | `hero_052r_s01|hero_052r` | `yhero_052r_s01` |
+| `240094` | 白虎 | `hero_051r_s01|hero_051r` | `yhero_051r_s01` |
+| `240096` | 青龍 | `hero_050r_s01|hero_050r` | `yhero_050r_s01` |
+| `240101` | 玄武 | `hero_053r_s01|hero_053r` | `yhero_053r_s01` |
 
 同类界面查找时可以套用这条规则：
 
