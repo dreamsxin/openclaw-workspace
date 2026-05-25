@@ -2,7 +2,7 @@
 extends Control
 
 const SAVE_PATH := "user://shaonv_godot_mvp_save.json"
-const DEFAULT_HERO_ID := 240055
+const DEFAULT_HERO_ID := 240037
 const LEGACY_DEFAULT_HERO_ID := 240065
 const HERO_DATA_PATH := "res://data/heroes_mvp.json"
 const POOL_DATA_PATH := "res://data/gacha_pools_mvp.json"
