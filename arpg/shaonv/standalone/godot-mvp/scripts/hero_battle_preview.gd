@@ -11,10 +11,16 @@ var clip_names: Array = []
 var canvas: Control
 var hero_list: VBoxContainer
 var resource_list: VBoxContainer
+var search_box: LineEdit
+var resource_filter: OptionButton
+var missing_only_check: CheckButton
 var info_label: Label
 var clip_label: Label
 var status_label: Label
 var counts_label: Label
+var filtered_indices: Array = []
+var selected_resource_filter := "all"
+var show_missing_only := false
 
 
 func _ready() -> void:
@@ -64,31 +70,34 @@ func _build_ui() -> void:
 	right_panel.size = Vector2(362, 720)
 	add_child(right_panel)
 
-	add_child(_label("战斗动画 / 资源预览", 20, Vector2(12, 10), Vector2(212, 34), HORIZONTAL_ALIGNMENT_CENTER))
-	counts_label = _label("", 13, Vector2(12, 42), Vector2(212, 24), HORIZONTAL_ALIGNMENT_CENTER)
+	add_child(_label("战斗动画 / 资源预览", 20, Vector2(12, 8), Vector2(212, 32), HORIZONTAL_ALIGNMENT_CENTER))
+	counts_label = _label("", 13, Vector2(12, 38), Vector2(212, 22), HORIZONTAL_ALIGNMENT_CENTER)
 	add_child(counts_label)
 
+	search_box = LineEdit.new()
+	search_box.placeholder_text = "搜索 名字 / hero_037 / id"
+	search_box.position = Vector2(10, 66)
+	search_box.size = Vector2(216, 30)
+	search_box.text_changed.connect(_on_search_changed)
+	add_child(search_box)
+
+	missing_only_check = CheckButton.new()
+	missing_only_check.text = "只看缺失"
+	missing_only_check.position = Vector2(8, 98)
+	missing_only_check.size = Vector2(108, 28)
+	missing_only_check.toggled.connect(_on_missing_only_toggled)
+	add_child(missing_only_check)
+
 	var scroll := ScrollContainer.new()
-	scroll.position = Vector2(8, 76)
-	scroll.size = Vector2(220, 634)
+	scroll.position = Vector2(8, 130)
+	scroll.size = Vector2(220, 580)
 	add_child(scroll)
 
 	hero_list = VBoxContainer.new()
 	hero_list.name = "HeroBattleList"
 	hero_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll.add_child(hero_list)
-
-	for index in heroes.size():
-		var hero: Dictionary = heroes[index]
-		var btn := Button.new()
-		btn.text = "%s  %s" % [hero.get("name", "?"), hero.get("qKey", "?")]
-		btn.tooltip_text = "id=%s spine=%s" % [hero.get("heroId", ""), hero.get("spine", "")]
-		btn.custom_minimum_size = Vector2(0, 36)
-		btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		btn.name = "hero_%d" % index
-		btn.pressed.connect(_select_hero.bind(index))
-		hero_list.add_child(btn)
+	_rebuild_hero_list()
 
 	canvas = Control.new()
 	canvas.name = "BattlePreviewCanvas"
@@ -111,14 +120,28 @@ func _build_ui() -> void:
 	_button("上个角色", Vector2(604, 668), _prev_hero, 86, 34)
 	_button("下个角色", Vector2(700, 668), _next_hero, 86, 34)
 
-	add_child(_label("战斗资源清单", 20, Vector2(936, 12), Vector2(316, 34), HORIZONTAL_ALIGNMENT_CENTER))
-	var hint := _label("hero_xxxq prefab / Skill prefab / Battle wav", 12, Vector2(936, 44), Vector2(316, 24), HORIZONTAL_ALIGNMENT_CENTER)
+	add_child(_label("战斗资源清单", 20, Vector2(936, 10), Vector2(316, 32), HORIZONTAL_ALIGNMENT_CENTER))
+	var hint := _label("没有独立 hero_xxxq Spine；右侧是 qKey 关联资源", 12, Vector2(936, 38), Vector2(316, 24), HORIZONTAL_ALIGNMENT_CENTER)
 	hint.modulate = Color(0.72, 0.78, 0.86, 0.88)
 	add_child(hint)
 
+	resource_filter = OptionButton.new()
+	resource_filter.position = Vector2(932, 66)
+	resource_filter.size = Vector2(164, 30)
+	resource_filter.add_item("全部资源")
+	resource_filter.add_item("3D Prefab")
+	resource_filter.add_item("Skill Prefab")
+	resource_filter.add_item("Battle 音效")
+	resource_filter.item_selected.connect(_on_resource_filter_selected)
+	add_child(resource_filter)
+
+	var copy_hint := _label("点条目看路径", 12, Vector2(1104, 66), Vector2(160, 30), HORIZONTAL_ALIGNMENT_CENTER)
+	copy_hint.modulate = Color(0.72, 0.78, 0.86, 0.82)
+	add_child(copy_hint)
+
 	var resource_scroll := ScrollContainer.new()
-	resource_scroll.position = Vector2(930, 78)
-	resource_scroll.size = Vector2(338, 632)
+	resource_scroll.position = Vector2(930, 104)
+	resource_scroll.size = Vector2(338, 606)
 	add_child(resource_scroll)
 
 	resource_list = VBoxContainer.new()
@@ -138,6 +161,80 @@ func _build_ui() -> void:
 			baked_count += 1
 	counts_label.text = "%d 角色  %d 预览" % [heroes.size(), baked_count]
 	status_label.text = "prefab=%d  skill=%d  wav=%d" % [summary_prefabs, summary_skill, summary_sounds]
+
+
+func _rebuild_hero_list() -> void:
+	if hero_list == null:
+		return
+	for child in hero_list.get_children():
+		child.queue_free()
+	filtered_indices.clear()
+	var query := search_box.text.strip_edges().to_lower() if search_box != null else ""
+	for index in heroes.size():
+		var hero: Dictionary = heroes[index]
+		if not _hero_matches_query(hero, query):
+			continue
+		if show_missing_only and not _hero_has_missing_resource(hero):
+			continue
+		filtered_indices.append(index)
+		var btn := Button.new()
+		btn.text = "%s  %s" % [hero.get("name", "?"), hero.get("qKey", "?")]
+		btn.tooltip_text = "id=%s spine=%s baked=%s" % [hero.get("heroId", ""), hero.get("spine", ""), hero.get("baked", "")]
+		btn.custom_minimum_size = Vector2(0, 36)
+		btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		btn.name = "hero_%d" % index
+		btn.pressed.connect(_select_hero.bind(index))
+		hero_list.add_child(btn)
+	_update_hero_buttons()
+
+
+func _hero_matches_query(hero: Dictionary, query: String) -> bool:
+	if query.is_empty():
+		return true
+	var haystack := " ".join([
+		str(hero.get("name", "")),
+		str(hero.get("heroId", "")),
+		str(hero.get("spine", "")),
+		str(hero.get("qKey", "")),
+		str(hero.get("galSpine", "")),
+	]).to_lower()
+	return haystack.contains(query)
+
+
+func _hero_has_missing_resource(hero: Dictionary) -> bool:
+	if not bool(hero.get("bakedExists", false)):
+		return true
+	for group_name in ["prefabs3d", "skillPrefabs", "sounds"]:
+		for item in hero.get(group_name, []):
+			if item is Dictionary and not bool(item.get("physicalExists", false)):
+				return true
+	return false
+
+
+func _on_search_changed(_text: String) -> void:
+	_rebuild_hero_list()
+
+
+func _on_missing_only_toggled(enabled: bool) -> void:
+	show_missing_only = enabled
+	_rebuild_hero_list()
+
+
+func _on_resource_filter_selected(index: int) -> void:
+	match index:
+		1:
+			selected_resource_filter = "prefabs3d"
+		2:
+			selected_resource_filter = "skillPrefabs"
+		3:
+			selected_resource_filter = "sounds"
+		_:
+			selected_resource_filter = "all"
+	if heroes.size() > 0 and current_index >= 0 and current_index < heroes.size():
+		for child in resource_list.get_children():
+			child.queue_free()
+		_render_resources(heroes[current_index])
 
 
 func _initial_hero_index() -> int:
@@ -195,9 +292,12 @@ func _render_baked_preview(hero: Dictionary) -> void:
 
 
 func _render_resources(hero: Dictionary) -> void:
-	_add_resource_section("3D Prefabs", hero.get("prefabs3d", []))
-	_add_resource_section("Skill Prefabs", hero.get("skillPrefabs", []))
-	_add_resource_section("Battle Sounds", hero.get("sounds", []))
+	if selected_resource_filter in ["all", "prefabs3d"]:
+		_add_resource_section("3D Prefabs", hero.get("prefabs3d", []))
+	if selected_resource_filter in ["all", "skillPrefabs"]:
+		_add_resource_section("Skill Prefabs", hero.get("skillPrefabs", []))
+	if selected_resource_filter in ["all", "sounds"]:
+		_add_resource_section("Battle Sounds", hero.get("sounds", []))
 
 
 func _add_resource_section(title: String, items_value) -> void:
@@ -223,7 +323,7 @@ func _add_resource_section(title: String, items_value) -> void:
 
 
 func _select_resource(entry: Dictionary) -> void:
-	status_label.text = "选中: %s\n%s" % [entry.get("name", ""), entry.get("address", "")]
+	status_label.text = "选中: %s\n%s\n%s" % [entry.get("name", ""), entry.get("address", ""), entry.get("physicalPath", "")]
 
 
 func _resource_title(entry: Dictionary) -> String:
@@ -290,9 +390,10 @@ func _update_labels() -> void:
 		clip_label.text = "本体 Spine clip [%d/%d]: %s" % [clip_index + 1, clip_names.size(), clip_names[clip_index]]
 	else:
 		clip_label.text = "本体 Spine clip: 无"
-	status_label.text = "角色 %d/%d；%s 的 prefab/音效在右侧，中间播放本体 Spine。" % [
+	status_label.text = "角色 %d/%d；筛选命中 %d；%s 的 prefab/音效在右侧，中间播放本体 Spine。" % [
 		current_index + 1,
 		heroes.size(),
+		filtered_indices.size(),
 		hero.get("qKey", "?"),
 	]
 	counts_label.text = "3D=%d  Skill=%d  Wav=%d" % [prefab_count, skill_count, sound_count]
@@ -301,11 +402,12 @@ func _update_labels() -> void:
 func _update_hero_buttons() -> void:
 	if hero_list == null:
 		return
-	for index in hero_list.get_child_count():
-		var btn := hero_list.get_child(index) as Button
+	for child_index in hero_list.get_child_count():
+		var btn := hero_list.get_child(child_index) as Button
 		if btn == null:
 			continue
-		btn.disabled = index == current_index
+		var hero_index := int(str(btn.name).trim_prefix("hero_"))
+		btn.disabled = hero_index == current_index
 
 
 func _label(text: String, size: int, pos: Vector2, sz: Vector2, align := HORIZONTAL_ALIGNMENT_LEFT) -> Label:
