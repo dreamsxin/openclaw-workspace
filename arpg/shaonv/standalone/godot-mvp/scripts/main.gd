@@ -394,12 +394,11 @@ func _draw_and_show(count: int) -> void:
 	_push_view("喚灵结果")
 	gacha_result_screen.draw_and_show(count)
 
-func _show_gallery() -> void:
-
-
 func _show_gal() -> void:
 	gal_screen.show_gal()
 
+
+func _show_gallery() -> void:
 	_clear("圖鑑")
 	var header := _label("武將圖鑑", 34)
 	header.position = Vector2(40, 24)
