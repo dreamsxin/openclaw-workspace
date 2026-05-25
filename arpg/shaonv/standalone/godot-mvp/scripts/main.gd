@@ -2,6 +2,8 @@
 extends Control
 
 const SAVE_PATH := "user://shaonv_godot_mvp_save.json"
+const DEFAULT_HERO_ID := 240055
+const LEGACY_DEFAULT_HERO_ID := 240065
 const HERO_DATA_PATH := "res://data/heroes_mvp.json"
 const POOL_DATA_PATH := "res://data/gacha_pools_mvp.json"
 const LIVE_OPS_DATA_PATH := "res://data/live_ops_mvp.json"
@@ -63,7 +65,7 @@ var save := {
 	"claimed_tasks": {},
 	"claimed_mail": {},
 	"daily_claimed_date": "",
-	"selected_hero_id": 240065,
+	"selected_hero_id": DEFAULT_HERO_ID,
 	"active_pool_id": "advanced",
 	"battle_count": 0,
 	"max_stage_id": 0,
@@ -157,6 +159,8 @@ func _load_save() -> void:
 	var parsed = JSON.parse_string(FileAccess.get_file_as_string(SAVE_PATH))
 	if typeof(parsed) == TYPE_DICTIONARY:
 		save.merge(parsed, true)
+	if int(save.get("selected_hero_id", DEFAULT_HERO_ID)) == LEGACY_DEFAULT_HERO_ID:
+		save["selected_hero_id"] = DEFAULT_HERO_ID
 
 func _persist() -> void:
 	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
@@ -339,7 +343,7 @@ func _show_start_view_from_env() -> void:
 		_show_gallery()
 	elif start_view == "hero_detail":
 		_enter_main_scene()
-		_show_hero_detail(int(OS.get_environment("SHAONV_MVP_HERO_ID")) if not OS.get_environment("SHAONV_MVP_HERO_ID").is_empty() else int(save.get("selected_hero_id", 240065)))
+		_show_hero_detail(int(OS.get_environment("SHAONV_MVP_HERO_ID")) if not OS.get_environment("SHAONV_MVP_HERO_ID").is_empty() else int(save.get("selected_hero_id", DEFAULT_HERO_ID)))
 	else:
 		_show_launch()
 
@@ -478,7 +482,7 @@ func _show_history() -> void:
 			"claimed_tasks": {},
 			"claimed_mail": {},
 			"daily_claimed_date": "",
-			"selected_hero_id": 240065,
+			"selected_hero_id": DEFAULT_HERO_ID,
 			"active_pool_id": "advanced"
 		}
 		_persist()

@@ -109,7 +109,7 @@ func show_home() -> void:
 func enter_normal_state() -> void:
 	_main_state = "normal"
 	# 不再调 _clear — show_home 已经做了
-	var hero = app._hero_by_id(int(app.save.get("selected_hero_id", 240065)))
+	var hero = app._hero_by_id(int(app.save.get("selected_hero_id", 240055)))
 	# Layer 0: Wallpaper (always below everything)
 	draw_wallpaper(hero)
 	# Layer 1: Full-screen transparent button (wallpaper toggle)
@@ -139,7 +139,7 @@ func enter_normal_state() -> void:
 func enter_wallpaper_focus() -> void:
 	_main_state = "wallpaper_focus"
 	app._clear("壁纸")
-	var hero = app._hero_by_id(int(app.save.get("selected_hero_id", 240065)))
+	var hero = app._hero_by_id(int(app.save.get("selected_hero_id", 240055)))
 	draw_wallpaper(hero)
 	# pnlCtl: centered control bar at bottom
 	var ctl_y = 660.0
@@ -155,7 +155,7 @@ func enter_gal_entry() -> void:
 	# Dimmed wallpaper as backdrop
 	app._draw_image(UI_MAIN_BG, Vector2(1, 0), Vector2(1278, 720), true, Color(1, 1, 1, 0.22))
 	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.016, 0.012, 0.020, 0.90)))
-	var hero = app._hero_by_id(int(app.save.get("selected_hero_id", 240065)))
+	var hero = app._hero_by_id(int(app.save.get("selected_hero_id", 240055)))
 	# ── Top bar ──
 	var top = app._panel(Vector2(0, 0), Vector2(1280, 60), Color(0.024, 0.018, 0.028, 0.72))
 	app._view_container().add_child(top)
@@ -277,20 +277,20 @@ func draw_player_info(hero: Dictionary) -> void:
 	add_hit_button(Vector2(0, 13), Vector2(271, 76), app._show_player_info)
 	# btnChange/btnEye: center near x=402/478, top y about 15 on a 1280x720 target.
 	app._draw_image(UI_MAIN_BTN_CHANGE, Vector2(280, 15), Vector2(57, 57), false, Color(1, 1, 1, 0.92))
-	add_ui_text("壁纸", Vector2(281, 69), Vector2(56, 20), 13, HORIZONTAL_ALIGNMENT_CENTER, Color(1, 1, 1, 0.94))
+	add_ui_text("壁紙", Vector2(281, 69), Vector2(56, 20), 13, HORIZONTAL_ALIGNMENT_CENTER, Color(1, 1, 1, 0.94))
 	add_hit_button(Vector2(280, 15), Vector2(57, 74), app._show_gallery)
 	app._draw_image(UI_MAIN_BTN_EYE, Vector2(338, 15), Vector2(57, 57), false, Color(1, 1, 1, 0.92))
-	add_ui_text("互动", Vector2(339, 69), Vector2(56, 20), 13, HORIZONTAL_ALIGNMENT_CENTER, Color(1, 1, 1, 0.94))
+	add_ui_text("互動", Vector2(339, 69), Vector2(56, 20), 13, HORIZONTAL_ALIGNMENT_CENTER, Color(1, 1, 1, 0.94))
 	add_hit_button(Vector2(338, 15), Vector2(57, 74), enter_wallpaper_focus)
 
 
 func draw_funny_content() -> void:
 	# pnlFunnyContent: bottom-right row, prefab screenshot box x≈972..1331 y≈629..731.
 	var actions = [
-		[UI_MAIN_FUNNY_ARENA, "竞技", app._show_battle],
-		[UI_MAIN_FUNNY_PRAYER, "祈愿", app._open_prayer_pool],
-		[UI_MAIN_FUNNY_ADVENTURE, "冒险", app._show_battle],
-		[UI_MAIN_FUNNY_DRAW, "唤灵", app._open_present_pool]
+		[UI_MAIN_FUNNY_ARENA, "競技", app._show_battle],
+		[UI_MAIN_FUNNY_PRAYER, "祈願", app._open_prayer_pool],
+		[UI_MAIN_FUNNY_ADVENTURE, "冒險", app._show_battle],
+		[UI_MAIN_FUNNY_DRAW, "喚靈", app._open_present_pool]
 	]
 	var bw = 67.0; var bh = 98.0; var gap = 5.0
 	var start_x = 745.0
@@ -312,7 +312,7 @@ func draw_story_harvest() -> void:
 	_main_panels.append(bg)
 	app._draw_image(UI_MAIN_STORY_PROGRESS, Vector2(sx + 61, sy - 2), Vector2(119, 26), false, Color(1, 1, 1, 0.9))
 	add_ui_text("进度：%s" % app._next_task_text(), Vector2(sx + 64, sy + 1), Vector2(112, 20), 12, HORIZONTAL_ALIGNMENT_CENTER, Color(1.0, 0.88, 0.52))
-	add_ui_text("尘世探秘", Vector2(sx + 86, sy + 37), Vector2(116, 34), 24, HORIZONTAL_ALIGNMENT_CENTER, Color(0.55, 0.48, 0.40))
+	add_ui_text("塵世探秘", Vector2(sx + 86, sy + 37), Vector2(116, 34), 24, HORIZONTAL_ALIGNMENT_CENTER, Color(0.55, 0.48, 0.40))
 	# btnHarvest: chest/hook reward button inside pnlStory.
 	app._draw_image(UI_MAIN_BTN_HARVEST, Vector2(sx + 10, sy + 13), Vector2(74, 74), false, Color(1, 1, 1, 0.90))
 	add_hit_button(Vector2(sx + 10, sy + 13), Vector2(74, 74), app._claim_afk_reward)
@@ -327,8 +327,8 @@ func draw_story_harvest() -> void:
 func draw_charge_column() -> void:
 	# pnlCharge: right-side commerce grid, screenshot x≈1117..1238 y≈142..390.
 	var entries = [
-		[UI_MAIN_CHARGE_ICONS[3], "储值", app._show_shop, Vector2(1118, 142)],
-		[UI_MAIN_CHARGE_ICONS[0], "活动", app._show_daily, Vector2(1178, 142)],
+		[UI_MAIN_CHARGE_ICONS[3], "儲值", app._show_shop, Vector2(1118, 142)],
+		[UI_MAIN_CHARGE_ICONS[0], "活動", app._show_daily, Vector2(1178, 142)],
 		[UI_MAIN_CHARGE_ICONS[4], "商店", app._show_shop, Vector2(1118, 230)],
 		[UI_MAIN_CHARGE_ICONS[1], "福利", app._show_daily, Vector2(1178, 230)],
 		[UI_MAIN_CHARGE_ICONS[2], "月卡", app._show_shop, Vector2(1178, 318)]
@@ -365,16 +365,16 @@ func draw_commercialization() -> void:
 	# pnlGift: 409x300 (→313x288), below banner
 	var gx = px + 5; var gy = py + 113
 	var gifts = [
-		["唤灵福利", "4d01h", app._show_daily],
+		["喚靈福利", "4d01h", app._show_daily],
 		["幻海邀约", "6d01h", enter_gal_entry],
-		["签到福利", "", app._show_daily],
+		["簽到福利", "", app._show_daily],
 		["新服庆典", "11d01h", app._show_tasks],
 		["交流大厅", "", app._show_mail],
 		["开服冲榜", "7d01h", app._show_daily],
 		["限时皮肤", "11d01h", app._show_shop],
 		["露箔闪光", "11d01h", app._show_shop],
 		["首储", "", app._show_shop],
-		["万象唤灵", "4d01h", app._open_present_pool],
+		["萬象喚靈", "4d01h", app._open_present_pool],
 		["周末企划", "1d01h", app._show_tasks],
 		["神域馈赠", "11d01h", app._show_daily]
 	]
@@ -398,7 +398,7 @@ func draw_chapter_info() -> void:
 	var px = 1042.0; var py = 480.0
 	var bg = app._draw_image(UI_MAIN_CHAPTER_BG, Vector2(px, py), Vector2(212, 96), false, Color(1, 1, 1, 0.90))
 	_main_panels.append(bg)
-	add_ui_text("第1章尘世裂痕 0/1", Vector2(px + 26, py + 9), Vector2(168, 20), 15, HORIZONTAL_ALIGNMENT_CENTER, Color(1.0, 0.90, 0.62))
+	add_ui_text("第1章塵世裂痕 0/1", Vector2(px + 26, py + 9), Vector2(168, 20), 15, HORIZONTAL_ALIGNMENT_CENTER, Color(1.0, 0.90, 0.62))
 	var rewards = [
 		[UI_ITEM_TICKET, "5", Color(0.96, 0.48, 0.38, 0.72)],
 		["res://assets/ui/item/draw_06.png", "10", Color(0.28, 0.40, 0.72, 0.72)],
@@ -420,13 +420,14 @@ func draw_bottom_bar() -> void:
 	var bar = app._draw_image(UI_MAIN_BOTTOM_BG, Vector2(49, bar_y), Vector2(430, bar_h), false, Color(1, 1, 1, 0.72))
 	_main_panels.append(bar)
 	# 6 buttons: compact row starts immediately after the enlarged Gal portal.
+	# 繁體中文: via lang_extra.bytes UI1000001-UI1000013
 	var buttons = [
-		["幻灵", app._show_gallery, true],
+		["幻靈", app._show_gallery, true],
 		["背包", app._show_shop, false],
-		["遗器", app._show_home, false],
-		["养成", app._show_gallery, true],
-		["任务", app._show_tasks, true],
-		["公会", app._show_home, false]
+		["遺器", app._show_home, false],
+		["養成", app._show_gallery, true],
+		["任務", app._show_tasks, true],
+		["公會", app._show_home, false]
 	]
 	var bw = 62.0; var bx = 135.0
 	for item in buttons:
@@ -441,7 +442,7 @@ func draw_gal_button() -> void:
 	# mainui_btn_25 source is 150x170; force-scale it so it cannot cover btnHero.
 	var gx = 38.0; var gy = 562.0
 	add_scaled_image(UI_MAIN_GAL, Vector2(gx, gy), Vector2(108, 132), Color(1, 1, 1, 0.94))
-	add_ui_text("现世", Vector2(gx + 19, gy + 88), Vector2(70, 30), 20, HORIZONTAL_ALIGNMENT_CENTER, Color(1, 1, 1, 0.96))
+	add_ui_text("現世", Vector2(gx + 19, gy + 88), Vector2(70, 30), 20, HORIZONTAL_ALIGNMENT_CENTER, Color(1, 1, 1, 0.96))
 	add_hit_button(Vector2(gx, gy), Vector2(108, 132), enter_gal_entry)
 	app._draw_red_dot(Vector2(gx + 82, gy + 8))
 
@@ -452,7 +453,7 @@ func draw_chat_bar() -> void:
 	var cx = 916.0; var cy = 90.0
 	var bg = app._draw_image(UI_MAIN_CHAT_BG, Vector2(cx, cy), Vector2(314, 38), false, Color(1, 1, 1, 0.72))
 	_main_panels.append(bg)
-	var chat = app._label("[世界] 尘世：?", 14)
+	var chat = app._label("[世界] 塵世：?", 14)
 	chat.position = Vector2(cx + 49, cy + 8); chat.size = Vector2(255, 22)
 	chat.modulate = Color(0.54, 0.92, 0.54)
 	app._view_container().add_child(chat)
