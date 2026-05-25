@@ -13,6 +13,7 @@ const STARTUP_SCREEN := preload("res://scripts/screens/startup_screen.gd")
 const HOME_SCREEN := preload("res://scripts/screens/home_screen.gd")
 const GACHA_SCREEN := preload("res://scripts/screens/gacha_screen.gd")
 const GACHA_RESULT_SCREEN := preload("res://scripts/screens/gacha_result_screen.gd")
+const GAL_SCREEN := preload("res://scripts/screens/gal_screen.gd")
 const UI_LOGIN_BG := "res://assets/ui/background/login_bg_01.png"
 const UI_MAIN_BG := "res://assets/ui/background/mainui_bg_01.png"
 const UI_LOGIN_LOGO := "res://assets/ui/login/logo.png"
@@ -86,6 +87,7 @@ var current_view := "boot"
 var gallery_filter := "all"
 var startup_screen
 var home_screen
+var gal_screen
 var gacha_screen
 var gacha_result_screen
 
@@ -120,6 +122,7 @@ func _ready() -> void:
 	home_screen = HOME_SCREEN.new(self)
 	gacha_screen = GACHA_SCREEN.new(self)
 	gacha_result_screen = GACHA_RESULT_SCREEN.new(self)
+	gal_screen = GAL_SCREEN.new(self)
 	_startup_sequence()
 	if not OS.get_environment("SHAONV_MVP_CAPTURE").is_empty():
 		call_deferred("_capture_debug_screenshot")
@@ -392,6 +395,11 @@ func _draw_and_show(count: int) -> void:
 	gacha_result_screen.draw_and_show(count)
 
 func _show_gallery() -> void:
+
+
+func _show_gal() -> void:
+	gal_screen.show_gal()
+
 	_clear("圖鑑")
 	var header := _label("武將圖鑑", 34)
 	header.position = Vector2(40, 24)

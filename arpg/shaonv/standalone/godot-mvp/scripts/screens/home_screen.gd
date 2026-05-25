@@ -150,67 +150,7 @@ func enter_wallpaper_focus() -> void:
 
 
 func enter_gal_entry() -> void:
-	_main_state = "gal_entry"
-	app._clear("约会")
-	# Dimmed wallpaper as backdrop
-	app._draw_image(UI_MAIN_BG, Vector2(1, 0), Vector2(1278, 720), true, Color(1, 1, 1, 0.22))
-	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.016, 0.012, 0.020, 0.90)))
-	var hero = app._hero_by_id(int(app.save.get("selected_hero_id", 240055)))
-	# ── Top bar ──
-	var top = app._panel(Vector2(0, 0), Vector2(1280, 60), Color(0.024, 0.018, 0.028, 0.72))
-	app._view_container().add_child(top)
-	app._view_container().add_child(app._panel(Vector2(0, 58), Vector2(1280, 2), Color(0.76, 0.54, 0.28, 0.28)))
-	app._add_action_button("← 返回", Vector2(18, 8), enter_normal_state, Vector2(100, 44))
-	var title = app._label("约 会", 28, HORIZONTAL_ALIGNMENT_CENTER)
-	title.position = Vector2(440, 12)
-	title.size = Vector2(400, 36)
-	title.modulate = Color(0.94, 0.86, 0.64)
-	app._view_container().add_child(title)
-	# ── Hero card ──
-	var cx = 315.0; var cy = 85.0; var cw = 650.0; var ch = 420.0
-	app._view_container().add_child(app._panel(Vector2(cx, cy), Vector2(cw, ch), Color(0.030, 0.022, 0.036, 0.68)))
-	app._view_container().add_child(app._panel(Vector2(cx + 4, cy + 4), Vector2(cw - 8, ch - 8), Color(0.045, 0.034, 0.052, 0.40)))
-	app._draw_hero_stage(hero, Vector2(cx + 30, cy + 30), Vector2(320, 360), false)
-	app._draw_image(UI_MAIN_AVATAR_RING, Vector2(cx + 148, cy + 26), Vector2(84, 84), false, Color(1, 1, 1, 0.78))
-	app._draw_image(UI_MAIN_EXP_RING, Vector2(cx + 142, cy + 20), Vector2(96, 96), false, Color(1, 0.84, 0.28, 0.72))
-	# Hero info
-	var ix = cx + 370; var iy = cy + 40
-	var hname = app._label(str(hero.get("name", "???")) if hero else "???", 24)
-	hname.position = Vector2(ix, iy); hname.size = Vector2(240, 32); hname.modulate = Color(0.98, 0.94, 0.80)
-	app._view_container().add_child(hname)
-	var htitle = app._label(str(hero.get("title", "")) if hero else "", 16)
-	htitle.position = Vector2(ix, iy + 36); htitle.size = Vector2(240, 22); htitle.modulate = Color(0.72, 0.66, 0.52)
-	app._view_container().add_child(htitle)
-	# Affection bar
-	var bl = app._label("好感度", 14, HORIZONTAL_ALIGNMENT_CENTER)
-	bl.position = Vector2(ix, iy + 72); bl.size = Vector2(56, 18); bl.modulate = Color(0.64, 0.58, 0.48)
-	app._view_container().add_child(bl)
-	app._view_container().add_child(app._panel(Vector2(ix + 60, iy + 74), Vector2(160, 12), Color(0.08, 0.06, 0.12, 0.70)))
-	app._view_container().add_child(app._panel(Vector2(ix + 60, iy + 74), Vector2(54, 12), Color(0.92, 0.38, 0.56, 0.78)))
-	var hlvl = app._label("Lv.%d" % int(hero.get("level", 1)) if hero else "Lv.1", 14)
-	hlvl.position = Vector2(ix, iy + 100); hlvl.size = Vector2(80, 18); hlvl.modulate = Color(0.86, 0.80, 0.56)
-	app._view_container().add_child(hlvl)
-	# Navigation
-	app._add_action_button("◀", Vector2(cx - 56, cy + 180), app._show_home, Vector2(44, 56))
-	app._add_action_button("▶", Vector2(cx + cw + 12, cy + 180), app._show_home, Vector2(44, 56))
-	app._view_container().add_child(app._panel(Vector2(cx, cy + ch + 14), Vector2(cw, 1), Color(0.76, 0.54, 0.28, 0.18)))
-	# Action buttons
-	var abtn = [["💬 对话", app._show_mail], ["🎁 赠礼", app._show_shop], ["💕 邀约", app._show_home]]
-	var aw = 170.0; var ah = 72.0; var ag = 22.0
-	var ax0 = (1280.0 - (3*aw+2*ag)) * 0.5; var ay = 535.0
-	for i in range(abtn.size()):
-		var ax = ax0 + i*(aw+ag)
-		app._view_container().add_child(app._panel(Vector2(ax, ay), Vector2(aw, ah), Color(0.040, 0.030, 0.048, 0.74)))
-		var albl = app._label(str(abtn[i][0]), 16, HORIZONTAL_ALIGNMENT_CENTER)
-		albl.position = Vector2(ax, ay + 14); albl.size = Vector2(aw, 22); albl.modulate = Color(0.86, 0.80, 0.68)
-		app._view_container().add_child(albl)
-		app._add_action_button("互动" if i==0 else ("送礼" if i==1 else "约会"), Vector2(ax + 2, ay + 38), abtn[i][1], Vector2(aw - 4, 32))
-		if i == 2: app._draw_red_dot(Vector2(ax + aw - 22, ay + 8))
-	# Status
-	app._view_container().add_child(app._panel(Vector2(0, 688), Vector2(1280, 32), Color(0.020, 0.016, 0.028, 0.64)))
-	var st = app._label("Gal 约会系统  |  键: Gal.GalEntry.5799  |  完整实现待反向", 12, HORIZONTAL_ALIGNMENT_CENTER)
-	st.position = Vector2(140, 694); st.size = Vector2(1000, 22); st.modulate = Color(0.52, 0.48, 0.42)
-	app._view_container().add_child(st)
+	app._show_gal()
 
 
 # ═══════════════════════════════════════════════════════════════
