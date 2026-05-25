@@ -173,3 +173,28 @@ Unity `Image` 的 `Simple/Sliced/Filled` 和 Godot `TextureRect` 的 `stretch_mo
 - `tmp/screenshots/home-resource-mail-v2.png`
 - `tmp/screenshots/home-resource-tasks-v4.png`
 - `tmp/screenshots/home-resource-wallpaper_select-v2.png`
+
+## 2026-05-26 Home 主屏剩余按钮独立化
+
+本轮继续处理“能点但语义不准”的入口，避免主屏按钮过度复用商店或设置页：
+
+- `儲值` 和左侧 `首储` 不再进入商店，改为 `_show_charge()`，支持首储一次领取、普通补给反复购买，并复用 `mainui_btn_08`、`mainui_btn_10`、`mainui_btn_19` 与 `item/draw_05/draw_07`。
+- 右上角罗盘 `mainui_btn_11` 不再直接打开设置，改为 `_show_home_menu()`，收束玩家资料、系统设置、邮件、资源修复、公告和小助手。
+- 主屏 `btnJumpAutoFight` 使用 `mainui_img_36` 的横幅现在有透明点击区，进入 `_show_auto_fight()`，可切换自动状态、挑战一次、收取挂机。
+- 右下章节卡与 Story 区域不再直接跳任务，改为 `_show_chapter_progress()`，集中展示已通关、下一关、章节奖励和任务进度，再分流到挑战/任务/战役详情。
+- 透明点击区不要用 `_add_action_button("", ...)`，Godot 默认 Button 皮肤会画出灰块；需要使用 `_add_hit_button()` 或 HomeScreen 的 `add_hit_button()`，并保持 `flat=true`、`focus_mode=NONE`。
+
+新增快速回归入口：
+
+- `SHAONV_MVP_START_VIEW=home_menu`
+- `SHAONV_MVP_START_VIEW=charge`
+- `SHAONV_MVP_START_VIEW=auto_fight`
+- `SHAONV_MVP_START_VIEW=chapter`
+
+验证截图：
+
+- `tmp/screenshots/home-main-buttons-v2.png`
+- `tmp/screenshots/home-charge-view.png`
+- `tmp/screenshots/home-menu-view-v2.png`
+- `tmp/screenshots/home-auto-fight-view.png`
+- `tmp/screenshots/home-chapter-progress-view.png`

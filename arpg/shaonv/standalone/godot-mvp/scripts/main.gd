@@ -426,6 +426,18 @@ func _show_start_view_from_env() -> void:
 	elif start_view == "wallpaper_select":
 		_enter_main_scene()
 		_show_wallpaper_select()
+	elif start_view == "home_menu":
+		_enter_main_scene()
+		_show_home_menu()
+	elif start_view == "charge":
+		_enter_main_scene()
+		_show_charge()
+	elif start_view == "auto_fight":
+		_enter_main_scene()
+		_show_auto_fight()
+	elif start_view == "chapter":
+		_enter_main_scene()
+		_show_chapter_progress()
 	elif start_view == "shop":
 		_enter_main_scene()
 		_show_shop()
@@ -1467,6 +1479,82 @@ func _show_settings() -> void:
 	_add_action_button("返回主界面", Vector2(216, 340), _show_home, Vector2(146, 44))
 
 
+func _show_home_menu() -> void:
+	var origin := _show_home_panel("快捷選單", "主屏右上角羅盤入口，收束公告、郵件、設定與資源修復。")
+	var entries := [
+		{"name": "玩家資料", "desc": "查看等級、戰力、收集與看板狀態。", "callback": _show_player_info, "icon": UI_MAIN_LIMIT_ICONS[0]},
+		{"name": "系統設定", "desc": "音樂、音效與看板自動播放。", "callback": _show_settings, "icon": UI_MAIN_CHARGE_ICONS[2]},
+		{"name": "郵件", "desc": "領取補償與系統獎勵。", "callback": _show_mail, "icon": UI_MAIN_LIMIT_ICONS[2]},
+		{"name": "資源修復", "desc": "檢查本地 MVP 資源導出狀態。", "callback": _show_repair_notice, "icon": UI_MAIN_CHARGE_ICONS[1]},
+		{"name": "公告", "desc": "查看本地公告與活動提示。", "callback": _show_home_notice, "icon": UI_MAIN_LIMIT_ICONS[3]},
+		{"name": "客服助手", "desc": "回到主屏小助手建議。", "callback": _show_assist, "icon": UI_MAIN_LIMIT_ICONS[4]},
+	]
+	for index in range(entries.size()):
+		var item: Dictionary = entries[index]
+		var col := index % 3
+		var row := index / 3
+		var pos := origin + Vector2(col * 304, row * 148)
+		_draw_home_resource_card(pos, Vector2(264, 112), Color(0.76, 0.88, 1.0, 0.30), index % 2 == 1)
+		_draw_image(str(item.get("icon", UI_MAIN_LIMIT_ICON_FRAME)), pos + Vector2(12, 14), Vector2(76, 76), false, Color(1, 1, 1, 0.92))
+		var title := _label(str(item.get("name", "")), 21)
+		title.position = pos + Vector2(98, 14)
+		title.size = Vector2(144, 28)
+		title.modulate = Color(1.0, 0.94, 0.74)
+		_view_container().add_child(title)
+		var desc := _label(str(item.get("desc", "")), 14)
+		desc.position = pos + Vector2(98, 46)
+		desc.size = Vector2(142, 46)
+		desc.modulate = Color(0.90, 0.86, 0.82)
+		_view_container().add_child(desc)
+		_add_hit_button(pos, Vector2(264, 112), item.get("callback", _show_home))
+
+
+func _show_home_notice() -> void:
+	var origin := _show_home_panel("公告", "本地 MVP 公告中心，對應右上快捷選單與登入公告。")
+	var notices := [
+		{"title": "資源恢復進度", "body": "Home、Gal、幻靈列表和詳情已接入本地導出的 UI/角色資源。"},
+		{"title": "今日活動", "body": "每日補給、郵件、章節任務與萬象喚靈可形成完整離線循環。"},
+		{"title": "測試提示", "body": "可用 SHAONV_MVP_START_VIEW 指定 main、charge、chapter 等入口回歸截圖。"},
+	]
+	for index in range(notices.size()):
+		var notice: Dictionary = notices[index]
+		var pos := origin + Vector2(0, index * 104)
+		_draw_home_resource_card(pos, Vector2(820, 82), Color(1.0, 0.82, 0.42, 0.25), index % 2 == 1)
+		var title := _label(str(notice.get("title", "")), 21)
+		title.position = pos + Vector2(24, 8)
+		title.size = Vector2(220, 30)
+		title.modulate = Color(1.0, 0.94, 0.70)
+		_view_container().add_child(title)
+		var body := _label(str(notice.get("body", "")), 16)
+		body.position = pos + Vector2(24, 42)
+		body.size = Vector2(760, 28)
+		body.modulate = Color(0.90, 0.86, 0.82)
+		_view_container().add_child(body)
+	_add_action_button("返回選單", Vector2(270, 580), _show_home_menu, Vector2(132, 44), UI_COMMON_BTN_WHITE)
+
+
+func _show_repair_notice() -> void:
+	var origin := _show_home_panel("資源修復", "本地資源檢查入口，方便核對導出和 Godot 映射。")
+	var checks := [
+		{"name": "MainUI 圖集", "path": "assets/ui/mainui", "ok": FileAccess.file_exists("res://assets/ui/mainui/mainui_btn_25.png")},
+		{"name": "通用按鈕", "path": "assets/ui/common", "ok": FileAccess.file_exists("res://assets/ui/common/tongyong_btn_08.png")},
+		{"name": "英雄圓頭像", "path": "assets/ui/hero/round", "ok": FileAccess.file_exists("res://assets/ui/hero/round/yhero_037.png")},
+		{"name": "Gal Spine", "path": "assets/spine/hero_037r_s01", "ok": FileAccess.file_exists("res://assets/spine/hero_037r_s01/hero_037r_s01.baked.json")},
+	]
+	for index in range(checks.size()):
+		var item: Dictionary = checks[index]
+		var pos := origin + Vector2(0, index * 72)
+		_draw_home_resource_card(pos, Vector2(820, 54), Color(0.70, 0.90, 1.0, 0.24), index % 2 == 1)
+		var state := "已找到" if bool(item.get("ok", false)) else "待導出"
+		var color := Color(0.66, 1.0, 0.54) if bool(item.get("ok", false)) else Color(1.0, 0.62, 0.44)
+		var label := _label("%s    %s    %s" % [item.get("name", ""), state, item.get("path", "")], 18)
+		label.position = pos + Vector2(20, 8)
+		label.size = Vector2(780, 34)
+		label.modulate = color
+		_view_container().add_child(label)
+	_add_action_button("返回選單", Vector2(270, 580), _show_home_menu, Vector2(132, 44), UI_COMMON_BTN_WHITE)
+
+
 func _show_home_panel(title_text: String, subtitle_text: String) -> Vector2:
 	_clear(title_text)
 	_draw_image(UI_MAIN_BG, Vector2(0, 0), Vector2(1280, 720), true, Color(1, 1, 1, 0.68))
@@ -1818,6 +1906,55 @@ func _show_home_wallpaper_focus() -> void:
 	home_screen.enter_wallpaper_focus()
 
 
+func _show_charge() -> void:
+	var origin := _show_home_panel("儲值", "右側儲值與左側首儲入口，先用本地模擬充值閉環替代原支付流程。")
+	var first_claimed := bool(save.get("first_charge_claimed", false))
+	var packs := [
+		{"name": "首儲禮包", "desc": "首次領取：源石 x1980 / 喚靈券 x10", "gems": 1980, "tickets": 10, "key": "first_charge_claimed", "once": true, "icon": UI_MAIN_CHARGE_ICONS[3]},
+		{"name": "月度源石", "desc": "源石 x980 / 喚靈券 x3", "gems": 980, "tickets": 3, "key": "charge_monthly_count", "once": false, "icon": UI_MAIN_CHARGE_ICONS[2]},
+		{"name": "喚靈補給", "desc": "源石 x300 / 喚靈券 x5", "gems": 300, "tickets": 5, "key": "charge_ticket_count", "once": false, "icon": UI_MAIN_LIMIT_ICONS[5]},
+	]
+	for index in range(packs.size()):
+		var pack: Dictionary = packs[index]
+		var pos := origin + Vector2(0, index * 118)
+		_draw_home_resource_card(pos, Vector2(860, 94), Color(1.0, 0.76, 0.34, 0.28), index % 2 == 1)
+		_draw_image(str(pack.get("icon", UI_MAIN_CHARGE_ICONS[3])), pos + Vector2(12, 8), Vector2(78, 78), false, Color(1, 1, 1, 0.94))
+		var title := _label(str(pack.get("name", "")), 22)
+		title.position = pos + Vector2(106, 12)
+		title.size = Vector2(190, 30)
+		title.modulate = Color(1.0, 0.93, 0.70)
+		_view_container().add_child(title)
+		var desc := _label(str(pack.get("desc", "")), 16)
+		desc.position = pos + Vector2(106, 48)
+		desc.size = Vector2(390, 26)
+		desc.modulate = Color(0.92, 0.86, 0.82)
+		_view_container().add_child(desc)
+		_draw_home_reward_icon("res://assets/ui/item/draw_05.png", pos + Vector2(500, -4), "源石", "x%d" % int(pack.get("gems", 0)))
+		_draw_home_reward_icon("res://assets/ui/item/draw_07.png", pos + Vector2(586, -4), "喚靈券", "x%d" % int(pack.get("tickets", 0)))
+		var is_once := bool(pack.get("once", false))
+		var claimed := bool(save.get(str(pack.get("key", "")), false)) if is_once else false
+		if claimed:
+			var claimed_label := _label("已領取", 18, HORIZONTAL_ALIGNMENT_CENTER)
+			claimed_label.position = pos + Vector2(724, 28)
+			claimed_label.size = Vector2(110, 36)
+			claimed_label.modulate = Color(0.70, 1.0, 0.58)
+			_view_container().add_child(claimed_label)
+		else:
+			_add_action_button("領取" if index == 0 else "購買", pos + Vector2(724, 26), func(p := pack) -> void:
+				_buy_charge_pack(p)
+			, Vector2(104, 42), UI_COMMON_BTN_GOLD)
+	var wallet := _label("當前：源石 %s / 喚靈券 %s\n首儲狀態：%s" % [
+		str(save.get("gems", 0)),
+		str(save.get("tickets", 0)),
+		"已完成" if first_claimed else "可領取"
+	], 19)
+	wallet.position = origin + Vector2(0, 372)
+	wallet.size = Vector2(520, 64)
+	wallet.modulate = Color(0.95, 0.90, 0.78)
+	_view_container().add_child(wallet)
+	_add_action_button("前往商店", origin + Vector2(600, 382), _show_shop, Vector2(132, 44), UI_COMMON_BTN_WHITE)
+
+
 func _show_shop() -> void:
 	var origin := _show_home_panel("商店", "資源補給與喚靈券兌換。")
 	var title := _label("資源補給", 34)
@@ -1944,6 +2081,92 @@ func _show_tasks() -> void:
 	_add_action_button("返回主界面", Vector2(104, 580), _show_home, Vector2(146, 44), UI_COMMON_BTN_WHITE)
 	_add_action_button("前往喚靈", Vector2(264, 580), _show_gacha, Vector2(146, 44), UI_COMMON_BTN_GOLD)
 
+
+func _show_auto_fight() -> void:
+	var origin := _show_home_panel("自動挑戰", "主屏冒險上方的自動挑戰橫幅，接入關卡推進與掛機收益。")
+	var stage := _next_stage()
+	var stage_name := str(stage.get("name", "全部完成"))
+	var stage_power := int(stage.get("power", 0))
+	var enabled := bool(save.get("auto_fight_enabled", true))
+	var summary := _label("狀態：%s\n目標：%s\n推薦戰力：%d\n目前戰力：%d\n掛機時間：%s" % [
+		"自動挑戰中" if enabled else "已暫停",
+		stage_name,
+		stage_power,
+		_player_power(),
+		_afk_time_display()
+	], 22)
+	_draw_home_resource_card(origin, Vector2(640, 190), Color(0.84, 0.92, 1.0, 0.30), false)
+	_draw_image(UI_MAIN_FUNNY_ARENA, origin + Vector2(18, 30), Vector2(88, 102), false, Color(1, 1, 1, 0.86))
+	_draw_image(UI_MAIN_CHARGE_ICONS[0], origin + Vector2(452, 24), Vector2(86, 86), false, Color(1, 1, 1, 0.82))
+	summary.position = origin + Vector2(126, 18)
+	summary.size = Vector2(480, 160)
+	_view_container().add_child(summary)
+	_add_action_button("切換狀態", origin + Vector2(0, 214), func() -> void:
+		save["auto_fight_enabled"] = not bool(save.get("auto_fight_enabled", true))
+		_persist()
+		_show_auto_fight()
+	, Vector2(132, 44), UI_COMMON_BTN_GOLD)
+	_add_action_button("挑戰一次", origin + Vector2(154, 214), _fight_next_stage, Vector2(132, 44), UI_COMMON_BTN_GOLD)
+	_add_action_button("收取掛機", origin + Vector2(308, 214), _claim_afk_reward, Vector2(132, 44), UI_COMMON_BTN_WHITE)
+	_add_action_button("查看戰役", origin + Vector2(462, 214), _show_battle, Vector2(132, 44), UI_COMMON_BTN_WHITE)
+
+
+func _show_chapter_progress() -> void:
+	var origin := _show_home_panel("塵世探秘", "主屏右下章節卡入口，展示下一關、章節獎勵與任務進度。")
+	var next_stage := _next_stage()
+	var max_stage := int(save.get("max_stage_id", 0))
+	var next_text := str(next_stage.get("name", "全部完成"))
+	_draw_home_resource_card(origin, Vector2(860, 118), Color(1.0, 0.78, 0.36, 0.28), false)
+	var title := _label("第%s章  %s" % ["1" if max_stage < 200 else "2", "塵世裂痕"], 28)
+	title.position = origin + Vector2(20, 12)
+	title.size = Vector2(320, 40)
+	title.modulate = Color(1.0, 0.92, 0.64)
+	_view_container().add_child(title)
+	var desc := _label("已通關：%s\n下一關：%s\n任務：%s" % [
+		_stage_name(max_stage),
+		next_text,
+		_next_task_text()
+	], 18)
+	desc.position = origin + Vector2(20, 56)
+	desc.size = Vector2(480, 54)
+	_view_container().add_child(desc)
+	var rewards := [
+		{"icon": "res://assets/ui/item/draw_07.png", "name": "喚靈券", "count": "x5"},
+		{"icon": "res://assets/ui/item/draw_06.png", "name": "碎片", "count": "x10"},
+		{"icon": "res://assets/ui/item/draw_05.png", "name": "源石", "count": "x100"},
+	]
+	for index in range(rewards.size()):
+		var reward: Dictionary = rewards[index]
+		_draw_home_reward_icon(str(reward.get("icon", "")), origin + Vector2(544 + index * 88, 10), str(reward.get("name", "")), str(reward.get("count", "")))
+	var y := origin.y + 148.0
+	for chapter in chapters:
+		var chapter_pos := Vector2(origin.x, y)
+		_draw_home_resource_card(chapter_pos, Vector2(860, 74), Color(0.72, 0.86, 1.0, 0.22), int(y) % 2 == 0)
+		var completed := 0
+		for stage in chapter.get("stages", []):
+			if int(stage.get("id", 0)) <= max_stage:
+				completed += 1
+		var label := _label("%s    進度 %d/%d" % [chapter.get("name", ""), completed, chapter.get("stages", []).size()], 21)
+		label.position = chapter_pos + Vector2(20, 8)
+		label.size = Vector2(420, 32)
+		label.modulate = Color(1.0, 0.94, 0.74)
+		_view_container().add_child(label)
+		var stage_line := []
+		for stage in chapter.get("stages", []):
+			var sid := int(stage.get("id", 0))
+			var mark := "✓" if sid <= max_stage else ("▶" if sid == int(next_stage.get("id", 0)) else "·")
+			stage_line.append("%s %s" % [mark, stage.get("name", "")])
+		var stages := _label("   ".join(stage_line), 14)
+		stages.position = chapter_pos + Vector2(20, 42)
+		stages.size = Vector2(800, 22)
+		stages.modulate = Color(0.88, 0.86, 0.82)
+		_view_container().add_child(stages)
+		y += 88
+	_add_action_button("挑戰", origin + Vector2(0, 382), _fight_next_stage, Vector2(132, 44), UI_COMMON_BTN_GOLD)
+	_add_action_button("章節任務", origin + Vector2(154, 382), _show_tasks, Vector2(132, 44), UI_COMMON_BTN_WHITE)
+	_add_action_button("戰役詳情", origin + Vector2(308, 382), _show_battle, Vector2(132, 44), UI_COMMON_BTN_WHITE)
+
+
 func _show_battle(message := "") -> void:
 	_clear("戰役")
 	_draw_image(UI_MAIN_BG, Vector2(0, 0), Vector2(1280, 646), true, Color(1, 1, 1, 0.42))
@@ -2008,6 +2231,21 @@ func _buy_tickets(count: int) -> void:
 	save["tickets"] = int(save.get("tickets", 0)) + count * int(shop.get("ticketAmount", 1))
 	_persist()
 	_show_shop()
+
+
+func _buy_charge_pack(pack: Dictionary) -> void:
+	var key := str(pack.get("key", "charge_pack"))
+	if bool(pack.get("once", false)):
+		if bool(save.get(key, false)):
+			_show_charge()
+			return
+		save[key] = true
+	else:
+		save[key] = int(save.get(key, 0)) + 1
+	_grant_reward(int(pack.get("tickets", 0)), int(pack.get("gems", 0)))
+	_persist()
+	_show_charge()
+
 
 func _duplicate_shards(pool: Dictionary, rarity: int) -> int:
 	var shards: Dictionary = pool.get("duplicateShards", {"4": 25, "3": 8, "2": 3})
@@ -2667,6 +2905,18 @@ func _add_action_button(text: String, pos: Vector2, callback: Callable, size := 
 	button.focus_mode = Control.FOCUS_NONE
 	button.position = pos
 	button.size = size
+	button.pressed.connect(callback)
+	_view_container().add_child(button)
+
+
+func _add_hit_button(pos: Vector2, hit_size: Vector2, callback: Callable) -> void:
+	var button := Button.new()
+	button.text = ""
+	button.flat = true
+	button.focus_mode = Control.FOCUS_NONE
+	button.position = pos
+	button.size = hit_size
+	button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	button.pressed.connect(callback)
 	_view_container().add_child(button)
 

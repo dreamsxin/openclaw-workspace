@@ -260,6 +260,7 @@ func draw_funny_content() -> void:
 	app._draw_image(UI_MAIN_AUTO_FIGHT, Vector2(auto_x, auto_y), Vector2(138, 86), false, Color(1, 1, 1, 0.88))
 	add_ui_text("自動挑戰中", Vector2(auto_x + 2, auto_y + 10), Vector2(134, 20), 13, HORIZONTAL_ALIGNMENT_CENTER, Color(0.96, 0.88, 0.52))
 	add_ui_text("歷戰尖塔-單隊", Vector2(auto_x + 2, auto_y + 38), Vector2(134, 18), 12, HORIZONTAL_ALIGNMENT_CENTER, Color(0.96, 0.88, 0.52))
+	add_hit_button(Vector2(auto_x, auto_y), Vector2(138, 86), app._show_auto_fight)
 
 
 func draw_story_harvest() -> void:
@@ -278,14 +279,14 @@ func draw_story_harvest() -> void:
 	app._draw_image(UI_MAIN_HOOK_TIME_BG, Vector2(sx + 5, sy + 67), Vector2(84, 24), false, Color(1, 1, 1, 0.70))
 	add_ui_text(app._afk_time_display(), Vector2(sx + 13, sy + 69), Vector2(68, 18), 11, HORIZONTAL_ALIGNMENT_CENTER, Color(0.92, 0.84, 0.52))
 	# btnStory: prefab has transparent overlay button (132×99) covering story area
-	add_hit_button(Vector2(sx + 86, sy), Vector2(sw - 86, sh), app._show_tasks)
+	add_hit_button(Vector2(sx + 86, sy), Vector2(sw - 86, sh), app._show_chapter_progress)
 	app._draw_red_dot(Vector2(sx + sw - 20, sy + 2))
 
 
 func draw_charge_column() -> void:
 	# pnlCharge: right-side commerce grid, screenshot x≈1117..1238 y≈142..390.
 	var entries = [
-		[UI_MAIN_CHARGE_ICONS[3], "儲值", app._show_shop, Vector2(1118, 142)],
+		[UI_MAIN_CHARGE_ICONS[3], "儲值", app._show_charge, Vector2(1118, 142)],
 		[UI_MAIN_CHARGE_ICONS[0], "活動", app._show_activity_center, Vector2(1178, 142)],
 		[UI_MAIN_CHARGE_ICONS[4], "商店", app._show_shop, Vector2(1118, 230)],
 		[UI_MAIN_CHARGE_ICONS[1], "福利", app._show_welfare, Vector2(1178, 230)],
@@ -303,7 +304,7 @@ func draw_menu_button() -> void:
 	# btnMenu: 78x78 (→60x75), right-top pos(-94,-54)
 	var mx = 1178.0; var my = 14.0
 	app._draw_image(UI_MAIN_MENU, Vector2(mx, my), Vector2(60, 60), false, Color(1, 1, 1, 0.94))
-	add_hit_button(Vector2(mx, my), Vector2(60, 60), app._show_settings)
+	add_hit_button(Vector2(mx, my), Vector2(60, 60), app._show_home_menu)
 	app._draw_red_dot(Vector2(mx + 46, my + 4))
 
 
@@ -331,7 +332,7 @@ func draw_commercialization() -> void:
 		["开服冲榜", "7d01h", app._show_activity_center],
 		["限时皮肤", "11d01h", app._show_shop],
 		["露箔闪光", "11d01h", app._show_shop],
-		["首储", "", app._show_shop],
+		["首储", "", app._show_charge],
 		["萬象喚靈", "4d01h", app._open_present_pool],
 		["周末企划", "1d01h", app._show_tasks],
 		["神域馈赠", "11d01h", app._show_welfare]
@@ -368,7 +369,7 @@ func draw_chapter_info() -> void:
 		add_scaled_image(str(reward[0]), Vector2(rx + 4, py + 40), Vector2(34, 34), Color(1, 1, 1, 0.96))
 		add_ui_text(str(reward[1]), Vector2(rx + 23, py + 64), Vector2(18, 14), 9, HORIZONTAL_ALIGNMENT_RIGHT, Color(1, 1, 1, 0.95))
 		rx += 50
-	add_hit_button(Vector2(px, py), Vector2(212, 96), app._show_tasks)
+	add_hit_button(Vector2(px, py), Vector2(212, 96), app._show_chapter_progress)
 	app._draw_red_dot(Vector2(px + 8, py + 4))
 
 
