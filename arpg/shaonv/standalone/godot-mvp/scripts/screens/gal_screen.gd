@@ -31,6 +31,11 @@ const GAL_BTN_PRIV := "res://assets/ui/gal/gal_btn_04.png"
 const GAL_IMG_LABEL_BG := "res://assets/ui/gal/gal_img_05.png"
 const GAL_IMG_ROLE_BG := "res://assets/ui/gal/gal_img_06.png"
 const GAL_IMG_ROLE_SELECT_BG := "res://assets/ui/gal/gal_img_09.png"
+const GAL_IMG_ROLE_GRID_LEVEL := "res://assets/ui/gal/gal_img_10.png"
+const GAL_BTN_ROLE_GRID_SELECT := "res://assets/ui/gal/gal_btn_17.png"
+const GAL_BTN_ROLE_GRID_SELECT_MARK := "res://assets/ui/gal/gal_btn_18.png"
+const GAL_IMG_ROLE_GRID_LOCK := "res://assets/ui/gal/gal_img_51.png"
+const GAL_IMG_ROLE_GRID_FAVORITE := "res://assets/ui/gal/gal_img_52.png"
 const GAL_BTN_CHANGE_ICON := "res://assets/ui/gal/gal_btn_11.png"
 
 # Shared / child view resources
@@ -270,17 +275,51 @@ func _draw_main_view() -> void:
 
 
 func _draw_hero_stage(hero: Dictionary) -> void:
-	app._draw_hero_stage(hero, Vector2(318, 18), Vector2(560, 674), false)
+	_draw_clipped_gal_stage(hero, Vector2(250, -32), Vector2(720, 910), Vector2(268, 0), Vector2(620, 570))
 	_add_hit_button(Vector2(335, 36), Vector2(500, 620), func() -> void:
 		_play_touch_voice("touch")
 		_show_touch_hint("摸到了。%s 的心情似乎變好了。" % str(hero.get("name", "她")))
 	)
 
 	var line = app._label("今天也要全力發光!", 18, HORIZONTAL_ALIGNMENT_CENTER)
-	line.position = Vector2(500, 430)
+	line.position = Vector2(510, 458)
 	line.size = Vector2(260, 30)
 	line.modulate = Color(1, 1, 1, 0.96)
 	app._view_container().add_child(line)
+
+
+func _draw_clipped_gal_stage(hero: Dictionary, stage_pos: Vector2, stage_size: Vector2, clip_pos: Vector2, clip_size: Vector2) -> void:
+	var clip := Control.new()
+	clip.position = clip_pos
+	clip.size = clip_size
+	clip.clip_contents = true
+	clip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	app._view_container().add_child(clip)
+
+	var resource_path := str(hero.get("artResource", ""))
+	if not resource_path.is_empty():
+		var spine_base_path := "res://%s" % resource_path.replace("Art/Spine", "assets/spine")
+		var baked_path := "%s.baked.json" % spine_base_path
+		if FileAccess.file_exists(baked_path):
+			var canvas_script = load("res://scripts/spine_baked_preview_canvas.gd")
+			var canvas: Control = canvas_script.new()
+			canvas.position = stage_pos - clip_pos
+			canvas.size = stage_size
+			clip.add_child(canvas)
+			canvas.set_baked_path(baked_path, "wait")
+			return
+		var png_path := "%s.png" % spine_base_path
+		var source_texture: Texture2D = app._load_png_source_texture(png_path)
+		if source_texture != null:
+			var rect := TextureRect.new()
+			rect.texture = source_texture
+			rect.position = stage_pos - clip_pos
+			rect.size = stage_size
+			rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+			clip.add_child(rect)
+			return
+	app._draw_hero_stage(hero, stage_pos, stage_size, false)
 
 
 func _draw_top_bar() -> void:
@@ -502,37 +541,28 @@ func _draw_gal_role_list(current_hero: Dictionary) -> void:
 	var roster := _gal_roster()
 	if roster.is_empty():
 		return
-	var panel_pos := Vector2(165, 500)
-	var panel_size := Vector2(660, 138)
-	app._view_container().add_child(app._panel(panel_pos + Vector2(8, 8), panel_size, Color(0, 0, 0, 0.22)))
-	app._view_container().add_child(app._panel(panel_pos, panel_size, Color(0.05, 0.04, 0.08, 0.82)))
-	var title = app._label("選擇看板角色", 16)
-	title.position = panel_pos + Vector2(18, 10)
-	title.size = Vector2(180, 24)
-	title.modulate = Color(1.0, 0.88, 0.96)
-	app._view_container().add_child(title)
+	var selector_pos := _gal_left_middle_pos(Vector2(181, -296), Vector2(110, 110))
+	var name_pos := selector_pos + _gal_size(Vector2(75, 84))
+	var name_size := _gal_size(Vector2(200, 44))
+	app._draw_image(GAL_IMG_ROLE_SELECT_BG, name_pos, name_size, false, Color(1, 1, 1, 0.92))
+	var current_name = app._label(str(current_hero.get("name", "角色")), 15, HORIZONTAL_ALIGNMENT_CENTER)
+	current_name.position = name_pos + Vector2(4, 3)
+	current_name.size = name_size - Vector2(32, 8)
+	current_name.modulate = Color(1.0, 0.92, 0.98)
+	app._view_container().add_child(current_name)
+
+	var list_pos := selector_pos + _gal_size(Vector2(314, 0)) - Vector2(0, 28)
+	var list_size := _gal_size(Vector2(656, 128))
+	app._view_container().add_child(app._panel(list_pos + Vector2(8, 8), list_size, Color(0, 0, 0, 0.20)))
+	app._view_container().add_child(app._panel(list_pos, list_size, Color(0.03, 0.025, 0.055, 0.54)))
 	for index in range(roster.size()):
 		var item: Dictionary = roster[index]
-		var item_pos := panel_pos + Vector2(18 + index * 90, 40)
-		var item_size := Vector2(78, 88)
+		var item_size := _gal_size(Vector2(110, 110))
+		var item_pos := list_pos + Vector2(index * 70, 10)
+		if item_pos.x + item_size.x > list_pos.x + list_size.x:
+			break
 		var selected := int(item.get("id", 0)) == int(current_hero.get("id", 0))
-		app._view_container().add_child(app._panel(item_pos, item_size, Color(1.0, 0.72, 0.92, 0.18 if selected else 0.07)))
-		app._draw_image(GAL_IMG_ROLE_BG, item_pos + Vector2(7, 2), Vector2(64, 64), false, Color(1, 1, 1, 0.86))
-		var tex = app._hero_round_head_texture(item)
-		if tex != null:
-			var head := TextureRect.new()
-			head.texture = tex
-			head.position = item_pos + Vector2(10, 5)
-			head.size = Vector2(58, 58)
-			head.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-			head.stretch_mode = TextureRect.STRETCH_SCALE
-			head.modulate = Color(1, 1, 1, 0.96)
-			app._view_container().add_child(head)
-		var name_label = app._label(str(item.get("name", "角色")), 12, HORIZONTAL_ALIGNMENT_CENTER)
-		name_label.position = item_pos + Vector2(0, 64)
-		name_label.size = Vector2(78, 22)
-		name_label.modulate = Color(1.0, 0.92, 0.98)
-		app._view_container().add_child(name_label)
+		_draw_role_grid_item(item, item_pos, item_size, selected)
 		var hero_id := int(item.get("id", 0))
 		var hero_name := str(item.get("name", "角色"))
 		_add_hit_button(item_pos, item_size, func() -> void:
@@ -541,6 +571,50 @@ func _draw_gal_role_list(current_hero: Dictionary) -> void:
 			show_view(VIEW_MAIN)
 			_show_touch_hint("已切換看板：%s" % hero_name)
 		)
+
+
+func _draw_role_grid_item(item: Dictionary, item_pos: Vector2, item_size: Vector2, selected: bool) -> void:
+	app._draw_image(GAL_IMG_ROLE_BG, item_pos, item_size, false, Color(1, 1, 1, 0.88))
+	if selected:
+		if FileAccess.file_exists(GAL_BTN_ROLE_GRID_SELECT):
+			app._draw_image(GAL_BTN_ROLE_GRID_SELECT, item_pos, item_size, false, Color(1, 1, 1, 0.95))
+		else:
+			app._view_container().add_child(app._panel(item_pos + Vector2(5, 5), item_size - Vector2(10, 10), Color(1.0, 0.72, 0.92, 0.20)))
+	var tex = app._hero_round_head_texture(item)
+	if tex != null:
+		var head := TextureRect.new()
+		head.texture = tex
+		head.position = item_pos + _gal_size(Vector2(5, 5))
+		head.size = _gal_size(Vector2(100, 100))
+		head.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		head.stretch_mode = TextureRect.STRETCH_SCALE
+		head.modulate = Color(1, 1, 1, 0.96)
+		app._view_container().add_child(head)
+	var level_pos := item_pos + _gal_size(Vector2(-36, -38)) + item_size * 0.5
+	var level_size := _gal_size(Vector2(56, 56))
+	if FileAccess.file_exists(GAL_IMG_ROLE_GRID_LEVEL):
+		app._draw_image(GAL_IMG_ROLE_GRID_LEVEL, level_pos, level_size, false, Color(1, 1, 1, 0.92))
+	else:
+		app._view_container().add_child(app._panel(level_pos + Vector2(3, 3), Vector2(34, 22), Color(0.05, 0.04, 0.07, 0.64)))
+	var lv = app._label(str(int(item.get("gal_level", app.save.get("gal_level", 2)))), 11, HORIZONTAL_ALIGNMENT_CENTER)
+	lv.position = level_pos + Vector2(4, 4)
+	lv.size = Vector2(30, 18)
+	lv.modulate = Color(1, 0.95, 0.82)
+	app._view_container().add_child(lv)
+	if selected:
+		var mark_pos := item_pos + item_size - _gal_size(Vector2(50, 50)) - Vector2(5, 5)
+		if FileAccess.file_exists(GAL_BTN_ROLE_GRID_SELECT_MARK):
+			app._draw_image(GAL_BTN_ROLE_GRID_SELECT_MARK, mark_pos, _gal_size(Vector2(50, 50)), false, Color(1, 1, 1, 0.95))
+		else:
+			app._draw_image(GAL_BTN_CHANGE_ICON, mark_pos, _gal_size(Vector2(42, 42)), false, Color(1, 1, 1, 0.88))
+	var favorite_pos := item_pos + Vector2(9, item_size.y - 28)
+	if FileAccess.file_exists(GAL_IMG_ROLE_GRID_FAVORITE) and int(item.get("id", 0)) == int(app.save.get("selected_gal_hero_id", DEFAULT_GAL_HERO_ID)):
+		app._draw_image(GAL_IMG_ROLE_GRID_FAVORITE, favorite_pos, _gal_size(Vector2(34, 34)), false, Color(1, 1, 1, 0.90))
+	var name_label = app._label(str(item.get("name", "角色")), 11, HORIZONTAL_ALIGNMENT_CENTER)
+	name_label.position = item_pos + Vector2(1, item_size.y - 23)
+	name_label.size = Vector2(item_size.x - 2, 20)
+	name_label.modulate = Color(1.0, 0.92, 0.98)
+	app._view_container().add_child(name_label)
 
 
 func _draw_hidden_restore_button() -> void:
