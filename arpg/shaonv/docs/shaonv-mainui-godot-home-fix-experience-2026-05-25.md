@@ -141,3 +141,35 @@ Unity `Image` 的 `Simple/Sliced/Filled` 和 Godot `TextureRect` 的 `stretch_mo
 - `tmp/screenshots/home-month-card-view.png`
 - `tmp/screenshots/home-assist-view.png`
 - `tmp/screenshots/home-chat-view.png`
+
+## 2026-05-26 Home 二级页真实资源接入
+
+本轮开始修复“按钮能点但进入后仍像占位界面”的问题，优先处理 Home 链路下的背包、遗器、养成、公会、活动、福利、月卡、竞技、小助手、聊天、壁纸选择，以及商店、每日、邮件、任务这些二级跳转页。
+
+资源使用经验：
+
+- 二级页背景仍使用 `mainui_bg_01` 加深色遮罩，避免离开 Home 后视觉断层。
+- 标题区可复用 `mainui_img_44` 的弱覆盖感和 `mainui_img_40` 的横向分割线，但不要把带大字/角色图的 `mainui_img_37` 直接拉伸成通用大面板；它会把“NEWBIE”这类活动大字压到内容上。
+- 小卡片可以少量复用 `mainui_img_38/mainui_img_39`，但宽列表更适合用暗色面板 + `mainui_img_40` 上下边线，避免源图被过度放大后露出不相关角色图案。
+- 奖励和道具格使用 `mainui_img_45` + `item/draw_*.png`，比纯色方块更接近原 UI 的奖励格语义。
+- 主屏活动/福利入口继续复用 `mainui_btn_14~20` 与 `mainui_btn_06/07/10`，这些资源比任意 Common 图标更符合 MainUI 链路。
+- 壁纸选择页头像使用 `Head/Round/yhero_*`，外框使用 `common_img_64`，星条使用 `common_img_62`，与 Gal/幻灵左侧头像条保持一致。
+- Godot `TextureRect` 默认会参与鼠标命中，统一给 `_draw_image()` 生成的 TextureRect 设置 `mouse_filter = IGNORE`，否则后画的高亮/底图可能挡住透明按钮。
+
+新增快速回归入口：
+
+- `SHAONV_MVP_START_VIEW=shop`
+- `SHAONV_MVP_START_VIEW=daily`
+- `SHAONV_MVP_START_VIEW=mail`
+- `SHAONV_MVP_START_VIEW=tasks`
+
+验证截图：
+
+- `tmp/screenshots/home-resource-bag-v2.png`
+- `tmp/screenshots/home-resource-activity-v3.png`
+- `tmp/screenshots/home-resource-welfare-v2.png`
+- `tmp/screenshots/home-resource-shop-v2.png`
+- `tmp/screenshots/home-resource-daily-v2.png`
+- `tmp/screenshots/home-resource-mail-v2.png`
+- `tmp/screenshots/home-resource-tasks-v4.png`
+- `tmp/screenshots/home-resource-wallpaper_select-v2.png`
