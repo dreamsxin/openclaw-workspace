@@ -1,0 +1,112 @@
+{
+  "prefabName": "GalSpecialTouchView",
+  "prefabAddress": "Assets/Game/RawAssets/Prefabs/UI/Gal/GalSpecialTouchView.prefab",
+  "sourceBundle": "D:\\work\\openclaw-workspace\\arpg\\shaonv\\files\\yoo\\Default\\UnpackBundleFiles\\c3\\c3143120fcff5fee497c40fe6e98537f\\__data",
+  "imageCount": 4,
+  "textCount": 0,
+  "buttonCount": 3,
+  "images": [
+    {
+      "gameObject": "imgBackGround",
+      "gameObjectPathId": 2441855794273678041,
+      "active": true,
+      "componentPathId": -8973314729027538215,
+      "spriteFileID": 0,
+      "spritePathID": 0,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    },
+    {
+      "gameObject": "btnDetail",
+      "gameObjectPathId": 2366028440194478809,
+      "active": true,
+      "componentPathId": -8323249265214524711,
+      "spriteFileID": 1,
+      "spritePathID": -585734721033315241,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    },
+    {
+      "gameObject": "btnClose",
+      "gameObjectPathId": 2652240184213140185,
+      "active": true,
+      "componentPathId": 2415246818776150745,
+      "spriteFileID": 1,
+      "spritePathID": 29869871900691548,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    },
+    {
+      "gameObject": "btnFavorite",
+      "gameObjectPathId": -2332332392837385511,
+      "active": false,
+      "componentPathId": 4961967286766367449,
+      "spriteFileID": 1,
+      "spritePathID": 5707822553258207148,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    }
+  ],
+  "texts": [],
+  "buttons": [
+    {
+      "gameObject": "btnFavorite",
+      "gameObjectPathId": -2332332392837385511,
+      "active": false,
+      "componentPathId": -7061976412854455591,
+      "interactable": 1,
+      "navigationMode": 3
+    },
+    {
+      "gameObject": "btnDetail",
+      "gameObjectPathId": 2366028440194478809,
+      "active": true,
+      "componentPathId": -5610397514863185191,
+      "interactable": 1,
+      "navigationMode": 3
+    },
+    {
+      "gameObject": "btnClose",
+      "gameObjectPathId": 2652240184213140185,
+      "active": true,
+      "componentPathId": -4573195076141092135,
+      "interactable": 1,
+      "navigationMode": 3
+    }
+  ],
+  "otherMonoBehaviours": {
+    "ContentSizeFitter": 1,
+    "DynamicField": 1,
+    "GalDormitoryPanelTopBtns": 1,
+    "GalSpecialTouchView": 1,
+    "HorizontalLayoutGroup": 1,
+    "SkeletonGraphic": 3,
+    "SkeletonUtility": 3,
+    "SpineTouchManager": 1
+  },
+  "internalSprites": {}
+}

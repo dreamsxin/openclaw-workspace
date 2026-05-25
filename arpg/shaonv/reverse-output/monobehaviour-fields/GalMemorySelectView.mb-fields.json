@@ -1,0 +1,78 @@
+{
+  "prefabName": "GalMemorySelectView",
+  "prefabAddress": "Assets/Game/RawAssets/Prefabs/UI/Gal/GalMemorySelectView.prefab",
+  "sourceBundle": "D:\\work\\openclaw-workspace\\arpg\\shaonv\\files\\yoo\\Default\\BundleFiles\\f4\\f4c3ddad9de84e7e939a72608e654866\\__data",
+  "imageCount": 2,
+  "textCount": 1,
+  "buttonCount": 1,
+  "images": [
+    {
+      "gameObject": "Image",
+      "gameObjectPathId": -9187024634944358531,
+      "active": true,
+      "componentPathId": -5269175424172755075,
+      "spriteFileID": 1,
+      "spritePathID": -402671390955738671,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    },
+    {
+      "gameObject": "btnClose",
+      "gameObjectPathId": 1256317446526728061,
+      "active": true,
+      "componentPathId": -4765753983396677763,
+      "spriteFileID": 2,
+      "spritePathID": -6642399814138380746,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    }
+  ],
+  "texts": [
+    {
+      "gameObject": "Text",
+      "gameObjectPathId": 5746254422618797949,
+      "active": true,
+      "componentPathId": 7476765259337955197,
+      "text": "Default",
+      "fontSize": 36,
+      "fontStyle": 0,
+      "alignment": 3,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 0
+    }
+  ],
+  "buttons": [
+    {
+      "gameObject": "btnClose",
+      "gameObjectPathId": 1256317446526728061,
+      "active": true,
+      "componentPathId": -229820838613682307,
+      "interactable": 1,
+      "navigationMode": 3
+    }
+  ],
+  "otherMonoBehaviours": {
+    "GalMemorySelectView": 1,
+    "GridScroller": 1,
+    "LangLabel": 1,
+    "ScrollRect": 1
+  },
+  "internalSprites": {}
+}

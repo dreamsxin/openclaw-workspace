@@ -1,0 +1,145 @@
+{
+  "prefabName": "GalCollectionRewardGrid",
+  "prefabAddress": "Assets/Game/RawAssets/Prefabs/UI/Gal/GalCollectionRewardGrid.prefab",
+  "sourceBundle": "D:\\work\\openclaw-workspace\\arpg\\shaonv\\files\\yoo\\Default\\BundleFiles\\6a\\6a73ebb1c3f9c11b991c26e41e30ab95\\__data",
+  "imageCount": 3,
+  "textCount": 4,
+  "buttonCount": 1,
+  "images": [
+    {
+      "gameObject": "Image",
+      "gameObjectPathId": -2324615110186416739,
+      "active": true,
+      "componentPathId": -5368535070785387107,
+      "spriteFileID": 1,
+      "spritePathID": -8186069723909107211,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    },
+    {
+      "gameObject": "GalCollectionRewardGrid",
+      "gameObjectPathId": 72402430883284381,
+      "active": true,
+      "componentPathId": -2843834177902787171,
+      "spriteFileID": 3,
+      "spritePathID": 2339112084163463118,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    },
+    {
+      "gameObject": "btnComplete",
+      "gameObjectPathId": 1622847720912012701,
+      "active": true,
+      "componentPathId": -1104955842616212067,
+      "spriteFileID": 4,
+      "spritePathID": 4684707823822077107,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    }
+  ],
+  "texts": [
+    {
+      "gameObject": "txtNum",
+      "gameObjectPathId": -6677885364926331491,
+      "active": true,
+      "componentPathId": -4987815667384171107,
+      "text": "Default",
+      "fontSize": 36,
+      "fontStyle": 0,
+      "alignment": 4,
+      "color": {
+        "r": 1.0,
+        "g": 0.3686274588108063,
+        "b": 0.6784313917160034,
+        "a": 1.0
+      },
+      "raycastTarget": 0
+    },
+    {
+      "gameObject": "Text",
+      "gameObjectPathId": 5958924555998348701,
+      "active": true,
+      "componentPathId": -1353710319684926051,
+      "text": "Default",
+      "fontSize": 26,
+      "fontStyle": 0,
+      "alignment": 4,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 0
+    },
+    {
+      "gameObject": "txtTitle",
+      "gameObjectPathId": -1812609811942586979,
+      "active": true,
+      "componentPathId": 2258056854596240797,
+      "text": "Default",
+      "fontSize": 20,
+      "fontStyle": 0,
+      "alignment": 4,
+      "color": {
+        "r": 0.1882352977991104,
+        "g": 0.1882352977991104,
+        "b": 0.1882352977991104,
+        "a": 1.0
+      },
+      "raycastTarget": 0
+    },
+    {
+      "gameObject": "Text",
+      "gameObjectPathId": 6681764077237323165,
+      "active": true,
+      "componentPathId": 5533743337048196509,
+      "text": "Default",
+      "fontSize": 26,
+      "fontStyle": 0,
+      "alignment": 4,
+      "color": {
+        "r": 0.1882352977991104,
+        "g": 0.1882352977991104,
+        "b": 0.1882352977991104,
+        "a": 1.0
+      },
+      "raycastTarget": 0
+    }
+  ],
+  "buttons": [
+    {
+      "gameObject": "btnComplete",
+      "gameObjectPathId": 1622847720912012701,
+      "active": true,
+      "componentPathId": 6701174835200673181,
+      "interactable": 1,
+      "navigationMode": 3
+    }
+  ],
+  "otherMonoBehaviours": {
+    "GalCollectionRewardGrid": 1,
+    "GridScroller": 1,
+    "LangLabel": 2,
+    "ScrollRect": 1
+  },
+  "internalSprites": {}
+}

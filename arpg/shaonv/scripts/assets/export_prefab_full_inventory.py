@@ -26,9 +26,73 @@ KNOWN_PREFABS = {
     "CityView": "Assets/Game/RawAssets/Prefabs/UI/City/CityView.prefab",
     "ActivityMainView": "Assets/Game/RawAssets/Prefabs/UI/Activity/ActivityMainView.prefab",
     "BagView": "Assets/Game/RawAssets/Prefabs/UI/Bag/BagView.prefab",
+    # ── Gal ──
+    # Dormitory
     "GalDormitoryView": "Assets/Game/RawAssets/Prefabs/UI/Gal/Dormitory/GalDormitoryView.prefab",
     "GalDormitoryMainPanel": "Assets/Game/RawAssets/Prefabs/UI/Gal/Dormitory/GalDormitoryMainPanel.prefab",
+    "GalCharacterView": "Assets/Game/RawAssets/Prefabs/UI/Gal/Dormitory/GalCharacterView.prefab",
+    "GalDormitoryDressUpPanel": "Assets/Game/RawAssets/Prefabs/UI/Gal/Dormitory/GalDormitoryDressUpPanel.prefab",
+    "GalDormitoryDressUpBgGrid": "Assets/Game/RawAssets/Prefabs/UI/Gal/Dormitory/GalDormitoryDressUpBgGrid.prefab",
+    "GalDormitoryDressUpEffectGrid": "Assets/Game/RawAssets/Prefabs/UI/Gal/Dormitory/GalDormitoryDressUpEffectGrid.prefab",
+    "GalDormitoryDressUpSkinGrid": "Assets/Game/RawAssets/Prefabs/UI/Gal/Dormitory/GalDormitoryDressUpSkinGrid.prefab",
+    "GalDormitoryDressUpUnlockGrid": "Assets/Game/RawAssets/Prefabs/UI/Gal/Dormitory/GalDormitoryDressUpUnlockGrid.prefab",
+    "GalDormitoryFilesPanel": "Assets/Game/RawAssets/Prefabs/UI/Gal/Dormitory/GalDormitoryFilesPanel.prefab",
+    "GalDormitoryGiftPanel": "Assets/Game/RawAssets/Prefabs/UI/Gal/Dormitory/GalDormitoryGiftPanel.prefab",
+    # "GalDormitoryGiftGrid": missing from physical map
+    "GalDormitoryInteractionPanel": "Assets/Game/RawAssets/Prefabs/UI/Gal/Dormitory/GalDormitoryInteractionPanel.prefab",
+    "GalDormitoryPlotPanel": "Assets/Game/RawAssets/Prefabs/UI/Gal/Dormitory/GalDormitoryPlotPanel.prefab",
+    # "GalDormitoryScenePanel": missing from physical map
+    "GalVoiceGrid": "Assets/Game/RawAssets/Prefabs/UI/Gal/Dormitory/GalVoiceGrid.prefab",
+    # Dormitory Plot
+    "GalPlotBlackPanel": "Assets/Game/RawAssets/Prefabs/UI/Gal/Dormitory/Plot/GalPlotBlackPanel.prefab",
+    # "GalPlotDialoguePanel": missing from physical map
+    "GalPlotDialogueSectionCenterGrid": "Assets/Game/RawAssets/Prefabs/UI/Gal/Dormitory/Plot/GalPlotDialogueSectionCenterGrid.prefab",
+    "GalPlotDialogueSectionRightGrid": "Assets/Game/RawAssets/Prefabs/UI/Gal/Dormitory/Plot/GalPlotDialogueSectionRightGrid.prefab",
+    "GalPlotLocationPanel": "Assets/Game/RawAssets/Prefabs/UI/Gal/Dormitory/Plot/GalPlotLocationPanel.prefab",
+    "GalPlotTransformPanel": "Assets/Game/RawAssets/Prefabs/UI/Gal/Dormitory/Plot/GalPlotTransformPanel.prefab",
+    # Main Gal
+    "GalCollectionPageGrid": "Assets/Game/RawAssets/Prefabs/UI/Gal/GalCollectionPageGrid.prefab",
+    "GalCollectionRecordGrid": "Assets/Game/RawAssets/Prefabs/UI/Gal/GalCollectionRecordGrid.prefab",
+    "GalCollectionRecordPreView": "Assets/Game/RawAssets/Prefabs/UI/Gal/GalCollectionRecordPreView.prefab",
+    "GalCollectionRewardGrid": "Assets/Game/RawAssets/Prefabs/UI/Gal/GalCollectionRewardGrid.prefab",
+    "GalCollectionRewardView": "Assets/Game/RawAssets/Prefabs/UI/Gal/GalCollectionRewardView.prefab",
+    "GalCollectionTokenGrid": "Assets/Game/RawAssets/Prefabs/UI/Gal/GalCollectionTokenGrid.prefab",
+    # "GalCollectionTokenGrid": missing from physical map
+    # "GalCollectionView": missing from physical map
+    # "GalDateRewardView": missing from physical map
     "GalDateSelectView": "Assets/Game/RawAssets/Prefabs/UI/Gal/GalDateSelectView.prefab",
+    "GalDateSelectGrid": "Assets/Game/RawAssets/Prefabs/UI/Gal/GalDateSelectGrid.prefab",
+    "GalEffectGrid": "Assets/Game/RawAssets/Prefabs/UI/Gal/GalEffectGrid.prefab",
+    # "GalLevelGrid": missing from physical map
+    "GalLevelGroupGrid": "Assets/Game/RawAssets/Prefabs/UI/Gal/GalLevelGroupGrid.prefab",
+    "GalLevelUpUnlockGrid": "Assets/Game/RawAssets/Prefabs/UI/Gal/GalLevelUpUnlockGrid.prefab",
+    "GalLevelUpView": "Assets/Game/RawAssets/Prefabs/UI/Gal/GalLevelUpView.prefab",
+    "GalLevelView": "Assets/Game/RawAssets/Prefabs/UI/Gal/GalLevelView.prefab",
+    "GalMapEventGrid": "Assets/Game/RawAssets/Prefabs/UI/Gal/GalMapEventGrid.prefab",
+    "GalMapLocationGrid": "Assets/Game/RawAssets/Prefabs/UI/Gal/GalMapLocationGrid.prefab",
+    # "GalMapView": missing from physical map
+    # "GalMemorySelectGrid": missing from physical map
+    "GalMemorySelectView": "Assets/Game/RawAssets/Prefabs/UI/Gal/GalMemorySelectView.prefab",
+    # "GalPlotRecapGrid": missing from physical map
+    # "GalPlotRecapView": missing from physical map
+    "GalSpecialTouchSelectGrid": "Assets/Game/RawAssets/Prefabs/UI/Gal/GalSpecialTouchSelectGrid.prefab",
+    "GalSpecialTouchSelectView": "Assets/Game/RawAssets/Prefabs/UI/Gal/GalSpecialTouchSelectView.prefab",
+    "GalSpecialTouchView": "Assets/Game/RawAssets/Prefabs/UI/Gal/GalSpecialTouchView.prefab",
+    "GalTabGrid": "Assets/Game/RawAssets/Prefabs/UI/Gal/GalTabGrid.prefab",
+    "GalToastGrid": "Assets/Game/RawAssets/Prefabs/UI/Gal/GalToastGrid.prefab",
+    "GalToastView": "Assets/Game/RawAssets/Prefabs/UI/Gal/GalToastView.prefab",
+    "GalTokenDetailView": "Assets/Game/RawAssets/Prefabs/UI/Gal/GalTokenDetailView.prefab",
+    # Gal Components
+    "GalDormitoryPanelTopBtns": "Assets/Game/RawAssets/Prefabs/UI/Gal/Components/GalDormitoryPanelTopBtns.prefab",
+    "GalDormitoryPlotCtlBar": "Assets/Game/RawAssets/Prefabs/UI/Gal/Components/GalDormitoryPlotCtlBar.prefab",
+    "GalListenTimesBar": "Assets/Game/RawAssets/Prefabs/UI/Gal/Components/GalListenTimesBar.prefab",
+    "GalRole": "Assets/Game/RawAssets/Prefabs/UI/Gal/Components/GalRole.prefab",
+    "GalRoleSelectGrid": "Assets/Game/RawAssets/Prefabs/UI/Gal/Components/GalRoleSelectGrid.prefab",
+    "GalRoleSelector": "Assets/Game/RawAssets/Prefabs/UI/Gal/Components/GalRoleSelector.prefab",
+    # Gal SpineTouch
+    "SpineDragEffect01": "Assets/Game/RawAssets/Prefabs/UI/Gal/SpineTouch/SpineDragEffect01.prefab",
+    "SpineTouchTeachPanel": "Assets/Game/RawAssets/Prefabs/UI/Gal/SpineTouch/Teach/SpineTouchTeachPanel.prefab",
+    # ── Hero ──
     "HeroDetailInfoView": "Assets/Game/RawAssets/Prefabs/UI/Hero/HeroDetailInfoView.prefab",
     "HeroListOrdinationTabGrid": "Assets/Game/RawAssets/Prefabs/UI/Hero/HeroListOrdinationTabGrid.prefab",
     "HeroListTabGrid": "Assets/Game/RawAssets/Prefabs/UI/Hero/HeroListTabGrid.prefab",

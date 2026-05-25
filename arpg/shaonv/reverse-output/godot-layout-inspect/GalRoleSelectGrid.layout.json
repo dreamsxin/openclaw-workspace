@@ -1,0 +1,551 @@
+{
+  "address": "Assets/Game/RawAssets/Prefabs/UI/Gal/Components/GalRoleSelectGrid.prefab",
+  "source": "D:\\work\\openclaw-workspace\\arpg\\shaonv\\files\\yoo\\Default\\BundleFiles\\88\\88e0293b6331aefd95458eee49b4f7df\\__data",
+  "typeCounts": {
+    "AssetBundle": 1,
+    "CanvasRenderer": 10,
+    "GameObject": 11,
+    "MonoBehaviour": 15,
+    "MonoScript": 6,
+    "RectTransform": 11
+  },
+  "nodeCount": 11,
+  "roots": [
+    {
+      "name": "GalRoleSelectGrid",
+      "pathId": 1286200820953979311,
+      "active": true,
+      "components": [
+        "RectTransform",
+        "CanvasRenderer",
+        "Image",
+        "Button",
+        "GalRoleSelectGrid"
+      ],
+      "rect": {
+        "rectPathId": -5824507501395043921,
+        "gameObjectPathId": 1286200820953979311,
+        "fatherRectPathId": 0,
+        "childrenRectPathIds": [
+          -5271578350077666897,
+          2278301162708277679,
+          -8067268007738664529,
+          6004552697697999279,
+          8229612775906744751,
+          -6868730483465250385,
+          -3210747244013020753,
+          -8675689850682992209
+        ],
+        "anchorMin": [
+          0.5,
+          0.5
+        ],
+        "anchorMax": [
+          0.5,
+          0.5
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "sizeDelta": [
+          110.0,
+          110.0
+        ],
+        "anchoredPosition": [
+          0.0,
+          0.0
+        ],
+        "localPosition": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "localScale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "children": [
+        {
+          "name": "imgBackGround",
+          "pathId": -4213409529049900625,
+          "active": true,
+          "components": [
+            "RectTransform",
+            "CanvasRenderer",
+            "Image"
+          ],
+          "rect": {
+            "rectPathId": -5271578350077666897,
+            "gameObjectPathId": -4213409529049900625,
+            "fatherRectPathId": -5824507501395043921,
+            "childrenRectPathIds": [],
+            "anchorMin": [
+              0.5,
+              0.5
+            ],
+            "anchorMax": [
+              0.5,
+              0.5
+            ],
+            "pivot": [
+              0.5,
+              0.5
+            ],
+            "sizeDelta": [
+              110.0,
+              110.0
+            ],
+            "anchoredPosition": [
+              0.0,
+              0.0
+            ],
+            "localPosition": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "localScale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          "children": []
+        },
+        {
+          "name": "imgHead",
+          "pathId": -2845964928696510033,
+          "active": true,
+          "components": [
+            "RectTransform",
+            "CanvasRenderer",
+            "Image",
+            "Grey"
+          ],
+          "rect": {
+            "rectPathId": 2278301162708277679,
+            "gameObjectPathId": -2845964928696510033,
+            "fatherRectPathId": -5824507501395043921,
+            "childrenRectPathIds": [],
+            "anchorMin": [
+              0.5,
+              0.5
+            ],
+            "anchorMax": [
+              0.5,
+              0.5
+            ],
+            "pivot": [
+              0.5,
+              0.5
+            ],
+            "sizeDelta": [
+              100.0,
+              100.0
+            ],
+            "anchoredPosition": [
+              0.0,
+              0.0
+            ],
+            "localPosition": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "localScale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          "children": []
+        },
+        {
+          "name": "imgSelect",
+          "pathId": -1867427154784282193,
+          "active": true,
+          "components": [
+            "RectTransform",
+            "CanvasRenderer",
+            "Image"
+          ],
+          "rect": {
+            "rectPathId": -8067268007738664529,
+            "gameObjectPathId": -1867427154784282193,
+            "fatherRectPathId": -5824507501395043921,
+            "childrenRectPathIds": [
+              -7493287474376926801
+            ],
+            "anchorMin": [
+              0.5,
+              0.5
+            ],
+            "anchorMax": [
+              0.5,
+              0.5
+            ],
+            "pivot": [
+              0.5,
+              0.5
+            ],
+            "sizeDelta": [
+              110.0,
+              110.0
+            ],
+            "anchoredPosition": [
+              0.0,
+              0.0
+            ],
+            "localPosition": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "localScale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          "children": [
+            {
+              "name": "Image",
+              "pathId": 955243281509194159,
+              "active": true,
+              "components": [
+                "RectTransform",
+                "CanvasRenderer",
+                "Image"
+              ],
+              "rect": {
+                "rectPathId": -7493287474376926801,
+                "gameObjectPathId": 955243281509194159,
+                "fatherRectPathId": -8067268007738664529,
+                "childrenRectPathIds": [],
+                "anchorMin": [
+                  1.0,
+                  0.0
+                ],
+                "anchorMax": [
+                  1.0,
+                  0.0
+                ],
+                "pivot": [
+                  0.5,
+                  0.5
+                ],
+                "sizeDelta": [
+                  50.0,
+                  50.0
+                ],
+                "anchoredPosition": [
+                  -17.0,
+                  17.0
+                ],
+                "localPosition": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "localScale": [
+                  1.0,
+                  1.0,
+                  1.0
+                ]
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "name": "Image",
+          "pathId": -41983920814876241,
+          "active": true,
+          "components": [
+            "RectTransform",
+            "CanvasRenderer",
+            "Image"
+          ],
+          "rect": {
+            "rectPathId": 6004552697697999279,
+            "gameObjectPathId": -41983920814876241,
+            "fatherRectPathId": -5824507501395043921,
+            "childrenRectPathIds": [
+              4813024480010181039
+            ],
+            "anchorMin": [
+              0.5,
+              0.5
+            ],
+            "anchorMax": [
+              0.5,
+              0.5
+            ],
+            "pivot": [
+              0.5,
+              0.5
+            ],
+            "sizeDelta": [
+              56.0,
+              56.0
+            ],
+            "anchoredPosition": [
+              -36.0,
+              -38.0
+            ],
+            "localPosition": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "localScale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          "children": [
+            {
+              "name": "txtLv",
+              "pathId": -5230060241055049297,
+              "active": true,
+              "components": [
+                "RectTransform",
+                "CanvasRenderer",
+                "Text",
+                "NicerOutline"
+              ],
+              "rect": {
+                "rectPathId": 4813024480010181039,
+                "gameObjectPathId": -5230060241055049297,
+                "fatherRectPathId": 6004552697697999279,
+                "childrenRectPathIds": [],
+                "anchorMin": [
+                  0.0,
+                  0.0
+                ],
+                "anchorMax": [
+                  1.0,
+                  1.0
+                ],
+                "pivot": [
+                  0.5,
+                  0.5
+                ],
+                "sizeDelta": [
+                  0.0,
+                  -26.0
+                ],
+                "anchoredPosition": [
+                  0.0,
+                  3.0
+                ],
+                "localPosition": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "localScale": [
+                  1.0,
+                  1.0,
+                  1.0
+                ]
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "name": "imgFavorite",
+          "pathId": -7615315304999413329,
+          "active": true,
+          "components": [
+            "RectTransform",
+            "CanvasRenderer",
+            "Image"
+          ],
+          "rect": {
+            "rectPathId": 8229612775906744751,
+            "gameObjectPathId": -7615315304999413329,
+            "fatherRectPathId": -5824507501395043921,
+            "childrenRectPathIds": [],
+            "anchorMin": [
+              0.0,
+              1.0
+            ],
+            "anchorMax": [
+              0.0,
+              1.0
+            ],
+            "pivot": [
+              0.5,
+              0.5
+            ],
+            "sizeDelta": [
+              34.0,
+              34.0
+            ],
+            "anchoredPosition": [
+              17.0,
+              -17.0
+            ],
+            "localPosition": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "localScale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          "children": []
+        },
+        {
+          "name": "btnClick",
+          "pathId": -3100747642664969809,
+          "active": true,
+          "components": [
+            "RectTransform",
+            "CanvasRenderer",
+            "Image",
+            "Button"
+          ],
+          "rect": {
+            "rectPathId": -6868730483465250385,
+            "gameObjectPathId": -3100747642664969809,
+            "fatherRectPathId": -5824507501395043921,
+            "childrenRectPathIds": [],
+            "anchorMin": [
+              0.0,
+              0.0
+            ],
+            "anchorMax": [
+              1.0,
+              1.0
+            ],
+            "pivot": [
+              0.5,
+              0.5
+            ],
+            "sizeDelta": [
+              0.0,
+              0.0
+            ],
+            "anchoredPosition": [
+              0.0,
+              0.0
+            ],
+            "localPosition": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "localScale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          "children": []
+        },
+        {
+          "name": "imgLock",
+          "pathId": -8928154765287679569,
+          "active": true,
+          "components": [
+            "RectTransform",
+            "CanvasRenderer",
+            "Image"
+          ],
+          "rect": {
+            "rectPathId": -3210747244013020753,
+            "gameObjectPathId": -8928154765287679569,
+            "fatherRectPathId": -5824507501395043921,
+            "childrenRectPathIds": [],
+            "anchorMin": [
+              0.5,
+              0.5
+            ],
+            "anchorMax": [
+              0.5,
+              0.5
+            ],
+            "pivot": [
+              0.5,
+              0.5
+            ],
+            "sizeDelta": [
+              100.0,
+              100.0
+            ],
+            "anchoredPosition": [
+              0.0,
+              0.0
+            ],
+            "localPosition": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "localScale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          "children": []
+        },
+        {
+          "name": "@pnlRd",
+          "pathId": -754937599702787665,
+          "active": true,
+          "components": [
+            "RectTransform"
+          ],
+          "rect": {
+            "rectPathId": -8675689850682992209,
+            "gameObjectPathId": -754937599702787665,
+            "fatherRectPathId": -5824507501395043921,
+            "childrenRectPathIds": [],
+            "anchorMin": [
+              0.5,
+              0.5
+            ],
+            "anchorMax": [
+              0.5,
+              0.5
+            ],
+            "pivot": [
+              0.5,
+              0.5
+            ],
+            "sizeDelta": [
+              0.0,
+              0.0
+            ],
+            "anchoredPosition": [
+              35.29999923706055,
+              35.0
+            ],
+            "localPosition": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "localScale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          "children": []
+        }
+      ]
+    }
+  ]
+}

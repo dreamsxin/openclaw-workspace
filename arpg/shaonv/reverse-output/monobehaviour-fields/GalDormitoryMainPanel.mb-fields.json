@@ -1,0 +1,880 @@
+{
+  "prefabName": "GalDormitoryMainPanel",
+  "prefabAddress": "Assets/Game/RawAssets/Prefabs/UI/Gal/Dormitory/GalDormitoryMainPanel.prefab",
+  "sourceBundle": "D:\\work\\openclaw-workspace\\arpg\\shaonv\\files\\yoo\\Default\\BundleFiles\\0a\\0a24eb46b41a34ab7bcb3c89c216dda7\\__data",
+  "imageCount": 31,
+  "textCount": 13,
+  "buttonCount": 17,
+  "images": [
+    {
+      "gameObject": "imgHead",
+      "gameObjectPathId": 4816678642632783974,
+      "active": true,
+      "componentPathId": -8970171477371881370,
+      "spriteFileID": 0,
+      "spritePathID": 0,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 0.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    },
+    {
+      "gameObject": "btnGoOut",
+      "gameObjectPathId": -4502830870101329818,
+      "active": true,
+      "componentPathId": -8557749576643413914,
+      "spriteFileID": 3,
+      "spritePathID": -6290704267416343162,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    },
+    {
+      "gameObject": "btnDressUp",
+      "gameObjectPathId": 2004251382098786406,
+      "active": true,
+      "componentPathId": -8274746935223486362,
+      "spriteFileID": 3,
+      "spritePathID": -2796760415809536613,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    },
+    {
+      "gameObject": "Image",
+      "gameObjectPathId": -4203206950772377498,
+      "active": true,
+      "componentPathId": -6924348055621699482,
+      "spriteFileID": 5,
+      "spritePathID": -8768762878164804970,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    },
+    {
+      "gameObject": "@pnlLock",
+      "gameObjectPathId": 8737887922986383462,
+      "active": true,
+      "componentPathId": -5230722550200371098,
+      "spriteFileID": 3,
+      "spritePathID": 5879409729889871925,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    },
+    {
+      "gameObject": "Image",
+      "gameObjectPathId": -4934071815544014746,
+      "active": true,
+      "componentPathId": -4995337953893844890,
+      "spriteFileID": 3,
+      "spritePathID": 6897153143866991283,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    },
+    {
+      "gameObject": "Image",
+      "gameObjectPathId": 4056391332372052070,
+      "active": true,
+      "componentPathId": -4880214581127710618,
+      "spriteFileID": 3,
+      "spritePathID": 4472807782220342181,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    },
+    {
+      "gameObject": "Image",
+      "gameObjectPathId": -7575634918195693466,
+      "active": true,
+      "componentPathId": -4867371267913123738,
+      "spriteFileID": 5,
+      "spritePathID": -8768762878164804970,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    },
+    {
+      "gameObject": "Image",
+      "gameObjectPathId": -593896992803293082,
+      "active": true,
+      "componentPathId": -3211293449686124442,
+      "spriteFileID": 3,
+      "spritePathID": 1900362288726776618,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    },
+    {
+      "gameObject": "btnPersonality",
+      "gameObjectPathId": -7977084001170261914,
+      "active": true,
+      "componentPathId": -2789149702969657242,
+      "spriteFileID": 3,
+      "spritePathID": 3450411761113111365,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    },
+    {
+      "gameObject": "btnFile",
+      "gameObjectPathId": -3284088009794750362,
+      "active": true,
+      "componentPathId": -2428485200137455514,
+      "spriteFileID": 3,
+      "spritePathID": -7791231826743360608,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    },
+    {
+      "gameObject": "btnDate",
+      "gameObjectPathId": -8398147650269382554,
+      "active": true,
+      "componentPathId": -1864446183864829850,
+      "spriteFileID": 3,
+      "spritePathID": 4545647666581890156,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    },
+    {
+      "gameObject": "Image",
+      "gameObjectPathId": 8631267878988052582,
+      "active": true,
+      "componentPathId": -1540640196259448730,
+      "spriteFileID": 7,
+      "spritePathID": -4412841485881239637,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 0,
+      "imageType": 0
+    },
+    {
+      "gameObject": "btnPhotoAlbum",
+      "gameObjectPathId": -4940306515452069786,
+      "active": true,
+      "componentPathId": -1245351383708632986,
+      "spriteFileID": 3,
+      "spritePathID": 332417400220949110,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    },
+    {
+      "gameObject": "btnPrivateInteraction",
+      "gameObjectPathId": 6823148103320500326,
+      "active": true,
+      "componentPathId": 391894872993396838,
+      "spriteFileID": 3,
+      "spritePathID": -6405154997828222340,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    },
+    {
+      "gameObject": "btnInteraction",
+      "gameObjectPathId": 5081889563138357350,
+      "active": false,
+      "componentPathId": 1305120312410142822,
+      "spriteFileID": 3,
+      "spritePathID": 1298054745446984818,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    },
+    {
+      "gameObject": "btnGift",
+      "gameObjectPathId": 7628202757932808294,
+      "active": true,
+      "componentPathId": 1348754860576700518,
+      "spriteFileID": 3,
+      "spritePathID": -6999200307080179915,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    },
+    {
+      "gameObject": "btnClose",
+      "gameObjectPathId": 1909305882666170470,
+      "active": true,
+      "componentPathId": 1680422349147699302,
+      "spriteFileID": 3,
+      "spritePathID": 29869871900691548,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    },
+    {
+      "gameObject": "btnHide",
+      "gameObjectPathId": 7425608338417940582,
+      "active": true,
+      "componentPathId": 2008182668641400934,
+      "spriteFileID": 3,
+      "spritePathID": 2684126018677895685,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    },
+    {
+      "gameObject": "btnFavorite",
+      "gameObjectPathId": 6807964125889788006,
+      "active": true,
+      "componentPathId": 2586203030788339814,
+      "spriteFileID": 3,
+      "spritePathID": 5707822553258207148,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    },
+    {
+      "gameObject": "Image",
+      "gameObjectPathId": -5614093644532189082,
+      "active": true,
+      "componentPathId": 3276183346735446118,
+      "spriteFileID": 3,
+      "spritePathID": -2634433931089810732,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    },
+    {
+      "gameObject": "btnPhone",
+      "gameObjectPathId": 9068020105983064166,
+      "active": false,
+      "componentPathId": 3470077490504300646,
+      "spriteFileID": 3,
+      "spritePathID": 4935938465141706739,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    },
+    {
+      "gameObject": "Image",
+      "gameObjectPathId": -208650611585877914,
+      "active": true,
+      "componentPathId": 3499084102805256294,
+      "spriteFileID": 3,
+      "spritePathID": 6897153143866991283,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    },
+    {
+      "gameObject": "btnChange",
+      "gameObjectPathId": 2080224057855080550,
+      "active": true,
+      "componentPathId": 5512994940304259174,
+      "spriteFileID": 3,
+      "spritePathID": -9044900711477693316,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    },
+    {
+      "gameObject": "Image",
+      "gameObjectPathId": 2638151861189113958,
+      "active": true,
+      "componentPathId": 6117668069192005734,
+      "spriteFileID": 3,
+      "spritePathID": 6508602588351213021,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 0,
+      "imageType": 0
+    },
+    {
+      "gameObject": "btnLv",
+      "gameObjectPathId": 6293277726546491494,
+      "active": true,
+      "componentPathId": 6458557177700055142,
+      "spriteFileID": 3,
+      "spritePathID": -3430507108785648173,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    },
+    {
+      "gameObject": "@pnlLock",
+      "gameObjectPathId": -1770517681060743066,
+      "active": true,
+      "componentPathId": 6672443298291349606,
+      "spriteFileID": 3,
+      "spritePathID": 8581355503842334348,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    },
+    {
+      "gameObject": "btnMemories",
+      "gameObjectPathId": 7526210789639813222,
+      "active": true,
+      "componentPathId": 7382235182483011686,
+      "spriteFileID": 3,
+      "spritePathID": -7546580293866859590,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    },
+    {
+      "gameObject": "Image",
+      "gameObjectPathId": -8939278009873500058,
+      "active": true,
+      "componentPathId": 7701980329338108006,
+      "spriteFileID": 3,
+      "spritePathID": 6897153143866991283,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    },
+    {
+      "gameObject": "Image",
+      "gameObjectPathId": 6912059875450058854,
+      "active": true,
+      "componentPathId": 8140362657456683110,
+      "spriteFileID": 3,
+      "spritePathID": 6897153143866991283,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    },
+    {
+      "gameObject": "btnDetail",
+      "gameObjectPathId": -8986928691585124250,
+      "active": false,
+      "componentPathId": 8510554586937129062,
+      "spriteFileID": 3,
+      "spritePathID": -585734721033315241,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    }
+  ],
+  "texts": [
+    {
+      "gameObject": "Text",
+      "gameObjectPathId": 1336978688491878502,
+      "active": true,
+      "componentPathId": -8106733678899988378,
+      "text": "Default",
+      "fontSize": 22,
+      "fontStyle": 0,
+      "alignment": 3,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 0
+    },
+    {
+      "gameObject": "txtName",
+      "gameObjectPathId": -4129358190635812762,
+      "active": true,
+      "componentPathId": -5832662535736362906,
+      "text": "DefaultDefaultDefaultDefaultDefault",
+      "fontSize": 26,
+      "fontStyle": 0,
+      "alignment": 3,
+      "color": {
+        "r": 1.0,
+        "g": 0.8156862854957581,
+        "b": 0.42352941632270813,
+        "a": 1.0
+      },
+      "raycastTarget": 0
+    },
+    {
+      "gameObject": "Text",
+      "gameObjectPathId": -5385077632980912026,
+      "active": true,
+      "componentPathId": -3830030249859778458,
+      "text": "Default",
+      "fontSize": 18,
+      "fontStyle": 0,
+      "alignment": 4,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 0
+    },
+    {
+      "gameObject": "txtTName",
+      "gameObjectPathId": -5587018390689056666,
+      "active": true,
+      "componentPathId": -2873836176599386010,
+      "text": "DefaultDefaultDefaultDefault",
+      "fontSize": 50,
+      "fontStyle": 0,
+      "alignment": 6,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 0
+    },
+    {
+      "gameObject": "Text",
+      "gameObjectPathId": -1184682289775871898,
+      "active": true,
+      "componentPathId": -2456836709104322458,
+      "text": "Default",
+      "fontSize": 18,
+      "fontStyle": 0,
+      "alignment": 4,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 0
+    },
+    {
+      "gameObject": "txtExp",
+      "gameObjectPathId": 4441903842301737062,
+      "active": true,
+      "componentPathId": -1220670546452121498,
+      "text": "<color=#FFB2CD>{0}</color>/{1}",
+      "fontSize": 22,
+      "fontStyle": 0,
+      "alignment": 4,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 0
+    },
+    {
+      "gameObject": "Text",
+      "gameObjectPathId": 8892035401062447206,
+      "active": true,
+      "componentPathId": -385355208538556314,
+      "text": "外出",
+      "fontSize": 36,
+      "fontStyle": 0,
+      "alignment": 8,
+      "color": {
+        "r": 1.0,
+        "g": 0.6000000238418579,
+        "b": 0.7960784435272217,
+        "a": 1.0
+      },
+      "raycastTarget": 0
+    },
+    {
+      "gameObject": "Text",
+      "gameObjectPathId": -2648503722793404314,
+      "active": true,
+      "componentPathId": 2016411283074545766,
+      "text": "Default",
+      "fontSize": 18,
+      "fontStyle": 0,
+      "alignment": 4,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 0
+    },
+    {
+      "gameObject": "Text",
+      "gameObjectPathId": -2892304504115333018,
+      "active": true,
+      "componentPathId": 3908043564516997222,
+      "text": "约会",
+      "fontSize": 40,
+      "fontStyle": 0,
+      "alignment": 5,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 0
+    },
+    {
+      "gameObject": "Text",
+      "gameObjectPathId": -1306845852525168538,
+      "active": true,
+      "componentPathId": 5655807725609515110,
+      "text": "Default",
+      "fontSize": 22,
+      "fontStyle": 0,
+      "alignment": 4,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 0
+    },
+    {
+      "gameObject": "Text",
+      "gameObjectPathId": 5519982904626673766,
+      "active": true,
+      "componentPathId": 6565889515082250342,
+      "text": "Default",
+      "fontSize": 18,
+      "fontStyle": 0,
+      "alignment": 4,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 0
+    },
+    {
+      "gameObject": "txtLv",
+      "gameObjectPathId": -5172254528951650202,
+      "active": true,
+      "componentPathId": 7650421208694814822,
+      "text": "50",
+      "fontSize": 110,
+      "fontStyle": 0,
+      "alignment": 1,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 0
+    },
+    {
+      "gameObject": "Text",
+      "gameObjectPathId": 3792515044850038886,
+      "active": true,
+      "componentPathId": 7950797571758913638,
+      "text": "Default",
+      "fontSize": 22,
+      "fontStyle": 0,
+      "alignment": 4,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 0
+    }
+  ],
+  "buttons": [
+    {
+      "gameObject": "btnGift",
+      "gameObjectPathId": 7628202757932808294,
+      "active": true,
+      "componentPathId": -8254182142855317402,
+      "interactable": 1,
+      "navigationMode": 3
+    },
+    {
+      "gameObject": "btnDressUp",
+      "gameObjectPathId": 2004251382098786406,
+      "active": true,
+      "componentPathId": -7692548693092435866,
+      "interactable": 1,
+      "navigationMode": 3
+    },
+    {
+      "gameObject": "btnPhotoAlbum",
+      "gameObjectPathId": -4940306515452069786,
+      "active": true,
+      "componentPathId": -7045902146415789978,
+      "interactable": 1,
+      "navigationMode": 3
+    },
+    {
+      "gameObject": "btnDetail",
+      "gameObjectPathId": -8986928691585124250,
+      "active": false,
+      "componentPathId": -6672384502198601626,
+      "interactable": 1,
+      "navigationMode": 3
+    },
+    {
+      "gameObject": "btnFavorite",
+      "gameObjectPathId": 6807964125889788006,
+      "active": true,
+      "componentPathId": -4742397364535855002,
+      "interactable": 1,
+      "navigationMode": 3
+    },
+    {
+      "gameObject": "btnClose",
+      "gameObjectPathId": 1909305882666170470,
+      "active": true,
+      "componentPathId": -3652586232118609818,
+      "interactable": 1,
+      "navigationMode": 3
+    },
+    {
+      "gameObject": "btnDate",
+      "gameObjectPathId": -8398147650269382554,
+      "active": true,
+      "componentPathId": -3295317982165370778,
+      "interactable": 1,
+      "navigationMode": 3
+    },
+    {
+      "gameObject": "btnMemories",
+      "gameObjectPathId": 7526210789639813222,
+      "active": true,
+      "componentPathId": -3041130797893584794,
+      "interactable": 1,
+      "navigationMode": 3
+    },
+    {
+      "gameObject": "btnPhone",
+      "gameObjectPathId": 9068020105983064166,
+      "active": false,
+      "componentPathId": -1788747234127677338,
+      "interactable": 1,
+      "navigationMode": 3
+    },
+    {
+      "gameObject": "btnChange",
+      "gameObjectPathId": 2080224057855080550,
+      "active": true,
+      "componentPathId": -945981839934719898,
+      "interactable": 1,
+      "navigationMode": 3
+    },
+    {
+      "gameObject": "btnGoOut",
+      "gameObjectPathId": -4502830870101329818,
+      "active": true,
+      "componentPathId": -408240773832542106,
+      "interactable": 1,
+      "navigationMode": 3
+    },
+    {
+      "gameObject": "btnFile",
+      "gameObjectPathId": -3284088009794750362,
+      "active": true,
+      "componentPathId": 187126911047268454,
+      "interactable": 1,
+      "navigationMode": 3
+    },
+    {
+      "gameObject": "btnInteraction",
+      "gameObjectPathId": 5081889563138357350,
+      "active": false,
+      "componentPathId": 612545216669644902,
+      "interactable": 1,
+      "navigationMode": 3
+    },
+    {
+      "gameObject": "btnPrivateInteraction",
+      "gameObjectPathId": 6823148103320500326,
+      "active": true,
+      "componentPathId": 2014769102445574246,
+      "interactable": 1,
+      "navigationMode": 3
+    },
+    {
+      "gameObject": "btnLv",
+      "gameObjectPathId": 6293277726546491494,
+      "active": true,
+      "componentPathId": 4483606900186118246,
+      "interactable": 1,
+      "navigationMode": 3
+    },
+    {
+      "gameObject": "btnHide",
+      "gameObjectPathId": 7425608338417940582,
+      "active": true,
+      "componentPathId": 6696459493729138790,
+      "interactable": 1,
+      "navigationMode": 3
+    },
+    {
+      "gameObject": "btnPersonality",
+      "gameObjectPathId": -7977084001170261914,
+      "active": true,
+      "componentPathId": 6751142573287372902,
+      "interactable": 1,
+      "navigationMode": 3
+    }
+  ],
+  "otherMonoBehaviours": {
+    "ContentSizeFitter": 1,
+    "EnhancedScroller": 1,
+    "GalDormitoryMainPanel": 1,
+    "GalDormitoryPanelTopBtns": 1,
+    "GalRoleSelector": 1,
+    "Gradient": 1,
+    "HorizontalLayoutGroup": 1,
+    "LangLabel": 7,
+    "ScrollRect": 1,
+    "Unknown": 1
+  },
+  "internalSprites": {}
+}

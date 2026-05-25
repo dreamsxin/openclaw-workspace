@@ -1,0 +1,159 @@
+{
+  "address": "Assets/Game/RawAssets/Prefabs/UI/Gal/GalToastView.prefab",
+  "source": "D:\\work\\openclaw-workspace\\arpg\\shaonv\\files\\yoo\\Default\\BundleFiles\\9a\\9ad540a9894ff20ae5be482d5bccb4d6\\__data",
+  "typeCounts": {
+    "AssetBundle": 1,
+    "CanvasRenderer": 1,
+    "GameObject": 3,
+    "MonoBehaviour": 4,
+    "MonoScript": 3,
+    "RectTransform": 3
+  },
+  "nodeCount": 3,
+  "roots": [
+    {
+      "name": "GalToastView",
+      "pathId": -4793483091776896281,
+      "active": true,
+      "components": [
+        "RectTransform",
+        "CanvasRenderer",
+        "Image",
+        "GalToastView"
+      ],
+      "rect": {
+        "rectPathId": -8463147393436089625,
+        "gameObjectPathId": -4793483091776896281,
+        "fatherRectPathId": 0,
+        "childrenRectPathIds": [
+          4163609369624052455,
+          805826900689158887
+        ],
+        "anchorMin": [
+          0.0,
+          0.0
+        ],
+        "anchorMax": [
+          1.0,
+          1.0
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "sizeDelta": [
+          0.0,
+          0.0
+        ],
+        "anchoredPosition": [
+          0.0,
+          0.0
+        ],
+        "localPosition": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "localScale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "children": [
+        {
+          "name": "pnlShowArea",
+          "pathId": 3043891361111474919,
+          "active": true,
+          "components": [
+            "RectTransform",
+            "VerticalLayoutGroup",
+            "ContentSizeFitter"
+          ],
+          "rect": {
+            "rectPathId": 4163609369624052455,
+            "gameObjectPathId": 3043891361111474919,
+            "fatherRectPathId": -8463147393436089625,
+            "childrenRectPathIds": [],
+            "anchorMin": [
+              1.0,
+              1.0
+            ],
+            "anchorMax": [
+              1.0,
+              1.0
+            ],
+            "pivot": [
+              1.0,
+              0.0
+            ],
+            "sizeDelta": [
+              486.0,
+              0.0
+            ],
+            "anchoredPosition": [
+              0.0,
+              -275.0
+            ],
+            "localPosition": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "localScale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          "children": []
+        },
+        {
+          "name": "pnlCycle",
+          "pathId": -2890765310325619993,
+          "active": false,
+          "components": [
+            "RectTransform"
+          ],
+          "rect": {
+            "rectPathId": 805826900689158887,
+            "gameObjectPathId": -2890765310325619993,
+            "fatherRectPathId": -8463147393436089625,
+            "childrenRectPathIds": [],
+            "anchorMin": [
+              0.5,
+              0.5
+            ],
+            "anchorMax": [
+              0.5,
+              0.5
+            ],
+            "pivot": [
+              0.5,
+              0.5
+            ],
+            "sizeDelta": [
+              100.0,
+              100.0
+            ],
+            "anchoredPosition": [
+              0.0,
+              -1226.0
+            ],
+            "localPosition": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "localScale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          "children": []
+        }
+      ]
+    }
+  ]
+}

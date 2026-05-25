@@ -1,0 +1,159 @@
+{
+  "address": "Assets/Game/RawAssets/Prefabs/UI/Gal/GalLevelUpUnlockGrid.prefab",
+  "source": "D:\\work\\openclaw-workspace\\arpg\\shaonv\\files\\yoo\\Default\\BundleFiles\\b7\\b74fd58a818855498e8519f82942d3ba\\__data",
+  "typeCounts": {
+    "AssetBundle": 1,
+    "CanvasRenderer": 2,
+    "GameObject": 3,
+    "MonoBehaviour": 3,
+    "MonoScript": 3,
+    "RectTransform": 3
+  },
+  "nodeCount": 3,
+  "roots": [
+    {
+      "name": "GalLevelUpUnlockGrid",
+      "pathId": 1726894179203406391,
+      "active": true,
+      "components": [
+        "RectTransform",
+        "GalLevelUpUnlockGrid"
+      ],
+      "rect": {
+        "rectPathId": -434176287573288393,
+        "gameObjectPathId": 1726894179203406391,
+        "fatherRectPathId": 0,
+        "childrenRectPathIds": [
+          -6493088159127971273,
+          7241551475708320311
+        ],
+        "anchorMin": [
+          0.5,
+          0.5
+        ],
+        "anchorMax": [
+          0.5,
+          0.5
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "sizeDelta": [
+          449.0,
+          34.0
+        ],
+        "anchoredPosition": [
+          373.5,
+          -30.0
+        ],
+        "localPosition": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "localScale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "children": [
+        {
+          "name": "imgUnlock",
+          "pathId": -9195973766828008905,
+          "active": true,
+          "components": [
+            "RectTransform",
+            "CanvasRenderer",
+            "Image"
+          ],
+          "rect": {
+            "rectPathId": -6493088159127971273,
+            "gameObjectPathId": -9195973766828008905,
+            "fatherRectPathId": -434176287573288393,
+            "childrenRectPathIds": [],
+            "anchorMin": [
+              0.5,
+              0.5
+            ],
+            "anchorMax": [
+              0.5,
+              0.5
+            ],
+            "pivot": [
+              0.5,
+              0.5
+            ],
+            "sizeDelta": [
+              34.0,
+              34.0
+            ],
+            "anchoredPosition": [
+              -207.5,
+              0.0
+            ],
+            "localPosition": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "localScale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          "children": []
+        },
+        {
+          "name": "txtUnlock",
+          "pathId": -4711237376720184777,
+          "active": true,
+          "components": [
+            "RectTransform",
+            "CanvasRenderer",
+            "Text"
+          ],
+          "rect": {
+            "rectPathId": 7241551475708320311,
+            "gameObjectPathId": -4711237376720184777,
+            "fatherRectPathId": -434176287573288393,
+            "childrenRectPathIds": [],
+            "anchorMin": [
+              0.0,
+              0.0
+            ],
+            "anchorMax": [
+              1.0,
+              1.0
+            ],
+            "pivot": [
+              0.5,
+              0.5
+            ],
+            "sizeDelta": [
+              -32.0,
+              0.0
+            ],
+            "anchoredPosition": [
+              15.99993896484375,
+              0.0
+            ],
+            "localPosition": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "localScale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          "children": []
+        }
+      ]
+    }
+  ]
+}

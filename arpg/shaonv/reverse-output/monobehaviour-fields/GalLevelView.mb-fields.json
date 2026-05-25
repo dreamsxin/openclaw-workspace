@@ -1,0 +1,103 @@
+{
+  "prefabName": "GalLevelView",
+  "prefabAddress": "Assets/Game/RawAssets/Prefabs/UI/Gal/GalLevelView.prefab",
+  "sourceBundle": "D:\\work\\openclaw-workspace\\arpg\\shaonv\\files\\yoo\\Default\\BundleFiles\\61\\611624cb7868a2d0d927630c22cc46f4\\__data",
+  "imageCount": 3,
+  "textCount": 1,
+  "buttonCount": 2,
+  "images": [
+    {
+      "gameObject": "Image",
+      "gameObjectPathId": -2932340670298683376,
+      "active": true,
+      "componentPathId": 1296357214706305040,
+      "spriteFileID": 2,
+      "spritePathID": -421240102205256099,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    },
+    {
+      "gameObject": "btnDetail",
+      "gameObjectPathId": -3498173836244187120,
+      "active": true,
+      "componentPathId": 2548569600032475152,
+      "spriteFileID": 1,
+      "spritePathID": 8487680652697467711,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    },
+    {
+      "gameObject": "btnClose",
+      "gameObjectPathId": 3538544290639022096,
+      "active": true,
+      "componentPathId": 9069809737238218768,
+      "spriteFileID": 1,
+      "spritePathID": -6642399814138380746,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    }
+  ],
+  "texts": [
+    {
+      "gameObject": "Text",
+      "gameObjectPathId": 2844869514779002896,
+      "active": true,
+      "componentPathId": 6979569287500433424,
+      "text": "Default",
+      "fontSize": 36,
+      "fontStyle": 0,
+      "alignment": 3,
+      "color": {
+        "r": 0.1882352977991104,
+        "g": 0.1882352977991104,
+        "b": 0.1882352977991104,
+        "a": 1.0
+      },
+      "raycastTarget": 0
+    }
+  ],
+  "buttons": [
+    {
+      "gameObject": "btnClose",
+      "gameObjectPathId": 3538544290639022096,
+      "active": true,
+      "componentPathId": -6703351721833756656,
+      "interactable": 1,
+      "navigationMode": 3
+    },
+    {
+      "gameObject": "btnDetail",
+      "gameObjectPathId": -3498173836244187120,
+      "active": true,
+      "componentPathId": 1683421027555051536,
+      "interactable": 1,
+      "navigationMode": 3
+    }
+  ],
+  "otherMonoBehaviours": {
+    "GalLevelView": 1,
+    "GridScrollerEx": 1,
+    "LangLabel": 1,
+    "ScrollRect": 2,
+    "TabScrollView": 1
+  },
+  "internalSprites": {}
+}

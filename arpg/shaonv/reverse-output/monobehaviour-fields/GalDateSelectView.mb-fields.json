@@ -1,0 +1,178 @@
+{
+  "prefabName": "GalDateSelectView",
+  "prefabAddress": "Assets/Game/RawAssets/Prefabs/UI/Gal/GalDateSelectView.prefab",
+  "sourceBundle": "D:\\work\\openclaw-workspace\\arpg\\shaonv\\files\\yoo\\Default\\BundleFiles\\5e\\5e61987c6c373fef049be54caacf7543\\__data",
+  "imageCount": 4,
+  "textCount": 4,
+  "buttonCount": 3,
+  "images": [
+    {
+      "gameObject": "btnClose",
+      "gameObjectPathId": 7767924455955447219,
+      "active": true,
+      "componentPathId": -8894956039491207757,
+      "spriteFileID": 1,
+      "spritePathID": -6642399814138380746,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    },
+    {
+      "gameObject": "btnConfirm",
+      "gameObjectPathId": 6516452555345903027,
+      "active": true,
+      "componentPathId": -8483208221377675853,
+      "spriteFileID": 1,
+      "spritePathID": 4745905287881312284,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    },
+    {
+      "gameObject": "imgBg",
+      "gameObjectPathId": -3565150582239707725,
+      "active": true,
+      "componentPathId": -6094703307438998093,
+      "spriteFileID": 2,
+      "spritePathID": 1963196103581458254,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    },
+    {
+      "gameObject": "btnDateRecord",
+      "gameObjectPathId": -4551553561861472845,
+      "active": true,
+      "componentPathId": -5597318699832099405,
+      "spriteFileID": 1,
+      "spritePathID": -6938206185962175494,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 1,
+      "imageType": 0
+    }
+  ],
+  "texts": [
+    {
+      "gameObject": "Text",
+      "gameObjectPathId": 2395925531231665587,
+      "active": true,
+      "componentPathId": -4756558597057593933,
+      "text": "Default",
+      "fontSize": 18,
+      "fontStyle": 0,
+      "alignment": 4,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 0
+    },
+    {
+      "gameObject": "Text",
+      "gameObjectPathId": -3186450741664858701,
+      "active": true,
+      "componentPathId": -4361603111550370381,
+      "text": "Default",
+      "fontSize": 36,
+      "fontStyle": 0,
+      "alignment": 3,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 0
+    },
+    {
+      "gameObject": "Text",
+      "gameObjectPathId": 2564358214789053875,
+      "active": true,
+      "componentPathId": -2862418957707952717,
+      "text": "Default",
+      "fontSize": 26,
+      "fontStyle": 0,
+      "alignment": 4,
+      "color": {
+        "r": 1.0,
+        "g": 0.6000000238418579,
+        "b": 0.7960784435272217,
+        "a": 1.0
+      },
+      "raycastTarget": 0
+    },
+    {
+      "gameObject": "txtDateNum",
+      "gameObjectPathId": -7461412354393096781,
+      "active": true,
+      "componentPathId": 4791870950207274419,
+      "text": "Default",
+      "fontSize": 20,
+      "fontStyle": 0,
+      "alignment": 3,
+      "color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "raycastTarget": 0
+    }
+  ],
+  "buttons": [
+    {
+      "gameObject": "btnConfirm",
+      "gameObjectPathId": 6516452555345903027,
+      "active": true,
+      "componentPathId": -7001849353230205517,
+      "interactable": 1,
+      "navigationMode": 3
+    },
+    {
+      "gameObject": "btnClose",
+      "gameObjectPathId": 7767924455955447219,
+      "active": true,
+      "componentPathId": -4855295435176985165,
+      "interactable": 1,
+      "navigationMode": 3
+    },
+    {
+      "gameObject": "btnDateRecord",
+      "gameObjectPathId": -4551553561861472845,
+      "active": true,
+      "componentPathId": 7452253451398102451,
+      "interactable": 1,
+      "navigationMode": 3
+    }
+  ],
+  "otherMonoBehaviours": {
+    "GalDateSelectView": 1,
+    "LangLabel": 3,
+    "NicerOutline": 1,
+    "ScrollRect": 1,
+    "TabScrollView": 1
+  },
+  "internalSprites": {}
+}

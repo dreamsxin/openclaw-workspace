@@ -1,0 +1,160 @@
+{
+  "address": "Assets/Game/RawAssets/Prefabs/UI/Gal/GalEffectGrid.prefab",
+  "source": "D:\\work\\openclaw-workspace\\arpg\\shaonv\\files\\yoo\\Default\\BundleFiles\\46\\46f875407737f82422188899d4b21af8\\__data",
+  "typeCounts": {
+    "AssetBundle": 1,
+    "CanvasRenderer": 3,
+    "GameObject": 3,
+    "MonoBehaviour": 3,
+    "MonoScript": 2,
+    "RectTransform": 3
+  },
+  "nodeCount": 3,
+  "roots": [
+    {
+      "name": "GalEffectGrid",
+      "pathId": 2634383876021252941,
+      "active": true,
+      "components": [
+        "RectTransform",
+        "CanvasRenderer",
+        "Image"
+      ],
+      "rect": {
+        "rectPathId": 5978311988624913229,
+        "gameObjectPathId": 2634383876021252941,
+        "fatherRectPathId": 0,
+        "childrenRectPathIds": [
+          65336612940641101,
+          -3809392839869172915
+        ],
+        "anchorMin": [
+          0.5,
+          0.5
+        ],
+        "anchorMax": [
+          0.5,
+          0.5
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "sizeDelta": [
+          390.0,
+          36.0
+        ],
+        "anchoredPosition": [
+          0.0,
+          0.0
+        ],
+        "localPosition": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "localScale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "children": [
+        {
+          "name": "txtName",
+          "pathId": -1362211883676830899,
+          "active": true,
+          "components": [
+            "RectTransform",
+            "CanvasRenderer",
+            "Text"
+          ],
+          "rect": {
+            "rectPathId": 65336612940641101,
+            "gameObjectPathId": -1362211883676830899,
+            "fatherRectPathId": 5978311988624913229,
+            "childrenRectPathIds": [],
+            "anchorMin": [
+              0.0,
+              0.5
+            ],
+            "anchorMax": [
+              0.0,
+              0.5
+            ],
+            "pivot": [
+              0.0,
+              0.5
+            ],
+            "sizeDelta": [
+              160.0,
+              30.0
+            ],
+            "anchoredPosition": [
+              14.0,
+              0.0
+            ],
+            "localPosition": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "localScale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          "children": []
+        },
+        {
+          "name": "txtValue",
+          "pathId": 5486760405211706189,
+          "active": true,
+          "components": [
+            "RectTransform",
+            "CanvasRenderer",
+            "Text"
+          ],
+          "rect": {
+            "rectPathId": -3809392839869172915,
+            "gameObjectPathId": 5486760405211706189,
+            "fatherRectPathId": 5978311988624913229,
+            "childrenRectPathIds": [],
+            "anchorMin": [
+              1.0,
+              0.5
+            ],
+            "anchorMax": [
+              1.0,
+              0.5
+            ],
+            "pivot": [
+              1.0,
+              0.5
+            ],
+            "sizeDelta": [
+              160.0,
+              30.0
+            ],
+            "anchoredPosition": [
+              -14.0,
+              0.0
+            ],
+            "localPosition": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "localScale": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          "children": []
+        }
+      ]
+    }
+  ]
+}
