@@ -7,8 +7,11 @@ const VIEW_CHARACTER := "character"
 const VIEW_DRESS_UP := "dress_up"
 const VIEW_FILES := "files"
 const VIEW_ALBUM := "album"
+const VIEW_ALBUM_DETAIL := "album_detail"
 const VIEW_MEMORY := "memory"
 const VIEW_SPECIAL_TOUCH := "special_touch"
+const VIEW_GIFT := "gift"
+const VIEW_LEVEL := "level"
 const DEFAULT_GAL_HERO_ID := 240030
 
 # Main panel resources
@@ -94,6 +97,7 @@ var _role_selector_expanded := false
 var _ui_hidden := false
 var _files_tab := "voice"
 var _dress_tab := "skin"
+var _album_detail_index := 0
 
 const GAL_PREFAB_SCALE := Vector2(1280.0 / 1670.0, 720.0 / 750.0)
 const GAL_INFO_PANEL_CENTER := Vector2(190, -46)
@@ -127,10 +131,16 @@ func show_view(view_name: String) -> void:
 			_draw_files_view()
 		VIEW_ALBUM:
 			_draw_album_view()
+		VIEW_ALBUM_DETAIL:
+			_draw_album_detail_view()
 		VIEW_MEMORY:
 			_draw_memory_view()
 		VIEW_SPECIAL_TOUCH:
 			_draw_special_touch_view()
+		VIEW_GIFT:
+			_draw_gift_view()
+		VIEW_LEVEL:
+			_draw_level_detail_view()
 		_:
 			_draw_main_view()
 	_restart_idle_voice_timer()
@@ -390,7 +400,9 @@ func _draw_top_bar() -> void:
 	var fav_pos := _gal_top_left_pos(Vector2(186, -18))
 	app._draw_image(GAL_BTN_FAV, fav_pos, section_size, false, Color(1, 1, 1, 0.92))
 	_add_hit_button(fav_pos, section_size, func() -> void:
-		_show_touch_hint("已設為最愛看板")
+		var hero := _selected_hero()
+		app.save["favorite_gal_hero_id"] = int(hero.get("id", DEFAULT_GAL_HERO_ID))
+		_show_touch_hint("已設為最愛看板：%s" % str(hero.get("name", "角色")))
 	)
 
 
@@ -482,6 +494,9 @@ func _draw_level_ring() -> void:
 	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	lbl.modulate = Color(1.0, 0.96, 0.98)
 	app._view_container().add_child(lbl)
+	_add_hit_button(lv_pos, lv_size, func() -> void:
+		show_view(VIEW_LEVEL)
+	)
 
 
 func _draw_action_buttons() -> void:
@@ -508,10 +523,7 @@ func _draw_action_buttons() -> void:
 	app._draw_image(GAL_BTN_GIFT, gift_pos, small_size, false, Color(1, 1, 1, 0.90))
 	_add_gal_text("禮物", gift_pos + _gal_size(Vector2(0, 60)), _gal_size(Vector2(88, 22)), 14)
 	_add_hit_button(gift_pos, small_size, func() -> void:
-		_play_gift_voice()
-		app.save["gal_exp"] = mini(int(app.save.get("gal_exp", 0)) + 5, 250)
-		show_view(VIEW_MAIN)
-		_show_touch_hint("禮物已送出，親密 +5")
+		show_view(VIEW_GIFT)
 	)
 
 	var file_pos := _gal_right_bottom_pos(Vector2(-623, 19), Vector2(88, 88))
@@ -1026,22 +1038,127 @@ func _draw_profile_content(hero: Dictionary, content_pos: Vector2) -> void:
 		app._view_container().add_child(label)
 
 
+func _draw_gift_view() -> void:
+	var ctx := _draw_child_panel_shell("禮物", "選擇禮物贈送給看板角色，提升親密度並觸發語音。")
+	var card_pos: Vector2 = ctx["card_pos"]
+	var hero: Dictionary = ctx["hero"]
+	var gifts := [
+		{"name": "星砂糖果", "desc": "甜味零食，適合日常問候", "gain": 5, "count_key": "gal_gift_candy", "count": 9},
+		{"name": "手作花束", "desc": "心意明顯，容易觸發高興反應", "gain": 12, "count_key": "gal_gift_flower", "count": 3},
+		{"name": "限定飾品", "desc": "珍貴禮物，會留下回憶記錄", "gain": 20, "count_key": "gal_gift_accessory", "count": 1},
+	]
+	for index in range(gifts.size()):
+		var item: Dictionary = gifts[index]
+		var pos := card_pos + Vector2(74, 130 + index * 126)
+		var count_key := str(item.get("count_key", ""))
+		var count := int(app.save.get(count_key, int(item.get("count", 0))))
+		var available := count > 0
+		app._view_container().add_child(app._panel(pos, Vector2(742, 92), Color(0.95, 0.72, 0.92, 0.16 if available else 0.06)))
+		app._view_container().add_child(app._panel(pos + Vector2(18, 16), Vector2(60, 60), Color(0.86, 0.74, 0.38, 0.72 if available else 0.32)))
+		var name = app._label(str(item.get("name", "")), 21)
+		name.position = pos + Vector2(96, 14)
+		name.size = Vector2(180, 30)
+		name.modulate = Color(1, 0.94, 0.98) if available else Color(0.7, 0.68, 0.72)
+		app._view_container().add_child(name)
+		var desc = app._label(str(item.get("desc", "")), 15)
+		desc.position = pos + Vector2(96, 50)
+		desc.size = Vector2(360, 24)
+		desc.modulate = Color(0.94, 0.86, 0.92, 0.82)
+		app._view_container().add_child(desc)
+		_add_gal_text("持有 x%d" % count, pos + Vector2(474, 18), Vector2(96, 26), 15)
+		_add_gal_text("親密 +%d" % int(item.get("gain", 0)), pos + Vector2(592, 18), Vector2(110, 26), 16)
+		var gift_name := str(item.get("name", "禮物"))
+		var gain := int(item.get("gain", 0))
+		_add_hit_button(pos, Vector2(742, 92), func() -> void:
+			if int(app.save.get(count_key, count)) <= 0:
+				_show_touch_hint("禮物不足：%s" % gift_name)
+				return
+			app.save[count_key] = int(app.save.get(count_key, count)) - 1
+			_add_gal_exp(gain)
+			app.save["gal_last_gift"] = gift_name
+			app.save["gal_memory_gift"] = true
+			_play_gift_voice()
+			show_view(VIEW_GIFT)
+			_show_touch_hint("%s 收下了 %s，親密 +%d" % [str(hero.get("name", "她")), gift_name, gain])
+		)
+
+	var footer_pos := card_pos + Vector2(74, 548)
+	app._view_container().add_child(app._panel(footer_pos, Vector2(742, 46), Color(0.04, 0.05, 0.10, 0.52)))
+	_add_gal_text("最近贈送：%s" % str(app.save.get("gal_last_gift", "尚未贈送")), footer_pos + Vector2(20, 8), Vector2(260, 28), 15)
+	_add_gal_text("親密 %d / 250" % int(app.save.get("gal_exp", 0)), footer_pos + Vector2(508, 8), Vector2(180, 28), 15)
+
+
+func _draw_level_detail_view() -> void:
+	var ctx := _draw_child_panel_shell("親密等級", "查看當前親密進度與已解鎖功能。")
+	var card_pos: Vector2 = ctx["card_pos"]
+	var level := int(app.save.get("gal_level", 2))
+	var exp_val := int(app.save.get("gal_exp", 0))
+	app._view_container().add_child(app._panel(card_pos + Vector2(82, 132), Vector2(718, 118), Color(0.95, 0.78, 0.34, 0.12)))
+	_add_gal_text("Lv.%d" % level, card_pos + Vector2(116, 150), Vector2(110, 60), 42)
+	_add_gal_text("%d / 250" % exp_val, card_pos + Vector2(250, 164), Vector2(140, 32), 22)
+	app._view_container().add_child(app._panel(card_pos + Vector2(404, 172), Vector2(330, 18), Color(0.02, 0.025, 0.05, 0.72)))
+	app._view_container().add_child(app._panel(card_pos + Vector2(407, 175), Vector2(324 * clampf(float(exp_val) / 250.0, 0.0, 1.0), 12), Color(0.88, 0.72, 0.28, 0.92)))
+
+	var perks := [
+		{"title": "Lv.1 語音問候", "desc": "進入 Gal 時播放問候語音", "open": true},
+		{"title": "Lv.2 甜蜜互動", "desc": "開啟角色觸摸區域與送禮", "open": level >= 2},
+		{"title": "Lv.3 外出回憶", "desc": "約會確認後加入心動回憶", "open": level >= 3},
+		{"title": "Lv.4 專屬相片", "desc": "相冊解鎖更多照片格", "open": level >= 4},
+	]
+	for index in range(perks.size()):
+		var item: Dictionary = perks[index]
+		var pos := card_pos + Vector2(94, 288 + index * 68)
+		var open := bool(item.get("open", false))
+		app._view_container().add_child(app._panel(pos, Vector2(694, 52), Color(0.80, 1.0, 0.24, 0.12 if open else 0.04)))
+		_add_gal_text(str(item.get("title", "")), pos + Vector2(18, 8), Vector2(190, 28), 16)
+		var desc = app._label(str(item.get("desc", "")), 15)
+		desc.position = pos + Vector2(236, 14)
+		desc.size = Vector2(360, 24)
+		desc.modulate = Color(0.94, 0.86, 0.92, 0.82)
+		app._view_container().add_child(desc)
+		_add_gal_text("已解鎖" if open else "未解鎖", pos + Vector2(598, 10), Vector2(76, 26), 14)
+
+
 func _draw_album_view() -> void:
 	var ctx := _draw_child_panel_shell("相冊", "展示已解鎖的 Gal 圖像回憶。")
 	var card_pos: Vector2 = ctx["card_pos"]
+	var unlocked_count := 2
+	if bool(app.save.get("gal_memory_date", false)):
+		unlocked_count += 1
+	if bool(app.save.get("gal_memory_gift", false)):
+		unlocked_count += 1
 	for index in range(6):
 		var col := index % 3
 		var row := index / 3
 		var pos := card_pos + Vector2(70 + col * 250, 132 + row * 190)
-		app._view_container().add_child(app._panel(pos, Vector2(208, 132), Color(1.0, 0.82, 0.94, 0.10)))
-		app._view_container().add_child(app._panel(pos + Vector2(8, 8), Vector2(192, 88), Color(0.02, 0.018, 0.04, 0.56)))
-		app._draw_image(GAL_IMG_CHAR_TAG, pos + Vector2(36, 36), Vector2(136, 30), false, Color(1, 1, 1, 0.44))
-		_add_gal_text("未解鎖", pos + Vector2(44, 34), Vector2(120, 28), 14)
+		var unlocked := index < unlocked_count
+		app._view_container().add_child(app._panel(pos, Vector2(208, 132), Color(1.0, 0.82, 0.94, 0.14 if unlocked else 0.06)))
+		var preview_color := Color(0.18, 0.10, 0.16, 0.72) if unlocked else Color(0.02, 0.018, 0.04, 0.56)
+		app._view_container().add_child(app._panel(pos + Vector2(8, 8), Vector2(192, 88), preview_color))
+		app._draw_image(GAL_IMG_CHAR_TAG, pos + Vector2(36, 36), Vector2(136, 30), false, Color(1, 1, 1, 0.62 if unlocked else 0.44))
+		_add_gal_text("查看" if unlocked else "未解鎖", pos + Vector2(44, 34), Vector2(120, 28), 14)
 		_add_gal_text("回憶相片 %02d" % (index + 1), pos + Vector2(8, 100), Vector2(192, 26), 14)
 		var album_index := index + 1
 		_add_hit_button(pos, Vector2(208, 132), func() -> void:
-			_show_touch_hint("查看相片 %02d" % album_index)
+			if album_index > unlocked_count:
+				_show_touch_hint("相片 %02d 尚未解鎖" % album_index)
+				return
+			_album_detail_index = album_index
+			show_view(VIEW_ALBUM_DETAIL)
 		)
+
+
+func _draw_album_detail_view() -> void:
+	var ctx := _draw_child_panel_shell("相片詳情", "回看已解鎖的 Gal 圖像回憶。")
+	var card_pos: Vector2 = ctx["card_pos"]
+	var hero: Dictionary = ctx["hero"]
+	var detail_index := maxi(_album_detail_index, 1)
+	var preview_pos := card_pos + Vector2(76, 120)
+	app._view_container().add_child(app._panel(preview_pos, Vector2(740, 402), Color(0.04, 0.03, 0.06, 0.74)))
+	_draw_clipped_gal_stage(hero, preview_pos + Vector2(170, -62), Vector2(430, 540), preview_pos + Vector2(22, 18), Vector2(696, 310))
+	app._view_container().add_child(app._panel(preview_pos + Vector2(22, 338), Vector2(696, 42), Color(0.02, 0.02, 0.04, 0.62)))
+	_add_gal_text("回憶相片 %02d" % detail_index, preview_pos + Vector2(36, 344), Vector2(180, 30), 18)
+	_add_gal_text("已收藏到 Gal 相冊", preview_pos + Vector2(486, 344), Vector2(190, 30), 15)
 
 
 func _draw_memory_view() -> void:
@@ -1049,9 +1166,9 @@ func _draw_memory_view() -> void:
 	var card_pos: Vector2 = ctx["card_pos"]
 	var memories := [
 		{"title": "初次問候", "desc": "她在房間裡向你打招呼。", "unlocked": true},
-		{"title": "送禮反應", "desc": "收到禮物時的特別語音。", "unlocked": true},
-		{"title": "外出邀約", "desc": "約會功能接通後可繼續補全。", "unlocked": false},
-		{"title": "甜蜜互動", "desc": "特殊觸摸事件入口。", "unlocked": true}
+		{"title": "送禮反應", "desc": "收到禮物時的特別語音。", "unlocked": bool(app.save.get("gal_memory_gift", false)), "view": VIEW_GIFT},
+		{"title": "外出邀約", "desc": "約會確認後留下的出行記錄。", "unlocked": bool(app.save.get("gal_memory_date", false)), "view": VIEW_DATE_SELECT},
+		{"title": "甜蜜互動", "desc": "特殊觸摸事件入口。", "unlocked": true, "view": VIEW_SPECIAL_TOUCH}
 	]
 	for index in range(memories.size()):
 		var item: Dictionary = memories[index]
@@ -1070,8 +1187,12 @@ func _draw_memory_view() -> void:
 		app._view_container().add_child(desc)
 		if unlocked:
 			var memory_title := str(item.get("title", ""))
+			var target_view := str(item.get("view", VIEW_MEMORY))
 			_add_hit_button(pos, Vector2(740, 78), func() -> void:
-				_show_touch_hint("回看：%s" % memory_title)
+				if target_view == VIEW_MEMORY:
+					_show_touch_hint("回看：%s" % memory_title)
+				else:
+					show_view(target_view)
 			)
 
 
@@ -1136,8 +1257,18 @@ func _register_touch_action(kind: String, label_text: String, gain: int) -> void
 	else:
 		_play_touch_voice(kind)
 	app.save["gal_touch_count"] = int(app.save.get("gal_touch_count", 0)) + 1
-	app.save["gal_exp"] = int(app.save.get("gal_exp", 0)) + gain
+	_add_gal_exp(gain)
 	_show_touch_hint("%s成功，好感 +%d" % [label_text, gain])
+
+
+func _add_gal_exp(amount: int) -> void:
+	var level := int(app.save.get("gal_level", 2))
+	var exp_val := int(app.save.get("gal_exp", 0)) + amount
+	while exp_val >= 250:
+		exp_val -= 250
+		level += 1
+	app.save["gal_level"] = level
+	app.save["gal_exp"] = max(exp_val, 0)
 
 
 func _draw_date_select_view() -> void:
@@ -1155,7 +1286,8 @@ func _draw_date_select_view() -> void:
 	title.size = Vector2(280, 42)
 	app._view_container().add_child(title)
 
-	var dates_left := 2 + int(app.save.get("gal_level", 2))
+	var used_dates := int(app.save.get("gal_dates_used_today", 0))
+	var dates_left := maxi(2 + int(app.save.get("gal_level", 2)) - used_dates, 0)
 	var remain = app._label("今日可安排 %d 次" % dates_left, 18)
 	remain.position = Vector2(card_pos.x + 50, card_pos.y + 74)
 	remain.size = Vector2(240, 28)
@@ -1173,7 +1305,7 @@ func _draw_date_select_view() -> void:
 	record.size = Vector2(92, 26)
 	app._view_container().add_child(record)
 	_add_hit_button(Vector2(card_pos.x + 34, card_pos.y + 120), Vector2(78, 78), func() -> void:
-		show_view(VIEW_CHARACTER)
+		show_view(VIEW_MEMORY)
 	)
 
 	var info_panel = app._panel(Vector2(card_pos.x + 150, card_pos.y + 112), Vector2(850, 176), Color(0.16, 0.08, 0.11, 0.74))
@@ -1228,8 +1360,18 @@ func _draw_date_select_view() -> void:
 	app._draw_image(GAL_BTN_DATE_CONFIRM, Vector2(card_pos.x + 366, card_pos.y + 528), Vector2(270, 58), false)
 	_add_gal_text("確認出行", Vector2(card_pos.x + 424, card_pos.y + 541), Vector2(160, 28), 20)
 	_add_hit_button(Vector2(card_pos.x + 366, card_pos.y + 528), Vector2(270, 58), func() -> void:
+		if int(app.save.get("gal_dates_used_today", 0)) >= 2 + int(app.save.get("gal_level", 2)):
+			_show_touch_hint("今日出行次數已用完")
+			return
+		var selected_index := int(app.save.get("gal_selected_date_option", 0))
+		var selected: Dictionary = sections[clampi(selected_index, 0, sections.size() - 1)]
+		app.save["gal_dates_used_today"] = int(app.save.get("gal_dates_used_today", 0)) + 1
+		app.save["gal_last_date"] = str(selected.get("title", "外出"))
+		app.save["gal_memory_date"] = true
+		_add_gal_exp(15)
 		_play_touch_voice("greet")
 		show_view(VIEW_MAIN)
+		_show_touch_hint("已完成外出：%s，親密 +15" % str(selected.get("title", "外出")))
 	)
 
 

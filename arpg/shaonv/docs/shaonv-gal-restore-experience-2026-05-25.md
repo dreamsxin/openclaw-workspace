@@ -374,3 +374,26 @@ $py='C:\Users\admin\AppData\Local\Python\pythoncore-3.14-64\python.exe'
 
 - `tmp/screenshots/gal-dress-up-impl-v3.png`
 - `tmp/screenshots/gal-special-touch-impl-v3.png`
+
+## 17. Gal 其他按钮功能闭环
+
+本轮把 Gal 主界面里原本只弹提示或半接通的按钮补成可写状态/可跳转的闭环功能：
+
+- 顶部最爱按钮写入 `favorite_gal_hero_id`，记录当前看板角色。
+- 亲密等级圆环进入 `VIEW_LEVEL`，展示当前等级、经验条和功能解锁列表。
+- 礼物按钮进入 `VIEW_GIFT`，可选择糖果、花束、饰品，扣减持有数、增加亲密度、播放礼物语音，并写入 `gal_memory_gift`。
+- 约会/外出确认会消耗 `gal_dates_used_today`，记录 `gal_last_date`，增加亲密度，并写入 `gal_memory_date`。
+- 约会页的“回忆”按钮改为进入心动回忆页，而不是性格详情页。
+- 相册页根据礼物/约会状态解锁更多格子；已解锁相片会进入 `VIEW_ALBUM_DETAIL`。
+- 心动回忆条目不再只弹提示，已解锁的“送礼反应/外出邀约/甜蜜互动”会跳到对应功能页。
+
+统一经验处理：
+
+- `touch/gift/date` 都走 `_add_gal_exp(amount)`，经验满 `250` 自动提升 `gal_level` 并保留溢出经验。
+
+本轮验证截图：
+
+- `tmp/screenshots/gal-gift-view.png`
+- `tmp/screenshots/gal-level-view.png`
+- `tmp/screenshots/gal-album-view-buttons.png`
+- `tmp/screenshots/gal-date-select-buttons.png`
