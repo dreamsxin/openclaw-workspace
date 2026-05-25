@@ -317,3 +317,33 @@ Godot MVP 已按 prefab 尺寸调整详情左侧头像条：头像 `70x70`，`co
 新增验证截图：
 
 - `tmp/screenshots/godot-remnant-detail-head-frame.png`
+
+## 15. Gal 互动音频导出与播放
+
+Gal 主界面的角色互动音频来自 `Assets/Game/RawAssets/Sound/Action/hero_xxx_*.wav`，不是 `Sound/Battle/hero_xxxq_*`。以默认 Gal 角色 `hero_037r_s01` 为例，互动语音仍按本体编号 `hero_037` 查找：
+
+- `hero_037_greet.wav`：进入 Gal 主界面/确认出行等问候反馈。
+- `hero_037_wait1.wav` / `hero_037_wait2.wav` / `hero_037_wait3.wav`：主界面待机语音。
+- `hero_037_arm1.wav` / `hero_037_er.wav`：触摸/短反馈语音。
+- `hero_037_gift.wav` / `hero_037_gift_fav.wav`：礼物反馈。
+
+导出脚本：
+
+```powershell
+$py='C:\Users\admin\AppData\Local\Python\pythoncore-3.14-64\python.exe'
+& $py scripts\assets\export_unity_audio_clips.py --plan tmp\gal-hero037-audio-export-plan.json --repo-root . --godot-root standalone\godot-mvp --export-root reverse-output\godot-resource-export\gal-audio-hero037
+```
+
+关键经验：
+
+- 音频 bundle 同样需要 YooAsset 前 `222` 字节 XOR `0x16`。只 XOR 32 字节会触发 UnityPy 的 encrypted BundleFile 报错。
+- `AudioClip.samples` 可直接导出 RIFF WAV；`hero_037_*` 样本均为 PCM、单声道、16-bit、22050Hz。
+- Godot CLI/运行时不会自动 import 新导出的 `.wav`，直接 `load("res://...wav")` 会报 `No loader found`。当前 Gal 脚本用轻量 RIFF WAV parser 构造 `AudioStreamWAV`，避免依赖 Godot Editor 导入流程。
+- 当前运行环境 WASAPI 初始化失败会回退 dummy driver，因此自动验证只能证明播放链路无脚本错误；实际听音需在音频设备正常的环境中打开。
+
+已接入的 Godot 互动：
+
+- 所有 Gal 透明命中按钮增加按下缩放、悬停透明反馈，并播放短点击音。
+- 角色中间区域增加触摸命中，轮播 `greet/arm/wait` 语音并显示短飘字。
+- 礼物按钮播放 `gift/gift_fav` 语音。
+- Gal 主界面启动后会播放问候语音，并开启待机语音定时器。

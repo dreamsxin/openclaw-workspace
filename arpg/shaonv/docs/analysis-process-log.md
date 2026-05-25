@@ -52,6 +52,7 @@ export_unity_ui_resources.py    → 从 bundle 批量导出 PNG sprite → asset
 - 复核完整 APK 后确认：`base.apk`、`split_config.arm64_v8a.apk`、`split_install_time_asset_pack.apk` 均不包含 `HeroListView` 的目标 hash / bundle name；`split_install_time_asset_pack.apk` 的 `assets/yoo/Default` 与当前 resources 集合一致。后续补齐应转向已安装客户端缓存、热更 manifest 或网络下载源。
 - MainUIView 全量清单给的是 Unity `RectTransform` 原始值，不是 Godot 可直接使用的屏幕左上角坐标。修 Godot Home 时必须同时处理父容器、锚点、pivot、Y 轴方向、非等比画布缩放、LayoutGroup/ContentSizeFitter 运行时排布和运行时数据注入。详细经验见 `shaonv-mainui-godot-home-fix-experience-2026-05-25.md`。
 - 角色战斗侧未发现 `Assets/Game/RawAssets/Spine/Hero/hero_xxxq` 独立 Spine；战斗动作资源应从 `Prefabs/3d/hero_xxxq_*`、`Prefabs/Skill/Hero_xxxQ*`、`Sound/Battle/hero_xxxq_*` 关联。Godot 预览器中间仍播放 `hero_xxx` 本体 baked Spine，右侧列出同编号 `hero_xxxq` 战斗资源。详见 `shaonv-hero-battle-preview-2026-05-25.md`。
+- Gal 角色互动音频来自 `Sound/Action/hero_xxx_*.wav`，可用 `scripts/assets/export_unity_audio_clips.py` 按计划小批量导出。UnityPy 读取前需要 YooAsset 前 222 字节 XOR 0x16，导出的 RIFF WAV 在 Godot CLI 下需运行时构造 `AudioStreamWAV`，不能依赖 Editor 自动 import。
 
 ## 已删除/归档的原始文档
 

@@ -45,9 +45,30 @@ const GAL_IMG_TRAIT_1 := "res://assets/ui/gal/gal_img_115.png"
 const GAL_IMG_TRAIT_2 := "res://assets/ui/gal/gal_img_116.png"
 const GAL_IMG_TRAIT_3 := "res://assets/ui/gal/gal_img_117.png"
 const GAL_IMG_TRAIT_4 := "res://assets/ui/gal/gal_img_118.png"
+const GAL_AUDIO_CLICK := "res://assets/audio/gal/hero_037_er.wav"
+const GAL_AUDIO_GREET := "res://assets/audio/gal/hero_037_greet.wav"
+const GAL_AUDIO_WAIT := [
+	"res://assets/audio/gal/hero_037_wait1.wav",
+	"res://assets/audio/gal/hero_037_wait2.wav",
+	"res://assets/audio/gal/hero_037_wait3.wav",
+]
+const GAL_AUDIO_TOUCH := [
+	"res://assets/audio/gal/hero_037_greet.wav",
+	"res://assets/audio/gal/hero_037_arm1.wav",
+	"res://assets/audio/gal/hero_037_wait2.wav",
+]
+const GAL_AUDIO_GIFT := [
+	"res://assets/audio/gal/hero_037_gift.wav",
+	"res://assets/audio/gal/hero_037_gift_fav.wav",
+]
 
 var app
 var _current_view := VIEW_MAIN
+var _audio_player: AudioStreamPlayer
+var _voice_index := 0
+var _gift_voice_index := 0
+var _idle_voice_timer: Timer
+var _audio_cache: Dictionary = {}
 
 const GAL_PREFAB_SCALE := Vector2(1280.0 / 1670.0, 720.0 / 750.0)
 const GAL_INFO_PANEL_CENTER := Vector2(190, -46)
@@ -65,6 +86,7 @@ func show_view(view_name: String) -> void:
 	_current_view = view_name
 	app.current_view = "gal"
 	app._clear("Gal")
+	_ensure_audio_player()
 	match view_name:
 		VIEW_DATE_SELECT:
 			_draw_date_select_view()
@@ -72,6 +94,7 @@ func show_view(view_name: String) -> void:
 			_draw_character_view()
 		_:
 			_draw_main_view()
+	_restart_idle_voice_timer()
 
 
 func _selected_hero() -> Dictionary:
@@ -145,6 +168,10 @@ func _draw_main_view() -> void:
 
 func _draw_hero_stage(hero: Dictionary) -> void:
 	app._draw_hero_stage(hero, Vector2(330, 28), Vector2(540, 662), false)
+	_add_hit_button(Vector2(360, 40), Vector2(470, 610), func() -> void:
+		_play_touch_voice("touch")
+		_show_touch_hint("摸到了。%s 的心情似乎變好了。" % str(hero.get("name", "她")))
+	)
 
 	var line = app._label("今天也要全力發光!", 18, HORIZONTAL_ALIGNMENT_CENTER)
 	line.position = Vector2(500, 430)
@@ -157,7 +184,10 @@ func _draw_top_bar() -> void:
 	var close_pos := _gal_top_left_pos(Vector2(60, -18))
 	var close_size := _gal_size(Vector2(120, 80))
 	app._draw_image(GAL_BTN_CLOSE, close_pos, close_size, false, Color(1, 1, 1, 0.94))
-	_add_hit_button(close_pos, close_size, app._show_home)
+	_add_hit_button(close_pos, close_size, func() -> void:
+		_stop_idle_voice_timer()
+		app._show_home()
+	)
 
 	var detail_pos := _gal_top_left_pos(Vector2(126, -18))
 	var section_size := _gal_size(Vector2(60, 60))
@@ -291,6 +321,8 @@ func _draw_action_buttons() -> void:
 	app._draw_image(GAL_BTN_GIFT, gift_pos, small_size, false, Color(1, 1, 1, 0.90))
 	_add_gal_text("禮物", gift_pos + _gal_size(Vector2(0, 60)), _gal_size(Vector2(88, 22)), 14)
 	_add_hit_button(gift_pos, small_size, func() -> void:
+		_play_gift_voice()
+		_show_touch_hint("禮物已送出，好感 +5")
 		show_view(VIEW_DATE_SELECT)
 	)
 
@@ -443,11 +475,13 @@ func _draw_date_select_view() -> void:
 		var selected_index := index
 		_add_hit_button(Vector2(px, py), Vector2(262, 182), func() -> void:
 			app.save["gal_selected_date_option"] = selected_index
+			_show_touch_hint("已選擇：%s" % str(item.get("title", "")))
 		)
 
 	app._draw_image(GAL_BTN_DATE_CONFIRM, Vector2(card_pos.x + 366, card_pos.y + 528), Vector2(270, 58), false)
 	_add_gal_text("確認出行", Vector2(card_pos.x + 424, card_pos.y + 541), Vector2(160, 28), 20)
 	_add_hit_button(Vector2(card_pos.x + 366, card_pos.y + 528), Vector2(270, 58), func() -> void:
+		_play_touch_voice("greet")
 		show_view(VIEW_MAIN)
 	)
 
@@ -602,6 +636,187 @@ func _add_hit_button(pos: Vector2, hit_size: Vector2, callback: Callable) -> But
 	button.position = pos
 	button.size = hit_size
 	button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-	button.pressed.connect(callback)
+	button.button_down.connect(_on_gal_button_down.bind(button))
+	button.button_up.connect(_on_gal_button_up.bind(button))
+	button.mouse_entered.connect(_on_gal_button_hover.bind(button, true))
+	button.mouse_exited.connect(_on_gal_button_hover.bind(button, false))
+	button.pressed.connect(func() -> void:
+		_play_gal_sound(GAL_AUDIO_CLICK, 0.45)
+		_spawn_press_pulse(button)
+		callback.call()
+	)
 	app._view_container().add_child(button)
 	return button
+
+
+func _ensure_audio_player() -> void:
+	if _audio_player != null and is_instance_valid(_audio_player):
+		return
+	_audio_player = AudioStreamPlayer.new()
+	_audio_player.name = "GalAudioPlayer"
+	app.add_child(_audio_player)
+
+
+func _play_gal_sound(path: String, volume := 1.0) -> void:
+	if not bool(app.save.get("settings", {}).get("effects", true)):
+		return
+	if path.is_empty() or not FileAccess.file_exists(path):
+		return
+	_ensure_audio_player()
+	var stream := _load_wav_stream(path)
+	if stream == null:
+		return
+	_audio_player.stream = stream
+	_audio_player.volume_db = linear_to_db(clampf(volume, 0.01, 1.0))
+	_audio_player.play()
+
+
+func _load_wav_stream(path: String) -> AudioStreamWAV:
+	if _audio_cache.has(path):
+		return _audio_cache[path]
+	var bytes := FileAccess.get_file_as_bytes(path)
+	if bytes.size() < 44 or _ascii4(bytes, 0) != "RIFF" or _ascii4(bytes, 8) != "WAVE":
+		return null
+	var offset := 12
+	var channels := 1
+	var sample_rate := 22050
+	var bits_per_sample := 16
+	var data_start := -1
+	var data_size := 0
+	while offset + 8 <= bytes.size():
+		var chunk := _ascii4(bytes, offset)
+		var chunk_size := _u32le(bytes, offset + 4)
+		var chunk_data := offset + 8
+		if chunk == "fmt " and chunk_data + 16 <= bytes.size():
+			var audio_format := _u16le(bytes, chunk_data)
+			channels = _u16le(bytes, chunk_data + 2)
+			sample_rate = _u32le(bytes, chunk_data + 4)
+			bits_per_sample = _u16le(bytes, chunk_data + 14)
+			if audio_format != 1:
+				return null
+		elif chunk == "data":
+			data_start = chunk_data
+			data_size = mini(chunk_size, bytes.size() - data_start)
+			break
+		offset = chunk_data + chunk_size + (chunk_size % 2)
+	if data_start < 0 or data_size <= 0:
+		return null
+	var stream := AudioStreamWAV.new()
+	if bits_per_sample == 8:
+		stream.format = AudioStreamWAV.FORMAT_8_BITS
+	elif bits_per_sample == 16:
+		stream.format = AudioStreamWAV.FORMAT_16_BITS
+	else:
+		return null
+	stream.mix_rate = sample_rate
+	stream.stereo = channels == 2
+	stream.data = bytes.slice(data_start, data_start + data_size)
+	_audio_cache[path] = stream
+	return stream
+
+
+func _u16le(bytes: PackedByteArray, offset: int) -> int:
+	return int(bytes[offset]) | (int(bytes[offset + 1]) << 8)
+
+
+func _u32le(bytes: PackedByteArray, offset: int) -> int:
+	return int(bytes[offset]) | (int(bytes[offset + 1]) << 8) | (int(bytes[offset + 2]) << 16) | (int(bytes[offset + 3]) << 24)
+
+
+func _ascii4(bytes: PackedByteArray, offset: int) -> String:
+	if offset + 4 > bytes.size():
+		return ""
+	var out := ""
+	for index in range(4):
+		out += char(bytes[offset + index])
+	return out
+
+
+func _play_touch_voice(kind := "touch") -> void:
+	var pool: Array = GAL_AUDIO_TOUCH
+	if kind == "greet":
+		_play_gal_sound(GAL_AUDIO_GREET, 0.9)
+		return
+	if pool.is_empty():
+		return
+	var path := str(pool[_voice_index % pool.size()])
+	_voice_index += 1
+	_play_gal_sound(path, 0.9)
+
+
+func _play_gift_voice() -> void:
+	if GAL_AUDIO_GIFT.is_empty():
+		return
+	var path := str(GAL_AUDIO_GIFT[_gift_voice_index % GAL_AUDIO_GIFT.size()])
+	_gift_voice_index += 1
+	_play_gal_sound(path, 0.92)
+
+
+func _restart_idle_voice_timer() -> void:
+	_stop_idle_voice_timer()
+	if _current_view != VIEW_MAIN or GAL_AUDIO_WAIT.is_empty():
+		return
+	_idle_voice_timer = Timer.new()
+	_idle_voice_timer.one_shot = false
+	_idle_voice_timer.wait_time = 12.0
+	_idle_voice_timer.timeout.connect(_play_idle_voice)
+	app._view_container().add_child(_idle_voice_timer)
+	_idle_voice_timer.start()
+	_play_gal_sound(GAL_AUDIO_GREET, 0.85)
+
+
+func _stop_idle_voice_timer() -> void:
+	if _idle_voice_timer != null and is_instance_valid(_idle_voice_timer):
+		_idle_voice_timer.stop()
+		_idle_voice_timer.queue_free()
+	_idle_voice_timer = null
+
+
+func _play_idle_voice() -> void:
+	if _current_view != VIEW_MAIN or GAL_AUDIO_WAIT.is_empty():
+		return
+	var path := str(GAL_AUDIO_WAIT[randi() % GAL_AUDIO_WAIT.size()])
+	_play_gal_sound(path, 0.72)
+
+
+func _show_touch_hint(text: String) -> void:
+	var bubble: Label = app._label(text, 17, HORIZONTAL_ALIGNMENT_CENTER)
+	bubble.position = Vector2(446, 472)
+	bubble.size = Vector2(390, 38)
+	bubble.modulate = Color(1.0, 0.92, 0.98, 0.0)
+	app._view_container().add_child(bubble)
+	var tween: Tween = bubble.create_tween()
+	tween.tween_property(bubble, "modulate:a", 0.96, 0.12)
+	tween.tween_property(bubble, "position:y", bubble.position.y - 18.0, 0.45).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tween.parallel().tween_property(bubble, "modulate:a", 0.0, 0.45).set_delay(0.35)
+	tween.tween_callback(bubble.queue_free)
+
+
+func _spawn_press_pulse(button: Button) -> void:
+	var pulse := ColorRect.new()
+	pulse.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	pulse.color = Color(1.0, 0.72, 0.92, 0.28)
+	var pulse_size := Vector2(minf(button.size.x, 96.0), minf(button.size.y, 96.0))
+	pulse.position = button.position + button.size * 0.5 - pulse_size * 0.5
+	pulse.size = pulse_size
+	pulse.scale = Vector2(0.82, 0.82)
+	pulse.pivot_offset = pulse_size * 0.5
+	app._view_container().add_child(pulse)
+	var tween := pulse.create_tween()
+	tween.tween_property(pulse, "scale", Vector2(1.25, 1.25), 0.22).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tween.parallel().tween_property(pulse, "color:a", 0.0, 0.22)
+	tween.tween_callback(pulse.queue_free)
+
+
+func _on_gal_button_down(button: Button) -> void:
+	var tween := button.create_tween()
+	tween.tween_property(button, "scale", Vector2(0.96, 0.96), 0.06)
+
+
+func _on_gal_button_up(button: Button) -> void:
+	var tween := button.create_tween()
+	tween.tween_property(button, "scale", Vector2.ONE, 0.10).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+
+func _on_gal_button_hover(button: Button, hovering: bool) -> void:
+	button.modulate = Color(1.0, 1.0, 1.0, 0.36) if hovering else Color(1, 1, 1, 1)
