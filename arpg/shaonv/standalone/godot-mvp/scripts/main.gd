@@ -1747,10 +1747,22 @@ func _hero_round_head_path(hero: Dictionary) -> String:
 		return _godot_resource_path(explicit)
 	var spine := str(hero.get("spine", ""))
 	if spine.begins_with("hero_"):
+		var candidates: Array[String] = []
 		var suffix := spine.trim_prefix("hero_")
-		var path := "res://assets/ui/hero/round/yhero_%s.png" % suffix
-		if FileAccess.file_exists(path):
-			return path
+		candidates.append(suffix)
+		var base_suffix := suffix.split("_")[0]
+		if not candidates.has(base_suffix):
+			candidates.append(base_suffix)
+		if base_suffix.length() > 1:
+			var last_char := base_suffix.substr(base_suffix.length() - 1, 1)
+			if last_char == "r" or last_char == "h":
+				var normalized_suffix := base_suffix.substr(0, base_suffix.length() - 1)
+				if not candidates.has(normalized_suffix):
+					candidates.append(normalized_suffix)
+		for candidate in candidates:
+			var path := "res://assets/ui/hero/round/yhero_%s.png" % candidate
+			if FileAccess.file_exists(path):
+				return path
 	return ""
 
 func _hero_round_head_texture(hero: Dictionary) -> Texture2D:

@@ -103,7 +103,7 @@
 本轮根据 `现世界面.jpg` 重新校准 `standalone/godot-mvp/scripts/screens/gal_screen.gd`：
 
 - 背景不能使用 `gal_img_122` 作为实际房间图。`gal_img_122` 是 UI 透明/遮罩层；截图同款房间来自 `standalone/unity-mvp/Assets/Resources/UI/BackGround/gal_bg_room_4.png`，已复制到 Godot：`assets/ui/background/gal_bg_room_4.png`。
-- 角色资源确认走 `hero_037` 线索。`hero_resource_map.json` 中 `240030` 的 Gal 专用 spine 是 `hero_037r_s01|hero_037r`，但当前 Godot baked canvas 渲染这两套会出现 atlas 散片被放大到前景的问题。因此本轮先使用已验证可正常拼装的 `hero_037`，并在代码注释中保留后续修复 Gal 专用 spine 的入口。
+- 角色资源确认走 Gal 专用 spine 线索。`hero_resource_map.json` 中 `240030` 的 Gal 专用 spine 是 `hero_037r_s01|hero_037r`；当前 Godot MVP 已改为默认使用 `hero_037r_s01`，并通过截图验证中间动态看板可正常拼装。
 - 截图态左栏不是完整 prefab 线框中的所有按钮都可见：顶部为返回、帮助、收藏；左栏文字为 `玄武 / 墨茗 / 天真無邪`；主要侧按钮显示 `裝扮`、`甜蜜互動`；左下角为角色头像切换入口。
 - 右侧亲密等级在截图中位于右上，而不是线框初稿中的右下；`心動回憶` 与 `相冊` 纵向排列在等级环下方。
 - 底部操作区按照截图从左到右为 `檔案`、`禮物`、`外出`、`約會`，右下贴边但保留 20px 左右的底部呼吸空间。
@@ -112,4 +112,4 @@
 
 - `tmp/screenshots/godot-gal-layout-fix-3.png`
 
-后续若要完全换成截图中的 Gal 动态看板，需要先修复 `hero_037r` / `hero_037r_s01` 的 baked attachment 变换或多图层合成问题；否则布局正确也会被前景散片遮挡。
+后续继续对齐截图时，重点转向 UI 锚点和头像资源：左下角色头像应优先命中 `Head/Round/yhero_*`，当前工作区缺 `yhero_037*.png` 时只能临时回退到 `zhero_037` 裁切。

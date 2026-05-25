@@ -64,19 +64,13 @@ Unity 全量清单里的 `RectTransform` 不能直接当 Godot 左上角坐标�
 
 ## 5. 动态看板问题
 
-`hero_037r` 与 `hero_037r_s01` 是正确的 Gal 专用动态看板线索，但当前 Godot baked 渲染会出现 atlas 散片被放大到前景的问题。现象：
+`hero_037r_s01|hero_037r` 是正确的 Gal 专用动态看板线索；当前 Godot MVP 已改为优先使用 `hero_037r_s01`，并验证中间角色区域可正常拼装。早期记录的散片问题不再作为当前阻塞项处理。
 
-- `hero_037r_s01`：脸、手、衣服等 attachment 以巨大散片覆盖屏幕。
-- `hero_037r`：腿、头发等 attachment 以错误尺度覆盖前景。
-- `hero_037`：可正常拼装，因此作为当前 MVP 临时回退。
+后续继续修 Gal 主界面时优先检查：
 
-下一步修复应优先检查：
-
-- baked JSON 的 `bounds` 是否被异常大的附件污染。
-- `spine_baked_preview_canvas.gd` 是否按 clip 全局 bounds 缩放，导致 Gal r 资源中某些附件扩大后拖垮整体 scale。
-- baker 是否需要过滤 inactive/hidden slot，或按 drawOrder/attachment color alpha 判断可见性。
-- atlas region 的旋转、offset、originalSize、uv 是否在 baker 输出和 Godot canvas 中被一致处理。
-- `hero_037r*` 是否需要按背景/前景/角色分层渲染，而不是合成到单个 baked canvas。
+- `hero_resource_map.json` / 英雄数据中的 Gal 专用 spine、半身、头像字段，不要把普通战斗/招募资源误用到 Gal 看板。
+- `Head/Round/yhero_*` 是否同步到 `standalone/godot-mvp/assets/ui/hero/round/`；例如 `hero_037r_s01` 应依次尝试 `yhero_037r_s01`、`yhero_037r`、`yhero_037`。
+- 缺圆头像时只能临时回退到 `zhero_*` 裁切，视觉上会和 Gal/英雄详情的圆头像不一致，必须标记为资源缺口而不是布局问题。
 
 ## 6. 快速验证命令
 
@@ -91,7 +85,39 @@ $env:SHAONV_MVP_START_VIEW='gal'
 
 - `tmp/screenshots/godot-gal-layout-fix-3.png`
 
-## 7. 子界面继续恢复记录
+## 7. 资源路径关系速查
+
+本次 Gal 修复最重要的经验不是单个坐标，而是资源路径要按“数据索引、Prefab 节点绑定、物理 bundle、Godot 落地路径”四段一起查。不要只按截图里看到的名字猜资源。
+
+通用查找链路：
+
+1. 先查全量控件清单：`docs/shaonv-*-full-control-resource-inventory-*.md`。节点表里的 `Image:xxx -> bundle` 是 UI 按钮、框、头像格的第一可信来源。
+2. 再查角色资源索引：`standalone/godot-mvp/data/hero_resource_map.json` 或 `reverse-output/gacha-static/hero_resource_map.csv`。这里负责回答同一个 `heroId` 在普通英雄、招募、Gal 看板、Gal 半身中分别该用哪套资源。
+3. 需要导出原始图时查物理映射：`reverse-output/assets/yoo-physical-map/physical-asset-map.csv`。确认 `assetPath`、`bundleName`、`physicalPath`、`physicalExists`，不要只看 manifest 地址。
+4. 最后核对 Godot 落地路径：`standalone/godot-mvp/assets/...`。代码里用的是 `res://assets/...`，例如 `Assets/Game/RawAssets/Sprite/Head/Round/yhero_023.png` 对应 `res://assets/ui/hero/round/yhero_023.png`。
+
+Gal 默认角色 `240030` 的例子：
+
+| 用途 | 数据字段/节点 | Unity 原始资源线索 | Godot 路径 |
+|------|---------------|--------------------|------------|
+| 中间 Gal Spine | `hero_resource_map.galSpine` | `hero_037r_s01|hero_037r` | `res://assets/spine/hero_037r_s01/hero_037r_s01.baked.json` |
+| 普通 Spine | `hero_resource_map.spine` | `hero_037|hero_037_s01` | `res://assets/spine/hero_037/...` |
+| 招募立绘兜底 | `hero_resource_map.recruitImg` | `zhero_037|zhero_037_s01` | `res://assets/ui/hero/recruit/zhero_037.png` |
+| Gal 半身/皮肤格 | `hero_resource_map.galHalfIcon` | `phero_037r_s01|phero_037r` | `res://assets/ui/hero/half/...`，按实际导出文件核对 |
+| 圆头像 | `HeroMainSelectHeroGrid/imgHero` 等节点 | `Head/Round/yhero_*` | `res://assets/ui/hero/round/yhero_*.png` |
+| Gal 顶部返回/详情/收藏 | `GalDormitoryMainPanel/pnlTopBar` | `gal_btn_01 / gal_btn_30 / gal_btn_31` | `res://assets/ui/gal/gal_btn_01.png` 等 |
+
+圆头像命名要特别小心：Gal Spine 往往带皮肤/场景后缀，例如 `hero_037r_s01`。Godot 现在的候选链是 `yhero_037r_s01 -> yhero_037r -> yhero_037`；当前工作区没有 `yhero_037*.png`，所以 Gal 左下头像只能回退到 `zhero_037` 裁切。这是资源缺口，不是布局问题。
+
+同类界面查找时可以套用这条规则：
+
+- `zhero_*`：招募/卡片立绘兜底，通常不适合作圆头像。
+- `yhero_*` / `ypet_*`：圆头像，英雄详情左侧条、Gal 角色入口、Toast/Map 头像节点优先用这一类。
+- `phero_*`：半身/皮肤格，Gal 换装类界面会出现。
+- `hero_*` Spine：战斗/普通展示用；`hero_*r*` 通常是 Gal/宿舍看板特化资源，要优先查 `galSpine` 而不是普通 `spine`。
+- `gal_btn_* / gal_img_*`：Gal UI 按钮和框，先从 `GalDormitoryMainPanel` 清单拿节点名与 sprite 名，再映射到 `res://assets/ui/gal/`。
+
+## 8. 子界面继续恢复记录
 
 本轮继续把 `GalDateSelectView` 与 `GalCharacterView` 接入 Godot MVP，形成 `gal_screen.gd` 内部三态：
 
@@ -111,7 +137,7 @@ $env:SHAONV_MVP_START_VIEW='gal'
 
 - `tmp/screenshots/godot-gal-restored-main.png`
 
-## 8. 幻靈详情页恢复补充
+## 9. 幻靈详情页恢复补充
 
 从 `MainUI` 底栏进入的 `幻靈` 不是抽卡 `喚靈`，而是 `RemnantsListView` / `RemnantsMainView` 链路；`喚靈` 才对应 `LotteryDrawMainView`。恢复时先把入口语义分清，否则会把 Home 按钮接到错误界面。
 
@@ -143,7 +169,7 @@ $env:SHAONV_MVP_START_VIEW='gal'
 
 - `tmp/screenshots/godot-remnant-detail-v3.png`
 
-## 9. 按 prefab 节点反查 Sprite / Icon
+## 10. 按 prefab 节点反查 Sprite / Icon
 
 后续恢复界面时不要只靠截图猜 icon，优先走 `prefab 节点名 -> Image.sprite -> sprite 名称 -> 本地 PNG/物理 bundle` 的链路：
 
@@ -158,7 +184,7 @@ $env:SHAONV_MVP_START_VIEW='gal'
 - `tmp/screenshots/hero-img-1-90-contact.png`
 - `tmp/screenshots/godot-remnant-detail-v4.png`
 
-## 10. 头像资源不要混用
+## 11. 头像资源不要混用
 
 英雄/gal/幻靈界面的头像必须按原始资源类别区分，不能把抽卡招募图裁切后到处复用：
 
@@ -188,7 +214,7 @@ standalone/godot-mvp/assets/ui/hero/round/yhero_*.png
 
 - `tmp/screenshots/godot-remnant-detail-round-heads-v2.png`
 
-## 11. 控件 icon / sprite 资源页
+## 12. 控件 icon / sprite 资源页
 
 恢复界面时建议先生成资源页，再结合 prefab 节点清单查图，不要只凭截图猜。已新增脚本：
 
@@ -215,7 +241,7 @@ standalone/godot-mvp/assets/ui/hero/round/yhero_*.png
 - 如果必须从 bundle 导出，应按 prefab 资源表列出目标 sprite 名称，分批导出并只读目标 Sprite；不要遍历所有 Texture2D。若导出卡住，先检查/结束残留 Python 进程，再继续。
 - 资源页只作为“看图索引”，最终使用前仍要回到 `*-full-control-resource-inventory-*.md` 验证节点绑定，例如 `HeroMainView/pnllLeft/pnlSelectHero -> hero_img_36`、`HeroMainSelectHeroGrid/imgHero -> yhero_000`。
 
-## 12. Unity bundle 小样本解包验证
+## 13. Unity bundle 小样本解包验证
 
 本轮继续测试 Unity bundle 解包，结论是：小样本按 `physical-asset-map.csv` 精确导出目标 sprite 是稳定的，之前卡住不是包不可解，而是全量/半全量读取大图集、以及 Windows `Python Install Manager` shim 干扰进程判断。
 
@@ -259,13 +285,14 @@ Measure-Command { & $py scripts\assets\export_unity_bundle_images.py --plan tmp\
 - 耗时约 `1.28s`。
 - `tmp/screenshots/resource-sheets/hero-round-heads.png` 已更新。
 - `tmp/screenshots/godot-remnant-detail-round-heads-v3.png` 验证详情页左侧已全部使用 `Head/Round/yhero_*` 圆头像。
+- 2026-05-25 复核 Gal 默认角色 `hero_037r_s01`：当前工作区未找到 `yhero_037*.png`，Gal 左下角色头像仍会回退到 `zhero_037` 裁切；已在 Godot 资源解析中加入 `037r_s01 -> 037r -> 037` 候选链，资源补齐后会自动命中。
 
 补充脚本经验：
 
 - `export_unity_bundle_images.py` 在传入 `wanted` 时会跳过 `Texture2D`，只读取目标 `Sprite`，这是避免头像大图集卡死的关键。
 - 仍然不要一次性全量导出大型 atlas；优先从 prefab 清单或 manifest 中列计划文件，10-50 个一批导出更安全。
 
-## 13. 英雄详情左侧头像外圈
+## 14. 英雄详情左侧头像外圈
 
 英雄详情左侧头像条对应 `HeroMainSelectHeroGrid`，外圈不是单个资源，而是至少三层组合：
 

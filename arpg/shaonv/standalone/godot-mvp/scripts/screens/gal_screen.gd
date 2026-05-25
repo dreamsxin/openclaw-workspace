@@ -4,12 +4,14 @@ extends RefCounted
 const VIEW_MAIN := "main"
 const VIEW_DATE_SELECT := "date_select"
 const VIEW_CHARACTER := "character"
+const DEFAULT_GAL_HERO_ID := 240030
 
 # Main panel resources
 const GAL_BG := "res://assets/ui/gal/gal_img_122.png"
 const GAL_ROOM_BG := "res://assets/ui/background/gal_bg_room_4.png"
 const GAL_HERO_PANEL := "res://assets/ui/gal/gal_img_03.png"
 const GAL_BTN_CLOSE := "res://assets/ui/gal/gal_btn_01.png"
+const GAL_BTN_DETAIL := "res://assets/ui/gal/gal_btn_30.png"
 const GAL_BTN_FAV := "res://assets/ui/gal/gal_btn_31.png"
 const GAL_BTN_LV := "res://assets/ui/gal/gal_img_07.png"
 const GAL_BTN_LV_BAR := "res://assets/ui/gal/gal_img_08.png"
@@ -47,6 +49,10 @@ const GAL_IMG_TRAIT_4 := "res://assets/ui/gal/gal_img_118.png"
 var app
 var _current_view := VIEW_MAIN
 
+const GAL_PREFAB_SCALE := Vector2(1280.0 / 1670.0, 720.0 / 750.0)
+const GAL_INFO_PANEL_CENTER := Vector2(190, -46)
+const GAL_INFO_PANEL_SIZE := Vector2(292, 610)
+
 func _init(app_ref) -> void:
 	app = app_ref
 
@@ -69,7 +75,55 @@ func show_view(view_name: String) -> void:
 
 
 func _selected_hero() -> Dictionary:
-	return app._hero_by_id(int(app.save.get("selected_hero_id", 240037)))
+	var hero: Dictionary = app._hero_by_id(int(app.save.get("selected_gal_hero_id", DEFAULT_GAL_HERO_ID)))
+	if hero.is_empty():
+		hero = app._hero_by_id(DEFAULT_GAL_HERO_ID)
+	if not hero.is_empty():
+		hero = hero.duplicate(true)
+		var spine := str(hero.get("spine", ""))
+		if spine == "hero_037":
+			hero["name"] = "墨菏"
+			hero["title"] = "玄武"
+			hero["spine"] = "hero_037r_s01"
+			hero["artResource"] = "Art/Spine/hero_037r_s01/hero_037r_s01"
+			hero["galSpine"] = "hero_037r_s01|hero_037r"
+			hero["portraitResource"] = "assets/ui/hero/recruit/zhero_037.png"
+	return hero
+
+
+func _gal_size(prefab_size: Vector2) -> Vector2:
+	return Vector2(prefab_size.x * GAL_PREFAB_SCALE.x, prefab_size.y * GAL_PREFAB_SCALE.y)
+
+
+func _gal_top_left_pos(pos: Vector2) -> Vector2:
+	return Vector2(pos.x * GAL_PREFAB_SCALE.x, -pos.y * GAL_PREFAB_SCALE.y)
+
+
+func _gal_left_middle_pos(center: Vector2, size: Vector2) -> Vector2:
+	return Vector2((center.x - size.x * 0.5) * GAL_PREFAB_SCALE.x, (375.0 - center.y - size.y * 0.5) * GAL_PREFAB_SCALE.y)
+
+
+func _gal_right_bottom_pos(center: Vector2, size: Vector2) -> Vector2:
+	return Vector2((1670.0 + center.x - size.x) * GAL_PREFAB_SCALE.x, (750.0 - center.y - size.y) * GAL_PREFAB_SCALE.y)
+
+
+func _gal_right_top_pos(center: Vector2, size: Vector2) -> Vector2:
+	return Vector2((1670.0 + center.x - size.x) * GAL_PREFAB_SCALE.x, -center.y * GAL_PREFAB_SCALE.y)
+
+
+func _gal_center_pos(center: Vector2, size: Vector2) -> Vector2:
+	return Vector2((835.0 + center.x - size.x * 0.5) * GAL_PREFAB_SCALE.x, (375.0 - center.y - size.y * 0.5) * GAL_PREFAB_SCALE.y)
+
+
+func _gal_info_child_center(child_pos: Vector2, child_size := Vector2.ZERO, pivot_left := false) -> Vector2:
+	var x := GAL_INFO_PANEL_CENTER.x - GAL_INFO_PANEL_SIZE.x * 0.5 + child_pos.x
+	if pivot_left:
+		x += child_size.x * 0.5
+	return Vector2(x, GAL_INFO_PANEL_CENTER.y + child_pos.y)
+
+
+func _gal_info_child_pos(child_pos: Vector2, child_size: Vector2, pivot_left := false) -> Vector2:
+	return _gal_left_middle_pos(_gal_info_child_center(child_pos, child_size, pivot_left), child_size)
 
 
 func _draw_main_view() -> void:
@@ -90,7 +144,7 @@ func _draw_main_view() -> void:
 
 
 func _draw_hero_stage(hero: Dictionary) -> void:
-	app._draw_hero_stage(hero, Vector2(345, 34), Vector2(520, 650), false)
+	app._draw_hero_stage(hero, Vector2(330, 28), Vector2(540, 662), false)
 
 	var line = app._label("今天也要全力發光!", 18, HORIZONTAL_ALIGNMENT_CENTER)
 	line.position = Vector2(500, 430)
@@ -100,226 +154,211 @@ func _draw_hero_stage(hero: Dictionary) -> void:
 
 
 func _draw_top_bar() -> void:
-	var cx := 50.0
-	var cy := 16.0
-	var cw := 54.0
-	var ch := 54.0
-	app._draw_image(GAL_BTN_CLOSE, Vector2(cx, cy), Vector2(cw, ch), false, Color(1, 1, 1, 0.94))
-	_add_hit_button(Vector2(cx, cy), Vector2(cw, ch), app._show_home)
+	var close_pos := _gal_top_left_pos(Vector2(60, -18))
+	var close_size := _gal_size(Vector2(120, 80))
+	app._draw_image(GAL_BTN_CLOSE, close_pos, close_size, false, Color(1, 1, 1, 0.94))
+	_add_hit_button(close_pos, close_size, app._show_home)
 
-	app._draw_image(GAL_BTN_FAV, Vector2(178, 20), Vector2(44, 44), false, Color(1, 1, 1, 0.92))
-	_add_hit_button(Vector2(178, 20), Vector2(44, 44), func() -> void:
+	var detail_pos := _gal_top_left_pos(Vector2(126, -18))
+	var section_size := _gal_size(Vector2(60, 60))
+	app._draw_image(GAL_BTN_DETAIL, detail_pos, section_size, false, Color(1, 1, 1, 0.92))
+	_add_hit_button(detail_pos, section_size, func() -> void:
+		show_view(VIEW_CHARACTER)
+	)
+
+	var fav_pos := _gal_top_left_pos(Vector2(186, -18))
+	app._draw_image(GAL_BTN_FAV, fav_pos, section_size, false, Color(1, 1, 1, 0.92))
+	_add_hit_button(fav_pos, section_size, func() -> void:
 		app._show_gallery()
 	)
 
-	var help = app._label("?", 22, HORIZONTAL_ALIGNMENT_CENTER)
-	help.position = Vector2(136, 24)
-	help.size = Vector2(36, 36)
-	help.modulate = Color(1.0, 0.72, 0.90)
-	app._view_container().add_child(help)
-
 
 func _draw_hero_info_panel(hero: Dictionary) -> void:
-	var pw := 224.0
-	var ph := 586.0
-	var px := 36.0
-	var py := 23.0
+	var panel_pos := _gal_left_middle_pos(GAL_INFO_PANEL_CENTER, GAL_INFO_PANEL_SIZE)
+	var panel_size := _gal_size(GAL_INFO_PANEL_SIZE)
+	var px := panel_pos.x
+	var py := panel_pos.y
+	var pw := panel_size.x
+	var ph := panel_size.y
 
-	app._draw_image(GAL_HERO_PANEL, Vector2(px - 4, py - 4), Vector2(pw + 8, ph + 8), false, Color(1, 1, 1, 0.25))
-	app._draw_image(GAL_HERO_PANEL, Vector2(px, py), Vector2(pw, ph), false, Color(1, 1, 1, 1.0))
+	app._draw_image(GAL_HERO_PANEL, panel_pos, panel_size, false, Color(1, 1, 1, 1.0))
+	app._draw_image(GAL_HERO_PANEL, _gal_left_middle_pos(GAL_INFO_PANEL_CENTER + Vector2(146, 0), GAL_INFO_PANEL_SIZE), panel_size, false, Color(1, 1, 1, 0.35))
 
-	var title_text := "玄武" if str(hero.get("spine", "")) == "hero_037" else str(hero.get("title", hero.get("name", "")))
-	var name_text := "墨菏" if str(hero.get("spine", "")) == "hero_037" else str(hero.get("name", "角色"))
-	var label_text := "天真天然邪" if str(hero.get("spine", "")) == "hero_037" else "性格標籤"
+	var title_text := str(hero.get("title", hero.get("name", "")))
+	var name_text := str(hero.get("name", "角色"))
+	var label_text := str(hero.get("personality", "天真天然邪"))
 
 	var title_label = app._label(title_text, 18)
-	title_label.position = Vector2(56, 92)
-	title_label.size = Vector2(120, 28)
+	title_label.position = _gal_info_child_pos(Vector2(298.3, 275.0), Vector2(180, 30), true)
+	title_label.size = _gal_size(Vector2(180, 30))
 	title_label.modulate = Color(1.0, 0.92, 0.66)
 	app._view_container().add_child(title_label)
 
 	var name_label = app._label(name_text, 30)
-	name_label.position = Vector2(56, 118)
-	name_label.size = Vector2(140, 42)
+	name_label.position = _gal_info_child_pos(Vector2(298.3, 231.5), Vector2(210, 57), true)
+	name_label.size = _gal_size(Vector2(210, 57))
 	name_label.modulate = Color(1.0, 1.0, 1.0)
 	app._view_container().add_child(name_label)
 
-	app._draw_image(GAL_IMG_LABEL_BG, Vector2(52, 178), Vector2(118, 25), false, Color(1, 0.62, 0.86, 0.92))
+	app._draw_image(GAL_IMG_LABEL_BG, _gal_info_child_pos(Vector2(66, 157), Vector2(126, 36), true), _gal_size(Vector2(126, 36)), false, Color(1, 0.62, 0.86, 0.92))
 	var tag_label = app._label(label_text, 14)
-	tag_label.position = Vector2(58, 181)
-	tag_label.size = Vector2(86, 18)
+	tag_label.position = _gal_info_child_pos(Vector2(66, 157), Vector2(126, 30), true)
+	tag_label.size = _gal_size(Vector2(126, 30))
 	tag_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	tag_label.modulate = Color(1.0, 0.92, 1.0)
 	app._view_container().add_child(tag_label)
 
-	var dress_x := 50.0
-	var dress_y := 220.0
-	app._draw_image(GAL_BTN_DRESS, Vector2(dress_x, dress_y), Vector2(75, 94), false)
-	app._draw_image(GAL_IMG_LABEL_BG, Vector2(dress_x - 12, dress_y + 82), Vector2(99, 28), false, Color(1, 1, 1, 0.74))
-	_add_gal_text("裝扮", Vector2(dress_x - 8, dress_y + 82), Vector2(91, 28), 14)
-	_add_hit_button(Vector2(dress_x, dress_y), Vector2(75, 94), func() -> void:
+	var dress_pos := _gal_info_child_pos(Vector2(-4, 72), Vector2(98, 98), true)
+	app._draw_image(GAL_BTN_DRESS, dress_pos, _gal_size(Vector2(98, 98)), false)
+	app._draw_image(GAL_IMG_LABEL_BG, _gal_info_child_pos(Vector2(-4, 18), Vector2(126, 36), true), _gal_size(Vector2(126, 36)), false, Color(1, 1, 1, 0.74))
+	_add_gal_text("裝扮", _gal_info_child_pos(Vector2(-4, 18), Vector2(126, 30), true), _gal_size(Vector2(126, 30)), 14)
+	_add_hit_button(dress_pos, _gal_size(Vector2(98, 98)), func() -> void:
 		show_view(VIEW_CHARACTER)
 	)
-	app._draw_red_dot(Vector2(dress_x + 55, dress_y + 6))
+	app._draw_red_dot(_gal_info_child_pos(Vector2(27.3, 100.5), Vector2(0, 0), true))
 
-	var priv_x := 50.0
-	var priv_y := 335.0
-	app._draw_image(GAL_BTN_PRIV, Vector2(priv_x, priv_y), Vector2(75, 94), false)
-	app._draw_image(GAL_IMG_LABEL_BG, Vector2(priv_x - 12, priv_y + 82), Vector2(99, 28), false, Color(1, 1, 1, 0.74))
-	_add_gal_text("甜蜜互動", Vector2(priv_x - 16, priv_y + 82), Vector2(112, 28), 14)
-	_add_hit_button(Vector2(priv_x, priv_y), Vector2(75, 94), func() -> void:
+	var priv_pos := _gal_info_child_pos(Vector2(-4, -58), Vector2(98, 98), true)
+	app._draw_image(GAL_BTN_PRIV, priv_pos, _gal_size(Vector2(98, 98)), false)
+	app._draw_image(GAL_IMG_LABEL_BG, _gal_info_child_pos(Vector2(-4, -112), Vector2(126, 36), true), _gal_size(Vector2(126, 36)), false, Color(1, 1, 1, 0.74))
+	_add_gal_text("甜蜜互動", _gal_info_child_pos(Vector2(-4, -112), Vector2(126, 30), true), _gal_size(Vector2(126, 30)), 14)
+	_add_hit_button(priv_pos, _gal_size(Vector2(98, 98)), func() -> void:
 		show_view(VIEW_CHARACTER)
 	)
 
-	var person_x := 74.0
-	var person_y := 480.0
-	app._draw_image("res://assets/ui/gal/gal_img_04.png", Vector2(person_x, person_y), Vector2(129, 46), false, Color(1, 1, 1, 0.95))
-	app._draw_image("res://assets/ui/gal/gal_btn_02.png", Vector2(person_x + 88, person_y - 2), Vector2(38, 50), false)
-	_add_gal_text("性格", Vector2(person_x + 4, person_y + 8), Vector2(88, 28), 15)
-	_add_hit_button(Vector2(person_x, person_y), Vector2(129, 46), func() -> void:
+	var personality_pos := _gal_info_child_pos(Vector2(66, 157), Vector2(168, 48), true)
+	app._draw_image("res://assets/ui/gal/gal_img_04.png", personality_pos, _gal_size(Vector2(168, 48)), false, Color(1, 1, 1, 0.95))
+	app._draw_image("res://assets/ui/gal/gal_btn_02.png", _gal_info_child_pos(Vector2(150, 157), Vector2(50, 50), true), _gal_size(Vector2(50, 50)), false)
+	_add_gal_text("性格", _gal_info_child_pos(Vector2(55, 157), Vector2(120, 30), true), _gal_size(Vector2(120, 30)), 15)
+	_add_hit_button(personality_pos, _gal_size(Vector2(168, 48)), func() -> void:
 		show_view(VIEW_CHARACTER)
 	)
 
 
 func _draw_level_ring() -> void:
-	var lv_w := 190.0
-	var lv_h := 210.0
-	var lv_x := 1004.0
-	var lv_y := 24.0
-	app._draw_image(GAL_BTN_LV, Vector2(lv_x, lv_y), Vector2(lv_w, lv_h), false, Color(1, 1, 1, 0.90))
+	var lv_pos := _gal_right_top_pos(Vector2(-13, -15), Vector2(322, 322))
+	var lv_size := _gal_size(Vector2(322, 322))
+	app._draw_image(GAL_BTN_LV, lv_pos, lv_size, false, Color(1, 1, 1, 0.90))
 
 	var level := int(app.save.get("gal_level", 2))
 	var lv_num = app._label(str(level), 48)
-	lv_num.position = Vector2(lv_x + 78, lv_y + 44)
-	lv_num.size = Vector2(60, 62)
+	lv_num.position = lv_pos + _gal_size(Vector2(131, 92))
+	lv_num.size = _gal_size(Vector2(60, 70))
 	lv_num.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	lv_num.modulate = Color(1.0, 0.94, 0.66)
 	app._view_container().add_child(lv_num)
 
-	var bar_w := 170.0
-	var bar_h := 44.0
-	var bar_y := lv_y + 152
-	app._draw_image(GAL_BTN_LV_BAR, Vector2(lv_x + 34, bar_y), Vector2(bar_w, bar_h), false, Color(1, 1, 1, 0.82))
+	var bar_pos := lv_pos + _gal_size(Vector2(50, 240))
+	var bar_size := _gal_size(Vector2(222, 46))
+	app._draw_image(GAL_BTN_LV_BAR, bar_pos, bar_size, false, Color(1, 1, 1, 0.82))
 
 	var exp_val := int(app.save.get("gal_exp", 0))
 	var exp_text = app._label("%d/250" % exp_val, 13)
-	exp_text.position = Vector2(lv_x + 54, bar_y + 13)
-	exp_text.size = Vector2(130, 16)
+	exp_text.position = bar_pos + _gal_size(Vector2(28, 12))
+	exp_text.size = _gal_size(Vector2(166, 20))
 	exp_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	exp_text.modulate = Color(1.0, 0.72, 0.72)
 	app._view_container().add_child(exp_text)
 
 	var lbl = app._label("好感等級", 13)
-	lbl.position = Vector2(lv_x + 20, lv_y + 12)
-	lbl.size = Vector2(lv_w - 40, 18)
+	lbl.position = lv_pos + _gal_size(Vector2(0, 38))
+	lbl.size = _gal_size(Vector2(322, 30))
 	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	lbl.modulate = Color(1.0, 0.96, 0.98)
 	app._view_container().add_child(lbl)
 
 
 func _draw_action_buttons() -> void:
-	var dw := 227.0
-	var dh := 111.0
-	var dx := 1007.0
-	var dy := 591.0
-	app._draw_image(GAL_BTN_DATE, Vector2(dx, dy), Vector2(dw, dh), false, Color(1, 1, 1, 0.94))
-	_add_gal_text("約會", Vector2(dx + 68, dy + 32), Vector2(91, 46), 24)
-	_add_hit_button(Vector2(dx, dy), Vector2(dw, dh), func() -> void:
+	var date_pos := _gal_right_bottom_pos(Vector2(-59, 19), Vector2(296, 116))
+	var date_size := _gal_size(Vector2(296, 116))
+	app._draw_image(GAL_BTN_DATE, date_pos, date_size, false, Color(1, 1, 1, 0.94))
+	_add_gal_text("約會", date_pos + _gal_size(Vector2(88, 34)), _gal_size(Vector2(120, 46)), 24)
+	_add_hit_button(date_pos, date_size, func() -> void:
 		show_view(VIEW_DATE_SELECT)
 	)
-	app._draw_red_dot(Vector2(dx + dw - 26, dy + 10))
+	app._draw_red_dot(_gal_right_bottom_pos(Vector2(49.1, 40.4), Vector2(0, 0)))
 
-	var gw := 144.0
-	var gh := 84.0
-	var gx := 870.0
-	var gy := 618.0
-	app._draw_image(GAL_BTN_GOOUT, Vector2(gx, gy), Vector2(gw, gh), false, Color(1, 1, 1, 0.90))
-	_add_gal_text("外出", Vector2(gx + 32, gy + 22), Vector2(80, 40), 22)
-	_add_hit_button(Vector2(gx, gy), Vector2(gw, gh), func() -> void:
+	var go_pos := _gal_right_bottom_pos(Vector2(-347, 19), Vector2(188, 88))
+	var go_size := _gal_size(Vector2(188, 88))
+	app._draw_image(GAL_BTN_GOOUT, go_pos, go_size, false, Color(1, 1, 1, 0.90))
+	_add_gal_text("外出", go_pos + _gal_size(Vector2(42, 23)), _gal_size(Vector2(84, 40)), 22)
+	_add_hit_button(go_pos, go_size, func() -> void:
 		show_view(VIEW_DATE_SELECT)
 	)
-	app._draw_red_dot(Vector2(gx + gw - 20, gy + 8))
+	app._draw_red_dot(_gal_right_bottom_pos(Vector2(-292.3, 53), Vector2(0, 0)))
 
-	var gi_w := 68.0
-	var gi_h := 84.0
-	var gi_x := 803.0
-	var gi_y := 618.0
-	app._draw_image(GAL_BTN_GIFT, Vector2(gi_x, gi_y), Vector2(gi_w, gi_h), false, Color(1, 1, 1, 0.90))
-	_add_gal_text("禮物", Vector2(gi_x, gi_y + 62), Vector2(gi_w, 22), 14)
-	_add_hit_button(Vector2(gi_x, gi_y), Vector2(gi_w, gi_h), func() -> void:
+	var gift_pos := _gal_right_bottom_pos(Vector2(-535, 19), Vector2(88, 88))
+	var small_size := _gal_size(Vector2(88, 88))
+	app._draw_image(GAL_BTN_GIFT, gift_pos, small_size, false, Color(1, 1, 1, 0.90))
+	_add_gal_text("禮物", gift_pos + _gal_size(Vector2(0, 60)), _gal_size(Vector2(88, 22)), 14)
+	_add_hit_button(gift_pos, small_size, func() -> void:
 		show_view(VIEW_DATE_SELECT)
 	)
 
-	var f_x := 735.0
-	app._draw_image(GAL_BTN_FILE, Vector2(f_x, gi_y), Vector2(gi_w, gi_h), false, Color(1, 1, 1, 0.90))
-	_add_gal_text("檔案", Vector2(f_x, gi_y + 62), Vector2(gi_w, 22), 14)
-	_add_hit_button(Vector2(f_x, gi_y), Vector2(gi_w, gi_h), func() -> void:
+	var file_pos := _gal_right_bottom_pos(Vector2(-623, 19), Vector2(88, 88))
+	app._draw_image(GAL_BTN_FILE, file_pos, small_size, false, Color(1, 1, 1, 0.90))
+	_add_gal_text("檔案", file_pos + _gal_size(Vector2(0, 60)), _gal_size(Vector2(88, 22)), 14)
+	_add_hit_button(file_pos, small_size, func() -> void:
 		show_view(VIEW_CHARACTER)
 	)
 
 
 func _draw_side_buttons() -> void:
-	var sw := 75.0
-	var sh := 94.0
-	var sx := 1108.0
+	var button_size := _gal_size(Vector2(98, 98))
+	var label_size := _gal_size(Vector2(126, 36))
 
-	app._draw_image(GAL_BTN_ALBUM, Vector2(sx, 356), Vector2(sw, sh), false, Color(1, 1, 1, 0.88))
-	app._draw_image(GAL_IMG_LABEL_BG, Vector2(sx - 18, 438), Vector2(109, 28), false, Color(1, 1, 1, 0.72))
-	_add_gal_text("相冊", Vector2(sx - 18, 438), Vector2(109, 28), 14)
-	_add_hit_button(Vector2(sx, 356), Vector2(sw, sh), func() -> void:
+	var album_pos := _gal_right_bottom_pos(Vector2(-79, 193), Vector2(98, 98))
+	app._draw_image(GAL_BTN_ALBUM, album_pos, button_size, false, Color(1, 1, 1, 0.88))
+	app._draw_image(GAL_IMG_LABEL_BG, album_pos + _gal_size(Vector2(-14, 89)), label_size, false, Color(1, 1, 1, 0.72))
+	_add_gal_text("相冊", album_pos + _gal_size(Vector2(-14, 89)), label_size, 14)
+	_add_hit_button(album_pos, button_size, func() -> void:
 		show_view(VIEW_DATE_SELECT)
 	)
-	app._draw_red_dot(Vector2(sx + 55, 360))
+	app._draw_red_dot(_gal_right_bottom_pos(Vector2(-51.7, 221.5), Vector2(0, 0)))
 
-	app._draw_image(GAL_BTN_MEM, Vector2(sx, 246), Vector2(sw, sh), false, Color(1, 1, 1, 0.88))
-	app._draw_image(GAL_IMG_LABEL_BG, Vector2(sx - 18, 328), Vector2(109, 28), false, Color(1, 1, 1, 0.72))
-	_add_gal_text("心動回憶", Vector2(sx - 18, 328), Vector2(109, 28), 14)
-	_add_hit_button(Vector2(sx, 246), Vector2(sw, sh), func() -> void:
+	var mem_pos := _gal_right_bottom_pos(Vector2(-79, 323), Vector2(98, 98))
+	app._draw_image(GAL_BTN_MEM, mem_pos, button_size, false, Color(1, 1, 1, 0.88))
+	app._draw_image(GAL_IMG_LABEL_BG, mem_pos + _gal_size(Vector2(-14, 89)), label_size, false, Color(1, 1, 1, 0.72))
+	_add_gal_text("心動回憶", mem_pos + _gal_size(Vector2(-14, 89)), label_size, 14)
+	_add_hit_button(mem_pos, button_size, func() -> void:
 		show_view(VIEW_DATE_SELECT)
 	)
-	app._draw_red_dot(Vector2(sx + 55, 250))
+	app._draw_red_dot(_gal_right_bottom_pos(Vector2(-51.7, 351.5), Vector2(0, 0)))
 
 
 func _draw_hide_button() -> void:
-	app._draw_image("res://assets/ui/gal/gal_btn_46.png", Vector2(432, 142), Vector2(58, 70), false, Color(1, 1, 1, 0.72))
-	_add_hit_button(Vector2(432, 142), Vector2(58, 70), func() -> void:
+	var hide_pos := _gal_center_pos(Vector2(-196, 129), Vector2(90, 90))
+	var hide_size := _gal_size(Vector2(90, 90))
+	app._draw_image("res://assets/ui/gal/gal_btn_46.png", hide_pos, hide_size, false, Color(1, 1, 1, 0.72))
+	_add_hit_button(hide_pos, hide_size, func() -> void:
 		show_view(VIEW_DATE_SELECT)
 	)
 
 
 func _draw_role_selector(hero: Dictionary) -> void:
-	var rx := 52.0
-	var ry := 594.0
-	var rw := 72.0
-	var rh := 72.0
+	var selector_pos := _gal_left_middle_pos(Vector2(181, -296), Vector2(110, 110))
+	var selector_size := _gal_size(Vector2(110, 110))
+	var head_pos := _gal_left_middle_pos(Vector2(181, -296), Vector2(100, 100))
+	var head_size := _gal_size(Vector2(100, 100))
 
-	app._draw_image(GAL_IMG_ROLE_BG, Vector2(rx, ry), Vector2(rw, rh), false, Color(1, 1, 1, 0.88))
-	var tex = app._hero_portrait_texture(hero)
+	app._draw_image(GAL_IMG_ROLE_BG, selector_pos, selector_size, false, Color(1, 1, 1, 0.88))
+	var tex = app._hero_round_head_texture(hero)
 	if tex != null:
-		var atlas := AtlasTexture.new()
-		atlas.atlas = tex
-		atlas.region = Rect2(0, 88, tex.get_width(), min(260, tex.get_height() - 88))
-
-		var clip := Control.new()
-		clip.position = Vector2(rx + 8, ry + 8)
-		clip.size = Vector2(56, 56)
-		clip.clip_contents = true
-		app._view_container().add_child(clip)
-
 		var rect := TextureRect.new()
-		rect.texture = atlas
-		rect.position = Vector2.ZERO
-		rect.size = Vector2(56, 56)
+		rect.texture = tex
+		rect.position = head_pos
+		rect.size = head_size
 		rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		rect.stretch_mode = TextureRect.STRETCH_SCALE
 		rect.modulate = Color(1, 1, 1, 0.96)
-		clip.add_child(rect)
+		app._view_container().add_child(rect)
+	else:
+		app._draw_hero_thumb(hero, head_pos + _gal_size(Vector2(10, 10)), head_size - _gal_size(Vector2(20, 20)), Color(1, 1, 1, 0.78))
 
-	app._draw_image(GAL_BTN_CHANGE_ICON, Vector2(rx + rw - 18, ry - 8), Vector2(32, 38), false, Color(1, 1, 1, 0.90))
-	_add_hit_button(Vector2(rx, ry), Vector2(rw, rh), func() -> void:
+	app._draw_image(GAL_BTN_CHANGE_ICON, _gal_left_middle_pos(Vector2(219, -279), Vector2(50, 50)), _gal_size(Vector2(50, 50)), false, Color(1, 1, 1, 0.90))
+	_add_hit_button(selector_pos, selector_size, func() -> void:
 		show_view(VIEW_CHARACTER)
 	)
-	app._draw_red_dot(Vector2(rx + 68, ry + 4))
+	app._draw_red_dot(_gal_left_middle_pos(Vector2(230.9, -246.4), Vector2(0, 0)))
 
 
 func _draw_date_select_view() -> void:
