@@ -68,6 +68,8 @@ const LOTTERY_SCALE := Vector2(1280.0 / 1670.0, 720.0 / 750.0)
 const LOTTERY_BTN_WHITE := "res://assets/ui/common/tongyong_btn_01.png"
 
 var app
+var prayer_remnant_canvas: Control
+var prayer_draw_pending := false
 
 func _init(app_ref) -> void:
 	app = app_ref
@@ -94,6 +96,8 @@ func _lottery_child_pos(parent_center: Vector2, child_center: Vector2, child_siz
 
 
 func show_gacha() -> void:
+	prayer_remnant_canvas = null
+	prayer_draw_pending = false
 	var pool = app._pool_by_id(str(app.save.get("active_pool_id", "advanced")))
 	var realm = app._active_gacha_realm()
 	app._set_chrome_visible(false)
@@ -249,6 +253,7 @@ func draw_prayer_remnant_animation_bg() -> void:
 		canvas.size = size
 		canvas.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		app._view_container().add_child(canvas)
+		prayer_remnant_canvas = canvas
 		canvas.set_baked_path(UI_PRAYER_REMNANT_SPINE_BAKED, "wait")
 	elif FileAccess.file_exists(UI_PRAYER_REMNANT_SPINE_FALLBACK):
 		app._draw_image(UI_PRAYER_REMNANT_SPINE_FALLBACK, pos, size, false)
@@ -499,18 +504,34 @@ func _toggle_skip_animation() -> void:
 
 
 func _request_draw(count: int) -> void:
+	if prayer_draw_pending:
+		return
 	var pool: Dictionary = app._pool_by_id(str(app.save.get("active_pool_id", "advanced")))
 	var cost := count * int(pool.get("ticketCost", 1))
 	if int(app.save.get("tickets", 0)) < cost:
 		_show_draw_blocked(cost)
 		return
 	if app._active_gacha_realm() == "prayer":
-		app._show_prayer_rewards(count, not _skip_animation_enabled())
+		var play_reveal := not _skip_animation_enabled()
+		if play_reveal and not _is_holy_relic_prayer_pool(pool):
+			await _play_prayer_remnant_click_animation()
+		app._show_prayer_rewards(count, play_reveal)
 		return
 	if _skip_animation_enabled():
 		app._draw_and_show(count)
 	else:
 		app._show_draw_animation(count)
+
+
+func _play_prayer_remnant_click_animation() -> void:
+	if prayer_remnant_canvas == null or not is_instance_valid(prayer_remnant_canvas):
+		return
+	if not prayer_remnant_canvas.has_method("set_clip"):
+		return
+	prayer_draw_pending = true
+	prayer_remnant_canvas.set_clip("wait1")
+	await app.get_tree().create_timer(1.2).timeout
+	prayer_draw_pending = false
 
 
 func _show_draw_blocked(required_cost: int) -> void:
