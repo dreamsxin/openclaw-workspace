@@ -147,10 +147,45 @@ func enter_wallpaper_focus() -> void:
 	draw_wallpaper(hero)
 	# pnlCtl: centered control bar at bottom
 	var ctl_y = 660.0
-	app._add_action_button("◀", Vector2(520, ctl_y), app._show_home, Vector2(48, 48))
-	app._add_action_button("▶", Vector2(576, ctl_y), app._show_home, Vector2(48, 48))
-	app._add_action_button("▐▐", Vector2(632, ctl_y), app._show_home, Vector2(48, 48))
-	app._add_action_button("眼", Vector2(700, ctl_y), enter_normal_state, Vector2(56, 48))
+	var settings: Dictionary = app.save.get("settings", {})
+	var auto_label := "Pause" if bool(settings.get("wallpaper_auto_play", true)) else "Play"
+	app._add_action_button("<", Vector2(500, ctl_y), func() -> void: _cycle_wallpaper(-1), Vector2(54, 48))
+	app._add_action_button(">", Vector2(562, ctl_y), func() -> void: _cycle_wallpaper(1), Vector2(54, 48))
+	app._add_action_button(auto_label, Vector2(624, ctl_y), func() -> void: _toggle_wallpaper_auto_play(), Vector2(86, 48))
+	app._add_action_button("Exit", Vector2(718, ctl_y), enter_normal_state, Vector2(66, 48))
+
+
+func _wallpaper_candidates() -> Array:
+	var candidates: Array = app._gallery_filtered_heroes()
+	return candidates if not candidates.is_empty() else app.heroes
+
+
+func _selected_wallpaper_index(candidates: Array) -> int:
+	var selected_id := int(app.save.get("selected_hero_id", 240055))
+	for index in range(candidates.size()):
+		var hero: Dictionary = candidates[index]
+		if int(hero.get("id", 0)) == selected_id:
+			return index
+	return 0
+
+
+func _cycle_wallpaper(offset: int) -> void:
+	var candidates := _wallpaper_candidates()
+	if candidates.is_empty():
+		return
+	var next_index := posmod(_selected_wallpaper_index(candidates) + offset, candidates.size())
+	var hero: Dictionary = candidates[next_index]
+	app.save["selected_hero_id"] = int(hero.get("id", 240055))
+	app._persist()
+	enter_wallpaper_focus()
+
+
+func _toggle_wallpaper_auto_play() -> void:
+	var settings: Dictionary = app.save.get("settings", {})
+	settings["wallpaper_auto_play"] = not bool(settings.get("wallpaper_auto_play", true))
+	app.save["settings"] = settings
+	app._persist()
+	enter_wallpaper_focus()
 
 
 func enter_gal_entry() -> void:
