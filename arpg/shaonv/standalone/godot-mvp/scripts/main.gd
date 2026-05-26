@@ -2315,7 +2315,11 @@ func _lottery_bg_for_pool(pool_id: String) -> String:
 			return UI_LOTTERY_BG_EPIC
 		"prayer":
 			return "res://assets/ui/lottery/bg/lottery_bg_05.png"
+		"self_select_prayer":
+			return "res://assets/ui/lottery/bg/lottery_bg_05.png"
 		"source_prayer":
+			return UI_LOTTERY_BG_PRAYER
+		"saint_source_prayer":
 			return UI_LOTTERY_BG_PRAYER
 		_:
 			return UI_LOTTERY_BG_ADVANCED
@@ -2587,12 +2591,14 @@ func _draw_image(path: String, pos: Vector2, draw_size: Vector2, cover := false,
 	var rect := TextureRect.new()
 	rect.texture = source_texture
 	rect.position = pos
+	rect.custom_minimum_size = draw_size
 	rect.size = draw_size
 	rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED if cover else TextureRect.STRETCH_SCALE
 	rect.modulate = tint
 	rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_view_container().add_child(rect)
+	rect.size = draw_size
 	return rect
 
 func _draw_clipped_image(path: String, pos: Vector2, draw_size: Vector2, cover := false, tint := Color(1, 1, 1, 1)) -> Control:

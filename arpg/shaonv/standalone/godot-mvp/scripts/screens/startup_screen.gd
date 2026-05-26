@@ -17,11 +17,37 @@ const UI_LOGIN_TIP = "res://assets/ui/login/login_img_01.png"           # imgTip
 const UI_LOADING_BG = "res://assets/ui/background/loading_bg_01.png"
 const UI_LAUNCH_VIDEO = "res://assets/video/game_start.ogv"
 const LAUNCH_VIDEO_SECONDS := 15.8
+const LOGIN_PREFAB_SIZE := Vector2(1670, 750)
+const LOGIN_SCALE := Vector2(1280.0 / 1670.0, 720.0 / 750.0)
 
 var app
 
 func _init(app_ref) -> void:
 	app = app_ref
+
+func _login_size(prefab_size: Vector2) -> Vector2:
+	return Vector2(prefab_size.x * LOGIN_SCALE.x, prefab_size.y * LOGIN_SCALE.y)
+
+func _login_center_pos(center: Vector2, size: Vector2) -> Vector2:
+	return Vector2((835.0 + center.x - size.x * 0.5) * LOGIN_SCALE.x, (375.0 - center.y - size.y * 0.5) * LOGIN_SCALE.y)
+
+func _login_left_top_pos(anchor_pos: Vector2, size: Vector2) -> Vector2:
+	return Vector2(anchor_pos.x * LOGIN_SCALE.x, (-anchor_pos.y) * LOGIN_SCALE.y)
+
+func _login_left_bottom_center_pos(center: Vector2, size: Vector2) -> Vector2:
+	return Vector2((center.x - size.x * 0.5) * LOGIN_SCALE.x, (750.0 - center.y - size.y * 0.5) * LOGIN_SCALE.y)
+
+func _login_right_bottom_pos(offset: Vector2, size: Vector2) -> Vector2:
+	return Vector2((1670.0 + offset.x - size.x) * LOGIN_SCALE.x, (750.0 - offset.y - size.y) * LOGIN_SCALE.y)
+
+func _login_center_top_pos(offset: Vector2, size: Vector2) -> Vector2:
+	return Vector2((835.0 + offset.x - size.x * 0.5) * LOGIN_SCALE.x, (-offset.y) * LOGIN_SCALE.y)
+
+func _login_function_pos(index: int, size: Vector2) -> Vector2:
+	var panel_center_x := 1670.0 - 65.672607421875
+	var x := panel_center_x - size.x * 0.5
+	var y := 750.0 - (30.0 + float(index) * 76.0) - size.y * 0.5
+	return Vector2(x * LOGIN_SCALE.x, y * LOGIN_SCALE.y)
 
 func show_launch() -> void:
 	app.current_view = "launch"
@@ -90,6 +116,75 @@ func show_preloading() -> void:
 	app._add_action_button("继续", Vector2(574, 522), app._show_login, Vector2(132, 46))
 
 func show_login() -> void:
+	app.current_view = "login"
+	app._set_chrome_visible(false)
+	app._clear("Login")
+
+	app._draw_image(UI_LOGIN_BG, Vector2.ZERO, Vector2(1280, 720), true)
+	app._view_container().add_child(app._panel(Vector2.ZERO, Vector2(1280, 720), Color(0.018, 0.014, 0.012, 0.04)))
+	app._add_hit_button(Vector2.ZERO, Vector2(1280, 720), app._show_loading)
+
+	var logo_size := _login_size(Vector2(260, 104) * 0.8)
+	var logo_pos := _login_left_top_pos(Vector2(61, -129), Vector2(260, 104) * 0.8)
+	if app._draw_image(UI_LOGIN_LOGO, logo_pos, logo_size, false) == null:
+		var logo = app._label("Shaonv", 42, HORIZONTAL_ALIGNMENT_CENTER)
+		logo.position = logo_pos
+		logo.size = logo_size
+		app._view_container().add_child(logo)
+
+	var age_size := _login_size(Vector2(83, 104) * 0.8)
+	var age_pos := _login_left_bottom_center_pos(Vector2(90, 154), Vector2(83, 104) * 0.8)
+	app._draw_image(UI_LOGIN_AGE, age_pos, age_size, false)
+	app._add_hit_button(age_pos, age_size, app._show_login)
+
+	var version_size := _login_size(Vector2(332, 96))
+	var version_pos := _login_right_bottom_pos(Vector2(-13, 114), Vector2(332, 96))
+	var ver = app._label("Ver 1.0.0\nApp v1.18\nRes v1.18", 14, HORIZONTAL_ALIGNMENT_RIGHT)
+	ver.position = version_pos
+	ver.size = version_size
+	ver.modulate = Color(0.68, 0.64, 0.58)
+	app._view_container().add_child(ver)
+
+	var input_size := _login_size(Vector2(543, 64))
+	var input_pos := _login_center_pos(Vector2(0, -114.5), Vector2(543, 64))
+	app._draw_image(UI_LOGIN_INPUT_BG, input_pos, input_size, false, Color(1, 1, 1, 0.95))
+	app._draw_image(UI_LOGIN_INPUT_ICON, input_pos + _login_size(Vector2(12.5, 12)), _login_size(Vector2(40, 40)), false)
+	var account = LineEdit.new()
+	account.text = "LocalPlayer"
+	account.placeholder_text = "Player name"
+	account.position = input_pos + _login_size(Vector2(112, 0))
+	account.size = _login_size(Vector2(392, 64))
+	account.flat = true
+	app._view_container().add_child(account)
+
+	var buttons := [
+		{"icon": UI_LOGIN_BTN_NOTICE, "callback": app._show_login_notice_popup},
+		{"icon": UI_LOGIN_BTN_REPAIR, "callback": app._show_repair_popup},
+		{"icon": UI_LOGIN_BTN_SWITCH, "callback": app._show_login_account_popup},
+		{"icon": UI_LOGIN_BTN_SELECT, "callback": app._show_login},
+	]
+	for index in range(buttons.size()):
+		var button_size := _login_size(Vector2(60, 60))
+		var button_pos := _login_function_pos(index, Vector2(60, 60))
+		app._draw_image(str(buttons[index].get("icon", "")), button_pos + _login_size(Vector2(4, 4)), _login_size(Vector2(52, 52)), false)
+		app._add_hit_button(button_pos, button_size, buttons[index].get("callback"))
+
+	var tip_size := _login_size(Vector2(536, 30))
+	var tip_pos := _login_center_top_pos(Vector2(0, -553), Vector2(536, 30))
+	if app._draw_image(UI_LOGIN_TIP, tip_pos, tip_size, false) == null:
+		var tip = app._label("Tap anywhere to login", 15, HORIZONTAL_ALIGNMENT_CENTER)
+		tip.position = tip_pos
+		tip.size = tip_size
+		app._view_container().add_child(tip)
+
+	var agree = CheckBox.new()
+	agree.text = "Agree to Privacy Policy and Terms"
+	agree.button_pressed = true
+	agree.position = _login_center_top_pos(Vector2(20, -620), Vector2(428, 32))
+	agree.size = _login_size(Vector2(428, 32))
+	app._view_container().add_child(agree)
+
+func show_login_legacy() -> void:
 	app.current_view = "login"
 	app._set_chrome_visible(false)
 	app._clear("登入")
