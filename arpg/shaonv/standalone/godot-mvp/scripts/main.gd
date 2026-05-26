@@ -478,11 +478,11 @@ func _show_start_view_from_env() -> void:
 		_open_prayer_pool()
 	elif start_view == "prayer_result":
 		_enter_main_scene()
-		_open_prayer_pool()
+		_open_prayer_pool() if OS.get_environment("SHAONV_MVP_GACHA_POOL").is_empty() else _show_gacha()
 		_show_prayer_rewards(int(OS.get_environment("SHAONV_MVP_DRAW_COUNT")) if not OS.get_environment("SHAONV_MVP_DRAW_COUNT").is_empty() else 10, false)
 	elif start_view == "prayer_reveal":
 		_enter_main_scene()
-		_open_prayer_pool()
+		_open_prayer_pool() if OS.get_environment("SHAONV_MVP_GACHA_POOL").is_empty() else _show_gacha()
 		_show_prayer_rewards(int(OS.get_environment("SHAONV_MVP_DRAW_COUNT")) if not OS.get_environment("SHAONV_MVP_DRAW_COUNT").is_empty() else 10, true)
 	elif start_view == "battle":
 		_enter_main_scene()

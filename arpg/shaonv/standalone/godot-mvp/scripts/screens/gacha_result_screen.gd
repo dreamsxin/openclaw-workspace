@@ -53,6 +53,9 @@ const UI_PRAYER_REWARD_TAG := {
 }
 const UI_PRAYER_REWARD_RELIC_TAG := "res://assets/ui/lottery/lottery_img_107.png"
 const UI_PRAYER_REWARD_RARE_SSR := "res://assets/ui/common/common_img_163.png"
+const UI_PRAYER_REMNANT_SPINE_BAKED := "res://assets/spine/all_export/Other__yiqi/Other__yiqi.baked.json"
+const UI_PRAYER_REMNANT_SPINE_FALLBACK := "res://assets/spine/all_export/Other__yiqi/yiqi.png"
+const SPINE_BAKED_PREVIEW_CANVAS := preload("res://scripts/spine_baked_preview_canvas.gd")
 const UI_TICKET_ICON := "res://assets/ui/item/draw_03.png"
 const FX_CAPSULE_BLUE_GLOW := "res://assets/ui/effect/fx_capsule_open_blue/Tex_glow005.png"
 const FX_CAPSULE_BLUE_RING := "res://assets/ui/effect/fx_capsule_open_blue/fx_047_tex_012.png"
@@ -277,9 +280,60 @@ func show_prayer_rewards(count: int, play_reveal: bool) -> void:
 		return
 	var seq := _next_sequence()
 	if play_reveal:
-		show_prayer_holy_relic_reveal(results, count, seq)
+		if _is_holy_relic_prayer_pool(pool):
+			show_prayer_holy_relic_reveal(results, count, seq)
+		else:
+			show_prayer_remnant_reveal(results, count, seq)
 	else:
 		show_prayer_result_view(results, count)
+
+func show_prayer_remnant_reveal(results: Array, count: int, seq: int) -> void:
+	if not _is_sequence_live(seq):
+		return
+	var best := best_result(results)
+	var rarity := int(best.get("rolled_rarity", 2))
+	var pool: Dictionary = app._pool_by_id(str(app.save.get("active_pool_id", "source_prayer")))
+	app.current_view = "prayer_remnant_recruit"
+	app._set_chrome_visible(false)
+	app._clear("祈願顯現")
+	draw_prayer_remnant_reveal_backdrop(rarity)
+
+	var title: Label = app._label(str(pool.get("name", "源神祈願")), 42, HORIZONTAL_ALIGNMENT_CENTER)
+	title.position = Vector2(74, 104)
+	title.size = Vector2(340, 60)
+	title.modulate = Color(1.0, 0.92, 0.72)
+	app._view_container().add_child(title)
+
+	var rare_text := "SSR 共鳴" if rarity >= 4 else ("SR 共鳴" if rarity == 3 else "源質共鳴")
+	var rare: Label = app._label(rare_text, 34, HORIZONTAL_ALIGNMENT_CENTER)
+	rare.position = Vector2(78, 170)
+	rare.size = Vector2(332, 52)
+	rare.modulate = frame_color(rarity, 1.0)
+	app._view_container().add_child(rare)
+
+	var hint: Label = app._label("祈願儀式展開中\n點擊查看本次結果", 22, HORIZONTAL_ALIGNMENT_CENTER)
+	hint.position = Vector2(86, 236)
+	hint.size = Vector2(316, 70)
+	hint.modulate = Color(0.96, 0.88, 0.74)
+	app._view_container().add_child(hint)
+
+	app._add_hit_button(Vector2.ZERO, Vector2(1280, 720), func() -> void:
+		_cancel_sequence()
+		show_prayer_result_view(results, count)
+	)
+	app._add_action_button("查看结果", Vector2(162, 612), func() -> void:
+		_cancel_sequence()
+		show_prayer_result_view(results, count)
+	, Vector2(142, 46))
+	app._add_action_button("返回祈願", Vector2(318, 612), func() -> void:
+		_cancel_sequence()
+		app._pop_view()
+	, Vector2(132, 46))
+	app._add_action_button("跳过", Vector2(1088, 34), func() -> void:
+		_cancel_sequence()
+		show_prayer_result_view(results, count)
+	, Vector2(102, 40))
+	run_prayer_reveal_auto.call_deferred(results, count, seq)
 
 func show_prayer_holy_relic_reveal(results: Array, count: int, seq: int) -> void:
 	if not _is_sequence_live(seq):
@@ -504,6 +558,23 @@ func draw_prayer_recruit_backdrop(rarity: int) -> void:
 	app._draw_image(UI_PRAYER_REWARD_RARE_SSR, Vector2(956, 108), Vector2(118, 58), false, Color(1, 1, 1, 0.92 if rarity >= 4 else 0.38))
 
 
+func draw_prayer_remnant_reveal_backdrop(rarity: int) -> void:
+	app._draw_image(UI_PRAYER_STAGE_BG, Vector2(-195, -6), Vector2(1670, 732), true, Color(1, 1, 1, 0.90))
+	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.018, 0.014, 0.026, 0.24)))
+	if FileAccess.file_exists(UI_PRAYER_REMNANT_SPINE_BAKED):
+		var canvas: Control = SPINE_BAKED_PREVIEW_CANVAS.new()
+		canvas.position = Vector2(0, 0)
+		canvas.size = Vector2(1280, 720)
+		canvas.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		app._view_container().add_child(canvas)
+		canvas.set_baked_path(UI_PRAYER_REMNANT_SPINE_BAKED, "1")
+	elif FileAccess.file_exists(UI_PRAYER_REMNANT_SPINE_FALLBACK):
+		app._draw_image(UI_PRAYER_REMNANT_SPINE_FALLBACK, Vector2(0, 0), Vector2(1280, 720), false)
+	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(456, 720), Color(0.02, 0.016, 0.026, 0.42)))
+	app._draw_image(UI_RECRUIT_LIGHT_L, Vector2(0, 0), Vector2(640, 720), true, frame_color(rarity, 0.18))
+	app._draw_image(UI_RECRUIT_FX_R, Vector2(640, 0), Vector2(640, 720), true, frame_color(rarity, 0.12))
+
+
 func draw_fx_capsule_open_blue(center: Vector2, rarity: int) -> void:
 	# Source: Assets/Game/RawAssets/Prefabs/3d/fx_capsule_open_blue.prefab.
 	# Unity structure is fx_capsule_open_blue/vfx_blue/gyunan + four gyun4 children,
@@ -685,7 +756,10 @@ func draw_card_portrait(hero: Dictionary, pos: Vector2, draw_size: Vector2) -> v
 func _is_prayer_pool(pool: Dictionary) -> bool:
 	var realm := str(pool.get("realm", ""))
 	var pid := str(pool.get("id", ""))
-	return realm == "prayer" or pid == "prayer" or pid == "source_prayer"
+	return realm == "prayer" or pid == "prayer" or pid == "source_prayer" or pid == "saint_source_prayer"
+
+func _is_holy_relic_prayer_pool(pool: Dictionary) -> bool:
+	return str(pool.get("id", "prayer")) == "prayer"
 
 func best_result(results: Array) -> Dictionary:
 	var best = results[0] if not results.is_empty() else {}
