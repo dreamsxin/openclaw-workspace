@@ -464,6 +464,7 @@ func _draw_top_bar() -> void:
 	_add_hit_button(fav_pos, section_size, func() -> void:
 		var hero := _selected_hero()
 		app.save["favorite_gal_hero_id"] = int(hero.get("id", DEFAULT_GAL_HERO_ID))
+		_persist_gal_state()
 		_show_touch_hint("已設為最愛看板：%s" % str(hero.get("name", "角色")))
 	)
 
@@ -691,6 +692,7 @@ func _draw_gal_role_list(current_hero: Dictionary) -> void:
 		_add_hit_button(item_pos, item_size, func() -> void:
 			app.save["selected_gal_hero_id"] = hero_id
 			_role_selector_expanded = false
+			_persist_gal_state()
 			show_view(VIEW_MAIN)
 			_show_touch_hint("已切換看板：%s" % hero_name)
 		)
@@ -908,6 +910,7 @@ func _draw_dress_skin_card(hero: Dictionary, item: Dictionary, pos: Vector2, sel
 			_show_touch_hint("尚未解鎖：%s" % target_name)
 			return
 		app.save[_dress_skin_save_key(hero_id)] = target_spine
+		_persist_gal_state()
 		show_view(VIEW_DRESS_UP)
 		_show_touch_hint("已切換裝扮：%s" % target_name)
 	)
@@ -990,6 +993,8 @@ func _draw_dress_action_area(hero: Dictionary, panel_pos: Vector2) -> void:
 		app._view_container().add_child(app._panel(button_pos, button_size, Color(0.72, 0.82, 0.28, 0.72)))
 	_add_gal_text("已啟用：%s" % selected_spine, button_pos, button_size, 16)
 	_add_hit_button(button_pos, button_size, func() -> void:
+		app.save[_dress_skin_save_key(int(hero.get("id", 0)))] = selected_spine
+		_persist_gal_state()
 		_show_touch_hint("當前裝扮已設為 Gal 看板")
 	)
 
@@ -1012,6 +1017,7 @@ func _draw_dress_background_grid(panel_pos: Vector2) -> void:
 		var bg_name := str(item.get("name", "背景"))
 		_add_hit_button(pos, Vector2(338, 124), func() -> void:
 			app.save["gal_dress_background"] = bg_key
+			_persist_gal_state()
 			show_view(VIEW_DRESS_UP)
 			_show_touch_hint("已切換背景：%s" % bg_name)
 		)
@@ -1154,6 +1160,7 @@ func _draw_gift_view() -> void:
 		var gift_index := index
 		_add_hit_button(pos, row_size, func() -> void:
 			app.save["gal_selected_gift_index"] = gift_index
+			_persist_gal_state()
 			show_view(VIEW_GIFT)
 		)
 
@@ -1172,19 +1179,29 @@ func _draw_gift_view() -> void:
 	app._draw_image(GAL_GIFT_RESET, reset_pos, Vector2(68, 68), false, Color(1, 1, 1, 0.92))
 	app._draw_image(GAL_GIFT_AUTO, auto_pos, Vector2(156, 56), false, Color(1, 1, 1, 0.92))
 	app._draw_image(GAL_SPECIAL_BTN_ENTRY, send_pos, Vector2(156, 56), false, Color(1, 1, 1, 0.96))
+	_add_gal_text("Reset", reset_pos + Vector2(-8, 50), Vector2(84, 24), 12)
 	_add_gal_text("Auto", auto_pos, Vector2(156, 52), 18)
 	_add_gal_text("Send", send_pos, Vector2(156, 52), 18)
 	_add_hit_button(reset_pos, Vector2(68, 68), func() -> void:
 		app.save["gal_selected_gift_index"] = 0
+		_persist_gal_state()
 		show_view(VIEW_GIFT)
 	)
 	_add_hit_button(auto_pos, Vector2(156, 56), func() -> void:
-		var best := 0
+		var best := -1
+		var best_gain := -1
 		for i in range(gifts.size()):
 			var candidate: Dictionary = gifts[i]
 			if int(app.save.get(str(candidate.get("count_key", "")), int(candidate.get("count", 0)))) > 0:
-				best = i
+				var gain := int(candidate.get("gain", 0))
+				if gain > best_gain:
+					best = i
+					best_gain = gain
+		if best < 0:
+			_show_touch_hint("No gift available")
+			return
 		app.save["gal_selected_gift_index"] = best
+		_persist_gal_state()
 		show_view(VIEW_GIFT)
 	)
 	_add_hit_button(send_pos, Vector2(156, 56), func() -> void:
@@ -1199,6 +1216,7 @@ func _draw_gift_view() -> void:
 		app.save["gal_last_gift"] = str(selected.get("name", "Gift"))
 		app.save["gal_memory_gift"] = true
 		_add_gal_exp(int(selected.get("gain", 0)))
+		_persist_gal_state()
 		_play_gift_voice()
 		show_view(VIEW_GIFT)
 		_show_touch_hint("Gift sent: %s" % str(selected.get("name", "Gift")))
@@ -1207,7 +1225,10 @@ func _draw_gift_view() -> void:
 	var getway_pos := panel_pos + Vector2(34, 78)
 	app._draw_image(GAL_GIFT_GETWAY, getway_pos, Vector2(72, 72), false, Color(1, 1, 1, 0.90))
 	_add_hit_button(getway_pos, Vector2(72, 72), func() -> void:
-		_show_touch_hint("Gift source opened")
+		app.save["gal_gift_candy"] = int(app.save.get("gal_gift_candy", 9)) + 1
+		_persist_gal_state()
+		show_view(VIEW_GIFT)
+		_show_touch_hint("Gift source opened: Candy +1")
 	)
 	_add_gal_text("Last: %s" % str(app.save.get("gal_last_gift", "None")), panel_pos + Vector2(74, 626), Vector2(360, 26), 14)
 
@@ -1250,6 +1271,7 @@ func _draw_gift_view_legacy() -> void:
 			_add_gal_exp(gain)
 			app.save["gal_last_gift"] = gift_name
 			app.save["gal_memory_gift"] = true
+			_persist_gal_state()
 			_play_gift_voice()
 			show_view(VIEW_GIFT)
 			_show_touch_hint("%s 收下了 %s，親密 +%d" % [str(hero.get("name", "她")), gift_name, gain])
@@ -1370,6 +1392,8 @@ func _draw_album_view() -> void:
 				_show_touch_hint("Photo %02d locked" % album_index)
 				return
 			_album_detail_index = album_index
+			app.save["gal_album_detail_index"] = album_index
+			_persist_gal_state()
 			show_view(VIEW_ALBUM_DETAIL)
 		)
 
@@ -1406,7 +1430,7 @@ func _draw_album_view_legacy() -> void:
 func _draw_album_detail_view() -> void:
 	app._draw_image(GAL_BG_ALBUM_DETAIL, Vector2(0, 0), Vector2(1280, 720), true)
 	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.02, 0.02, 0.04, 0.24)))
-	var detail_index := maxi(_album_detail_index, 1)
+	var detail_index := maxi(_album_detail_index if _album_detail_index > 0 else int(app.save.get("gal_album_detail_index", 1)), 1)
 	var bg_pos := Vector2(65, 34)
 	var bg_size := Vector2(1150, 652)
 	app._draw_image(GAL_ALBUM_PREVIEW_BG, bg_pos, bg_size, false, Color(1, 1, 1, 0.95))
@@ -1420,6 +1444,16 @@ func _draw_album_detail_view() -> void:
 	)
 	app._draw_image(GAL_BTN_DETAIL, Vector2(136, 20), Vector2(48, 48), false, Color(1, 1, 1, 0.90))
 	app._draw_image(GAL_BTN_FAV, Vector2(192, 20), Vector2(48, 48), false, Color(1, 1, 1, 0.90))
+	_add_hit_button(Vector2(136, 20), Vector2(48, 48), func() -> void:
+		app.save["gal_last_album_detail"] = detail_index
+		_persist_gal_state()
+		_show_touch_hint("Photo detail saved")
+	)
+	_add_hit_button(Vector2(192, 20), Vector2(48, 48), func() -> void:
+		app.save["gal_favorite_album_index"] = detail_index
+		_persist_gal_state()
+		_show_touch_hint("Favorite photo: %02d" % detail_index)
+	)
 	_add_gal_text("Memory Photo %02d" % detail_index, bg_pos + Vector2(120, 560), Vector2(260, 34), 24)
 	_add_gal_text("Saved to Gal album", bg_pos + Vector2(680, 565), Vector2(260, 28), 15)
 
@@ -1472,6 +1506,8 @@ func _draw_memory_view() -> void:
 			var target_view := str(item.get("view", VIEW_MEMORY))
 			var memory_title := str(item.get("title", ""))
 			_add_hit_button(pos, Vector2(430, 108), func() -> void:
+				app.save["gal_last_memory"] = memory_title
+				_persist_gal_state()
 				if target_view == VIEW_MEMORY:
 					_show_touch_hint("Replay: %s" % memory_title)
 				else:
@@ -1677,6 +1713,7 @@ func _draw_special_touch_card(hero: Dictionary, item: Dictionary, grid_rect: Rec
 			_add_gal_text(str(item.get("button", "進入")), button_rect.position, button_rect.size, 18)
 			_add_hit_button(grid_rect.position, grid_rect.size, func() -> void:
 				app.save["gal_last_special_touch"] = str(item.get("name", "甜蜜互動"))
+				_persist_gal_state()
 				show_view(VIEW_SPECIAL_TOUCH_PLAY)
 				_show_touch_hint("進入：%s" % str(item.get("name", "甜蜜互動")))
 			)
@@ -1785,17 +1822,18 @@ func _draw_touch_zone(item: Dictionary) -> void:
 
 func _draw_plot_control_bar() -> void:
 	var buttons := [
-		{"path": GAL_PLOT_RECAP, "pos": Vector2(804, 626), "hint": "Recap opened"},
-		{"path": GAL_PLOT_AUTO, "pos": Vector2(924, 626), "hint": "Auto mode toggled"},
-		{"path": GAL_PLOT_SKIP, "pos": Vector2(1044, 626), "hint": "Skip touch story"},
+		{"path": GAL_PLOT_RECAP, "pos": Vector2(804, 626), "action": "recap", "hint": "Recap opened"},
+		{"path": GAL_PLOT_AUTO if bool(app.save.get("gal_plot_auto", false)) else GAL_PLOT_PAUSE, "pos": Vector2(924, 626), "action": "auto", "hint": "Auto mode toggled"},
+		{"path": GAL_PLOT_SKIP, "pos": Vector2(1044, 626), "action": "skip", "hint": "Skip touch story"},
 	]
 	for item in buttons:
 		var data: Dictionary = item
 		var pos: Vector2 = data.get("pos", Vector2.ZERO)
 		app._draw_image(str(data.get("path", "")), pos, Vector2(119, 50), false, Color(1, 1, 1, 0.92))
+		var action := str(data.get("action", ""))
 		var hint := str(data.get("hint", ""))
 		_add_hit_button(pos, Vector2(119, 50), func() -> void:
-			_show_touch_hint(hint)
+			_handle_plot_control(action, hint)
 		)
 
 
@@ -1817,8 +1855,11 @@ func _register_touch_action(kind: String, label_text: String, gain: int) -> void
 		_play_gift_voice()
 	else:
 		_play_touch_voice(kind)
+	app.save["gal_last_touch_kind"] = kind
+	app.save["gal_last_touch_label"] = label_text
 	app.save["gal_touch_count"] = int(app.save.get("gal_touch_count", 0)) + 1
 	_add_gal_exp(gain)
+	_persist_gal_state()
 	_show_touch_hint("%s成功，好感 +%d" % [label_text, gain])
 
 
@@ -1830,6 +1871,34 @@ func _add_gal_exp(amount: int) -> void:
 		level += 1
 	app.save["gal_level"] = level
 	app.save["gal_exp"] = max(exp_val, 0)
+
+
+func _handle_plot_control(action: String, fallback_hint: String) -> void:
+	match action:
+		"recap":
+			app.save["gal_plot_recap_opened"] = true
+			app.save["gal_last_memory"] = str(app.save.get("gal_last_special_touch", "Special touch"))
+			_persist_gal_state()
+			_show_touch_hint("Recap: %s" % str(app.save.get("gal_last_memory", "Special touch")))
+		"auto":
+			app.save["gal_plot_auto"] = not bool(app.save.get("gal_plot_auto", false))
+			_persist_gal_state()
+			show_view(VIEW_SPECIAL_TOUCH_PLAY)
+			_show_touch_hint("Auto %s" % ("on" if bool(app.save.get("gal_plot_auto", false)) else "off"))
+		"skip":
+			app.save["gal_plot_skipped"] = true
+			app.save["gal_memory_special_touch"] = true
+			_add_gal_exp(3)
+			_persist_gal_state()
+			show_view(VIEW_SPECIAL_TOUCH)
+			_show_touch_hint("Story skipped, EXP +3")
+		_:
+			_show_touch_hint(fallback_hint)
+
+
+func _persist_gal_state() -> void:
+	if app != null and app.has_method("_persist"):
+		app._persist()
 
 
 
@@ -1894,6 +1963,7 @@ func _draw_date_select_view() -> void:
 				_show_touch_hint("Locked until Lv.3")
 				return
 			app.save["gal_selected_date_option"] = selected_index
+			_persist_gal_state()
 			show_view(VIEW_DATE_SELECT)
 			_show_touch_hint("Selected: %s" % str(choice.get("title", "")))
 		)
@@ -1913,6 +1983,7 @@ func _draw_date_select_view() -> void:
 		app.save["gal_last_date"] = str(selected.get("title", "Date"))
 		app.save["gal_memory_date"] = true
 		_add_gal_exp(15)
+		_persist_gal_state()
 		_play_touch_voice("greet")
 		show_view(VIEW_MAIN)
 		_show_touch_hint("Date complete: %s, EXP +15" % str(selected.get("title", "Date")))
