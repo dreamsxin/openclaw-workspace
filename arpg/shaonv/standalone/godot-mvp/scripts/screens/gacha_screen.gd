@@ -21,7 +21,11 @@ const UI_LOTTERY_POOL_FRAME := "res://assets/ui/lottery/lottery_img_55.png"
 const UI_LOTTERY_PRAYER_FRAME := "res://assets/ui/lottery/lottery_img_57.png"
 const UI_PRAYER_HOLY_RELIC_BOTTOM_FRAME := "res://assets/ui/lottery/lottery_img_76.png"
 const UI_PRAYER_HOLY_RELIC_DIVIDER := "res://assets/ui/lottery/lottery_img_04.png"
-const UI_PRAYER_HOLY_RELIC_ANIMATION_BG := "res://assets/ui/background/lottery_img_10.png"
+const UI_PRAYER_HOLY_RELIC_ANIMATION_BG := "res://assets/ui/background/lottery_img_11.png"
+const UI_PRAYER_REMNANT_ANIMATION_BG := "res://assets/ui/background/lottery_img_10.png"
+const UI_PRAYER_REMNANT_SPINE_BAKED := "res://assets/spine/all_export/Other__yiqi/Other__yiqi.baked.json"
+const UI_PRAYER_REMNANT_SPINE_FALLBACK := "res://assets/spine/all_export/Other__yiqi/yiqi.png"
+const SPINE_BAKED_PREVIEW_CANVAS := preload("res://scripts/spine_baked_preview_canvas.gd")
 const UI_PRAYER_HOLY_RELIC_FUNC_ICONS := [
 	"res://assets/ui/lottery/lottery_btn_04.png",
 	"res://assets/ui/lottery/lottery_btn_22.png",
@@ -163,6 +167,10 @@ func draw_top_buttons() -> void:
 		app._add_hit_button(skip_pos, Vector2(132, 34), func() -> void: _toggle_skip_animation())
 
 func draw_prayer_screen(pool: Dictionary) -> void:
+	if not _is_holy_relic_prayer_pool(pool):
+		draw_prayer_remnant_screen(pool)
+		_draw_prayer_screen_nav()
+		return
 	draw_prayer_holy_relic_animation_bg()
 	draw_header_resources()
 	draw_prayer_pool_tabs()
@@ -173,6 +181,25 @@ func draw_prayer_screen(pool: Dictionary) -> void:
 	draw_prayer_holy_relic_tabs()
 	app._add_action_button("◀  返回", Vector2(44, 18), app._show_home, Vector2(118, 38), LOTTERY_BTN_WHITE)
 	app._add_action_button("?", Vector2(174, 18), app._show_player_info, Vector2(42, 38), LOTTERY_BTN_WHITE)
+
+
+func _is_holy_relic_prayer_pool(pool: Dictionary) -> bool:
+	return str(pool.get("id", "prayer")) == "prayer"
+
+
+func _draw_prayer_screen_nav() -> void:
+	app._add_action_button("鈼€  杩斿洖", Vector2(44, 18), app._show_home, Vector2(118, 38), LOTTERY_BTN_WHITE)
+	app._add_action_button("?", Vector2(174, 18), app._show_player_info, Vector2(42, 38), LOTTERY_BTN_WHITE)
+
+
+func draw_prayer_remnant_screen(pool: Dictionary) -> void:
+	draw_prayer_remnant_animation_bg()
+	draw_header_resources()
+	draw_prayer_pool_tabs()
+	draw_prayer_holy_relic_frame()
+	draw_prayer_holy_relic_top_buttons()
+	draw_prayer_right_panel(pool)
+	draw_prayer_buttons(pool)
 
 
 func draw_prayer_holy_relic_frame() -> void:
@@ -210,6 +237,21 @@ func draw_prayer_holy_relic_top_buttons() -> void:
 
 func draw_prayer_holy_relic_animation_bg() -> void:
 	app._draw_image(UI_PRAYER_HOLY_RELIC_ANIMATION_BG, _lottery_center_pos(Vector2.ZERO, LOTTERY_PREFAB_SIZE), _lottery_size(LOTTERY_PREFAB_SIZE), false)
+
+
+func draw_prayer_remnant_animation_bg() -> void:
+	var pos := _lottery_center_pos(Vector2.ZERO, LOTTERY_PREFAB_SIZE)
+	var size := _lottery_size(LOTTERY_PREFAB_SIZE)
+	app._draw_image(UI_PRAYER_REMNANT_ANIMATION_BG, pos, size, false)
+	if FileAccess.file_exists(UI_PRAYER_REMNANT_SPINE_BAKED):
+		var canvas: Control = SPINE_BAKED_PREVIEW_CANVAS.new()
+		canvas.position = pos
+		canvas.size = size
+		canvas.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		app._view_container().add_child(canvas)
+		canvas.set_baked_path(UI_PRAYER_REMNANT_SPINE_BAKED, "wait")
+	elif FileAccess.file_exists(UI_PRAYER_REMNANT_SPINE_FALLBACK):
+		app._draw_image(UI_PRAYER_REMNANT_SPINE_FALLBACK, pos, size, false)
 
 
 func draw_prayer_right_panel(pool: Dictionary) -> void:
@@ -439,6 +481,8 @@ func lottery_bg_for_pool(pool_id: String) -> String:
 		"prayer":
 			return "res://assets/ui/lottery/bg/lottery_bg_05.png"
 		"source_prayer":
+			return UI_LOTTERY_BG_PRAYER
+		"saint_source_prayer":
 			return UI_LOTTERY_BG_PRAYER
 		_:
 			return UI_LOTTERY_BG_ADVANCED

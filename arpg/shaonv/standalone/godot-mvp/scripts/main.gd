@@ -381,7 +381,7 @@ func _startup_tick() -> void:
 		0:
 			_show_launch()
 			_startup_stage = 1
-			_startup_timer.start(1.5)
+			_startup_timer.start(startup_screen.LAUNCH_VIDEO_SECONDS)
 		1:
 			_show_login()
 			_startup_stage = 2

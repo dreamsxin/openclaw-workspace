@@ -15,6 +15,8 @@ const UI_LOGIN_INPUT_ICON = "res://assets/ui/login/login_img_04.png"    # input 
 const UI_LOGIN_AGE = "res://assets/ui/login/login_txt_03.png"           # btnAge 12+
 const UI_LOGIN_TIP = "res://assets/ui/login/login_img_01.png"           # imgTipLogin
 const UI_LOADING_BG = "res://assets/ui/background/loading_bg_01.png"
+const UI_LAUNCH_VIDEO = "res://assets/video/game_start.ogv"
+const LAUNCH_VIDEO_SECONDS := 15.8
 
 var app
 
@@ -29,14 +31,36 @@ func show_launch() -> void:
 
 	# LaunchView: Image (fullscreen black) + RawImage (1680×1680, anchor 0.5-0.5 居中)
 	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.0, 0.0, 0.0, 1.0)))
-	# RawImage: 1680×1680 center-anchored → Godot: 1287×1613 centered at (640,360) → top-left (-3,-446)
-	app._view_container().add_child(app._panel(Vector2(-3, -446), Vector2(1287, 1613), Color(0.05, 0.032, 0.026, 0.38)))
+	var played_video := _draw_launch_video()
+	if not played_video:
+		# RawImage: 1680×1680 center-anchored → Godot: 1287×1613 centered at (640,360) → top-left (-3,-446)
+		app._view_container().add_child(app._panel(Vector2(-3, -446), Vector2(1287, 1613), Color(0.05, 0.032, 0.026, 0.38)))
 
 	var hint = app._label("少女回战 · 离线单机版", 18, HORIZONTAL_ALIGNMENT_CENTER)
 	hint.position = Vector2(440, 640)
 	hint.size = Vector2(400, 36)
 	hint.modulate = Color(0.78, 0.72, 0.62, 1.0)
 	app._view_container().add_child(hint)
+
+func _draw_launch_video() -> bool:
+	if not ResourceLoader.exists(UI_LAUNCH_VIDEO):
+		return false
+	var stream := load(UI_LAUNCH_VIDEO)
+	if stream == null:
+		return false
+	var video := VideoStreamPlayer.new()
+	video.stream = stream
+	video.position = Vector2(0, 0)
+	video.size = Vector2(1280, 720)
+	video.expand = true
+	video.autoplay = true
+	video.finished.connect(func() -> void:
+		if app.current_view == "launch":
+			app._show_login()
+	)
+	app._view_container().add_child(video)
+	video.play()
+	return true
 
 func show_preloading() -> void:
 	app.current_view = "preloading"
