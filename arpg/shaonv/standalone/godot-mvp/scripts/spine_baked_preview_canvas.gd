@@ -5,6 +5,7 @@ var textures: Dictionary = {}
 var clip_name := ""
 var time := 0.0
 var playing := true
+var playback_speed := 1.0
 var load_error := ""
 var _last_frame: int = -1  # avoid redundant redraws
 
@@ -65,10 +66,13 @@ func set_clip(next_clip_name: String) -> void:
 func set_playing(next_playing: bool) -> void:
 	playing = next_playing
 
+func set_playback_speed(next_speed: float) -> void:
+	playback_speed = clampf(next_speed, 0.1, 8.0)
+
 func _process(delta: float) -> void:
 	if not visible or not playing:
 		return
-	time += delta
+	time += delta * playback_speed
 	if baked.is_empty():
 		return
 	var clip := _active_clip()

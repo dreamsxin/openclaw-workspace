@@ -1,186 +1,298 @@
-# UTF-8 source. Spine Animation Browser — full hero list from heroes_list.json
 extends Node2D
 
-var heroes: Array = []
+const BAKED_CANVAS_SCRIPT := "res://scripts/spine_baked_preview_canvas.gd"
+const ALL_SPINES_INDEX := "res://assets/spine/all_spines_list.json"
+const LEGACY_HERO_INDEX := "res://assets/spine/heroes_list.json"
+
+var entries: Array = []
 var current_index := 0
 var anim_index := 0
-var anim_names: Array = []
+var anim_names: Array[String] = []
 var speed := 1.0
+var playing := true
+
 var info_label: Label
 var anim_label: Label
 var status_label: Label
 var canvas: Control
-var scroll: ScrollContainer
+var list_box: VBoxContainer
 
-func _ready():
+
+func _ready() -> void:
 	position = Vector2.ZERO
-	_load_heroes()
+	_load_entries()
 	_build_ui()
-	if heroes.size() > 0:
-		_select_hero(0)
+	if not entries.is_empty():
+		_select_entry(0)
 
-func _load_heroes():
-	var file = FileAccess.open("res://assets/spine/heroes_list.json", FileAccess.READ)
-	if file:
-		var parsed = JSON.parse_string(file.get_as_text())
-		if parsed is Array:
-			heroes = parsed
 
-func _build_ui():
-	var bg = ColorRect.new()
+func _load_entries() -> void:
+	entries = _read_all_spines()
+	if entries.is_empty():
+		entries = _read_legacy_heroes()
+
+
+func _read_all_spines() -> Array:
+	var file := FileAccess.open(ALL_SPINES_INDEX, FileAccess.READ)
+	if file == null:
+		return []
+	var parsed = JSON.parse_string(file.get_as_text())
+	if not parsed is Array:
+		return []
+
+	var loaded: Array = []
+	for item in parsed:
+		if not item is Dictionary:
+			continue
+		var baked_path := String(item.get("baked", ""))
+		if baked_path.is_empty() or not FileAccess.file_exists(baked_path):
+			continue
+		var entry: Dictionary = item.duplicate(true)
+		entry["name"] = String(entry.get("name", entry.get("key", "?")))
+		entry["label"] = "%s/%s" % [entry.get("category", "Spine"), entry.get("key", "?")]
+		entry["baked_path"] = baked_path
+		loaded.append(entry)
+	return loaded
+
+
+func _read_legacy_heroes() -> Array:
+	var file := FileAccess.open(LEGACY_HERO_INDEX, FileAccess.READ)
+	if file == null:
+		return []
+	var parsed = JSON.parse_string(file.get_as_text())
+	if not parsed is Array:
+		return []
+
+	var loaded: Array = []
+	for item in parsed:
+		if not item is Dictionary:
+			continue
+		var key := String(item.get("key", ""))
+		var baked_path := "res://assets/spine/%s/%s.baked.json" % [key, key]
+		if not FileAccess.file_exists(baked_path):
+			continue
+		var entry: Dictionary = item.duplicate(true)
+		entry["label"] = "%s [%s]" % [entry.get("name", key), key]
+		entry["baked_path"] = baked_path
+		loaded.append(entry)
+	return loaded
+
+
+func _build_ui() -> void:
+	var bg := ColorRect.new()
 	bg.color = Color(0.06, 0.05, 0.09)
 	bg.size = Vector2(1280, 720)
 	add_child(bg)
 
-	# Left panel with scroll
-	var panel = ColorRect.new()
+	var panel := ColorRect.new()
 	panel.color = Color(0.10, 0.08, 0.14, 0.95)
-	panel.size = Vector2(200, 720)
+	panel.size = Vector2(260, 720)
 	add_child(panel)
 
-	var title = _lbl("%d 角色" % heroes.size(), 20, Vector2(0, 10), Vector2(200, 32), HORIZONTAL_ALIGNMENT_CENTER)
+	var title := _label("%d Spine" % entries.size(), 20, Vector2(0, 10), Vector2(260, 32), HORIZONTAL_ALIGNMENT_CENTER)
 	add_child(title)
 
-	# Scrollable hero list
-	scroll = ScrollContainer.new()
+	var scroll := ScrollContainer.new()
 	scroll.position = Vector2(4, 46)
-	scroll.size = Vector2(192, 666)
-	scroll.name = "HeroScroll"
+	scroll.size = Vector2(252, 666)
+	scroll.name = "SpineScroll"
 	add_child(scroll)
 
-	var list = VBoxContainer.new()
-	list.name = "HeroList"
-	list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	scroll.add_child(list)
+	list_box = VBoxContainer.new()
+	list_box.name = "SpineList"
+	list_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(list_box)
 
-	for i in heroes.size():
-		var h = heroes[i]
-		var btn = Button.new()
-		btn.text = "%s [%s]" % [h["name"], h["key"]]
+	for index in entries.size():
+		var entry: Dictionary = entries[index]
+		var btn := Button.new()
+		btn.text = String(entry.get("label", entry.get("key", "?")))
+		btn.tooltip_text = String(entry.get("sourceDir", entry.get("baked_path", "")))
 		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		btn.custom_minimum_size = Vector2(0, 36)
+		btn.custom_minimum_size = Vector2(0, 32)
 		btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		btn.pressed.connect(_select_hero.bind(i))
-		btn.name = "btn_%d" % i
-		list.add_child(btn)
+		btn.pressed.connect(_select_entry.bind(index))
+		list_box.add_child(btn)
 
-	# Info bar at bottom
-	info_label = _lbl("", 18, Vector2(210, 598), Vector2(340, 26))
-	add_child(info_label)
-	anim_label = _lbl("", 15, Vector2(210, 632), Vector2(500, 22))
-	add_child(anim_label)
-	status_label = _lbl("", 14, Vector2(210, 662), Vector2(300, 20))
-	add_child(status_label)
-
-	# Controls
-	_btn("◀◀", Vector2(720, 598), _clip_prev, 44, 32)
-	_btn("▶/‖", Vector2(772, 598), _toggle_play, 56, 32)
-	_btn("▶▶", Vector2(836, 598), _clip_next, 44, 32)
-	_btn("−",  Vector2(890, 598), _speed_down, 40, 32)
-	_btn("＋",  Vector2(936, 598), _speed_up, 40, 32)
-	_btn("1x", Vector2(982, 598), _reset_speed, 40, 32)
-	_btn("⇄",  Vector2(1028, 598), _flip, 44, 32)
-	_btn("←",  Vector2(1080, 598), _prev_hero, 44, 32)
-	_btn("→",  Vector2(1130, 598), _next_hero, 44, 32)
-
-	# Preview area
 	canvas = Control.new()
-	canvas.position = Vector2(200, 0)
-	canvas.size = Vector2(1080, 594)
+	canvas.position = Vector2(260, 0)
+	canvas.size = Vector2(1020, 594)
 	canvas.name = "Preview"
 	add_child(canvas)
 
-func _select_hero(index: int):
-	current_index = index
-	var hero = heroes[index]
-	info_label.text = "%s [%s]  id=%d" % [hero["name"], hero["key"], hero["id"]]
+	info_label = _label("", 17, Vector2(270, 598), Vector2(520, 26))
+	anim_label = _label("", 15, Vector2(270, 632), Vector2(610, 22))
+	status_label = _label("", 14, Vector2(270, 662), Vector2(610, 20))
+	add_child(info_label)
+	add_child(anim_label)
+	add_child(status_label)
 
-	# Clear previous
+	_button("<<", Vector2(890, 598), _clip_prev, 44, 32)
+	_button("Play", Vector2(940, 598), _toggle_play, 62, 32)
+	_button(">>", Vector2(1008, 598), _clip_next, 44, 32)
+	_button("-", Vector2(1062, 598), _speed_down, 36, 32)
+	_button("+", Vector2(1104, 598), _speed_up, 36, 32)
+	_button("1x", Vector2(1146, 598), _reset_speed, 40, 32)
+	_button("Flip", Vector2(1192, 598), _flip, 54, 32)
+	_button("<", Vector2(890, 638), _prev_entry, 44, 32)
+	_button(">", Vector2(940, 638), _next_entry, 44, 32)
+
+
+func _select_entry(index: int) -> void:
+	if index < 0 or index >= entries.size():
+		return
+	current_index = index
+	anim_index = 0
+	speed = 1.0
+	playing = true
+
 	for child in canvas.get_children():
 		child.queue_free()
 
-	var baked_path = "res://assets/spine/%s/%s.baked.json" % [hero["key"], hero["key"]]
-	var baked_disk = baked_path.replace("res://", "")
-	if not FileAccess.file_exists(baked_disk):
-		anim_label.text = "無 baked 動畫"
-		status_label.text = "缺失"
+	var entry: Dictionary = entries[index]
+	var baked_path := String(entry.get("baked_path", entry.get("baked", "")))
+	anim_names = _clip_names(baked_path)
+	if anim_names.is_empty():
+		anim_label.text = "No baked clips"
+		status_label.text = "Missing or empty baked JSON"
 		return
 
-	# Get animation names
-	var file = FileAccess.open(baked_disk, FileAccess.READ)
-	anim_names.clear()
-	if file:
-		var data = JSON.parse_string(file.get_as_text())
-		var clips: Dictionary = data.get("clips", {})
-		for k in clips:
-			if clips[k] is Dictionary and clips[k].get("frames", []).size() > 0:
-				anim_names.append(k)
-	if anim_names.size() == 0:
-		anim_names = ["(empty)"]
-
-	# Create baked canvas
-	var BakedClass = load("res://scripts/spine_baked_preview_canvas.gd")
-	var c = Control.new()
-	c.set_script(BakedClass)
-	c.position = Vector2(0, 0)
-	c.size = Vector2(1080, 594)
-	c.name = "Baked"
-	c.set_baked_path(baked_path, anim_names[0])
-	canvas.add_child(c)
-
-	anim_index = 0
-	speed = 1.0
+	var baked_class = load(BAKED_CANVAS_SCRIPT)
+	var preview := Control.new()
+	preview.set_script(baked_class)
+	preview.position = Vector2.ZERO
+	preview.size = canvas.size
+	preview.name = "Baked"
+	preview.set_baked_path(baked_path, anim_names[0])
+	preview.set_playback_speed(speed)
+	canvas.add_child(preview)
 	_update_labels()
 
-func _clip_next():
-	if anim_names.size() <= 1: return
+
+func _clip_names(baked_path: String) -> Array[String]:
+	var names: Array[String] = []
+	var file := FileAccess.open(baked_path, FileAccess.READ)
+	if file == null:
+		return names
+	var parsed = JSON.parse_string(file.get_as_text())
+	if not parsed is Dictionary:
+		return names
+	var clips: Dictionary = parsed.get("clips", {})
+	for key in clips.keys():
+		var clip = clips[key]
+		if clip is Dictionary and clip.get("frames", []).size() > 0:
+			names.append(String(key))
+	return names
+
+
+func _clip_next() -> void:
+	if anim_names.size() <= 1:
+		return
 	anim_index = (anim_index + 1) % anim_names.size()
 	_apply_clip()
-func _clip_prev():
-	if anim_names.size() <= 1: return
+
+
+func _clip_prev() -> void:
+	if anim_names.size() <= 1:
+		return
 	anim_index = (anim_index - 1 + anim_names.size()) % anim_names.size()
 	_apply_clip()
-func _apply_clip():
-	var c = canvas.get_node_or_null("Baked") as Control
-	if c and c.has_method("set_clip"):
-		c.set_clip(anim_names[anim_index])
-		c.set_playing(true)
+
+
+func _apply_clip() -> void:
+	var preview := canvas.get_node_or_null("Baked") as Control
+	if preview != null and preview.has_method("set_clip"):
+		preview.set_clip(anim_names[anim_index])
+		preview.set_playing(playing)
+		preview.set_playback_speed(speed)
 	_update_labels()
-func _toggle_play():
-	var c = canvas.get_node_or_null("Baked") as Control
-	if c and c.has_method("set_playing"):
-		var p = c.get("playing")
-		c.set_playing(not p)
-func _speed_up(): speed = min(speed * 1.25, 4.0); _update_labels()
-func _speed_down(): speed = max(speed / 1.25, 0.25); _update_labels()
-func _reset_speed(): speed = 1.0; _update_labels()
-func _flip():
-	var c = canvas.get_node_or_null("Baked") as Control
-	if c: c.scale.x *= -1.0
-func _prev_hero():
-	if heroes.size() == 0: return
-	_select_hero((current_index - 1 + heroes.size()) % heroes.size())
-func _next_hero():
-	if heroes.size() == 0: return
-	_select_hero((current_index + 1) % heroes.size())
 
-func _update_labels():
-	var hero = heroes[current_index] if current_index < heroes.size() else {"name":"?", "key":"?", "id":0}
-	info_label.text = "%s [%s]  id=%d" % [hero["name"], hero["key"], hero["id"]]
-	if anim_names.size() > 0:
-		anim_label.text = "動畫 [%d/%d]: %s  @ %.1fx" % [anim_index + 1, anim_names.size(), anim_names[anim_index], speed]
+
+func _toggle_play() -> void:
+	playing = not playing
+	var preview := canvas.get_node_or_null("Baked") as Control
+	if preview != null and preview.has_method("set_playing"):
+		preview.set_playing(playing)
+	_update_labels()
+
+
+func _speed_up() -> void:
+	speed = minf(speed * 1.25, 4.0)
+	_apply_speed()
+
+
+func _speed_down() -> void:
+	speed = maxf(speed / 1.25, 0.25)
+	_apply_speed()
+
+
+func _reset_speed() -> void:
+	speed = 1.0
+	_apply_speed()
+
+
+func _apply_speed() -> void:
+	var preview := canvas.get_node_or_null("Baked") as Control
+	if preview != null and preview.has_method("set_playback_speed"):
+		preview.set_playback_speed(speed)
+	_update_labels()
+
+
+func _flip() -> void:
+	var preview := canvas.get_node_or_null("Baked") as Control
+	if preview != null:
+		preview.scale.x *= -1.0
+
+
+func _prev_entry() -> void:
+	if entries.is_empty():
+		return
+	_select_entry((current_index - 1 + entries.size()) % entries.size())
+
+
+func _next_entry() -> void:
+	if entries.is_empty():
+		return
+	_select_entry((current_index + 1) % entries.size())
+
+
+func _update_labels() -> void:
+	if entries.is_empty():
+		info_label.text = "No Spine entries"
+		return
+	var entry: Dictionary = entries[current_index]
+	info_label.text = "%s" % String(entry.get("label", entry.get("key", "?")))
+	if not anim_names.is_empty():
+		anim_label.text = "Clip %d/%d: %s  @ %.2fx  %s" % [
+			anim_index + 1,
+			anim_names.size(),
+			anim_names[anim_index],
+			speed,
+			"playing" if playing else "paused",
+		]
 	else:
-		anim_label.text = "無動畫"
-	status_label.text = "角色 %d/%d" % [current_index + 1, heroes.size()]
+		anim_label.text = "No clips"
+	status_label.text = "%d/%d  %s" % [current_index + 1, entries.size(), String(entry.get("sourceDir", ""))]
 
-func _lbl(text: String, size: int, pos: Vector2, sz: Vector2, align := HORIZONTAL_ALIGNMENT_LEFT) -> Label:
-	var l = Label.new()
-	l.text = text; l.add_theme_font_size_override("font_size", size)
-	l.horizontal_alignment = align; l.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	l.position = pos; l.size = sz
-	l.modulate = Color(0.90, 0.86, 0.80)
-	return l
 
-func _btn(text: String, pos: Vector2, cb: Callable, w: float, h: float):
-	var b = Button.new(); b.text = text; b.position = pos; b.size = Vector2(w, h)
-	b.pressed.connect(cb); add_child(b)
+func _label(text: String, font_size: int, pos: Vector2, rect_size: Vector2, align := HORIZONTAL_ALIGNMENT_LEFT) -> Label:
+	var label := Label.new()
+	label.text = text
+	label.add_theme_font_size_override("font_size", font_size)
+	label.horizontal_alignment = align
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.position = pos
+	label.size = rect_size
+	label.modulate = Color(0.90, 0.86, 0.80)
+	label.clip_text = true
+	return label
+
+
+func _button(text: String, pos: Vector2, cb: Callable, width: float, height: float) -> Button:
+	var button := Button.new()
+	button.text = text
+	button.position = pos
+	button.size = Vector2(width, height)
+	button.pressed.connect(cb)
+	add_child(button)
+	return button

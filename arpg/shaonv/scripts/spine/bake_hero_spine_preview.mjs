@@ -18,10 +18,14 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "../..");
 const projectRoot = path.join(root, "standalone/godot-mvp");
 const heroName = stringArg("--hero=", "hero_016");
+const spineDirArg = stringArg("--dir=", "");
+const sourceKey = stringArg("--key=", heroName);
 const fps = numberArg("--fps=", 8);
 const maxDuration = numberArg("--max-duration=", 1.2);
 const maxClips = numberArg("--max-clips=", 2);
-const heroDir = path.join(projectRoot, "assets/spine", heroName);
+const heroDir = spineDirArg
+  ? path.resolve(projectRoot, spineDirArg.replace(/^res:\/\//, ""))
+  : path.join(projectRoot, "assets/spine", heroName);
 
 const preferredClipNames = [
   "Idle",
@@ -61,9 +65,12 @@ function resPath(absPath) {
 
 function extractAtlasPages(atlasText) {
   const pages = [];
-  for (const rawLine of atlasText.split(/\r?\n/)) {
-    const line = rawLine.trim();
-    if (/^[^:]+\.(png|jpg|jpeg|webp|tga)$/i.test(line)) pages.push(line);
+  const lines = atlasText.split(/\r?\n/);
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!/^[^:]+\.(png|jpg|jpeg|webp|tga)$/i.test(line)) continue;
+    const next = lines.slice(i + 1).map((item) => item.trim()).find((item) => item.length > 0) ?? "";
+    if (next.toLowerCase().startsWith("size:")) pages.push(line);
   }
   return [...new Set(pages)];
 }
@@ -118,7 +125,11 @@ function attachmentFrame(slot) {
   if (!attachment) return null;
 
   if (attachment instanceof RegionAttachment) {
-    attachment.updateRegion();
+    try {
+      attachment.updateRegion();
+    } catch {
+      return null;
+    }
     const vertices = new Array(8).fill(0);
     attachment.computeWorldVertices(slot, vertices, 0, 2);
     const region = attachment.region;
@@ -137,7 +148,11 @@ function attachmentFrame(slot) {
   }
 
   if (attachment instanceof MeshAttachment) {
-    attachment.updateRegion();
+    try {
+      attachment.updateRegion();
+    } catch {
+      return null;
+    }
     const count = attachment.worldVerticesLength;
     const vertices = new Array(count).fill(0);
     attachment.computeWorldVertices(slot, 0, count, vertices, 0, 2);
@@ -255,8 +270,8 @@ function bakeAnimationClip(skeletonData, animationName) {
 }
 
 function main() {
-  const skelPath = path.join(heroDir, `${heroName}.skel.bytes`);
-  const atlasPath = path.join(heroDir, `${heroName}.atlas.txt`);
+  const skelPath = path.join(heroDir, `${sourceKey}.skel.bytes`);
+  const atlasPath = path.join(heroDir, `${sourceKey}.atlas.txt`);
   const atlasText = fs.readFileSync(atlasPath, "utf8");
   const atlasPages = extractAtlasPages(atlasText);
   const pages = {};
@@ -277,7 +292,7 @@ function main() {
       skeleton: resPath(skelPath),
       runtime: "@esotericsoftware/spine-core@4.2.43",
     },
-    character: { name: heroName, pages },
+    character: { name: sourceKey, pages },
     skeleton: {
       version: skeletonData.version,
       hash: skeletonData.hash,
@@ -302,9 +317,9 @@ function main() {
     },
     clips,
   };
-  const outPath = path.join(heroDir, `${heroName}.baked.json`);
+  const outPath = path.join(heroDir, `${sourceKey}.baked.json`);
   fs.writeFileSync(outPath, JSON.stringify(output) + "\n", "utf8");
-  console.log(`baked ${heroName}: ${clipNames.join(", ")} -> ${path.relative(root, outPath)}`);
+  console.log(`baked ${sourceKey}: ${clipNames.join(", ")} -> ${path.relative(root, outPath)}`);
   console.log(JSON.stringify(output.skeleton, null, 2));
 }
 
