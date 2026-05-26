@@ -397,3 +397,35 @@ $py='C:\Users\admin\AppData\Local\Python\pythoncore-3.14-64\python.exe'
 - `tmp/screenshots/gal-level-view.png`
 - `tmp/screenshots/gal-album-view-buttons.png`
 - `tmp/screenshots/gal-date-select-buttons.png`
+
+## 18. Gal 甜蜜互动选择页资源路线修正
+
+本轮核对截图中的“甜蜜互动”入口卡时，先前实现误把 `GalDateSelectGrid` 的约会选择卡资源当成参考，这是猜测路线，应避免继续沿用。正确 prefab 是：
+
+- 选择页根界面：`Assets/Game/RawAssets/Prefabs/UI/Gal/GalSpecialTouchSelectView.prefab`
+- 互动卡片：`Assets/Game/RawAssets/Prefabs/UI/Gal/GalSpecialTouchSelectGrid.prefab`
+
+`GalSpecialTouchSelectGrid` 的关键节点与资源：
+
+- 卡片根尺寸是 `320x540`。
+- `imgBg` 使用 `gal_img_70`，是普通互动卡底。
+- `imgIcon` 使用 `gal_img_71`，原始尺寸 `310x250`，用于卡面图外框。
+- `imgIcon/Image` 使用 `gal_img_72`，是标题粉色条。
+- `imgLabel0/1/2` 分别使用 `gal_img_73/74/75`。
+- `txtDes` 是描述文字，字号 `20`，颜色接近深灰。
+- `imgBg/btnEntry` 才是“进入”按钮，sprite 为 `gal_btn_26`，原始尺寸 `208x74`，位置 `pos(0,45)`，Text 字号 `26`。
+- 未解锁时不要强行画按钮；同位置显示 `txtLock`，原始尺寸 `240x60`，颜色是偏粉的锁定文字。
+- 敬请期待卡走 `pnlNone`，底图 `gal_img_76`，中间字图 `gal_txt_02`。
+
+导出命令示例：
+
+```powershell
+$py='C:\Users\admin\AppData\Local\Python\pythoncore-3.14-64\python.exe'
+& $py scripts\assets\export_unity_bundle_images.py --plan tmp\gal-special-touch-select-export-plan.json --repo-root . --godot-root standalone\godot-mvp --export-root reverse-output\godot-resource-export\gal-special-touch-select --xor-prefix 222 --xor-key 0x16
+```
+
+排查经验：
+
+- 看到 `gal_img_77/78/79/80` 时要确认是否来自 `GalDateSelectGrid`，它对应约会选择，不是甜蜜互动入口。
+- “按钮长得像”不能作为资源依据；优先查 prefab 节点名、Image.sprite、RectTransform，再导出对应 sprite。
+- 如果 prefab 中按钮默认 inactive，通常是运行时按解锁状态切换，需要同时复原 inactive 按钮和同位置锁定文本。

@@ -7,6 +7,11 @@ const UI_RECRUIT_LIGHT_R := "res://assets/ui/lottery/lottery_img_60_r.png"
 const UI_RECRUIT_FX_L := "res://assets/ui/lottery/fx_lottery_img_60_l.png"
 const UI_RECRUIT_FX_R := "res://assets/ui/lottery/fx_lottery_img_60_r.png"
 const UI_RECRUIT_DISC := "res://assets/ui/lottery/lottery_img_62.png"
+const UI_STAGE_DISC_A := "res://assets/ui/lottery/lottery_img_62a.png"
+const UI_STAGE_DISC_B := "res://assets/ui/lottery/lottery_img_62b.png"
+const UI_STAGE_DISC_C := "res://assets/ui/lottery/lottery_img_62c.png"
+const UI_STAGE_DISC_F := "res://assets/ui/lottery/lottery_img_62f.png"
+const UI_STAGE_DISC_I := "res://assets/ui/lottery/lottery_img_62i.png"
 const UI_RECRUIT_GROUP := "res://assets/ui/lottery/lottery_img_01.png"
 const UI_RESULT_CARD_BG := "res://assets/ui/lottery/lottery_img_55.png"
 const UI_RESULT_CARD_BG_PRAYER := "res://assets/ui/lottery/lottery_img_57.png"
@@ -15,96 +20,206 @@ const UI_RESULT_SIDE_B := "res://assets/ui/lottery/lottery_img_12.png"
 const UI_RESULT_SIDE_C := "res://assets/ui/lottery/lottery_img_13.png"
 const UI_RESULT_SIDE_D := "res://assets/ui/lottery/lottery_img_14.png"
 const UI_TICKET_ICON := "res://assets/ui/item/draw_03.png"
+const LOTTERY_STAGE_SCALE := Vector2(1280.0 / 1670.0, 720.0 / 750.0)
 
 var app
+var sequence_id := 0
 
 func _init(app_ref) -> void:
 	app = app_ref
 
+
+func _stage_size(prefab_size: Vector2) -> Vector2:
+	return Vector2(prefab_size.x * LOTTERY_STAGE_SCALE.x, prefab_size.y * LOTTERY_STAGE_SCALE.y)
+
+
+func _stage_center_pos(center: Vector2, size: Vector2) -> Vector2:
+	return Vector2((835.0 + center.x - size.x * 0.5) * LOTTERY_STAGE_SCALE.x, (375.0 - center.y - size.y * 0.5) * LOTTERY_STAGE_SCALE.y)
+
 func show_draw_animation(count: int) -> void:
-	var pool = app._pool_by_id(str(app.save.get("active_pool_id", "advanced")))
-	var cost = count * int(pool.get("ticketCost", 1))
-	app.current_view = "draw_animation"
-	app._set_chrome_visible(false)
-	app._clear("喚灵演出")
-	draw_recruit_backdrop(3)
-	app._draw_image(UI_RECRUIT_DISC, Vector2(454, 70), Vector2(372, 372), false, Color(1, 1, 1, 0.84))
-	app._draw_image(UI_TICKET_ICON, Vector2(590, 292), Vector2(76, 88), false, Color(1, 1, 1, 0.96))
-
-	var title = app._label("喚灵仪式", 42, HORIZONTAL_ALIGNMENT_CENTER)
-	title.position = Vector2(390, 92)
-	title.size = Vector2(500, 62)
-	app._view_container().add_child(title)
-
-	var info = app._label("%s\n本次喚灵 %d 次  消耗 %d / %d\n保底 %d / %d" % [
-		pool.get("name", "喚灵"),
-		count,
-		cost,
-		int(app.save.get("tickets", 0)),
-		app._pity(pool.get("id", "advanced")),
-		int(pool.get("pityLimit", 60))
-	], 21, HORIZONTAL_ALIGNMENT_CENTER)
-	info.position = Vector2(342, 448)
-	info.size = Vector2(596, 96)
-	info.modulate = Color(0.95, 0.88, 0.72)
-	app._view_container().add_child(info)
-
+	var pool: Dictionary = app._pool_by_id(str(app.save.get("active_pool_id", "advanced")))
+	var cost := count * int(pool.get("ticketCost", 1))
 	if int(app.save.get("tickets", 0)) < cost:
-		var warning = app._label("喚灵券不足", 28, HORIZONTAL_ALIGNMENT_CENTER)
-		warning.position = Vector2(430, 552)
-		warning.size = Vector2(420, 42)
-		app._view_container().add_child(warning)
-		app._add_action_button("返回卡池", Vector2(574, 620), func() -> void: app._pop_view(), Vector2(132, 46))
+		show_empty_ticket_warning()
 		return
-
-	app._add_action_button("开始喚灵", Vector2(438, 620), func() -> void: show_recruit_reveal(count), Vector2(132, 46))
-	app._add_action_button("跳过演出", Vector2(574, 620), func() -> void: draw_and_show(count), Vector2(132, 46))
-	app._add_action_button("返回卡池", Vector2(710, 620), func() -> void: app._pop_view(), Vector2(132, 46))
-
-func show_recruit_reveal(count: int) -> void:
-	var results = app._perform_draw(count)
+	var results: Array = app._perform_draw(count)
 	if results.is_empty():
 		show_empty_ticket_warning()
 		return
-	var best = best_result(results)
-	var hero = best.get("hero", app._hero_by_id(240065))
-	var rarity = int(best.get("rolled_rarity", hero.get("rarity", 1)))
+	var seq := _next_sequence()
+	show_stage_view(results, count, seq)
+
+func show_stage_view(results: Array, count: int, seq: int) -> void:
+	var pool: Dictionary = app._pool_by_id(str(app.save.get("active_pool_id", "advanced")))
+	var cost := count * int(pool.get("ticketCost", 1))
+	var best := best_result(results)
+	var hero: Dictionary = best.get("hero", app._hero_by_id(240065))
+	var rarity := int(best.get("rolled_rarity", hero.get("rarity", 1)))
+	app.current_view = "draw_stage"
+	app._set_chrome_visible(false)
+	app._clear("喚靈啟動")
+	draw_stage_backdrop(rarity)
+	var title: Label = app._label("喚靈儀式啟動", 42, HORIZONTAL_ALIGNMENT_CENTER)
+	title.position = Vector2(390, 48)
+	title.size = Vector2(500, 62)
+	app._view_container().add_child(title)
+
+	var info: Label = app._label("%s\n本次喚靈 %d 次  已消耗 %d 張喚靈券\n保底進度 %d / %d" % [
+		pool.get("name", "喚灵"),
+		count,
+		cost,
+		app._pity(pool.get("id", "advanced")),
+		int(pool.get("pityLimit", 60))
+	], 21, HORIZONTAL_ALIGNMENT_CENTER)
+	info.position = Vector2(342, 546)
+	info.size = Vector2(596, 90)
+	info.modulate = Color(0.95, 0.88, 0.72)
+	app._view_container().add_child(info)
+
+	draw_stage_orbits(results, rarity)
+	app._add_action_button("快速啟動", Vector2(438, 644), func() -> void:
+		show_stage_color(results, count, seq)
+	, Vector2(132, 46))
+	app._add_action_button("跳過演出", Vector2(574, 644), func() -> void:
+		_cancel_sequence()
+		show_results(results, count)
+	, Vector2(132, 46))
+	app._add_action_button("返回卡池", Vector2(710, 644), func() -> void:
+		_cancel_sequence()
+		app._pop_view()
+	, Vector2(132, 46))
+	run_stage_auto.call_deferred(results, count, seq)
+
+func show_stage_color(results: Array, count: int, seq: int) -> void:
+	if not _is_sequence_live(seq):
+		return
+	var best := best_result(results)
+	var hero: Dictionary = best.get("hero", app._hero_by_id(240065))
+	var rarity := int(best.get("rolled_rarity", hero.get("rarity", 1)))
+	app.current_view = "draw_stage_color"
+	app._set_chrome_visible(false)
+	app._clear("喚靈共鳴")
+	draw_stage_backdrop(rarity)
+	draw_stage_cards(results, rarity)
+	var title: Label = app._label("命運軌跡已鎖定", 42, HORIZONTAL_ALIGNMENT_CENTER)
+	title.position = Vector2(390, 76)
+	title.size = Vector2(500, 62)
+	title.modulate = frame_color(rarity, 1.0)
+	app._view_container().add_child(title)
+	var rare_text := "SSR 反應" if rarity >= 4 else ("SR 反應" if rarity == 3 else "靈能反應")
+	var hint: Label = app._label("%s\n即將顯現最高稀有度幻靈" % rare_text, 24, HORIZONTAL_ALIGNMENT_CENTER)
+	hint.position = Vector2(392, 510)
+	hint.size = Vector2(496, 70)
+	hint.modulate = Color(1.0, 0.92, 0.72)
+	app._view_container().add_child(hint)
+	app._add_action_button("跳過", Vector2(1088, 34), func() -> void:
+		_cancel_sequence()
+		show_results(results, count)
+	, Vector2(102, 40))
+	run_color_auto.call_deferred(results, count, seq)
+
+func show_recruit_reveal(count: int) -> void:
+	var results: Array = app._perform_draw(count)
+	if results.is_empty():
+		show_empty_ticket_warning()
+		return
+	show_recruit_silhouette(results, count, _next_sequence())
+
+func show_recruit_silhouette(results: Array, count: int, seq: int) -> void:
+	if not _is_sequence_live(seq):
+		return
+	var best := best_result(results)
+	var hero: Dictionary = best.get("hero", app._hero_by_id(240065))
+	var rarity := int(best.get("rolled_rarity", hero.get("rarity", 1)))
+	app.current_view = "hero_recruit_silhouette"
+	app._set_chrome_visible(false)
+	app._clear("幻靈顯現")
+	draw_recruit_backdrop(rarity)
+	draw_spine_png_variant(hero, "_silhouette", Vector2(438, 18), Vector2(620, 668), Color(0, 0, 0, 0.82))
+	draw_recruit_fx_layers(rarity, false)
+
+	var title: Label = app._label("靈魂輪廓同步中", 34, HORIZONTAL_ALIGNMENT_CENTER)
+	title.position = Vector2(90, 204)
+	title.size = Vector2(360, 52)
+	title.modulate = Color(0.94, 0.88, 0.72)
+	app._view_container().add_child(title)
+	var hint: Label = app._label("點擊可立即揭示\n%s 反應" % ("SSR" if rarity >= 4 else "稀有度"), 20, HORIZONTAL_ALIGNMENT_CENTER)
+	hint.position = Vector2(118, 270)
+	hint.size = Vector2(304, 70)
+	app._view_container().add_child(hint)
+	app._add_hit_button(Vector2.ZERO, Vector2(1280, 720), func() -> void:
+		show_recruit_revealed(results, count, seq)
+	)
+	app._add_action_button("跳過", Vector2(1088, 34), func() -> void:
+		_cancel_sequence()
+		show_results(results, count)
+	, Vector2(102, 40))
+	run_recruit_auto.call_deferred(results, count, seq)
+
+func show_recruit_revealed(results: Array, count: int, seq: int) -> void:
+	if not _is_sequence_live(seq):
+		return
+	var best := best_result(results)
+	var hero: Dictionary = best.get("hero", app._hero_by_id(240065))
+	var rarity := int(best.get("rolled_rarity", hero.get("rarity", 1)))
 
 	app.current_view = "hero_recruit"
 	app._set_chrome_visible(false)
 	app._clear("招募演出")
 	draw_recruit_backdrop(rarity)
 
-	draw_spine_png_variant(hero, "_silhouette", Vector2(618, 36), Vector2(520, 620), Color(0, 0, 0, 0.72))
+	draw_spine_png_variant(hero, "_silhouette", Vector2(610, 36), Vector2(520, 620), Color(0, 0, 0, 0.18))
 	app._draw_hero_stage(hero, Vector2(596, 28), Vector2(560, 636), false)
+	draw_recruit_fx_layers(rarity, true)
 	draw_quality_frame(rarity)
 
-	var new_tag = app._label("NEW" if best.get("is_new", false) else "碎片 +%d" % int(best.get("shards", 0)), 28, HORIZONTAL_ALIGNMENT_CENTER)
+	var rare_label := "SSR" if rarity >= 4 else ("SR" if rarity == 3 else "R")
+	var rare_tag: Label = app._label(rare_label, 54, HORIZONTAL_ALIGNMENT_CENTER)
+	rare_tag.position = Vector2(78, 132)
+	rare_tag.size = Vector2(260, 70)
+	rare_tag.modulate = frame_color(rarity, 1.0)
+	app._view_container().add_child(rare_tag)
+
+	var new_tag: Label = app._label("NEW" if best.get("is_new", false) else "碎片 +%d" % int(best.get("shards", 0)), 28, HORIZONTAL_ALIGNMENT_CENTER)
 	new_tag.position = Vector2(130, 202)
 	new_tag.size = Vector2(220, 44)
 	new_tag.modulate = app._rarity_color(rarity, 1.0)
 	app._view_container().add_child(new_tag)
 
-	var name = app._label(str(hero.get("name", "")), 44, HORIZONTAL_ALIGNMENT_CENTER)
+	var name: Label = app._label(str(hero.get("name", "")), 44, HORIZONTAL_ALIGNMENT_CENTER)
 	name.position = Vector2(74, 252)
 	name.size = Vector2(360, 58)
 	app._view_container().add_child(name)
 
-	var star = app._label(app._stars(rarity), 26, HORIZONTAL_ALIGNMENT_CENTER)
+	var star: Label = app._label(app._stars(rarity), 26, HORIZONTAL_ALIGNMENT_CENTER)
 	star.position = Vector2(82, 314)
 	star.size = Vector2(344, 40)
 	star.modulate = app._rarity_color(rarity, 1.0)
 	app._view_container().add_child(star)
 
-	var hint = app._label("点击继续查看本次结果", 18, HORIZONTAL_ALIGNMENT_CENTER)
+	var hint: Label = app._label("點擊繼續查看本次結果", 18, HORIZONTAL_ALIGNMENT_CENTER)
 	hint.position = Vector2(72, 382)
 	hint.size = Vector2(360, 34)
 	hint.modulate = Color(0.92, 0.84, 0.68)
 	app._view_container().add_child(hint)
 
-	app._add_action_button("查看结果", Vector2(170, 620), func() -> void: show_results(results, count), Vector2(142, 46))
-	app._add_action_button("返回卡池", Vector2(324, 620), func() -> void: app._pop_view(), Vector2(132, 46))
-	app._add_action_button("跳过", Vector2(1088, 34), func() -> void: show_results(results, count), Vector2(102, 40))
+	app._add_action_button("查看结果", Vector2(170, 620), func() -> void:
+		_cancel_sequence()
+		show_results(results, count)
+	, Vector2(142, 46))
+	app._add_action_button("返回卡池", Vector2(324, 620), func() -> void:
+		_cancel_sequence()
+		app._pop_view()
+	, Vector2(132, 46))
+	app._add_action_button("跳过", Vector2(1088, 34), func() -> void:
+		_cancel_sequence()
+		show_results(results, count)
+	, Vector2(102, 40))
+	app._add_hit_button(Vector2.ZERO, Vector2(1280, 720), func() -> void:
+		_cancel_sequence()
+		show_results(results, count)
+	)
+	run_revealed_auto.call_deferred(results, count, seq)
 
 func draw_and_show(count: int) -> void:
 	var results = app._perform_draw(count)
@@ -142,6 +257,68 @@ func draw_recruit_backdrop(rarity: int) -> void:
 	app._draw_image(UI_RECRUIT_FX_R, Vector2(658, 0), Vector2(640, 720), true, Color(1, 1, 1, 0.30))
 	app._view_container().add_child(app._panel(Vector2(52, 168), Vector2(420, 286), Color(0.018, 0.014, 0.016, 0.54)))
 
+func draw_stage_backdrop(rarity: int) -> void:
+	app._draw_image(UI_RECRUIT_BG, Vector2(-195, -6), Vector2(1670, 732), true, Color(1, 1, 1, 0.92))
+	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.006, 0.008, 0.018, 0.48)))
+	app._draw_image(UI_RECRUIT_LIGHT_L, _stage_center_pos(Vector2(-417.5, 0), Vector2(835, 750)), _stage_size(Vector2(835, 750)), true, Color(1, 1, 1, 0.36))
+	app._draw_image(UI_RECRUIT_LIGHT_R, _stage_center_pos(Vector2(417.5, 0), Vector2(835, 750)), _stage_size(Vector2(835, 750)), true, Color(1, 1, 1, 0.36))
+	app._draw_image(UI_RECRUIT_FX_L, _stage_center_pos(Vector2(-417.5, 0), Vector2(835, 750)), _stage_size(Vector2(835, 750)), true, frame_color(rarity, 0.20))
+	app._draw_image(UI_RECRUIT_FX_R, _stage_center_pos(Vector2(417.5, 0), Vector2(835, 750)), _stage_size(Vector2(835, 750)), true, frame_color(rarity, 0.20))
+	app._draw_image(UI_RECRUIT_GROUP, Vector2(0, 0), Vector2(1280, 720), true, Color(1, 1, 1, 0.18))
+
+func draw_stage_orbits(results: Array, rarity: int) -> void:
+	draw_new_stage_starmap(rarity, false)
+	var pulse: Label = app._label("點擊星圖啟動", 20, HORIZONTAL_ALIGNMENT_CENTER)
+	pulse.position = Vector2(548, 342)
+	pulse.size = Vector2(184, 32)
+	pulse.modulate = Color(1.0, 0.92, 0.68)
+	app._view_container().add_child(pulse)
+
+func draw_stage_cards(results: Array, rarity: int) -> void:
+	draw_new_stage_starmap(rarity, true)
+
+func draw_new_stage_starmap(rarity: int, activated: bool) -> void:
+	app._draw_image(UI_RECRUIT_DISC, _stage_center_pos(Vector2(0, 0), Vector2(725, 708)), _stage_size(Vector2(725, 708)), false, frame_color(rarity, 0.95 if activated else 0.76))
+	app._draw_image(UI_STAGE_DISC_I, _stage_center_pos(Vector2(0, 0), Vector2(700, 700)), _stage_size(Vector2(700, 700)), false, Color(1, 1, 1, 0.42 if activated else 0.24))
+	app._draw_image(UI_STAGE_DISC_F, _stage_center_pos(Vector2(0, 0), Vector2(400, 400)), _stage_size(Vector2(400, 400)), false, frame_color(rarity, 0.50 if activated else 0.26))
+	app._draw_image(UI_STAGE_DISC_A, _stage_center_pos(Vector2(0, 0), Vector2(210, 210)), _stage_size(Vector2(210, 210)), false, Color(1, 1, 1, 0.68))
+	app._draw_image(UI_STAGE_DISC_B, _stage_center_pos(Vector2(0, 0), Vector2(190, 190)), _stage_size(Vector2(190, 190)), false, frame_color(rarity, 0.72 if activated else 0.38))
+	app._draw_image(UI_STAGE_DISC_C, _stage_center_pos(Vector2(1, 6), Vector2(256, 256)), _stage_size(Vector2(256, 256)), false, Color(1, 1, 1, 0.46))
+	var stars: Array = [
+		{"center": Vector2(-516.5, 106), "size": Vector2(255, 270), "inner": Vector2(261, 261)},
+		{"center": Vector2(-696, -64), "size": Vector2(200, 200), "inner": Vector2(180, 180)},
+		{"center": Vector2(-472, -199), "size": Vector2(184, 184), "inner": Vector2(190, 190)},
+		{"center": Vector2(-373.3, -62.8), "size": Vector2(200, 200), "inner": Vector2(270, 270)},
+		{"center": Vector2(362.3, 245.1), "size": Vector2(200, 200), "inner": Vector2(270, 270)},
+		{"center": Vector2(570.3, 222.1), "size": Vector2(270, 270), "inner": Vector2(261, 261)},
+		{"center": Vector2(693.1, -41.9), "size": Vector2(285, 285), "inner": Vector2(400, 400)},
+		{"center": Vector2(485.3, -209), "size": Vector2(200, 200), "inner": Vector2(270, 270)},
+	]
+	for index in range(stars.size()):
+		var star: Dictionary = stars[index]
+		var center: Vector2 = star["center"]
+		var size: Vector2 = star["size"]
+		var inner: Vector2 = star["inner"]
+		var pos := _stage_center_pos(center, size)
+		var inner_pos := _stage_center_pos(center, inner)
+		var alpha := 0.34 + float(index % 3) * 0.10
+		if activated:
+			alpha += 0.22
+		app._draw_image(UI_STAGE_DISC_C, inner_pos, _stage_size(inner), false, frame_color(rarity, alpha))
+		app._draw_image(UI_STAGE_DISC_A, pos + _stage_size(Vector2(size.x * 0.24, size.y * 0.24)), _stage_size(Vector2(size.x * 0.36, size.y * 0.36)), false, Color(1, 1, 1, 0.62 if activated else 0.42))
+		app._view_container().add_child(app._panel(pos + _stage_size(Vector2(size.x * 0.42, size.y * 0.42)), _stage_size(Vector2(size.x * 0.16, size.y * 0.16)), frame_color(rarity if activated and index == 6 else 3, 0.42)))
+	if activated:
+		app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), frame_color(rarity, 0.12)))
+
+func draw_recruit_fx_layers(rarity: int, revealed: bool) -> void:
+	var alpha := 0.74 if revealed else 0.38
+	app._draw_image(UI_RECRUIT_DISC, Vector2(396, -72), Vector2(488, 488), false, frame_color(rarity, 0.28 * alpha))
+	app._draw_image(UI_RECRUIT_FX_L, Vector2(-24, 0), Vector2(650, 720), true, frame_color(rarity, 0.24 * alpha))
+	app._draw_image(UI_RECRUIT_FX_R, Vector2(654, 0), Vector2(650, 720), true, frame_color(rarity, 0.24 * alpha))
+	for i in range(4):
+		var x := 92.0 + float(i) * 292.0
+		app._view_container().add_child(app._panel(Vector2(x, 450 + float(i % 2) * 18), Vector2(210, 5), frame_color(rarity, 0.38 * alpha)))
+
 func draw_quality_frame(rarity: int) -> void:
 	var color = frame_color(rarity, 0.36)
 	app._view_container().add_child(app._panel(Vector2(0, 450), Vector2(1280, 150), color))
@@ -156,7 +333,7 @@ func draw_finish_backdrop(results: Array) -> void:
 	var rarity = int(best.get("rolled_rarity", hero.get("rarity", 1)))
 	app._draw_image(UI_RECRUIT_BG, Vector2(-195, -6), Vector2(1670, 732), true)
 	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.014, 0.012, 0.014, 0.48)))
-	app._draw_image(UI_RECRUIT_DISC, Vector2(414, -110), Vector2(452, 452), false, frame_color(rarity, 0.36))
+	draw_finish_light_masks(rarity)
 	var title = app._label("喚灵结果", 42, HORIZONTAL_ALIGNMENT_CENTER)
 	title.position = Vector2(420, 46)
 	title.size = Vector2(440, 60)
@@ -166,6 +343,17 @@ func draw_finish_backdrop(results: Array) -> void:
 	top.size = Vector2(500, 44)
 	top.modulate = app._rarity_color(rarity, 1.0)
 	app._view_container().add_child(top)
+
+func draw_finish_light_masks(rarity: int) -> void:
+	var masks := [
+		{"pos": Vector2(330, -64), "size": Vector2(452, 452), "alpha": 0.36},
+		{"pos": Vector2(22, 108), "size": Vector2(230, 310), "alpha": 0.20},
+		{"pos": Vector2(1008, 98), "size": Vector2(250, 320), "alpha": 0.20},
+		{"pos": Vector2(230, 474), "size": Vector2(820, 54), "alpha": 0.22},
+		{"pos": Vector2(476, 96), "size": Vector2(330, 330), "alpha": 0.26},
+	]
+	for mask in masks:
+		app._draw_image(UI_RECRUIT_DISC, mask.get("pos", Vector2.ZERO), mask.get("size", Vector2.ZERO), false, frame_color(rarity, float(mask.get("alpha", 0.2))))
 
 func draw_result_grid(results: Array) -> void:
 	var columns = 5 if results.size() > 1 else 1
@@ -253,6 +441,36 @@ func best_result(results: Array) -> Dictionary:
 		if rarity > best_rarity:
 			best = result
 	return best
+
+func _next_sequence() -> int:
+	sequence_id += 1
+	return sequence_id
+
+func _cancel_sequence() -> void:
+	sequence_id += 1
+
+func _is_sequence_live(seq: int) -> bool:
+	return seq == sequence_id
+
+func run_stage_auto(results: Array, count: int, seq: int) -> void:
+	await app.get_tree().create_timer(0.95).timeout
+	if _is_sequence_live(seq):
+		show_stage_color(results, count, seq)
+
+func run_color_auto(results: Array, count: int, seq: int) -> void:
+	await app.get_tree().create_timer(0.95).timeout
+	if _is_sequence_live(seq):
+		show_recruit_silhouette(results, count, seq)
+
+func run_recruit_auto(results: Array, count: int, seq: int) -> void:
+	await app.get_tree().create_timer(0.90).timeout
+	if _is_sequence_live(seq):
+		show_recruit_revealed(results, count, seq)
+
+func run_revealed_auto(results: Array, count: int, seq: int) -> void:
+	await app.get_tree().create_timer(1.35).timeout
+	if _is_sequence_live(seq):
+		show_results(results, count)
 
 func frame_color(rarity: int, alpha: float) -> Color:
 	if rarity >= 4:

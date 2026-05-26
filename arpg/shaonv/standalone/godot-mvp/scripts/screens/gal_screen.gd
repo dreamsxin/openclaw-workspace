@@ -10,6 +10,7 @@ const VIEW_ALBUM := "album"
 const VIEW_ALBUM_DETAIL := "album_detail"
 const VIEW_MEMORY := "memory"
 const VIEW_SPECIAL_TOUCH := "special_touch"
+const VIEW_SPECIAL_TOUCH_PLAY := "special_touch_play"
 const VIEW_GIFT := "gift"
 const VIEW_LEVEL := "level"
 const DEFAULT_GAL_HERO_ID := 240030
@@ -48,6 +49,16 @@ const GAL_BTN_DRESS_GETWAY := "res://assets/ui/gal/gal_btn_25.png"
 const GAL_BG_DATE_SELECT := "res://assets/ui/background/gal_bg_06.png"
 const GAL_BTN_DATE_CONFIRM := "res://assets/ui/gal/gal_btn_25.png"
 const GAL_BTN_DATE_RECORD := "res://assets/ui/gal/gal_btn_36.png"
+const GAL_BG_SPECIAL_TOUCH_SELECT := "res://assets/ui/background/gal_bg_05.png"
+const GAL_SPECIAL_CARD_BG := "res://assets/ui/gal/gal_img_70.png"
+const GAL_SPECIAL_CARD_ICON_FRAME := "res://assets/ui/gal/gal_img_71.png"
+const GAL_SPECIAL_CARD_TITLE_BG := "res://assets/ui/gal/gal_img_72.png"
+const GAL_SPECIAL_CARD_LABEL_0 := "res://assets/ui/gal/gal_img_73.png"
+const GAL_SPECIAL_CARD_LABEL_1 := "res://assets/ui/gal/gal_img_74.png"
+const GAL_SPECIAL_CARD_LABEL_2 := "res://assets/ui/gal/gal_img_75.png"
+const GAL_SPECIAL_CARD_NONE := "res://assets/ui/gal/gal_img_76.png"
+const GAL_SPECIAL_CARD_COMING := "res://assets/ui/gal/gal_txt_02.png"
+const GAL_SPECIAL_BTN_ENTRY := "res://assets/ui/gal/gal_btn_26.png"
 const GAL_BG_CHARACTER := "res://assets/ui/background/gal_bg_11.png"
 const GAL_IMG_CHAR_FRAME := "res://assets/ui/gal/gal_img_103.png"
 const GAL_IMG_CHAR_HEADER := "res://assets/ui/gal/gal_img_105.png"
@@ -69,6 +80,8 @@ const GAL_DRESS_GRID_NAME := "res://assets/ui/gal/gal_img_33.png"
 const GAL_DRESS_GRID_BG := "res://assets/ui/gal/gal_img_34.png"
 const GAL_DRESS_GRID_LOCK := "res://assets/ui/gal/gal_img_36.png"
 const GAL_DRESS_ACTIVE_DECOR := "res://assets/ui/gal/gal_img_41.png"
+const GAL_INTERACTION_PIC_1 := "res://assets/ui/gallery/gal_gallery_pic_24004301.png"
+const GAL_INTERACTION_PIC_2 := "res://assets/ui/gallery/gal_gallery_pic_24003001.png"
 const GAL_AUDIO_CLICK := "res://assets/audio/gal/hero_037_er.wav"
 const GAL_AUDIO_GREET := "res://assets/audio/gal/hero_037_greet.wav"
 const GAL_AUDIO_WAIT := [
@@ -137,6 +150,8 @@ func show_view(view_name: String) -> void:
 			_draw_memory_view()
 		VIEW_SPECIAL_TOUCH:
 			_draw_special_touch_view()
+		VIEW_SPECIAL_TOUCH_PLAY:
+			_draw_special_touch_play_view()
 		VIEW_GIFT:
 			_draw_gift_view()
 		VIEW_LEVEL:
@@ -291,6 +306,17 @@ func _gal_right_middle_pos(center: Vector2, size: Vector2) -> Vector2:
 
 func _gal_center_pos(center: Vector2, size: Vector2) -> Vector2:
 	return Vector2((835.0 + center.x - size.x * 0.5) * GAL_PREFAB_SCALE.x, (375.0 - center.y - size.y * 0.5) * GAL_PREFAB_SCALE.y)
+
+
+func _gal_center_rect(center: Vector2, size: Vector2) -> Rect2:
+	return Rect2(_gal_center_pos(center, size), _gal_size(size))
+
+
+func _gal_child_center_rect(parent_rect: Rect2, parent_prefab_size: Vector2, center: Vector2, size: Vector2) -> Rect2:
+	var scale := Vector2(parent_rect.size.x / parent_prefab_size.x, parent_rect.size.y / parent_prefab_size.y)
+	var child_size := Vector2(size.x * scale.x, size.y * scale.y)
+	var child_center := parent_rect.position + parent_rect.size * 0.5 + Vector2(center.x * scale.x, -center.y * scale.y)
+	return Rect2(child_center - child_size * 0.5, child_size)
 
 
 func _gal_info_child_center(child_pos: Vector2, child_size := Vector2.ZERO, pivot_left := false) -> Vector2:
@@ -754,12 +780,12 @@ func _draw_dress_up_view() -> void:
 		_draw_dress_skin_grid(hero, panel_pos)
 
 
-func _draw_gal_child_close_button() -> void:
+func _draw_gal_child_close_button(target_view := VIEW_MAIN) -> void:
 	var close_pos := _gal_top_left_pos(Vector2(60, -18))
 	var close_size := _gal_size(Vector2(120, 80))
 	app._draw_image(GAL_BTN_CLOSE, close_pos, close_size, false, Color(1, 1, 1, 0.94))
 	_add_hit_button(close_pos, close_size, func() -> void:
-		show_view(VIEW_MAIN)
+		show_view(target_view)
 	)
 
 
@@ -1199,11 +1225,234 @@ func _draw_memory_view() -> void:
 func _draw_special_touch_view() -> void:
 	var hero := _selected_hero()
 	_draw_gal_background()
+	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.08, 0.05, 0.09, 0.34)))
+	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.92, 0.74, 0.88, 0.08)))
+	_draw_blur_side_hint()
+
+	var bg_rect := _gal_center_rect(Vector2.ZERO, Vector2(1160, 726))
+	if app._draw_image(GAL_BG_SPECIAL_TOUCH_SELECT, bg_rect.position, bg_rect.size, false, Color(1, 1, 1, 0.96)) == null:
+		app._view_container().add_child(app._panel(bg_rect.position, bg_rect.size, Color(0.92, 0.86, 0.96, 0.18)))
+		app._view_container().add_child(app._panel(bg_rect.position + Vector2(16, 18), bg_rect.size - Vector2(32, 36), Color(0.05, 0.03, 0.06, 0.18)))
+
+	var close_rect := _gal_child_center_rect(bg_rect, Vector2(1160, 726), Vector2(541, 312), Vector2(60, 60))
+	app._draw_image(GAL_BTN_CLOSE_SMALL, close_rect.position, close_rect.size, false, Color(1, 1, 1, 0.94))
+	_add_hit_button(close_rect.position, close_rect.size, func() -> void:
+		show_view(VIEW_MAIN)
+	)
+
+	var title_rect := _gal_child_center_rect(bg_rect, Vector2(1160, 726), Vector2(-41.7, 293), Vector2(906.6, 36.1))
+	_draw_special_touch_title(title_rect.position, title_rect.size)
+
+	var section_rect := _gal_child_center_rect(bg_rect, Vector2(1160, 726), Vector2(15.5, -17), Vector2(1005, 550))
+
+	var cards := [
+		{
+			"name": "沐浴時光",
+			"tag": "互動",
+			"desc": "蘇煙為你受傷、你小心翼翼的幫忙處理傷口，感覺兩人的距離更近了一點",
+			"pic": GAL_INTERACTION_PIC_2,
+			"unlocked": true,
+			"button": "進入",
+			"can_enter": true,
+			"focus": Vector2(0.50, 0.58),
+		},
+		{
+			"name": "海濱天堂",
+			"tag": "貼近",
+			"desc": "和敖夢一起前往海濱度假，享受難得的休憩時光",
+			"pic": GAL_INTERACTION_PIC_1,
+			"unlocked": true,
+			"can_enter": false,
+			"lock_text": "任意幻靈親密度達10級解鎖",
+			"focus": Vector2(0.38, 0.58),
+		},
+		{
+			"name": "COMING SOON",
+			"tag": "",
+			"desc": "",
+			"pic": "",
+			"fallback": "",
+			"unlocked": false,
+			"button": "敬請期待",
+			"coming": true,
+		},
+	]
+
+	for index in range(cards.size()):
+		var card: Dictionary = cards[index]
+		var grid_rect := _special_touch_grid_rect(section_rect, index)
+		_draw_special_touch_card(hero, card, grid_rect, index)
+
+	_draw_special_touch_footer(hero, section_rect)
+
+
+func _draw_special_touch_play_view() -> void:
+	var hero := _selected_hero()
+	_draw_gal_background()
 	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.02, 0.02, 0.05, 0.08)))
-	_draw_gal_child_close_button()
+	_draw_gal_child_close_button(VIEW_SPECIAL_TOUCH)
 
 	_draw_clipped_gal_stage(hero, Vector2(272, -74), Vector2(790, 990), Vector2(184, 0), Vector2(760, 720))
 	_draw_special_touch_front_layer(hero)
+
+
+func _draw_blur_side_hint() -> void:
+	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(210, 720), Color(0.04, 0.02, 0.05, 0.40)))
+	app._view_container().add_child(app._panel(Vector2(1008, 0), Vector2(272, 720), Color(0.04, 0.02, 0.05, 0.36)))
+	for index in range(5):
+		var y := 78.0 + index * 104.0
+		app._view_container().add_child(app._panel(Vector2(64, y), Vector2(68, 68), Color(1.0, 0.58, 0.86, 0.10)))
+		app._view_container().add_child(app._panel(Vector2(1108, y + 22), Vector2(64, 64), Color(1.0, 0.58, 0.86, 0.11)))
+
+
+func _draw_special_touch_title(pos: Vector2, size := Vector2(220, 42)) -> void:
+	app._view_container().add_child(app._panel(pos + Vector2(0, size.y - 8), Vector2(size.x * 0.22, 4), Color(1.0, 0.58, 0.88, 0.46)))
+	var title: Label = app._label("甜蜜互動", 30)
+	title.position = pos + Vector2(8, -4)
+	title.size = size
+	title.modulate = Color(1.0, 0.70, 0.94)
+	app._view_container().add_child(title)
+
+
+func _special_touch_grid_rect(section_rect: Rect2, index: int) -> Rect2:
+	var scale := minf(section_rect.size.x / 1005.0, section_rect.size.y / 550.0)
+	var grid_size := Vector2(320, 540) * scale
+	var gap := 20.0 * scale
+	var total_width := grid_size.x * 3.0 + gap * 2.0
+	var x := section_rect.position.x + (section_rect.size.x - total_width) * 0.5 + index * (grid_size.x + gap)
+	var y := section_rect.position.y + (section_rect.size.y - grid_size.y) * 0.5
+	return Rect2(Vector2(x, y), grid_size)
+
+
+func _grid_child_rect(grid_rect: Rect2, center: Vector2, size: Vector2) -> Rect2:
+	return _gal_child_center_rect(grid_rect, Vector2(320, 540), center, size)
+
+
+func _draw_special_touch_card(hero: Dictionary, item: Dictionary, grid_rect: Rect2, index: int) -> void:
+	var unlocked := bool(item.get("unlocked", false))
+	if not unlocked and bool(item.get("coming", false)):
+		var none_rect := _grid_child_rect(grid_rect, Vector2.ZERO, Vector2(330, 550))
+		if app._draw_image(GAL_SPECIAL_CARD_NONE, none_rect.position, none_rect.size, false, Color(1, 1, 1, 0.86)) == null:
+			app._view_container().add_child(app._panel(grid_rect.position, grid_rect.size, Color(0.02, 0.02, 0.04, 0.42)))
+		var coming_rect := _grid_child_rect(grid_rect, Vector2.ZERO, Vector2(320, 100))
+		if app._draw_image(GAL_SPECIAL_CARD_COMING, coming_rect.position, coming_rect.size, false, Color(1, 1, 1, 0.90)) == null:
+			_add_gal_text("敬請期待", coming_rect.position + Vector2(16, 18), Vector2(170, 38), 28)
+			_add_gal_text("COMING SOON", coming_rect.position + Vector2(40, 56), Vector2(122, 22), 11)
+		_add_hit_button(grid_rect.position, grid_rect.size, func() -> void:
+			_show_touch_hint("尚未開放，敬請期待")
+		)
+		return
+
+	if app._draw_image(GAL_SPECIAL_CARD_BG, grid_rect.position, grid_rect.size, false, Color(1, 1, 1, 0.96)) == null:
+		app._view_container().add_child(app._panel(grid_rect.position, grid_rect.size, Color(0.96, 0.86, 0.96, 0.82 if unlocked else 0.36)))
+		app._view_container().add_child(app._panel(grid_rect.position + Vector2(4, 4), grid_rect.size - Vector2(8, 8), Color(0.12, 0.07, 0.12, 0.18)))
+
+	var pic_rect := _grid_child_rect(grid_rect, Vector2(0, 140), Vector2(310, 250))
+	if unlocked:
+		app._draw_image(GAL_SPECIAL_CARD_ICON_FRAME, pic_rect.position, pic_rect.size, false, Color(1, 1, 1, 0.96))
+		_draw_special_touch_card_picture(str(item.get("pic", "")), pic_rect.position, pic_rect.size, item.get("focus", Vector2(0.5, 0.5)))
+		var title_bg_rect := _grid_child_rect(grid_rect, Vector2(0, 33), Vector2(310, 36))
+		if app._draw_image(GAL_SPECIAL_CARD_TITLE_BG, title_bg_rect.position, title_bg_rect.size, false, Color(1, 1, 1, 0.96)) == null:
+			app._view_container().add_child(app._panel(title_bg_rect.position, title_bg_rect.size, Color(1.0, 0.42, 0.76, 0.70)))
+		_add_gal_text(str(item.get("name", "")), title_bg_rect.position + Vector2(8, 0), title_bg_rect.size - Vector2(16, 0), 17)
+	else:
+		app._view_container().add_child(app._panel(pic_rect.position, pic_rect.size, Color(0.02, 0.02, 0.04, 0.42)))
+		_add_gal_text("敬請期待", pic_rect.position + Vector2(16, 138), Vector2(170, 38), 28)
+		_add_gal_text("COMING SOON", pic_rect.position + Vector2(40, 176), Vector2(122, 22), 11)
+
+	if unlocked:
+		var tag_rect := _grid_child_rect(grid_rect, Vector2(-100 + index * 100, -8), Vector2(90, 26))
+		var label_path := GAL_SPECIAL_CARD_LABEL_0 if index == 0 else (GAL_SPECIAL_CARD_LABEL_1 if index == 1 else GAL_SPECIAL_CARD_LABEL_2)
+		if app._draw_image(label_path, tag_rect.position, tag_rect.size, false, Color(1, 1, 1, 0.96)) == null:
+			app._view_container().add_child(app._panel(tag_rect.position, tag_rect.size, Color(1.0, 0.58, 0.78, 0.44)))
+		_add_gal_text(str(item.get("tag", "")), tag_rect.position, tag_rect.size, 13)
+
+		var desc: Label = app._label(str(item.get("desc", "")), 17)
+		var desc_rect := _grid_child_rect(grid_rect, Vector2(0, -106.3325), Vector2(280, 140.665))
+		desc.position = desc_rect.position
+		desc.size = desc_rect.size
+		desc.modulate = Color(0.22, 0.16, 0.18)
+		app._view_container().add_child(desc)
+
+		if bool(item.get("can_enter", false)):
+			var button_rect := _grid_child_rect(grid_rect, Vector2(0, -225), Vector2(208, 74))
+			if app._draw_image(GAL_SPECIAL_BTN_ENTRY, button_rect.position, button_rect.size, false, Color(1, 1, 1, 0.98)) == null:
+				app._view_container().add_child(app._panel(button_rect.position, button_rect.size, Color(1.0, 0.42, 0.78, 0.82)))
+			_add_gal_text(str(item.get("button", "進入")), button_rect.position, button_rect.size, 18)
+			_add_hit_button(grid_rect.position, grid_rect.size, func() -> void:
+				app.save["gal_last_special_touch"] = str(item.get("name", "甜蜜互動"))
+				show_view(VIEW_SPECIAL_TOUCH_PLAY)
+				_show_touch_hint("進入：%s" % str(item.get("name", "甜蜜互動")))
+			)
+		else:
+			var lock_text: Label = app._label(str(item.get("lock_text", "任意幻靈親密度達10級解鎖")), 15, HORIZONTAL_ALIGNMENT_CENTER)
+			var lock_rect := _grid_child_rect(grid_rect, Vector2(0, -225), Vector2(240, 60))
+			lock_text.position = lock_rect.position
+			lock_text.size = lock_rect.size
+			lock_text.modulate = Color(1.0, 0.60, 0.80)
+			app._view_container().add_child(lock_text)
+			_add_hit_button(grid_rect.position, grid_rect.size, func() -> void:
+				_show_touch_hint(str(item.get("lock_text", "尚未解鎖")))
+			)
+	else:
+		var condition: Label = app._label("任意幻靈親密度達10級解鎖", 15, HORIZONTAL_ALIGNMENT_CENTER)
+		var condition_rect := _grid_child_rect(grid_rect, Vector2(0, -225), Vector2(240, 60))
+		condition.position = condition_rect.position
+		condition.size = condition_rect.size
+		condition.modulate = Color(1.0, 0.58, 0.84)
+		app._view_container().add_child(condition)
+		_add_hit_button(grid_rect.position, grid_rect.size, func() -> void:
+			_show_touch_hint("尚未開放，敬請期待")
+		)
+
+
+func _draw_special_touch_card_picture(pic_path: String, pos: Vector2, size: Vector2, focus_value) -> void:
+	if pic_path.is_empty() or not FileAccess.file_exists(pic_path):
+		app._view_container().add_child(app._panel(pos, size, Color(0.22, 0.12, 0.18, 0.82)))
+		return
+	var texture: Texture2D = app._load_png_source_texture(pic_path)
+	if texture == null:
+		app._view_container().add_child(app._panel(pos, size, Color(0.22, 0.12, 0.18, 0.82)))
+		return
+	var focus := Vector2(0.5, 0.5)
+	if typeof(focus_value) == TYPE_VECTOR2:
+		focus = focus_value
+	var source_size := texture.get_size()
+	var target_ratio := size.x / size.y
+	var source_ratio := source_size.x / source_size.y
+	var draw_size := size
+	if source_ratio > target_ratio:
+		draw_size.x = size.y * source_ratio
+	else:
+		draw_size.y = size.x / source_ratio
+	var offset := size * 0.5 - draw_size * focus
+	offset.x = clampf(offset.x, size.x - draw_size.x, 0.0)
+	offset.y = clampf(offset.y, size.y - draw_size.y, 0.0)
+	var rect := TextureRect.new()
+	rect.texture = texture
+	rect.size = draw_size
+	rect.position = pos + offset
+	rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	rect.stretch_mode = TextureRect.STRETCH_SCALE
+	rect.modulate = Color(1, 1, 1, 0.95)
+	rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var clip := Control.new()
+	clip.position = pos
+	clip.size = size
+	clip.clip_contents = true
+	clip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	app._view_container().add_child(clip)
+	rect.position -= pos
+	clip.add_child(rect)
+
+
+func _draw_special_touch_footer(hero: Dictionary, section_rect: Rect2) -> void:
+	var count := int(app.save.get("gal_touch_count", 0))
+	var level := int(app.save.get("gal_level", 2))
+	var footer_pos := section_rect.position + Vector2(0, section_rect.size.y + 10)
+	app._view_container().add_child(app._panel(footer_pos, Vector2(section_rect.size.x, 42), Color(1.0, 0.55, 0.86, 0.12)))
+	_add_gal_text("%s  親密 Lv.%d   今日互動 %d 次" % [str(hero.get("name", "角色")), level, count], footer_pos + Vector2(18, 8), Vector2(330, 26), 15)
+	_add_gal_text("選擇互動劇情後會進入角色觸摸層，保留語音與好感反饋。", footer_pos + Vector2(section_rect.size.x - 360, 8), Vector2(340, 26), 13)
 
 
 func _draw_special_touch_front_layer(hero: Dictionary) -> void:

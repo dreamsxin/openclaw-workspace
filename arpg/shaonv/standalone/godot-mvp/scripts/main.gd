@@ -6,6 +6,7 @@ const DEFAULT_HERO_ID := 240037
 const LEGACY_DEFAULT_HERO_ID := 240065
 const HERO_DATA_PATH := "res://data/heroes_mvp.json"
 const HERO_RESOURCE_MAP_PATH := "res://data/hero_resource_map.json"
+const HERO_RARITY_GRADE_PATH := "res://data/hero_rarity_grades.json"
 const POOL_DATA_PATH := "res://data/gacha_pools_mvp.json"
 const LIVE_OPS_DATA_PATH := "res://data/live_ops_mvp.json"
 const ADVENTURE_DATA_PATH := "res://data/adventure_mvp.json"
@@ -89,6 +90,7 @@ const UI_REMNANT_STAGE_BG := "res://assets/spine/hero_017/hero_017_bg.png"
 
 var heroes: Array = []
 var hero_resource_map: Array = []
+var hero_rarity_grades := {}
 var pools: Array = []
 var tasks: Array = []
 var mails: Array = []
@@ -161,6 +163,7 @@ func _ready() -> void:
 	rng.randomize()
 	heroes = _read_json(HERO_DATA_PATH).get("heroes", [])
 	hero_resource_map = _read_json_array(HERO_RESOURCE_MAP_PATH)
+	hero_rarity_grades = _read_json(HERO_RARITY_GRADE_PATH)
 	pools = _read_json(POOL_DATA_PATH).get("pools", [])
 	var live_ops := _read_json(LIVE_OPS_DATA_PATH)
 	tasks = live_ops.get("tasks", [])
@@ -171,6 +174,8 @@ func _ready() -> void:
 	chapters = adventure.get("chapters", [])
 	afk_reward = adventure.get("afkReward", {"tickets": 1, "gems": 240, "shards": {}})
 	_load_save()
+	if OS.get_environment("SHAONV_MVP_GACHA_POOL") != "":
+		save["active_pool_id"] = OS.get_environment("SHAONV_MVP_GACHA_POOL")
 	_build_root()
 	startup_screen = STARTUP_SCREEN.new(self)
 	home_screen = HOME_SCREEN.new(self)
@@ -184,6 +189,9 @@ func _ready() -> void:
 func _capture_debug_screenshot() -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
+	var delay := float(OS.get_environment("SHAONV_MVP_CAPTURE_DELAY")) if not OS.get_environment("SHAONV_MVP_CAPTURE_DELAY").is_empty() else 0.0
+	if delay > 0.0:
+		await get_tree().create_timer(delay).timeout
 	if DisplayServer.get_name() == "headless":
 		push_warning("Shaonv MVP screenshot skipped: --headless has no renderable viewport texture.")
 		return
@@ -454,10 +462,16 @@ func _show_start_view_from_env() -> void:
 		_enter_main_scene()
 		_show_gacha()
 	elif start_view == "draw_animation":
+		_enter_main_scene()
+		_show_gacha()
 		_show_draw_animation(int(OS.get_environment("SHAONV_MVP_DRAW_COUNT")) if not OS.get_environment("SHAONV_MVP_DRAW_COUNT").is_empty() else 10)
 	elif start_view == "draw_reveal":
+		_enter_main_scene()
+		_show_gacha()
 		gacha_result_screen.show_recruit_reveal(int(OS.get_environment("SHAONV_MVP_DRAW_COUNT")) if not OS.get_environment("SHAONV_MVP_DRAW_COUNT").is_empty() else 10)
 	elif start_view == "draw_result":
+		_enter_main_scene()
+		_show_gacha()
 		_draw_and_show(int(OS.get_environment("SHAONV_MVP_DRAW_COUNT")) if not OS.get_environment("SHAONV_MVP_DRAW_COUNT").is_empty() else 10)
 	elif start_view == "prayer":
 		_enter_main_scene()
@@ -1146,6 +1160,7 @@ func _perform_draw(count: int) -> Array:
 		return []
 	save["tickets"] = int(save.get("tickets", 0)) - cost
 	save["draw_count"] = int(save.get("draw_count", 0)) + count
+	save["gacha_integral"] = int(save.get("gacha_integral", 0)) + count * 10
 	var results: Array = []
 	for i in range(count):
 		results.append(_draw_one(pool))
@@ -2263,8 +2278,8 @@ func _open_prayer_pool() -> void:
 	_show_gacha()
 
 func _open_present_pool() -> void:
-	if str(save.get("active_pool_id", "advanced")) == "prayer":
-		save["active_pool_id"] = "advanced"
+	if _active_gacha_realm() == "prayer":
+		save["active_pool_id"] = "normal"
 		_persist()
 	_show_gacha()
 
@@ -2272,10 +2287,13 @@ func _draw_home_bottom_bar() -> void:
 	home_screen.draw_home_bottom_bar()
 
 func _active_gacha_realm() -> String:
-	return "prayer" if str(save.get("active_pool_id", "advanced")) == "prayer" else "present"
+	var pool := _pool_by_id(str(save.get("active_pool_id", "advanced")))
+	return "prayer" if str(pool.get("realm", "")) == "prayer" or str(pool.get("id", "")) == "prayer" else "present"
 
 func _pool_in_realm(pool_id: String, realm: String) -> bool:
-	return pool_id == "prayer" if realm == "prayer" else pool_id != "prayer"
+	var pool := _pool_by_id(pool_id)
+	var pool_realm := str(pool.get("realm", "prayer" if pool_id == "prayer" else "present"))
+	return pool_realm == realm
 
 func _lottery_bg_for_pool(pool_id: String) -> String:
 	match pool_id:
@@ -2284,6 +2302,8 @@ func _lottery_bg_for_pool(pool_id: String) -> String:
 		"epic":
 			return UI_LOTTERY_BG_EPIC
 		"prayer":
+			return "res://assets/ui/lottery/bg/lottery_bg_05.png"
+		"source_prayer":
 			return UI_LOTTERY_BG_PRAYER
 		_:
 			return UI_LOTTERY_BG_ADVANCED
@@ -2296,7 +2316,7 @@ func _add_realm_button(text: String, realm: String, pos: Vector2) -> void:
 	button.pressed.connect(func() -> void:
 		if realm == "prayer":
 			save["active_pool_id"] = "prayer"
-		elif str(save.get("active_pool_id", "advanced")) == "prayer":
+		elif _active_gacha_realm() == "prayer":
 			save["active_pool_id"] = "advanced"
 		_persist()
 		_show_gacha()
@@ -2620,6 +2640,22 @@ func _hero_by_id(id: int) -> Dictionary:
 		if int(hero.get("id", 0)) == id:
 			return hero
 	return heroes[0] if not heroes.is_empty() else {}
+
+func _hero_grade(hero_or_id) -> String:
+	var hero_id := 0
+	if typeof(hero_or_id) == TYPE_DICTIONARY:
+		hero_id = int(hero_or_id.get("id", 0))
+	else:
+		hero_id = int(hero_or_id)
+	for item in hero_rarity_grades.get("heroes", []):
+		if int(item.get("heroId", 0)) == hero_id:
+			return str(item.get("grade", ""))
+	var hero := {}
+	if typeof(hero_or_id) == TYPE_DICTIONARY:
+		hero = hero_or_id
+	else:
+		hero = _hero_by_id(hero_id)
+	return str(hero_rarity_grades.get("rareToGrade", {}).get(str(int(hero.get("rarity", 1))), _stars(int(hero.get("rarity", 1)))))
 
 func _pool_by_id(id: String) -> Dictionary:
 	for pool in pools:

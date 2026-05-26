@@ -1,0 +1,637 @@
+{
+  "source": "reverse-output/gacha-static/tables/hero.csv + reverse-output/gacha-static/hero_resource_map.csv",
+  "updated": "2026-05-26",
+  "rareToGrade": {
+    "1": "R",
+    "2": "SR",
+    "3": "SSR",
+    "4": "SSR+"
+  },
+  "notes": [
+    "Use hero.rare as the base display grade. rare2/rare3 are extra grouping/high-tier flags, not direct label text.",
+    "Confirmed against HeroMainView screenshot: hero 240069 has rare=3 and displays SSR; rare=4 entries have rare3=2 and are treated as SSR+."
+  ],
+  "heroes": [
+    {
+      "heroId": 240030,
+      "name": "妲己",
+      "rare": 2,
+      "rare2": 0,
+      "rare3": 0,
+      "grade": "SR",
+      "spine": "hero_037"
+    },
+    {
+      "heroId": 240031,
+      "name": "申公豹",
+      "rare": 3,
+      "rare2": 0,
+      "rare3": 0,
+      "grade": "SSR",
+      "spine": "hero_044"
+    },
+    {
+      "heroId": 240032,
+      "name": "玉藻前",
+      "rare": 3,
+      "rare2": 0,
+      "rare3": 0,
+      "grade": "SSR",
+      "spine": "hero_004"
+    },
+    {
+      "heroId": 240034,
+      "name": "迦樓羅",
+      "rare": 3,
+      "rare2": 0,
+      "rare3": 0,
+      "grade": "SSR",
+      "spine": "hero_047"
+    },
+    {
+      "heroId": 240035,
+      "name": "伊斯塔爾",
+      "rare": 3,
+      "rare2": 0,
+      "rare3": 0,
+      "grade": "SSR",
+      "spine": "hero_055"
+    },
+    {
+      "heroId": 240037,
+      "name": "阿修羅",
+      "rare": 3,
+      "rare2": 1,
+      "rare3": 1,
+      "grade": "SSR",
+      "spine": "hero_022"
+    },
+    {
+      "heroId": 240038,
+      "name": "玉兔",
+      "rare": 3,
+      "rare2": 0,
+      "rare3": 0,
+      "grade": "SSR",
+      "spine": "hero_038"
+    },
+    {
+      "heroId": 240039,
+      "name": "梅林",
+      "rare": 3,
+      "rare2": 0,
+      "rare3": 0,
+      "grade": "SSR",
+      "spine": "hero_066"
+    },
+    {
+      "heroId": 240040,
+      "name": "希爾芙",
+      "rare": 2,
+      "rare2": 0,
+      "rare3": 0,
+      "grade": "SR",
+      "spine": "hero_026"
+    },
+    {
+      "heroId": 240041,
+      "name": "阿奴凱特",
+      "rare": 3,
+      "rare2": 0,
+      "rare3": 0,
+      "grade": "SSR",
+      "spine": "hero_049"
+    },
+    {
+      "heroId": 240042,
+      "name": "妖師鯤鵬",
+      "rare": 3,
+      "rare2": 0,
+      "rare3": 0,
+      "grade": "SSR",
+      "spine": "hero_039"
+    },
+    {
+      "heroId": 240043,
+      "name": "奇美拉",
+      "rare": 2,
+      "rare2": 0,
+      "rare3": 0,
+      "grade": "SR",
+      "spine": "hero_021"
+    },
+    {
+      "heroId": 240044,
+      "name": "諸葛月姬",
+      "rare": 2,
+      "rare2": 0,
+      "rare3": 0,
+      "grade": "SR",
+      "spine": "hero_033"
+    },
+    {
+      "heroId": 240045,
+      "name": "蔡文姬",
+      "rare": 3,
+      "rare2": 0,
+      "rare3": 0,
+      "grade": "SSR",
+      "spine": "hero_005"
+    },
+    {
+      "heroId": 240046,
+      "name": "相柳",
+      "rare": 3,
+      "rare2": 0,
+      "rare3": 0,
+      "grade": "SSR",
+      "spine": "hero_007"
+    },
+    {
+      "heroId": 240047,
+      "name": "須佐之男",
+      "rare": 3,
+      "rare2": 0,
+      "rare3": 0,
+      "grade": "SSR",
+      "spine": "hero_059"
+    },
+    {
+      "heroId": 240048,
+      "name": "鄧嬋玉",
+      "rare": 3,
+      "rare2": 0,
+      "rare3": 0,
+      "grade": "SSR",
+      "spine": "hero_029"
+    },
+    {
+      "heroId": 240049,
+      "name": "未定55",
+      "rare": 3,
+      "rare2": 0,
+      "rare3": 0,
+      "grade": "SSR",
+      "spine": "hero_001"
+    },
+    {
+      "heroId": 240050,
+      "name": "海姆達爾",
+      "rare": 3,
+      "rare2": 0,
+      "rare3": 0,
+      "grade": "SSR",
+      "spine": "hero_040"
+    },
+    {
+      "heroId": 240051,
+      "name": "未定41",
+      "rare": 3,
+      "rare2": 0,
+      "rare3": 0,
+      "grade": "SSR",
+      "spine": "hero_001"
+    },
+    {
+      "heroId": 240052,
+      "name": "普羅米修斯",
+      "rare": 3,
+      "rare2": 0,
+      "rare3": 0,
+      "grade": "SSR",
+      "spine": "hero_025"
+    },
+    {
+      "heroId": 240053,
+      "name": "小喬",
+      "rare": 3,
+      "rare2": 0,
+      "rare3": 0,
+      "grade": "SSR",
+      "spine": "hero_032"
+    },
+    {
+      "heroId": 240054,
+      "name": "黃月英",
+      "rare": 3,
+      "rare2": 0,
+      "rare3": 1,
+      "grade": "SSR",
+      "spine": "hero_020"
+    },
+    {
+      "heroId": 240055,
+      "name": "天狐妲己",
+      "rare": 4,
+      "rare2": 0,
+      "rare3": 2,
+      "grade": "SSR+",
+      "spine": "hero_016"
+    },
+    {
+      "heroId": 240057,
+      "name": "輝夜",
+      "rare": 3,
+      "rare2": 0,
+      "rare3": 0,
+      "grade": "SSR",
+      "spine": "hero_002"
+    },
+    {
+      "heroId": 240058,
+      "name": "伊卡洛斯",
+      "rare": 1,
+      "rare2": 0,
+      "rare3": 0,
+      "grade": "R",
+      "spine": "hero_031"
+    },
+    {
+      "heroId": 240060,
+      "name": "努特",
+      "rare": 3,
+      "rare2": 0,
+      "rare3": 0,
+      "grade": "SSR",
+      "spine": "hero_043"
+    },
+    {
+      "heroId": 240061,
+      "name": "塔納托斯",
+      "rare": 4,
+      "rare2": 0,
+      "rare3": 2,
+      "grade": "SSR+",
+      "spine": "hero_018"
+    },
+    {
+      "heroId": 240062,
+      "name": "大喬",
+      "rare": 3,
+      "rare2": 1,
+      "rare3": 1,
+      "grade": "SSR",
+      "spine": "hero_024"
+    },
+    {
+      "heroId": 240064,
+      "name": "雪女",
+      "rare": 1,
+      "rare2": 0,
+      "rare3": 0,
+      "grade": "R",
+      "spine": "hero_001"
+    },
+    {
+      "heroId": 240065,
+      "name": "莉莉絲",
+      "rare": 3,
+      "rare2": 1,
+      "rare3": 1,
+      "grade": "SSR",
+      "spine": "hero_003"
+    },
+    {
+      "heroId": 240066,
+      "name": "步練師",
+      "rare": 1,
+      "rare2": 0,
+      "rare3": 0,
+      "grade": "R",
+      "spine": "hero_034"
+    },
+    {
+      "heroId": 240067,
+      "name": "妖姬",
+      "rare": 3,
+      "rare2": 0,
+      "rare3": 0,
+      "grade": "SSR",
+      "spine": "hero_041"
+    },
+    {
+      "heroId": 240068,
+      "name": "哪吒",
+      "rare": 3,
+      "rare2": 1,
+      "rare3": 1,
+      "grade": "SSR",
+      "spine": "hero_001"
+    },
+    {
+      "heroId": 240069,
+      "name": "女帝",
+      "rare": 3,
+      "rare2": 1,
+      "rare3": 1,
+      "grade": "SSR",
+      "spine": "hero_017"
+    },
+    {
+      "heroId": 240070,
+      "name": "紫苑",
+      "rare": 3,
+      "rare2": 0,
+      "rare3": 0,
+      "grade": "SSR",
+      "spine": "hero_057"
+    },
+    {
+      "heroId": 240071,
+      "name": "未定25",
+      "rare": 3,
+      "rare2": 0,
+      "rare3": 0,
+      "grade": "SSR",
+      "spine": "hero_001"
+    },
+    {
+      "heroId": 240072,
+      "name": "河童",
+      "rare": 1,
+      "rare2": 0,
+      "rare3": 0,
+      "grade": "R",
+      "spine": "hero_030"
+    },
+    {
+      "heroId": 240073,
+      "name": "鳳凰火",
+      "rare": 2,
+      "rare2": 0,
+      "rare3": 0,
+      "grade": "SR",
+      "spine": "hero_008"
+    },
+    {
+      "heroId": 240074,
+      "name": "立花訚千代",
+      "rare": 3,
+      "rare2": 0,
+      "rare3": 0,
+      "grade": "SSR",
+      "spine": "hero_042"
+    },
+    {
+      "heroId": 240075,
+      "name": "未定29",
+      "rare": 3,
+      "rare2": 0,
+      "rare3": 0,
+      "grade": "SSR",
+      "spine": "hero_001"
+    },
+    {
+      "heroId": 240076,
+      "name": "貂蟬",
+      "rare": 4,
+      "rare2": 0,
+      "rare3": 2,
+      "grade": "SSR+",
+      "spine": "hero_056"
+    },
+    {
+      "heroId": 240077,
+      "name": "未定31",
+      "rare": 3,
+      "rare2": 0,
+      "rare3": 0,
+      "grade": "SSR",
+      "spine": "hero_001"
+    },
+    {
+      "heroId": 240079,
+      "name": "陰陽師",
+      "rare": 3,
+      "rare2": 0,
+      "rare3": 0,
+      "grade": "SSR",
+      "spine": "hero_058"
+    },
+    {
+      "heroId": 240080,
+      "name": "甄宓",
+      "rare": 2,
+      "rare2": 0,
+      "rare3": 0,
+      "grade": "SR",
+      "spine": "hero_035"
+    },
+    {
+      "heroId": 240081,
+      "name": "索爾",
+      "rare": 4,
+      "rare2": 0,
+      "rare3": 2,
+      "grade": "SSR+",
+      "spine": "hero_014"
+    },
+    {
+      "heroId": 240082,
+      "name": "阿布羅狄忒",
+      "rare": 3,
+      "rare2": 1,
+      "rare3": 1,
+      "grade": "SSR",
+      "spine": "hero_023"
+    },
+    {
+      "heroId": 240083,
+      "name": "米迦勒",
+      "rare": 4,
+      "rare2": 0,
+      "rare3": 2,
+      "grade": "SSR+",
+      "spine": "hero_064"
+    },
+    {
+      "heroId": 240084,
+      "name": "孫尚香",
+      "rare": 3,
+      "rare2": 0,
+      "rare3": 0,
+      "grade": "SSR",
+      "spine": "hero_036"
+    },
+    {
+      "heroId": 240085,
+      "name": "伊邪那美",
+      "rare": 4,
+      "rare2": 0,
+      "rare3": 2,
+      "grade": "SSR+",
+      "spine": "hero_054"
+    },
+    {
+      "heroId": 240086,
+      "name": "賽特",
+      "rare": 4,
+      "rare2": 0,
+      "rare3": 2,
+      "grade": "SSR+",
+      "spine": "hero_062"
+    },
+    {
+      "heroId": 240087,
+      "name": "阿努比斯",
+      "rare": 3,
+      "rare2": 0,
+      "rare3": 0,
+      "grade": "SSR",
+      "spine": "hero_060"
+    },
+    {
+      "heroId": 240088,
+      "name": "亞瑟",
+      "rare": 3,
+      "rare2": 0,
+      "rare3": 0,
+      "grade": "SSR",
+      "spine": "hero_045"
+    },
+    {
+      "heroId": 240089,
+      "name": "蔥聾",
+      "rare": 3,
+      "rare2": 1,
+      "rare3": 1,
+      "grade": "SSR",
+      "spine": "hero_011"
+    },
+    {
+      "heroId": 240090,
+      "name": "狄俄涅",
+      "rare": 3,
+      "rare2": 1,
+      "rare3": 0,
+      "grade": "SSR",
+      "spine": "hero_015"
+    },
+    {
+      "heroId": 240091,
+      "name": "瓦爾基裡",
+      "rare": 3,
+      "rare2": 1,
+      "rare3": 1,
+      "grade": "SSR",
+      "spine": "hero_019"
+    },
+    {
+      "heroId": 240092,
+      "name": "女媧",
+      "rare": 4,
+      "rare2": 0,
+      "rare3": 2,
+      "grade": "SSR+",
+      "spine": "hero_010"
+    },
+    {
+      "heroId": 240093,
+      "name": "朱雀",
+      "rare": 4,
+      "rare2": 0,
+      "rare3": 2,
+      "grade": "SSR+",
+      "spine": "hero_052"
+    },
+    {
+      "heroId": 240094,
+      "name": "白虎",
+      "rare": 4,
+      "rare2": 0,
+      "rare3": 2,
+      "grade": "SSR+",
+      "spine": "hero_051"
+    },
+    {
+      "heroId": 240095,
+      "name": "修普諾斯",
+      "rare": 4,
+      "rare2": 0,
+      "rare3": 2,
+      "grade": "SSR+",
+      "spine": "hero_012"
+    },
+    {
+      "heroId": 240096,
+      "name": "青龍",
+      "rare": 4,
+      "rare2": 0,
+      "rare3": 2,
+      "grade": "SSR+",
+      "spine": "hero_050"
+    },
+    {
+      "heroId": 240097,
+      "name": "雅典娜",
+      "rare": 4,
+      "rare2": 0,
+      "rare3": 2,
+      "grade": "SSR+",
+      "spine": "hero_065"
+    },
+    {
+      "heroId": 240098,
+      "name": "赫拉",
+      "rare": 4,
+      "rare2": 0,
+      "rare3": 2,
+      "grade": "SSR+",
+      "spine": "hero_009"
+    },
+    {
+      "heroId": 240099,
+      "name": "荷魯斯",
+      "rare": 4,
+      "rare2": 0,
+      "rare3": 2,
+      "grade": "SSR+",
+      "spine": "hero_061"
+    },
+    {
+      "heroId": 240100,
+      "name": "撒拉弗",
+      "rare": 4,
+      "rare2": 0,
+      "rare3": 2,
+      "grade": "SSR+",
+      "spine": "hero_013"
+    },
+    {
+      "heroId": 240101,
+      "name": "玄武",
+      "rare": 4,
+      "rare2": 0,
+      "rare3": 2,
+      "grade": "SSR+",
+      "spine": "hero_053"
+    },
+    {
+      "heroId": 240102,
+      "name": "王昭君",
+      "rare": 4,
+      "rare2": 0,
+      "rare3": 2,
+      "grade": "SSR+",
+      "spine": "hero_046"
+    },
+    {
+      "heroId": 240103,
+      "name": "東皇太一",
+      "rare": 4,
+      "rare2": 0,
+      "rare3": 2,
+      "grade": "SSR+",
+      "spine": "hero_027"
+    },
+    {
+      "heroId": 250065,
+      "name": "寂漣・莉莉絲",
+      "rare": 4,
+      "rare2": 0,
+      "rare3": 0,
+      "grade": "SSR+",
+      "spine": ""
+    }
+  ]
+}
