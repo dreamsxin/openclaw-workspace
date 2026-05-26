@@ -756,10 +756,11 @@ func draw_card_portrait(hero: Dictionary, pos: Vector2, draw_size: Vector2) -> v
 func _is_prayer_pool(pool: Dictionary) -> bool:
 	var realm := str(pool.get("realm", ""))
 	var pid := str(pool.get("id", ""))
-	return realm == "prayer" or pid == "prayer" or pid == "source_prayer" or pid == "saint_source_prayer"
+	return realm == "prayer" or pid == "prayer" or pid == "self_select_prayer" or pid == "source_prayer" or pid == "saint_source_prayer"
 
 func _is_holy_relic_prayer_pool(pool: Dictionary) -> bool:
-	return str(pool.get("id", "prayer")) == "prayer"
+	var pool_id := str(pool.get("id", "prayer"))
+	return pool_id == "prayer" or pool_id == "self_select_prayer"
 
 func best_result(results: Array) -> Dictionary:
 	var best = results[0] if not results.is_empty() else {}

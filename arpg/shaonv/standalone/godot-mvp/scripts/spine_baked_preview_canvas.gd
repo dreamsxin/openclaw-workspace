@@ -63,6 +63,12 @@ func set_clip(next_clip_name: String) -> void:
 	time = 0.0
 	queue_redraw()
 
+func restart_clip(next_clip_name: String) -> void:
+	clip_name = next_clip_name
+	time = 0.0
+	_last_frame = -1
+	queue_redraw()
+
 func set_playing(next_playing: bool) -> void:
 	playing = next_playing
 

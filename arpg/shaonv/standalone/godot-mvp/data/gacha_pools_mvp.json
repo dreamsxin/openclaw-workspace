@@ -52,6 +52,26 @@
       "sourceStatic": { "table": "drawconfig", "id": 1203, "cnt2": 50, "cnt3": 2000, "cntF": 18, "cntF2": 15, "rateUp": 0 }
     },
     {
+      "id": "self_select_prayer",
+      "name": "鑷伕閬哄櫒",
+      "realm": "prayer",
+      "titlePic": "lottery_btn_11",
+      "pic": "lottery_btn_02",
+      "ticketCost": 1,
+      "tenDrawCount": 5,
+      "costIcon": "res://assets/ui/item/draw_07.png",
+      "costItemId": 230123,
+      "tenCostItemId": 230123,
+      "pityLimit": 30,
+      "integralLimit": 50,
+      "rates": { "4": 0.05, "3": 0.14, "2": 0.81 },
+      "upRate": 0.5,
+      "duplicateShards": { "4": 25, "3": 8, "2": 3 },
+      "featuredHeroIds": [410000, 410001, 410004, 410006, 410007, 410008, 410009, 410010],
+      "wishHeroIds": [410005, 410006, 410007, 410008, 410009],
+      "sourceStatic": { "table": "drawconfig", "id": 1202, "cnt2": 50, "cnt3": 30, "cntF": 39, "cntF2": 19, "rateUp": 50 }
+    },
+    {
       "id": "source_prayer",
       "name": "源神祈願",
       "realm": "prayer",

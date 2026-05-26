@@ -100,6 +100,10 @@ KNOWN_PREFABS = {
     "HeroMainSelectHeroGrid": "Assets/Game/RawAssets/Prefabs/UI/Hero/HeroMainSelectHeroGrid.prefab",
     "HeroMainView": "Assets/Game/RawAssets/Prefabs/UI/Hero/HeroMainView.prefab",
     "LotteryDrawMainView": "Assets/Game/RawAssets/Prefabs/UI/LotteryDraw/LotteryDrawMainView.prefab",
+    "PrayerView": "Assets/Game/RawAssets/Prefabs/UI/Prayer/PrayerView.prefab",
+    "PrayerHolyRelicPanel": "Assets/Game/RawAssets/Prefabs/UI/Prayer/PrayerHolyRelicPanel.prefab",
+    "PrayerRewardView": "Assets/Game/RawAssets/Prefabs/UI/Prayer/PrayerRewardView.prefab",
+    "PrayerRewardGrid": "Assets/Game/RawAssets/Prefabs/UI/Prayer/PrayerRewardGrid.prefab",
     # ── Remnants / 幻靈 ──
     "RemnantInfoGrid": "Assets/Game/RawAssets/Prefabs/UI/Remnants/RemnantInfoGrid.prefab",
     "RemnantsListGrid": "Assets/Game/RawAssets/Prefabs/UI/Remnants/RemnantsListGrid.prefab",
@@ -111,6 +115,16 @@ KNOWN_PREFABS = {
 }
 
 IMAGE_TYPE = {0: "Simple", 1: "Sliced", 2: "Tiled", 3: "Filled"}
+
+KNOWN_CAB_SAMPLE_ROWS = {
+    "CAB-380dc4eef737e1f3e153b7a16c1efbd3": {
+        "address": "Assets/Game/RawAssets/Sprite/LotteryDraw/LotteryDraw.spriteatlas",
+        "bundleName": "assets_game_rawassets_sprite_lotterydraw.bundle",
+        "hashFileName": "6c8ca2312693e27b46729a868236cce3.bundle",
+        "physicalPath": r"files\yoo\Default\BundleFiles\ce\ce18fceb7ff2f67915e3b4177b14df94\__data",
+        "physicalExists": "True",
+    },
+}
 
 
 def safe_name(value: str) -> str:
@@ -135,6 +149,17 @@ def read_physical_map(path: Path) -> tuple[dict[str, dict[str, str]], dict[str, 
             by_address[address.lower()] = row
             by_basename[Path(address).stem.lower()].append(row)
     return by_address, by_basename
+
+
+def add_known_sample_rows(
+    by_address: dict[str, dict[str, str]],
+    by_basename: dict[str, list[dict[str, str]]],
+) -> None:
+    for row in KNOWN_CAB_SAMPLE_ROWS.values():
+        address = row.get("address", "")
+        if address:
+            by_address.setdefault(address.lower(), row)
+            by_basename[Path(address).stem.lower()].append(row)
 
 
 def pptr_id(value: Any) -> int:
@@ -586,14 +611,46 @@ def load_sprite_names_from_row(
 def image_asset_for_name(
     name: str,
     by_basename: dict[str, list[dict[str, str]]],
+    preferred_row: dict[str, str] | None = None,
 ) -> tuple[str, dict[str, str]] | None:
     rows = by_basename.get(name.lower(), [])
     sprite_rows = [row for row in rows if "/Sprite/" in row.get("address", "").replace("\\", "/")]
+    if preferred_row:
+        for row in sprite_rows:
+            if (
+                row.get("bundleName") == preferred_row.get("bundleName")
+                or row.get("hashFileName") == preferred_row.get("hashFileName")
+                or row.get("physicalPath") == preferred_row.get("physicalPath")
+            ):
+                return row.get("address", ""), row
     if sprite_rows:
         return sprite_rows[0].get("address", ""), sprite_rows[0]
     if rows:
         return rows[0].get("address", ""), rows[0]
     return None
+
+
+def add_spriteatlas_rows(
+    by_basename: dict[str, list[dict[str, str]]],
+    names_by_fileid: dict[int, dict[int, str]],
+    fileid_to_cab: dict[int, str],
+    cab_rows: dict[str, dict[str, str]],
+) -> None:
+    for fid, names in names_by_fileid.items():
+        cab = fileid_to_cab.get(fid, "")
+        row = cab_rows.get(cab)
+        if not row:
+            continue
+        base_address = str(row.get("address", ""))
+        if base_address.endswith(".spriteatlas"):
+            folder = str(Path(base_address).parent).replace("\\", "/")
+        else:
+            folder = str(Path(base_address).parent).replace("\\", "/")
+        for name in names.values():
+            image_row = dict(row)
+            image_row["address"] = f"{folder}/{name}.png"
+            image_row["assetPath"] = image_row["address"]
+            by_basename[name.lower()].append(image_row)
 
 
 def generate_report(
@@ -646,7 +703,7 @@ def generate_report(
             cab = fileid_to_cab.get(fid, f"fileID:{fid}")
             source_note = f"external {cab}"
             if name:
-                found = image_asset_for_name(name, by_basename)
+                found = image_asset_for_name(name, by_basename, cab_rows.get(cab))
                 if found:
                     asset, row = found
                     resolved_counts["external_sprite"] += 1
@@ -784,6 +841,7 @@ def main() -> int:
 
     repo_root = Path(args.repo_root).resolve()
     by_address, by_basename = read_physical_map(repo_root / args.physical_map)
+    add_known_sample_rows(by_address, by_basename)
     prefab_name, prefab_address = resolve_prefab_address(args.target)
     prefab_row = by_address.get(prefab_address.lower())
     if not prefab_row:
@@ -805,11 +863,16 @@ def main() -> int:
         args.xor_prefix,
         args.xor_key,
     )
+    for cab in target_cabs:
+        known_row = KNOWN_CAB_SAMPLE_ROWS.get(cab)
+        if known_row and (repo_root / known_row.get("physicalPath", "")).exists():
+            cab_rows.setdefault(cab, known_row)
     sprite_names_by_fileid: dict[int, dict[int, str]] = {}
     for fid, cab in fileid_to_cab.items():
         row = cab_rows.get(cab)
         if row:
             sprite_names_by_fileid[fid] = load_sprite_names_from_row(repo_root, row, args.xor_prefix, args.xor_key)
+    add_spriteatlas_rows(by_basename, sprite_names_by_fileid, fileid_to_cab, cab_rows)
 
     layout_dir = repo_root / args.layout_out_dir
     mb_dir = repo_root / args.mb_out_dir

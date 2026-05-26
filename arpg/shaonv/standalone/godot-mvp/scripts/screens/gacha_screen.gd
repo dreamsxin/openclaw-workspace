@@ -25,6 +25,11 @@ const UI_PRAYER_HOLY_RELIC_ANIMATION_BG := "res://assets/ui/background/lottery_i
 const UI_PRAYER_REMNANT_ANIMATION_BG := "res://assets/ui/background/lottery_img_10.png"
 const UI_PRAYER_REMNANT_SPINE_BAKED := "res://assets/spine/all_export/Other__yiqi/Other__yiqi.baked.json"
 const UI_PRAYER_REMNANT_SPINE_FALLBACK := "res://assets/spine/all_export/Other__yiqi/yiqi.png"
+const UI_PRAYER_REMNANT_IDLE_CLIP := "wait"
+const UI_PRAYER_REMNANT_OPEN_CLIP := "1"
+const UI_PRAYER_REMNANT_CLIPS := ["wait", "wait1", "1"]
+const UI_PRAYER_REMNANT_HIT_CENTER := Vector2(-20, -10)
+const UI_PRAYER_REMNANT_HIT_SIZE := Vector2(770, 540)
 const SPINE_BAKED_PREVIEW_CANVAS := preload("res://scripts/spine_baked_preview_canvas.gd")
 const UI_PRAYER_HOLY_RELIC_FUNC_ICONS := [
 	"res://assets/ui/lottery/lottery_btn_04.png",
@@ -37,10 +42,10 @@ const UI_PRAYER_HOLY_RELIC_INTEGRAL_ICON := "res://assets/ui/lottery/lottery_btn
 const UI_PRAYER_HOLY_RELIC_INTEGRAL_FINISH := "res://assets/ui/lottery/lottery_img_115.png"
 const UI_PRAYER_HOLY_RELIC_TAB_SELECT := "res://assets/ui/lottery/lottery_img_77.png"
 const UI_PRAYER_HOLY_RELIC_TABS := [
-	{"label": "遺器祈願", "count": "x9", "bg": "res://assets/ui/lottery/lottery_img_75.png", "icon": "res://assets/ui/lottery/lottery_btn_29.png", "select_icon": "res://assets/ui/lottery/lottery_btn_30.png"},
-	{"label": "自選遺器", "count": "x0", "bg": "res://assets/ui/lottery/lottery_img_96.png", "icon": "res://assets/ui/lottery/lottery_btn_31.png", "select_icon": "res://assets/ui/lottery/lottery_btn_32.png"},
-	{"label": "源神祈願", "count": "x0", "bg": "res://assets/ui/lottery/lottery_img_74.png", "icon": "res://assets/ui/lottery/lottery_btn_33.png", "select_icon": "res://assets/ui/lottery/lottery_btn_34.png"},
-	{"label": "聖源祈願", "count": "x0", "bg": "res://assets/ui/lottery/lottery_img_97.png", "icon": "res://assets/ui/lottery/lottery_btn_35.png", "select_icon": "res://assets/ui/lottery/lottery_btn_36.png"},
+	{"id": "prayer", "label": "遺器祈願", "count": "x9", "bg": "res://assets/ui/lottery/lottery_img_75.png", "icon": "res://assets/ui/lottery/lottery_btn_29.png", "select_icon": "res://assets/ui/lottery/lottery_btn_30.png"},
+	{"id": "self_select_prayer", "label": "自選遺器", "count": "x0", "bg": "res://assets/ui/lottery/lottery_img_96.png", "icon": "res://assets/ui/lottery/lottery_btn_31.png", "select_icon": "res://assets/ui/lottery/lottery_btn_32.png"},
+	{"id": "source_prayer", "label": "源神祈願", "count": "x0", "bg": "res://assets/ui/lottery/lottery_img_74.png", "icon": "res://assets/ui/lottery/lottery_btn_33.png", "select_icon": "res://assets/ui/lottery/lottery_btn_34.png"},
+	{"id": "saint_source_prayer", "label": "聖源祈願", "count": "x0", "bg": "res://assets/ui/lottery/lottery_img_97.png", "icon": "res://assets/ui/lottery/lottery_btn_35.png", "select_icon": "res://assets/ui/lottery/lottery_btn_36.png"},
 ]
 const UI_LOTTERY_TICKET_ICON := "res://assets/ui/item/draw_01.png"
 const UI_LOTTERY_GEM_ICON := "res://assets/ui/item/draw_05.png"
@@ -70,6 +75,7 @@ const LOTTERY_BTN_WHITE := "res://assets/ui/common/tongyong_btn_01.png"
 var app
 var prayer_remnant_canvas: Control
 var prayer_draw_pending := false
+var prayer_remnant_clip_index := 0
 
 func _init(app_ref) -> void:
 	app = app_ref
@@ -98,6 +104,7 @@ func _lottery_child_pos(parent_center: Vector2, child_center: Vector2, child_siz
 func show_gacha() -> void:
 	prayer_remnant_canvas = null
 	prayer_draw_pending = false
+	prayer_remnant_clip_index = 0
 	var pool = app._pool_by_id(str(app.save.get("active_pool_id", "advanced")))
 	var realm = app._active_gacha_realm()
 	app._set_chrome_visible(false)
@@ -188,7 +195,8 @@ func draw_prayer_screen(pool: Dictionary) -> void:
 
 
 func _is_holy_relic_prayer_pool(pool: Dictionary) -> bool:
-	return str(pool.get("id", "prayer")) == "prayer"
+	var pool_id := str(pool.get("id", "prayer"))
+	return pool_id == "prayer" or pool_id == "self_select_prayer"
 
 
 func _draw_prayer_screen_nav() -> void:
@@ -204,6 +212,7 @@ func draw_prayer_remnant_screen(pool: Dictionary) -> void:
 	draw_prayer_holy_relic_top_buttons()
 	draw_prayer_right_panel(pool)
 	draw_prayer_buttons(pool)
+	draw_prayer_holy_relic_tabs()
 
 
 func draw_prayer_holy_relic_frame() -> void:
@@ -254,7 +263,8 @@ func draw_prayer_remnant_animation_bg() -> void:
 		canvas.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		app._view_container().add_child(canvas)
 		prayer_remnant_canvas = canvas
-		canvas.set_baked_path(UI_PRAYER_REMNANT_SPINE_BAKED, "wait")
+		canvas.set_baked_path(UI_PRAYER_REMNANT_SPINE_BAKED, UI_PRAYER_REMNANT_IDLE_CLIP)
+		app._add_hit_button(_lottery_center_pos(UI_PRAYER_REMNANT_HIT_CENTER, UI_PRAYER_REMNANT_HIT_SIZE), _lottery_size(UI_PRAYER_REMNANT_HIT_SIZE), func() -> void: _cycle_prayer_remnant_clip())
 	elif FileAccess.file_exists(UI_PRAYER_REMNANT_SPINE_FALLBACK):
 		app._draw_image(UI_PRAYER_REMNANT_SPINE_FALLBACK, pos, size, false)
 
@@ -298,10 +308,11 @@ func draw_prayer_buttons(pool: Dictionary) -> void:
 	app._draw_image(UI_LOTTERY_BTN_SINGLE, one_pos, one_size, false)
 	app._draw_image(UI_LOTTERY_BTN_TEN, ten_pos, ten_size, false)
 	var one_cost: int = max(1, int(pool.get("ticketCost", 1)))
+	var continuous_count: int = max(1, int(pool.get("tenDrawCount", 10)))
 	_draw_draw_button_text(one_pos, "祈願1次", one_cost, Vector2(66, -26), 98.0, false)
-	_draw_draw_button_text(ten_pos, "祈願10次", one_cost * 10, Vector2(42.9, -26), 120.0, true)
+	_draw_draw_button_text(ten_pos, "祈願%d次" % continuous_count, one_cost * continuous_count, Vector2(42.9, -26), 120.0, true)
 	app._add_hit_button(one_pos, one_size, func() -> void: _request_draw(1))
-	app._add_hit_button(ten_pos, ten_size, func() -> void: _request_draw(10))
+	app._add_hit_button(ten_pos, ten_size, func() -> void: _request_draw(continuous_count))
 	var today: Label = app._label("今日剩餘次數：9979/9999", 15, HORIZONTAL_ALIGNMENT_RIGHT)
 	today.position = Vector2(930, 674)
 	today.size = Vector2(270, 28)
@@ -310,11 +321,13 @@ func draw_prayer_buttons(pool: Dictionary) -> void:
 
 func draw_prayer_holy_relic_tabs() -> void:
 	var base := _lottery_right_bottom_pos(Vector2(-64, 210), Vector2(0, 111))
+	var active_pool_id := str(app.save.get("active_pool_id", "prayer"))
 	for index in range(UI_PRAYER_HOLY_RELIC_TABS.size()):
 		var tab: Dictionary = UI_PRAYER_HOLY_RELIC_TABS[index]
 		var size := _lottery_size(Vector2(104, 104))
 		var pos := base - Vector2((index + 1) * (size.x + _lottery_size(Vector2(8, 0)).x), size.y * 0.5)
-		var active := index == 0
+		var tab_pool_id := str(tab.get("id", "prayer"))
+		var active := active_pool_id == tab_pool_id
 		app._draw_image(str(tab.get("bg", "")), pos, size, false, Color(1, 1, 1, 0.96 if active else 0.72))
 		app._draw_image(str(tab.get("icon", "")), pos + _lottery_size(Vector2(-7, -22)), _lottery_size(Vector2(118, 118)), false, Color(1, 1, 1, 0.92 if active else 0.48))
 		if active:
@@ -331,7 +344,10 @@ func draw_prayer_holy_relic_tabs() -> void:
 		count.modulate = Color(1, 1, 1, 0.92 if active else 0.56)
 		app._view_container().add_child(count)
 		app._add_hit_button(pos, size, func(tab := index) -> void:
-			_show_lottery_notice("祈願分頁", "%s 對應 PrayerHolyRelicPanel/btnPrayer%d，待接完整分頁數據。" % [str(UI_PRAYER_HOLY_RELIC_TABS[tab].get("label", "")), tab + 1])
+			var selected: Dictionary = UI_PRAYER_HOLY_RELIC_TABS[tab]
+			app.save["active_pool_id"] = str(selected.get("id", "prayer"))
+			app._persist()
+			show_gacha()
 		)
 
 
@@ -489,6 +505,8 @@ func lottery_bg_for_pool(pool_id: String) -> String:
 			return UI_LOTTERY_BG_PRAYER
 		"saint_source_prayer":
 			return UI_LOTTERY_BG_PRAYER
+		"self_select_prayer":
+			return "res://assets/ui/lottery/bg/lottery_bg_05.png"
 		_:
 			return UI_LOTTERY_BG_ADVANCED
 
@@ -526,12 +544,23 @@ func _request_draw(count: int) -> void:
 func _play_prayer_remnant_click_animation() -> void:
 	if prayer_remnant_canvas == null or not is_instance_valid(prayer_remnant_canvas):
 		return
-	if not prayer_remnant_canvas.has_method("set_clip"):
+	if not prayer_remnant_canvas.has_method("restart_clip"):
 		return
 	prayer_draw_pending = true
-	prayer_remnant_canvas.set_clip("wait1")
+	prayer_remnant_canvas.restart_clip(UI_PRAYER_REMNANT_OPEN_CLIP)
 	await app.get_tree().create_timer(1.2).timeout
 	prayer_draw_pending = false
+
+
+func _cycle_prayer_remnant_clip() -> void:
+	if prayer_draw_pending:
+		return
+	if prayer_remnant_canvas == null or not is_instance_valid(prayer_remnant_canvas):
+		return
+	if not prayer_remnant_canvas.has_method("restart_clip"):
+		return
+	prayer_remnant_clip_index = (prayer_remnant_clip_index + 1) % UI_PRAYER_REMNANT_CLIPS.size()
+	prayer_remnant_canvas.restart_clip(str(UI_PRAYER_REMNANT_CLIPS[prayer_remnant_clip_index]))
 
 
 func _show_draw_blocked(required_cost: int) -> void:
