@@ -74,3 +74,23 @@
 - 该文档不是手工拼表，而是由通用脚本从 prefab bundle、layout、MonoBehaviour 字段和物理资产表组合生成。
 - 若 `Image:none` 出现在按钮或点击区上，通常表示透明 hit target 或运行时替换资源，不应直接判定资源缺失。
 - 若 external CAB 未定位，需要先扩充本地 bundle 样本或物理资产映射，再重跑脚本。
+
+## 2026-05-26 动画链路复核
+
+`LotteryDrawStageView/pnlVideo/video` 的 prefab 序列化数据里没有静态绑定视频：`VideoPlayer.m_VideoClip` 为 `0`，`m_Url` 为空。热更代码 `InitViw(drawType, operateType, isFirst)` 只记录 `_drawType`、`_operateType`，然后启动 `DelayOpenMp4()`：
+
+```text
+LotteryDrawStageView.InitViw
+  -> DelayOpenMp4()
+DelayOpenMp4
+  -> wait 0.32s
+  -> pnlVideo.SetActive(true)
+  -> video.loopPointReached += callback
+  -> video.Play()
+callback
+  -> LotteryDrawModel.ReqLotteryDraw(_drawType, _operateType)
+```
+
+也就是说当前 prefab 本身只是视频/跳过容器；本轮没有在 `LotteryDrawStageView` IL 里找到 `VideoPlayer.set_url` 或 `VideoPlayer.set_clip`。如果原包运行时确实播放前段 mp4，需要继续从更高层、平台初始化或资源替换逻辑查找注入点。不要把 `pnlAnim` 下大量 `Image:none` 当作缺失贴图直接补图，它们更像旧版拖拽/灵阵演出的遗留节点。
+
+跳过按钮链路也已确认：`btnSkip` 使用 `common_img_115`，点击 `OnSkipBtnClick` 会在视频播放时 `Stop()`，随后同样调用 `LotteryDrawModel.ReqLotteryDraw(_drawType,_operateType)`。

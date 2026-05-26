@@ -12,6 +12,14 @@ const UI_STAGE_DISC_B := "res://assets/ui/lottery/lottery_img_62b.png"
 const UI_STAGE_DISC_C := "res://assets/ui/lottery/lottery_img_62c.png"
 const UI_STAGE_DISC_F := "res://assets/ui/lottery/lottery_img_62f.png"
 const UI_STAGE_DISC_I := "res://assets/ui/lottery/lottery_img_62i.png"
+# Prayer / holy-relic stage assets (chest-themed, sourced from LotteryDraw atlas + BackGround/lottery_img_10)
+const UI_PRAYER_STAGE_BG := "res://assets/ui/background/lottery_img_10.png"
+const UI_PRAYER_DISC := "res://assets/ui/lottery/lottery_img_63.png"
+const UI_PRAYER_DISC_A := "res://assets/ui/lottery/lottery_img_63a.png"
+const UI_PRAYER_DISC_B := "res://assets/ui/lottery/lottery_img_63b.png"
+const UI_PRAYER_DISC_C := "res://assets/ui/lottery/lottery_img_63c.png"
+const UI_PRAYER_DISC_D := "res://assets/ui/lottery/lottery_img_63d.png"
+const UI_PRAYER_DISC_E := "res://assets/ui/lottery/lottery_img_63e.png"
 const UI_RECRUIT_GROUP := "res://assets/ui/lottery/lottery_img_01.png"
 const UI_RESULT_CARD_BG := "res://assets/ui/lottery/lottery_img_55.png"
 const UI_RESULT_CARD_BG_PRAYER := "res://assets/ui/lottery/lottery_img_57.png"
@@ -51,6 +59,7 @@ func show_draw_animation(count: int) -> void:
 
 func show_stage_view(results: Array, count: int, seq: int) -> void:
 	var pool: Dictionary = app._pool_by_id(str(app.save.get("active_pool_id", "advanced")))
+	var is_prayer := _is_prayer_pool(pool)
 	var cost := count * int(pool.get("ticketCost", 1))
 	var best := best_result(results)
 	var hero: Dictionary = best.get("hero", app._hero_by_id(240065))
@@ -58,7 +67,7 @@ func show_stage_view(results: Array, count: int, seq: int) -> void:
 	app.current_view = "draw_stage"
 	app._set_chrome_visible(false)
 	app._clear("喚靈啟動")
-	draw_stage_backdrop(rarity)
+	draw_stage_backdrop(rarity, is_prayer)
 	var title: Label = app._label("喚靈儀式啟動", 42, HORIZONTAL_ALIGNMENT_CENTER)
 	title.position = Vector2(390, 48)
 	title.size = Vector2(500, 62)
@@ -76,7 +85,7 @@ func show_stage_view(results: Array, count: int, seq: int) -> void:
 	info.modulate = Color(0.95, 0.88, 0.72)
 	app._view_container().add_child(info)
 
-	draw_stage_orbits(results, rarity)
+	draw_stage_orbits(results, rarity, is_prayer)
 	app._add_action_button("快速啟動", Vector2(438, 644), func() -> void:
 		show_stage_color(results, count, seq)
 	, Vector2(132, 46))
@@ -93,14 +102,16 @@ func show_stage_view(results: Array, count: int, seq: int) -> void:
 func show_stage_color(results: Array, count: int, seq: int) -> void:
 	if not _is_sequence_live(seq):
 		return
+	var pool: Dictionary = app._pool_by_id(str(app.save.get("active_pool_id", "advanced")))
+	var is_prayer := _is_prayer_pool(pool)
 	var best := best_result(results)
 	var hero: Dictionary = best.get("hero", app._hero_by_id(240065))
 	var rarity := int(best.get("rolled_rarity", hero.get("rarity", 1)))
 	app.current_view = "draw_stage_color"
 	app._set_chrome_visible(false)
 	app._clear("喚靈共鳴")
-	draw_stage_backdrop(rarity)
-	draw_stage_cards(results, rarity)
+	draw_stage_backdrop(rarity, is_prayer)
+	draw_stage_cards(results, rarity, is_prayer)
 	var title: Label = app._label("命運軌跡已鎖定", 42, HORIZONTAL_ALIGNMENT_CENTER)
 	title.position = Vector2(390, 76)
 	title.size = Vector2(500, 62)
@@ -257,8 +268,9 @@ func draw_recruit_backdrop(rarity: int) -> void:
 	app._draw_image(UI_RECRUIT_FX_R, Vector2(658, 0), Vector2(640, 720), true, Color(1, 1, 1, 0.30))
 	app._view_container().add_child(app._panel(Vector2(52, 168), Vector2(420, 286), Color(0.018, 0.014, 0.016, 0.54)))
 
-func draw_stage_backdrop(rarity: int) -> void:
-	app._draw_image(UI_RECRUIT_BG, Vector2(-195, -6), Vector2(1670, 732), true, Color(1, 1, 1, 0.92))
+func draw_stage_backdrop(rarity: int, is_prayer: bool = false) -> void:
+	var bg_path := UI_PRAYER_STAGE_BG if is_prayer else UI_RECRUIT_BG
+	app._draw_image(bg_path, Vector2(-195, -6), Vector2(1670, 732), true, Color(1, 1, 1, 0.92))
 	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.006, 0.008, 0.018, 0.48)))
 	app._draw_image(UI_RECRUIT_LIGHT_L, _stage_center_pos(Vector2(-417.5, 0), Vector2(835, 750)), _stage_size(Vector2(835, 750)), true, Color(1, 1, 1, 0.36))
 	app._draw_image(UI_RECRUIT_LIGHT_R, _stage_center_pos(Vector2(417.5, 0), Vector2(835, 750)), _stage_size(Vector2(835, 750)), true, Color(1, 1, 1, 0.36))
@@ -266,24 +278,30 @@ func draw_stage_backdrop(rarity: int) -> void:
 	app._draw_image(UI_RECRUIT_FX_R, _stage_center_pos(Vector2(417.5, 0), Vector2(835, 750)), _stage_size(Vector2(835, 750)), true, frame_color(rarity, 0.20))
 	app._draw_image(UI_RECRUIT_GROUP, Vector2(0, 0), Vector2(1280, 720), true, Color(1, 1, 1, 0.18))
 
-func draw_stage_orbits(results: Array, rarity: int) -> void:
-	draw_new_stage_starmap(rarity, false)
+func draw_stage_orbits(results: Array, rarity: int, is_prayer: bool = false) -> void:
+	draw_new_stage_starmap(rarity, false, is_prayer)
 	var pulse: Label = app._label("點擊星圖啟動", 20, HORIZONTAL_ALIGNMENT_CENTER)
 	pulse.position = Vector2(548, 342)
 	pulse.size = Vector2(184, 32)
 	pulse.modulate = Color(1.0, 0.92, 0.68)
 	app._view_container().add_child(pulse)
 
-func draw_stage_cards(results: Array, rarity: int) -> void:
-	draw_new_stage_starmap(rarity, true)
+func draw_stage_cards(results: Array, rarity: int, is_prayer: bool = false) -> void:
+	draw_new_stage_starmap(rarity, true, is_prayer)
 
-func draw_new_stage_starmap(rarity: int, activated: bool) -> void:
-	app._draw_image(UI_RECRUIT_DISC, _stage_center_pos(Vector2(0, 0), Vector2(725, 708)), _stage_size(Vector2(725, 708)), false, frame_color(rarity, 0.95 if activated else 0.76))
-	app._draw_image(UI_STAGE_DISC_I, _stage_center_pos(Vector2(0, 0), Vector2(700, 700)), _stage_size(Vector2(700, 700)), false, Color(1, 1, 1, 0.42 if activated else 0.24))
-	app._draw_image(UI_STAGE_DISC_F, _stage_center_pos(Vector2(0, 0), Vector2(400, 400)), _stage_size(Vector2(400, 400)), false, frame_color(rarity, 0.50 if activated else 0.26))
-	app._draw_image(UI_STAGE_DISC_A, _stage_center_pos(Vector2(0, 0), Vector2(210, 210)), _stage_size(Vector2(210, 210)), false, Color(1, 1, 1, 0.68))
-	app._draw_image(UI_STAGE_DISC_B, _stage_center_pos(Vector2(0, 0), Vector2(190, 190)), _stage_size(Vector2(190, 190)), false, frame_color(rarity, 0.72 if activated else 0.38))
-	app._draw_image(UI_STAGE_DISC_C, _stage_center_pos(Vector2(1, 6), Vector2(256, 256)), _stage_size(Vector2(256, 256)), false, Color(1, 1, 1, 0.46))
+func draw_new_stage_starmap(rarity: int, activated: bool, is_prayer: bool = false) -> void:
+	var disc_main := UI_PRAYER_DISC if is_prayer else UI_RECRUIT_DISC
+	var disc_a := UI_PRAYER_DISC_A if is_prayer else UI_STAGE_DISC_A
+	var disc_b := UI_PRAYER_DISC_B if is_prayer else UI_STAGE_DISC_B
+	var disc_c := UI_PRAYER_DISC_C if is_prayer else UI_STAGE_DISC_C
+	var disc_f := UI_PRAYER_DISC_D if is_prayer else UI_STAGE_DISC_F
+	var disc_i := UI_PRAYER_DISC_E if is_prayer else UI_STAGE_DISC_I
+	app._draw_image(disc_main, _stage_center_pos(Vector2(0, 0), Vector2(725, 708)), _stage_size(Vector2(725, 708)), false, frame_color(rarity, 0.95 if activated else 0.76))
+	app._draw_image(disc_i, _stage_center_pos(Vector2(0, 0), Vector2(700, 700)), _stage_size(Vector2(700, 700)), false, Color(1, 1, 1, 0.42 if activated else 0.24))
+	app._draw_image(disc_f, _stage_center_pos(Vector2(0, 0), Vector2(400, 400)), _stage_size(Vector2(400, 400)), false, frame_color(rarity, 0.50 if activated else 0.26))
+	app._draw_image(disc_a, _stage_center_pos(Vector2(0, 0), Vector2(210, 210)), _stage_size(Vector2(210, 210)), false, Color(1, 1, 1, 0.68))
+	app._draw_image(disc_b, _stage_center_pos(Vector2(0, 0), Vector2(190, 190)), _stage_size(Vector2(190, 190)), false, frame_color(rarity, 0.72 if activated else 0.38))
+	app._draw_image(disc_c, _stage_center_pos(Vector2(1, 6), Vector2(256, 256)), _stage_size(Vector2(256, 256)), false, Color(1, 1, 1, 0.46))
 	var stars: Array = [
 		{"center": Vector2(-516.5, 106), "size": Vector2(255, 270), "inner": Vector2(261, 261)},
 		{"center": Vector2(-696, -64), "size": Vector2(200, 200), "inner": Vector2(180, 180)},
@@ -304,8 +322,8 @@ func draw_new_stage_starmap(rarity: int, activated: bool) -> void:
 		var alpha := 0.34 + float(index % 3) * 0.10
 		if activated:
 			alpha += 0.22
-		app._draw_image(UI_STAGE_DISC_C, inner_pos, _stage_size(inner), false, frame_color(rarity, alpha))
-		app._draw_image(UI_STAGE_DISC_A, pos + _stage_size(Vector2(size.x * 0.24, size.y * 0.24)), _stage_size(Vector2(size.x * 0.36, size.y * 0.36)), false, Color(1, 1, 1, 0.62 if activated else 0.42))
+		app._draw_image(disc_c, inner_pos, _stage_size(inner), false, frame_color(rarity, alpha))
+		app._draw_image(disc_a, pos + _stage_size(Vector2(size.x * 0.24, size.y * 0.24)), _stage_size(Vector2(size.x * 0.36, size.y * 0.36)), false, Color(1, 1, 1, 0.62 if activated else 0.42))
 		app._view_container().add_child(app._panel(pos + _stage_size(Vector2(size.x * 0.42, size.y * 0.42)), _stage_size(Vector2(size.x * 0.16, size.y * 0.16)), frame_color(rarity if activated and index == 6 else 3, 0.42)))
 	if activated:
 		app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), frame_color(rarity, 0.12)))
@@ -430,6 +448,11 @@ func draw_card_portrait(hero: Dictionary, pos: Vector2, draw_size: Vector2) -> v
 	rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	rect.clip_contents = true
 	app._view_container().add_child(rect)
+
+func _is_prayer_pool(pool: Dictionary) -> bool:
+	var realm := str(pool.get("realm", ""))
+	var pid := str(pool.get("id", ""))
+	return realm == "prayer" or pid == "prayer" or pid == "source_prayer"
 
 func best_result(results: Array) -> Dictionary:
 	var best = results[0] if not results.is_empty() else {}

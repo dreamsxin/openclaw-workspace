@@ -21,6 +21,7 @@ const UI_LOTTERY_POOL_FRAME := "res://assets/ui/lottery/lottery_img_55.png"
 const UI_LOTTERY_PRAYER_FRAME := "res://assets/ui/lottery/lottery_img_57.png"
 const UI_PRAYER_HOLY_RELIC_BOTTOM_FRAME := "res://assets/ui/lottery/lottery_img_76.png"
 const UI_PRAYER_HOLY_RELIC_DIVIDER := "res://assets/ui/lottery/lottery_img_04.png"
+const UI_PRAYER_HOLY_RELIC_ANIMATION_BG := "res://assets/ui/background/lottery_img_10.png"
 const UI_PRAYER_HOLY_RELIC_FUNC_ICONS := [
 	"res://assets/ui/lottery/lottery_btn_04.png",
 	"res://assets/ui/lottery/lottery_btn_22.png",
@@ -42,9 +43,7 @@ const UI_LOTTERY_GEM_ICON := "res://assets/ui/item/draw_05.png"
 const UI_LOTTERY_PRAYER_KEY := "res://assets/ui/item/draw_07.png"
 const UI_LOTTERY_PRAYER_ORB := "res://assets/ui/lottery/lottery_img_63.png"
 const UI_LOTTERY_PRAYER_GLOW := "res://assets/ui/lottery/lottery_img_64.png"
-const UI_LOTTERY_PRAYER_DISC := "res://assets/ui/lottery/lottery_img_66e.png"
 const UI_LOTTERY_PRAYER_CARD := "res://assets/ui/lottery/lottery_img_141.png"
-const UI_LOTTERY_PRAYER_DECOR := "res://assets/ui/lottery/lottery_img_135.png"
 const UI_LOTTERY_WISH_SLOT := "res://assets/ui/common/common_img_71.png"
 const UI_LOTTERY_WISH_ADD := "res://assets/ui/common/common_img_72.png"
 const UI_LOTTERY_WISH_COLOR_A := "res://assets/ui/common/common_img_66.png"
@@ -164,11 +163,9 @@ func draw_top_buttons() -> void:
 		app._add_hit_button(skip_pos, Vector2(132, 34), func() -> void: _toggle_skip_animation())
 
 func draw_prayer_screen(pool: Dictionary) -> void:
-	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.13, 0.085, 0.045, 0.18)))
-	app._draw_image(UI_LOTTERY_PRAYER_DECOR, Vector2(212, -20), Vector2(360, 430), false, Color(1, 1, 1, 0.56))
+	draw_prayer_holy_relic_animation_bg()
 	draw_header_resources()
-	draw_pool_tabs("prayer")
-	draw_prayer_hero_and_chest()
+	draw_prayer_pool_tabs()
 	draw_prayer_holy_relic_frame()
 	draw_prayer_holy_relic_top_buttons()
 	draw_prayer_right_panel(pool)
@@ -211,23 +208,20 @@ func draw_prayer_holy_relic_top_buttons() -> void:
 	app._add_hit_button(integral_pos, _lottery_size(Vector2(60, 84)), func() -> void: _show_gacha_integral())
 
 
-func draw_prayer_hero_and_chest() -> void:
-	var hero: Dictionary = app._hero_by_id(240102)
-	app._draw_hero_stage(hero, Vector2(275, -18), Vector2(430, 500), false)
-	app._draw_image(UI_LOTTERY_PRAYER_DISC, Vector2(260, 336), Vector2(560, 340), false, Color(1, 1, 1, 0.94))
-	app._view_container().add_child(app._panel(Vector2(0, 432), Vector2(1280, 94), Color(1.0, 0.78, 0.38, 0.08)))
+func draw_prayer_holy_relic_animation_bg() -> void:
+	app._draw_image(UI_PRAYER_HOLY_RELIC_ANIMATION_BG, _lottery_center_pos(Vector2.ZERO, LOTTERY_PREFAB_SIZE), _lottery_size(LOTTERY_PREFAB_SIZE), false)
 
 
 func draw_prayer_right_panel(pool: Dictionary) -> void:
-	var title: Label = app._label(str(pool.get("name", "遺器祈願")), 44, HORIZONTAL_ALIGNMENT_RIGHT)
-	title.position = Vector2(925, 92)
-	title.size = Vector2(280, 58)
+	var title: Label = app._label(str(pool.get("name", "遺器祈願")), 50, HORIZONTAL_ALIGNMENT_RIGHT)
+	title.position = _lottery_right_bottom_pos(Vector2(-488.5, -152.5), Vector2(853, 69.5))
+	title.size = _lottery_size(Vector2(853, 69.5))
 	title.modulate = Color(1, 1, 1, 0.98)
 	app._view_container().add_child(title)
 	var remain: int = max(int(pool.get("pityLimit", 30)) - app._pity(str(pool.get("id", "prayer"))), 0)
 	var tip: Label = app._label("繼續祈願%d次\n必定獲得SSR遺器" % remain, 18, HORIZONTAL_ALIGNMENT_RIGHT)
-	tip.position = Vector2(914, 150)
-	tip.size = Vector2(286, 54)
+	tip.position = Vector2(900, 150)
+	tip.size = Vector2(300, 54)
 	tip.modulate = Color(1, 1, 1, 0.96)
 	app._view_container().add_child(tip)
 	app._draw_image(UI_LOTTERY_PRAYER_GLOW, Vector2(1051, 222), Vector2(112, 112), false, Color(1.0, 0.92, 0.74, 0.88))
@@ -292,6 +286,37 @@ func draw_prayer_holy_relic_tabs() -> void:
 		app._add_hit_button(pos, size, func(tab := index) -> void:
 			_show_lottery_notice("祈願分頁", "%s 對應 PrayerHolyRelicPanel/btnPrayer%d，待接完整分頁數據。" % [str(UI_PRAYER_HOLY_RELIC_TABS[tab].get("label", "")), tab + 1])
 		)
+
+
+func draw_prayer_pool_tabs() -> void:
+	var prayer_pools: Array = []
+	for pool_item in app.pools:
+		if app._pool_in_realm(str(pool_item.get("id", "")), "prayer"):
+			prayer_pools.append(pool_item)
+	var base_pos := Vector2(34, 110)
+	var tab_size := Vector2(230, 86)
+	for index in range(prayer_pools.size()):
+		var pool_item: Dictionary = prayer_pools[index]
+		var pool_id := str(pool_item.get("id", "prayer"))
+		var active := pool_id == str(app.save.get("active_pool_id", "prayer"))
+		var pos := base_pos + Vector2(0, index * 96)
+		_draw_prayer_pool_tab(pool_item, pos, tab_size, active)
+		app._add_hit_button(pos, tab_size, func() -> void:
+			app.save["active_pool_id"] = pool_id
+			app._persist()
+			show_gacha()
+		)
+
+
+func _draw_prayer_pool_tab(pool_item: Dictionary, pos: Vector2, size: Vector2, active: bool) -> void:
+	app._draw_image(UI_LOTTERY_TAB_BG, pos, size, false, Color(0.98, 0.88, 0.56, 0.96) if active else Color(0.74, 0.68, 0.78, 0.86))
+	var title_pic := str(pool_item.get("titlePic", ""))
+	if not title_pic.is_empty():
+		app._draw_image("res://assets/ui/lottery/%s.png" % title_pic, pos + Vector2(7, 7), size - Vector2(14, 14), false, Color(1, 1, 1, 1.0 if active else 0.82))
+	if active:
+		var highlight_size := _lottery_size(Vector2(230, 100))
+		app._draw_image(UI_LOTTERY_TAB_HIGHLIGHT, pos - Vector2((highlight_size.x - size.x) * 0.5, (highlight_size.y - size.y) * 0.5), highlight_size, false)
+		app._draw_image(UI_LOTTERY_TAB_CORNER, pos + Vector2(size.x - 19, -4), _lottery_size(Vector2(33, 33)), false)
 
 func draw_pool_tabs(realm: String) -> void:
 	var tab_centers := [Vector2(115, 188.8), Vector2(115, 92.8), Vector2(115, -3.2)]

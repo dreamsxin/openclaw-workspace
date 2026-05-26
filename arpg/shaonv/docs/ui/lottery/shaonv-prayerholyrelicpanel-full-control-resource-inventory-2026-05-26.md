@@ -157,3 +157,115 @@ py -3.14 .\scripts\assets\export_unity_bundle_images.py `
 | `btnPrayer4` | `510389095063694228` | `lottery_img_97` | `104x104` | `assets/ui/lottery/lottery_img_97.png` |
 | `btnPrayer4/imgPrayer4` | `6675259198021006933` | `lottery_btn_35` | `87x89` | `assets/ui/lottery/lottery_btn_35.png` |
 | `btnPrayer4/imgPrayer4Select/Image` | `2062222436411578312` | `lottery_btn_36` | `118x114` | `assets/ui/lottery/lottery_btn_36.png` |
+
+## 2026-05-26 `lottery_img_10` 反查结论
+
+### 同名资源拆分
+
+`lottery_img_10.png` 不是单一资源名，至少有两条不同逻辑路径：
+
+| Asset | Bundle / physical | 尺寸与用途 | 结论 |
+|---|---|---|---|
+| `Assets/Game/RawAssets/Sprite/BackGround/lottery_img_10.png` | `assets_game_rawassets_sprite_background_lottery_img_10.bundle` / `files\yoo\Default\BundleFiles\a3\a3bd4b27626ddd19f15f594781795822\__data` | `1670x750`，银发角色 + 宝箱房间大背景 | `screenshot/祈愿.jpg` 的主舞台背景；Godot 应放到 `assets/ui/background/lottery_img_10.png` |
+| `Assets/Game/RawAssets/Sprite/LotteryDraw/lottery_img_10.png` | Manifest 归 `assets_game_rawassets_sprite_lotterydraw.bundle`，本地可读样本仍在 `ce18fceb7ff2f67915e3b4177b14df94\__data` | `54x54` 小图标 | `PrayerHolyRelicPanel/btnIntegral/imgIntegral/imgIntegralSlider` 等图集控件使用；不是主舞台背景 |
+
+所以不能仅凭 `lottery_` 前缀判定为「遺器祈願」专属。`Sprite/LotteryDraw/lottery_*` 是抽卡/祈願共用图集；`draw_pool_summary.csv` 中普通/高级/进阶喚靈、源神祈願、聖源祈願、遺器祈願、自選遺器和回響池都会引用 `lottery_btn_*`。
+
+### 反查到的界面文件
+
+从截图和资源链路复核，`BackGround/lottery_img_10.png` 对应的是祈願主界面的运行时舞台图，不在 `PrayerHolyRelicPanel.prefab` 的静态 `Image.sprite` 表里。静态 prefab 反查应这样拆：
+
+| 层级 | Prefab / 资源 | 作用 |
+|---|---|---|
+| 入口 shell | `Assets/Game/RawAssets/Prefabs/UI/Prayer/PrayerView.prefab` | 仅 4 个节点：`imgBg`、`pnlContent`、`tabPrayer`，负责承载实际页面 |
+| 主面板 | `Assets/Game/RawAssets/Prefabs/UI/Prayer/PrayerHolyRelicPanel.prefab` | 本文完整控件清单来源：`69` 节点、`35` Image、`21` Text、`12` Button |
+| 舞台/动画承载 | `PrayerHolyRelicPanel/pnlAnimation` 与 `LotteryDrawNewStageView.prefab` 链路 | `pnlAnimation` 是 `1670x750` 的运行时动画/背景承载位，静态显示 `Image:none`；点击祈願后的过程演出继续进入 `LotteryDrawNewStageView` 系列 |
+| 主舞台贴图 | `Assets/Game/RawAssets/Sprite/BackGround/lottery_img_10.png` | 截图里的床、宝箱、银发角色大背景；属于 `BackGround` 路径，不是 `Sprite/LotteryDraw` 小图标 |
+
+### 全控件清单定位
+
+本文件上方的「节点层级清单」就是 `PrayerHolyRelicPanel.prefab` 的全控件清单。关键分区如下：
+
+| 区域 | 节点范围 | 说明 |
+|---|---|---|
+| 舞台承载 | `#2 PrayerHolyRelicPanel/pnlAnimation` | `1670x750`，运行时背景/动画入口，静态无 sprite |
+| 底部操作框 | `#3-38 PrayerHolyRelicPanel/imgFrame/...` | 底部半透明框、功能按钮、跳过动画、单抽/十连按钮 |
+| 祈願类型分页 | `#39-67 PrayerHolyRelicPanel/imgFrame/pnlTab/...` | `btnPrayer1..4`，对应遺器祈願、自選遺器、源神祈願、聖源祈願图标组 |
+| 右侧标题与提示 | `#68-69 txtDrawName / txtTip` | 主标题和保底说明，截图右侧文案由运行时语言与池配置填充 |
+
+### 资源归属边界
+
+- 「遺器祈願 / 自選遺器」在 `draw_pool_summary.csv` 中使用 `titlePic=lottery_btn_11`；「源神祈願 / 聖源祈願」使用 `titlePic=lottery_btn_10`。
+- `PrayerHolyRelicPanel` 的大量 `lottery_btn_*` / `lottery_img_*` 来自 `LotteryDraw.spriteatlas`，这是祈願主面板复用抽卡图集，不代表所有 `lottery_` 资源都归遺器祈願。
+- `BackGround/lottery_img_10.png` 与 `LotteryDraw/lottery_img_10.png` 必须按完整资源路径区分；前者是截图主舞台，后者是图集小控件。
+- 若 prefab 清单显示 `Image:none`，先判断是否是透明点击区或运行时替换位。`PrayerHolyRelicPanel/pnlAnimation`、`PrayerView/imgBg`、`btnPrayerOnce/imgPrayerOnceCost`、`btnPrayerContinuous/imgPrayerContinuousCost` 都属于这种需要结合运行时数据复核的位置。
+
+## 2026-05-26 运行时代码链路复核
+
+`PrayerHolyRelicPanel/pnlAnimation` 在 prefab 清单中是 `Image:none`，但不是缺图。热更代码中构造器明确写入 `_animationSpine = "lottery_img_11"`，`OnInit()` 随后执行：
+
+```text
+PrayerHolyRelicPanel::.ctor
+  -> _animationSpine = "lottery_img_11"
+PrayerHolyRelicPanel.OnInit
+  -> AssetsHelper.LoadSpriteFromBackground(_animationSpine)
+  -> <OnInit>b__44_0(Sprite sp)
+  -> pnlAnimation.Image.sprite = sp
+```
+
+因此当前热更版本的 `PrayerHolyRelicPanel` 主舞台应优先使用完整路径 `Assets/Game/RawAssets/Sprite/BackGround/lottery_img_11.png`，而不是 `Sprite/LotteryDraw/lottery_img_11.png` 小图标。已验证物理资源：
+
+| Asset | Bundle | Physical | 尺寸 | Godot 路径 |
+|---|---|---|---|---|
+| `Assets/Game/RawAssets/Sprite/BackGround/lottery_img_11.png` | `assets_game_rawassets_sprite_background_lottery_img_11.bundle` | `files\yoo\Default\BundleFiles\f0\f07f1e8a185bf5928f5235ef6166d33e\__data` | `1670x750` | `assets/ui/background/lottery_img_11.png` |
+
+导出命令：
+
+```powershell
+py -3.14 .\scripts\assets\export_unity_bundle_images.py `
+  .\files\yoo\Default\BundleFiles\f0\f07f1e8a185bf5928f5235ef6166d33e\__data `
+  --out .\reverse-output\godot-resource-export\background-lottery-img-11 `
+  --xor-prefix 222 --xor-key 0x16
+```
+
+注意：本地同时存在 `BackGround/lottery_img_10.png` 与 `BackGround/lottery_img_11.png`，二者都是 `1670x750` 大背景。旧截图与部分池配置可能更像 `lottery_img_10`，但当前 `PrayerHolyRelicPanel` 热更 IL 写死的是 `lottery_img_11`。后续如果要按具体祈願池动态切换，必须继续查 `PrayerView` / pool config 是否在打开不同子面板时覆盖 `_animationSpine`，不能只按文件名邻号猜。
+
+### 祈願抽取动画现状
+
+`PrayerBasePanel.OnLotteryDraw` 保留了跳过动画开关逻辑：若 `PlayerSetting.GetBool(SkipAnimationKey,false)` 为 `false`，会调用 `DrawAnimation(info)`，然后打开 `Prefabs/UI/Prayer/PrayerRewardView`。但当前热更中的 `PrayerBasePanel.DrawAnimation` 只等待 `UniTask.CompletedTask`，没有再打开 `LotteryDrawStageView` 或视频演出。
+
+实际链路可写成：
+
+```text
+btnPrayerOnce / btnPrayerContinuous
+  -> PrayerBasePanel.OnBtnOnceClick / OnBtnContinueClick
+  -> PrayerModel 请求抽取
+  -> PrayerBasePanel.OnLotteryDraw
+  -> if !SkipAnimationKey: DrawAnimation(info)  # 当前 no-op
+  -> ViewBehaviour.Open("Prefabs/UI/Prayer/PrayerRewardView", info)
+```
+
+所以 Godot 还原时，祈願页的“跳過動畫”开关应保留；但若严格跟当前热更逻辑，祈願抽取可以直接进结果页。普通喚靈的多段动画链路另见 `LotteryDrawMainView` / `LotteryDrawStageView` 文档。
+
+### 祈願池按钮 titlePic 反查
+
+`drawconfig.titlePic` 可以直接反查左侧池按钮 banner。`源神祈願` 与 `聖源祈願` 均使用 `titlePic=lottery_btn_10`，`遺器祈願` 与 `自選遺器` 使用 `titlePic=lottery_btn_11`。
+
+| drawconfig id | 文案 | titlePic | pic | 结论 |
+|---:|---|---|---|---|
+| `1101` | `源神祈願` | `lottery_btn_10` | `lottery_btn_02` | 左侧祈願池按钮使用 `lottery_btn_10.png` |
+| `1102` | `聖源祈願` | `lottery_btn_10` | `lottery_btn_02` | 与源神祈願共用同一张标题按钮图 |
+| `1203` | `遺器祈願` | `lottery_btn_11` | `lottery_btn_02` | 遺器祈願按钮图 |
+| `1202` | `自選遺器` | `lottery_btn_11` | `lottery_btn_02` | 与遺器祈願共用同一张标题按钮图 |
+
+资源路径闭合：
+
+```text
+drawconfig.titlePic = lottery_btn_10
+  -> Assets/Game/RawAssets/Sprite/LotteryDraw/lottery_btn_10.png
+  -> assets_game_rawassets_sprite_lotterydraw.bundle
+  -> reverse-output/godot-resource-export/lotterydraw-ce/lottery_btn_10.png
+  -> standalone/godot-mvp/assets/ui/lottery/lottery_btn_10.png
+```
+
+经验：`titlePic` 是配置表驱动的池按钮图，不是 `PrayerHolyRelicPanel/pnlTab/btnPrayer1..4` 那组圆形祈願类型 tab。前者对应左侧池 banner，后者对应底部 `pnlTab` 的 `lottery_btn_29..36` 图标。

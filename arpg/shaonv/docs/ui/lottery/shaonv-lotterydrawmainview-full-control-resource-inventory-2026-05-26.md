@@ -351,3 +351,45 @@
 - `btnProbability`、`btnShop2`、`btnCrystalShop`、`btnMarch`、`btnIntegral` 是召唤内功能入口，不应继续全部复用 Home 的通用商店/任务页。当前 MVP 已拆成概率公示、召唤商店、碎片商店、阵容推荐、积分抽奖；后续如找到这些子界面的 prefab，应按同样方式替换为原始布局。
 - `pnlNormalWish/@pnlHero1/btnWish` 与 `@pnlHero2/btnWish` 是透明点击区，`Image:none` 不是资源缺失；槽位底框来自 `common_img_71`，加号来自 `common_img_72`，选中后头像应走角色圆头像资源，而不是截图裁切。
 - 积分入口 `btnIntegral` 暂以 MVP 的 `draw_count * 10` / `gacha_integral` 驱动，保持“抽卡后增长、满额领奖”的闭环。若后续定位到原始积分抽奖表，应替换奖励池和消耗规则，但 UI 入口与增长触发点仍跟随 `ReqLotteryDraw` 成功回包。
+
+## 2026-05-26 角色登场视频链路
+
+抽中高稀有角色后的专属登场动画不在 `LotteryDrawStageView`，而在 `HeroRecruitView.InitAnimationView`。热更 IL 关键逻辑：
+
+```text
+HeroRecruitView.InitView(heroId,isNew,endCall)
+  -> InitAnimationView(heroCfg, heroId)
+  -> if heroCfg.recruitVideo 非空且 SilentUpdate 完成
+  -> AssetsHelper.LoadVideoClip(heroCfg.recruitVideo)
+  -> _videoPlayer.clip = clip
+  -> _videoPlayer.Play()
+  -> await clip.length
+  -> PlayerSetting.SetInt(GetAnimationKey(heroId), 1)
+  -> InitInfoView(heroId)
+```
+
+`heroCfg.recruitVideo` 来自 `reverse-output/gacha-static/tables/hero.json` / `hero.csv`，值形如 `recruit_010`、`recruit_052`。资源表闭合到 `Assets/Game/RawAssets/Video/recruit_010.mp4` 这类路径，物理 bundle 位于 `reverse-output/assets/manifest-parsed-py/manifest-parsed-assets.csv`。
+
+示例 `recruit_010`：
+
+| 字段 | 值 |
+|---|---|
+| 资源路径 | `Assets/Game/RawAssets/Video/recruit_010.mp4` |
+| Bundle | `assets_game_rawassets_video_recruit_010.bundle` |
+| Physical | `files\yoo\Default\BundleFiles\98\984910b64c756464fe84700c6a6b0c0c\__data` |
+| VideoClip | `recruit_010` |
+| 原视频尺寸 | `1920x1080` |
+| 帧率/帧数 | `30fps / 301 frames` |
+
+导出工具已补充为 `scripts/assets/export_unity_bundle_videos.py`。单视频烟测：
+
+```powershell
+py -3.14 .\scripts\assets\export_unity_bundle_videos.py `
+  .\files\yoo\Default\BundleFiles\98\984910b64c756464fe84700c6a6b0c0c\__data `
+  --out .\reverse-output\godot-resource-export\videos\recruit-010 `
+  --xor-prefix 222 --xor-key 0x16
+```
+
+输出 `reverse-output/godot-resource-export/videos/recruit-010/recruit_010.mp4`，大小 `6694220` bytes。实现细节：这些视频 bundle 前缀同样需要 XOR，解后是 `UnityFS`；`VideoClip.m_ExternalResources` 指向同 bundle 内的 `CAB-*.resource`，该 resource 起始为 mp4 `ftypisom` 数据。
+
+Godot MVP 下一步接入建议：在 `gacha_result_screen.gd` 的 `show_recruit_silhouette/show_recruit_revealed` 前，按抽中角色的 `recruitVideo` 查找 `assets/video/recruit_*.mp4`，优先用 `VideoStreamPlayer` 播放，播放完成后进入 `InitInfoView` 等价展示；若视频缺失或播放失败，再 fallback 到当前 Spine/PNG 模拟层。
