@@ -179,7 +179,7 @@ py -3.14 .\scripts\assets\export_unity_bundle_images.py `
 |---|---|---|
 | 入口 shell | `Assets/Game/RawAssets/Prefabs/UI/Prayer/PrayerView.prefab` | 仅 4 个节点：`imgBg`、`pnlContent`、`tabPrayer`，负责承载实际页面 |
 | 主面板 | `Assets/Game/RawAssets/Prefabs/UI/Prayer/PrayerHolyRelicPanel.prefab` | 本文完整控件清单来源：`69` 节点、`35` Image、`21` Text、`12` Button |
-| 舞台/动画承载 | `PrayerHolyRelicPanel/pnlAnimation` 与 `LotteryDrawNewStageView.prefab` 链路 | `pnlAnimation` 是 `1670x750` 的运行时动画/背景承载位，静态显示 `Image:none`；点击祈願后的过程演出继续进入 `LotteryDrawNewStageView` 系列 |
+| 舞台/背景承载 | `PrayerHolyRelicPanel/pnlAnimation` | `pnlAnimation` 是 `1670x750` 的运行时背景承载位，静态显示 `Image:none`；当前热更中祈願点击后的前置 `DrawAnimation` 是 no-op，不会进入 `LotteryDrawNewStageView` 系列 |
 | 主舞台贴图 | `Assets/Game/RawAssets/Sprite/BackGround/lottery_img_10.png` | 截图里的床、宝箱、银发角色大背景；属于 `BackGround` 路径，不是 `Sprite/LotteryDraw` 小图标 |
 
 ### 全控件清单定位
@@ -246,6 +246,27 @@ btnPrayerOnce / btnPrayerContinuous
 ```
 
 所以 Godot 还原时，祈願页的“跳過動畫”开关应保留；但若严格跟当前热更逻辑，祈願抽取可以直接进结果页。普通喚靈的多段动画链路另见 `LotteryDrawMainView` / `LotteryDrawStageView` 文档。
+
+### 祈願结果展示动画类型
+
+`PrayerRewardView` 是祈願结果页，不是抽卡主舞台 prefab。它的 `OnOpenAsync` 会隐藏所有 `PrayerRewardGrid`，逐个调用 `ShowRecruitView(itemShow)`，再显示格子并间隔 `showGridInterval = 0.1` 秒。因此普通奖励的“动画”主要是 UI 结果格逐个显现，资源由 `PrayerRewardGrid` 的 `lottery_img_80..91`、`lottery_img_102..108`、`common_img_163..166` 等 PNG/Sprite 组成。
+
+`ShowRecruitView` 只对高稀有奖励打开额外展示页：
+
+| RewardType | 条件 | 打开的 View | 动画类型结论 |
+|---:|---|---|---|
+| `22` | 英雄，且 `HeroStaticItem.rare > 2` | `Prefabs/UI/LotteryDraw/HeroRecruitView` | 复用普通喚靈英雄招募展示；包含 `VideoPlayer`、`SkeletonGraphic`、`Animator`，是 Video + Spine + PNG UI 组合 |
+| `21` | Remnants / 聖物类奖励 | `Prefabs/UI/Remnants/RemnantRecruitView` | 有 `spineRemnant` / `spineRemnantSilhouette`，通过 `LoadSkeletonDataFromRemnants` 播放 `standby`，是 Spine + PNG UI 组合 |
+| `36` | 遺器奖励 | `Prefabs/UI/HolyRelic/HolyRelicRecruitView` | 没有 `SkeletonGraphic` / `VideoPlayer` 字段，只加载 `HolyRelic` / `Common` Sprite 并启用 `@fxRelicLight*`、`@fxImgRelicBg*` 子节点，是 PNG/UI 合成动画 |
+
+结论：`祈願按钮点击展示的动画` 不能统一按 Spine 处理。遺器祈願本身的点击前置动画在当前热更为 no-op；抽中遺器后的高稀有展示是 `HolyRelicRecruitView` 的图片与特效节点组合。只有抽到英雄或 Remnants/聖物时，才会分别进入 `HeroRecruitView` / `RemnantRecruitView` 的 Spine 或 Video 链路。
+
+### Prefab 与资源区分经验
+
+- `LotteryDrawMainView` / `LotteryDrawNewStageView` 是普通喚靈链路；`PrayerView` / `PrayerHolyRelicPanel` / `PrayerRewardView` 是祈願链路。
+- 两条链路复用 `LotteryDraw` 图集和 `LotteryDrawInfo` / `DrawOperateType` 等数据结构，所以资源名前缀相似，但 prefab 不应混用。
+- 祈願链路里 `PrayerRewardView.prefab` 当前本地物理映射未命中：manifest 有 `assets_game_rawassets_prefabs_ui_prayer_prayerrewardview.bundle` / `715dfdfca01468071d780e27352de68d.bundle`，但 `physical-asset-map.csv` 标记 `False`。后续若要复刻结果页布局，需要继续从其它 bundle/cache 补齐该 prefab。
+- `HolyRelicRecruitView.prefab` 与 `RemnantRecruitView.prefab` 也在 manifest 中存在但当前物理映射未命中；可先按 IL 还原行为，再继续补 bundle 做全控件清单。
 
 ### 祈願池按钮 titlePic 反查
 

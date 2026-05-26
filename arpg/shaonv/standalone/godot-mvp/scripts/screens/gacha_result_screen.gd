@@ -27,7 +27,36 @@ const UI_RESULT_SIDE_A := "res://assets/ui/lottery/lottery_img_11.png"
 const UI_RESULT_SIDE_B := "res://assets/ui/lottery/lottery_img_12.png"
 const UI_RESULT_SIDE_C := "res://assets/ui/lottery/lottery_img_13.png"
 const UI_RESULT_SIDE_D := "res://assets/ui/lottery/lottery_img_14.png"
+const UI_PRAYER_REWARD_BG := {
+	2: "res://assets/ui/lottery/lottery_img_80.png",
+	3: "res://assets/ui/lottery/lottery_img_83.png",
+	4: "res://assets/ui/lottery/lottery_img_86.png",
+	5: "res://assets/ui/lottery/lottery_img_89.png",
+}
+const UI_PRAYER_REWARD_MASK := {
+	2: "res://assets/ui/lottery/lottery_img_81.png",
+	3: "res://assets/ui/lottery/lottery_img_84.png",
+	4: "res://assets/ui/lottery/lottery_img_87.png",
+	5: "res://assets/ui/lottery/lottery_img_90.png",
+}
+const UI_PRAYER_REWARD_FRAME := {
+	2: "res://assets/ui/lottery/lottery_img_82.png",
+	3: "res://assets/ui/lottery/lottery_img_85.png",
+	4: "res://assets/ui/lottery/lottery_img_88.png",
+	5: "res://assets/ui/lottery/lottery_img_91.png",
+}
+const UI_PRAYER_REWARD_TAG := {
+	2: "res://assets/ui/lottery/lottery_img_102.png",
+	3: "res://assets/ui/lottery/lottery_img_103.png",
+	4: "res://assets/ui/lottery/lottery_img_104.png",
+	5: "res://assets/ui/lottery/lottery_img_105.png",
+}
+const UI_PRAYER_REWARD_RELIC_TAG := "res://assets/ui/lottery/lottery_img_107.png"
+const UI_PRAYER_REWARD_RARE_SSR := "res://assets/ui/common/common_img_163.png"
 const UI_TICKET_ICON := "res://assets/ui/item/draw_03.png"
+const FX_CAPSULE_BLUE_GLOW := "res://assets/ui/effect/fx_capsule_open_blue/Tex_glow005.png"
+const FX_CAPSULE_BLUE_RING := "res://assets/ui/effect/fx_capsule_open_blue/fx_047_tex_012.png"
+const FX_CAPSULE_BLUE_STAR := "res://assets/ui/effect/fx_capsule_open_blue/tfx_star09.png"
 const LOTTERY_STAGE_SCALE := Vector2(1280.0 / 1670.0, 720.0 / 750.0)
 
 var app
@@ -236,6 +265,95 @@ func draw_and_show(count: int) -> void:
 	var results = app._perform_draw(count)
 	show_results(results, count)
 
+func show_prayer_rewards(count: int, play_reveal: bool) -> void:
+	var pool: Dictionary = app._pool_by_id(str(app.save.get("active_pool_id", "prayer")))
+	var cost := count * int(pool.get("ticketCost", 1))
+	if int(app.save.get("tickets", 0)) < cost:
+		show_empty_ticket_warning("祈願鑰匙不足", true)
+		return
+	var results: Array = app._perform_draw(count)
+	if results.is_empty():
+		show_empty_ticket_warning("祈願鑰匙不足", true)
+		return
+	var seq := _next_sequence()
+	if play_reveal:
+		show_prayer_holy_relic_reveal(results, count, seq)
+	else:
+		show_prayer_result_view(results, count)
+
+func show_prayer_holy_relic_reveal(results: Array, count: int, seq: int) -> void:
+	if not _is_sequence_live(seq):
+		return
+	var best := best_result(results)
+	var rarity := int(best.get("rolled_rarity", 2))
+	var pool: Dictionary = app._pool_by_id(str(app.save.get("active_pool_id", "prayer")))
+	app.current_view = "prayer_holy_relic_recruit"
+	app._set_chrome_visible(false)
+	app._clear("遺器顯現")
+	draw_prayer_recruit_backdrop(rarity)
+
+	var title: Label = app._label("遺器祈願", 42, HORIZONTAL_ALIGNMENT_CENTER)
+	title.position = Vector2(70, 112)
+	title.size = Vector2(330, 60)
+	title.modulate = Color(1.0, 0.92, 0.72)
+	app._view_container().add_child(title)
+
+	var rare_text := "SSR 遺器顯現" if rarity >= 4 else ("SR 遺器顯現" if rarity == 3 else "遺器顯現")
+	var rare: Label = app._label(rare_text, 34, HORIZONTAL_ALIGNMENT_CENTER)
+	rare.position = Vector2(70, 176)
+	rare.size = Vector2(330, 52)
+	rare.modulate = frame_color(rarity, 1.0)
+	app._view_container().add_child(rare)
+
+	var name: Label = app._label(_prayer_reward_name(best), 30, HORIZONTAL_ALIGNMENT_CENTER)
+	name.position = Vector2(74, 242)
+	name.size = Vector2(322, 46)
+	app._view_container().add_child(name)
+
+	var detail: Label = app._label("%s\n%s  保底進度 %d / %d" % [
+		app._stars(min(rarity + 1, 5)) if rarity >= 4 else app._stars(rarity),
+		str(pool.get("name", "遺器祈願")),
+		app._pity(str(pool.get("id", "prayer"))),
+		int(pool.get("pityLimit", 30))
+	], 19, HORIZONTAL_ALIGNMENT_CENTER)
+	detail.position = Vector2(78, 306)
+	detail.size = Vector2(314, 76)
+	detail.modulate = Color(0.96, 0.88, 0.74)
+	app._view_container().add_child(detail)
+
+	app._add_action_button("查看结果", Vector2(162, 612), func() -> void:
+		_cancel_sequence()
+		show_prayer_result_view(results, count)
+	, Vector2(142, 46))
+	app._add_action_button("返回祈願", Vector2(318, 612), func() -> void:
+		_cancel_sequence()
+		app._pop_view()
+	, Vector2(132, 46))
+	app._add_action_button("跳过", Vector2(1088, 34), func() -> void:
+		_cancel_sequence()
+		show_prayer_result_view(results, count)
+	, Vector2(102, 40))
+	app._add_hit_button(Vector2.ZERO, Vector2(1280, 720), func() -> void:
+		_cancel_sequence()
+		show_prayer_result_view(results, count)
+	)
+	run_prayer_reveal_auto.call_deferred(results, count, seq)
+
+func show_prayer_result_view(results: Array, count: int) -> void:
+	app.current_view = "prayer_reward"
+	app._set_chrome_visible(false)
+	app._clear("祈願结果")
+	if results.is_empty():
+		show_empty_ticket_warning("祈願鑰匙不足", true)
+		return
+	draw_prayer_result_backdrop(results)
+	draw_prayer_reward_grid(results)
+	app._add_action_button("再祈願一次", Vector2(780, 656), func() -> void:
+		show_prayer_rewards(count, not bool(app.save.get("gacha_skip_animation", false)))
+	, Vector2(148, 42))
+	app._add_action_button("返回祈願", Vector2(944, 656), func() -> void: app._pop_view(), Vector2(132, 42))
+	app._add_action_button("遺器", Vector2(1094, 656), app._show_relics, Vector2(92, 42))
+
 func show_results(results: Array, count: int) -> void:
 	app.current_view = "draw_result"
 	app._set_chrome_visible(false)
@@ -249,11 +367,14 @@ func show_results(results: Array, count: int) -> void:
 	app._add_action_button("返回卡池", Vector2(944, 656), func() -> void: app._pop_view(), Vector2(132, 42))
 	app._add_action_button("图鉴", Vector2(1094, 656), app._show_gallery, Vector2(92, 42))
 
-func show_empty_ticket_warning() -> void:
+func show_empty_ticket_warning(message := "喚灵券不足", prayer := false) -> void:
 	app._set_chrome_visible(false)
-	app._clear("喚灵结果")
-	draw_recruit_backdrop(2)
-	var warning = app._label("喚灵券不足", 34, HORIZONTAL_ALIGNMENT_CENTER)
+	app._clear("祈願结果" if prayer else "喚灵结果")
+	if prayer:
+		draw_prayer_result_backdrop([])
+	else:
+		draw_recruit_backdrop(2)
+	var warning = app._label(message, 34, HORIZONTAL_ALIGNMENT_CENTER)
 	warning.position = Vector2(390, 260)
 	warning.size = Vector2(500, 58)
 	app._view_container().add_child(warning)
@@ -373,6 +494,68 @@ func draw_finish_light_masks(rarity: int) -> void:
 	for mask in masks:
 		app._draw_image(UI_RECRUIT_DISC, mask.get("pos", Vector2.ZERO), mask.get("size", Vector2.ZERO), false, frame_color(rarity, float(mask.get("alpha", 0.2))))
 
+func draw_prayer_recruit_backdrop(rarity: int) -> void:
+	app._draw_image(UI_PRAYER_STAGE_BG, Vector2(-195, -6), Vector2(1670, 732), true, Color(1, 1, 1, 0.94))
+	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.018, 0.012, 0.010, 0.42)))
+	app._view_container().add_child(app._panel(Vector2(0, 452), Vector2(1280, 150), frame_color(rarity, 0.16)))
+	app._draw_image(UI_RECRUIT_LIGHT_L, Vector2(-48, 148), Vector2(690, 430), true, Color(1.0, 0.86, 0.58, 0.26))
+	app._draw_image(UI_RECRUIT_LIGHT_R, Vector2(638, 148), Vector2(690, 430), true, frame_color(rarity, 0.32))
+	draw_fx_capsule_open_blue(Vector2(708, 286), rarity)
+	app._draw_image(UI_PRAYER_REWARD_RARE_SSR, Vector2(956, 108), Vector2(118, 58), false, Color(1, 1, 1, 0.92 if rarity >= 4 else 0.38))
+
+
+func draw_fx_capsule_open_blue(center: Vector2, rarity: int) -> void:
+	# Source: Assets/Game/RawAssets/Prefabs/3d/fx_capsule_open_blue.prefab.
+	# Unity structure is fx_capsule_open_blue/vfx_blue/gyunan + four gyun4 children,
+	# each bound by UiParticles to one ParticleSystem. No disc/star-map atlas sprites.
+	var layers := [
+		{"node": "gyunan", "texture": FX_CAPSULE_BLUE_RING, "size": Vector2(600, 600), "color": Color(1, 1, 1, 0.58), "speed": 0.04, "pulse": 0.035},
+		{"node": "gyun4 (1)", "texture": FX_CAPSULE_BLUE_GLOW, "size": Vector2(140, 140), "color": Color(0.155, 0.326, 0.802, 0.70), "speed": -0.10, "pulse": 0.08},
+		{"node": "gyun4 (2)", "texture": FX_CAPSULE_BLUE_GLOW, "size": Vector2(100, 100), "color": Color(0.026, 0.145, 0.292, 0.48), "speed": 0.07, "pulse": 0.06},
+		{"node": "gyun4 (3)", "texture": FX_CAPSULE_BLUE_STAR, "size": Vector2(120, 120), "color": Color(0.459, 0.918, 1.0, 0.96), "speed": 0.17, "pulse": 0.10},
+		{"node": "gyun4 (5)", "texture": FX_CAPSULE_BLUE_STAR, "size": Vector2(110, 110), "color": Color(0.271, 0.145, 0.784, 0.58), "speed": -0.26, "pulse": 0.09},
+	]
+	for index in range(layers.size()):
+		var layer: Dictionary = layers[index]
+		var size: Vector2 = layer["size"]
+		var rect: TextureRect = app._draw_image(str(layer["texture"]), center - size * 0.5, size, false, layer["color"])
+		if rect == null:
+			continue
+		rect.name = str(layer["node"])
+		rect.pivot_offset = size * 0.5
+		rect.rotation = 0.18 * float(index)
+		var mat := CanvasItemMaterial.new()
+		mat.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+		rect.material = mat
+		var tween: Tween = app.get_tree().create_tween()
+		tween.set_loops()
+		tween.tween_property(rect, "rotation", rect.rotation + TAU * sign(float(layer["speed"])), max(8.0, TAU / max(abs(float(layer["speed"])), 0.04))).from(rect.rotation)
+		var pulse: Tween = app.get_tree().create_tween()
+		pulse.set_loops()
+		pulse.tween_property(rect, "scale", Vector2.ONE * (1.0 + float(layer["pulse"])), 0.72 + float(index) * 0.08).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		pulse.tween_property(rect, "scale", Vector2.ONE, 0.72 + float(index) * 0.08).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+func draw_prayer_result_backdrop(results: Array) -> void:
+	var rarity := 3
+	var title_name := "遺器祈願"
+	if not results.is_empty():
+		var best := best_result(results)
+		rarity = int(best.get("rolled_rarity", 3))
+		title_name = _prayer_reward_name(best)
+	app._draw_image(UI_PRAYER_STAGE_BG, Vector2(-195, -6), Vector2(1670, 732), true, Color(1, 1, 1, 0.90))
+	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.016, 0.012, 0.014, 0.54)))
+	app._draw_image(UI_PRAYER_DISC, Vector2(410, -120), Vector2(460, 460), false, frame_color(rarity, 0.22))
+	app._draw_image(UI_PRAYER_DISC_E, Vector2(940, 86), Vector2(248, 248), false, Color(1, 1, 1, 0.16))
+	var title: Label = app._label("祈願结果", 42, HORIZONTAL_ALIGNMENT_CENTER)
+	title.position = Vector2(420, 46)
+	title.size = Vector2(440, 60)
+	app._view_container().add_child(title)
+	var top: Label = app._label("%s  %s" % [app._stars(min(rarity + 1, 5)) if rarity >= 4 else app._stars(rarity), title_name], 24, HORIZONTAL_ALIGNMENT_CENTER)
+	top.position = Vector2(340, 108)
+	top.size = Vector2(600, 44)
+	top.modulate = frame_color(rarity, 1.0)
+	app._view_container().add_child(top)
+
 func draw_result_grid(results: Array) -> void:
 	var columns = 5 if results.size() > 1 else 1
 	var card_size = Vector2(176, 188) if results.size() > 1 else Vector2(300, 330)
@@ -388,6 +571,56 @@ func draw_result_grid(results: Array) -> void:
 		var row = i / columns
 		var pos = Vector2(start_x + col * (card_size.x + gap.x), start_y + row * (card_size.y + gap.y))
 		draw_result_card(result, pos, card_size, rarity)
+
+func draw_prayer_reward_grid(results: Array) -> void:
+	var columns := 5 if results.size() > 1 else 1
+	var card_size := Vector2(162, 210) if results.size() > 1 else Vector2(300, 360)
+	var gap := Vector2(24, 24)
+	var total_w := columns * card_size.x + (columns - 1) * gap.x
+	var start_x := (1280.0 - total_w) * 0.5
+	var start_y := 166.0 if results.size() > 1 else 176.0
+	for i in range(results.size()):
+		var result: Dictionary = results[i]
+		var rarity := int(result.get("rolled_rarity", 2))
+		var col := i % columns
+		var row := i / columns
+		var pos := Vector2(start_x + col * (card_size.x + gap.x), start_y + row * (card_size.y + gap.y))
+		draw_prayer_reward_card(result, pos, card_size, rarity)
+
+func draw_prayer_reward_card(result: Dictionary, pos: Vector2, card_size: Vector2, rarity: int) -> void:
+	var color_idx := _prayer_reward_color_index(rarity)
+	app._view_container().add_child(app._panel(pos, card_size, Color(0.022, 0.018, 0.018, 0.70)))
+	app._draw_image(str(UI_PRAYER_REWARD_BG.get(color_idx, UI_PRAYER_REWARD_BG[2])), pos - Vector2(4, 4), card_size + Vector2(8, 8), false, Color(1, 1, 1, 0.92))
+	app._draw_image(str(UI_PRAYER_REWARD_MASK.get(color_idx, UI_PRAYER_REWARD_MASK[2])), pos + Vector2(8, 8), card_size - Vector2(16, 58), false, Color(1, 1, 1, 0.52))
+	app._draw_image(UI_PRAYER_DISC, pos + Vector2(card_size.x * 0.5 - 48, 34), Vector2(96, 96), false, frame_color(rarity, 0.90))
+	app._draw_image(UI_PRAYER_DISC_A, pos + Vector2(card_size.x * 0.5 - 34, 48), Vector2(68, 68), false, Color(1, 1, 1, 0.86))
+	app._draw_image(UI_PRAYER_DISC_B, pos + Vector2(card_size.x * 0.5 - 24, 58), Vector2(48, 48), false, frame_color(rarity, 0.92))
+	app._draw_image(str(UI_PRAYER_REWARD_FRAME.get(color_idx, UI_PRAYER_REWARD_FRAME[2])), pos - Vector2(4, 4), card_size + Vector2(8, 8), false, Color(1, 1, 1, 0.95))
+	app._draw_image(str(UI_PRAYER_REWARD_TAG.get(color_idx, UI_PRAYER_REWARD_TAG[2])), pos + Vector2(8, 8), Vector2(56, 24), false, Color(1, 1, 1, 0.90))
+	app._draw_image(UI_PRAYER_REWARD_RELIC_TAG, pos + Vector2(card_size.x - 58, 8), Vector2(48, 24), false, Color(1, 1, 1, 0.78))
+	if rarity >= 4:
+		app._draw_image(UI_PRAYER_REWARD_RARE_SSR, pos + Vector2(10, card_size.y - 74), Vector2(74, 36), false, Color(1, 1, 1, 0.90))
+
+	var name: Label = app._label(_prayer_reward_name(result), 17, HORIZONTAL_ALIGNMENT_CENTER)
+	name.position = pos + Vector2(8, card_size.y - 58)
+	name.size = Vector2(card_size.x - 16, 28)
+	app._view_container().add_child(name)
+
+	var detail: Label = app._label("%s   %s" % [_prayer_reward_grade(rarity), "NEW" if result.get("is_new", false) else "精粹 +%d" % max(1, int(result.get("shards", 0)))], 14, HORIZONTAL_ALIGNMENT_CENTER)
+	detail.position = pos + Vector2(8, card_size.y - 30)
+	detail.size = Vector2(card_size.x - 16, 22)
+	detail.modulate = frame_color(rarity, 1.0)
+	app._view_container().add_child(detail)
+
+	var button := Button.new()
+	button.text = ""
+	button.flat = true
+	button.position = pos
+	button.size = card_size
+	button.pressed.connect(func() -> void:
+		app._show_relics()
+	)
+	app._view_container().add_child(button)
 
 func draw_result_card(result: Dictionary, pos: Vector2, card_size: Vector2, rarity: int) -> void:
 	var hero = result.get("hero", {})
@@ -494,6 +727,32 @@ func run_revealed_auto(results: Array, count: int, seq: int) -> void:
 	await app.get_tree().create_timer(1.35).timeout
 	if _is_sequence_live(seq):
 		show_results(results, count)
+
+func run_prayer_reveal_auto(results: Array, count: int, seq: int) -> void:
+	await app.get_tree().create_timer(2.20).timeout
+	if _is_sequence_live(seq):
+		show_prayer_result_view(results, count)
+
+func _prayer_reward_color_index(rarity: int) -> int:
+	if rarity >= 4:
+		return 5
+	if rarity == 3:
+		return 4
+	return 2
+
+func _prayer_reward_grade(rarity: int) -> String:
+	if rarity >= 4:
+		return "SSR"
+	if rarity == 3:
+		return "SR"
+	return "R"
+
+func _prayer_reward_name(result: Dictionary) -> String:
+	var hero: Dictionary = result.get("hero", {})
+	var hero_name := str(hero.get("name", "星核"))
+	if hero_name.is_empty():
+		hero_name = "星核"
+	return "遺器·%s" % hero_name
 
 func frame_color(rarity: int, alpha: float) -> Color:
 	if rarity >= 4:

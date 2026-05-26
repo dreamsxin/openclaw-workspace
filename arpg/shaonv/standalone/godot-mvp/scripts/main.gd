@@ -476,6 +476,14 @@ func _show_start_view_from_env() -> void:
 	elif start_view == "prayer":
 		_enter_main_scene()
 		_open_prayer_pool()
+	elif start_view == "prayer_result":
+		_enter_main_scene()
+		_open_prayer_pool()
+		_show_prayer_rewards(int(OS.get_environment("SHAONV_MVP_DRAW_COUNT")) if not OS.get_environment("SHAONV_MVP_DRAW_COUNT").is_empty() else 10, false)
+	elif start_view == "prayer_reveal":
+		_enter_main_scene()
+		_open_prayer_pool()
+		_show_prayer_rewards(int(OS.get_environment("SHAONV_MVP_DRAW_COUNT")) if not OS.get_environment("SHAONV_MVP_DRAW_COUNT").is_empty() else 10, true)
 	elif start_view == "battle":
 		_enter_main_scene()
 		_show_battle()
@@ -544,6 +552,10 @@ func _show_draw_animation(count: int) -> void:
 func _draw_and_show(count: int) -> void:
 	_push_view("喚灵结果")
 	gacha_result_screen.draw_and_show(count)
+
+func _show_prayer_rewards(count: int, play_reveal: bool) -> void:
+	_push_view("祈願结果")
+	gacha_result_screen.show_prayer_rewards(count, play_reveal)
 
 func _show_gal() -> void:
 	gal_screen.show_gal()

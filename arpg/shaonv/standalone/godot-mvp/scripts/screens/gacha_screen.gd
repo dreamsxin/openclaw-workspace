@@ -445,7 +445,7 @@ func lottery_bg_for_pool(pool_id: String) -> String:
 
 
 func _skip_animation_enabled() -> bool:
-	return bool(app.save.get("gacha_skip_animation", true))
+	return bool(app.save.get("gacha_skip_animation", false))
 
 
 func _toggle_skip_animation() -> void:
@@ -459,6 +459,9 @@ func _request_draw(count: int) -> void:
 	var cost := count * int(pool.get("ticketCost", 1))
 	if int(app.save.get("tickets", 0)) < cost:
 		_show_draw_blocked(cost)
+		return
+	if app._active_gacha_realm() == "prayer":
+		app._show_prayer_rewards(count, not _skip_animation_enabled())
 		return
 	if _skip_animation_enabled():
 		app._draw_and_show(count)
