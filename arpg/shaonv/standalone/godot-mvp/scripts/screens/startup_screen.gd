@@ -5,6 +5,8 @@ const UI_LOGIN_BG = "res://assets/ui/background/login_bg_01.png"
 const UI_LOGIN_BTN = "res://assets/ui/login/login_btn_03.png"
 const UI_LOGIN_LOGO = "res://assets/ui/login/login_txt_02.png"  # prefab: imgLogo → login_txt_02
 const UI_LOGIN_SERVER_BG = "res://assets/ui/login/server_bg_03.png"
+const UI_LOGIN_SERVER_SELECT_BG = "res://assets/ui/login/login_img_01.png"
+const UI_LOGIN_SERVER_STATUS = "res://assets/ui/login/login_img_02.png"
 # Function buttons (pnlFunction)
 const UI_LOGIN_BTN_NOTICE = "res://assets/ui/login/login_btn_01.png"    # btnNotice
 const UI_LOGIN_BTN_REPAIR = "res://assets/ui/login/login_btn_02.png"    # btnRepair
@@ -13,12 +15,19 @@ const UI_LOGIN_BTN_SELECT = "res://assets/ui/login/login_btn_06.png"    # btnSel
 const UI_LOGIN_INPUT_BG = "res://assets/ui/login/login_img_03.png"      # inputAccount bg
 const UI_LOGIN_INPUT_ICON = "res://assets/ui/login/login_img_04.png"    # input icon
 const UI_LOGIN_AGE = "res://assets/ui/login/login_txt_03.png"           # btnAge 12+
-const UI_LOGIN_TIP = "res://assets/ui/login/login_img_01.png"           # imgTipLogin
+const UI_LOGIN_TIP = "res://assets/ui/login/login_txt_01.png"           # imgTipLogin
+const UI_COMMON_TOGGLE_BG = "res://assets/ui/common/common_btn_09.png"
+const UI_COMMON_TOGGLE_CHECK = "res://assets/ui/common/common_btn_10.png"
 const UI_LOADING_BG = "res://assets/ui/background/loading_bg_01.png"
+const UI_LOADING_TRACK = "res://assets/ui/loading/update_img_01.png"
+const UI_LOADING_FILL = "res://assets/ui/loading/update_img_02.png"
+const UI_LOADING_HANDLE = "res://assets/ui/loading/update_img_03.png"
 const UI_LAUNCH_VIDEO = "res://assets/video/game_start.ogv"
 const LAUNCH_VIDEO_SECONDS := 15.8
 const LOGIN_PREFAB_SIZE := Vector2(1670, 750)
 const LOGIN_SCALE := Vector2(1280.0 / 1670.0, 720.0 / 750.0)
+const LAUNCH_RAW_IMAGE_POS := Vector2(-3, -446)
+const LAUNCH_RAW_IMAGE_SIZE := Vector2(1287, 1613)
 
 var app
 
@@ -43,11 +52,24 @@ func _login_right_bottom_pos(offset: Vector2, size: Vector2) -> Vector2:
 func _login_center_top_pos(offset: Vector2, size: Vector2) -> Vector2:
 	return Vector2((835.0 + offset.x - size.x * 0.5) * LOGIN_SCALE.x, (-offset.y) * LOGIN_SCALE.y)
 
+func _login_child_center_pos(parent_pos: Vector2, parent_prefab_size: Vector2, child_center: Vector2, child_prefab_size: Vector2) -> Vector2:
+	return parent_pos + _login_size(Vector2(
+		parent_prefab_size.x * 0.5 + child_center.x - child_prefab_size.x * 0.5,
+		parent_prefab_size.y * 0.5 - child_center.y - child_prefab_size.y * 0.5
+	))
+
 func _login_function_pos(index: int, size: Vector2) -> Vector2:
 	var panel_center_x := 1670.0 - 65.672607421875
 	var x := panel_center_x - size.x * 0.5
-	var y := 750.0 - (30.0 + float(index) * 76.0) - size.y * 0.5
+	var y := 185.0 + float(index) * 76.0
 	return Vector2(x * LOGIN_SCALE.x, y * LOGIN_SCALE.y)
+
+func _pulse_alpha(node: CanvasItem, low := 0.45, high := 1.0, duration := 0.75) -> void:
+	node.modulate.a = high
+	var tween: Tween = app.create_tween()
+	tween.set_loops()
+	tween.tween_property(node, "modulate:a", low, duration)
+	tween.tween_property(node, "modulate:a", high, duration)
 
 func show_launch() -> void:
 	app.current_view = "launch"
@@ -60,13 +82,15 @@ func show_launch() -> void:
 	var played_video := _draw_launch_video()
 	if not played_video:
 		# RawImage: 1680×1680 center-anchored → Godot: 1287×1613 centered at (640,360) → top-left (-3,-446)
-		app._view_container().add_child(app._panel(Vector2(-3, -446), Vector2(1287, 1613), Color(0.05, 0.032, 0.026, 0.38)))
+		app._view_container().add_child(app._panel(LAUNCH_RAW_IMAGE_POS, LAUNCH_RAW_IMAGE_SIZE, Color(0.0, 0.0, 0.0, 1.0)))
 
 	var hint = app._label("少女回战 · 离线单机版", 18, HORIZONTAL_ALIGNMENT_CENTER)
 	hint.position = Vector2(440, 640)
 	hint.size = Vector2(400, 36)
 	hint.modulate = Color(0.78, 0.72, 0.62, 1.0)
 	app._view_container().add_child(hint)
+	hint.visible = false
+	_draw_launch_skip_controls()
 
 func _draw_launch_video() -> bool:
 	if not ResourceLoader.exists(UI_LAUNCH_VIDEO):
@@ -76,17 +100,29 @@ func _draw_launch_video() -> bool:
 		return false
 	var video := VideoStreamPlayer.new()
 	video.stream = stream
-	video.position = Vector2(0, 0)
-	video.size = Vector2(1280, 720)
+	video.position = LAUNCH_RAW_IMAGE_POS
+	video.size = LAUNCH_RAW_IMAGE_SIZE
 	video.expand = true
 	video.autoplay = true
+	video.modulate.a = 0.0
 	video.finished.connect(func() -> void:
 		if app.current_view == "launch":
 			app._show_login()
 	)
 	app._view_container().add_child(video)
+	var tween: Tween = app.create_tween()
+	tween.tween_property(video, "modulate:a", 1.0, 0.1).set_delay(0.1)
 	video.play()
 	return true
+
+func _draw_launch_skip_controls() -> void:
+	var skip_label: Label = app._label("点击跳过", 18, HORIZONTAL_ALIGNMENT_CENTER)
+	skip_label.position = Vector2(1084, 638)
+	skip_label.size = Vector2(126, 34)
+	skip_label.modulate = Color(0.94, 0.88, 0.74, 0.86)
+	app._view_container().add_child(skip_label)
+	skip_label.visible = false
+	app._add_hit_button(Vector2(0, 0), Vector2(1280, 720), app._skip_launch_video)
 
 func show_preloading() -> void:
 	app.current_view = "preloading"
@@ -121,7 +157,6 @@ func show_login() -> void:
 	app._clear("Login")
 
 	app._draw_image(UI_LOGIN_BG, Vector2.ZERO, Vector2(1280, 720), true)
-	app._view_container().add_child(app._panel(Vector2.ZERO, Vector2(1280, 720), Color(0.018, 0.014, 0.012, 0.04)))
 	app._add_hit_button(Vector2.ZERO, Vector2(1280, 720), app._show_loading)
 
 	var logo_size := _login_size(Vector2(260, 104) * 0.8)
@@ -137,23 +172,31 @@ func show_login() -> void:
 	app._draw_image(UI_LOGIN_AGE, age_pos, age_size, false)
 	app._add_hit_button(age_pos, age_size, app._show_login)
 
-	var version_size := _login_size(Vector2(332, 96))
 	var version_pos := _login_right_bottom_pos(Vector2(-13, 114), Vector2(332, 96))
-	var ver = app._label("Ver 1.0.0\nApp v1.18\nRes v1.18", 14, HORIZONTAL_ALIGNMENT_RIGHT)
-	ver.position = version_pos
-	ver.size = version_size
-	ver.modulate = Color(0.68, 0.64, 0.58)
-	app._view_container().add_child(ver)
+	var version_line_size := _login_size(Vector2(332, 30))
+	var version_lines := ["Ver 1.0.0", "App v1.18", "Res v1.18"]
+	for i in range(version_lines.size()):
+		var ver = app._label(str(version_lines[i]), 14, HORIZONTAL_ALIGNMENT_RIGHT)
+		ver.position = version_pos + Vector2(0, version_line_size.y * i)
+		ver.size = version_line_size
+		ver.modulate = Color(0.68, 0.64, 0.58)
+		app._view_container().add_child(ver)
 
 	var input_size := _login_size(Vector2(543, 64))
 	var input_pos := _login_center_pos(Vector2(0, -114.5), Vector2(543, 64))
 	app._draw_image(UI_LOGIN_INPUT_BG, input_pos, input_size, false, Color(1, 1, 1, 0.95))
-	app._draw_image(UI_LOGIN_INPUT_ICON, input_pos + _login_size(Vector2(12.5, 12)), _login_size(Vector2(40, 40)), false)
+	var input_prefab_size := Vector2(543, 64)
+	app._draw_image(UI_LOGIN_INPUT_ICON, _login_child_center_pos(input_pos, input_prefab_size, Vector2(-239.1, 0), Vector2(40, 40)), _login_size(Vector2(40, 40)), false)
+	var account_label = app._label("账号", 18, HORIZONTAL_ALIGNMENT_CENTER)
+	account_label.position = input_pos + _login_size(Vector2(18, 0))
+	account_label.size = _login_size(Vector2(96, 64))
+	account_label.modulate = Color(0.56, 0.48, 0.40, 0.92)
+	app._view_container().add_child(account_label)
 	var account = LineEdit.new()
 	account.text = "LocalPlayer"
-	account.placeholder_text = "Player name"
-	account.position = input_pos + _login_size(Vector2(112, 0))
-	account.size = _login_size(Vector2(392, 64))
+	account.placeholder_text = "输入账号..."
+	account.position = _login_child_center_pos(input_pos, input_prefab_size, Vector2(160.8, 0), Vector2(362.7, 63.9))
+	account.size = _login_size(Vector2(362.7, 63.9))
 	account.flat = true
 	app._view_container().add_child(account)
 
@@ -166,23 +209,49 @@ func show_login() -> void:
 	for index in range(buttons.size()):
 		var button_size := _login_size(Vector2(60, 60))
 		var button_pos := _login_function_pos(index, Vector2(60, 60))
-		app._draw_image(str(buttons[index].get("icon", "")), button_pos + _login_size(Vector2(4, 4)), _login_size(Vector2(52, 52)), false)
+		app._draw_image(str(buttons[index].get("icon", "")), button_pos, button_size, false)
 		app._add_hit_button(button_pos, button_size, buttons[index].get("callback"))
+
+	var server_size := _login_size(Vector2(500, 34))
+	var server_pos := _login_center_pos(Vector2(0, -99), Vector2(500, 34))
+	var server_group := Control.new()
+	server_group.name = "btnServerSel"
+	server_group.position = server_pos
+	server_group.size = server_size
+	server_group.visible = false
+	app._view_container().add_child(server_group)
+	var server_bg: TextureRect = app._draw_image(UI_LOGIN_SERVER_SELECT_BG, server_pos, server_size, false)
+	if server_bg != null:
+		server_bg.reparent(server_group)
+		server_bg.position = Vector2.ZERO
+	var server_status: TextureRect = app._draw_image(UI_LOGIN_SERVER_STATUS, _login_child_center_pos(server_pos, Vector2(500, 34), Vector2(-20, 0), Vector2(26, 26)), _login_size(Vector2(26, 26)), false)
+	if server_status != null:
+		server_status.reparent(server_group)
+		server_status.position -= server_pos
 
 	var tip_size := _login_size(Vector2(536, 30))
 	var tip_pos := _login_center_top_pos(Vector2(0, -553), Vector2(536, 30))
-	if app._draw_image(UI_LOGIN_TIP, tip_pos, tip_size, false) == null:
+	var tip_node: TextureRect = app._draw_image(UI_LOGIN_TIP, tip_pos, tip_size, false)
+	if tip_node == null:
 		var tip = app._label("Tap anywhere to login", 15, HORIZONTAL_ALIGNMENT_CENTER)
 		tip.position = tip_pos
 		tip.size = tip_size
 		app._view_container().add_child(tip)
+		_pulse_alpha(tip)
+	else:
+		_pulse_alpha(tip_node)
 
-	var agree = CheckBox.new()
-	agree.text = "Agree to Privacy Policy and Terms"
-	agree.button_pressed = true
-	agree.position = _login_center_top_pos(Vector2(20, -620), Vector2(428, 32))
-	agree.size = _login_size(Vector2(428, 32))
-	app._view_container().add_child(agree)
+	var rich_pos := _login_center_top_pos(Vector2(19.9, -620), Vector2(420, 32))
+	var toggle_size := _login_size(Vector2(32, 32))
+	var toggle_pos := rich_pos + _login_size(Vector2(0, 0))
+	app._draw_image(UI_COMMON_TOGGLE_BG, toggle_pos, toggle_size, false)
+	app._draw_image(UI_COMMON_TOGGLE_CHECK, toggle_pos, toggle_size, false)
+	app._add_hit_button(toggle_pos, toggle_size, app._show_login)
+	var agree_text = app._label("我已阅读并同意服务协议和隐私政策", 15, HORIZONTAL_ALIGNMENT_LEFT)
+	agree_text.position = toggle_pos + _login_size(Vector2(42, 0))
+	agree_text.size = _login_size(Vector2(386, 32))
+	agree_text.modulate = Color(0.82, 0.76, 0.68, 0.96)
+	app._view_container().add_child(agree_text)
 
 func show_login_legacy() -> void:
 	app.current_view = "login"
@@ -294,8 +363,7 @@ func show_loading() -> void:
 
 	# imgBg: centering (0.5,0.5), 1670x750 → Godot: (0,0) fullscreen
 	# Prefab uses loading_bg_01.png (not login_bg_01), loaded via FixHarmoniousPic("6")
-	app._draw_image(UI_LOADING_BG, Vector2(0, 0), Vector2(1280, 720), true, Color(1, 1, 1, 0.92))
-	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.012, 0.014, 0.018, 0.16)))
+	app._draw_image(UI_LOADING_BG, Vector2(0, 0), Vector2(1280, 720), true)
 
 	# sldSpeed: anchor(0,0.5)→(1,0.5), pos(3.96,-356.8), size(-181,34)
 	# Godot: full-width with margin, y from center = -356.8*0.96 = -342 → y = 360-342 = 18... no
@@ -324,41 +392,48 @@ func show_loading() -> void:
 	# Position: (1271-94/2=1224, 701-37*0.96/2=701-18=683), size=(94,36)
 	
 	# Simpler: use a bottom area for the progress bar
-	var slider_y := 680.0
-	var slider_margin := 180.0  # margin from edges for stretched slider (-181 in Unity)
-	var slider_w := 1280.0 - slider_margin * 2
-	var slider_h := 34.0
+	var slider_prefab_size := Vector2(LOGIN_PREFAB_SIZE.x - 181.07, 34)
+	var slider_size := _login_size(slider_prefab_size)
+	var slider_pos := _login_center_pos(Vector2(3.9648, -356.8), slider_prefab_size)
 	
 	# Background track
-	app._view_container().add_child(app._panel(Vector2(slider_margin, slider_y), Vector2(slider_w, slider_h), Color(0.06, 0.05, 0.04, 0.70)))
+	if app._draw_image(UI_LOADING_TRACK, slider_pos, slider_size, false) == null:
+		app._view_container().add_child(app._panel(slider_pos, slider_size, Color(0.06, 0.05, 0.04, 0.70)))
 	# Fill (animated)
-	var fill = app._panel(Vector2(slider_margin, slider_y), Vector2(0, slider_h), Color(0.86, 0.65, 0.28, 0.88))
-	app._view_container().add_child(fill)
+	var fill: Control = app._draw_clipped_image(UI_LOADING_FILL, slider_pos, Vector2(0, slider_size.y), false)
+	if fill == null:
+		fill = app._panel(slider_pos, Vector2(0, slider_size.y), Color(0.86, 0.65, 0.28, 0.88))
+		app._view_container().add_child(fill)
 	# Handle: prefab 82×82 → Godot 63×79
-	var handle = app._panel(Vector2(slider_margin - 32, slider_y - 23), Vector2(64, 80), Color(0.94, 0.78, 0.42, 0.92))
+	var handle_size := _login_size(Vector2(82, 82))
+	var handle_y := slider_pos.y + slider_size.y * 0.5 - handle_size.y * 0.55
+	var handle: Control = app._draw_image(UI_LOADING_HANDLE, Vector2(slider_pos.x - handle_size.x * 0.5, handle_y), handle_size, false)
+	if handle == null:
+		handle = app._panel(Vector2(slider_pos.x - handle_size.x * 0.5, handle_y), handle_size, Color(0.94, 0.78, 0.42, 0.92))
+		app._view_container().add_child(handle)
 	handle.name = "loading_handle"
-	app._view_container().add_child(handle)
 	
 	# txtPercent: right-anchored near slider
 	var pct = app._label("0%", 20, HORIZONTAL_ALIGNMENT_RIGHT)
 	pct.name = "loading_percent"
-	pct.position = Vector2(slider_margin + slider_w + 8, slider_y - 12)
-	pct.size = Vector2(80, 36)
+	var pct_prefab_size := Vector2(123, 37)
+	pct.position = Vector2((1670.0 - 11.39 - pct_prefab_size.x * 0.5) * LOGIN_SCALE.x, (375.0 + 355.03 - pct_prefab_size.y * 0.5) * LOGIN_SCALE.y)
+	pct.size = _login_size(pct_prefab_size)
 	app._view_container().add_child(pct)
 	
 	# Auto-transition: animate 0→100, then auto-load main scene
-	_animate_loading_progress(fill, handle, pct, slider_margin, slider_w, slider_y, slider_h)
+	_animate_loading_progress(fill, handle, pct, slider_pos, slider_size, handle_y, handle_size.x)
 
-func _animate_loading_progress(fill: ColorRect, handle: ColorRect, pct: Label, margin: float, width: float, y: float, h: float) -> void:
-	var steps := 40
-	var step_time := 2.0 / steps  # 2 seconds in 40 steps = 50ms per step
+func _animate_loading_progress(fill: Control, handle: Control, pct: Label, pos: Vector2, size: Vector2, handle_y: float, handle_width: float) -> void:
+	var steps := 100
+	var step_time := 0.005
 	for i in range(steps + 1):
 		var t = float(i) / steps
 		var val = int(t * 100)
-		fill.size = Vector2(width * t, h)
-		handle.position = Vector2(margin + width * t - 32, y - 23)
+		fill.size = Vector2(size.x * t, size.y)
+		handle.position = Vector2(pos.x + size.x * t - handle_width * 0.5, handle_y)
 		pct.text = "%d%%" % val
 		if i < steps:
 			await app._startup_step_timer(step_time)
-	await app._startup_step_timer(0.5)
-	app._enter_main_scene()
+	if app.current_view == "loading":
+		app._enter_main_scene()
