@@ -11,7 +11,7 @@
 docs/
 ├── INDEX.md                ← 本文件
 ├── meta/         (9)       流程 / MVP / 架构决策 / 全量导出指南
-├── platform/    (12)       资源管线：YooAsset / Spine / 文本 / 数表
+├── platform/    (13)       资源管线：YooAsset / Spine / 文本 / 数表
 ├── ui/
 │   ├── startup/      (3)   启动链 (Launch + Login + Loading + 视频)
 │   ├── mainui/       (14)  主界面 / City / Activity / 章节 / 背景采样
@@ -56,6 +56,11 @@ docs/
 | `shaonv-localization-text-lookup-experience-2026-05-25.md` | 本地化文本查找经验 |
 | `table-data-analysis.md` | 配置表分析 |
 | `shaonv-yooasset-manifest-reverse-dependency-guide-2026-05-27.md` | Manifest 反向定位 / asset→bundle→physical 手册 |
+| `shaonv-bundle-resource-name-index-guide-2026-05-27.md` | 按资源名直查本地 bundle 内容索引，避开 `__data` 人肉定位 |
+
+> Spine 补导出 / `batch_bake_all_export_spines.py` 排障提示：
+> 先查 `D:\work\openclaw-workspace\arpg\shaonv\files\yoo\Default\{BundleFiles,UnpackBundleFiles}`，
+> 再判断是不是烘焙脚本问题。详见 `platform/shaonv-yooasset-physical-mapping-fix.md`。
 
 ---
 
@@ -80,6 +85,10 @@ docs/
 | `shaonv-mainui-godot-gap-analysis-2026-05-25.md` | Godot 主界面缺口分析 |
 | `shaonv-mainui-godot-home-fix-experience-2026-05-25.md` | Godot Home 修复经验（坐标错位） |
 | `shaonv-mainui-manifest-reverse-lookup-2026-05-27.md` | 主界面 manifest 反查 / 用户头像与资源栏还原检查 |
+| `shaonv-mainui-pnlfunny-pnlstory-reverse-lookup-2026-05-27.md` | `pnlFunny` / `pnlStory` / 挂机与章节入口反查 |
+| `shaonv-expeditionmap-worldmap-reverse-lookup-2026-05-27.md` | `ExpeditionMapView` 真实 `WorldMap` tile / `map_pic_*` 反查边界 |
+| `shaonv-expeditionmap-worldmap-source-bundle-layout-reconstruction-2026-05-27.md` | `share_assets_art_worldmap01*` 源分包解包、8x8 原始拼图和运行时 tile 链路重建 |
+| `shaonv-expeditionmainview-worldmap-layout-fix-2026-05-27.md` | `ExpeditionMainView` 首屏场景、驻扎角色和按钮锚点修复记录 |
 | `shaonv-chapterrewarddetailgrid-full-control-resource-inventory-2026-05-27.md` | 章节奖励详情格子 |
 | `shaonv-chapterrewarddetailview-full-control-resource-inventory-2026-05-27.md` | 章节奖励详情弹层 |
 | `shaonv-chaptertaskcell-full-control-resource-inventory-2026-05-27.md` | 章节任务 Cell |
@@ -181,9 +190,54 @@ docs/
 | 背景 Prefab 布局 | `reverse-output/background-layout-inspect/*.layout.json` |
 | IL callgraph | `reverse-output/managed/Assembly-CSharp-ui-callgraph/*.il.txt` |
 | 物理资产映射 | `reverse-output/assets/yoo-physical-map/physical-asset-map.csv` |
+| Bundle 资源名索引 | `reverse-output/assets/bundle-name-index/bundle-resource-name-index.csv` |
+| Bundle 摘要索引 | `reverse-output/assets/bundle-name-index/bundle-resource-summary.csv` |
 | 本地化文本 | `reverse-output/assets/story-textassets/Assets/Game/Lang/lang_extra.bytes` |
 | LotteryDraw 图集导出 | `reverse-output/godot-resource-export/lotterydraw-ce/` |
 | Godot MVP 代码 | `standalone/godot-mvp/scripts/` |
+
+## 本地 Bundle 文件清单
+
+下次反查 `bundleName / hashFileName / physicalPath` 时，优先按这个顺序找本地物理文件：
+
+| 用途 | 优先路径 | 说明 |
+|---|---|---|
+| 运行时缓存 bundle | `files/yoo/Default/BundleFiles/<hash前两位>/<hash>/__data` | 最重要。很多 Spine / Prefab / Sprite 物理包只在这里有，不在 APK 静态资源里。 |
+| 运行时 unpack 缓存 | `files/yoo/Default/UnpackBundleFiles/<hash前两位>/<hash>/__data` | 已下载/已解包过的运行时缓存，部分 UI / 图片资源会落这里。 |
+| APK 内静态 bundle | `resources/assets/yoo/Default/<hash>.bundle` | 安装包自带的 YooAsset bundle；不是所有 manifest 记录都会在这里存在。 |
+| APK 原包复核 | `apk/base.apk`、`apk/split_install_time_asset_pack.apk`、`apk/split_config.arm64_v8a.apk` | 当 `resources/assets/yoo/Default` 没有目标 hash 时，用来确认是否 APK 本身就未下发。 |
+| bundle 物理映射 | `reverse-output/assets/yoo-physical-map/physical-bundle-map.csv` | 查 `hashFileName -> physicalPath` 的第一落点。 |
+| asset 物理映射 | `reverse-output/assets/yoo-physical-map/physical-asset-map.csv` | 查 `assetPath/address -> bundleName/hashFileName/physicalPath`。 |
+| 全量 manifest bundle 表 | `reverse-output/assets/manifest-parsed-py/manifest-parsed-bundles.csv` | 当 `physical-bundle-map.csv` 没有命中时，回到这里查 bundle 元数据。 |
+| 全量 manifest asset 表 | `reverse-output/assets/manifest-parsed-py/manifest-parsed-assets.csv` | 当只知道某个 PNG / skel / atlas 资源名时，从这里反查 bundle。 |
+
+固定排障顺序：
+
+1. 先用 `manifest-parsed-assets.csv` 或 `manifest-parsed-bundles.csv` 查到目标 `bundleName` 和 `hashFileName`。
+2. 先查 `files/yoo/Default/BundleFiles`，再查 `files/yoo/Default/UnpackBundleFiles`。
+3. 只有前两处没有，再查 `resources/assets/yoo/Default/<hash>.bundle`。
+4. 三处都没有时，再去 `apk/*.apk` 复核该 hash 是否随安装包下发。
+5. 如果 manifest 有记录、但以上位置都没有物理文件，默认按“当前本地缺 bundle”处理，不要先怀疑导出脚本或烘焙脚本。
+
+补充经验：不要只信 `physical-asset-map.csv` 或 manifest 推导出的包名。
+
+- 如果 manifest 里能看到资源名，但 `physicalPath` 仍为空，下一步应该直接“按资源名扫所有本地 bundle 内部 container path”。
+- 这一步已实证补回过漏包：
+  - `hero_053_s02`
+  - `hero_053_s02h`
+- 当时 `manifest-parsed-assets.csv` 中这两组 Spine 资源的 `physicalExists=False`，但直接扫描本地 bundle 内容后，实际在以下位置找到了真包：
+  - `files/yoo/Default/BundleFiles/d1/d133c1e76a9e76b3b5ebbb26131bb095/__data`
+  - `files/yoo/Default/BundleFiles/2e/2ebf56a5c569284708925de1bc096436/__data`
+- 所以下次如果出现“manifest 有行、hash 也有，但 physical map 没闭合”的情况，优先按资源名全扫本地 bundle，不要过早下结论说资源缺失。
+
+和 Spine 相关的经验：
+
+- `scripts/spine/batch_bake_all_export_spines.py` 只处理已经进入 `standalone/godot-mvp/assets/spine/all_export` 的条目。
+- 如果某个 Spine 没进 `all_export`，优先检查上面这份 bundle 本地文件清单，而不是直接重试 baked。
+- 如果 `physical-asset-map.csv` 仍旧漏掉某个 Spine，但你已经在 bundle 扫描里确认命中了资源名，允许先把该资源单独补导到 `tmp/all-spine-export`，再跑：
+  - `scripts/spine/import_all_spines_to_godot.py`
+  - `scripts/spine/bake_hero_spine_preview.mjs`
+  - 或按需只烘新增条目
 
 ---
 

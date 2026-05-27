@@ -383,7 +383,7 @@ func draw_story_harvest() -> void:
 	app._draw_image(UI_MAIN_HOOK_TIME_BG, Vector2(sx + 12, sy + 70), Vector2(92, 20), false, Color(1, 1, 1, 0.74))
 	add_ui_text(app._afk_time_display(), Vector2(sx + 18, sy + 71), Vector2(80, 18), 11, HORIZONTAL_ALIGNMENT_CENTER, Color(0.92, 0.84, 0.52))
 	# btnStory: prefab has transparent overlay button (132×99) covering story area
-	add_hit_button(Vector2(sx + 86, sy), Vector2(sw - 86, sh), app._show_dust_exploration)
+	add_hit_button(Vector2(sx + 86, sy), Vector2(sw - 86, sh), app._show_dust_transition)
 	app._draw_red_dot(Vector2(sx + sw - 20, sy + 2))
 
 
@@ -490,7 +490,7 @@ func draw_chapter_info() -> void:
 		add_scaled_image(str(reward_item.get("icon", UI_ITEM_TICKET)), Vector2(rx + 4, py + 43), Vector2(34, 34), Color(1, 1, 1, 0.96))
 		add_ui_text(str(reward_item.get("count", "")), Vector2(rx + 12, py + 66), Vector2(30, 14), 9, HORIZONTAL_ALIGNMENT_RIGHT, Color(1, 1, 1, 0.95))
 		rx += 50
-	add_hit_button(Vector2(px, py), chapter_rect.size, app._show_dust_exploration)
+	add_hit_button(Vector2(px, py), chapter_rect.size, app._show_dust_transition)
 	if not app._afk_claimed_today() or int(state.get("completed", 0)) < int(state.get("stage_count", 1)):
 		app._draw_red_dot(Vector2(px + 8, py + 4))
 

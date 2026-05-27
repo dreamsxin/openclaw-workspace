@@ -102,7 +102,7 @@
 
 本轮根据 `现世界面.jpg` 重新校准 `standalone/godot-mvp/scripts/screens/gal_screen.gd`：
 
-- 背景不能使用 `gal_img_122` 作为实际房间图。`gal_img_122` 是 UI 透明/遮罩层；截图同款房间来自 `standalone/unity-mvp/Assets/Resources/UI/BackGround/gal_bg_room_4.png`，已复制到 Godot：`assets/ui/background/gal_bg_room_4.png`。
+- 背景不能使用 `gal_img_122` 作为实际房间图。`gal_img_122` 是 UI 透明/遮罩层；截图同款房间图现已直接位于 `standalone/godot-mvp/assets/ui/background/gal_bg_room_4.png`。
 - 角色资源确认走 Gal 专用 spine 线索。`hero_resource_map.json` 中 `240030` 的 Gal 专用 spine 是 `hero_037r_s01|hero_037r`；当前 Godot MVP 已改为默认使用 `hero_037r_s01`，并通过截图验证中间动态看板可正常拼装。
 - 截图态左栏不是完整 prefab 线框中的所有按钮都可见：顶部为返回、帮助、收藏；左栏文字为 `玄武 / 墨茗 / 天真無邪`；主要侧按钮显示 `裝扮`、`甜蜜互動`；左下角为角色头像切换入口。
 - 右侧亲密等级在截图中位于右上，而不是线框初稿中的右下；`心動回憶` 与 `相冊` 纵向排列在等级环下方。

@@ -56,17 +56,16 @@ def main() -> int:
 
     root = Path(args.repo_root)
     out = root / args.out
-    unity = root / "standalone/unity-mvp/Assets/Resources/UI"
     godot = root / "standalone/godot-mvp/assets/ui"
 
     sheets = [
-        ("hero-buttons", unity / "Hero", ["hero_btn_*.png"], 8, (128, 112)),
-        ("hero-icons-1-120", unity / "Hero", ["hero_img_*.png", "hero_zhiye_*.png"], 10, (110, 100)),
-        ("common-buttons", unity / "Common", ["common_btn_*.png", "tongyong_btn_*.png", "*_btn_*.png"], 8, (142, 112)),
-        ("common-icons", unity / "Common", ["common_img_*.png", "chat_headk_*.png"], 10, (110, 100)),
+        ("hero-buttons", godot / "hero", ["hero_btn_*.png"], 8, (128, 112)),
+        ("hero-icons-1-120", godot / "hero", ["hero_img_*.png", "hero_zhiye_*.png"], 10, (110, 100)),
+        ("common-buttons", godot / "common", ["common_btn_*.png", "tongyong_btn_*.png", "*_btn_*.png"], 8, (142, 112)),
+        ("common-icons", godot / "common", ["common_img_*.png", "chat_headk_*.png"], 10, (110, 100)),
         ("skill-icons", godot / "skill", ["*.png"], 8, (120, 112)),
         ("hero-round-heads", godot / "hero/round", ["yhero_*.png"], 8, (112, 112)),
-        ("hero-square-heads", unity / "Item", ["thero_*.png"], 8, (120, 112)),
+        ("hero-square-heads", godot / "hero/square", ["thero_*.png"], 8, (120, 112)),
         ("gal-godot", godot / "gal", ["*.png"], 8, (136, 112)),
     ]
 

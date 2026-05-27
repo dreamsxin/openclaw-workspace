@@ -15,6 +15,7 @@ const BAKED_SPINE_CANVAS := preload("res://scripts/spine_baked_preview_canvas.gd
 const STARTUP_SCREEN := preload("res://scripts/screens/startup_screen.gd")
 const HOME_SCREEN := preload("res://scripts/screens/home_screen.gd")
 const CHAPTER_SCREEN := preload("res://scripts/screens/chapter_screen.gd")
+const EXPEDITION_SCREEN := preload("res://scripts/screens/expedition_screen.gd")
 const BATTLE_SCREEN := preload("res://scripts/screens/battle_screen.gd")
 const SHOP_SCREEN := preload("res://scripts/screens/shop_screen.gd")
 const ACTIVITY_SCREEN := preload("res://scripts/screens/activity_screen.gd")
@@ -154,6 +155,7 @@ var current_view := "boot"
 var startup_screen
 var home_screen
 var chapter_screen
+var expedition_screen
 var battle_screen
 var shop_screen
 var activity_screen
@@ -204,6 +206,7 @@ func _ready() -> void:
 	startup_screen = STARTUP_SCREEN.new(self)
 	home_screen = HOME_SCREEN.new(self)
 	chapter_screen = CHAPTER_SCREEN.new(self)
+	expedition_screen = EXPEDITION_SCREEN.new(self)
 	battle_screen = BATTLE_SCREEN.new(self)
 	shop_screen = SHOP_SCREEN.new(self)
 	activity_screen = ACTIVITY_SCREEN.new(self)
@@ -688,6 +691,9 @@ func _show_start_view_from_env() -> void:
 	elif start_view == "hero_detail":
 		_enter_main_scene()
 		_show_hero_detail(int(OS.get_environment("SHAONV_MVP_HERO_ID")) if not OS.get_environment("SHAONV_MVP_HERO_ID").is_empty() else int(save.get("selected_hero_id", DEFAULT_HERO_ID)))
+	elif start_view == "expedition":
+		_enter_main_scene()
+		_show_expedition_main()
 	else:
 		_show_launch()
 
@@ -1082,7 +1088,23 @@ func _show_auto_fight() -> void:
 
 
 func _show_chapter_progress() -> void:
-	_show_dust_exploration()
+	_show_expedition_main()
+
+
+func _show_dust_transition() -> void:
+	chapter_screen.show_dust_transition()
+
+
+func _show_expedition_main() -> void:
+	expedition_screen.show_expedition_main()
+
+
+func _show_chapter_panel() -> void:
+	chapter_screen.show_dust_exploration()
+
+
+func _show_chapter_panel_for(chapter_index: int) -> void:
+	chapter_screen.show_dust_exploration_for_chapter(chapter_index)
 
 
 func _show_dust_exploration() -> void:
@@ -1091,6 +1113,10 @@ func _show_dust_exploration() -> void:
 
 func _current_chapter_state() -> Dictionary:
 	return chapter_screen.current_chapter_state()
+
+
+func _chapter_state_for_index(chapter_index: int) -> Dictionary:
+	return chapter_screen.chapter_state_for_index(chapter_index)
 
 
 func _chapter_display_name(chapter: Dictionary, fallback_index: int = 1) -> String:

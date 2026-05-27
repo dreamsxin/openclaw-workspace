@@ -10,7 +10,7 @@
 |---|---|---|---|
 | 当前 MVP | 跑通主界面、抽卡、结果、图鉴、记录、存档 | `standalone/godot-mvp` | 当前主线，适合开源/低成本发行，并能逐步接入 Spine、音效和 UI 资源。 |
 | 历史验证 | 快速验证离线抽卡规则和界面流程 | `standalone/web-mvp` | 已删除，仅保留文档结论。 |
-| 高还原参考 | 理论上最容易复用 Unity 原 prefab/Material/Animator | `standalone/unity-mvp` | 已删除，不再作为实现方向；只保留逆向分析价值。 |
+| 高还原参考资源 | 理论上最容易复用 Unity 原 prefab/Material/Animator | `standalone/godot-mvp/assets/ui` | 原独立 Unity 参考目录的 UI PNG 已并入 Godot 资源树，不再保留单独工程。 |
 
 当前工程位置：
 

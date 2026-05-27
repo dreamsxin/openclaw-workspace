@@ -23,7 +23,7 @@
 2. 用节点名定位控件：例如 `btnDate`、`btnGoOut`、`btnGift`、`btnFile`、`btnLv`、`btnMemories`、`btnPhotoAlbum`。
 3. 用清单中的 `Image:<sprite>` 回到资源名：例如 `gal_btn_12`、`gal_btn_13`、`gal_img_07`。
 4. 若 prefab 中背景是透明图或空图，继续查截图和剧情/角色数据。`GalDormitoryMainPanel/Image` 使用的 `gal_img_122` 是透明/遮罩层，不是实际房间背景。
-5. 背景图优先在 `standalone/unity-mvp/Assets/Resources/UI/BackGround/` 和 `Assets/Game/RawAssets/Sprite/BackGround/Gal/` 路径下按名称比对。
+5. 背景图优先在 `standalone/godot-mvp/assets/ui/background/` 和 `Assets/Game/RawAssets/Sprite/BackGround/Gal/` 路径下按名称比对。
 
 本轮确认：
 
@@ -142,7 +142,7 @@ Gal 默认角色 `240030` 的例子：
 - Gal 主界面的按钮不能继续全部指回主页。`btnDate`、`btnGoOut`、`btnGift`、`btnPhotoAlbum`、`btnMemories` 可以先接到 `date_select`；`btnFile`、`btnDressUp`、`btnPrivateInteraction`、`btnPersonality`、角色选择入口可以先接到 `character`。
 - 若子界面的运行时文本仍未定位，先用可读 MVP 数据补齐，不照搬 prefab 里的 `Default`。布局和跳转优先，细节表数据后续再接。
 - GDScript 中 `var x := app._label(...)` 会因为 `app` 是动态对象而无法推断类型。跨脚本 helper 返回值建议使用普通 `=`，或显式写类型。
-- 子界面资源可以直接从清单中的 sprite 名称反查 bundle。`gal_btn_25`、`gal_btn_33`、`gal_btn_36`、`gal_img_103`、`gal_img_105`、`gal_img_106`、`gal_img_111` 至 `gal_img_119` 均来自 Gal atlas 或单图 bundle；`gal_bg_06`、`gal_bg_11` 已在 `standalone/unity-mvp/Assets/Resources/UI/BackGround/` 中有现成 PNG。
+- 子界面资源可以直接从清单中的 sprite 名称反查 bundle。`gal_btn_25`、`gal_btn_33`、`gal_btn_36`、`gal_img_103`、`gal_img_105`、`gal_img_106`、`gal_img_111` 至 `gal_img_119` 均来自 Gal atlas 或单图 bundle；`gal_bg_06`、`gal_bg_11` 已在 `standalone/godot-mvp/assets/ui/background/` 中有现成 PNG。
 - `HeroListView` 这类缺物理 bundle 的界面不要强行生成清单。先查 `*-physical-bundle-gap` 文档，确认可用子模板，再用运行时数据和已导出的模板恢复可用 MVP。
 
 新增验证截图：
@@ -187,7 +187,7 @@ Gal 默认角色 `240030` 的例子：
 
 - 先读对应 `*-full-control-resource-inventory-*.md`，查 `Path` 与 `Bindings / resources`。例如 `HeroMainView/pnllLeft/pnlSelectHero` 明确绑定 `hero_img_36`，`pnlSelectHero_bg2` 绑定 `hero_img_36a`，`HeroMainSelectHeroGrid/imgHightLight` 绑定 `hero_img_119`。
 - 如果节点是 `Image:none` 或 `Image:UISprite`，先判断是否透明点击区、遮罩或 prefab 内置占位，不要当成缺图。`HeroTabGrid/btn` 就是透明按钮占位，真正的 tab icon 由运行时数据注入。
-- 对运行时注入的 icon，再用节点语义和图集候选缩略图交叉验证。本轮把 `standalone/unity-mvp/Assets/Resources/UI/Hero/hero_img_1~90` 做成 contact sheet 后确认：`hero_img_37~46` 是 Hero 详情左侧 tab/职业/元素类 icon，其中 `hero_img_37` 对应截图绿色 `主頁` 图标，`hero_img_43/44/45` 可用于 `養成/靈裝/靈階` 占位。
+- 对运行时注入的 icon，再用节点语义和图集候选缩略图交叉验证。本轮把 `standalone/godot-mvp/assets/ui/hero/hero_img_1~90` 做成 contact sheet 后确认：`hero_img_37~46` 是 Hero 详情左侧 tab/职业/元素类 icon，其中 `hero_img_37` 对应截图绿色 `主頁` 图标，`hero_img_43/44/45` 可用于 `養成/靈裝/靈階` 占位。
 - 反查结果要同步到 Godot 资源目录再使用，不要硬编码不存在的路径。本轮同步 `hero_img_37~46` 到 `standalone/godot-mvp/assets/ui/hero/`，再在 `main.gd` 中通过常量引用。
 - 做资源表时建议输出四列：`prefab path`、`sprite name`、`Unity source png`、`Godot target png / missing`。这样一眼能看出是“缺资源”、“运行时注入”还是“代码没用对图”。
 
@@ -247,7 +247,7 @@ standalone/godot-mvp/assets/ui/hero/round/yhero_*.png
 
 导出经验：
 
-- 已落地 PNG 生成资源页很快，优先用 `make_ui_resource_sheets.py`；它只读 `standalone/unity-mvp/Assets/Resources/UI` 和 `standalone/godot-mvp/assets/ui`，不解 Unity bundle。
+- 已落地 PNG 生成资源页很快，优先用 `make_ui_resource_sheets.py`；它现在只读合并后的 `standalone/godot-mvp/assets/ui`，不解 Unity bundle。
 - 大 bundle 不要在普通交互回合里全量 `Texture2D/Sprite.image` 导出。`assets_game_rawassets_sprite_head_round.bundle` 这类头像图集会导致 UnityPy 解码 ASTC 大图非常慢，表现为电脑卡住或残留多个 `python.exe`。
 - Windows 上 `python` 可能先启动 `Python Install Manager` / WindowsApps shim，再拉起真正解释器。长任务建议显式调用真实解释器路径，例如 `C:\Users\admin\AppData\Local\Python\pythoncore-3.14-64\python.exe`，避免进程判断混乱。
 - 如果必须从 bundle 导出，应按 prefab 资源表列出目标 sprite 名称，分批导出并只读目标 Sprite；不要遍历所有 Texture2D。若导出卡住，先检查/结束残留 Python 进程，再继续。

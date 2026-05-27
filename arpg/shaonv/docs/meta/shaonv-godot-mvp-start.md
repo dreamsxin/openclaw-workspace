@@ -17,7 +17,7 @@ D:\work\openclaw-workspace\arpg\shaonv\Godot\Godot_console.exe
 
 ## 2. 当前选择
 
-从授权和发行成本考虑，MVP 正式实现转向 Godot。此前的 `standalone/web-mvp` 和 `standalone/unity-mvp` 已删除，当前可运行实现以 `standalone/godot-mvp` 为唯一主线。
+从授权和发行成本考虑，MVP 正式实现转向 Godot。此前的 `standalone/web-mvp` 已删除，原独立 Unity 参考目录中的 UI PNG 也已并入 `standalone/godot-mvp/assets/ui/`，当前可运行实现以 `standalone/godot-mvp` 为唯一主线。
 
 Godot 当前目标是“用原素材重制单机抽卡闭环”，不是直接复用 Unity prefab。原因：
 

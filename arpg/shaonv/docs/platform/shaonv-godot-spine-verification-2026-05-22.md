@@ -149,6 +149,21 @@ foreach ($hero in @('hero_001','hero_003Dh','hero_005','hero_016','hero_017')) {
 }
 ```
 
+补充经验：
+
+- `scripts/spine/batch_bake_all_export_spines.py` 只会处理已经导入 `standalone/godot-mvp/assets/spine/all_export` 的条目。
+- 如果某个 Spine 在 manifest 中存在、但始终进不了 `all_export`，优先去
+  `D:\work\openclaw-workspace\arpg\shaonv\files`
+  查 YooAsset 运行时缓存，而不是直接重试烘焙。
+- 重点目录是：
+
+```text
+files/yoo/Default/BundleFiles/
+files/yoo/Default/UnpackBundleFiles/
+```
+
+- 只有先从 `files` / `resources` 找到对应 bundle `__data` 或 `.bundle`，前置的导出脚本才有机会把 Spine 三件套补进 `all_export`，后续批量 baked 才会生效。
+
 代表输出：
 
 ```text

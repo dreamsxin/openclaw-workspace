@@ -23,6 +23,7 @@ const sourceKey = stringArg("--key=", heroName);
 const fps = numberArg("--fps=", 8);
 const maxDuration = numberArg("--max-duration=", 1.2);
 const maxClips = numberArg("--max-clips=", 2);
+const explicitClips = listArg("--clips=");
 const heroDir = spineDirArg
   ? path.resolve(projectRoot, spineDirArg.replace(/^res:\/\//, ""))
   : path.join(projectRoot, "assets/spine", heroName);
@@ -52,6 +53,16 @@ function numberArg(prefix, fallback) {
   if (!arg) return fallback;
   const value = Number(arg.slice(prefix.length));
   return Number.isFinite(value) && value > 0 ? value : fallback;
+}
+
+function listArg(prefix) {
+  const arg = process.argv.find((item) => item.startsWith(prefix));
+  if (!arg) return [];
+  return arg
+    .slice(prefix.length)
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
 }
 
 function round(value, digits = 3) {
@@ -86,13 +97,18 @@ function loadSkeleton(skelPath, atlasText) {
 function chooseClipNames(skeletonData) {
   const available = skeletonData.animations.map((animation) => animation.name);
   const selected = [];
+  const targetCount = explicitClips.length > 0 ? Math.max(maxClips, explicitClips.length) : maxClips;
+  for (const explicit of explicitClips) {
+    if (available.includes(explicit) && !selected.includes(explicit)) selected.push(explicit);
+    if (selected.length >= targetCount) return selected;
+  }
   for (const preferred of preferredClipNames) {
     if (available.includes(preferred) && !selected.includes(preferred)) selected.push(preferred);
-    if (selected.length >= maxClips) break;
+    if (selected.length >= targetCount) break;
   }
   for (const name of available) {
     if (!selected.includes(name)) selected.push(name);
-    if (selected.length >= maxClips) break;
+    if (selected.length >= targetCount) break;
   }
   return selected;
 }

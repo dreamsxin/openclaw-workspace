@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Batch export Unity UI resources from YooAsset bundles to Unity project.
+Batch export UI resources from YooAsset bundles into the merged Godot UI tree.
 Filters physical-asset-map.csv for Sprite assets in priority UI directories,
-decrypts bundles, extracts PNG images, and places them in the Unity Resources folder.
+decrypts bundles, extracts PNG images, and places them in standalone/godot-mvp/assets/ui.
 
 Priority order: Login → MainUI → LotteryDraw → Gallery → Hero → Common → Item → Battle
 
@@ -26,7 +26,7 @@ import UnityPy
 # Project paths
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 PHYSICAL_MAP = PROJECT_ROOT / "reverse-output" / "assets" / "yoo-physical-map" / "physical-asset-map.csv"
-UNITY_UI_ROOT = PROJECT_ROOT / "standalone" / "unity-mvp" / "Assets" / "Resources" / "UI"
+GODOT_UI_ROOT = PROJECT_ROOT / "standalone" / "godot-mvp" / "assets" / "ui"
 
 # Priority directories for Sprite assets (in export order)
 PRIORITY_SPRITE_DIRS = [
@@ -149,22 +149,61 @@ def group_by_bundle(assets: list[dict]) -> dict[str, list[dict]]:
     return groups
 
 
-def asset_to_unity_dir(asset_path: str) -> str:
-    """Convert asset path to Unity Resources subdirectory.
-    Assets/Game/RawAssets/Sprite/Login/logo.png -> Login
-    Assets/Game/RawAssets/Sprite/MainUI/mainui_img_01.png -> MainUI
+def asset_to_godot_dir(asset_path: str) -> str:
+    """Convert asset path to merged Godot UI subdirectory.
+    Assets/Game/RawAssets/Sprite/Login/logo.png -> login
+    Assets/Game/RawAssets/Sprite/MainUI/mainui_img_01.png -> mainui
     """
     prefix = "Assets/Game/RawAssets/Sprite/"
     if asset_path.startswith(prefix):
         rel = asset_path[len(prefix):]
         parts = rel.replace("\\", "/").split("/")
-        if len(parts) >= 1:
-            return parts[0]
+        if parts:
+            top = parts[0]
+            name = Path(parts[-1]).name.lower()
+
+            if top == "BackGround":
+                if name.startswith("gal_gallery_pic_"):
+                    return "gallery"
+                return "background"
+            if top == "Battle":
+                return "battle"
+            if top == "Common":
+                return "common"
+            if top == "Hero":
+                if name.startswith("zhero_"):
+                    return "hero/recruit"
+                if name.startswith("phero_"):
+                    return "hero/half"
+                if name.startswith("yhero_"):
+                    return "hero/round"
+                if name.startswith("thero_"):
+                    return "hero/square"
+                return "hero"
+            if top == "Item":
+                if name.startswith("thero_"):
+                    return "hero/square"
+                return "item"
+            if top == "Loading":
+                return "loading"
+            if top == "Login":
+                return "login"
+            if top == "LotteryDraw":
+                return "lottery"
+            if top == "Mail":
+                return "mail"
+            if top == "MainUI":
+                return "mainui"
+            if top == "Task":
+                return "task"
+            if top == "Welfare":
+                return "welfare"
+            return top.lower()
     return "Other"
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Export Unity UI resources from YooAsset bundles.")
+    parser = argparse.ArgumentParser(description="Export merged Godot UI resources from YooAsset bundles.")
     parser.add_argument("--dry-run", action="store_true", help="Only list what would be exported")
     args = parser.parse_args()
 
@@ -179,7 +218,7 @@ def main():
         print("\n[Dry run] Would export:")
         dir_counts = defaultdict(int)
         for a in assets:
-            dir_counts[asset_to_unity_dir(a["assetPath"])] += 1
+            dir_counts[asset_to_godot_dir(a["assetPath"])] += 1
         for d, c in sorted(dir_counts.items(), key=lambda x: -x[1]):
             print(f"  {d}: {c} assets")
         print(f"\nTotal: {len(assets)} assets across {len(bundles)} bundles")
@@ -205,16 +244,16 @@ def main():
             total_failed += len(bundle_assets)
             continue
 
-        # Determine output directory from first asset
-        unity_dir = asset_to_unity_dir(bundle_assets[0]["assetPath"])
-        out_dir = UNITY_UI_ROOT / unity_dir
+        # Determine output directory from the first asset in this bundle group.
+        godot_dir = asset_to_godot_dir(bundle_assets[0]["assetPath"])
+        out_dir = GODOT_UI_ROOT / godot_dir
 
         count = export_textures(env, out_dir)
         total_exported += count
 
     print(f"\nDone: {total_exported} images exported from {processed_bundles} bundles")
     print(f"Failed: {total_failed} assets (bundle not found or extraction error)")
-    print(f"Output: {UNITY_UI_ROOT}")
+    print(f"Output: {GODOT_UI_ROOT}")
     return 0
 
 

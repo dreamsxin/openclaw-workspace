@@ -2,7 +2,7 @@
 """
 Generate Unity MonoBehaviour stub C# scripts from Assembly-CSharp type index.
 Reads core-ui-types.csv and view-panel-types.csv, extracts class names and fields,
-generates stub .cs files with [SerializeField] attributes.
+and writes reverse-analysis stubs under reverse-output/managed/unity-stubs.
 
 Usage:
     python scripts/unity/generate_unity_stubs.py
@@ -17,7 +17,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 INDEX_DIR = PROJECT_ROOT / "reverse-output" / "managed" / "Assembly-CSharp-index"
 DUMP_CS = PROJECT_ROOT / "reverse-output" / "il2cpp" / "il2cppdumper" / "dump.cs"
-OUTPUT_DIR = PROJECT_ROOT / "standalone" / "unity-mvp" / "Assets" / "Scripts" / "Stubs"
+OUTPUT_DIR = PROJECT_ROOT / "reverse-output" / "managed" / "unity-stubs"
 
 # Classes we need stubs for (core UI framework + startup + main views)
 PRIORITY_TYPES = {

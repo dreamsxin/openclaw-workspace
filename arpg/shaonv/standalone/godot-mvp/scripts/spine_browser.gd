@@ -8,6 +8,7 @@ var entries: Array = []
 var current_index := 0
 var anim_index := 0
 var anim_names: Array[String] = []
+var skeleton_anim_names: Array[String] = []
 var speed := 1.0
 var playing := true
 
@@ -152,6 +153,7 @@ func _select_entry(index: int) -> void:
 	var entry: Dictionary = entries[index]
 	var baked_path := String(entry.get("baked_path", entry.get("baked", "")))
 	anim_names = _clip_names(baked_path)
+	skeleton_anim_names = _skeleton_animation_names(baked_path)
 	if anim_names.is_empty():
 		anim_label.text = "No baked clips"
 		status_label.text = "Missing or empty baked JSON"
@@ -182,6 +184,20 @@ func _clip_names(baked_path: String) -> Array[String]:
 		var clip = clips[key]
 		if clip is Dictionary and clip.get("frames", []).size() > 0:
 			names.append(String(key))
+	return names
+
+
+func _skeleton_animation_names(baked_path: String) -> Array[String]:
+	var names: Array[String] = []
+	var file := FileAccess.open(baked_path, FileAccess.READ)
+	if file == null:
+		return names
+	var parsed = JSON.parse_string(file.get_as_text())
+	if not parsed is Dictionary:
+		return names
+	for animation in parsed.get("skeleton", {}).get("animations", []):
+		if animation is Dictionary:
+			names.append(String(animation.get("name", "")))
 	return names
 
 
@@ -272,7 +288,24 @@ func _update_labels() -> void:
 		]
 	else:
 		anim_label.text = "No clips"
-	status_label.text = "%d/%d  %s" % [current_index + 1, entries.size(), String(entry.get("sourceDir", ""))]
+	var baked_summary := "baked=%d" % anim_names.size()
+	if not skeleton_anim_names.is_empty():
+		var missing: Array[String] = []
+		for animation_name in skeleton_anim_names:
+			if not anim_names.has(animation_name):
+				missing.append(animation_name)
+		if not missing.is_empty():
+			baked_summary = "%s / skeleton=%d / missing=%s" % [
+				baked_summary,
+				skeleton_anim_names.size(),
+				", ".join(missing.slice(0, 6))
+			]
+	status_label.text = "%d/%d  %s  |  %s" % [
+		current_index + 1,
+		entries.size(),
+		String(entry.get("sourceDir", "")),
+		baked_summary
+	]
 
 
 func _label(text: String, font_size: int, pos: Vector2, rect_size: Vector2, align := HORIZONTAL_ALIGNMENT_LEFT) -> Label:

@@ -44,6 +44,37 @@ assetPath/address -> bundleID -> resolvedBundleID -> bundleName -> hashFileName 
 
 结论：manifest 已完整解析；当前磁盘只存在 276 个对应 bundle，剩余资源缺物理包，不是解析失败。
 
+## 2.1 Spine 批量烘焙定位经验补充
+
+当 `scripts/spine/batch_bake_all_export_spines.py` 或相关 Spine 补导出流程遇到“索引里有 bundle/hash，但本地导不出对应 Spine 目录”的情况，优先检查：
+
+```text
+D:\work\openclaw-workspace\arpg\shaonv\files
+```
+
+尤其是：
+
+```text
+files/yoo/Default/BundleFiles/<hash前两位>/<hash>/__data
+files/yoo/Default/UnpackBundleFiles/<hash前两位>/<hash>/__data
+```
+
+原因：
+
+- `batch_bake_all_export_spines.py` 本身只负责对已经进入 `standalone/godot-mvp/assets/spine/all_export` 的资源做 baked JSON 烘焙，不负责找回缺失物理包。
+- 真正决定某个 Spine 资源能否先被导出进 `all_export` 的，是 `physical-asset-map.csv` / `physical-bundle-map.csv` 能否把 manifest 中的 `hashFileName` 闭合到本地物理文件。
+- 对 Spine 资源来说，很多可用包并不在 `resources/assets/yoo/Default`，而是在手机运行时缓存 `files/yoo/Default` 下。
+- 所以下次如果看到 “manifest 能定位 bundle/hash，但 `all_export` 没生成、顶层旧目录是空壳、`physicalExists=False`”，先回到 `files` 目录核对是否已有对应 `__data`，不要先怀疑烘焙脚本。
+
+实操顺序建议：
+
+1. 在 `manifest-parsed-assets.csv` / `manifest-parsed-bundles.csv` 查目标 Spine 的 `bundleName` 和 `hashFileName`。
+2. 先查 `files/yoo/Default`，再查 `resources/assets/yoo/Default`。
+3. 只有在 bundle 物理文件已经存在时，才继续跑：
+   - `scripts/assets/export_all_spine_resources.py`
+   - `scripts/spine/import_all_spines_to_godot.py`
+   - `scripts/spine/batch_bake_all_export_spines.py`
+
 ## 3. 修改内容
 
 脚本：

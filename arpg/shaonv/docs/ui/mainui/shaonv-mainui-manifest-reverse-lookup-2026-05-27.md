@@ -82,7 +82,35 @@ TopResGrid 200x40
 
 ### 塵世探秘界面
 
-Manifest 反查确认 `ChapterTaskView.prefab` physical 存在，layout 节点包含全屏 `Image/@fx_imgBg_star`、`pnlContent/pnlReward`、`pnlReward/pnlChapterIfno`、`pnlContent/pnlTask` 与 `svTaskList`。`ChapterTaskView` 资源清单进一步确认本体使用 `hero_bg_01`、`task_bg_01`、`task_btn_01`、`task_img_39/37/13`、`common_btn_17`；`ChapterTaskCell` 使用 `task_img_18/03/02`、`common_btn_02`、`common_img_88`；`ChapterRewardDetailView/Grid` 使用 `common_bg_09`、`common_btn_16`、`common_img_44/46/88`。数据表 `chapter_resolved.csv` 仍记录了 `chapter_chufa_00..05` 背景 key，但这些 key 对应的章节切换背景没有作为 Godot 可直接引用贴图落地；`@fx_imgBg_star`、`@RoleRewardPre`、Spine/CanvasGroup 动画层也没有本地运行时。
+> 2026-05-27 会话更正：
+> 过渡页 `ChangeToOther` 之后的真实首屏目标不应继续认定为 `ChapterTaskView`。结合 `screenshot/塵世探秘界面.jpg` 与后续反查结果，真实首屏更接近 `ExpeditionMainView`，并进一步联动 `ExpeditionMapView`。`ChapterTaskView` 仍属于塵世探秘相关系统，但更适合作为章节任务 / 奖励子界面，而不是过渡页后的主场景。
+
+此前版本把 `pnlStory/btnStory` 和 `btnChapterInfo` 直接接到 `ChapterTaskView`，是因为主界面 IL 和 red dot key 明确落在 `ChapterTask.ChapterTaskEnter.32541` 这条功能线，且 `ChapterTaskView.prefab` 资源闭合最好、最容易在 Godot 侧优先落地。但这条证据只能说明“入口与章节任务系统相关”，不能直接推出“首个落地界面就是章节任务面板”。
+
+新增反证来自：
+
+- `ChangeToOther.prefab` / `CloundMaskView.prefab`
+  - 明确存在单独时钟切场过渡壳。
+- `screenshot/塵世探秘界面.jpg`
+  - 画面是地图式、场景式、底部功能按钮式布局，不符合 `ChapterTaskView` 的“左奖励、右任务列表”纯 2D 面板结构。
+- `ExpeditionMainView.prefab`
+  - `btnDispatch / btnHero / btnMarch / btnFight / btnStronger`
+  - `pnlReward/btnReward/txtHookTime`
+  - `pnlMap/imgMap/btnMap`
+  - `btnCrossReward`
+  - 上述结构与截图高度吻合。
+- `ExpeditionMapView.prefab`
+  - 补充了真实地图滚动容器、chapter shadow、地图大底图和 move tool 层。
+  - 进一步反查已确认真实地图底图走 `WorldMap_<x>_<y>.png` tile 加载；当前本地资源集中只闭合到一张真实节点 icon：`map_pic_1001.png`。
+  - 详见 [shaonv-expeditionmap-worldmap-reverse-lookup-2026-05-27.md](D:/work/openclaw-workspace/arpg/shaonv/docs/ui/mainui/shaonv-expeditionmap-worldmap-reverse-lookup-2026-05-27.md)。
+
+因此，当前更合理的真实链路应修正为：
+
+- `MainUIView/pnlStory/btnStory`
+- `MainUIView/btnChapterInfo`
+- `ChangeToOther`
+- `ExpeditionMainView`
+- `ExpeditionMapView` / `ChapterTaskView`（视后续子入口而定）
 
 本轮只修复可证实的小缺口：
 
@@ -90,6 +118,68 @@ Manifest 反查确认 `ChapterTaskView.prefab` physical 存在，layout 节点�
 - `main.gd` 新增 `_draw_chapter_task_cell()` 与 `_show_chapter_reward_detail()`，对齐 `ChapterTaskCell`、`ChapterRewardDetailView/Grid` 的行底、进度条、领取/已领取状态与详情弹窗。
 - `home_screen.gd` 中 `pnlStory/btnStory` 与 `btnChapterInfo` 的透明点击区均指向 `_show_dust_exploration()`，右下主入口不再停留在旧的简化章节面板。
 - 挑战、收取挂机、章节任务、战役详情沿用现有 MVP 数据与行为，不伪造未接入的 `ChapterTaskView` 运行时奖励滚动、章节背景换图、角色奖励预览或粒子/Spine 层。
+
+### 2026-05-27 `ExpeditionMainView` 首屏修正补记
+
+本轮继续推进后，`ExpeditionMainView` 已经不再停留在“知道它应该存在，但首屏还是错的”状态，而是按 prefab 锚点和场景资源做了一次真正落地修正。
+
+新增证据闭环：
+
+- 真实截图：
+  - `screenshot/塵世探秘界面.jpg`
+- 主场景底图：
+  - `standalone/godot-mvp/assets/ui/expedition/afkmap/worldmap04_main_view.png`
+- prefab 布局：
+  - `reverse-output/godot-layout-inspect/ExpeditionMainView.layout.json`
+
+其中 `ExpeditionMainView.prefab` 的关键锚点已确认到：
+
+- `imgMap`
+  - 右上锚点
+  - `160x160`
+  - `anchoredPosition = (-64, -23)`
+- `btnCrossReward`
+  - 左上锚点
+  - `352x70`
+  - `anchoredPosition = (64, -100)`
+- `btnFight`
+  - 右下锚点
+  - `160x160`
+  - `anchoredPosition = (-64, 23)`
+- `btnDispatch / btnHero / btnMarch`
+  - 右下锚点
+  - `90x90`
+- `btnStronger`
+  - 左下锚点
+  - `152x152`
+- `btnReward`
+  - 右下奖励宝箱区
+  - `172x172`
+
+Godot 侧本轮已据此修正：
+
+- 首屏底图改回 `worldmap04_main_view`
+- 右上 `imgMap/btnMap` 恢复为原 prefab 的小地图入口块，不再误做成中央大预览
+- 左上 `btnCrossReward` 回到跨关奖励条语义
+- 底部 `btnDispatch / btnHero / btnMarch / btnStronger / btnFight / btnReward` 按原始锚点系统重排
+- 中部驻扎角色从圆头像占位改为 baked Spine 本体
+
+运行验证截图：
+
+- 修正前：
+  - [shaonv-expedition-capture-mainview-v4.png](D:/work/openclaw-workspace/arpg/shaonv/tmp/shaonv-expedition-capture-mainview-v4.png)
+- 修正后：
+  - [shaonv-expedition-capture-mainview-v6.png](D:/work/openclaw-workspace/arpg/shaonv/tmp/shaonv-expedition-capture-mainview-v6.png)
+
+当前首屏已经能稳定表达：
+
+- 固定院落主场景
+- 中部驻扎角色
+- 右上小地图入口
+- 左上跨关奖励条
+- 底部功能按钮与挂机奖励宝箱
+
+但还没有完全闭合到原截图的“骑乘/驻扎载具”表现；这层仍是后续继续推进的重点。
 
 ### 右下功能与挂机区
 
