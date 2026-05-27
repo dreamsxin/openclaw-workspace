@@ -61,6 +61,9 @@ docs/
 > Spine 补导出 / `batch_bake_all_export_spines.py` 排障提示：
 > 先查 `D:\work\openclaw-workspace\arpg\shaonv\files\yoo\Default\{BundleFiles,UnpackBundleFiles}`，
 > 再判断是不是烘焙脚本问题。详见 `platform/shaonv-yooasset-physical-mapping-fix.md`。
+> 2026-05-28 已新增 Expedition 实战案例：`hero_053_s02 / hero_053_s02h` 是通过“按资源名直扫所有本地 bundle 内容”补回的，
+> 见 `platform/shaonv-bundle-resource-name-index-guide-2026-05-27.md`
+> 与 `ui/mainui/shaonv-expeditionmainview-worldmap-layout-fix-2026-05-27.md`。
 
 ---
 

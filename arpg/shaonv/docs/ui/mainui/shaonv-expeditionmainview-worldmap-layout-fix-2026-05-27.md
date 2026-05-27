@@ -244,3 +244,122 @@
 2. 继续深挖 `PlayerTileMovement.prefab`、`Player.prefab`、`Tip_EnterVehicle.prefab` 及其脚本字段，确认真实“进入载具/驻扎状态”链路。
 3. 把驻扎角色从“AFKMap 风格单体单位”推进到“角色 + 坐骑/驻扎底座”的组合表现。
 4. 若后续拿到 `ExpeditionMainView` 相关更多运行时字段，再补 `btnFight` 的真实解锁条件、`btnReward` 的挂机收益数值和 `btnCrossReward` 的真实章节阶段文案。
+
+## 6. 2026-05-28 阶段进度补记
+
+本轮继续沿同一条证据链推进，重点从“首屏大结构修回”转向“入口层级和真实交互壳补齐”。
+
+### 6.1 `hero_053_s02 / hero_053_s02h` 已从本地 bundle 真补回
+
+此前 `hero_053_s02` 在 manifest 中有完整 Spine 记录，但 `physical-asset-map.csv` 没有闭合到可用物理包。
+
+本轮不再依赖 manifest 推导包名，而是直接按资源名扫描所有本地 bundle container path，最终命中：
+
+- `files/yoo/Default/BundleFiles/d1/d133c1e76a9e76b3b5ebbb26131bb095/__data`
+- `files/yoo/Default/BundleFiles/2e/2ebf56a5c569284708925de1bc096436/__data`
+
+实际补回并导入成功的条目：
+
+- `Hero__hero_053_s02`
+- `Hero__hero_053_s02__hero_053_s02_bg`
+- `Hero__hero_053_s02h`
+- `Hero__hero_053_s02h__hero_053_s02h_bg`
+
+并已完成 baked：
+
+- `Hero__hero_053_s02.baked.json`
+- `Hero__hero_053_s02h.baked.json`
+
+这说明：
+
+- `hero_053_s02` 系列不是“本地没有资源”
+- 问题在于原先的物理映射没有闭合到运行时真实 bundle
+
+### 6.2 首屏驻扎单位默认方案已切到 `hero_053_s02h`
+
+当前首屏驻扎角色默认不再优先用：
+
+- `HeroQ__hero_053q_s01`
+
+而改为优先：
+
+- `hero_053_s02h`
+
+理由：
+
+- `HeroQ` 更偏战斗/演出气质
+- `hero_053_s02h` 更接近主界面静态驻扎单位
+- 更符合“塵世探秘界面”里中部巡逻/载具入口的氛围
+
+同时保留运行时切换能力，仍可对比：
+
+- `heroq_s01`
+- `hero_s02`
+- `hero_s02h`
+
+### 6.3 主界面三条核心入口行为已改成更接近原始层级
+
+本轮已把以下交互链改成更像真实流程：
+
+1. 首屏中部驻扎单位点击
+   - 进入地图页
+   - 自动打开当前章节详情
+
+2. `btnMap`
+   - 不再只打开地图页
+   - 改为进入地图并聚焦当前章节详情
+
+3. `btnCrossReward`
+   - 改为直接进入章节奖励详情
+
+4. `btnFight`
+   - 改为先进章节页
+   - 再从章节页进入挑战流
+
+这条交互层级当前更接近：
+
+`ExpeditionMainView -> ExpeditionMapView / ExpeditionChapterMapDetailView / ChapterTaskView`
+
+### 6.4 首屏按钮内部子控件与状态语义继续补齐
+
+本轮继续补了主界面里此前缺失、但 prefab 已确认存在的子层语义：
+
+- `btnCrossReward`
+  - `txtCrossRewardStage`
+  - `txtCrossRewardNumber`
+  - `imgCrossRewardIcon`
+
+- `btnReward`
+  - `txtHookTime`
+  - `txtRewardTip`
+  - `pnlHookSoftGuide` 轻量占位
+  - 独立 hotspot
+
+- `btnFight`
+  - `imgLevelLimit`
+  - `txtLevelLimit`
+  - `pnlSoftGuide` 轻量占位
+
+- `btnDispatch / btnHero / btnMarch`
+  - `Text`
+  - `@pnlRedDot` 占位
+
+并且 `btnReward / btnFight` 已不再是纯静态文案：
+
+- `btnReward`
+  - 若今日未领取挂机收益：显示挂机时间与“快速战斗99次 / 可提升等级”
+  - 若今日已领取：改成“今日挂机收益 / 已领取”
+  - soft guide 随之关闭
+
+- `btnFight`
+  - 若有下一关且战力足够：显示“可进行挑战”
+  - 若战力不足：显示“推荐战力xxxx”
+  - 若无下一关：显示“全部通关”
+  - 引导发光只在可挑战时显示
+
+### 6.5 当前仍未闭合的点
+
+1. 首屏驻扎单位已经更像“进入载具 / 巡逻入口”，但还没恢复成原截图里更完整的坐骑/巡逻组合。
+2. `map_pic_1002+` 仍不能当作真实 world icon 资源使用。
+3. `ConquerChapterStaticItem.mapPic / mapMove / mapDec` 真实数据链还未完整导入 Godot。
+4. `WorldMap04` 源场景装饰逻辑与前景遮挡还没彻底打穿。

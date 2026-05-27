@@ -280,7 +280,7 @@ func _draw_main_afk_move_layer(parent: Control) -> void:
 	runner.add_child(label)
 	var enter_badge: ColorRect = app._panel(Vector2(82, 112), Vector2(46, 18), Color(0.10, 0.10, 0.12, 0.72))
 	runner.add_child(enter_badge)
-	var enter_text: Label = app._label("进入", 10, HORIZONTAL_ALIGNMENT_CENTER)
+	var enter_text: Label = app._label("巡逻", 10, HORIZONTAL_ALIGNMENT_CENTER)
 	enter_text.position = Vector2(84, 111)
 	enter_text.size = Vector2(42, 18)
 	enter_text.modulate = Color(0.98, 0.94, 0.82)
@@ -534,6 +534,25 @@ func _reward_summary_text(items: Array) -> String:
 	return "「%s」x%s" % [reward_name, reward_count]
 
 
+func _fight_state() -> Dictionary:
+	var next_stage: Dictionary = app._next_stage()
+	if next_stage.is_empty():
+		return {
+			"available": false,
+			"can_fight": false,
+			"status_text": "全部通关",
+			"button_text": "已通关"
+		}
+	var required_power := int(next_stage.get("power", 0))
+	var can_fight := app._player_power() >= required_power
+	return {
+		"available": true,
+		"can_fight": can_fight,
+		"status_text": "可进行挑战" if can_fight else ("推荐战力%d" % required_power),
+		"button_text": "前往章节"
+	}
+
+
 func _reparent_to(node: Node, parent: Node) -> Node:
 	if node == null:
 		return null
@@ -582,7 +601,7 @@ func _draw_map_zone() -> void:
 	map_button.size = MAIN_MAP_SIZE
 	map_button.modulate = Color(1, 1, 1, 0.01)
 	map_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-	map_button.pressed.connect(show_expedition_map)
+	map_button.pressed.connect(_open_current_map_detail_from_main)
 	map_panel.add_child(map_button)
 
 	_draw_image_in(map_panel, UI_EXP_CROSS_REWARD, MAIN_CROSS_REWARD_POS, MAIN_CROSS_REWARD_SIZE, false, Color(1, 1, 1, 0.96))
@@ -609,7 +628,7 @@ func _draw_map_zone() -> void:
 	cross_button.size = MAIN_CROSS_REWARD_SIZE
 	cross_button.modulate = Color(1, 1, 1, 0.01)
 	cross_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-	cross_button.pressed.connect(show_chapter_panel)
+	cross_button.pressed.connect(app.chapter_screen.show_chapter_reward_detail)
 	map_panel.add_child(cross_button)
 
 
@@ -630,20 +649,26 @@ func _add_main_map_move_marker(parent: Control, center: Vector2) -> void:
 
 func _draw_bottom_actions() -> void:
 	var reward_pos := Vector2(855, 525)
+	var afk_claimed: bool = app._afk_claimed_today()
+	var fight_state := _fight_state()
 	app._draw_image(UI_EXP_REWARD, reward_pos, Vector2(172, 172), false, Color(1, 1, 1, 0.96))
 	app._draw_image(UI_EXP_HOOK_TIME, reward_pos + Vector2(17, 118), Vector2(138, 26), false, Color(1, 1, 1, 0.90))
 	var hook_time: Label = app._label(app._afk_time_display(), 22, HORIZONTAL_ALIGNMENT_CENTER)
 	hook_time.position = reward_pos + Vector2(17, 118)
 	hook_time.size = Vector2(138, 26)
-	hook_time.modulate = Color(0.83, 0.97, 0.35)
+	hook_time.modulate = Color(0.83, 0.97, 0.35) if not afk_claimed else Color(0.72, 0.72, 0.72)
 	app._view_container().add_child(hook_time)
 	app._draw_image(UI_EXP_REWARD_TIP, reward_pos + Vector2(104, -8), Vector2(68, 68), false, Color(1, 1, 1, 0.96))
-	var reward_tip: Label = app._label("快速战斗99次\n可提升等级", 18, HORIZONTAL_ALIGNMENT_CENTER)
+	var reward_tip_text := "快速战斗99次\n可提升等级"
+	if afk_claimed:
+		reward_tip_text = "今日挂机收益\n已领取"
+	var reward_tip: Label = app._label(reward_tip_text, 18, HORIZONTAL_ALIGNMENT_CENTER)
 	reward_tip.position = reward_pos + Vector2(104, -8)
 	reward_tip.size = Vector2(122, 48)
-	reward_tip.modulate = Color(0.19, 0.19, 0.19)
+	reward_tip.modulate = Color(0.19, 0.19, 0.19) if not afk_claimed else Color(0.36, 0.36, 0.36)
 	app._view_container().add_child(reward_tip)
 	var reward_soft_guide: ColorRect = app._panel(reward_pos + Vector2(60, 34), Vector2(52, 52), Color(1.0, 0.84, 0.28, 0.10))
+	reward_soft_guide.visible = not afk_claimed
 	app._view_container().add_child(reward_soft_guide)
 	var reward_hotspot := Button.new()
 	reward_hotspot.text = ""
@@ -662,21 +687,24 @@ func _draw_bottom_actions() -> void:
 		{"path": UI_EXP_BTN_DISPATCH, "label": "派遣", "pos": Vector2(555, 603), "callback": app._show_tasks, "size": Vector2(90, 90)},
 		{"path": UI_EXP_BTN_HERO, "label": "星灵", "pos": Vector2(655, 603), "callback": app._show_develop, "size": Vector2(90, 90)},
 		{"path": UI_EXP_BTN_MARCH, "label": "阵容", "pos": Vector2(755, 603), "callback": app._show_battle, "size": Vector2(90, 90)},
-		{"path": UI_EXP_BTN_FIGHT, "label": "挑战", "pos": Vector2(1056, 537), "callback": app._fight_next_stage, "size": Vector2(160, 160)}
+		{"path": UI_EXP_BTN_FIGHT, "label": "挑战", "pos": Vector2(1056, 537), "callback": show_chapter_panel, "size": Vector2(160, 160), "enabled": bool(fight_state.get("available", false))}
 	]
 	for item in action_specs:
 		var size: Vector2 = item.get("size", Vector2(84, 84))
 		var pos: Vector2 = item.get("pos", Vector2.ZERO)
-		app._draw_image(str(item.get("path", "")), pos, size, false, Color(1, 1, 1, 0.96))
+		var enabled: bool = bool(item.get("enabled", true))
+		app._draw_image(str(item.get("path", "")), pos, size, false, Color(1, 1, 1, 0.96 if enabled else 0.52))
 		if str(item.get("label", "")) == "挑战":
 			app._draw_image(UI_EXP_LIMIT, pos + Vector2(-14, 76), Vector2(188, 76), false, Color(1, 1, 1, 0.94))
-			var fight_limit: Label = app._label("玩家4级解锁", 18, HORIZONTAL_ALIGNMENT_CENTER)
+			var fight_limit_text := str(fight_state.get("status_text", "玩家4级解锁"))
+			var fight_limit: Label = app._label(fight_limit_text, 18, HORIZONTAL_ALIGNMENT_CENTER)
 			fight_limit.position = pos + Vector2(19, 90)
 			fight_limit.size = Vector2(150, 50)
-			fight_limit.modulate = Color(0.10, 0.10, 0.10)
+			fight_limit.modulate = Color(0.10, 0.10, 0.10) if enabled else Color(0.42, 0.42, 0.42)
 			app._view_container().add_child(fight_limit)
 			# Keep a lightweight soft-guide marker aligned with the prefab's pnlSoftGuide.
 			var fight_glow: ColorRect = app._panel(pos + Vector2(54, 32), Vector2(52, 52), Color(1.0, 0.84, 0.28, 0.12))
+			fight_glow.visible = bool(fight_state.get("can_fight", false))
 			app._view_container().add_child(fight_glow)
 		var label_size := Vector2(size.x, 24)
 		var label_pos := pos + Vector2(0, size.y - 28)
@@ -692,12 +720,13 @@ func _draw_bottom_actions() -> void:
 		var label: Label = app._label(str(item.get("label", "")), label_font, HORIZONTAL_ALIGNMENT_CENTER)
 		label.position = label_pos
 		label.size = label_size
-		label.modulate = Color(1.0, 0.96, 0.88)
+		label.modulate = Color(1.0, 0.96, 0.88) if enabled else Color(0.76, 0.76, 0.76)
 		app._view_container().add_child(label)
 		if size.x <= 90:
 			var red_dot: ColorRect = app._panel(pos + Vector2(18, 10), Vector2(12, 12), Color(0.96, 0.20, 0.26, 0.22))
 			app._view_container().add_child(red_dot)
-		app._add_hit_button(pos, size, item.get("callback", app._show_home))
+		if enabled:
+			app._add_hit_button(pos, size, item.get("callback", app._show_home))
 
 
 func _draw_side_actions() -> void:
@@ -1208,6 +1237,14 @@ func _show_map_detail(item: Dictionary) -> void:
 	tip.size = Vector2(644, 56)
 	tip.modulate = Color(0.36, 0.36, 0.36)
 	overlay.add_child(tip)
+	for reward_index in range(min(int(state.get("chapter_rewards", []).size()), 3)):
+		var reward: Dictionary = state.get("chapter_rewards", [])[reward_index]
+		app._draw_home_reward_icon(
+			str(reward.get("icon", "")),
+			card_pos + Vector2(360 + reward_index * 86, 102),
+			"",
+			str(reward.get("count", ""))
+		)
 
 	var task_button := Button.new()
 	task_button.text = ""
@@ -1268,18 +1305,27 @@ func _clamp_map_content(next_pos: Vector2) -> Vector2:
 
 
 func _draw_map_side_buttons() -> void:
+	var fight_state := _fight_state()
 	var buttons := [
 		{"path": UI_EXP_BTN_DISPATCH, "label": "派遣", "pos": Vector2(1122, 188), "callback": app._show_tasks},
 		{"path": UI_EXP_BTN_MARCH, "label": "阵容", "pos": Vector2(1122, 298), "callback": app._show_battle},
-		{"path": UI_EXP_BTN_FIGHT, "label": "挑战", "pos": Vector2(1104, 438), "callback": show_chapter_panel, "size": Vector2(126, 126)}
+		{"path": UI_EXP_BTN_FIGHT, "label": "挑战", "pos": Vector2(1104, 438), "callback": show_chapter_panel, "size": Vector2(126, 126), "enabled": bool(fight_state.get("available", false))}
 	]
 	for item in buttons:
 		var size: Vector2 = item.get("size", Vector2(84, 84))
 		var pos: Vector2 = item.get("pos", Vector2.ZERO)
-		app._draw_image(str(item.get("path", "")), pos, size, false, Color(1, 1, 1, 0.96))
+		var enabled: bool = bool(item.get("enabled", true))
+		app._draw_image(str(item.get("path", "")), pos, size, false, Color(1, 1, 1, 0.96 if enabled else 0.52))
 		var label: Label = app._label(str(item.get("label", "")), 15, HORIZONTAL_ALIGNMENT_CENTER)
 		label.position = pos + Vector2(0, size.y - 6)
 		label.size = Vector2(size.x, 20)
-		label.modulate = Color(1.0, 0.96, 0.88)
+		label.modulate = Color(1.0, 0.96, 0.88) if enabled else Color(0.76, 0.76, 0.76)
 		app._view_container().add_child(label)
-		app._add_hit_button(pos, size, item.get("callback", show_expedition_main))
+		if str(item.get("label", "")) == "挑战":
+			var side_status: Label = app._label(str(fight_state.get("status_text", "")), 12, HORIZONTAL_ALIGNMENT_CENTER)
+			side_status.position = pos + Vector2(-6, size.y + 10)
+			side_status.size = Vector2(size.x + 12, 18)
+			side_status.modulate = Color(0.94, 0.90, 0.78) if enabled else Color(0.70, 0.70, 0.70)
+			app._view_container().add_child(side_status)
+		if enabled:
+			app._add_hit_button(pos, size, item.get("callback", show_expedition_main))

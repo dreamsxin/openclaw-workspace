@@ -58,6 +58,45 @@
 
 这次实跑结果：
 
+## 2026-05-28 实战补充：`hero_053_s02` / `hero_053_s02h`
+
+这条路线已经在 Expedition / Spine 追源里完成了一次完整实战。
+
+典型问题：
+
+- `manifest-parsed-assets.csv` 中能看到：
+  - `Assets/Game/RawAssets/Spine/Hero/hero_053_s02/...`
+  - `Assets/Game/RawAssets/Spine/Hero/hero_053_s02h/...`
+- 但 `physical-asset-map.csv` 没有可用 `physicalPath`
+- 直接按 manifest 推导包名，会误以为资源“本地缺失”
+
+改走资源名直查后，实际命中物理 bundle：
+
+- `hero_053_s02`
+  - `files/yoo/Default/BundleFiles/d1/d133c1e76a9e76b3b5ebbb26131bb095/__data`
+- `hero_053_s02h`
+  - `files/yoo/Default/BundleFiles/2e/2ebf56a5c569284708925de1bc096436/__data`
+
+然后继续走：
+
+1. 单独补导出到 `tmp/all-spine-export`
+2. 重跑 `scripts/spine/import_all_spines_to_godot.py`
+3. 针对新增条目运行 `scripts/spine/bake_hero_spine_preview.mjs`
+
+最终成功补回：
+
+- `Hero__hero_053_s02`
+- `Hero__hero_053_s02h`
+
+经验结论：
+
+1. `physical-asset-map.csv` 没命中，不等于本地没有资源。
+2. 当你已经知道明确资源名时，直接扫所有本地 bundle 的 container path，比继续猜 bundleName / hash 更快。
+3. 这条方法特别适合：
+   - Spine 三件套
+   - 运行时缓存 bundle
+   - manifest 有记录但 physical map 未闭合的资源
+
 - 扫描物理 bundle：`7281`
 - 扫描失败：`0`
 - 建立对象索引：`194117`
