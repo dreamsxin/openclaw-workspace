@@ -27,9 +27,15 @@ const UI_MAIN_MENU = "res://assets/ui/mainui/mainui_btn_11.png"
 const UI_MAIN_AUTO_FIGHT = "res://assets/ui/mainui/mainui_img_36.png"
 const UI_MAIN_HOOK_TIME_BG = "res://assets/ui/mainui/mainui_img_08.png"    # imgHookTime plate
 const UI_MAIN_FULLSCREEN_OVERLAY = "res://assets/ui/mainui/mainui_img_44.png"
+const UI_MAIN_LIMIT_DEFAULT = "res://assets/ui/mainui/mainui_btn_14.png"
 const UI_MAIN_BTN_EYE = "res://assets/ui/mainui/mainui_btn_12.png"       # btnEye
 const UI_MAIN_BTN_CHANGE = "res://assets/ui/mainui/mainui_btn_13.png"    # btnChange
 const UI_MAIN_BTN_HARVEST = "res://assets/ui/mainui/mainui_img_18.png"   # btnHarvest
+const UI_HERO_MASK = "res://assets/ui/hero/hero_img_253.png"
+const UI_WALLPAPER_ARROW = "res://assets/ui/wallpaper/wallpaper_btn_01.png"
+const UI_WALLPAPER_PLAY = "res://assets/ui/wallpaper/wallpaper_btn_02.png"
+const UI_WALLPAPER_PAUSE = "res://assets/ui/wallpaper/wallpaper_btn_16_1.png"
+const UI_WALLPAPER_PAUSE_FX = "res://assets/ui/wallpaper/wallpaper_btn_16_2.png"
 const UI_ITEM_TICKET = "res://assets/ui/item/draw_07.png"
 const UI_ITEM_GEM = "res://assets/ui/item/draw_05.png"
 const UI_MAIN_CHARGE_ICONS = [
@@ -56,6 +62,39 @@ func _init(app_ref) -> void:
 	app = app_ref
 
 
+func _main_prefab_size(prefab_size: Vector2) -> Vector2:
+	return Vector2(prefab_size.x * 1280.0 / 1670.0, prefab_size.y * 720.0 / 750.0)
+
+
+func _main_centered_rect(prefab_center: Vector2, prefab_size: Vector2) -> Rect2:
+	var size := _main_prefab_size(prefab_size)
+	var center := Vector2(640.0 + prefab_center.x * 1280.0 / 1670.0, 360.0 - prefab_center.y * 720.0 / 750.0)
+	return Rect2(center - size * 0.5, size)
+
+
+func _main_left_top_rect(prefab_pos: Vector2, prefab_size: Vector2) -> Rect2:
+	var size := _main_prefab_size(prefab_size)
+	return Rect2(Vector2(prefab_pos.x * 1280.0 / 1670.0, -prefab_pos.y * 720.0 / 750.0), size)
+
+
+func _main_right_top_center_rect(prefab_center: Vector2, prefab_size: Vector2) -> Rect2:
+	var size := _main_prefab_size(prefab_size)
+	var center := Vector2(1280.0 + prefab_center.x * 1280.0 / 1670.0, -prefab_center.y * 720.0 / 750.0)
+	return Rect2(center - size * 0.5, size)
+
+
+func _main_right_top_rect(prefab_pos: Vector2, prefab_size: Vector2) -> Rect2:
+	var size := _main_prefab_size(prefab_size)
+	var top_right := Vector2(1280.0 + prefab_pos.x * 1280.0 / 1670.0, -prefab_pos.y * 720.0 / 750.0)
+	return Rect2(Vector2(top_right.x - size.x, top_right.y), size)
+
+
+func _main_right_bottom_rect(prefab_pos: Vector2, prefab_size: Vector2) -> Rect2:
+	var size := _main_prefab_size(prefab_size)
+	var bottom_right := Vector2(1280.0 + prefab_pos.x * 1280.0 / 1670.0, 720.0 - prefab_pos.y * 720.0 / 750.0)
+	return Rect2(bottom_right - size, size)
+
+
 func add_hit_button(pos: Vector2, hit_size: Vector2, callback: Callable) -> Button:
 	var button := Button.new()
 	button.text = ""
@@ -64,7 +103,10 @@ func add_hit_button(pos: Vector2, hit_size: Vector2, callback: Callable) -> Butt
 	button.position = pos
 	button.size = hit_size
 	button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-	button.pressed.connect(callback)
+	button.pressed.connect(func() -> void:
+		app._play_sfx(app.AUDIO_SFX_UI_MAIN, 0.72)
+		callback.call()
+	)
 	app._view_container().add_child(button)
 	return button
 
@@ -145,14 +187,29 @@ func enter_wallpaper_focus() -> void:
 	app._clear("壁纸")
 	var hero = app._hero_by_id(int(app.save.get("selected_hero_id", 240055)))
 	draw_wallpaper(hero)
-	# pnlCtl: centered control bar at bottom
-	var ctl_y = 660.0
+	draw_wallpaper_control_bar()
+
+
+func draw_wallpaper_control_bar() -> void:
+	# @WallpaperPanel/pnlCtl: prefab center pos(0,-181), left/right/pause original sprites.
+	var ctl := _main_centered_rect(Vector2(0, -181), Vector2(68, 68))
+	var center := ctl.position + ctl.size * 0.5
 	var settings: Dictionary = app.save.get("settings", {})
-	var auto_label := "Pause" if bool(settings.get("wallpaper_auto_play", true)) else "Play"
-	app._add_action_button("<", Vector2(500, ctl_y), func() -> void: _cycle_wallpaper(-1), Vector2(54, 48))
-	app._add_action_button(">", Vector2(562, ctl_y), func() -> void: _cycle_wallpaper(1), Vector2(54, 48))
-	app._add_action_button(auto_label, Vector2(624, ctl_y), func() -> void: _toggle_wallpaper_auto_play(), Vector2(86, 48))
-	app._add_action_button("Exit", Vector2(718, ctl_y), enter_normal_state, Vector2(66, 48))
+	add_hit_button(Vector2(0, 0), Vector2(1280, 720), enter_normal_state)
+	var left_rect := _main_centered_rect(Vector2(-73, -181), Vector2(92, 50))
+	var right_rect := _main_centered_rect(Vector2(73, -181), Vector2(92, 50))
+	app._draw_image(UI_WALLPAPER_ARROW, left_rect.position, left_rect.size, false, Color(1, 1, 1, 0.94))
+	var right_icon: TextureRect = app._draw_image(UI_WALLPAPER_ARROW, right_rect.position, right_rect.size, false, Color(1, 1, 1, 0.94))
+	if right_icon != null:
+		right_icon.flip_h = true
+	var pause_rect := Rect2(center - Vector2(34, 34), Vector2(68, 68))
+	var is_playing := bool(settings.get("wallpaper_auto_play", true))
+	app._draw_image(UI_WALLPAPER_PAUSE if is_playing else UI_WALLPAPER_PLAY, pause_rect.position, pause_rect.size, false, Color(1, 1, 1, 0.95))
+	if is_playing:
+		app._draw_image(UI_WALLPAPER_PAUSE_FX, pause_rect.position, pause_rect.size, false, Color(1, 1, 1, 0.50))
+	add_hit_button(left_rect.position, left_rect.size, func() -> void: _cycle_wallpaper(-1))
+	add_hit_button(right_rect.position, right_rect.size, func() -> void: _cycle_wallpaper(1))
+	add_hit_button(pause_rect.position, pause_rect.size, func() -> void: _toggle_wallpaper_auto_play())
 
 
 func _wallpaper_candidates() -> Array:
@@ -202,6 +259,8 @@ func draw_wallpaper(hero: Dictionary) -> void:
 	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.012, 0.010, 0.008, 0.05)))
 	# Keep the interactive role in the center-right lane so left activity entries remain readable.
 	app._draw_hero_stage(hero, Vector2(390, 82), Vector2(560, 620), false)
+	var mask_rect := _main_centered_rect(Vector2(0, 0), Vector2(324, 274))
+	app._draw_image(UI_HERO_MASK, mask_rect.position, mask_rect.size, false, Color(1, 1, 1, 0.20))
 
 
 func draw_body_mask() -> void:
@@ -239,7 +298,8 @@ func draw_top_bar() -> void:
 func draw_player_info(hero: Dictionary) -> void:
 	# pnlPlayerInfo: (0,5) 271x108
 	var profile = app.save.get("profile", {})
-	var panel = app._draw_image(UI_MAIN_PLAYER_FRAME, Vector2(0, 5), Vector2(271, 108), false, Color(1, 1, 1, 0.94))
+	var player_rect := _main_left_top_rect(Vector2(0, -5), Vector2(354, 113))
+	var panel = app._draw_image(UI_MAIN_PLAYER_FRAME, player_rect.position, player_rect.size, false, Color(1, 1, 1, 0.94))
 	_main_panels.append(panel)
 	# imgHeadBg and imgExp are left-middle inside the player panel.
 	app._draw_image(UI_MAIN_AVATAR_RING, Vector2(49, 12), Vector2(61, 76), false, Color(1, 1, 1, 0.94))
@@ -337,9 +397,11 @@ func draw_charge_column() -> void:
 
 func draw_menu_button() -> void:
 	# btnMenu: 78x78 (→60x75), right-top pos(-94,-54)
-	var mx = 1178.0; var my = 14.0
-	app._draw_image(UI_MAIN_MENU, Vector2(mx, my), Vector2(60, 60), false, Color(1, 1, 1, 0.94))
-	add_hit_button(Vector2(mx, my), Vector2(60, 60), app._show_home_menu)
+	var menu_rect := _main_right_top_center_rect(Vector2(-94, -54), Vector2(78, 78))
+	var mx = menu_rect.position.x; var my = menu_rect.position.y
+	app._draw_image(UI_MAIN_MENU, Vector2(mx - 6, my - 6), Vector2(72, 72), false, Color(1, 1, 1, 0.30))
+	app._draw_image(UI_MAIN_MENU, Vector2(mx, my), menu_rect.size, false, Color(1, 1, 1, 0.94))
+	add_hit_button(Vector2(mx, my), menu_rect.size, app._show_home_menu)
 	app._draw_red_dot(Vector2(mx + 46, my + 4))
 
 
@@ -356,6 +418,9 @@ func draw_commercialization() -> void:
 	var px = 50.0; var py = 120.0
 	# @pnlAlternate: 301x108 (→231x104) banner
 	app._draw_image(UI_MAIN_BANNER, Vector2(px, py), Vector2(231, 104), false, Color(1, 1, 1, 0.92))
+	for dot_index in range(3):
+		var dot = app._panel(Vector2(px + 167 + dot_index * 14, py + 88), Vector2(7, 7), Color(1, 1, 1, 0.85 if dot_index == 0 else 0.35))
+		app._view_container().add_child(dot)
 	# pnlGift: 409x300 (→313x288), below banner
 	var gx = px + 5; var gy = py + 113
 	var gifts = [
@@ -370,11 +435,14 @@ func draw_commercialization() -> void:
 		["首储", "", app._show_charge],
 		["萬象喚靈", "4d01h", app._open_present_pool],
 		["周末企划", "1d01h", app._show_tasks],
-		["神域馈赠", "11d01h", app._show_welfare]
+		["神域馈赠", "11d01h", app._show_welfare],
+		["問卷", "可領取", app._show_welfare],
+		["埋點禮包", "", app._show_welfare],
+		["折扣禮包", "", app._show_shop]
 	]
 	var gsx = gx + 2.0; var gsy = gy + 5.0; var gi = 0
 	for gift in gifts:
-		add_scaled_image(str(UI_MAIN_LIMIT_ICONS[gi % UI_MAIN_LIMIT_ICONS.size()]), Vector2(gsx, gsy), Vector2(66, 66), Color(1, 1, 1, 0.9))
+		add_scaled_image(UI_MAIN_LIMIT_DEFAULT, Vector2(gsx, gsy), Vector2(66, 66), Color(1, 1, 1, 0.9))
 		add_ui_text(str(gift[0]), Vector2(gsx - 7, gsy + 48), Vector2(80, 20), 13, HORIZONTAL_ALIGNMENT_CENTER, Color(1, 1, 1, 0.94))
 		if not str(gift[1]).is_empty():
 			add_ui_text(str(gift[1]), Vector2(gsx - 4, gsy + 64), Vector2(74, 18), 12, HORIZONTAL_ALIGNMENT_CENTER, Color(1.0, 0.80, 0.28))
@@ -384,13 +452,17 @@ func draw_commercialization() -> void:
 		gi += 1; gsx += 74
 		if gi % 4 == 0:
 			gsx = gx + 2; gsy += 96
+		if gi >= 12:
+			gsx = gx + 2 + float(gi - 12) * 74.0
+			gsy = gy + 5 + 3.0 * 96.0
 
 
 func draw_chapter_info() -> void:
 	# btnChapterInfo: anchor(1,0) pivot(1,0) pos(-34,150) size(276,100)
 	# Godot: right=1280-34*0.7665=1254, bottom=720+150*0.96=864→pivot=cornner→bottom=576→top=480
-	var px = 1042.0; var py = 480.0
-	var bg = app._draw_image(UI_MAIN_CHAPTER_BG, Vector2(px, py), Vector2(212, 96), false, Color(1, 1, 1, 0.90))
+	var chapter_rect := _main_right_bottom_rect(Vector2(-34, 150), Vector2(276, 100))
+	var px = chapter_rect.position.x; var py = chapter_rect.position.y
+	var bg = app._draw_image(UI_MAIN_CHAPTER_BG, Vector2(px, py), chapter_rect.size, false, Color(1, 1, 1, 0.90))
 	_main_panels.append(bg)
 	add_ui_text("第1章塵世裂痕 0/1", Vector2(px + 26, py + 9), Vector2(168, 20), 15, HORIZONTAL_ALIGNMENT_CENTER, Color(1.0, 0.90, 0.62))
 	var rewards = [
@@ -404,7 +476,7 @@ func draw_chapter_info() -> void:
 		add_scaled_image(str(reward[0]), Vector2(rx + 4, py + 40), Vector2(34, 34), Color(1, 1, 1, 0.96))
 		add_ui_text(str(reward[1]), Vector2(rx + 23, py + 64), Vector2(18, 14), 9, HORIZONTAL_ALIGNMENT_RIGHT, Color(1, 1, 1, 0.95))
 		rx += 50
-	add_hit_button(Vector2(px, py), Vector2(212, 96), app._show_chapter_progress)
+	add_hit_button(Vector2(px, py), chapter_rect.size, app._show_chapter_progress)
 	app._draw_red_dot(Vector2(px + 8, py + 4))
 
 
@@ -444,14 +516,15 @@ func draw_gal_button() -> void:
 func draw_chat_bar() -> void:
 	# pnlChat: right-anchored pos(-64,-94), 410x40 (→314x38)
 	# Godot: left = 1280 - 64*0.7665 - 410*0.7665 ≈ 917, y = 94*0.96.
-	var cx = 916.0; var cy = 90.0
-	var bg = app._draw_image(UI_MAIN_CHAT_BG, Vector2(cx, cy), Vector2(314, 38), false, Color(1, 1, 1, 0.72))
+	var chat_rect := _main_right_top_rect(Vector2(-64, -94), Vector2(410, 40))
+	var cx = chat_rect.position.x; var cy = chat_rect.position.y
+	var bg = app._draw_image(UI_MAIN_CHAT_BG, Vector2(cx, cy), chat_rect.size, false, Color(1, 1, 1, 0.72))
 	_main_panels.append(bg)
 	var chat = app._label("[世界] 塵世：?", 14)
 	chat.position = Vector2(cx + 49, cy + 8); chat.size = Vector2(255, 22)
 	chat.modulate = Color(0.54, 0.92, 0.54)
 	app._view_container().add_child(chat)
-	add_hit_button(Vector2(cx, cy), Vector2(314, 38), app._show_chat)
+	add_hit_button(Vector2(cx, cy), chat_rect.size, app._show_chat)
 
 
 # ═══════════════════════════════════════════════════════════════

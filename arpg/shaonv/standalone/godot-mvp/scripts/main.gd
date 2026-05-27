@@ -82,6 +82,17 @@ const UI_COMMON_SECTION := "res://assets/ui/common/common_img_199.png"
 const UI_COMMON_SKILL_FRAME := "res://assets/ui/common/common_img_208.png"
 const UI_REMNANTS_BG := "res://assets/ui/background/mainui_bg_01.png"
 const UI_REMNANT_STAGE_BG := "res://assets/spine/hero_017/hero_017_bg.png"
+const AUDIO_BGM_LOGIN := "res://assets/audio/bgm/login.wav"
+const AUDIO_BGM_MAIN := "res://assets/audio/bgm/main.wav"
+const AUDIO_SFX_UI_CONFIRM := "res://assets/audio/ui/ui_confirm.wav"
+const AUDIO_SFX_UI_DRAW_ENTER := "res://assets/audio/ui/ui_draw_enter.wav"
+const AUDIO_SFX_UI_MAIN := "res://assets/audio/ui/ui_main.wav"
+const AUDIO_SFX_POP_OPEN := "res://assets/audio/effect/pop_open.wav"
+const AUDIO_SFX_GET_REWARD := "res://assets/audio/effect/getreward.wav"
+const AUDIO_SFX_DRAW_ANIMATION := "res://assets/audio/effect/draw_animation.wav"
+const AUDIO_SFX_DRAW_RESULT_1 := "res://assets/audio/effect/draw_result_1.wav"
+const AUDIO_SFX_DRAW_RESULT_10 := "res://assets/audio/effect/draw_result_10.wav"
+const AUDIO_SFX_POOL_SIZE := 6
 
 var heroes: Array = []
 var hero_resource_map: Array = []
@@ -140,6 +151,11 @@ var hero_screen
 var gal_screen
 var gacha_screen
 var gacha_result_screen
+var _bgm_player: AudioStreamPlayer
+var _sfx_players: Array[AudioStreamPlayer] = []
+var _audio_cache := {}
+var _audio_missing_warned := {}
+var _current_bgm_path := ""
 
 func _view_container() -> Control:
 	if _all_views.is_empty():
@@ -245,6 +261,7 @@ func _build_root() -> void:
 	bg.color = Color(0.036, 0.031, 0.028)
 	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(bg)
+	_ensure_audio_players()
 
 	top_bar = Control.new()
 	top_bar.position = Vector2(0, 0)
@@ -275,6 +292,146 @@ func _build_root() -> void:
 	add_child(wallet_label)
 
 	_setup_layers()
+
+func _ensure_audio_players() -> void:
+	if _bgm_player == null or not is_instance_valid(_bgm_player):
+		_bgm_player = AudioStreamPlayer.new()
+		_bgm_player.name = "BgmPlayer"
+		add_child(_bgm_player)
+	for index in range(_sfx_players.size() - 1, -1, -1):
+		if _sfx_players[index] == null or not is_instance_valid(_sfx_players[index]):
+			_sfx_players.remove_at(index)
+	while _sfx_players.size() < AUDIO_SFX_POOL_SIZE:
+		var player := AudioStreamPlayer.new()
+		player.name = "SfxPlayer%d" % _sfx_players.size()
+		add_child(player)
+		_sfx_players.append(player)
+
+func _audio_enabled(kind: String) -> bool:
+	var settings: Dictionary = save.get("settings", {})
+	if kind == "music" or kind == "bgm":
+		return bool(settings.get("music", true))
+	if kind == "effects" or kind == "sfx":
+		return bool(settings.get("effects", true))
+	return true
+
+func _play_bgm(path: String, volume := 1.0, loop := true) -> void:
+	if not _audio_enabled("music"):
+		_stop_bgm()
+		return
+	if path.is_empty():
+		_stop_bgm()
+		return
+	_ensure_audio_players()
+	if _current_bgm_path == path and _bgm_player.playing:
+		_bgm_player.volume_db = linear_to_db(clampf(volume, 0.01, 1.0))
+		return
+	var stream := _load_wav_stream(path, loop)
+	if stream == null:
+		return
+	_current_bgm_path = path
+	_bgm_player.stream = stream
+	_bgm_player.volume_db = linear_to_db(clampf(volume, 0.01, 1.0))
+	_bgm_player.play()
+
+func _stop_bgm() -> void:
+	if _bgm_player != null and is_instance_valid(_bgm_player):
+		_bgm_player.stop()
+	_current_bgm_path = ""
+
+func _play_sfx(path: String, volume := 1.0) -> void:
+	if not _audio_enabled("effects"):
+		return
+	if path.is_empty():
+		return
+	_ensure_audio_players()
+	var stream := _load_wav_stream(path, false)
+	if stream == null:
+		return
+	var player := _next_sfx_player()
+	player.stream = stream
+	player.volume_db = linear_to_db(clampf(volume, 0.01, 1.0))
+	player.play()
+
+func _next_sfx_player() -> AudioStreamPlayer:
+	for player in _sfx_players:
+		if not player.playing:
+			return player
+	var player := _sfx_players[0]
+	player.stop()
+	return player
+
+func _load_wav_stream(path: String, loop := false) -> AudioStreamWAV:
+	var cache_key := "%s|%s" % [path, str(loop)]
+	if _audio_cache.has(cache_key):
+		return _audio_cache[cache_key]
+	if not FileAccess.file_exists(path):
+		_warn_missing_audio(path)
+		return null
+	var bytes := FileAccess.get_file_as_bytes(path)
+	if bytes.size() < 44 or _ascii4(bytes, 0) != "RIFF" or _ascii4(bytes, 8) != "WAVE":
+		push_warning("Audio file is not a PCM WAV: %s" % path)
+		return null
+	var offset := 12
+	var channels := 1
+	var sample_rate := 22050
+	var bits_per_sample := 16
+	var data_start := -1
+	var data_size := 0
+	while offset + 8 <= bytes.size():
+		var chunk := _ascii4(bytes, offset)
+		var chunk_size := _u32le(bytes, offset + 4)
+		var chunk_data := offset + 8
+		if chunk == "fmt " and chunk_data + 16 <= bytes.size():
+			var audio_format := _u16le(bytes, chunk_data)
+			channels = _u16le(bytes, chunk_data + 2)
+			sample_rate = _u32le(bytes, chunk_data + 4)
+			bits_per_sample = _u16le(bytes, chunk_data + 14)
+			if audio_format != 1:
+				push_warning("Unsupported WAV format %d: %s" % [audio_format, path])
+				return null
+		elif chunk == "data":
+			data_start = chunk_data
+			data_size = mini(chunk_size, bytes.size() - data_start)
+			break
+		offset = chunk_data + chunk_size + (chunk_size % 2)
+	if data_start < 0 or data_size <= 0:
+		push_warning("WAV data chunk missing: %s" % path)
+		return null
+	var stream := AudioStreamWAV.new()
+	if bits_per_sample == 8:
+		stream.format = AudioStreamWAV.FORMAT_8_BITS
+	elif bits_per_sample == 16:
+		stream.format = AudioStreamWAV.FORMAT_16_BITS
+	else:
+		push_warning("Unsupported WAV bit depth %d: %s" % [bits_per_sample, path])
+		return null
+	stream.mix_rate = sample_rate
+	stream.stereo = channels == 2
+	stream.loop_mode = AudioStreamWAV.LOOP_FORWARD if loop else AudioStreamWAV.LOOP_DISABLED
+	stream.data = bytes.slice(data_start, data_start + data_size)
+	_audio_cache[cache_key] = stream
+	return stream
+
+func _warn_missing_audio(path: String) -> void:
+	if _audio_missing_warned.has(path):
+		return
+	_audio_missing_warned[path] = true
+	push_warning("Missing audio file: %s" % path)
+
+func _u16le(bytes: PackedByteArray, offset: int) -> int:
+	return int(bytes[offset]) | (int(bytes[offset + 1]) << 8)
+
+func _u32le(bytes: PackedByteArray, offset: int) -> int:
+	return int(bytes[offset]) | (int(bytes[offset + 1]) << 8) | (int(bytes[offset + 2]) << 16) | (int(bytes[offset + 3]) << 24)
+
+func _ascii4(bytes: PackedByteArray, offset: int) -> String:
+	if offset + 4 > bytes.size():
+		return ""
+	var out := ""
+	for index in range(4):
+		out += char(bytes[offset + index])
+	return out
 
 func _setup_layers() -> void:
 	# Layer 0: 锁屏 (最底)
@@ -530,12 +687,14 @@ func _show_preloading() -> void:
 	startup_screen.show_preloading()
 
 func _show_login() -> void:
+	_play_bgm(AUDIO_BGM_LOGIN, 0.65, true)
 	startup_screen.show_login()
 
 func _show_loading() -> void:
 	startup_screen.show_loading()
 
 func _enter_main_scene() -> void:
+	_play_bgm(AUDIO_BGM_MAIN, 0.58, true)
 	_set_chrome_visible(false)
 	_show_home()
 
@@ -545,9 +704,11 @@ func _refresh_wallet() -> void:
 	wallet_label.text = "郵件 %d   喚靈券 %s   源石 %s" % [_unclaimed_mail_count(), save.get("tickets", 0), save.get("gems", 0)]
 
 func _show_home() -> void:
+	_play_bgm(AUDIO_BGM_MAIN, 0.58, true)
 	home_screen.show_home()
 
 func _show_gacha() -> void:
+	_play_sfx(AUDIO_SFX_UI_DRAW_ENTER, 0.78)
 	_push_view("喚靈")
 	gacha_screen.show_gacha()
 
@@ -1282,7 +1443,10 @@ func _draw_home_feature_icon(icon_path: String, pos: Vector2, label_text: String
 	button.focus_mode = Control.FOCUS_NONE
 	button.position = pos
 	button.size = Vector2(86, 108)
-	button.pressed.connect(callback)
+	button.pressed.connect(func() -> void:
+		_play_sfx(AUDIO_SFX_UI_MAIN, 0.72)
+		callback.call()
+	)
 	_view_container().add_child(button)
 
 
@@ -2324,6 +2488,7 @@ func _gallery_filtered_heroes() -> Array:
 	return hero_screen._gallery_filtered_heroes()
 
 func _grant_reward(tickets: int, gems: int) -> void:
+	_play_sfx(AUDIO_SFX_GET_REWARD, 0.85)
 	save["tickets"] = int(save.get("tickets", 0)) + tickets
 	save["gems"] = int(save.get("gems", 0)) + gems
 	_persist()
@@ -2464,6 +2629,8 @@ func _add_toggle_button(label: String, key: String, pos: Vector2, value: bool) -
 		settings[key] = not bool(settings.get(key, true))
 		save["settings"] = settings
 		_persist()
+		if key == "music" and not _audio_enabled("music"):
+			_stop_bgm()
 		_show_settings()
 	, Vector2(220, 44))
 
@@ -2489,6 +2656,7 @@ func _show_login_account_popup() -> void:
 	_draw_overlay_popup("帳號", "Player\nOpenId: offline-player\n登入方式：本地單機")
 
 func _draw_overlay_popup(title: String, message: String) -> void:
+	_play_sfx(AUDIO_SFX_POP_OPEN, 0.85)
 	_view_container().add_child(_panel(Vector2(0, 0), Vector2(1280, 720), Color(0, 0, 0, 0.42)))
 	_view_container().add_child(_panel(Vector2(390, 220), Vector2(500, 260), Color(0.10, 0.075, 0.06, 0.96)))
 	var heading := _label(title, 28, HORIZONTAL_ALIGNMENT_CENTER)
@@ -2544,7 +2712,10 @@ func _add_action_button(text: String, pos: Vector2, callback: Callable, size := 
 	button.focus_mode = Control.FOCUS_NONE
 	button.position = pos
 	button.size = size
-	button.pressed.connect(callback)
+	button.pressed.connect(func() -> void:
+		_play_sfx(AUDIO_SFX_UI_CONFIRM, 0.70)
+		callback.call()
+	)
 	_view_container().add_child(button)
 
 
@@ -2556,7 +2727,10 @@ func _add_hit_button(pos: Vector2, hit_size: Vector2, callback: Callable) -> voi
 	button.position = pos
 	button.size = hit_size
 	button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-	button.pressed.connect(callback)
+	button.pressed.connect(func() -> void:
+		_play_sfx(AUDIO_SFX_UI_CONFIRM, 0.70)
+		callback.call()
+	)
 	_view_container().add_child(button)
 
 func _stars(count: int) -> String:

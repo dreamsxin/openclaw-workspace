@@ -90,6 +90,7 @@ func show_draw_animation(count: int) -> void:
 	show_stage_view(results, count, seq)
 
 func show_stage_view(results: Array, count: int, seq: int) -> void:
+	app._play_sfx(app.AUDIO_SFX_UI_DRAW_ENTER, 0.78)
 	var pool: Dictionary = app._pool_by_id(str(app.save.get("active_pool_id", "advanced")))
 	var is_prayer := _is_prayer_pool(pool)
 	var cost := count * int(pool.get("ticketCost", 1))
@@ -134,6 +135,7 @@ func show_stage_view(results: Array, count: int, seq: int) -> void:
 func show_stage_color(results: Array, count: int, seq: int) -> void:
 	if not _is_sequence_live(seq):
 		return
+	app._play_sfx(app.AUDIO_SFX_DRAW_ANIMATION, 0.86)
 	var pool: Dictionary = app._pool_by_id(str(app.save.get("active_pool_id", "advanced")))
 	var is_prayer := _is_prayer_pool(pool)
 	var best := best_result(results)
@@ -171,6 +173,7 @@ func show_recruit_reveal(count: int) -> void:
 func show_recruit_silhouette(results: Array, count: int, seq: int) -> void:
 	if not _is_sequence_live(seq):
 		return
+	app._play_sfx(app.AUDIO_SFX_DRAW_ANIMATION, 0.86)
 	var best := best_result(results)
 	var hero: Dictionary = best.get("hero", app._hero_by_id(240065))
 	var rarity := int(best.get("rolled_rarity", hero.get("rarity", 1)))
@@ -290,6 +293,7 @@ func show_prayer_rewards(count: int, play_reveal: bool) -> void:
 func show_prayer_remnant_reveal(results: Array, count: int, seq: int) -> void:
 	if not _is_sequence_live(seq):
 		return
+	app._play_sfx(app.AUDIO_SFX_DRAW_ANIMATION, 0.86)
 	var best := best_result(results)
 	var rarity := int(best.get("rolled_rarity", 2))
 	var pool: Dictionary = app._pool_by_id(str(app.save.get("active_pool_id", "source_prayer")))
@@ -338,6 +342,7 @@ func show_prayer_remnant_reveal(results: Array, count: int, seq: int) -> void:
 func show_prayer_holy_relic_reveal(results: Array, count: int, seq: int) -> void:
 	if not _is_sequence_live(seq):
 		return
+	app._play_sfx(app.AUDIO_SFX_DRAW_ANIMATION, 0.86)
 	var best := best_result(results)
 	var rarity := int(best.get("rolled_rarity", 2))
 	var pool: Dictionary = app._pool_by_id(str(app.save.get("active_pool_id", "prayer")))
@@ -400,6 +405,7 @@ func show_prayer_result_view(results: Array, count: int) -> void:
 	if results.is_empty():
 		show_empty_ticket_warning("祈願鑰匙不足", true)
 		return
+	app._play_sfx(app.AUDIO_SFX_GET_REWARD, 0.82)
 	draw_prayer_result_backdrop(results)
 	draw_prayer_reward_grid(results)
 	app._add_action_button("再祈願一次", Vector2(780, 656), func() -> void:
@@ -415,6 +421,7 @@ func show_results(results: Array, count: int) -> void:
 	if results.is_empty():
 		show_empty_ticket_warning()
 		return
+	app._play_sfx(app.AUDIO_SFX_DRAW_RESULT_1 if count <= 1 else app.AUDIO_SFX_DRAW_RESULT_10, 0.86)
 	draw_finish_backdrop(results)
 	draw_result_grid(results)
 	app._add_action_button("再抽一次", Vector2(794, 656), func() -> void: show_draw_animation(count), Vector2(132, 42))
