@@ -61,6 +61,8 @@ const FX_CAPSULE_BLUE_GLOW := "res://assets/ui/effect/fx_capsule_open_blue/Tex_g
 const FX_CAPSULE_BLUE_RING := "res://assets/ui/effect/fx_capsule_open_blue/fx_047_tex_012.png"
 const FX_CAPSULE_BLUE_STAR := "res://assets/ui/effect/fx_capsule_open_blue/tfx_star09.png"
 const LOTTERY_STAGE_SCALE := Vector2(1280.0 / 1670.0, 720.0 / 750.0)
+const RECRUIT_VIDEO_POS := Vector2(-195, -6)
+const RECRUIT_VIDEO_SIZE := Vector2(1670, 732)
 
 var app
 var sequence_id := 0
@@ -177,6 +179,8 @@ func show_recruit_silhouette(results: Array, count: int, seq: int) -> void:
 	var best := best_result(results)
 	var hero: Dictionary = best.get("hero", app._hero_by_id(240065))
 	var rarity := int(best.get("rolled_rarity", hero.get("rarity", 1)))
+	if try_show_recruit_video(hero, rarity, results, count, seq):
+		return
 	app.current_view = "hero_recruit_silhouette"
 	app._set_chrome_visible(false)
 	app._clear("幻靈顯現")
@@ -201,6 +205,29 @@ func show_recruit_silhouette(results: Array, count: int, seq: int) -> void:
 		show_results(results, count)
 	, Vector2(102, 40))
 	run_recruit_auto.call_deferred(results, count, seq)
+
+func try_show_recruit_video(hero: Dictionary, rarity: int, results: Array, count: int, seq: int) -> bool:
+	var video_path: String = app._hero_recruit_video_path(hero)
+	if video_path.is_empty():
+		return false
+	print("HeroRecruit video: %s -> %s" % [hero.get("spine", ""), video_path])
+	app.current_view = "hero_recruit_video"
+	app._set_chrome_visible(false)
+	app._clear("鎷涘嫙瑙嗛")
+	draw_recruit_backdrop(rarity)
+	var video: VideoStreamPlayer = app._draw_video(video_path, RECRUIT_VIDEO_POS, RECRUIT_VIDEO_SIZE, func() -> void:
+		if _is_sequence_live(seq):
+			show_recruit_revealed(results, count, seq)
+	)
+	if video == null:
+		return false
+	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), frame_color(rarity, 0.06)))
+	var reveal_callback := func() -> void:
+		if _is_sequence_live(seq):
+			show_recruit_revealed(results, count, seq)
+	app._add_action_button("璺宠繃", Vector2(1088, 34), reveal_callback, Vector2(102, 40))
+	app._add_hit_button(Vector2.ZERO, Vector2(1280, 720), reveal_callback)
+	return true
 
 func show_recruit_revealed(results: Array, count: int, seq: int) -> void:
 	if not _is_sequence_live(seq):

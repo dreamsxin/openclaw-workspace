@@ -50,9 +50,10 @@ const UI_MAIN_LIMIT_ICONS := [
 
 var app
 var gallery_filter := "all"
-var gallery_sort_mode := "power"
+var gallery_sort_mode := "level"
 var gallery_sort_open := false
 var gallery_camp_filter := "all"
+var gallery_occupation_filter := "all"
 var hero_detail_tab := "overview"
 
 func _init(app_ref) -> void:
@@ -105,9 +106,9 @@ func _draw_hero_sort_panel() -> void:
 	app._draw_image(UI_HERO_FILTER_BG, Vector2(836, 82), Vector2(360, 130), false, Color(1, 1, 1, 0.96))
 	app._view_container().add_child(app._panel(Vector2(848, 92), Vector2(336, 106), Color(0.030, 0.024, 0.038, 0.72)))
 	var modes := [
+		{"key": "level", "text": "等級"},
 		{"key": "power", "text": "戰力"},
 		{"key": "rarity", "text": "稀有"},
-		{"key": "level", "text": "等級"},
 	]
 	for index in range(modes.size()):
 		var mode: Dictionary = modes[index]
@@ -126,30 +127,39 @@ func _draw_hero_sort_panel() -> void:
 			gallery_sort_open = false
 			_show_gallery()
 		)
-	var camps := [
-		{"key": "all", "text": "全"},
-		{"key": "camp1", "text": "1"},
-		{"key": "camp2", "text": "2"},
-		{"key": "camp3", "text": "3"},
-		{"key": "camp4", "text": "4"},
-	]
-	for index in range(camps.size()):
-		var camp: Dictionary = camps[index]
-		var camp_key := str(camp.get("key", "all"))
-		var pos := Vector2(862 + index * 58.0, 150)
-		app._draw_image(str(UI_HERO_CAMP_ICONS[index]), pos, Vector2(44, 44), false, Color(1, 1, 1, 0.94))
-		var active := gallery_camp_filter == camp_key
-		if active:
-			app._draw_image(UI_HERO_HIGHLIGHT, pos - Vector2(10, 10), Vector2(64, 64), false, Color(1.0, 0.82, 0.32, 0.62))
-		var text: Label = app._label(str(camp.get("text", "")), 13, HORIZONTAL_ALIGNMENT_CENTER)
-		text.position = pos + Vector2(2, 12)
-		text.size = Vector2(40, 18)
-		app._view_container().add_child(text)
-		var target_camp := camp_key
-		app._add_hit_button(pos - Vector2(4, 4), Vector2(52, 52), func() -> void:
+	var occupation_keys := ["all", "occupation1", "occupation2", "occupation3", "occupation4", "occupation5"]
+	var occupation_icon_indices := [0, 6, 7, 8, 9, 10]
+	for index in range(occupation_keys.size()):
+		var key := str(occupation_keys[index])
+		var pos := Vector2(862 + index * 48.0, 104)
+		var target_occupation := key
+		_draw_hero_filter_icon(key, gallery_occupation_filter == key, str(UI_HERO_CAMP_ICONS[int(occupation_icon_indices[index])]), pos, Vector2(44, 44), "全" if index == 0 else "", func() -> void:
+			gallery_occupation_filter = target_occupation
+			_show_gallery()
+		)
+
+	var camp_keys := ["all", "camp1", "camp2", "camp3", "camp4", "camp5"]
+	var camp_icon_indices := [0, 1, 4, 2, 3, 5]
+	for index in range(camp_keys.size()):
+		var key := str(camp_keys[index])
+		var pos := Vector2(862 + index * 48.0, 150)
+		var target_camp := key
+		_draw_hero_filter_icon(key, gallery_camp_filter == key, str(UI_HERO_CAMP_ICONS[int(camp_icon_indices[index])]), pos, Vector2(44, 44), "全" if index == 0 else "", func() -> void:
 			gallery_camp_filter = target_camp
 			_show_gallery()
 		)
+
+
+func _draw_hero_filter_icon(_key: String, active: bool, icon_path: String, pos: Vector2, size: Vector2, text: String, on_press: Callable) -> void:
+	app._draw_image(icon_path, pos, size, false, Color(1, 1, 1, 0.94))
+	if active:
+		app._draw_image(UI_HERO_HIGHLIGHT, pos - Vector2(8, 8), Vector2(60, 60), false, Color(1.0, 0.82, 0.32, 0.62))
+	if not text.is_empty():
+		var label: Label = app._label(text, 13, HORIZONTAL_ALIGNMENT_CENTER)
+		label.position = pos + Vector2(2, 12)
+		label.size = Vector2(40, 18)
+		app._view_container().add_child(label)
+	app._add_hit_button(pos - Vector2(6, 6), Vector2(56, 56), on_press)
 
 
 func _draw_hero_list_filters() -> void:
@@ -220,6 +230,7 @@ func _draw_hero_list_cards() -> void:
 func _draw_hero_list_card(hero: Dictionary, pos: Vector2) -> void:
 	var hero_id := int(hero.get("id", 0))
 	var rarity := int(hero.get("rarity", 1))
+	var level := int(app.save.get("hero_levels", {}).get(str(hero_id), 1))
 	var copies := int(app.save.get("owned", {}).get(str(hero_id), 0))
 	var shards := int(app.save.get("shards", {}).get(str(hero_id), 0))
 	var owned := copies > 0
@@ -231,6 +242,12 @@ func _draw_hero_list_card(hero: Dictionary, pos: Vector2) -> void:
 	var tint := Color(1, 1, 1, 1) if owned else Color(0.42, 0.42, 0.45, 1)
 	app._draw_hero_thumb(hero, pos + Vector2(18, 16), Vector2(68, 72), tint)
 	_draw_hero_card_stars(rarity, pos + Vector2(16, 94), 13)
+	app._draw_image(UI_COMMON_LEVEL_BADGE, pos + Vector2(60, 58), Vector2(32, 32), false, Color(1, 1, 1, 0.95))
+	var level_label: Label = app._label(str(level), 13, HORIZONTAL_ALIGNMENT_CENTER)
+	level_label.position = pos + Vector2(63, 62)
+	level_label.size = Vector2(24, 22)
+	level_label.modulate = Color(1.0, 0.96, 0.76)
+	app._view_container().add_child(level_label)
 
 	var display_name := str(hero.get("name", "Unknown")) if owned else "未獲得"
 	var name_label: Label = app._label(display_name, 19)
@@ -326,9 +343,7 @@ func _draw_hero_selector_strip(selected_hero_id: int) -> void:
 
 func _hero_selector_heroes() -> Array:
 	var list: Array = app.heroes.duplicate(true)
-	list.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
-		return int(a.get("rarity", 1)) > int(b.get("rarity", 1)) if int(a.get("rarity", 1)) != int(b.get("rarity", 1)) else int(a.get("id", 0)) < int(b.get("id", 0))
-	)
+	list.sort_custom(_sort_heroes_by_level)
 	return list.slice(0, min(6, list.size()))
 
 
@@ -811,11 +826,8 @@ func _draw_hero_detail_attr(label_text: String, value_text: String, pos: Vector2
 
 func _draw_hero_card_stars(rarity: int, pos: Vector2, size: int) -> void:
 	if size < 20:
-		var badge: Label = app._label("R%d" % clamp(rarity, 1, 5), size + 2, HORIZONTAL_ALIGNMENT_CENTER)
-		badge.position = pos
-		badge.size = Vector2(38, size + 10)
-		badge.modulate = Color(1.0, 0.86, 0.52)
-		app._view_container().add_child(badge)
+		for i in range(clamp(rarity, 1, 5)):
+			app._draw_image(UI_HERO_STAR_SMALL, pos + Vector2(i * float(size), 0), Vector2(size, size), false, Color(1, 1, 1, 0.94))
 		return
 	for i in range(clamp(rarity, 1, 5)):
 		var star_path := UI_COMMON_STAR if size >= 20 else UI_HERO_STAR_SMALL
@@ -1098,6 +1110,7 @@ func _gallery_filtered_heroes() -> Array:
 		var rarity := int(hero.get("rarity", 1))
 		var owned := int(app.save.get("owned", {}).get(str(hero_id), 0)) > 0
 		var camp := _hero_camp_key(hero)
+		var occupation := _hero_occupation_key(hero)
 		var include := true
 		match gallery_filter:
 			"owned":
@@ -1114,10 +1127,33 @@ func _gallery_filtered_heroes() -> Array:
 				include = true
 		if gallery_camp_filter != "all" and camp != gallery_camp_filter:
 			include = false
+		if gallery_occupation_filter != "all" and occupation != gallery_occupation_filter:
+			include = false
 		if include:
 			list.append(hero)
 	list.sort_custom(_sort_gallery_heroes)
 	return list
+
+func _sort_heroes_by_level(a: Dictionary, b: Dictionary) -> bool:
+	var a_id := int(a.get("id", 0))
+	var b_id := int(b.get("id", 0))
+	var a_owned := int(app.save.get("owned", {}).get(str(a_id), 0)) > 0
+	var b_owned := int(app.save.get("owned", {}).get(str(b_id), 0)) > 0
+	if a_owned != b_owned:
+		return a_owned
+	var a_level := int(app.save.get("hero_levels", {}).get(str(a_id), 1))
+	var b_level := int(app.save.get("hero_levels", {}).get(str(b_id), 1))
+	if a_level != b_level:
+		return a_level > b_level
+	var a_rarity := int(a.get("rarity", 1))
+	var b_rarity := int(b.get("rarity", 1))
+	if a_rarity != b_rarity:
+		return a_rarity > b_rarity
+	var a_power := _hero_power(a)
+	var b_power := _hero_power(b)
+	if a_power != b_power:
+		return a_power > b_power
+	return a_id < b_id
 
 func _sort_gallery_heroes(a: Dictionary, b: Dictionary) -> bool:
 	var a_id := int(a.get("id", 0))
@@ -1128,10 +1164,7 @@ func _sort_gallery_heroes(a: Dictionary, b: Dictionary) -> bool:
 		return a_owned
 	match gallery_sort_mode:
 		"level":
-			var a_level := int(app.save.get("hero_levels", {}).get(str(a_id), 1))
-			var b_level := int(app.save.get("hero_levels", {}).get(str(b_id), 1))
-			if a_level != b_level:
-				return a_level > b_level
+			return _sort_heroes_by_level(a, b)
 		"power":
 			var a_power := _hero_power(a)
 			var b_power := _hero_power(b)
@@ -1156,4 +1189,8 @@ func _gallery_sort_label(mode: String) -> String:
 
 func _hero_camp_key(hero: Dictionary) -> String:
 	var hero_id := int(hero.get("id", 0))
-	return "camp%d" % ((hero_id % 4) + 1)
+	return "camp%d" % ((hero_id % 5) + 1)
+
+func _hero_occupation_key(hero: Dictionary) -> String:
+	var hero_id := int(hero.get("id", 0))
+	return "occupation%d" % ((int(hero_id / 10) % 5) + 1)

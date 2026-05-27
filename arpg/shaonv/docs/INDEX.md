@@ -11,12 +11,12 @@
 docs/
 ├── INDEX.md                ← 本文件
 ├── meta/         (9)       流程 / MVP / 架构决策 / 全量导出指南
-├── platform/    (11)       资源管线：YooAsset / Spine / 文本 / 数表
+├── platform/    (12)       资源管线：YooAsset / Spine / 文本 / 数表
 ├── ui/
-│   ├── startup/      (2)   启动链 (Launch + Login + Loading)
-│   ├── mainui/       (9)   主界面 / City / Activity / 背景采样
+│   ├── startup/      (3)   启动链 (Launch + Login + Loading + 视频)
+│   ├── mainui/       (14)  主界面 / City / Activity / 章节 / 背景采样
 │   ├── lottery/      (7)   抽卡 / 祈愿 / LotteryDrawNewStageView 链路
-│   ├── hero/         (7)   英雄主界面 / 详情 / 列表 / 战斗预览
+│   ├── hero/         (8)   英雄主界面 / 详情 / 列表 / 战斗预览
 │   ├── remnants/    (32)   遗器 / 聖物 全模块（装备/列表/升星/进阶/展示）
 │   ├── gal/         (40)   约会 / 宿舍 / 收藏 / 关卡 / 特殊触摸
 │   └── spine-touch/  (2)   Spine 触摸教学 / 拖拽特效
@@ -55,6 +55,7 @@ docs/
 | `shaonv-localization-full-mapping-2026-05-25.md` | 本地化全量映射 |
 | `shaonv-localization-text-lookup-experience-2026-05-25.md` | 本地化文本查找经验 |
 | `table-data-analysis.md` | 配置表分析 |
+| `shaonv-yooasset-manifest-reverse-dependency-guide-2026-05-27.md` | Manifest 反向定位 / asset→bundle→physical 手册 |
 
 ---
 
@@ -64,6 +65,7 @@ docs/
 |---|---|
 | `shaonv-startup-prefab-layout-analysis-2026-05-23.md` | 启动链 3 屏 + 十大偏差 |
 | `shaonv-startup-background-layout-reanalysis-2026-05-24.md` | 启动背景图映射修正 |
+| `shaonv-launch-video-prefab-reverse-and-godot-fix-2026-05-26.md` | 启动视频 Prefab 逆向 + Godot 修复 |
 
 > 单 prefab 原始布局：`prefabs/LaunchView-…`、`LoginView-…`、`LoadingView-…`
 
@@ -77,6 +79,11 @@ docs/
 | `shaonv-mainui-screenshot-layout-comparison-2026-05-24.md` | 主界面截图对照 |
 | `shaonv-mainui-godot-gap-analysis-2026-05-25.md` | Godot 主界面缺口分析 |
 | `shaonv-mainui-godot-home-fix-experience-2026-05-25.md` | Godot Home 修复经验（坐标错位） |
+| `shaonv-mainui-manifest-reverse-lookup-2026-05-27.md` | 主界面 manifest 反查 / 用户头像与资源栏还原检查 |
+| `shaonv-chapterrewarddetailgrid-full-control-resource-inventory-2026-05-27.md` | 章节奖励详情格子 |
+| `shaonv-chapterrewarddetailview-full-control-resource-inventory-2026-05-27.md` | 章节奖励详情弹层 |
+| `shaonv-chaptertaskcell-full-control-resource-inventory-2026-05-27.md` | 章节任务 Cell |
+| `shaonv-chaptertaskview-full-control-resource-inventory-2026-05-27.md` | 章节任务视图 |
 | `shaonv-cityview-full-control-resource-inventory-2026-05-24.md` | CityView 全控件 |
 | `shaonv-activitymainview-full-control-resource-inventory-2026-05-24.md` | ActivityMainView 全控件 |
 | `shaonv-background-prefab-sampling-2026-05-24.md` | 20 个背景 prefab 采样 |
@@ -105,6 +112,7 @@ docs/
 | `shaonv-herolisttabgrid-full-control-resource-inventory-2026-05-24.md` | 列表分类 Tab |
 | `shaonv-herolistordinationtabgrid-full-control-resource-inventory-2026-05-24.md` | 列表排序 Tab |
 | `shaonv-herolistview-physical-bundle-gap-2026-05-24.md` | HeroListView 物理 bundle 缺口 |
+| `shaonv-hero-manifest-reverse-lookup-2026-05-27.md` | 英雄列表 manifest 反查 / 缺失 prefab 边界 |
 | `shaonv-hero-battle-preview-2026-05-25.md` | 战斗 prefab/Skill/音效 + Godot 预览器 |
 
 ## ui/remnants/ — 遗器 / 聖物 (32 docs)
@@ -179,4 +187,4 @@ docs/
 
 ---
 
-*重组于 2026-05-26：原顶层 100+ 文件按界面/资源类型归档，prefabs/ 与 archive/ 保持原状。新增文档时按子目录归类并更新本文件。*
+*重组于 2026-05-26，更新于 2026-05-27：补录 May 26-27 新增文档，修正错位文件。*

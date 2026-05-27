@@ -8,12 +8,19 @@ const HERO_DATA_PATH := "res://data/heroes_mvp.json"
 const HERO_RESOURCE_MAP_PATH := "res://data/hero_resource_map.json"
 const HERO_RARITY_GRADE_PATH := "res://data/hero_rarity_grades.json"
 const POOL_DATA_PATH := "res://data/gacha_pools_mvp.json"
+const VIDEO_MANIFEST_PATH := "res://data/video_manifest.json"
 const LIVE_OPS_DATA_PATH := "res://data/live_ops_mvp.json"
 const ADVENTURE_DATA_PATH := "res://data/adventure_mvp.json"
 const BAKED_SPINE_CANVAS := preload("res://scripts/spine_baked_preview_canvas.gd")
 const STARTUP_SCREEN := preload("res://scripts/screens/startup_screen.gd")
 const HOME_SCREEN := preload("res://scripts/screens/home_screen.gd")
+const CHAPTER_SCREEN := preload("res://scripts/screens/chapter_screen.gd")
+const BATTLE_SCREEN := preload("res://scripts/screens/battle_screen.gd")
+const SHOP_SCREEN := preload("res://scripts/screens/shop_screen.gd")
+const ACTIVITY_SCREEN := preload("res://scripts/screens/activity_screen.gd")
 const HERO_SCREEN := preload("res://scripts/screens/hero_screen.gd")
+const REMNANTS_SCREEN := preload("res://scripts/screens/remnants_screen.gd")
+const HOME_PANEL_SCREEN := preload("res://scripts/screens/home_panel_screen.gd")
 const GACHA_SCREEN := preload("res://scripts/screens/gacha_screen.gd")
 const GACHA_RESULT_SCREEN := preload("res://scripts/screens/gacha_result_screen.gd")
 const GAL_SCREEN := preload("res://scripts/screens/gal_screen.gd")
@@ -97,6 +104,7 @@ const AUDIO_SFX_POOL_SIZE := 6
 var heroes: Array = []
 var hero_resource_map: Array = []
 var hero_rarity_grades := {}
+var video_manifest := {}
 var pools: Array = []
 var tasks: Array = []
 var mails: Array = []
@@ -143,11 +151,15 @@ var title_label: Label
 var wallet_label: Label
 var top_bar: Control
 var current_view := "boot"
-var remnants_page := 0
-var selected_remnant_id := DEFAULT_HERO_ID
 var startup_screen
 var home_screen
+var chapter_screen
+var battle_screen
+var shop_screen
+var activity_screen
 var hero_screen
+var remnants_screen
+var home_panel_screen
 var gal_screen
 var gacha_screen
 var gacha_result_screen
@@ -175,6 +187,7 @@ func _ready() -> void:
 	heroes = _read_json(HERO_DATA_PATH).get("heroes", [])
 	hero_resource_map = _read_json_array(HERO_RESOURCE_MAP_PATH)
 	hero_rarity_grades = _read_json(HERO_RARITY_GRADE_PATH)
+	video_manifest = _read_json(VIDEO_MANIFEST_PATH)
 	pools = _read_json(POOL_DATA_PATH).get("pools", [])
 	var live_ops := _read_json(LIVE_OPS_DATA_PATH)
 	tasks = live_ops.get("tasks", [])
@@ -190,7 +203,13 @@ func _ready() -> void:
 	_build_root()
 	startup_screen = STARTUP_SCREEN.new(self)
 	home_screen = HOME_SCREEN.new(self)
+	chapter_screen = CHAPTER_SCREEN.new(self)
+	battle_screen = BATTLE_SCREEN.new(self)
+	shop_screen = SHOP_SCREEN.new(self)
+	activity_screen = ACTIVITY_SCREEN.new(self)
 	hero_screen = HERO_SCREEN.new(self)
+	remnants_screen = REMNANTS_SCREEN.new(self)
+	home_panel_screen = HOME_PANEL_SCREEN.new(self)
 	gacha_screen = GACHA_SCREEN.new(self)
 	gacha_result_screen = GACHA_RESULT_SCREEN.new(self)
 	gal_screen = GAL_SCREEN.new(self)
@@ -732,420 +751,47 @@ func _show_gallery() -> void:
 	hero_screen._show_gallery()
 
 func _show_remnants_list() -> void:
-	current_view = "remnants"
-	_set_chrome_visible(false)
-	_clear("幻靈列表")
-	_draw_remnants_background()
-	_draw_remnants_top_bar()
-	_draw_remnants_side_filters()
-	var list: Array = _remnants_primary_heroes()
-	var page_size: int = 10
-	var page_count: int = max(1, int(ceil(float(list.size()) / float(page_size))))
-	remnants_page = clamp(remnants_page, 0, page_count - 1)
-	var start: int = remnants_page * page_size
-	var page_items: Array = list.slice(start, min(start + page_size, list.size()))
-	_draw_remnants_section("靈能原體", Vector2(260, 82), page_items, true)
-	_draw_remnants_sync_section(Vector2(260, 586), list.size(), page_count)
-
-
-func _draw_remnants_background() -> void:
-	_draw_image(UI_REMNANTS_BG, Vector2(0, 0), Vector2(1280, 720), true, Color(0.70, 0.76, 0.92, 0.86))
-	_view_container().add_child(_panel(Vector2(0, 0), Vector2(1280, 720), Color(0.010, 0.018, 0.035, 0.40)))
-	_view_container().add_child(_panel(Vector2(0, 548), Vector2(1280, 172), Color(0.34, 0.43, 0.60, 0.30)))
-	for i in range(7):
-		var y := 80.0 + i * 80.0
-		_view_container().add_child(_panel(Vector2(38, y), Vector2(2, 58), Color(0.45, 0.55, 0.72, 0.36)))
-		_view_container().add_child(_panel(Vector2(31, y + 22), Vector2(14, 14), Color(0.90, 0.96, 1.0, 0.60)))
-
-
-func _draw_remnants_top_bar() -> void:
-	_add_action_button("返回", Vector2(46, 18), _show_home, Vector2(116, 38))
-	_add_action_button("?", Vector2(176, 18), _show_player_info, Vector2(42, 38))
-	var tabs := ["編隊", "陣容推薦", "戰力", "品質", "星級", "等級"]
-	var x := 506.0
-	for i in range(tabs.size()):
-		var selected := i == 2
-		_view_container().add_child(_panel(Vector2(x, 20), Vector2(96, 30), Color(0.10, 0.12, 0.18, 0.62)))
-		var label := _label(str(tabs[i]), 15, HORIZONTAL_ALIGNMENT_CENTER)
-		label.position = Vector2(x, 24)
-		label.size = Vector2(96, 22)
-		label.modulate = Color(0.80, 1.0, 0.18) if selected else Color(0.95, 0.95, 0.98)
-		_view_container().add_child(label)
-		x += 96
-
-
-func _draw_remnants_side_filters() -> void:
-	var filters := [
-		["全部", Color(0.66, 0.94, 0.20, 1)],
-		["水相", Color(0.82, 0.92, 1.0, 1)],
-		["風相", Color(0.82, 1.0, 0.88, 1)],
-		["火相", Color(1.0, 0.78, 0.62, 1)],
-		["土相", Color(0.98, 0.90, 0.72, 1)],
-		["輝星", Color(0.88, 0.90, 1.0, 1)]
-	]
-	var y := 120.0
-	for i in range(filters.size()):
-		var selected := i == 0
-		if selected:
-			_view_container().add_child(_panel(Vector2(58, y - 12), Vector2(108, 30), Color(0.38, 0.58, 0.12, 0.72)))
-		var bullet := _panel(Vector2(72, y - 5), Vector2(16, 16), filters[i][1])
-		_view_container().add_child(bullet)
-		var label := _label(str(filters[i][0]), 17)
-		label.position = Vector2(106, y - 9)
-		label.size = Vector2(86, 26)
-		label.modulate = Color(0.88, 1.0, 0.58) if selected else Color(0.96, 0.96, 1.0)
-		_view_container().add_child(label)
-		y += 64
-
-
-func _draw_remnants_section(title: String, pos: Vector2, list: Array, featured: bool) -> void:
-	_draw_remnants_section_header(title, pos)
-	var columns := 5
-	var start_x := pos.x + 98
-	for i in range(list.size()):
-		var col := i % columns
-		var row := i / columns
-		_draw_remnants_card(list[i], Vector2(start_x + col * 132.0, pos.y + 48 + row * 214.0), featured)
-
-
-func _draw_remnants_sync_section(pos: Vector2, total_count: int, page_count: int) -> void:
-	_draw_remnants_section_header("同調者", pos)
-	var tip := _label("當前共用養成：幻靈等級-86級  靈階-0星  靈裝-紫色Lv.30  靈裝強化-20級", 16)
-	tip.position = pos + Vector2(190, 7)
-	tip.size = Vector2(730, 26)
-	tip.modulate = Color(1.0, 0.94, 0.58)
-	_view_container().add_child(tip)
-	var count := _label("全部幻靈：%d  第 %d/%d 頁" % [total_count, remnants_page + 1, page_count], 15, HORIZONTAL_ALIGNMENT_RIGHT)
-	count.position = pos + Vector2(606, 7)
-	count.size = Vector2(224, 24)
-	count.modulate = Color(0.82, 0.94, 1.0)
-	_view_container().add_child(count)
-	_add_action_button("上一頁", pos + Vector2(646, 42), func() -> void:
-		remnants_page = max(0, remnants_page - 1)
-		_show_remnants_list()
-	, Vector2(82, 36))
-	_add_action_button("下一頁", pos + Vector2(742, 42), func() -> void:
-		remnants_page = min(page_count - 1, remnants_page + 1)
-		_show_remnants_list()
-	, Vector2(82, 36))
-
-
-func _draw_remnants_section_header(title: String, pos: Vector2) -> void:
-	_view_container().add_child(_panel(pos, Vector2(846, 30), Color(0.08, 0.10, 0.18, 0.76)))
-	var marker := _panel(pos + Vector2(12, 7), Vector2(18, 16), Color(0.68, 0.96, 0.22, 0.95))
-	_view_container().add_child(marker)
-	var label := _label(title, 18)
-	label.position = pos + Vector2(42, 3)
-	label.size = Vector2(180, 26)
-	label.modulate = Color(0.78, 1.0, 0.32)
-	_view_container().add_child(label)
-
-
-func _draw_remnants_card(hero: Dictionary, pos: Vector2, featured: bool) -> void:
-	var rarity := int(hero.get("rarity", 1))
-	var hero_id := int(hero.get("id", 0))
-	var level := 78 + rarity * 4 + hero_id % 13
-	var card_size := Vector2(118, 202)
-	var frame_color := Color(0.92, 0.64, 0.20, 0.90) if rarity >= 4 else Color(0.34, 0.62, 0.92, 0.86)
-	_view_container().add_child(_panel(pos, card_size, Color(0.04, 0.055, 0.085, 0.88)))
-	_view_container().add_child(_panel(pos + Vector2(2, 2), card_size - Vector2(4, 4), Color(frame_color.r, frame_color.g, frame_color.b, 0.22)))
-	_draw_hero_thumb(hero, pos + Vector2(6, 6), Vector2(106, 142), Color(1, 1, 1, 1))
-	_view_container().add_child(_panel(pos + Vector2(4, 150), Vector2(110, 48), Color(0.45, 0.25, 0.06, 0.84)))
-	var rare := _label("SSR", 24)
-	rare.position = pos + Vector2(10, 154)
-	rare.size = Vector2(58, 30)
-	rare.modulate = Color(1.0, 0.82, 0.36)
-	_view_container().add_child(rare)
-	var level_label := _label("等級%d" % level, 12, HORIZONTAL_ALIGNMENT_RIGHT)
-	level_label.position = pos + Vector2(58, 154)
-	level_label.size = Vector2(54, 18)
-	level_label.modulate = Color(1.0, 0.96, 0.88)
-	_view_container().add_child(level_label)
-	var name := _label(str(hero.get("name", "幻靈")), 13, HORIZONTAL_ALIGNMENT_RIGHT)
-	name.position = pos + Vector2(48, 174)
-	name.size = Vector2(62, 20)
-	name.modulate = Color(1.0, 0.96, 0.88)
-	_view_container().add_child(name)
-	if featured:
-		_draw_red_dot(pos + Vector2(104, -6))
-		var tag := _label("特薦", 13, HORIZONTAL_ALIGNMENT_CENTER)
-		tag.position = pos + Vector2(75, 4)
-		tag.size = Vector2(38, 18)
-		tag.modulate = Color(1.0, 0.98, 0.20)
-		_view_container().add_child(tag)
-	var button := Button.new()
-	button.text = ""
-	button.flat = true
-	button.position = pos
-	button.size = card_size
-	button.focus_mode = Control.FOCUS_NONE
-	button.pressed.connect(func() -> void:
-		_show_remnant_detail(hero_id)
-	)
-	_view_container().add_child(button)
+	remnants_screen.show_list()
 
 
 func _show_remnant_detail(hero_id: int) -> void:
-	selected_remnant_id = hero_id
-	current_view = "remnant_detail"
-	_set_chrome_visible(false)
-	var hero := _hero_by_id(hero_id)
-	_clear("幻靈詳情")
-	_draw_remnant_detail_background(hero)
-	_draw_remnant_detail_left_strip(hero_id)
-	_draw_remnant_detail_tabs()
-	_draw_hero_stage(hero, Vector2(160, -74), Vector2(760, 840), false)
-	_draw_remnant_detail_panel(hero)
-
-
-func _draw_remnant_detail_background(hero: Dictionary) -> void:
-	_draw_image(UI_HERO_BG_DETAIL, Vector2(0, 0), Vector2(1280, 720), true, Color(0.92, 0.94, 1.0, 0.96))
-	_view_container().add_child(_panel(Vector2(0, 0), Vector2(1280, 720), Color(0.012, 0.018, 0.030, 0.32)))
-	if int(hero.get("id", 0)) == 240069:
-		_draw_image(UI_REMNANT_STAGE_BG, Vector2(154, -394), Vector2(700, 1400), false, Color(1.0, 1.0, 1.0, 0.90))
-		_view_container().add_child(_panel(Vector2(760, 0), Vector2(520, 720), Color(0.010, 0.014, 0.026, 0.38)))
-	_view_container().add_child(_panel(Vector2(250, 0), Vector2(520, 720), Color(0.92, 0.78, 0.42, 0.05)))
-	_view_container().add_child(_panel(Vector2(846, 26), Vector2(352, 520), Color(0.020, 0.024, 0.038, 0.42)))
-	_add_action_button("返回", Vector2(46, 18), _show_remnants_list, Vector2(116, 38))
-	_add_action_button("?", Vector2(176, 18), _show_player_info, Vector2(42, 38))
-
-
-func _draw_remnant_detail_left_strip(selected_id: int) -> void:
-	var list := _remnants_primary_heroes()
-	var selected_index := 0
-	for i in range(list.size()):
-		if int(list[i].get("id", 0)) == selected_id:
-			selected_index = i
-			break
-	var start: int = clamp(selected_index - 2, 0, max(0, list.size() - 7))
-	var visible := list.slice(start, min(start + 7, list.size()))
-	_draw_image(UI_HERO_SELECTOR_BG, Vector2(26, 66), Vector2(76, 628), false, Color(1, 1, 1, 0.90))
-	_draw_image(UI_HERO_SELECTOR_TOP, Vector2(26, 646), Vector2(76, 42), false, Color(1, 1, 1, 0.82))
-	for i in range(visible.size()):
-		var hero: Dictionary = visible[i]
-		var pos := Vector2(33, 73 + i * 82.0)
-		var is_selected := int(hero.get("id", 0)) == selected_id
-		if is_selected:
-			_draw_image(UI_HERO_HIGHLIGHT, pos - Vector2(15, 15), Vector2(100, 100), false, Color(1, 1, 1, 0.86))
-		_draw_hero_round_thumb(hero, pos, Vector2(70, 70), Color(1, 1, 1, 1))
-		_draw_image(UI_COMMON_HERO_HEAD_FRAME, pos, Vector2(70, 70), false, Color(1, 1, 1, 0.92))
-		_draw_image(UI_COMMON_HERO_STAR_BAR, pos + Vector2(0, 62), Vector2(70, 12), false, Color(1, 1, 1, 0.42))
-		var stars := _label("★★★★★", 8, HORIZONTAL_ALIGNMENT_CENTER)
-		stars.position = pos + Vector2(0, 61)
-		stars.size = Vector2(70, 12)
-		stars.modulate = Color(1.0, 1.0, 1.0, 0.72)
-		_view_container().add_child(stars)
-		var level := _label(str(_remnant_level(hero)), 11, HORIZONTAL_ALIGNMENT_RIGHT)
-		level.position = pos + Vector2(36, 2)
-		level.size = Vector2(26, 16)
-		level.modulate = Color(1.0, 0.96, 0.76)
-		_view_container().add_child(level)
-		var hero_id := int(hero.get("id", 0))
-		var button := Button.new()
-		button.text = ""
-		button.flat = true
-		button.position = pos - Vector2(6, 6)
-		button.size = Vector2(70, 78)
-		button.focus_mode = Control.FOCUS_NONE
-		button.pressed.connect(func() -> void:
-			_show_remnant_detail(hero_id)
-		)
-		_view_container().add_child(button)
-
-
-func _draw_remnant_detail_tabs() -> void:
-	var tabs := [
-		["主頁", UI_HERO_TAB_HOME, Color(0.70, 1.0, 0.22)],
-		["養成", UI_HERO_TAB_CULTIVATE, Color(1, 1, 1)],
-		["靈裝", UI_HERO_TAB_EQUIP, Color(1, 1, 1)],
-		["靈階", UI_HERO_TAB_STAGE, Color(1, 1, 1)]
-	]
-	var y := 104.0
-	for i in range(tabs.size()):
-		var selected := i == 0
-		if selected:
-			_view_container().add_child(_panel(Vector2(130, y - 19), Vector2(104, 48), Color(0.08, 0.14, 0.09, 0.58)))
-		_draw_image(str(tabs[i][1]), Vector2(132, y - 26), Vector2(54, 54), false, Color(0.78, 1.0, 0.22, 1.0) if selected else Color(0.92, 0.96, 1.0, 0.96))
-		var label := _label(str(tabs[i][0]), 21)
-		label.position = Vector2(190, y - 12)
-		label.size = Vector2(86, 28)
-		label.modulate = tabs[i][2]
-		_view_container().add_child(label)
-		y += 72
-
-
-func _draw_remnant_detail_panel(hero: Dictionary) -> void:
-	var rarity := int(hero.get("rarity", 1))
-	var hero_id := int(hero.get("id", 0))
-	var level := _remnant_level(hero)
-	var pos := Vector2(876, 54)
-	var type_name := _remnant_element_name(hero_id)
-	var role := _remnant_role_name(hero_id)
-	var small := _label(_remnant_title_name(hero_id), 16)
-	small.position = pos
-	small.size = Vector2(180, 24)
-	small.modulate = Color(1.0, 0.82, 0.34)
-	_view_container().add_child(small)
-	var name := _label(str(hero.get("name", "幻靈")), 30)
-	name.position = pos + Vector2(0, 26)
-	name.size = Vector2(210, 42)
-	name.modulate = Color(1.0, 1.0, 1.0)
-	_view_container().add_child(name)
-	var ssr := _label("SSR", 36, HORIZONTAL_ALIGNMENT_RIGHT)
-	ssr.position = pos + Vector2(224, 2)
-	ssr.size = Vector2(96, 50)
-	ssr.modulate = Color(1.0, 0.76, 0.24)
-	_view_container().add_child(ssr)
-	_view_container().add_child(_panel(pos + Vector2(0, 88), Vector2(284, 2), Color(0.84, 0.90, 1.0, 0.22)))
-	_draw_remnant_stars(_remnant_star_level(hero), pos + Vector2(12, 108))
-	var role_label := _label("狂刃" if role == "attack" else "守護", 17, HORIZONTAL_ALIGNMENT_CENTER)
-	role_label.position = pos + Vector2(176, 112)
-	role_label.size = Vector2(70, 24)
-	_view_container().add_child(role_label)
-	var element := _label(type_name, 17, HORIZONTAL_ALIGNMENT_CENTER)
-	element.position = pos + Vector2(260, 112)
-	element.size = Vector2(70, 24)
-	_view_container().add_child(element)
-	var desc := _label("反擊疊暴    暴擊輸出", 15)
-	desc.position = pos + Vector2(12, 150)
-	desc.size = Vector2(260, 24)
-	desc.modulate = Color(0.92, 0.92, 1.0)
-	_view_container().add_child(desc)
-	_view_container().add_child(_panel(pos + Vector2(0, 188), Vector2(284, 2), Color(0.84, 0.90, 1.0, 0.18)))
-
-	var power := _remnant_power(hero)
-	var level_label := _label("等級", 17)
-	level_label.position = pos + Vector2(10, 214)
-	level_label.size = Vector2(90, 24)
-	_view_container().add_child(level_label)
-	var level_value := _label("%d/180" % level, 22)
-	level_value.position = pos + Vector2(10, 240)
-	level_value.size = Vector2(130, 30)
-	level_value.modulate = Color(0.72, 1.0, 0.18)
-	_view_container().add_child(level_value)
-	var power_title := _label("戰力", 20, HORIZONTAL_ALIGNMENT_CENTER)
-	power_title.position = pos + Vector2(178, 214)
-	power_title.size = Vector2(106, 28)
-	power_title.modulate = Color(1.0, 0.95, 0.48)
-	_view_container().add_child(power_title)
-	var power_label := _label(str(power), 20, HORIZONTAL_ALIGNMENT_CENTER)
-	power_label.position = pos + Vector2(178, 244)
-	power_label.size = Vector2(106, 30)
-	power_label.modulate = Color(1.0, 0.90, 0.40)
-	_view_container().add_child(power_label)
-	var attrs := _remnant_attrs(hero)
-	_draw_remnant_attr("攻擊", str(attrs["攻擊"]), pos + Vector2(10, 294))
-	_draw_remnant_attr("生命", str(attrs["生命"]), pos + Vector2(178, 294))
-	_draw_remnant_attr("防禦", str(attrs["防禦"]), pos + Vector2(10, 326))
-	_draw_remnant_attr("速度", str(attrs["速度"]), pos + Vector2(178, 326))
-	_add_action_button("詳情屬性", pos + Vector2(0, 372), _show_player_info, Vector2(284, 28))
-	_draw_remnant_skill_badges(hero, pos + Vector2(8, 408))
-
-
-func _draw_remnant_stars(rarity: int, pos: Vector2) -> void:
-	for i in range(5):
-		var path := UI_COMMON_STAR if i < rarity else UI_COMMON_STAR_OFF
-		_draw_image(path, pos + Vector2(i * 28.0, 0), Vector2(26, 26), false, Color(1, 1, 1, 0.96))
-
-
-func _draw_remnant_skill_badges(hero: Dictionary, pos: Vector2) -> void:
-	var skill_paths: Array = hero.get("skillResources", [])
-	for i in range(4):
-		var icon_pos := pos + Vector2(i * 68.0, 0)
-		_draw_image(UI_COMMON_SKILL_FRAME, icon_pos, Vector2(62, 62), false, Color(1.0, 0.86, 0.28, 0.36))
-		if i < skill_paths.size():
-			_draw_image(_godot_resource_path(str(skill_paths[i])), icon_pos + Vector2(3, 3), Vector2(56, 56), false, Color(1, 1, 1, 0.98))
-		else:
-			var icon := _label("威", 24, HORIZONTAL_ALIGNMENT_CENTER)
-			icon.position = icon_pos + Vector2(3, 16)
-			icon.size = Vector2(56, 30)
-			icon.modulate = Color(1.0, 0.96, 0.62)
-			_view_container().add_child(icon)
-
-
-func _draw_remnant_attr(label_text: String, value_text: String, pos: Vector2) -> void:
-	var label := _label(label_text, 15)
-	label.position = pos
-	label.size = Vector2(58, 22)
-	label.modulate = Color(0.94, 0.94, 1.0)
-	_view_container().add_child(label)
-	var value := _label(value_text, 16, HORIZONTAL_ALIGNMENT_RIGHT)
-	value.position = pos + Vector2(60, 0)
-	value.size = Vector2(72, 22)
-	value.modulate = Color(1.0, 1.0, 1.0)
-	_view_container().add_child(value)
+	remnants_screen.show_detail(hero_id)
 
 
 func _remnant_power(hero: Dictionary) -> int:
-	var rarity := int(hero.get("rarity", 1))
-	var hero_id := int(hero.get("id", 0))
-	if hero_id == 240069:
-		return 274369
-	return 88000 + rarity * 42000 + (hero_id % 100) * 1137
+	return remnants_screen.remnant_power(hero)
 
 
 func _remnant_attrs(hero: Dictionary) -> Dictionary:
-	var rarity := int(hero.get("rarity", 1))
-	var hero_id := int(hero.get("id", 0))
-	if hero_id == 240069:
-		return {
-			"攻擊": 23746,
-			"生命": 212970,
-			"防禦": 1805,
-			"速度": 104,
-		}
-	return {
-		"攻擊": 16400 + rarity * 1800 + hero_id % 900,
-		"生命": 145000 + rarity * 18500 + (hero_id % 100) * 210,
-		"防禦": 1300 + rarity * 120 + hero_id % 90,
-		"速度": 96 + rarity * 2 + hero_id % 5,
-	}
+	return remnants_screen.remnant_attrs(hero)
 
 
 func _remnant_level(hero: Dictionary) -> int:
-	var hero_id := int(hero.get("id", 0))
-	if hero_id == 240069:
-		return 100
-	return 78 + int(hero.get("rarity", 1)) * 4 + hero_id % 13
+	return remnants_screen.remnant_level(hero)
 
 
 func _remnant_star_level(hero: Dictionary) -> int:
-	var hero_id := int(hero.get("id", 0))
-	if hero_id == 240069:
-		return 2
-	return int(hero.get("rarity", 1))
+	return remnants_screen.remnant_star_level(hero)
 
 
 func _remnant_title_name(hero_id: int) -> String:
-	if hero_id == 240069:
-		return "昭陽"
-	return _remnant_element_name(hero_id)
+	return remnants_screen.remnant_title_name(hero_id)
 
 
 func _remnant_element_name(hero_id: int) -> String:
-	if hero_id == 240069:
-		return "土相"
-	var names := ["水相", "風相", "火相", "土相", "輝星"]
-	return names[hero_id % names.size()]
+	return remnants_screen.remnant_element_name(hero_id)
 
 
 func _remnant_role_name(hero_id: int) -> String:
-	if hero_id == 240069:
-		return "attack"
-	return "attack" if hero_id % 2 == 0 else "guard"
+	return remnants_screen.remnant_role_name(hero_id)
 
 
 func _remnants_primary_heroes() -> Array:
-	var list := heroes.duplicate(true)
-	list.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
-		return int(a.get("rarity", 1)) > int(b.get("rarity", 1)) if int(a.get("rarity", 1)) != int(b.get("rarity", 1)) else int(a.get("id", 0)) < int(b.get("id", 0))
-	)
-	return list
+	return remnants_screen.primary_heroes()
 
 
 func _remnants_sync_heroes() -> Array:
-	var list := _remnants_primary_heroes()
-	return list.slice(2, min(list.size(), 10))
+	return remnants_screen.sync_heroes()
 
 func _show_history() -> void:
 	_clear("記錄")
@@ -1189,9 +835,11 @@ func _show_history() -> void:
 func _perform_draw(count: int) -> Array:
 	var pool := _pool_by_id(str(save.get("active_pool_id", "advanced")))
 	var cost := count * int(pool.get("ticketCost", 1))
-	if int(save.get("tickets", 0)) < cost:
+	var forced_draw := not OS.get_environment("SHAONV_MVP_FORCE_DRAW_HERO_ID").is_empty()
+	if not forced_draw and int(save.get("tickets", 0)) < cost:
 		return []
-	save["tickets"] = int(save.get("tickets", 0)) - cost
+	if not forced_draw:
+		save["tickets"] = int(save.get("tickets", 0)) - cost
 	save["draw_count"] = int(save.get("draw_count", 0)) + count
 	save["gacha_integral"] = int(save.get("gacha_integral", 0)) + count * 10
 	var results: Array = []
@@ -1210,6 +858,11 @@ func _perform_draw(count: int) -> Array:
 	return results
 
 func _draw_one(pool: Dictionary) -> Dictionary:
+	var forced_hero_id := int(OS.get_environment("SHAONV_MVP_FORCE_DRAW_HERO_ID")) if not OS.get_environment("SHAONV_MVP_FORCE_DRAW_HERO_ID").is_empty() else 0
+	if forced_hero_id > 0:
+		var forced_hero := _hero_by_id(forced_hero_id)
+		if not forced_hero.is_empty():
+			return _draw_result_for_hero(pool, forced_hero, int(forced_hero.get("rarity", 1)))
 	var pool_id := str(pool.get("id", "advanced"))
 	var pity := _pity(pool_id) + 1
 	var rarity := 2
@@ -1241,6 +894,9 @@ func _draw_one(pool: Dictionary) -> Dictionary:
 			featured.append(hero)
 	var list := featured if rarity >= 3 and not featured.is_empty() and rng.randf() < float(pool.get("upRate", 0.55)) else candidates
 	var hero: Dictionary = list[rng.randi_range(0, list.size() - 1)]
+	return _draw_result_for_hero(pool, hero, rarity)
+
+func _draw_result_for_hero(pool: Dictionary, hero: Dictionary, rarity: int) -> Dictionary:
 	var owned: Dictionary = save.get("owned", {})
 	var shards: Dictionary = save.get("shards", {})
 	var key := str(hero.get("id", 0))
@@ -1263,116 +919,23 @@ func _hero_unlock_shard_cost(hero: Dictionary) -> int:
 	return hero_screen._hero_unlock_shard_cost(hero)
 
 func _show_player_info() -> void:
-	_clear("玩家信息")
-	var profile: Dictionary = save.get("profile", {})
-	var settings: Dictionary = save.get("settings", {})
-	var panel := _panel(Vector2(44, 44), Vector2(620, 360), Color(0.095, 0.078, 0.065, 0.94))
-	_view_container().add_child(panel)
-	var info := _label("玩家資料\n名稱：%s\n等級：%d\n戰力：%d\n\n收集武將：%d\n累計喚靈：%d\n看板自動播放：%s" % [
-		profile.get("name", "Player"),
-		int(profile.get("level", 1)),
-		_player_power(),
-		save.get("owned", {}).size(),
-		int(save.get("draw_count", 0)),
-		"開" if bool(settings.get("wallpaper_auto_play", true)) else "關"
-	], 21)
-	info.position = Vector2(70, 70)
-	info.size = Vector2(520, 230)
-	_view_container().add_child(info)
-	_add_action_button("設定", Vector2(70, 330), _show_settings)
-	_add_action_button("返回主界面", Vector2(216, 330), _show_home, Vector2(146, 44))
+	home_panel_screen.show_player_info()
+
 
 func _show_settings() -> void:
-	_clear("設定")
-	var settings: Dictionary = save.get("settings", {})
-	var panel := _panel(Vector2(44, 44), Vector2(700, 370), Color(0.095, 0.078, 0.065, 0.94))
-	_view_container().add_child(panel)
-	var title := _label("SystemSettingView MVP", 30)
-	title.position = Vector2(70, 70)
-	title.size = Vector2(440, 44)
-	_view_container().add_child(title)
-	_add_toggle_button("看板自動播放", "wallpaper_auto_play", Vector2(70, 140), bool(settings.get("wallpaper_auto_play", true)))
-	_add_toggle_button("音樂", "music", Vector2(70, 202), bool(settings.get("music", true)))
-	_add_toggle_button("音效", "effects", Vector2(70, 264), bool(settings.get("effects", true)))
-	_add_action_button("玩家信息", Vector2(70, 340), _show_player_info)
-	_add_action_button("返回主界面", Vector2(216, 340), _show_home, Vector2(146, 44))
+	home_panel_screen.show_settings()
 
 
 func _show_home_menu() -> void:
-	var origin := _show_home_panel("快捷選單", "主屏右上角羅盤入口，收束公告、郵件、設定與資源修復。")
-	var entries := [
-		{"name": "玩家資料", "desc": "查看等級、戰力、收集與看板狀態。", "callback": _show_player_info, "icon": UI_MAIN_LIMIT_ICONS[0]},
-		{"name": "系統設定", "desc": "音樂、音效與看板自動播放。", "callback": _show_settings, "icon": UI_MAIN_CHARGE_ICONS[2]},
-		{"name": "郵件", "desc": "領取補償與系統獎勵。", "callback": _show_mail, "icon": UI_MAIN_LIMIT_ICONS[2]},
-		{"name": "資源修復", "desc": "檢查本地 MVP 資源導出狀態。", "callback": _show_repair_notice, "icon": UI_MAIN_CHARGE_ICONS[1]},
-		{"name": "公告", "desc": "查看本地公告與活動提示。", "callback": _show_home_notice, "icon": UI_MAIN_LIMIT_ICONS[3]},
-		{"name": "客服助手", "desc": "回到主屏小助手建議。", "callback": _show_assist, "icon": UI_MAIN_LIMIT_ICONS[4]},
-	]
-	for index in range(entries.size()):
-		var item: Dictionary = entries[index]
-		var col := index % 3
-		var row := index / 3
-		var pos := origin + Vector2(col * 304, row * 148)
-		_draw_home_resource_card(pos, Vector2(264, 112), Color(0.76, 0.88, 1.0, 0.30), index % 2 == 1)
-		_draw_image(str(item.get("icon", UI_MAIN_LIMIT_ICON_FRAME)), pos + Vector2(12, 14), Vector2(76, 76), false, Color(1, 1, 1, 0.92))
-		var title := _label(str(item.get("name", "")), 21)
-		title.position = pos + Vector2(98, 14)
-		title.size = Vector2(144, 28)
-		title.modulate = Color(1.0, 0.94, 0.74)
-		_view_container().add_child(title)
-		var desc := _label(str(item.get("desc", "")), 14)
-		desc.position = pos + Vector2(98, 46)
-		desc.size = Vector2(142, 46)
-		desc.modulate = Color(0.90, 0.86, 0.82)
-		_view_container().add_child(desc)
-		_add_hit_button(pos, Vector2(264, 112), item.get("callback", _show_home))
+	home_panel_screen.show_home_menu()
 
 
 func _show_home_notice() -> void:
-	var origin := _show_home_panel("公告", "本地 MVP 公告中心，對應右上快捷選單與登入公告。")
-	var notices := [
-		{"title": "資源恢復進度", "body": "Home、Gal、幻靈列表和詳情已接入本地導出的 UI/角色資源。"},
-		{"title": "今日活動", "body": "每日補給、郵件、章節任務與萬象喚靈可形成完整離線循環。"},
-		{"title": "測試提示", "body": "可用 SHAONV_MVP_START_VIEW 指定 main、charge、chapter 等入口回歸截圖。"},
-	]
-	for index in range(notices.size()):
-		var notice: Dictionary = notices[index]
-		var pos := origin + Vector2(0, index * 104)
-		_draw_home_resource_card(pos, Vector2(820, 82), Color(1.0, 0.82, 0.42, 0.25), index % 2 == 1)
-		var title := _label(str(notice.get("title", "")), 21)
-		title.position = pos + Vector2(24, 8)
-		title.size = Vector2(220, 30)
-		title.modulate = Color(1.0, 0.94, 0.70)
-		_view_container().add_child(title)
-		var body := _label(str(notice.get("body", "")), 16)
-		body.position = pos + Vector2(24, 42)
-		body.size = Vector2(760, 28)
-		body.modulate = Color(0.90, 0.86, 0.82)
-		_view_container().add_child(body)
-	_add_action_button("返回選單", Vector2(270, 580), _show_home_menu, Vector2(132, 44), UI_COMMON_BTN_WHITE)
+	home_panel_screen.show_home_notice()
 
 
 func _show_repair_notice() -> void:
-	var origin := _show_home_panel("資源修復", "本地資源檢查入口，方便核對導出和 Godot 映射。")
-	var checks := [
-		{"name": "MainUI 圖集", "path": "assets/ui/mainui", "ok": FileAccess.file_exists("res://assets/ui/mainui/mainui_btn_25.png")},
-		{"name": "通用按鈕", "path": "assets/ui/common", "ok": FileAccess.file_exists("res://assets/ui/common/tongyong_btn_08.png")},
-		{"name": "英雄圓頭像", "path": "assets/ui/hero/round", "ok": FileAccess.file_exists("res://assets/ui/hero/round/yhero_037.png")},
-		{"name": "Gal Spine", "path": "assets/spine/hero_037r_s01", "ok": FileAccess.file_exists("res://assets/spine/hero_037r_s01/hero_037r_s01.baked.json")},
-	]
-	for index in range(checks.size()):
-		var item: Dictionary = checks[index]
-		var pos := origin + Vector2(0, index * 72)
-		_draw_home_resource_card(pos, Vector2(820, 54), Color(0.70, 0.90, 1.0, 0.24), index % 2 == 1)
-		var state := "已找到" if bool(item.get("ok", false)) else "待導出"
-		var color := Color(0.66, 1.0, 0.54) if bool(item.get("ok", false)) else Color(1.0, 0.62, 0.44)
-		var label := _label("%s    %s    %s" % [item.get("name", ""), state, item.get("path", "")], 18)
-		label.position = pos + Vector2(20, 8)
-		label.size = Vector2(780, 34)
-		label.modulate = color
-		_view_container().add_child(label)
-	_add_action_button("返回選單", Vector2(270, 580), _show_home_menu, Vector2(132, 44), UI_COMMON_BTN_WHITE)
-
+	home_panel_screen.show_repair_notice()
 
 func _show_home_panel(title_text: String, subtitle_text: String) -> Vector2:
 	_clear(title_text)
@@ -1451,599 +1014,95 @@ func _draw_home_feature_icon(icon_path: String, pos: Vector2, label_text: String
 
 
 func _show_bag() -> void:
-	var origin := _show_home_panel("背包", "查看當前持有的喚靈券、源石、碎片和活動道具。")
-	var items := [
-		{"icon": "res://assets/ui/item/draw_07.png", "name": "喚靈券", "count": int(save.get("tickets", 0)), "desc": "用於喚靈抽取。"},
-		{"icon": "res://assets/ui/item/draw_05.png", "name": "源石", "count": int(save.get("gems", 0)), "desc": "可在商店兌換喚靈券。"},
-		{"icon": "res://assets/ui/item/draw_06.png", "name": "英雄碎片", "count": save.get("shards", {}).size(), "desc": "重複喚靈或關卡獎勵獲得。"},
-		{"icon": "res://assets/ui/item/draw_04.png", "name": "活動道具", "count": int(save.get("event_tokens", 0)), "desc": "活動、福利與任務產出。"},
-	]
-	for index in range(items.size()):
-		var item: Dictionary = items[index]
-		var col := index % 2
-		var row := index / 2
-		var pos := origin + Vector2(col * 470, row * 132)
-		_draw_home_resource_card(pos, Vector2(420, 104), _rarity_color(2 + index % 3, 0.36), index % 2 == 1)
-		_draw_home_reward_icon(str(item.get("icon", "")), pos + Vector2(16, 4), "", "x%s" % str(item.get("count", 0)))
-		var name := _label("%s  x%s" % [str(item.get("name", "")), str(item.get("count", 0))], 22)
-		name.position = pos + Vector2(106, 18)
-		name.size = Vector2(280, 30)
-		name.modulate = Color(1.0, 0.93, 0.70)
-		_view_container().add_child(name)
-		var desc := _label(str(item.get("desc", "")), 15)
-		desc.position = pos + Vector2(106, 56)
-		desc.size = Vector2(280, 24)
-		desc.modulate = Color(0.90, 0.84, 0.80)
-		_view_container().add_child(desc)
-	_add_action_button("前往商店", Vector2(270, 580), _show_shop, Vector2(132, 44), UI_COMMON_BTN_GOLD)
-	_add_action_button("前往喚靈", Vector2(422, 580), _show_gacha, Vector2(132, 44), UI_COMMON_BTN_GOLD)
+	home_panel_screen.show_bag()
 
 
 func _show_relics() -> void:
-	var origin := _show_home_panel("遺器", "整理目前已發現的遺器線索，後續可接入完整遺器背包。")
-	var rows := [
-		{"name": "星核碎片", "slot": "攻擊", "state": "已裝備", "bonus": "攻擊 +8%"},
-		{"name": "晨昏羽飾", "slot": "生命", "state": "可強化", "bonus": "生命 +12%"},
-		{"name": "古域紋章", "slot": "速度", "state": "未裝備", "bonus": "速度 +5"},
-	]
-	for index in range(rows.size()):
-		var item: Dictionary = rows[index]
-		var pos := origin + Vector2(0, index * 104)
-		_draw_home_resource_card(pos, Vector2(780, 84), Color(0.70, 0.78, 1.0, 0.34), index % 2 == 1)
-		_draw_home_reward_icon("res://assets/ui/item/draw_0%d.png" % (index + 1), pos + Vector2(12, -6), str(item.get("slot", "")), "")
-		var title := _label(str(item.get("name", "")), 22)
-		title.position = pos + Vector2(104, 12)
-		title.size = Vector2(180, 30)
-		title.modulate = Color(1.0, 0.93, 0.70)
-		_view_container().add_child(title)
-		var meta := _label("%s / %s / %s" % [item.get("slot", ""), item.get("state", ""), item.get("bonus", "")], 16)
-		meta.position = pos + Vector2(314, 18)
-		meta.size = Vector2(420, 28)
-		meta.modulate = Color(0.92, 0.86, 0.82)
-		_view_container().add_child(meta)
-	_add_action_button("幻靈列表", Vector2(270, 580), _show_remnants_list, Vector2(132, 44), UI_COMMON_BTN_GOLD)
+	home_panel_screen.show_relics()
 
 
 func _show_develop() -> void:
-	var origin := _show_home_panel("養成", "角色養成入口：查看英雄、進入詳情、前往 Gal 看板或幻靈列表。")
-	var actions := [
-		{"name": "英雄列表", "desc": "查看所有英雄與持有狀態。", "callback": _show_gallery, "icon": UI_MAIN_LIMIT_ICONS[0]},
-		{"name": "當前英雄", "desc": "進入當前選中英雄詳情。", "callback": func() -> void: _show_hero_detail(int(save.get("selected_hero_id", DEFAULT_HERO_ID))), "icon": UI_MAIN_LIMIT_ICONS[1]},
-		{"name": "Gal 看板", "desc": "進入現世互動與裝扮。", "callback": _show_gal, "icon": "res://assets/ui/mainui/mainui_btn_25.png"},
-		{"name": "幻靈列表", "desc": "查看幻靈列表與詳情。", "callback": _show_remnants_list, "icon": UI_MAIN_LIMIT_ICONS[2]},
-	]
-	for index in range(actions.size()):
-		var item: Dictionary = actions[index]
-		var col := index % 2
-		var row := index / 2
-		var pos := origin + Vector2(col * 430, row * 128)
-		_draw_home_resource_card(pos, Vector2(380, 96), _rarity_color(3 + row, 0.32), index % 2 == 1)
-		_draw_image(str(item.get("icon", UI_MAIN_LIMIT_ICON_FRAME)), pos + Vector2(12, 8), Vector2(72, 72), false, Color(1, 1, 1, 0.92))
-		var title := _label(str(item.get("name", "")), 22)
-		title.position = pos + Vector2(98, 12)
-		title.size = Vector2(150, 30)
-		title.modulate = Color(1.0, 0.93, 0.70)
-		_view_container().add_child(title)
-		var desc := _label(str(item.get("desc", "")), 15)
-		desc.position = pos + Vector2(98, 48)
-		desc.size = Vector2(250, 24)
-		desc.modulate = Color(0.92, 0.86, 0.82)
-		_view_container().add_child(desc)
-		_add_action_button("前往", pos + Vector2(284, 26), item.get("callback", _show_home), Vector2(72, 38), UI_COMMON_BTN_GOLD)
+	home_panel_screen.show_develop()
 
 
 func _show_guild() -> void:
-	var origin := _show_home_panel("公會", "單機 MVP 公會入口：目前提供簽到、捐獻與成員概覽。")
-	var level := int(save.get("guild_level", 1))
-	var contribution := int(save.get("guild_contribution", 0))
-	var info := _label("公會：星塵旅團\n等級：Lv.%d\n貢獻：%d\n今日狀態：%s" % [
-		level,
-		contribution,
-		"已簽到" if str(save.get("guild_checkin_date", "")) == Time.get_date_string_from_system() else "可簽到"
-	], 22)
-	_draw_home_resource_card(origin, Vector2(520, 166), Color(0.72, 0.88, 1.0, 0.34), false)
-	_draw_image(UI_MAIN_CHARGE_ICONS[1], origin + Vector2(20, 32), Vector2(86, 86), false, Color(1, 1, 1, 0.92))
-	info.position = origin + Vector2(126, 22)
-	info.size = Vector2(420, 160)
-	_view_container().add_child(info)
-	_add_action_button("公會簽到", origin + Vector2(0, 190), func() -> void:
-		if str(save.get("guild_checkin_date", "")) != Time.get_date_string_from_system():
-			save["guild_checkin_date"] = Time.get_date_string_from_system()
-			save["guild_contribution"] = int(save.get("guild_contribution", 0)) + 10
-			_grant_reward(1, 120)
-			_persist()
-		_show_guild()
-	, Vector2(132, 44), UI_COMMON_BTN_GOLD)
-	_add_action_button("查看任務", origin + Vector2(154, 190), _show_tasks, Vector2(132, 44), UI_COMMON_BTN_GOLD)
+	home_panel_screen.show_guild()
 
 
 func _show_activity_center() -> void:
-	var origin := _show_home_panel("活動", "限時活動與主屏左側入口統一收束到這裡。")
-	var activities := [
-		{"name": "新手狂歡", "time": "常駐", "callback": _show_daily, "icon": UI_MAIN_LIMIT_ICONS[0]},
-		{"name": "開服沖榜", "time": "7d01h", "callback": _show_tasks, "icon": UI_MAIN_LIMIT_ICONS[3]},
-		{"name": "限時皮膚", "time": "11d01h", "callback": _show_shop, "icon": UI_MAIN_LIMIT_ICONS[4]},
-		{"name": "萬象喚靈", "time": "4d01h", "callback": _open_present_pool, "icon": UI_MAIN_LIMIT_ICONS[5]},
-	]
-	for index in range(activities.size()):
-		var item: Dictionary = activities[index]
-		var pos := origin + Vector2(0, index * 82)
-		_draw_home_resource_card(pos, Vector2(760, 68), Color(1.0, 0.74, 0.38, 0.30), index % 2 == 1)
-		_draw_image(str(item.get("icon", UI_MAIN_LIMIT_ICON_FRAME)), pos + Vector2(8, -10), Vector2(76, 76), false, Color(1, 1, 1, 0.92))
-		var title := _label(str(item.get("name", "")), 20)
-		title.position = pos + Vector2(96, 10)
-		title.size = Vector2(180, 30)
-		title.modulate = Color(1.0, 0.93, 0.70)
-		_view_container().add_child(title)
-		var time_label := _label(str(item.get("time", "")), 16, HORIZONTAL_ALIGNMENT_CENTER)
-		time_label.position = pos + Vector2(488, 12)
-		time_label.size = Vector2(96, 26)
-		time_label.modulate = Color(1.0, 0.80, 0.28)
-		_view_container().add_child(time_label)
-		_add_action_button("前往", pos + Vector2(628, 12), item.get("callback", _show_home), Vector2(82, 38), UI_COMMON_BTN_GOLD)
+	activity_screen.show_activity_center()
 
 
 func _show_welfare() -> void:
-	var origin := _show_home_panel("福利", "每日、郵件與任務獎勵的快捷入口。")
-	var entries := [
-		{"name": "每日補給", "icon": UI_MAIN_CHARGE_ICONS[1], "callback": _show_daily},
-		{"name": "郵件獎勵", "icon": UI_MAIN_LIMIT_ICONS[2], "callback": _show_mail},
-		{"name": "章節任務", "icon": UI_MAIN_LIMIT_ICONS[3], "callback": _show_tasks},
-	]
-	for index in range(entries.size()):
-		var item: Dictionary = entries[index]
-		var pos := origin + Vector2(index * 170, 0)
-		_draw_home_feature_icon(str(item.get("icon", UI_MAIN_LIMIT_ICON_FRAME)), pos, str(item.get("name", "")), item.get("callback", _show_home))
-	var tip := _label("右側福利按鈕現在不再復用商店頁，而是直接進入獎勵收束頁。", 18)
-	tip.position = origin + Vector2(0, 132)
-	tip.size = Vector2(520, 90)
-	tip.modulate = Color(0.92, 0.86, 0.82)
-	_view_container().add_child(tip)
+	activity_screen.show_welfare()
 
 
 func _show_month_card() -> void:
-	var origin := _show_home_panel("月卡", "本地 MVP 月卡狀態與每日領取。")
-	var active := bool(save.get("month_card_active", false))
-	var claimed := str(save.get("month_card_claimed_date", "")) == Time.get_date_string_from_system()
-	var info := _label("狀態：%s\n每日獎勵：源石 x120 / 喚靈券 x1\n今日：%s" % [
-		"已開通" if active else "試用未開通",
-		"已領取" if claimed else "可領取"
-	], 22)
-	_draw_home_resource_card(origin, Vector2(560, 154), Color(1.0, 0.82, 0.42, 0.34), false)
-	_draw_image(UI_MAIN_CHARGE_ICONS[2], origin + Vector2(22, 30), Vector2(86, 86), false, Color(1, 1, 1, 0.94))
-	_draw_home_reward_icon("res://assets/ui/item/draw_05.png", origin + Vector2(404, 22), "源石", "x120")
-	_draw_home_reward_icon("res://assets/ui/item/draw_07.png", origin + Vector2(486, 22), "喚靈券", "x1")
-	info.position = origin + Vector2(126, 18)
-	info.size = Vector2(520, 120)
-	_view_container().add_child(info)
-	_add_action_button("開通試用", origin + Vector2(0, 154), func() -> void:
-		save["month_card_active"] = true
-		_persist()
-		_show_month_card()
-	, Vector2(132, 44), UI_COMMON_BTN_GOLD)
-	_add_action_button("領取", origin + Vector2(154, 154), func() -> void:
-		if bool(save.get("month_card_active", false)) and str(save.get("month_card_claimed_date", "")) != Time.get_date_string_from_system():
-			save["month_card_claimed_date"] = Time.get_date_string_from_system()
-			_grant_reward(1, 120)
-			_persist()
-		_show_month_card()
-	, Vector2(132, 44), UI_COMMON_BTN_GOLD)
+	activity_screen.show_month_card()
 
 
 func _show_competition() -> void:
-	var origin := _show_home_panel("競技", "競技入口先接入離線挑戰摘要，後續可替換排行榜與防守陣容。")
-	var rank := int(save.get("arena_rank", 1205))
-	var text := _label("當前排名：%d\n今日挑戰：%d / 5\n推薦戰力：%d\n\n挑戰成功可獲得源石與任務進度。" % [
-		rank,
-		int(save.get("arena_count", 0)),
-		max(_player_power() - 12000, 10000)
-	], 22)
-	_draw_home_resource_card(origin, Vector2(560, 190), Color(0.92, 0.74, 1.0, 0.32), false)
-	_draw_image(UI_MAIN_FUNNY_ARENA, origin + Vector2(18, 28), Vector2(88, 102), false, Color(1, 1, 1, 0.90))
-	text.position = origin + Vector2(128, 18)
-	text.size = Vector2(520, 180)
-	_view_container().add_child(text)
-	_add_action_button("模擬挑戰", origin + Vector2(0, 210), func() -> void:
-		save["arena_count"] = mini(int(save.get("arena_count", 0)) + 1, 5)
-		save["arena_rank"] = maxi(int(save.get("arena_rank", 1205)) - 12, 1)
-		_grant_reward(0, 60)
-		_persist()
-		_show_competition()
-	, Vector2(132, 44), UI_COMMON_BTN_GOLD)
+	activity_screen.show_competition()
 
 
 func _show_assist() -> void:
-	var origin := _show_home_panel("小助手", "整理當前可做事項，對應主屏的小助手入口。")
-	var tips := [
-		"先收取右下角塵世探秘掛機獎勵。",
-		"每日補給和郵件可以補充喚靈資源。",
-		"喚靈後可到養成/英雄列表查看新角色。",
-		"現世入口可進入 Gal 看板與甜蜜互動。"
-	]
-	for index in range(tips.size()):
-		var pos := origin + Vector2(0, index * 58)
-		_draw_home_resource_card(pos, Vector2(760, 44), Color(0.74, 0.92, 1.0, 0.24), index % 2 == 1)
-		var label := _label("%d. %s" % [index + 1, tips[index]], 19)
-		label.position = pos + Vector2(18, 5)
-		label.size = Vector2(720, 34)
-		_view_container().add_child(label)
+	home_panel_screen.show_assist()
 
 
 func _show_chat() -> void:
-	var origin := _show_home_panel("聊天", "世界頻道入口，目前顯示本地系統消息。")
-	var messages := [
-		"[世界] 塵世：?",
-		"[系統] 今日補給已刷新。",
-		"[公會] 星塵旅團歡迎回來。",
-		"[活動] 新手狂歡進行中。"
-	]
-	for index in range(messages.size()):
-		var pos := origin + Vector2(0, index * 58)
-		_draw_image("res://assets/ui/mainui/mainui_btn_04.png", pos, Vector2(760, 42), true, Color(1, 1, 1, 0.56))
-		var label := _label(messages[index], 19)
-		label.position = pos + Vector2(22, 4)
-		label.size = Vector2(720, 34)
-		_view_container().add_child(label)
+	home_panel_screen.show_chat()
 
 
 func _show_wallpaper_select() -> void:
-	var origin := _show_home_panel("壁紙", "選擇主界面看板角色，或進入純看板互動模式。")
-	var candidates := _gallery_filtered_heroes()
-	var max_count := mini(candidates.size(), 5)
-	for index in range(max_count):
-		var hero: Dictionary = candidates[index]
-		var pos := origin + Vector2(index * 154, 16)
-		_draw_home_resource_card(pos, Vector2(126, 166), _rarity_color(int(hero.get("rarity", 1)), 0.34), index % 2 == 1)
-		_draw_image(UI_COMMON_HERO_HEAD_FRAME, pos + Vector2(28, 16), Vector2(70, 70), false, Color(1, 1, 1, 0.88))
-		_draw_hero_round_thumb(hero, pos + Vector2(28, 16), Vector2(70, 70), Color(1, 1, 1, 0.95))
-		_draw_image(UI_COMMON_HERO_STAR_BAR, pos + Vector2(28, 82), Vector2(70, 12), false, Color(1, 1, 1, 0.40))
-		var label := _label(str(hero.get("name", "")), 15, HORIZONTAL_ALIGNMENT_CENTER)
-		label.position = pos + Vector2(8, 112)
-		label.size = Vector2(110, 24)
-		_view_container().add_child(label)
-		var hero_id := int(hero.get("id", 0))
-		var hero_name := str(hero.get("name", "角色"))
-		var button := Button.new()
-		button.text = ""
-		button.flat = true
-		button.position = pos
-		button.size = Vector2(126, 166)
-		button.pressed.connect(func() -> void:
-			save["selected_hero_id"] = hero_id
-			_persist()
-			_show_home()
-		)
-		_view_container().add_child(button)
-		if int(save.get("selected_hero_id", 0)) == hero_id:
-			_draw_image(UI_HERO_HIGHLIGHT, pos + Vector2(13, 1), Vector2(100, 100), false, Color(0.78, 1.0, 0.22, 0.48))
-			var selected := _label("看板中", 13, HORIZONTAL_ALIGNMENT_CENTER)
-			selected.position = pos + Vector2(22, 138)
-			selected.size = Vector2(82, 20)
-			selected.modulate = Color(1.0, 0.84, 0.30)
-			_view_container().add_child(selected)
-	_add_action_button("純看板模式", origin + Vector2(0, 250), _show_home_wallpaper_focus, Vector2(146, 44), UI_COMMON_BTN_GOLD)
-
+	home_panel_screen.show_wallpaper_select()
 
 func _show_home_wallpaper_focus() -> void:
 	home_screen.enter_wallpaper_focus()
 
 
 func _show_charge() -> void:
-	var origin := _show_home_panel("儲值", "右側儲值與左側首儲入口，先用本地模擬充值閉環替代原支付流程。")
-	var first_claimed := bool(save.get("first_charge_claimed", false))
-	var packs := [
-		{"name": "首儲禮包", "desc": "首次領取：源石 x1980 / 喚靈券 x10", "gems": 1980, "tickets": 10, "key": "first_charge_claimed", "once": true, "icon": UI_MAIN_CHARGE_ICONS[3]},
-		{"name": "月度源石", "desc": "源石 x980 / 喚靈券 x3", "gems": 980, "tickets": 3, "key": "charge_monthly_count", "once": false, "icon": UI_MAIN_CHARGE_ICONS[2]},
-		{"name": "喚靈補給", "desc": "源石 x300 / 喚靈券 x5", "gems": 300, "tickets": 5, "key": "charge_ticket_count", "once": false, "icon": UI_MAIN_LIMIT_ICONS[5]},
-	]
-	for index in range(packs.size()):
-		var pack: Dictionary = packs[index]
-		var pos := origin + Vector2(0, index * 118)
-		_draw_home_resource_card(pos, Vector2(860, 94), Color(1.0, 0.76, 0.34, 0.28), index % 2 == 1)
-		_draw_image(str(pack.get("icon", UI_MAIN_CHARGE_ICONS[3])), pos + Vector2(12, 8), Vector2(78, 78), false, Color(1, 1, 1, 0.94))
-		var title := _label(str(pack.get("name", "")), 22)
-		title.position = pos + Vector2(106, 12)
-		title.size = Vector2(190, 30)
-		title.modulate = Color(1.0, 0.93, 0.70)
-		_view_container().add_child(title)
-		var desc := _label(str(pack.get("desc", "")), 16)
-		desc.position = pos + Vector2(106, 48)
-		desc.size = Vector2(390, 26)
-		desc.modulate = Color(0.92, 0.86, 0.82)
-		_view_container().add_child(desc)
-		_draw_home_reward_icon("res://assets/ui/item/draw_05.png", pos + Vector2(500, -4), "源石", "x%d" % int(pack.get("gems", 0)))
-		_draw_home_reward_icon("res://assets/ui/item/draw_07.png", pos + Vector2(586, -4), "喚靈券", "x%d" % int(pack.get("tickets", 0)))
-		var is_once := bool(pack.get("once", false))
-		var claimed := bool(save.get(str(pack.get("key", "")), false)) if is_once else false
-		if claimed:
-			var claimed_label := _label("已領取", 18, HORIZONTAL_ALIGNMENT_CENTER)
-			claimed_label.position = pos + Vector2(724, 28)
-			claimed_label.size = Vector2(110, 36)
-			claimed_label.modulate = Color(0.70, 1.0, 0.58)
-			_view_container().add_child(claimed_label)
-		else:
-			_add_action_button("領取" if index == 0 else "購買", pos + Vector2(724, 26), func(p := pack) -> void:
-				_buy_charge_pack(p)
-			, Vector2(104, 42), UI_COMMON_BTN_GOLD)
-	var wallet := _label("當前：源石 %s / 喚靈券 %s\n首儲狀態：%s" % [
-		str(save.get("gems", 0)),
-		str(save.get("tickets", 0)),
-		"已完成" if first_claimed else "可領取"
-	], 19)
-	wallet.position = origin + Vector2(0, 372)
-	wallet.size = Vector2(520, 64)
-	wallet.modulate = Color(0.95, 0.90, 0.78)
-	_view_container().add_child(wallet)
-	_add_action_button("前往商店", origin + Vector2(600, 382), _show_shop, Vector2(132, 44), UI_COMMON_BTN_WHITE)
+	shop_screen.show_charge()
 
 
 func _show_shop() -> void:
-	var origin := _show_home_panel("商店", "資源補給與喚靈券兌換。")
-	var title := _label("資源補給", 34)
-	title.position = origin
-	title.size = Vector2(420, 52)
-	title.modulate = Color(1.0, 0.93, 0.70)
-	_view_container().add_child(title)
-	var desc := _label("單機 MVP 暫定兌換規則：源石 %d = 喚靈券 %d。日常、郵件和章節任務也會產出喚靈資源。" % [int(shop.get("exchangeGemCost", 160)), int(shop.get("ticketAmount", 1))], 20)
-	desc.position = origin + Vector2(0, 58)
-	desc.size = Vector2(760, 72)
-	_view_container().add_child(desc)
-	_draw_home_reward_icon("res://assets/ui/item/draw_05.png", origin + Vector2(820, -10), "源石", str(save.get("gems", 0)))
-	_draw_home_reward_icon("res://assets/ui/item/draw_07.png", origin + Vector2(908, -10), "喚靈券", str(save.get("tickets", 0)))
-	_add_action_button("兌換 1 張", origin + Vector2(0, 140), func() -> void: _buy_tickets(1), Vector2(132, 44), UI_COMMON_BTN_GOLD)
-	_add_action_button("兌換 10 張", origin + Vector2(146, 140), func() -> void: _buy_tickets(10), Vector2(132, 44), UI_COMMON_BTN_GOLD)
-	_add_action_button("每日補給", origin + Vector2(292, 140), _show_daily, Vector2(132, 44), UI_COMMON_BTN_WHITE)
-	_add_action_button("郵件", origin + Vector2(438, 140), _show_mail, Vector2(132, 44), UI_COMMON_BTN_WHITE)
-	_add_action_button("任務", origin + Vector2(584, 140), _show_tasks, Vector2(132, 44), UI_COMMON_BTN_WHITE)
-	_add_action_button("前往喚靈", origin + Vector2(0, 214), _show_gacha, Vector2(132, 44), UI_COMMON_BTN_GOLD)
+	shop_screen.show_shop()
 
 func _show_daily() -> void:
-	var origin := _show_home_panel("每日補給", "每日刷新獎勵，補充基礎抽卡資源。")
-	var today := Time.get_date_string_from_system()
-	var claimed := str(save.get("daily_claimed_date", "")) == today
-	var reward_tickets := int(daily.get("tickets", 3))
-	var reward_gems := int(daily.get("gems", 480))
-	var title := _label(str(daily.get("name", "每日補給")), 34)
-	title.position = origin
-	title.size = Vector2(420, 52)
-	title.modulate = Color(1.0, 0.93, 0.70)
-	_view_container().add_child(title)
-	_draw_home_reward_icon("res://assets/ui/item/draw_07.png", origin + Vector2(0, 78), "喚靈券", "x%d" % reward_tickets)
-	_draw_home_reward_icon("res://assets/ui/item/draw_05.png", origin + Vector2(92, 78), "源石", "x%d" % reward_gems)
-	var text := "%s\n喚靈券 x%d\n源石 x%d\n\n狀態：%s" % [daily.get("desc", "今日補給"), reward_tickets, reward_gems, "已領取" if claimed else "可領取"]
-	var label := _label(text, 22)
-	label.position = origin + Vector2(220, 74)
-	label.size = Vector2(520, 180)
-	_view_container().add_child(label)
-	if not claimed:
-		_add_action_button("領取", origin + Vector2(0, 228), func() -> void:
-			save["daily_claimed_date"] = today
-			_grant_reward(reward_tickets, reward_gems)
-			_show_daily()
-		, Vector2(132, 44), UI_COMMON_BTN_GOLD)
-	_add_action_button("返回商店", origin + Vector2(154, 228), _show_shop, Vector2(146, 44), UI_COMMON_BTN_WHITE)
-	_add_action_button("前往喚靈", origin + Vector2(314, 228), _show_gacha, Vector2(146, 44), UI_COMMON_BTN_GOLD)
+	shop_screen.show_daily()
 
 func _show_mail() -> void:
-	var origin := _show_home_panel("郵件", "系統郵件與補償獎勵。")
-	var title := _label("郵件", 34)
-	title.position = origin
-	title.size = Vector2(420, 52)
-	title.modulate = Color(1.0, 0.93, 0.70)
-	_view_container().add_child(title)
-	var claimed: Dictionary = save.get("claimed_mail", {})
-	var y := origin.y + 72.0
-	for mail in mails:
-		var mail_id := str(mail.get("id", ""))
-		var is_claimed := bool(claimed.get(mail_id, false))
-		var row_pos := Vector2(origin.x, y)
-		_draw_home_resource_card(row_pos, Vector2(820, 94), Color(0.72, 0.86, 1.0, 0.28), int(y) % 2 == 0)
-		_draw_image(UI_MAIN_LIMIT_ICONS[2], row_pos + Vector2(12, 12), Vector2(66, 66), false, Color(1, 1, 1, 0.88))
-		var row := _label("%s\n%s\n獎勵：喚靈券 x%d  源石 x%d   %s" % [mail.get("title", ""), mail.get("body", ""), int(mail.get("tickets", 0)), int(mail.get("gems", 0)), "已領取" if is_claimed else "可領取"], 17)
-		row.position = row_pos + Vector2(92, 8)
-		row.size = Vector2(600, 78)
-		_view_container().add_child(row)
-		if not is_claimed:
-			_add_action_button("領取", row_pos + Vector2(684, 26), func(id := mail_id, tickets := int(mail.get("tickets", 0)), gems := int(mail.get("gems", 0))) -> void:
-				var mail_claimed: Dictionary = save.get("claimed_mail", {})
-				mail_claimed[id] = true
-				save["claimed_mail"] = mail_claimed
-				_grant_reward(tickets, gems)
-				_show_mail()
-			, Vector2(104, 42), UI_COMMON_BTN_GOLD)
-		y += 108
-	_add_action_button("返回主界面", Vector2(104, 580), _show_home, Vector2(146, 44), UI_COMMON_BTN_WHITE)
-	_add_action_button("前往喚靈", Vector2(264, 580), _show_gacha, Vector2(146, 44), UI_COMMON_BTN_GOLD)
+	home_panel_screen.show_mail()
+
 
 func _show_tasks() -> void:
-	var origin := _show_home_panel("章節任務", "推進主線、喚靈與養成任務。")
-	var title := _label("章節任務", 34)
-	title.position = origin
-	title.size = Vector2(420, 52)
-	title.modulate = Color(1.0, 0.93, 0.70)
-	_view_container().add_child(title)
-	var claimed: Dictionary = save.get("claimed_tasks", {})
-	var y := origin.y + 72.0
-	var shown_tasks := 0
-	for task in tasks:
-		if shown_tasks >= 3:
-			break
-		shown_tasks += 1
-		var task_id := str(task.get("id", ""))
-		var progress := _task_progress(task_id)
-		var target := int(task.get("target", 1))
-		var done := progress >= target
-		var is_claimed := bool(claimed.get(task_id, false))
-		var row_pos := Vector2(origin.x, y)
-		_draw_home_resource_card(row_pos, Vector2(860, 90), Color(1.0, 0.80, 0.42, 0.24), int(y) % 2 == 0)
-		_draw_image(UI_MAIN_LIMIT_ICONS[3], row_pos + Vector2(14, 10), Vector2(66, 66), false, Color(1, 1, 1, 0.88))
-		var row := _label("%s\n%s  %d/%d\n獎勵：喚靈券 x%d  源石 x%d" % [task.get("name", ""), task.get("desc", ""), progress, target, int(task.get("tickets", 0)), int(task.get("gems", 0))], 17)
-		row.position = row_pos + Vector2(92, 8)
-		row.size = Vector2(630, 72)
-		_view_container().add_child(row)
-		if is_claimed:
-			var claimed_label := _label("已領取", 18, HORIZONTAL_ALIGNMENT_CENTER)
-			claimed_label.position = row_pos + Vector2(724, 22)
-			claimed_label.size = Vector2(110, 42)
-			_view_container().add_child(claimed_label)
-		elif done:
-			_add_action_button("領取", row_pos + Vector2(724, 22), func(id := task_id, tickets := int(task.get("tickets", 0)), gems := int(task.get("gems", 0))) -> void:
-				var task_claimed: Dictionary = save.get("claimed_tasks", {})
-				task_claimed[id] = true
-				save["claimed_tasks"] = task_claimed
-				_grant_reward(tickets, gems)
-				_show_tasks()
-			, Vector2(110, 42), UI_COMMON_BTN_GOLD)
-		else:
-			var todo := _label("進行中", 18, HORIZONTAL_ALIGNMENT_CENTER)
-			todo.position = row_pos + Vector2(724, 22)
-			todo.size = Vector2(110, 42)
-			_view_container().add_child(todo)
-		y += 102
-	_add_action_button("返回主界面", Vector2(104, 580), _show_home, Vector2(146, 44), UI_COMMON_BTN_WHITE)
-	_add_action_button("前往喚靈", Vector2(264, 580), _show_gacha, Vector2(146, 44), UI_COMMON_BTN_GOLD)
-
+	home_panel_screen.show_tasks()
 
 func _show_auto_fight() -> void:
-	var origin := _show_home_panel("自動挑戰", "主屏冒險上方的自動挑戰橫幅，接入關卡推進與掛機收益。")
-	var stage := _next_stage()
-	var stage_name := str(stage.get("name", "全部完成"))
-	var stage_power := int(stage.get("power", 0))
-	var enabled := bool(save.get("auto_fight_enabled", true))
-	var summary := _label("狀態：%s\n目標：%s\n推薦戰力：%d\n目前戰力：%d\n掛機時間：%s" % [
-		"自動挑戰中" if enabled else "已暫停",
-		stage_name,
-		stage_power,
-		_player_power(),
-		_afk_time_display()
-	], 22)
-	_draw_home_resource_card(origin, Vector2(640, 190), Color(0.84, 0.92, 1.0, 0.30), false)
-	_draw_image(UI_MAIN_FUNNY_ARENA, origin + Vector2(18, 30), Vector2(88, 102), false, Color(1, 1, 1, 0.86))
-	_draw_image(UI_MAIN_CHARGE_ICONS[0], origin + Vector2(452, 24), Vector2(86, 86), false, Color(1, 1, 1, 0.82))
-	summary.position = origin + Vector2(126, 18)
-	summary.size = Vector2(480, 160)
-	_view_container().add_child(summary)
-	_add_action_button("切換狀態", origin + Vector2(0, 214), func() -> void:
-		save["auto_fight_enabled"] = not bool(save.get("auto_fight_enabled", true))
-		_persist()
-		_show_auto_fight()
-	, Vector2(132, 44), UI_COMMON_BTN_GOLD)
-	_add_action_button("挑戰一次", origin + Vector2(154, 214), _fight_next_stage, Vector2(132, 44), UI_COMMON_BTN_GOLD)
-	_add_action_button("收取掛機", origin + Vector2(308, 214), _claim_afk_reward, Vector2(132, 44), UI_COMMON_BTN_WHITE)
-	_add_action_button("查看戰役", origin + Vector2(462, 214), _show_battle, Vector2(132, 44), UI_COMMON_BTN_WHITE)
+	battle_screen.show_auto_fight()
 
 
 func _show_chapter_progress() -> void:
-	var origin := _show_home_panel("塵世探秘", "主屏右下章節卡入口，展示下一關、章節獎勵與任務進度。")
-	var next_stage := _next_stage()
-	var max_stage := int(save.get("max_stage_id", 0))
-	var next_text := str(next_stage.get("name", "全部完成"))
-	_draw_home_resource_card(origin, Vector2(860, 118), Color(1.0, 0.78, 0.36, 0.28), false)
-	var title := _label("第%s章  %s" % ["1" if max_stage < 200 else "2", "塵世裂痕"], 28)
-	title.position = origin + Vector2(20, 12)
-	title.size = Vector2(320, 40)
-	title.modulate = Color(1.0, 0.92, 0.64)
-	_view_container().add_child(title)
-	var desc := _label("已通關：%s\n下一關：%s\n任務：%s" % [
-		_stage_name(max_stage),
-		next_text,
-		_next_task_text()
-	], 18)
-	desc.position = origin + Vector2(20, 56)
-	desc.size = Vector2(480, 54)
-	_view_container().add_child(desc)
-	var rewards := [
-		{"icon": "res://assets/ui/item/draw_07.png", "name": "喚靈券", "count": "x5"},
-		{"icon": "res://assets/ui/item/draw_06.png", "name": "碎片", "count": "x10"},
-		{"icon": "res://assets/ui/item/draw_05.png", "name": "源石", "count": "x100"},
-	]
-	for index in range(rewards.size()):
-		var reward: Dictionary = rewards[index]
-		_draw_home_reward_icon(str(reward.get("icon", "")), origin + Vector2(544 + index * 88, 10), str(reward.get("name", "")), str(reward.get("count", "")))
-	var y := origin.y + 148.0
-	for chapter in chapters:
-		var chapter_pos := Vector2(origin.x, y)
-		_draw_home_resource_card(chapter_pos, Vector2(860, 74), Color(0.72, 0.86, 1.0, 0.22), int(y) % 2 == 0)
-		var completed := 0
-		for stage in chapter.get("stages", []):
-			if int(stage.get("id", 0)) <= max_stage:
-				completed += 1
-		var label := _label("%s    進度 %d/%d" % [chapter.get("name", ""), completed, chapter.get("stages", []).size()], 21)
-		label.position = chapter_pos + Vector2(20, 8)
-		label.size = Vector2(420, 32)
-		label.modulate = Color(1.0, 0.94, 0.74)
-		_view_container().add_child(label)
-		var stage_line := []
-		for stage in chapter.get("stages", []):
-			var sid := int(stage.get("id", 0))
-			var mark := "✓" if sid <= max_stage else ("▶" if sid == int(next_stage.get("id", 0)) else "·")
-			stage_line.append("%s %s" % [mark, stage.get("name", "")])
-		var stages := _label("   ".join(stage_line), 14)
-		stages.position = chapter_pos + Vector2(20, 42)
-		stages.size = Vector2(800, 22)
-		stages.modulate = Color(0.88, 0.86, 0.82)
-		_view_container().add_child(stages)
-		y += 88
-	_add_action_button("挑戰", origin + Vector2(0, 382), _fight_next_stage, Vector2(132, 44), UI_COMMON_BTN_GOLD)
-	_add_action_button("章節任務", origin + Vector2(154, 382), _show_tasks, Vector2(132, 44), UI_COMMON_BTN_WHITE)
-	_add_action_button("戰役詳情", origin + Vector2(308, 382), _show_battle, Vector2(132, 44), UI_COMMON_BTN_WHITE)
+	_show_dust_exploration()
+
+
+func _show_dust_exploration() -> void:
+	chapter_screen.show_dust_exploration()
+
+
+func _current_chapter_state() -> Dictionary:
+	return chapter_screen.current_chapter_state()
+
+
+func _chapter_display_name(chapter: Dictionary, fallback_index: int = 1) -> String:
+	return chapter_screen.chapter_display_name(chapter, fallback_index)
+
+
+func _chapter_reward_items(chapter: Dictionary) -> Array:
+	return chapter_screen.chapter_reward_items(chapter)
 
 
 func _show_battle(message := "") -> void:
-	_clear("戰役")
-	_draw_image(UI_MAIN_BG, Vector2(0, 0), Vector2(1280, 646), true, Color(1, 1, 1, 0.42))
-	_view_container().add_child(_panel(Vector2(0, 0), Vector2(1280, 646), Color(0.018, 0.014, 0.012, 0.50)))
-	var title := _label("戰役推進", 34)
-	title.position = Vector2(44, 32)
-	title.size = Vector2(360, 52)
-	_view_container().add_child(title)
-	var current_stage := _next_stage()
-	var player_power := _player_power()
-	var stage_power := int(current_stage.get("power", 0))
-	var status := "可挑戰" if player_power >= stage_power else "戰力不足"
-	if current_stage.is_empty():
-		status = "章節已完成"
-	var summary := _label("目前戰力: %d\n已通關: %s\n下一關: %s\n推薦戰力: %d\n狀態: %s" % [
-		player_power,
-		_stage_name(int(save.get("max_stage_id", 0))),
-		current_stage.get("name", "全部完成"),
-		stage_power,
-		status
-	], 20)
-	summary.position = Vector2(58, 102)
-	summary.size = Vector2(430, 150)
-	_view_container().add_child(summary)
-	if not message.is_empty():
-		var result := _label(message, 19)
-		result.position = Vector2(58, 268)
-		result.size = Vector2(520, 92)
-		result.modulate = Color(1.0, 0.86, 0.48, 1.0)
-		_view_container().add_child(result)
-
-	var y := 94.0
-	for chapter in chapters:
-		var panel := _panel(Vector2(586, y), Vector2(598, 120), Color(0.048, 0.038, 0.033, 0.82))
-		_view_container().add_child(panel)
-		var name := _label(str(chapter.get("name", "")), 22)
-		name.position = Vector2(606, y + 12)
-		name.size = Vector2(360, 30)
-		_view_container().add_child(name)
-		var stage_text := []
-		for stage in chapter.get("stages", []):
-			var sid := int(stage.get("id", 0))
-			var mark := "已通關" if sid <= int(save.get("max_stage_id", 0)) else ("下一關" if sid == int(current_stage.get("id", 0)) else "未解鎖")
-			stage_text.append("%s  %s  戰力%d" % [mark, stage.get("name", ""), int(stage.get("power", 0))])
-		var rows := _label("\n".join(stage_text), 15)
-		rows.position = Vector2(606, y + 48)
-		rows.size = Vector2(548, 64)
-		_view_container().add_child(rows)
-		y += 136
-
-	if not current_stage.is_empty():
-		_add_action_button("挑戰", Vector2(58, 386), _fight_next_stage, Vector2(132, 46))
-	_add_action_button("收取掛機", Vector2(210, 386), _claim_afk_reward, Vector2(132, 46))
-	_add_action_button("前往喚靈", Vector2(362, 386), _show_gacha, Vector2(132, 46))
-	_add_action_button("返回主界面", Vector2(58, 548), _show_home, Vector2(146, 44))
+	battle_screen.show_battle(message)
 
 func _buy_tickets(count: int) -> void:
 	var cost := count * int(shop.get("exchangeGemCost", 160))
@@ -2414,6 +1473,41 @@ func _draw_clipped_image(path: String, pos: Vector2, draw_size: Vector2, cover :
 	rect.modulate = tint
 	clip.add_child(rect)
 	return clip
+
+func _hero_recruit_video_path(hero: Dictionary) -> String:
+	var spine_key := str(hero.get("spine", ""))
+	if spine_key.is_empty():
+		return ""
+	var hero_recruit: Dictionary = video_manifest.get("heroRecruit", {})
+	var path := str(hero_recruit.get(spine_key, ""))
+	if path.is_empty() or not ResourceLoader.exists(path):
+		return ""
+	return path
+
+func _draw_video(path: String, pos: Vector2, draw_size: Vector2, on_finished := Callable(), autoplay := true) -> VideoStreamPlayer:
+	if path.is_empty() or not ResourceLoader.exists(path):
+		return null
+	var stream := load(path)
+	if stream == null:
+		return null
+	var video := VideoStreamPlayer.new()
+	video.stream = stream
+	video.position = pos
+	video.size = draw_size
+	video.expand = true
+	video.autoplay = autoplay
+	video.modulate.a = 0.0
+	video.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	if on_finished.is_valid():
+		video.finished.connect(func() -> void:
+			on_finished.call()
+		)
+	_view_container().add_child(video)
+	var tween := create_tween()
+	tween.tween_property(video, "modulate:a", 1.0, 0.12).set_delay(0.08)
+	if autoplay:
+		video.play()
+	return video
 
 func _show_gacha_rate() -> void:
 	_clear("概率")
