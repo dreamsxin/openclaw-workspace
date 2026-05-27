@@ -72,6 +72,16 @@ const UI_HERO_SORT_BTN := "res://assets/ui/hero/hero_btn_05.png"
 const UI_HERO_FILTER_BG := "res://assets/ui/hero/hero_img_108.png"
 const UI_HERO_HIGHLIGHT := "res://assets/ui/hero/hero_img_119.png"
 const UI_HERO_STAR_SMALL := "res://assets/ui/hero/hero_img_60.png"
+const UI_HERO_CAMP_ICONS := [
+	"res://assets/ui/hero/hero_img_109.png",
+	"res://assets/ui/hero/hero_img_110.png",
+	"res://assets/ui/hero/hero_img_111.png",
+	"res://assets/ui/hero/hero_img_112.png",
+	"res://assets/ui/hero/hero_img_113.png",
+	"res://assets/ui/hero/hero_img_114.png",
+	"res://assets/ui/hero/hero_img_115.png",
+	"res://assets/ui/hero/hero_img_116.png",
+]
 const UI_HERO_TAB_HOME := "res://assets/ui/hero/hero_img_37.png"
 const UI_HERO_TAB_CULTIVATE := "res://assets/ui/hero/hero_img_43.png"
 const UI_HERO_TAB_EQUIP := "res://assets/ui/hero/hero_img_44.png"
@@ -138,6 +148,9 @@ var wallet_label: Label
 var top_bar: Control
 var current_view := "boot"
 var gallery_filter := "all"
+var gallery_sort_mode := "power"
+var gallery_sort_open := false
+var gallery_camp_filter := "all"
 var hero_detail_tab := "overview"
 var remnants_page := 0
 var selected_remnant_id := DEFAULT_HERO_ID
@@ -567,6 +580,7 @@ func _show_gallery() -> void:
 	_draw_hero_list_background()
 	_draw_hero_list_header()
 	_draw_hero_list_filters()
+	_draw_hero_sort_panel()
 	_draw_hero_list_cards()
 
 func _draw_hero_list_background() -> void:
@@ -592,11 +606,68 @@ func _draw_hero_list_header() -> void:
 	_view_container().add_child(progress)
 
 	_draw_image(UI_HERO_FILTER_BG, Vector2(836, 82), Vector2(360, 130), false, Color(1, 1, 1, 0.86))
-	var sort_hint := _label("排序  戰力", 18, HORIZONTAL_ALIGNMENT_CENTER)
+	var sort_hint := _label("排序  %s" % _gallery_sort_label(gallery_sort_mode), 18, HORIZONTAL_ALIGNMENT_CENTER)
 	sort_hint.position = Vector2(978, 94)
 	sort_hint.size = Vector2(130, 28)
 	_view_container().add_child(sort_hint)
 	_draw_image(UI_HERO_SORT_BTN, Vector2(1142, 116), Vector2(42, 42), false, Color(1, 1, 1, 0.92))
+	_add_hit_button(Vector2(1134, 108), Vector2(58, 58), func() -> void:
+		gallery_sort_open = not gallery_sort_open
+		_show_gallery()
+	)
+
+
+func _draw_hero_sort_panel() -> void:
+	if not gallery_sort_open:
+		return
+	_draw_image(UI_HERO_FILTER_BG, Vector2(836, 82), Vector2(360, 130), false, Color(1, 1, 1, 0.96))
+	_view_container().add_child(_panel(Vector2(848, 92), Vector2(336, 106), Color(0.030, 0.024, 0.038, 0.72)))
+	var modes := [
+		{"key": "power", "text": "戰力"},
+		{"key": "rarity", "text": "稀有"},
+		{"key": "level", "text": "等級"},
+	]
+	for index in range(modes.size()):
+		var mode: Dictionary = modes[index]
+		var mode_key := str(mode.get("key", "power"))
+		var selected := gallery_sort_mode == mode_key
+		var pos := Vector2(864 + index * 96.0, 104)
+		_view_container().add_child(_panel(pos, Vector2(82, 36), Color(0.70, 0.44, 0.18, 0.54) if selected else Color(0.09, 0.07, 0.10, 0.64)))
+		var label := _label(str(mode.get("text", "")), 16, HORIZONTAL_ALIGNMENT_CENTER)
+		label.position = pos + Vector2(0, 7)
+		label.size = Vector2(82, 22)
+		label.modulate = Color(1.0, 0.92, 0.70) if selected else Color(0.88, 0.84, 0.82)
+		_view_container().add_child(label)
+		var target_mode := mode_key
+		_add_hit_button(pos, Vector2(82, 36), func() -> void:
+			gallery_sort_mode = target_mode
+			gallery_sort_open = false
+			_show_gallery()
+		)
+	var camps := [
+		{"key": "all", "text": "全"},
+		{"key": "camp1", "text": "1"},
+		{"key": "camp2", "text": "2"},
+		{"key": "camp3", "text": "3"},
+		{"key": "camp4", "text": "4"},
+	]
+	for index in range(camps.size()):
+		var camp: Dictionary = camps[index]
+		var camp_key := str(camp.get("key", "all"))
+		var pos := Vector2(862 + index * 58.0, 150)
+		_draw_image(str(UI_HERO_CAMP_ICONS[index]), pos, Vector2(44, 44), false, Color(1, 1, 1, 0.94))
+		var active := gallery_camp_filter == camp_key
+		if active:
+			_draw_image(UI_HERO_HIGHLIGHT, pos - Vector2(10, 10), Vector2(64, 64), false, Color(1.0, 0.82, 0.32, 0.62))
+		var text := _label(str(camp.get("text", "")), 13, HORIZONTAL_ALIGNMENT_CENTER)
+		text.position = pos + Vector2(2, 12)
+		text.size = Vector2(40, 18)
+		_view_container().add_child(text)
+		var target_camp := camp_key
+		_add_hit_button(pos - Vector2(4, 4), Vector2(52, 52), func() -> void:
+			gallery_camp_filter = target_camp
+			_show_gallery()
+		)
 
 
 func _draw_hero_list_filters() -> void:
@@ -1303,12 +1374,24 @@ func _hero_selector_heroes() -> Array:
 func _draw_hero_selector_grid(hero: Dictionary, pos: Vector2, selected: bool) -> void:
 	var hero_id := int(hero.get("id", 0))
 	var rarity := int(hero.get("rarity", 1))
+	var key := str(hero_id)
+	var level := int(save.get("hero_levels", {}).get(key, 1))
+	var can_up := int(save.get("shards", {}).get(key, 0)) >= _hero_unlock_shard_cost(hero) or int(save.get("owned", {}).get(key, 0)) > 0
 	if selected:
 		_draw_image(UI_HERO_HIGHLIGHT, pos - Vector2(10, 10), Vector2(90, 90), false, Color(1, 1, 1, 0.72))
 	else:
 		_view_container().add_child(_panel(pos - Vector2(4, 4), Vector2(78, 78), Color(0.08, 0.065, 0.09, 0.58)))
 	_draw_hero_thumb(hero, pos, Vector2(70, 70), Color(1, 1, 1, 1))
+	_draw_image(UI_COMMON_HERO_HEAD_FRAME, pos, Vector2(70, 70), false, Color(1, 1, 1, 0.88))
 	_draw_hero_card_stars(rarity, pos + Vector2(8, 58), 10)
+	_view_container().add_child(_panel(pos + Vector2(42, 4), Vector2(24, 18), Color(0.02, 0.02, 0.03, 0.62)))
+	var level_label := _label(str(level), 10, HORIZONTAL_ALIGNMENT_CENTER)
+	level_label.position = pos + Vector2(42, 5)
+	level_label.size = Vector2(24, 14)
+	level_label.modulate = Color(1.0, 0.96, 0.76)
+	_view_container().add_child(level_label)
+	if can_up:
+		_draw_red_dot(pos + Vector2(60, -6))
 
 	var button := Button.new()
 	button.text = ""
@@ -1325,8 +1408,10 @@ func _draw_hero_selector_grid(hero: Dictionary, pos: Vector2, selected: bool) ->
 func _draw_hero_detail_tabs(hero: Dictionary, pos: Vector2) -> void:
 	var tabs := [
 		{"key": "overview", "text": "總覽"},
+		{"key": "core", "text": "核心"},
 		{"key": "attrs", "text": "屬性"},
 		{"key": "skills", "text": "技能"},
+		{"key": "equip", "text": "靈裝"},
 		{"key": "bond", "text": "羈絆"},
 	]
 	var x := pos.x
@@ -1335,22 +1420,22 @@ func _draw_hero_detail_tabs(hero: Dictionary, pos: Vector2) -> void:
 		var tab_key := str(tab.get("key", "overview"))
 		var is_selected := tab_key == hero_detail_tab
 		if is_selected:
-			_draw_image(UI_COMMON_TAB_HIGHLIGHT, Vector2(x, pos.y), Vector2(132, 48), false, Color(1, 1, 1, 0.92))
+			_draw_image(UI_COMMON_TAB_HIGHLIGHT, Vector2(x, pos.y), Vector2(92, 48), false, Color(1, 1, 1, 0.92))
 		else:
-			_view_container().add_child(_panel(Vector2(x + 8, pos.y + 6), Vector2(116, 36), Color(0.075, 0.058, 0.083, 0.62)))
+			_view_container().add_child(_panel(Vector2(x + 6, pos.y + 6), Vector2(80, 36), Color(0.075, 0.058, 0.083, 0.62)))
 		var label := _label(str(tab.get("text", "")), 18, HORIZONTAL_ALIGNMENT_CENTER)
-		label.position = Vector2(x + 18, pos.y + 8)
-		label.size = Vector2(96, 28)
+		label.position = Vector2(x + 8, pos.y + 8)
+		label.size = Vector2(76, 28)
 		label.modulate = Color(1.0, 0.92, 0.74) if is_selected else Color(0.82, 0.78, 0.78)
 		_view_container().add_child(label)
 		var button_pos := Vector2(x, pos.y)
 		var hero_id := int(hero.get("id", 0))
 		var target_tab := tab_key
-		_add_hit_button(button_pos, Vector2(132, 48), func() -> void:
+		_add_hit_button(button_pos, Vector2(92, 48), func() -> void:
 			hero_detail_tab = target_tab
 			_show_hero_detail(hero_id)
 		)
-		x += 126.0
+		x += 86.0
 
 
 func _draw_hero_detail_summary(hero: Dictionary, pos: Vector2) -> void:
@@ -1466,10 +1551,14 @@ func _draw_hero_detail_info_panel(hero: Dictionary, pos: Vector2) -> void:
 
 func _draw_hero_detail_tab_content(hero: Dictionary, pos: Vector2) -> void:
 	match hero_detail_tab:
+		"core":
+			_draw_hero_core_tab(hero, pos)
 		"attrs":
 			_draw_hero_attrs_tab(hero, pos)
 		"skills":
 			_draw_hero_skills_tab(hero, pos)
+		"equip":
+			_draw_hero_equip_tab(hero, pos)
 		"bond":
 			_draw_hero_bond_tab(hero, pos)
 		_:
@@ -1504,6 +1593,59 @@ func _draw_hero_attrs_tab(hero: Dictionary, pos: Vector2) -> void:
 	_view_container().add_child(tip)
 
 
+func _draw_hero_core_tab(hero: Dictionary, pos: Vector2) -> void:
+	_draw_image(UI_HERO_DETAIL_INFO_BG, pos, Vector2(540, 240), true, Color(1, 1, 1, 0.86))
+	_view_container().add_child(_panel(pos, Vector2(540, 240), Color(0.025, 0.020, 0.035, 0.34)))
+	_draw_hero_section_header("核心", pos + Vector2(18, 18), Vector2(250, 30))
+	_draw_hero_section_header("核心操作", pos + Vector2(276, 18), Vector2(246, 30))
+	var hero_id := int(hero.get("id", 0))
+	var core_levels: Dictionary = _hero_state_dict("hero_core_levels")
+	var center: Vector2 = pos + Vector2(156, 118)
+	_draw_hero_thumb(hero, center - Vector2(34, 34), Vector2(68, 68), Color(1, 1, 1, 1))
+	_draw_image(UI_COMMON_HERO_HEAD_FRAME, center - Vector2(34, 34), Vector2(68, 68), false, Color(1, 1, 1, 0.90))
+	var slots := [
+		Vector2(-116, -56),
+		Vector2(116, -56),
+		Vector2(-116, 56),
+		Vector2(116, 56),
+	]
+	for index in range(slots.size()):
+		var slot: int = index + 1
+		var slot_key := _hero_slot_key(hero_id, slot)
+		var level: int = int(core_levels.get(slot_key, 0))
+		var slot_offset: Vector2 = slots[index]
+		var slot_pos: Vector2 = center + slot_offset - Vector2(30, 30)
+		_view_container().add_child(_panel(slot_pos, Vector2(60, 60), Color(0.12, 0.09, 0.13, 0.68)))
+		_draw_image(UI_COMMON_SKILL_FRAME, slot_pos + Vector2(4, 4), Vector2(52, 52), false, Color(1.0, 0.82, 0.36, 0.40 if level <= 0 else 0.86))
+		var title := _label(str(slot), 15, HORIZONTAL_ALIGNMENT_CENTER)
+		title.position = slot_pos + Vector2(10, 8)
+		title.size = Vector2(40, 20)
+		_view_container().add_child(title)
+		var level_label := _label("Lv.%d" % level, 11, HORIZONTAL_ALIGNMENT_CENTER)
+		level_label.position = slot_pos + Vector2(4, 36)
+		level_label.size = Vector2(52, 16)
+		level_label.modulate = Color(1.0, 0.92, 0.68)
+		_view_container().add_child(level_label)
+		var target_slot: int = slot
+		_add_hit_button(slot_pos, Vector2(60, 60), func() -> void:
+			_upgrade_hero_core(hero_id, target_slot)
+		)
+	_add_action_button("一鍵核心", pos + Vector2(302, 74), func() -> void:
+		_upgrade_all_hero_cores(hero_id)
+	, Vector2(132, 42), UI_COMMON_BTN_GOLD)
+	_add_action_button("核心詳情", pos + Vector2(302, 126), func() -> void:
+		_set_hero_notice("核心位對應原版 pnlCore/btnPos1-4")
+		_persist()
+		_show_hero_detail(hero_id)
+	, Vector2(132, 42), UI_COMMON_BTN_WHITE)
+	var total: int = _hero_core_total(hero_id)
+	var tip := _label("四個核心位可點擊升級。\n核心總等級 %d，會提升戰力。" % total, 15)
+	tip.position = pos + Vector2(302, 178)
+	tip.size = Vector2(198, 48)
+	tip.modulate = Color(0.92, 0.86, 0.82)
+	_view_container().add_child(tip)
+
+
 func _draw_hero_skills_tab(hero: Dictionary, pos: Vector2) -> void:
 	_draw_image(UI_HERO_DETAIL_INFO_BG, pos, Vector2(540, 240), true, Color(1, 1, 1, 0.86))
 	_view_container().add_child(_panel(pos, Vector2(540, 240), Color(0.025, 0.020, 0.035, 0.34)))
@@ -1511,20 +1653,20 @@ func _draw_hero_skills_tab(hero: Dictionary, pos: Vector2) -> void:
 	_draw_hero_section_header("技能操作", pos + Vector2(276, 18), Vector2(246, 30))
 	var hero_id := int(hero.get("id", 0))
 	var skill_paths: Array = hero.get("skillResources", [])
-	var selected_skill := clampi(int(save.get("hero_selected_skill", 0)), 0, 3)
+	var selected_skill: int = clampi(int(save.get("hero_selected_skill", 0)), 0, 3)
 	for i in range(4):
-		var icon_pos := pos + Vector2(34 + i * 58.0, 74)
+		var icon_pos: Vector2 = pos + Vector2(34 + i * 58.0, 74)
 		if i == selected_skill:
 			_view_container().add_child(_panel(icon_pos - Vector2(4, 4), Vector2(56, 78), Color(0.86, 0.60, 0.24, 0.24)))
 		_draw_image(UI_COMMON_SKILL_FRAME, icon_pos, Vector2(48, 48), false, Color(1, 1, 1, 0.78))
 		if i < skill_paths.size():
 			_draw_image(_godot_resource_path(str(skill_paths[i])), icon_pos + Vector2(4, 4), Vector2(40, 40), false)
-		var skill_level := _hero_skill_level(hero_id, i)
+		var skill_level: int = _hero_skill_level(hero_id, i)
 		var skill_label := _label("Lv.%d" % skill_level, 12, HORIZONTAL_ALIGNMENT_CENTER)
 		skill_label.position = icon_pos + Vector2(-2, 50)
 		skill_label.size = Vector2(52, 20)
 		_view_container().add_child(skill_label)
-		var skill_index := i
+		var skill_index: int = i
 		_add_hit_button(icon_pos, Vector2(48, 70), func() -> void:
 			_select_hero_skill(hero_id, skill_index)
 		)
@@ -1540,6 +1682,49 @@ func _draw_hero_skills_tab(hero: Dictionary, pos: Vector2) -> void:
 	var desc := _label("當前選中技能 %d。升級會記錄技能等級並刷新詳情。" % (selected_skill + 1), 15)
 	desc.position = pos + Vector2(302, 182)
 	desc.size = Vector2(196, 42)
+	desc.modulate = Color(0.92, 0.86, 0.82)
+	_view_container().add_child(desc)
+
+
+func _draw_hero_equip_tab(hero: Dictionary, pos: Vector2) -> void:
+	_draw_image(UI_HERO_DETAIL_INFO_BG, pos, Vector2(540, 240), true, Color(1, 1, 1, 0.86))
+	_view_container().add_child(_panel(pos, Vector2(540, 240), Color(0.025, 0.020, 0.035, 0.34)))
+	var hero_id := int(hero.get("id", 0))
+	var sections: Array = [
+		{"key": "equip", "title": "靈裝"},
+		{"key": "slug", "title": "源神"},
+		{"key": "weapon", "title": "神具"},
+	]
+	for index in range(sections.size()):
+		var section: Dictionary = sections[index]
+		var section_pos: Vector2 = pos + Vector2(18 + index * 170.0, 18)
+		_draw_hero_section_header(str(section.get("title", "")), section_pos, Vector2(150, 30))
+		for slot_index in range(2):
+			var slot: int = slot_index + 1
+			var item_pos: Vector2 = section_pos + Vector2(14 + slot_index * 68.0, 54)
+			var level: int = _hero_equipment_level(hero_id, str(section.get("key", "")), slot)
+			_draw_image(UI_COMMON_SKILL_FRAME, item_pos, Vector2(58, 58), false, Color(1.0, 0.86, 0.28, 0.42 if level <= 0 else 0.88))
+			var symbol := _label(_hero_equipment_symbol(str(section.get("key", ""))), 22, HORIZONTAL_ALIGNMENT_CENTER)
+			symbol.position = item_pos + Vector2(4, 12)
+			symbol.size = Vector2(50, 28)
+			symbol.modulate = Color(1.0, 0.94, 0.70)
+			_view_container().add_child(symbol)
+			var level_label := _label("Lv.%d" % level, 11, HORIZONTAL_ALIGNMENT_CENTER)
+			level_label.position = item_pos + Vector2(2, 42)
+			level_label.size = Vector2(54, 14)
+			_view_container().add_child(level_label)
+			var target_kind: String = str(section.get("key", "equip"))
+			var target_slot: int = slot
+			_add_hit_button(item_pos, Vector2(58, 58), func() -> void:
+				_upgrade_hero_equipment(hero_id, target_kind, target_slot)
+			)
+	_add_action_button("一鍵強化", pos + Vector2(302, 154), func() -> void:
+		_upgrade_all_hero_equipment(hero_id)
+	, Vector2(132, 42), UI_COMMON_BTN_GOLD)
+	var total: int = _hero_equipment_total(hero_id)
+	var desc := _label("依 HeroDetailInfoView 的靈裝/源神/神具三區塊還原。\n點擊任一槽位可強化，總等級 %d。" % total, 15)
+	desc.position = pos + Vector2(28, 158)
+	desc.size = Vector2(250, 56)
 	desc.modulate = Color(0.92, 0.86, 0.82)
 	_view_container().add_child(desc)
 
@@ -1638,10 +1823,12 @@ func _hero_power(hero: Dictionary) -> int:
 	var level := int(save.get("hero_levels", {}).get(str(hero_id), 1))
 	var promotion := int(save.get("hero_promotions", {}).get(str(hero_id), 0))
 	var bond := int(save.get("hero_bonds", {}).get(str(hero_id), 0))
+	var core_total := _hero_core_total(hero_id)
+	var equipment_total := _hero_equipment_total(hero_id)
 	var skill_total := 0
 	for skill_index in range(4):
 		skill_total += _hero_skill_level(hero_id, skill_index)
-	return 2600 + rarity * 920 + max(owned, 1) * 360 + (hero_id % 100) * 13 + level * 45 + promotion * 320 + bond * 60 + skill_total * 28
+	return 2600 + rarity * 920 + max(owned, 1) * 360 + (hero_id % 100) * 13 + level * 45 + promotion * 320 + bond * 60 + skill_total * 28 + core_total * 54 + equipment_total * 42
 
 
 func _hero_attrs(hero: Dictionary) -> Dictionary:
@@ -1650,11 +1837,13 @@ func _hero_attrs(hero: Dictionary) -> Dictionary:
 	var level := int(save.get("hero_levels", {}).get(str(hero_id), 1))
 	var promotion := int(save.get("hero_promotions", {}).get(str(hero_id), 0))
 	var bond := int(save.get("hero_bonds", {}).get(str(hero_id), 0))
+	var core_total := _hero_core_total(hero_id)
+	var equipment_total := _hero_equipment_total(hero_id)
 	var power := _hero_power(hero)
 	return {
-		"攻擊": 900 + rarity * 220 + level * 18 + promotion * 70,
-		"防禦": 520 + rarity * 150 + level * 10 + promotion * 46,
-		"生命": 5200 + rarity * 1280 + level * 160 + promotion * 520,
+		"攻擊": 900 + rarity * 220 + level * 18 + promotion * 70 + equipment_total * 12,
+		"防禦": 520 + rarity * 150 + level * 10 + promotion * 46 + core_total * 8,
+		"生命": 5200 + rarity * 1280 + level * 160 + promotion * 520 + core_total * 96,
 		"速度": 92 + rarity * 7,
 		"命中": "%d%%" % (82 + rarity * 3 + min(bond, 10)),
 		"暴擊": "%d%%" % (12 + rarity * 4 + promotion * 2),
@@ -1675,6 +1864,14 @@ func _hero_unlock_shard_cost(hero: Dictionary) -> int:
 func _hero_state_dict(key: String) -> Dictionary:
 	var data = save.get(key, {})
 	return data if typeof(data) == TYPE_DICTIONARY else {}
+
+
+func _hero_slot_key(hero_id: int, slot: int) -> String:
+	return "%d:%d" % [hero_id, slot]
+
+
+func _hero_equipment_key(hero_id: int, kind: String, slot: int) -> String:
+	return "%d:%s:%d" % [hero_id, kind, slot]
 
 
 func _favorite_heroes() -> Array:
@@ -1745,6 +1942,83 @@ func _train_hero(hero_id: int) -> void:
 	_set_hero_notice("培養成功，Lv.%d" % next_level)
 	_persist()
 	_show_hero_detail(hero_id)
+
+
+func _upgrade_hero_core(hero_id: int, slot: int) -> void:
+	var levels := _hero_state_dict("hero_core_levels")
+	var key := _hero_slot_key(hero_id, slot)
+	var next_level: int = min(15, int(levels.get(key, 0)) + 1)
+	levels[key] = next_level
+	save["hero_core_levels"] = levels
+	_set_hero_notice("核心位 %d 升至 Lv.%d" % [slot, next_level])
+	_persist()
+	_show_hero_detail(hero_id)
+
+
+func _upgrade_all_hero_cores(hero_id: int) -> void:
+	var levels := _hero_state_dict("hero_core_levels")
+	for slot in range(1, 5):
+		var key := _hero_slot_key(hero_id, slot)
+		levels[key] = min(15, int(levels.get(key, 0)) + 1)
+	save["hero_core_levels"] = levels
+	_set_hero_notice("四個核心位已強化")
+	_persist()
+	_show_hero_detail(hero_id)
+
+
+func _hero_core_total(hero_id: int) -> int:
+	var levels := _hero_state_dict("hero_core_levels")
+	var total := 0
+	for slot in range(1, 5):
+		total += int(levels.get(_hero_slot_key(hero_id, slot), 0))
+	return total
+
+
+func _hero_equipment_symbol(kind: String) -> String:
+	match kind:
+		"slug":
+			return "源"
+		"weapon":
+			return "具"
+		_:
+			return "裝"
+
+
+func _hero_equipment_level(hero_id: int, kind: String, slot: int) -> int:
+	var levels := _hero_state_dict("hero_equipment_levels")
+	return int(levels.get(_hero_equipment_key(hero_id, kind, slot), 0))
+
+
+func _upgrade_hero_equipment(hero_id: int, kind: String, slot: int) -> void:
+	var levels := _hero_state_dict("hero_equipment_levels")
+	var key := _hero_equipment_key(hero_id, kind, slot)
+	var next_level: int = min(20, int(levels.get(key, 0)) + 1)
+	levels[key] = next_level
+	save["hero_equipment_levels"] = levels
+	_set_hero_notice("%s槽 %d 升至 Lv.%d" % [_hero_equipment_symbol(kind), slot, next_level])
+	_persist()
+	_show_hero_detail(hero_id)
+
+
+func _upgrade_all_hero_equipment(hero_id: int) -> void:
+	var levels := _hero_state_dict("hero_equipment_levels")
+	for kind in ["equip", "slug", "weapon"]:
+		for slot in range(1, 3):
+			var key := _hero_equipment_key(hero_id, str(kind), slot)
+			levels[key] = min(20, int(levels.get(key, 0)) + 1)
+	save["hero_equipment_levels"] = levels
+	_set_hero_notice("靈裝/源神/神具已一鍵強化")
+	_persist()
+	_show_hero_detail(hero_id)
+
+
+func _hero_equipment_total(hero_id: int) -> int:
+	var levels := _hero_state_dict("hero_equipment_levels")
+	var total := 0
+	for kind in ["equip", "slug", "weapon"]:
+		for slot in range(1, 3):
+			total += int(levels.get(_hero_equipment_key(hero_id, str(kind), slot), 0))
+	return total
 
 
 func _promote_hero(hero_id: int) -> void:
@@ -3047,6 +3321,7 @@ func _gallery_filtered_heroes() -> Array:
 		var hero_id := int(hero.get("id", 0))
 		var rarity := int(hero.get("rarity", 1))
 		var owned := int(save.get("owned", {}).get(str(hero_id), 0)) > 0
+		var camp := _hero_camp_key(hero)
 		var include := true
 		match gallery_filter:
 			"owned":
@@ -3061,6 +3336,8 @@ func _gallery_filtered_heroes() -> Array:
 				include = rarity <= 2
 			_:
 				include = true
+		if gallery_camp_filter != "all" and camp != gallery_camp_filter:
+			include = false
 		if include:
 			list.append(hero)
 	list.sort_custom(_sort_gallery_heroes)
@@ -3073,11 +3350,37 @@ func _sort_gallery_heroes(a: Dictionary, b: Dictionary) -> bool:
 	var b_owned := int(save.get("owned", {}).get(str(b_id), 0)) > 0
 	if a_owned != b_owned:
 		return a_owned
+	match gallery_sort_mode:
+		"level":
+			var a_level := int(save.get("hero_levels", {}).get(str(a_id), 1))
+			var b_level := int(save.get("hero_levels", {}).get(str(b_id), 1))
+			if a_level != b_level:
+				return a_level > b_level
+		"power":
+			var a_power := _hero_power(a)
+			var b_power := _hero_power(b)
+			if a_power != b_power:
+				return a_power > b_power
+		_:
+			pass
 	var a_rarity := int(a.get("rarity", 1))
 	var b_rarity := int(b.get("rarity", 1))
 	if a_rarity != b_rarity:
 		return a_rarity > b_rarity
 	return a_id < b_id
+
+func _gallery_sort_label(mode: String) -> String:
+	match mode:
+		"level":
+			return "等級"
+		"rarity":
+			return "稀有"
+		_:
+			return "戰力"
+
+func _hero_camp_key(hero: Dictionary) -> String:
+	var hero_id := int(hero.get("id", 0))
+	return "camp%d" % ((hero_id % 4) + 1)
 
 func _grant_reward(tickets: int, gems: int) -> void:
 	save["tickets"] = int(save.get("tickets", 0)) + tickets
