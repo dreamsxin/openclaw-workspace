@@ -82,12 +82,12 @@ func _read_legacy_heroes() -> Array:
 func _build_ui() -> void:
 	var bg := ColorRect.new()
 	bg.color = Color(0.06, 0.05, 0.09)
-	bg.size = Vector2(1280, 720)
+	bg.size = Vector2(1670, 750)
 	add_child(bg)
 
 	var panel := ColorRect.new()
 	panel.color = Color(0.10, 0.08, 0.14, 0.95)
-	panel.size = Vector2(260, 720)
+	panel.size = Vector2(260, 750)
 	add_child(panel)
 
 	var title := _label("%d Spine" % entries.size(), 20, Vector2(0, 10), Vector2(260, 32), HORIZONTAL_ALIGNMENT_CENTER)

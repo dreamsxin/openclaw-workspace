@@ -18,4 +18,4 @@ if not exist "%PROJECT%\project.godot" (
   exit /b 1
 )
 
-start "" "%GODOT%" --path "%PROJECT%" --scene res://scenes/main.tscn --rendering-method mobile --windowed --resolution 1280x720
+start "" "%GODOT%" --path "%PROJECT%" --scene res://scenes/main.tscn --rendering-method mobile --windowed --resolution 1670x750

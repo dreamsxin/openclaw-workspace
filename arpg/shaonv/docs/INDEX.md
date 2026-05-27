@@ -235,8 +235,8 @@ docs/
 
 和 Spine 相关的经验：
 
-- `scripts/spine/batch_bake_all_export_spines.py` 只处理已经进入 `standalone/godot-mvp/assets/spine/all_export` 的条目。
-- 如果某个 Spine 没进 `all_export`，优先检查上面这份 bundle 本地文件清单，而不是直接重试 baked。
+- `scripts/spine/batch_bake_all_export_spines.py` 只处理已经进入 `standalone/godot-mvp/assets/spine` 并写入 `all_spines_list.json` 的补导出条目。
+- 如果某个 Spine 没进 `all_spines_list.json`，优先检查上面这份 bundle 本地文件清单，而不是直接重试 baked。
 - 如果 `physical-asset-map.csv` 仍旧漏掉某个 Spine，但你已经在 bundle 扫描里确认命中了资源名，允许先把该资源单独补导到 `tmp/all-spine-export`，再跑：
   - `scripts/spine/import_all_spines_to_godot.py`
   - `scripts/spine/bake_hero_spine_preview.mjs`

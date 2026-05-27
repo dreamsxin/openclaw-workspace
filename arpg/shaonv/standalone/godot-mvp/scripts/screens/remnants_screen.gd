@@ -28,9 +28,9 @@ func show_list() -> void:
 
 
 func _draw_background() -> void:
-	app._draw_image(app.UI_REMNANTS_BG, Vector2(0, 0), Vector2(1280, 720), true, Color(0.70, 0.76, 0.92, 0.86))
-	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.010, 0.018, 0.035, 0.40)))
-	app._view_container().add_child(app._panel(Vector2(0, 548), Vector2(1280, 172), Color(0.34, 0.43, 0.60, 0.30)))
+	app._draw_image(app.UI_REMNANTS_BG, Vector2(0, 0), app.CANVAS_SIZE, true, Color(0.70, 0.76, 0.92, 0.86))
+	app._view_container().add_child(app._panel(Vector2(0, 0), app.CANVAS_SIZE, Color(0.010, 0.018, 0.035, 0.40)))
+	app._view_container().add_child(app._panel(Vector2(0, 548), Vector2(app.CANVAS_WIDTH, 172), Color(0.34, 0.43, 0.60, 0.30)))
 	for i in range(7):
 		var y = 80.0 + i * 80.0
 		app._view_container().add_child(app._panel(Vector2(38, y), Vector2(2, 58), Color(0.45, 0.55, 0.72, 0.36)))
@@ -178,12 +178,12 @@ func show_detail(hero_id: int) -> void:
 
 
 func _draw_detail_background(hero: Dictionary) -> void:
-	app._draw_image(app.UI_HERO_BG_DETAIL, Vector2(0, 0), Vector2(1280, 720), true, Color(0.92, 0.94, 1.0, 0.96))
-	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.012, 0.018, 0.030, 0.32)))
+	app._draw_image(app.UI_HERO_BG_DETAIL, Vector2(0, 0), app.CANVAS_SIZE, true, Color(0.92, 0.94, 1.0, 0.96))
+	app._view_container().add_child(app._panel(Vector2(0, 0), app.CANVAS_SIZE, Color(0.012, 0.018, 0.030, 0.32)))
 	if int(hero.get("id", 0)) == 240069:
 		app._draw_image(app.UI_REMNANT_STAGE_BG, Vector2(154, -394), Vector2(700, 1400), false, Color(1.0, 1.0, 1.0, 0.90))
-		app._view_container().add_child(app._panel(Vector2(760, 0), Vector2(520, 720), Color(0.010, 0.014, 0.026, 0.38)))
-	app._view_container().add_child(app._panel(Vector2(250, 0), Vector2(520, 720), Color(0.92, 0.78, 0.42, 0.05)))
+		app._view_container().add_child(app._panel(Vector2(760, 0), Vector2(520, app.CANVAS_HEIGHT), Color(0.010, 0.014, 0.026, 0.38)))
+	app._view_container().add_child(app._panel(Vector2(250, 0), Vector2(520, app.CANVAS_HEIGHT), Color(0.92, 0.78, 0.42, 0.05)))
 	app._view_container().add_child(app._panel(Vector2(846, 26), Vector2(352, 520), Color(0.020, 0.024, 0.038, 0.42)))
 	app._add_action_button("返回", Vector2(46, 18), app._show_remnants_list, Vector2(116, 38))
 	app._add_action_button("?", Vector2(176, 18), app._show_player_info, Vector2(42, 38))

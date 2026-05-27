@@ -53,14 +53,13 @@ const UI_PRAYER_REWARD_TAG := {
 }
 const UI_PRAYER_REWARD_RELIC_TAG := "res://assets/ui/lottery/lottery_img_107.png"
 const UI_PRAYER_REWARD_RARE_SSR := "res://assets/ui/common/common_img_163.png"
-const UI_PRAYER_REMNANT_SPINE_BAKED := "res://assets/spine/all_export/Other__yiqi/Other__yiqi.baked.json"
-const UI_PRAYER_REMNANT_SPINE_FALLBACK := "res://assets/spine/all_export/Other__yiqi/yiqi.png"
+const UI_PRAYER_REMNANT_SPINE_BAKED := "res://assets/spine/Other__yiqi/Other__yiqi.baked.json"
+const UI_PRAYER_REMNANT_SPINE_FALLBACK := "res://assets/spine/Other__yiqi/yiqi.png"
 const SPINE_BAKED_PREVIEW_CANVAS := preload("res://scripts/spine_baked_preview_canvas.gd")
 const UI_TICKET_ICON := "res://assets/ui/item/draw_03.png"
 const FX_CAPSULE_BLUE_GLOW := "res://assets/ui/effect/fx_capsule_open_blue/Tex_glow005.png"
 const FX_CAPSULE_BLUE_RING := "res://assets/ui/effect/fx_capsule_open_blue/fx_047_tex_012.png"
 const FX_CAPSULE_BLUE_STAR := "res://assets/ui/effect/fx_capsule_open_blue/tfx_star09.png"
-const LOTTERY_STAGE_SCALE := Vector2(1280.0 / 1670.0, 720.0 / 750.0)
 const RECRUIT_VIDEO_POS := Vector2(-195, -6)
 const RECRUIT_VIDEO_SIZE := Vector2(1670, 732)
 
@@ -72,11 +71,11 @@ func _init(app_ref) -> void:
 
 
 func _stage_size(prefab_size: Vector2) -> Vector2:
-	return Vector2(prefab_size.x * LOTTERY_STAGE_SCALE.x, prefab_size.y * LOTTERY_STAGE_SCALE.y)
+	return prefab_size
 
 
 func _stage_center_pos(center: Vector2, size: Vector2) -> Vector2:
-	return Vector2((835.0 + center.x - size.x * 0.5) * LOTTERY_STAGE_SCALE.x, (375.0 - center.y - size.y * 0.5) * LOTTERY_STAGE_SCALE.y)
+	return Vector2(835.0 + center.x - size.x * 0.5, 375.0 - center.y - size.y * 0.5)
 
 func show_draw_animation(count: int) -> void:
 	var pool: Dictionary = app._pool_by_id(str(app.save.get("active_pool_id", "advanced")))
@@ -197,7 +196,7 @@ func show_recruit_silhouette(results: Array, count: int, seq: int) -> void:
 	hint.position = Vector2(118, 270)
 	hint.size = Vector2(304, 70)
 	app._view_container().add_child(hint)
-	app._add_hit_button(Vector2.ZERO, Vector2(1280, 720), func() -> void:
+	app._add_hit_button(Vector2.ZERO, app.CANVAS_SIZE, func() -> void:
 		show_recruit_revealed(results, count, seq)
 	)
 	app._add_action_button("跳過", Vector2(1088, 34), func() -> void:
@@ -221,12 +220,12 @@ func try_show_recruit_video(hero: Dictionary, rarity: int, results: Array, count
 	)
 	if video == null:
 		return false
-	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), frame_color(rarity, 0.06)))
+	app._view_container().add_child(app._panel(Vector2(0, 0), app.CANVAS_SIZE, frame_color(rarity, 0.06)))
 	var reveal_callback := func() -> void:
 		if _is_sequence_live(seq):
 			show_recruit_revealed(results, count, seq)
 	app._add_action_button("璺宠繃", Vector2(1088, 34), reveal_callback, Vector2(102, 40))
-	app._add_hit_button(Vector2.ZERO, Vector2(1280, 720), reveal_callback)
+	app._add_hit_button(Vector2.ZERO, app.CANVAS_SIZE, reveal_callback)
 	return true
 
 func show_recruit_revealed(results: Array, count: int, seq: int) -> void:
@@ -288,7 +287,7 @@ func show_recruit_revealed(results: Array, count: int, seq: int) -> void:
 		_cancel_sequence()
 		show_results(results, count)
 	, Vector2(102, 40))
-	app._add_hit_button(Vector2.ZERO, Vector2(1280, 720), func() -> void:
+	app._add_hit_button(Vector2.ZERO, app.CANVAS_SIZE, func() -> void:
 		_cancel_sequence()
 		show_results(results, count)
 	)
@@ -348,7 +347,7 @@ func show_prayer_remnant_reveal(results: Array, count: int, seq: int) -> void:
 	hint.modulate = Color(0.96, 0.88, 0.74)
 	app._view_container().add_child(hint)
 
-	app._add_hit_button(Vector2.ZERO, Vector2(1280, 720), func() -> void:
+	app._add_hit_button(Vector2.ZERO, app.CANVAS_SIZE, func() -> void:
 		_cancel_sequence()
 		show_prayer_result_view(results, count)
 	)
@@ -419,7 +418,7 @@ func show_prayer_holy_relic_reveal(results: Array, count: int, seq: int) -> void
 		_cancel_sequence()
 		show_prayer_result_view(results, count)
 	, Vector2(102, 40))
-	app._add_hit_button(Vector2.ZERO, Vector2(1280, 720), func() -> void:
+	app._add_hit_button(Vector2.ZERO, app.CANVAS_SIZE, func() -> void:
 		_cancel_sequence()
 		show_prayer_result_view(results, count)
 	)
@@ -470,7 +469,7 @@ func show_empty_ticket_warning(message := "喚灵券不足", prayer := false) ->
 
 func draw_recruit_backdrop(rarity: int) -> void:
 	app._draw_image(UI_RECRUIT_BG, Vector2(-195, -6), Vector2(1670, 732), true)
-	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.012, 0.010, 0.014, 0.34)))
+	app._view_container().add_child(app._panel(Vector2(0, 0), app.CANVAS_SIZE, Color(0.012, 0.010, 0.014, 0.34)))
 	app._draw_image(UI_RECRUIT_LIGHT_L, Vector2(-48, 148), Vector2(690, 430), true, frame_color(rarity, 0.56))
 	app._draw_image(UI_RECRUIT_LIGHT_R, Vector2(638, 148), Vector2(690, 430), true, frame_color(rarity, 0.56))
 	app._draw_image(UI_RECRUIT_FX_L, Vector2(-18, 0), Vector2(640, 720), true, Color(1, 1, 1, 0.30))
@@ -480,12 +479,12 @@ func draw_recruit_backdrop(rarity: int) -> void:
 func draw_stage_backdrop(rarity: int, is_prayer: bool = false) -> void:
 	var bg_path := UI_PRAYER_STAGE_BG if is_prayer else UI_RECRUIT_BG
 	app._draw_image(bg_path, Vector2(-195, -6), Vector2(1670, 732), true, Color(1, 1, 1, 0.92))
-	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.006, 0.008, 0.018, 0.48)))
+	app._view_container().add_child(app._panel(Vector2(0, 0), app.CANVAS_SIZE, Color(0.006, 0.008, 0.018, 0.48)))
 	app._draw_image(UI_RECRUIT_LIGHT_L, _stage_center_pos(Vector2(-417.5, 0), Vector2(835, 750)), _stage_size(Vector2(835, 750)), true, Color(1, 1, 1, 0.36))
 	app._draw_image(UI_RECRUIT_LIGHT_R, _stage_center_pos(Vector2(417.5, 0), Vector2(835, 750)), _stage_size(Vector2(835, 750)), true, Color(1, 1, 1, 0.36))
 	app._draw_image(UI_RECRUIT_FX_L, _stage_center_pos(Vector2(-417.5, 0), Vector2(835, 750)), _stage_size(Vector2(835, 750)), true, frame_color(rarity, 0.20))
 	app._draw_image(UI_RECRUIT_FX_R, _stage_center_pos(Vector2(417.5, 0), Vector2(835, 750)), _stage_size(Vector2(835, 750)), true, frame_color(rarity, 0.20))
-	app._draw_image(UI_RECRUIT_GROUP, Vector2(0, 0), Vector2(1280, 720), true, Color(1, 1, 1, 0.18))
+	app._draw_image(UI_RECRUIT_GROUP, Vector2(0, 0), app.CANVAS_SIZE, true, Color(1, 1, 1, 0.18))
 
 func draw_stage_orbits(results: Array, rarity: int, is_prayer: bool = false) -> void:
 	draw_new_stage_starmap(rarity, false, is_prayer)
@@ -535,7 +534,7 @@ func draw_new_stage_starmap(rarity: int, activated: bool, is_prayer: bool = fals
 		app._draw_image(disc_a, pos + _stage_size(Vector2(size.x * 0.24, size.y * 0.24)), _stage_size(Vector2(size.x * 0.36, size.y * 0.36)), false, Color(1, 1, 1, 0.62 if activated else 0.42))
 		app._view_container().add_child(app._panel(pos + _stage_size(Vector2(size.x * 0.42, size.y * 0.42)), _stage_size(Vector2(size.x * 0.16, size.y * 0.16)), frame_color(rarity if activated and index == 6 else 3, 0.42)))
 	if activated:
-		app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), frame_color(rarity, 0.12)))
+		app._view_container().add_child(app._panel(Vector2(0, 0), app.CANVAS_SIZE, frame_color(rarity, 0.12)))
 
 func draw_recruit_fx_layers(rarity: int, revealed: bool) -> void:
 	var alpha := 0.74 if revealed else 0.38
@@ -548,7 +547,7 @@ func draw_recruit_fx_layers(rarity: int, revealed: bool) -> void:
 
 func draw_quality_frame(rarity: int) -> void:
 	var color = frame_color(rarity, 0.36)
-	app._view_container().add_child(app._panel(Vector2(0, 450), Vector2(1280, 150), color))
+	app._view_container().add_child(app._panel(Vector2(0, 450), Vector2(app.CANVAS_WIDTH, 150), color))
 	app._draw_image(UI_RESULT_SIDE_A, Vector2(0, 452), Vector2(190, 88), false, frame_color(rarity, 0.96))
 	app._draw_image(UI_RESULT_SIDE_B, Vector2(1088, 452), Vector2(190, 88), false, frame_color(rarity, 0.96))
 	app._draw_image(UI_RESULT_SIDE_C, Vector2(218, 470), Vector2(148, 80), false, frame_color(rarity, 0.72))
@@ -559,7 +558,7 @@ func draw_finish_backdrop(results: Array) -> void:
 	var hero = best.get("hero", app._hero_by_id(240065))
 	var rarity = int(best.get("rolled_rarity", hero.get("rarity", 1)))
 	app._draw_image(UI_RECRUIT_BG, Vector2(-195, -6), Vector2(1670, 732), true)
-	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.014, 0.012, 0.014, 0.48)))
+	app._view_container().add_child(app._panel(Vector2(0, 0), app.CANVAS_SIZE, Color(0.014, 0.012, 0.014, 0.48)))
 	draw_finish_light_masks(rarity)
 	var title = app._label("喚灵结果", 42, HORIZONTAL_ALIGNMENT_CENTER)
 	title.position = Vector2(420, 46)
@@ -584,8 +583,8 @@ func draw_finish_light_masks(rarity: int) -> void:
 
 func draw_prayer_recruit_backdrop(rarity: int) -> void:
 	app._draw_image(UI_PRAYER_STAGE_BG, Vector2(-195, -6), Vector2(1670, 732), true, Color(1, 1, 1, 0.94))
-	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.018, 0.012, 0.010, 0.42)))
-	app._view_container().add_child(app._panel(Vector2(0, 452), Vector2(1280, 150), frame_color(rarity, 0.16)))
+	app._view_container().add_child(app._panel(Vector2(0, 0), app.CANVAS_SIZE, Color(0.018, 0.012, 0.010, 0.42)))
+	app._view_container().add_child(app._panel(Vector2(0, 452), Vector2(app.CANVAS_WIDTH, 150), frame_color(rarity, 0.16)))
 	app._draw_image(UI_RECRUIT_LIGHT_L, Vector2(-48, 148), Vector2(690, 430), true, Color(1.0, 0.86, 0.58, 0.26))
 	app._draw_image(UI_RECRUIT_LIGHT_R, Vector2(638, 148), Vector2(690, 430), true, frame_color(rarity, 0.32))
 	draw_fx_capsule_open_blue(Vector2(708, 286), rarity)
@@ -594,19 +593,19 @@ func draw_prayer_recruit_backdrop(rarity: int) -> void:
 
 func draw_prayer_remnant_reveal_backdrop(rarity: int) -> void:
 	app._draw_image(UI_PRAYER_STAGE_BG, Vector2(-195, -6), Vector2(1670, 732), true, Color(1, 1, 1, 0.90))
-	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.018, 0.014, 0.026, 0.24)))
+	app._view_container().add_child(app._panel(Vector2(0, 0), app.CANVAS_SIZE, Color(0.018, 0.014, 0.026, 0.24)))
 	if FileAccess.file_exists(UI_PRAYER_REMNANT_SPINE_BAKED):
 		var canvas: Control = SPINE_BAKED_PREVIEW_CANVAS.new()
 		canvas.position = Vector2(0, 0)
-		canvas.size = Vector2(1280, 720)
+		canvas.size = app.CANVAS_SIZE
 		canvas.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		app._view_container().add_child(canvas)
 		canvas.set_baked_path(UI_PRAYER_REMNANT_SPINE_BAKED, "1")
 	elif FileAccess.file_exists(UI_PRAYER_REMNANT_SPINE_FALLBACK):
-		app._draw_image(UI_PRAYER_REMNANT_SPINE_FALLBACK, Vector2(0, 0), Vector2(1280, 720), false)
-	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(456, 720), Color(0.02, 0.016, 0.026, 0.42)))
-	app._draw_image(UI_RECRUIT_LIGHT_L, Vector2(0, 0), Vector2(640, 720), true, frame_color(rarity, 0.18))
-	app._draw_image(UI_RECRUIT_FX_R, Vector2(640, 0), Vector2(640, 720), true, frame_color(rarity, 0.12))
+		app._draw_image(UI_PRAYER_REMNANT_SPINE_FALLBACK, Vector2(0, 0), app.CANVAS_SIZE, false)
+	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(456, app.CANVAS_HEIGHT), Color(0.02, 0.016, 0.026, 0.42)))
+	app._draw_image(UI_RECRUIT_LIGHT_L, Vector2(0, 0), Vector2(640, app.CANVAS_HEIGHT), true, frame_color(rarity, 0.18))
+	app._draw_image(UI_RECRUIT_FX_R, Vector2(640, 0), Vector2(640, app.CANVAS_HEIGHT), true, frame_color(rarity, 0.12))
 
 
 func draw_fx_capsule_open_blue(center: Vector2, rarity: int) -> void:
@@ -648,7 +647,7 @@ func draw_prayer_result_backdrop(results: Array) -> void:
 		rarity = int(best.get("rolled_rarity", 3))
 		title_name = _prayer_reward_name(best)
 	app._draw_image(UI_PRAYER_STAGE_BG, Vector2(-195, -6), Vector2(1670, 732), true, Color(1, 1, 1, 0.90))
-	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.016, 0.012, 0.014, 0.54)))
+	app._view_container().add_child(app._panel(Vector2(0, 0), app.CANVAS_SIZE, Color(0.016, 0.012, 0.014, 0.54)))
 	app._draw_image(UI_PRAYER_DISC, Vector2(410, -120), Vector2(460, 460), false, frame_color(rarity, 0.22))
 	app._draw_image(UI_PRAYER_DISC_E, Vector2(940, 86), Vector2(248, 248), false, Color(1, 1, 1, 0.16))
 	var title: Label = app._label("祈願结果", 42, HORIZONTAL_ALIGNMENT_CENTER)
@@ -666,7 +665,7 @@ func draw_result_grid(results: Array) -> void:
 	var card_size = Vector2(176, 188) if results.size() > 1 else Vector2(300, 330)
 	var gap = Vector2(22, 22)
 	var total_w = columns * card_size.x + (columns - 1) * gap.x
-	var start_x = (1280.0 - total_w) * 0.5
+	var start_x = (app.CANVAS_WIDTH - total_w) * 0.5
 	var start_y = 166.0 if results.size() > 1 else 178.0
 	for i in range(results.size()):
 		var result = results[i]
@@ -682,7 +681,7 @@ func draw_prayer_reward_grid(results: Array) -> void:
 	var card_size := Vector2(162, 210) if results.size() > 1 else Vector2(300, 360)
 	var gap := Vector2(24, 24)
 	var total_w := columns * card_size.x + (columns - 1) * gap.x
-	var start_x := (1280.0 - total_w) * 0.5
+	var start_x: float = (app.CANVAS_WIDTH - total_w) * 0.5
 	var start_y := 166.0 if results.size() > 1 else 176.0
 	for i in range(results.size()):
 		var result: Dictionary = results[i]

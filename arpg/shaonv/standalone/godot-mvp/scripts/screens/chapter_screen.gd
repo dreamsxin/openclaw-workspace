@@ -233,9 +233,9 @@ func _show_dust_exploration_state(state: Dictionary) -> void:
 	var task_pos: Vector2 = Vector2(610, 268)
 
 	app._clear("塵世探秘")
-	app._draw_image(UI_CHAPTER_BG, Vector2(0, 0), Vector2(1280, 720), true, Color(1, 1, 1, 0.94))
-	app._draw_image(UI_CHAPTER_SPINE_MASK_BG, Vector2(0, 0), Vector2(1280, 720), true, Color(1, 1, 1, 0.42))
-	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.012, 0.018, 0.036, 0.32)))
+	app._draw_image(UI_CHAPTER_BG, Vector2(0, 0), app.CANVAS_SIZE, true, Color(1, 1, 1, 0.94))
+	app._draw_image(UI_CHAPTER_SPINE_MASK_BG, Vector2(0, 0), app.CANVAS_SIZE, true, Color(1, 1, 1, 0.42))
+	app._view_container().add_child(app._panel(Vector2(0, 0), app.CANVAS_SIZE, Color(0.012, 0.018, 0.036, 0.32)))
 
 	var title: Label = app._label("塵世探秘", 38)
 	title.position = Vector2(60, 36)
@@ -348,8 +348,8 @@ func _show_dust_exploration_state(state: Dictionary) -> void:
 
 
 func _draw_change_to_other() -> void:
-	app._draw_image(UI_CTO_DI, Vector2(0, 0), Vector2(1280, 720), true, Color(1, 1, 1, 0.90))
-	app._draw_image(UI_CTO_DARK, Vector2(0, 0), Vector2(1280, 720), true, Color(1, 1, 1, 0.96))
+	app._draw_image(UI_CTO_DI, Vector2(0, 0), app.CANVAS_SIZE, true, Color(1, 1, 1, 0.90))
+	app._draw_image(UI_CTO_DARK, Vector2(0, 0), app.CANVAS_SIZE, true, Color(1, 1, 1, 0.96))
 	_add_rotating_layer(UI_CTO_CLOCK13, Vector2(58, -42), Vector2(490, 490), 17.0, Color(1.0, 0.92, 0.72, 0.05))
 	_add_rotating_layer(UI_CTO_CLOCK13, Vector2(742, 292), Vector2(490, 490), -15.0, Color(1.0, 0.92, 0.72, 0.05))
 	_add_rotating_layer(UI_CTO_CLOCK13, Vector2(856, -84), Vector2(490, 490), 12.0, Color(1.0, 0.92, 0.72, 0.04))
@@ -378,8 +378,8 @@ func _draw_change_to_other() -> void:
 	app._draw_image(UI_CTO_CLOCK01, Vector2(596, 226), Vector2(88, 88), false, Color(1, 1, 1, 1.0))
 	var pointer_left := _add_rotating_layer(UI_CTO_CLOCK02, Vector2(518, 237), Vector2(164, 68), 36.0, Color(1, 1, 1, 0.94))
 	var pointer_right := _add_rotating_layer(UI_CTO_CLOCK03, Vector2(600, 250), Vector2(184, 48), -28.0, Color(1, 1, 1, 0.94))
-	var light1: TextureRect = app._draw_image(UI_CTO_LIGHT1, Vector2(0, 0), Vector2(1280, 720), true, Color(1, 1, 1, 0.90))
-	var light2: TextureRect = app._draw_image(UI_CTO_LIGHT2, Vector2(0, 0), Vector2(1280, 720), true, Color(1, 1, 1, 0.22))
+	var light1: TextureRect = app._draw_image(UI_CTO_LIGHT1, Vector2(0, 0), app.CANVAS_SIZE, true, Color(1, 1, 1, 0.90))
+	var light2: TextureRect = app._draw_image(UI_CTO_LIGHT2, Vector2(0, 0), app.CANVAS_SIZE, true, Color(1, 1, 1, 0.22))
 	_pulse_node(main_outer, 1.018, 0.82)
 	_pulse_node(main_glow_front, 1.030, 0.64)
 	_pulse_node(mid_ring, 1.016, 0.76)
@@ -403,12 +403,12 @@ func _draw_change_to_other() -> void:
 
 	var tip: Label = app._label("塵世探秘", 26, HORIZONTAL_ALIGNMENT_CENTER)
 	tip.position = Vector2(0, 620)
-	tip.size = Vector2(1280, 32)
+	tip.size = Vector2(app.CANVAS_WIDTH, 32)
 	tip.modulate = Color(1.0, 0.95, 0.80, 0.92)
 	app._view_container().add_child(tip)
 	var sub_tip: Label = app._label("載入章節與過渡場景...", 16, HORIZONTAL_ALIGNMENT_CENTER)
 	sub_tip.position = Vector2(0, 652)
-	sub_tip.size = Vector2(1280, 24)
+	sub_tip.size = Vector2(app.CANVAS_WIDTH, 24)
 	sub_tip.modulate = Color(0.96, 0.90, 0.78, 0.72)
 	app._view_container().add_child(sub_tip)
 	_shimmer_alpha(tip, 0.70, 0.96, 0.74)
@@ -571,7 +571,7 @@ func draw_chapter_task_cell(task: Dictionary, pos: Vector2, scale: float = 1.0, 
 
 func show_chapter_reward_detail() -> void:
 	app._clear("章節獎勵詳情")
-	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.006, 0.008, 0.016, 0.72)))
+	app._view_container().add_child(app._panel(Vector2(0, 0), app.CANVAS_SIZE, Color(0.006, 0.008, 0.016, 0.72)))
 	app._draw_image(UI_CHAPTER_REWARD_DETAIL_BG, Vector2(125, 55), Vector2(1030, 610), true, Color(1, 1, 1, 0.96))
 	var title: Label = app._label("章節獎勵詳情", 26)
 	title.position = Vector2(206, 96)

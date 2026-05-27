@@ -148,7 +148,6 @@ var _files_tab := "voice"
 var _dress_tab := "skin"
 var _album_detail_index := 0
 
-const GAL_PREFAB_SCALE := Vector2(1280.0 / 1670.0, 720.0 / 750.0)
 const GAL_INFO_PANEL_CENTER := Vector2(190, -46)
 const GAL_INFO_PANEL_SIZE := Vector2(292, 610)
 
@@ -317,31 +316,31 @@ func _gal_roster() -> Array[Dictionary]:
 
 
 func _gal_size(prefab_size: Vector2) -> Vector2:
-	return Vector2(prefab_size.x * GAL_PREFAB_SCALE.x, prefab_size.y * GAL_PREFAB_SCALE.y)
+	return prefab_size
 
 
 func _gal_top_left_pos(pos: Vector2) -> Vector2:
-	return Vector2(pos.x * GAL_PREFAB_SCALE.x, -pos.y * GAL_PREFAB_SCALE.y)
+	return Vector2(pos.x, -pos.y)
 
 
 func _gal_left_middle_pos(center: Vector2, size: Vector2) -> Vector2:
-	return Vector2((center.x - size.x * 0.5) * GAL_PREFAB_SCALE.x, (375.0 - center.y - size.y * 0.5) * GAL_PREFAB_SCALE.y)
+	return Vector2(center.x - size.x * 0.5, 375.0 - center.y - size.y * 0.5)
 
 
 func _gal_right_bottom_pos(center: Vector2, size: Vector2) -> Vector2:
-	return Vector2((1670.0 + center.x - size.x) * GAL_PREFAB_SCALE.x, (750.0 - center.y - size.y) * GAL_PREFAB_SCALE.y)
+	return Vector2(1670.0 + center.x - size.x, 750.0 - center.y - size.y)
 
 
 func _gal_right_top_pos(center: Vector2, size: Vector2) -> Vector2:
-	return Vector2((1670.0 + center.x - size.x) * GAL_PREFAB_SCALE.x, -center.y * GAL_PREFAB_SCALE.y)
+	return Vector2(1670.0 + center.x - size.x, -center.y)
 
 
 func _gal_right_middle_pos(center: Vector2, size: Vector2) -> Vector2:
-	return Vector2((1670.0 + center.x - size.x * 0.5) * GAL_PREFAB_SCALE.x, (375.0 - center.y - size.y * 0.5) * GAL_PREFAB_SCALE.y)
+	return Vector2(1670.0 + center.x - size.x * 0.5, 375.0 - center.y - size.y * 0.5)
 
 
 func _gal_center_pos(center: Vector2, size: Vector2) -> Vector2:
-	return Vector2((835.0 + center.x - size.x * 0.5) * GAL_PREFAB_SCALE.x, (375.0 - center.y - size.y * 0.5) * GAL_PREFAB_SCALE.y)
+	return Vector2(835.0 + center.x - size.x * 0.5, 375.0 - center.y - size.y * 0.5)
 
 
 func _gal_center_rect(center: Vector2, size: Vector2) -> Rect2:
@@ -370,7 +369,7 @@ func _draw_main_view() -> void:
 	var hero := _selected_hero()
 
 	_draw_gal_background()
-	app._view_container().add_child(app._panel(Vector2(0, 540), Vector2(1280, 180), Color(0.04, 0.025, 0.045, 0.10)))
+	app._view_container().add_child(app._panel(Vector2(0, 540), Vector2(app.CANVAS_WIDTH, 180), Color(0.04, 0.025, 0.045, 0.10)))
 
 	_draw_hero_stage(hero)
 	if _ui_hidden:
@@ -388,11 +387,11 @@ func _draw_main_view() -> void:
 func _draw_gal_background() -> void:
 	var bg_key := str(app.save.get("gal_dress_background", "room"))
 	if bg_key == "star":
-		app._draw_image(GAL_BG, Vector2(0, 0), Vector2(1280, 720), true)
-		app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.02, 0.03, 0.07, 0.12)))
+		app._draw_image(GAL_BG, Vector2(0, 0), app.CANVAS_SIZE, true)
+		app._view_container().add_child(app._panel(Vector2(0, 0), app.CANVAS_SIZE, Color(0.02, 0.03, 0.07, 0.12)))
 		return
-	app._draw_image(GAL_ROOM_BG, Vector2(0, 0), Vector2(1280, 720), true)
-	app._draw_image(GAL_BG, Vector2(0, 0), Vector2(1280, 720), true)
+	app._draw_image(GAL_ROOM_BG, Vector2(0, 0), app.CANVAS_SIZE, true)
+	app._draw_image(GAL_BG, Vector2(0, 0), app.CANVAS_SIZE, true)
 
 
 func _draw_hero_stage(hero: Dictionary) -> void:
@@ -755,9 +754,9 @@ func _draw_hidden_restore_button() -> void:
 
 func _draw_child_panel_shell(title_text: String, subtitle_text: String) -> Dictionary:
 	var hero := _selected_hero()
-	app._draw_image(GAL_ROOM_BG, Vector2(0, 0), Vector2(1280, 720), true)
-	app._draw_image(GAL_BG, Vector2(0, 0), Vector2(1280, 720), true)
-	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.02, 0.015, 0.035, 0.42)))
+	app._draw_image(GAL_ROOM_BG, Vector2(0, 0), app.CANVAS_SIZE, true)
+	app._draw_image(GAL_BG, Vector2(0, 0), app.CANVAS_SIZE, true)
+	app._view_container().add_child(app._panel(Vector2(0, 0), app.CANVAS_SIZE, Color(0.02, 0.015, 0.035, 0.42)))
 
 	var close_pos := _gal_top_left_pos(Vector2(60, -18))
 	var close_size := _gal_size(Vector2(120, 80))
@@ -789,7 +788,7 @@ func _draw_child_panel_shell(title_text: String, subtitle_text: String) -> Dicti
 func _draw_dress_up_view() -> void:
 	var hero := _selected_hero()
 	_draw_gal_background()
-	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.02, 0.02, 0.05, 0.12)))
+	app._view_container().add_child(app._panel(Vector2(0, 0), app.CANVAS_SIZE, Color(0.02, 0.02, 0.05, 0.12)))
 
 	_draw_gal_child_close_button()
 	_draw_clipped_gal_stage(hero, Vector2(186, -38), Vector2(760, 930), Vector2(108, 0), Vector2(720, 720))
@@ -1285,8 +1284,8 @@ func _draw_gift_view_legacy() -> void:
 
 
 func _draw_level_detail_view() -> void:
-	app._draw_image(GAL_BG_LEVEL, Vector2(0, 0), Vector2(1280, 720), true)
-	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.02, 0.02, 0.04, 0.24)))
+	app._draw_image(GAL_BG_LEVEL, Vector2(0, 0), app.CANVAS_SIZE, true)
+	app._view_container().add_child(app._panel(Vector2(0, 0), app.CANVAS_SIZE, Color(0.02, 0.02, 0.04, 0.24)))
 	var card_pos := Vector2(95, 20)
 	var card_size := Vector2(1090, 680)
 	app._view_container().add_child(app._panel(card_pos, card_size, Color(0.05, 0.04, 0.08, 0.42)))
@@ -1428,13 +1427,13 @@ func _draw_album_view_legacy() -> void:
 
 
 func _draw_album_detail_view() -> void:
-	app._draw_image(GAL_BG_ALBUM_DETAIL, Vector2(0, 0), Vector2(1280, 720), true)
-	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.02, 0.02, 0.04, 0.24)))
+	app._draw_image(GAL_BG_ALBUM_DETAIL, Vector2(0, 0), app.CANVAS_SIZE, true)
+	app._view_container().add_child(app._panel(Vector2(0, 0), app.CANVAS_SIZE, Color(0.02, 0.02, 0.04, 0.24)))
 	var detail_index := maxi(_album_detail_index if _album_detail_index > 0 else int(app.save.get("gal_album_detail_index", 1)), 1)
 	var bg_pos := Vector2(65, 34)
 	var bg_size := Vector2(1150, 652)
 	app._draw_image(GAL_ALBUM_PREVIEW_BG, bg_pos, bg_size, false, Color(1, 1, 1, 0.95))
-	app._draw_image(GAL_ALBUM_PREVIEW_FRAME, Vector2(0, 70), Vector2(1280, 276), false, Color(1, 1, 1, 0.70))
+	app._draw_image(GAL_ALBUM_PREVIEW_FRAME, Vector2(0, 70), Vector2(app.CANVAS_WIDTH, 276), false, Color(1, 1, 1, 0.70))
 	var pic_pos := Vector2(152, 112)
 	var pic_size := Vector2(976, 434)
 	_draw_special_touch_card_picture(GAL_BG_ALBUM_DETAIL if detail_index % 2 == 1 else GAL_INTERACTION_PIC_1, pic_pos, pic_size, Vector2(0.5, 0.54))
@@ -1472,8 +1471,8 @@ func _draw_album_detail_view_legacy() -> void:
 
 
 func _draw_memory_view() -> void:
-	app._draw_image(GAL_BG_MEMORY, Vector2(0, 0), Vector2(1280, 720), true)
-	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.02, 0.02, 0.04, 0.18)))
+	app._draw_image(GAL_BG_MEMORY, Vector2(0, 0), app.CANVAS_SIZE, true)
+	app._view_container().add_child(app._panel(Vector2(0, 0), app.CANVAS_SIZE, Color(0.02, 0.02, 0.04, 0.18)))
 	var card_pos := Vector2(84, 34)
 	var card_size := Vector2(1112, 652)
 	app._view_container().add_child(app._panel(card_pos, card_size, Color(0.04, 0.03, 0.06, 0.30)))
@@ -1556,8 +1555,8 @@ func _draw_memory_view_legacy() -> void:
 func _draw_special_touch_view() -> void:
 	var hero := _selected_hero()
 	_draw_gal_background()
-	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.08, 0.05, 0.09, 0.34)))
-	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.92, 0.74, 0.88, 0.08)))
+	app._view_container().add_child(app._panel(Vector2(0, 0), app.CANVAS_SIZE, Color(0.08, 0.05, 0.09, 0.34)))
+	app._view_container().add_child(app._panel(Vector2(0, 0), app.CANVAS_SIZE, Color(0.92, 0.74, 0.88, 0.08)))
 	_draw_blur_side_hint()
 
 	var bg_rect := _gal_center_rect(Vector2.ZERO, Vector2(1160, 726))
@@ -1620,7 +1619,7 @@ func _draw_special_touch_view() -> void:
 func _draw_special_touch_play_view() -> void:
 	var hero := _selected_hero()
 	_draw_gal_background()
-	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.02, 0.02, 0.05, 0.08)))
+	app._view_container().add_child(app._panel(Vector2(0, 0), app.CANVAS_SIZE, Color(0.02, 0.02, 0.05, 0.08)))
 	_draw_gal_child_close_button(VIEW_SPECIAL_TOUCH)
 
 	_draw_clipped_gal_stage(hero, Vector2(272, -74), Vector2(790, 990), Vector2(184, 0), Vector2(760, 720))
@@ -1629,8 +1628,8 @@ func _draw_special_touch_play_view() -> void:
 
 
 func _draw_blur_side_hint() -> void:
-	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(210, 720), Color(0.04, 0.02, 0.05, 0.40)))
-	app._view_container().add_child(app._panel(Vector2(1008, 0), Vector2(272, 720), Color(0.04, 0.02, 0.05, 0.36)))
+	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(210, app.CANVAS_HEIGHT), Color(0.04, 0.02, 0.05, 0.40)))
+	app._view_container().add_child(app._panel(Vector2(1008, 0), Vector2(272, app.CANVAS_HEIGHT), Color(0.04, 0.02, 0.05, 0.36)))
 	for index in range(5):
 		var y := 78.0 + index * 104.0
 		app._view_container().add_child(app._panel(Vector2(64, y), Vector2(68, 68), Color(1.0, 0.58, 0.86, 0.10)))
@@ -1904,8 +1903,8 @@ func _persist_gal_state() -> void:
 
 func _draw_date_select_view() -> void:
 	var hero := _selected_hero()
-	app._draw_image(GAL_BG_DATE_SELECT, Vector2(0, 0), Vector2(1280, 720), true)
-	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.03, 0.02, 0.04, 0.16)))
+	app._draw_image(GAL_BG_DATE_SELECT, Vector2(0, 0), app.CANVAS_SIZE, true)
+	app._view_container().add_child(app._panel(Vector2(0, 0), app.CANVAS_SIZE, Color(0.03, 0.02, 0.04, 0.16)))
 
 	var card_pos := Vector2(86, 32)
 	var card_size := Vector2(1108, 630)
@@ -1991,8 +1990,8 @@ func _draw_date_select_view() -> void:
 
 func _draw_date_select_view_legacy() -> void:
 	var hero := _selected_hero()
-	app._draw_image(GAL_BG_DATE_SELECT, Vector2(0, 0), Vector2(1280, 720), true)
-	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.03, 0.02, 0.04, 0.18)))
+	app._draw_image(GAL_BG_DATE_SELECT, Vector2(0, 0), app.CANVAS_SIZE, true)
+	app._view_container().add_child(app._panel(Vector2(0, 0), app.CANVAS_SIZE, Color(0.03, 0.02, 0.04, 0.18)))
 
 	var card_pos := Vector2(105, 34)
 	var card_size := Vector2(1070, 622)
@@ -2095,8 +2094,8 @@ func _draw_date_select_view_legacy() -> void:
 
 func _draw_character_view() -> void:
 	var hero := _selected_hero()
-	app._draw_image(GAL_BG_CHARACTER, Vector2(0, 0), Vector2(1280, 720), true)
-	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.02, 0.02, 0.03, 0.32)))
+	app._draw_image(GAL_BG_CHARACTER, Vector2(0, 0), app.CANVAS_SIZE, true)
+	app._view_container().add_child(app._panel(Vector2(0, 0), app.CANVAS_SIZE, Color(0.02, 0.02, 0.03, 0.32)))
 
 	var card_pos := Vector2(95, 20)
 	var card_size := Vector2(1090, 680)

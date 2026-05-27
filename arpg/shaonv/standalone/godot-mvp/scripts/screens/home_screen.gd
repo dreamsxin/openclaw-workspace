@@ -4,6 +4,9 @@
 # ShowOrHide() toggles listPanel + TopBar + btnBodyMask + btnEye/btnChange
 extends RefCounted
 
+const BAKED_SPINE_CANVAS := preload("res://scripts/spine_baked_preview_canvas.gd")
+const MAINUI_FX_CANVAS := preload("res://scripts/mainui_fx_canvas.gd")
+
 # ── Sprite constants ──
 const UI_MAIN_BG = "res://assets/ui/background/mainui_bg_01.png"   # 1670x750 fullscreen wallpaper
 const UI_MAIN_PLAYER_FRAME = "res://assets/ui/mainui/mainui_img_02.png"
@@ -67,35 +70,35 @@ func _init(app_ref) -> void:
 
 
 func _main_prefab_size(prefab_size: Vector2) -> Vector2:
-	return Vector2(prefab_size.x * 1280.0 / 1670.0, prefab_size.y * 720.0 / 750.0)
+	return prefab_size
 
 
 func _main_centered_rect(prefab_center: Vector2, prefab_size: Vector2) -> Rect2:
 	var size := _main_prefab_size(prefab_size)
-	var center := Vector2(640.0 + prefab_center.x * 1280.0 / 1670.0, 360.0 - prefab_center.y * 720.0 / 750.0)
+	var center := Vector2(835.0 + prefab_center.x, 375.0 - prefab_center.y)
 	return Rect2(center - size * 0.5, size)
 
 
 func _main_left_top_rect(prefab_pos: Vector2, prefab_size: Vector2) -> Rect2:
 	var size := _main_prefab_size(prefab_size)
-	return Rect2(Vector2(prefab_pos.x * 1280.0 / 1670.0, -prefab_pos.y * 720.0 / 750.0), size)
+	return Rect2(Vector2(prefab_pos.x, -prefab_pos.y), size)
 
 
 func _main_right_top_center_rect(prefab_center: Vector2, prefab_size: Vector2) -> Rect2:
 	var size := _main_prefab_size(prefab_size)
-	var center := Vector2(1280.0 + prefab_center.x * 1280.0 / 1670.0, -prefab_center.y * 720.0 / 750.0)
+	var center := Vector2(1670.0 + prefab_center.x, -prefab_center.y)
 	return Rect2(center - size * 0.5, size)
 
 
 func _main_right_top_rect(prefab_pos: Vector2, prefab_size: Vector2) -> Rect2:
 	var size := _main_prefab_size(prefab_size)
-	var top_right := Vector2(1280.0 + prefab_pos.x * 1280.0 / 1670.0, -prefab_pos.y * 720.0 / 750.0)
+	var top_right := Vector2(1670.0 + prefab_pos.x, -prefab_pos.y)
 	return Rect2(Vector2(top_right.x - size.x, top_right.y), size)
 
 
 func _main_right_bottom_rect(prefab_pos: Vector2, prefab_size: Vector2) -> Rect2:
 	var size := _main_prefab_size(prefab_size)
-	var bottom_right := Vector2(1280.0 + prefab_pos.x * 1280.0 / 1670.0, 720.0 - prefab_pos.y * 720.0 / 750.0)
+	var bottom_right := Vector2(1670.0 + prefab_pos.x, 750.0 - prefab_pos.y)
 	return Rect2(bottom_right - size, size)
 
 
@@ -143,6 +146,30 @@ func add_scaled_image(path: String, pos: Vector2, draw_size: Vector2, tint := Co
 	return rect
 
 
+func draw_baked_spine_layer(path: String, clip: String, rect: Rect2, tint := Color(1, 1, 1, 1)) -> Control:
+	if path.is_empty() or not FileAccess.file_exists(path):
+		return null
+	var canvas: Control = BAKED_SPINE_CANVAS.new()
+	canvas.position = rect.position
+	canvas.size = rect.size
+	canvas.modulate = tint
+	canvas.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	app._view_container().add_child(canvas)
+	canvas.set_baked_path(path, clip)
+	return canvas
+
+
+func draw_mainui_fx(kind: String, pos: Vector2, draw_size: Vector2, alpha := 1.0) -> Control:
+	var fx: Control = MAINUI_FX_CANVAS.new()
+	fx.position = pos
+	fx.size = draw_size
+	fx.modulate.a = alpha
+	fx.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	app._view_container().add_child(fx)
+	fx.set_kind(kind)
+	return fx
+
+
 # ═══════════════════════════════════════════════════════════════
 # State machine
 # ═══════════════════════════════════════════════════════════════
@@ -157,7 +184,7 @@ func show_home() -> void:
 func enter_normal_state() -> void:
 	_main_state = "normal"
 	# 不再调 _clear — show_home 已经做了
-	var hero = app._hero_by_id(int(app.save.get("selected_hero_id", 240055)))
+	var hero = app._hero_by_id(int(app.save.get("selected_hero_id", app.DEFAULT_HERO_ID)))
 	# Layer 0: Wallpaper (always below everything)
 	draw_wallpaper(hero)
 	# Layer 1: Full-screen transparent button (wallpaper toggle)
@@ -189,7 +216,7 @@ func enter_normal_state() -> void:
 func enter_wallpaper_focus() -> void:
 	_main_state = "wallpaper_focus"
 	app._clear("壁纸")
-	var hero = app._hero_by_id(int(app.save.get("selected_hero_id", 240055)))
+	var hero = app._hero_by_id(int(app.save.get("selected_hero_id", app.DEFAULT_HERO_ID)))
 	draw_wallpaper(hero)
 	draw_wallpaper_control_bar()
 
@@ -199,7 +226,7 @@ func draw_wallpaper_control_bar() -> void:
 	var ctl := _main_centered_rect(Vector2(0, -181), Vector2(68, 68))
 	var center := ctl.position + ctl.size * 0.5
 	var settings: Dictionary = app.save.get("settings", {})
-	add_hit_button(Vector2(0, 0), Vector2(1280, 720), enter_normal_state)
+	add_hit_button(Vector2(0, 0), app.CANVAS_SIZE, enter_normal_state)
 	var left_rect := _main_centered_rect(Vector2(-73, -181), Vector2(92, 50))
 	var right_rect := _main_centered_rect(Vector2(73, -181), Vector2(92, 50))
 	app._draw_image(UI_WALLPAPER_ARROW, left_rect.position, left_rect.size, false, Color(1, 1, 1, 0.94))
@@ -222,7 +249,7 @@ func _wallpaper_candidates() -> Array:
 
 
 func _selected_wallpaper_index(candidates: Array) -> int:
-	var selected_id := int(app.save.get("selected_hero_id", 240055))
+	var selected_id := int(app.save.get("selected_hero_id", app.DEFAULT_HERO_ID))
 	for index in range(candidates.size()):
 		var hero: Dictionary = candidates[index]
 		if int(hero.get("id", 0)) == selected_id:
@@ -236,7 +263,7 @@ func _cycle_wallpaper(offset: int) -> void:
 		return
 	var next_index := posmod(_selected_wallpaper_index(candidates) + offset, candidates.size())
 	var hero: Dictionary = candidates[next_index]
-	app.save["selected_hero_id"] = int(hero.get("id", 240055))
+	app.save["selected_hero_id"] = int(hero.get("id", app.DEFAULT_HERO_ID))
 	app._persist()
 	enter_wallpaper_focus()
 
@@ -259,18 +286,108 @@ func enter_gal_entry() -> void:
 
 func draw_wallpaper(hero: Dictionary) -> void:
 	# Prefab: @WallpaperPanel anchor=(0.5,0.5) 1668x750 → fullscreen scaled
-	app._draw_image(UI_MAIN_BG, Vector2(0, 0), Vector2(1280, 720), true)
-	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.012, 0.010, 0.008, 0.05)))
-	# Keep the interactive role in the center-right lane so left activity entries remain readable.
-	app._draw_hero_stage(hero, Vector2(390, 82), Vector2(560, 620), false)
-	var mask_rect := _main_centered_rect(Vector2(0, 0), Vector2(324, 274))
-	app._draw_image(UI_HERO_MASK, mask_rect.position, mask_rect.size, false, Color(1, 1, 1, 0.20))
+	app._draw_image(UI_MAIN_BG, Vector2(0, 0), app.CANVAS_SIZE, true)
+	app._view_container().add_child(app._panel(Vector2(0, 0), app.CANVAS_SIZE, Color(0.012, 0.010, 0.008, 0.05)))
+	draw_interactive_role(hero, Vector2(390, 82), Vector2(560, 620))
+
+
+func draw_interactive_role(hero: Dictionary, pos: Vector2, draw_size: Vector2) -> void:
+	# MainUIView prefab: irole/spBg -> spHero -> spFg -> imgMask.
+	var role_rect := Rect2(pos, draw_size)
+	var spine_key := _hero_spine_key(hero)
+	var drew_any := false
+	if not spine_key.is_empty():
+		drew_any = _draw_spine_role_layer(spine_key, "bg", role_rect, Color(1, 1, 1, 0.84)) or drew_any
+		drew_any = _draw_spine_role_layer(spine_key, "base", role_rect, Color(1, 1, 1, 0.98)) or drew_any
+		drew_any = _draw_spine_role_layer(spine_key, "fg", role_rect, Color(1, 1, 1, 0.92)) or drew_any
+	if not drew_any:
+		app._draw_hero_stage(hero, pos, draw_size, false)
+	var mask_size := Vector2(324, 274)
+	var mask_pos := pos + draw_size * 0.5 - mask_size * 0.5
+	app._draw_image(UI_HERO_MASK, mask_pos, mask_size, false, Color(1, 1, 1, 0.22))
+
+
+func _hero_spine_key(hero: Dictionary) -> String:
+	var resource_path := str(hero.get("artResource", ""))
+	if not resource_path.is_empty():
+		var parts := resource_path.split("/")
+		if parts.size() > 0:
+			return str(parts[parts.size() - 1])
+	var spine := str(hero.get("spine", ""))
+	if spine.find("|") >= 0:
+		spine = spine.split("|")[0]
+	return spine
+
+
+func _draw_spine_role_layer(spine_key: String, layer: String, rect: Rect2, tint: Color) -> bool:
+	var baked_path := _first_existing_path(_spine_layer_baked_candidates(spine_key, layer))
+	if not baked_path.is_empty():
+		draw_baked_spine_layer(baked_path, "wait", rect, tint)
+		return true
+	var png_path := _first_existing_path(_spine_layer_png_candidates(spine_key, layer))
+	if not png_path.is_empty():
+		return _draw_spine_png_layer(png_path, rect, tint) != null
+	if layer == "base":
+		print("[mainui] irole base missing for spine: %s" % spine_key)
+	return false
+
+
+func _spine_layer_baked_candidates(spine_key: String, layer: String) -> Array:
+	var layer_key := spine_key
+	if layer != "base":
+		layer_key = "%s_%s" % [spine_key, layer]
+	var candidates := []
+	if layer == "base":
+		candidates.append("res://assets/spine/%s/%s.baked.json" % [spine_key, spine_key])
+		candidates.append("res://assets/spine/Hero__%s/Hero__%s.baked.json" % [spine_key, spine_key])
+	else:
+		candidates.append("res://assets/spine/%s/%s.baked.json" % [spine_key, layer_key])
+		candidates.append("res://assets/spine/Hero__%s__%s/Hero__%s__%s.baked.json" % [spine_key, layer_key, spine_key, layer_key])
+	return candidates
+
+
+func _spine_layer_png_candidates(spine_key: String, layer: String) -> Array:
+	var layer_key := spine_key
+	if layer != "base":
+		layer_key = "%s_%s" % [spine_key, layer]
+	var candidates := []
+	if layer == "base":
+		candidates.append("res://assets/spine/%s/%s.png" % [spine_key, spine_key])
+		candidates.append("res://assets/spine/Hero__%s/%s.png" % [spine_key, spine_key])
+	else:
+		candidates.append("res://assets/spine/%s/%s.png" % [spine_key, layer_key])
+		candidates.append("res://assets/spine/Hero__%s__%s/%s.png" % [spine_key, layer_key, layer_key])
+	return candidates
+
+
+func _first_existing_path(candidates: Array) -> String:
+	for raw_path in candidates:
+		var path := str(raw_path)
+		if FileAccess.file_exists(path):
+			return path
+	return ""
+
+
+func _draw_spine_png_layer(path: String, rect: Rect2, tint: Color) -> TextureRect:
+	var texture: Texture2D = app._load_png_source_texture(path)
+	if texture == null:
+		return null
+	var texture_rect := TextureRect.new()
+	texture_rect.texture = texture
+	texture_rect.position = rect.position
+	texture_rect.size = rect.size
+	texture_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	texture_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	texture_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	texture_rect.modulate = tint
+	app._view_container().add_child(texture_rect)
+	return texture_rect
 
 
 func draw_body_mask() -> void:
 	var mask = Button.new()
 	mask.text = ""; mask.flat = true
-	mask.position = Vector2(0, 0); mask.size = Vector2(1280, 720)
+	mask.position = Vector2(0, 0); mask.size = app.CANVAS_SIZE
 	mask.modulate = Color(1, 1, 1, 0.0)
 	mask.pressed.connect(enter_wallpaper_focus)
 	app._view_container().add_child(mask)
@@ -278,7 +395,7 @@ func draw_body_mask() -> void:
 
 func draw_fullscreen_overlay() -> void:
 	# pnlAdapter/Image: mainui_img_44 fullscreen overlay layer
-	app._draw_image(UI_MAIN_FULLSCREEN_OVERLAY, Vector2(0, 0), Vector2(1280, 720), true, Color(1, 1, 1, 0.12))
+	app._draw_image(UI_MAIN_FULLSCREEN_OVERLAY, Vector2(0, 0), app.CANVAS_SIZE, true, Color(1, 1, 1, 0.12))
 
 
 func draw_top_bar() -> void:
@@ -329,7 +446,7 @@ func draw_player_info(hero: Dictionary) -> void:
 	app._view_container().add_child(power)
 	# btnPlayerInfo (0,13) 271x76
 	add_hit_button(Vector2(0, 13), Vector2(271, 76), app._show_player_info)
-	# btnChange/btnEye: center near x=402/478, top y about 15 on a 1280x720 target.
+	# btnChange/btnEye: compact actions beside the player card.
 	app._draw_image(UI_MAIN_BTN_CHANGE, Vector2(280, 15), Vector2(57, 57), false, Color(1, 1, 1, 0.92))
 	add_ui_text("壁紙", Vector2(281, 69), Vector2(56, 20), 13, HORIZONTAL_ALIGNMENT_CENTER, Color(1, 1, 1, 0.94))
 	add_hit_button(Vector2(280, 15), Vector2(57, 74), app._show_wallpaper_select)
@@ -408,6 +525,8 @@ func draw_menu_button() -> void:
 	# btnMenu: 78x78 (→60x75), right-top pos(-94,-54)
 	var menu_rect := _main_right_top_center_rect(Vector2(-94, -54), Vector2(78, 78))
 	var mx = menu_rect.position.x; var my = menu_rect.position.y
+	draw_mainui_fx("menu", Vector2(mx - 19, my - 19), menu_rect.size + Vector2(38, 38), 0.78)
+	app._draw_image(UI_MAIN_MENU, Vector2(mx - 8, my - 8), Vector2(76, 76), false, Color(1, 0.78, 0.34, 0.24))
 	app._draw_image(UI_MAIN_MENU, Vector2(mx - 6, my - 6), Vector2(72, 72), false, Color(1, 1, 1, 0.30))
 	app._draw_image(UI_MAIN_MENU, Vector2(mx, my), menu_rect.size, false, Color(1, 1, 1, 0.94))
 	add_hit_button(Vector2(mx, my), menu_rect.size, app._show_home_menu)
@@ -468,7 +587,6 @@ func draw_commercialization() -> void:
 
 func draw_chapter_info() -> void:
 	# btnChapterInfo: anchor(1,0) pivot(1,0) pos(-34,150) size(276,100)
-	# Godot: right=1280-34*0.7665=1254, bottom=720+150*0.96=864→pivot=cornner→bottom=576→top=480
 	var chapter_rect := _main_right_bottom_rect(Vector2(-34, 150), Vector2(276, 100))
 	var px = chapter_rect.position.x; var py = chapter_rect.position.y
 	var state: Dictionary = app._current_chapter_state()
@@ -496,7 +614,7 @@ func draw_chapter_info() -> void:
 
 
 func draw_bottom_bar() -> void:
-	# MainUIView screenshot calibration at 1280x720: keep this row slightly above the bottom edge.
+	# MainUIView screenshot calibration: keep this row slightly above the bottom edge.
 	var bar_y = 657.0; var bar_h = 48.0
 	var bar = app._draw_image(UI_MAIN_BOTTOM_BG, Vector2(49, bar_y), Vector2(430, bar_h), false, Color(1, 1, 1, 0.72))
 	_main_panels.append(bar)
@@ -522,6 +640,7 @@ func draw_bottom_bar() -> void:
 func draw_gal_button() -> void:
 	# mainui_btn_25 source is 150x170; force-scale it so it cannot cover btnHero.
 	var gx = 38.0; var gy = 562.0
+	draw_mainui_fx("gal", Vector2(gx - 4, gy + 58), Vector2(118, 76), 0.90)
 	add_scaled_image(UI_MAIN_GAL, Vector2(gx, gy), Vector2(108, 132), Color(1, 1, 1, 0.94))
 	add_ui_text("現世", Vector2(gx + 19, gy + 88), Vector2(70, 30), 20, HORIZONTAL_ALIGNMENT_CENTER, Color(1, 1, 1, 0.96))
 	add_hit_button(Vector2(gx, gy), Vector2(108, 132), enter_gal_entry)
@@ -531,7 +650,6 @@ func draw_gal_button() -> void:
 
 func draw_chat_bar() -> void:
 	# pnlChat: right-anchored pos(-64,-94), 410x40 (→314x38)
-	# Godot: left = 1280 - 64*0.7665 - 410*0.7665 ≈ 917, y = 94*0.96.
 	var chat_rect := _main_right_top_rect(Vector2(-64, -94), Vector2(410, 40))
 	var cx = chat_rect.position.x; var cy = chat_rect.position.y
 	var bg = app._draw_image(UI_MAIN_CHAT_BG, Vector2(cx, cy), chat_rect.size, false, Color(1, 1, 1, 0.72))

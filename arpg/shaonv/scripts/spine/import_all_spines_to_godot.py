@@ -3,7 +3,7 @@
 """Copy exported Spine preview files into the Godot MVP asset tree.
 
 This reads ``tmp/all-spine-export/spine-preview-files.csv`` and creates one
-Godot-friendly folder per skeleton under ``assets/spine/all_export``.
+Godot-friendly folder per skeleton under ``assets/spine``.
 """
 
 from __future__ import annotations
@@ -19,7 +19,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 EXPORT_ROOT = REPO_ROOT / "tmp/all-spine-export"
 PREVIEW_CSV = EXPORT_ROOT / "spine-preview-files.csv"
 GODOT_ROOT = REPO_ROOT / "standalone/godot-mvp"
-TARGET_ROOT = GODOT_ROOT / "assets/spine/all_export"
+TARGET_ROOT = GODOT_ROOT / "assets/spine"
 INDEX_PATH = GODOT_ROOT / "assets/spine/all_spines_list.json"
 
 
@@ -109,10 +109,10 @@ def main() -> int:
                 "sourceDir": row["sourceDir"],
                 "sourceSkeleton": row["skeleton"],
                 "base": base,
-                "dir": f"res://assets/spine/all_export/{key}",
-                "skeleton": f"res://assets/spine/all_export/{key}/{key}.skel.bytes",
-                "atlas": f"res://assets/spine/all_export/{key}/{key}.atlas.txt",
-                "baked": f"res://assets/spine/all_export/{key}/{key}.baked.json",
+                "dir": f"res://assets/spine/{key}",
+                "skeleton": f"res://assets/spine/{key}/{key}.skel.bytes",
+                "atlas": f"res://assets/spine/{key}/{key}.atlas.txt",
+                "baked": f"res://assets/spine/{key}/{key}.baked.json",
                 "pages": page_names,
             }
         )

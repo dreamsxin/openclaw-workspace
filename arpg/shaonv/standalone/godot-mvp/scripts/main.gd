@@ -2,8 +2,8 @@
 extends Control
 
 const SAVE_PATH := "user://shaonv_godot_mvp_save.json"
-const DEFAULT_HERO_ID := 240037
-const LEGACY_DEFAULT_HERO_ID := 240065
+const DEFAULT_HERO_ID := 240030
+const LEGACY_DEFAULT_HERO_IDS := [240037, 240065]
 const HERO_DATA_PATH := "res://data/heroes_mvp.json"
 const HERO_RESOURCE_MAP_PATH := "res://data/hero_resource_map.json"
 const HERO_RARITY_GRADE_PATH := "res://data/hero_rarity_grades.json"
@@ -101,6 +101,11 @@ const AUDIO_SFX_DRAW_ANIMATION := "res://assets/audio/effect/draw_animation.wav"
 const AUDIO_SFX_DRAW_RESULT_1 := "res://assets/audio/effect/draw_result_1.wav"
 const AUDIO_SFX_DRAW_RESULT_10 := "res://assets/audio/effect/draw_result_10.wav"
 const AUDIO_SFX_POOL_SIZE := 6
+const CANVAS_WIDTH := 1670.0
+const CANVAS_HEIGHT := 750.0
+const CANVAS_SIZE := Vector2(CANVAS_WIDTH, CANVAS_HEIGHT)
+const CONTENT_HEIGHT := 646.0
+const CONTENT_SIZE := Vector2(CANVAS_WIDTH, CONTENT_HEIGHT)
 
 var heroes: Array = []
 var hero_resource_map: Array = []
@@ -182,7 +187,7 @@ func _ready() -> void:
 	anchor_right = 0.0
 	anchor_bottom = 0.0
 	position = Vector2.ZERO
-	size = Vector2(1280, 720)
+	size = CANVAS_SIZE
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	print("Shaonv MVP _ready")
 	rng.randomize()
@@ -271,7 +276,7 @@ func _load_save() -> void:
 	var parsed = JSON.parse_string(FileAccess.get_file_as_string(SAVE_PATH))
 	if typeof(parsed) == TYPE_DICTIONARY:
 		save.merge(parsed, true)
-	if int(save.get("selected_hero_id", DEFAULT_HERO_ID)) == LEGACY_DEFAULT_HERO_ID:
+	if int(save.get("selected_hero_id", DEFAULT_HERO_ID)) in LEGACY_DEFAULT_HERO_IDS:
 		save["selected_hero_id"] = DEFAULT_HERO_ID
 
 func _persist() -> void:
@@ -287,13 +292,13 @@ func _build_root() -> void:
 
 	top_bar = Control.new()
 	top_bar.position = Vector2(0, 0)
-	top_bar.size = Vector2(1280, 74)
+	top_bar.size = Vector2(CANVAS_WIDTH, 74)
 	add_child(top_bar)
 
 	var top_bg := ColorRect.new()
 	top_bg.color = Color(0.034, 0.028, 0.024, 0.94)
 	top_bg.position = Vector2(0, 0)
-	top_bg.size = Vector2(1280, 74)
+	top_bg.size = Vector2(CANVAS_WIDTH, 74)
 	top_bar.add_child(top_bg)
 
 	var profile_button := Button.new()
@@ -304,12 +309,12 @@ func _build_root() -> void:
 	top_bar.add_child(profile_button)
 
 	title_label = _label("MainScene", 18, HORIZONTAL_ALIGNMENT_CENTER)
-	title_label.position = Vector2(548, 22)
+	title_label.position = Vector2((CANVAS_WIDTH - 184.0) * 0.5, 22)
 	title_label.size = Vector2(184, 30)
 	add_child(title_label)
 
 	wallet_label = _label("", 18, HORIZONTAL_ALIGNMENT_RIGHT)
-	wallet_label.position = Vector2(808, 18)
+	wallet_label.position = Vector2(CANVAS_WIDTH - 472.0, 18)
 	wallet_label.size = Vector2(440, 36)
 	add_child(wallet_label)
 
@@ -492,7 +497,7 @@ func _push_view(view_name: String, params: Dictionary = {}) -> void:
 		_all_views.back().hide()
 	var container := Control.new()
 	container.position = Vector2(0, 0)
-	container.size = Vector2(1280, 720)
+	container.size = CANVAS_SIZE
 	container.name = "view_%s_%d" % [view_name, _all_views.size()]
 	_mid_layer.add_child(container)
 	_all_views.push_back(container)
@@ -945,9 +950,9 @@ func _show_repair_notice() -> void:
 
 func _show_home_panel(title_text: String, subtitle_text: String) -> Vector2:
 	_clear(title_text)
-	_draw_image(UI_MAIN_BG, Vector2(0, 0), Vector2(1280, 720), true, Color(1, 1, 1, 0.68))
-	_draw_image(UI_MAIN_FULLSCREEN_OVERLAY, Vector2(0, 0), Vector2(1280, 720), true, Color(1, 1, 1, 0.14))
-	_view_container().add_child(_panel(Vector2(0, 0), Vector2(1280, 720), Color(0.012, 0.016, 0.030, 0.58)))
+	_draw_image(UI_MAIN_BG, Vector2(0, 0), CANVAS_SIZE, true, Color(1, 1, 1, 0.68))
+	_draw_image(UI_MAIN_FULLSCREEN_OVERLAY, Vector2(0, 0), CANVAS_SIZE, true, Color(1, 1, 1, 0.14))
+	_view_container().add_child(_panel(Vector2(0, 0), CANVAS_SIZE, Color(0.012, 0.016, 0.030, 0.58)))
 	_view_container().add_child(_panel(Vector2(68, 54), Vector2(1144, 592), Color(0.045, 0.062, 0.100, 0.42)))
 	_view_container().add_child(_panel(Vector2(72, 58), Vector2(1136, 586), Color(0.018, 0.025, 0.046, 0.58)))
 	_draw_image(UI_MAIN_DIVIDER, Vector2(68, 54), Vector2(1144, 8), true, Color(0.72, 0.80, 1.0, 0.46))
@@ -1226,8 +1231,8 @@ func _draw_result_stage(result: Dictionary) -> void:
 	var hero: Dictionary = result.get("hero", _hero_by_id(240065))
 	var rarity := int(result.get("rolled_rarity", hero.get("rarity", 1)))
 	var bg_path := UI_LOTTERY_STAGE_BG if rarity >= 4 else UI_LOTTERY_BG
-	_draw_image(bg_path, Vector2(0, 0), Vector2(1280, 646), true)
-	_view_container().add_child(_panel(Vector2(0, 0), Vector2(1280, 646), Color(0.02, 0.014, 0.016, 0.40)))
+	_draw_image(bg_path, Vector2(0, 0), CONTENT_SIZE, true)
+	_view_container().add_child(_panel(Vector2(0, 0), CONTENT_SIZE, Color(0.02, 0.014, 0.016, 0.40)))
 	_draw_image(UI_LOTTERY_LIGHT_L, Vector2(0, 0), Vector2(640, 430), true, Color(1, 1, 1, 0.42))
 	_draw_image(UI_LOTTERY_LIGHT_R, Vector2(640, 0), Vector2(640, 430), true, Color(1, 1, 1, 0.42))
 	_view_container().add_child(_panel(Vector2(254, 40), Vector2(772, 360), _rarity_color(rarity, 0.16)))
@@ -1755,10 +1760,10 @@ func _add_toggle_button(label: String, key: String, pos: Vector2, value: bool) -
 	, Vector2(220, 44))
 
 func _draw_startup_backdrop(base_color: Color, shade_color: Color) -> void:
-	_view_container().add_child(_panel(Vector2(0, 0), Vector2(1280, 720), base_color))
-	_view_container().add_child(_panel(Vector2(0, 0), Vector2(1280, 720), shade_color))
-	_view_container().add_child(_panel(Vector2(0, 0), Vector2(1280, 96), Color(0.01, 0.008, 0.007, 0.36)))
-	_view_container().add_child(_panel(Vector2(0, 624), Vector2(1280, 96), Color(0.01, 0.008, 0.007, 0.46)))
+	_view_container().add_child(_panel(Vector2(0, 0), CANVAS_SIZE, base_color))
+	_view_container().add_child(_panel(Vector2(0, 0), CANVAS_SIZE, shade_color))
+	_view_container().add_child(_panel(Vector2(0, 0), Vector2(CANVAS_WIDTH, 96), Color(0.01, 0.008, 0.007, 0.36)))
+	_view_container().add_child(_panel(Vector2(0, CANVAS_HEIGHT - 96.0), Vector2(CANVAS_WIDTH, 96), Color(0.01, 0.008, 0.007, 0.46)))
 	for index in range(5):
 		var x := 90.0 + float(index) * 236.0
 		_view_container().add_child(_panel(Vector2(x, 118), Vector2(1, 486), Color(0.92, 0.74, 0.44, 0.08)))
@@ -1777,7 +1782,7 @@ func _show_login_account_popup() -> void:
 
 func _draw_overlay_popup(title: String, message: String) -> void:
 	_play_sfx(AUDIO_SFX_POP_OPEN, 0.85)
-	_view_container().add_child(_panel(Vector2(0, 0), Vector2(1280, 720), Color(0, 0, 0, 0.42)))
+	_view_container().add_child(_panel(Vector2(0, 0), CANVAS_SIZE, Color(0, 0, 0, 0.42)))
 	_view_container().add_child(_panel(Vector2(390, 220), Vector2(500, 260), Color(0.10, 0.075, 0.06, 0.96)))
 	var heading := _label(title, 28, HORIZONTAL_ALIGNMENT_CENTER)
 	heading.position = Vector2(430, 244)

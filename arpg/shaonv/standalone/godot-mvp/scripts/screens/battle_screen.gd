@@ -38,8 +38,8 @@ func show_auto_fight() -> void:
 
 func show_battle(message := "") -> void:
 	app._clear("戰役")
-	app._draw_image(app.UI_MAIN_BG, Vector2(0, 0), Vector2(1280, 646), true, Color(1, 1, 1, 0.42))
-	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 646), Color(0.018, 0.014, 0.012, 0.50)))
+	app._draw_image(app.UI_MAIN_BG, Vector2(0, 0), app.CONTENT_SIZE, true, Color(1, 1, 1, 0.42))
+	app._view_container().add_child(app._panel(Vector2(0, 0), app.CONTENT_SIZE, Color(0.018, 0.014, 0.012, 0.50)))
 	var title: Label = app._label("戰役推進", 34)
 	title.position = Vector2(44, 32)
 	title.size = Vector2(360, 52)

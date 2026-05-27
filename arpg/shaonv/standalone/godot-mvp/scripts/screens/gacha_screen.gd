@@ -23,8 +23,8 @@ const UI_PRAYER_HOLY_RELIC_BOTTOM_FRAME := "res://assets/ui/lottery/lottery_img_
 const UI_PRAYER_HOLY_RELIC_DIVIDER := "res://assets/ui/lottery/lottery_img_04.png"
 const UI_PRAYER_HOLY_RELIC_ANIMATION_BG := "res://assets/ui/background/lottery_img_11.png"
 const UI_PRAYER_REMNANT_ANIMATION_BG := "res://assets/ui/background/lottery_img_10.png"
-const UI_PRAYER_REMNANT_SPINE_BAKED := "res://assets/spine/all_export/Other__yiqi/Other__yiqi.baked.json"
-const UI_PRAYER_REMNANT_SPINE_FALLBACK := "res://assets/spine/all_export/Other__yiqi/yiqi.png"
+const UI_PRAYER_REMNANT_SPINE_BAKED := "res://assets/spine/Other__yiqi/Other__yiqi.baked.json"
+const UI_PRAYER_REMNANT_SPINE_FALLBACK := "res://assets/spine/Other__yiqi/yiqi.png"
 const UI_PRAYER_REMNANT_IDLE_CLIP := "wait"
 const UI_PRAYER_REMNANT_OPEN_CLIP := "1"
 const UI_PRAYER_REMNANT_CLIPS := ["wait", "wait1", "1"]
@@ -69,7 +69,6 @@ const UI_LOTTERY_FUNC_ICONS := [
 	"res://assets/ui/lottery/lottery_img_61.png",
 ]
 const LOTTERY_PREFAB_SIZE := Vector2(1670, 750)
-const LOTTERY_SCALE := Vector2(1280.0 / 1670.0, 720.0 / 750.0)
 const LOTTERY_BTN_WHITE := "res://assets/ui/common/tongyong_btn_01.png"
 
 var app
@@ -82,19 +81,19 @@ func _init(app_ref) -> void:
 
 
 func _lottery_size(prefab_size: Vector2) -> Vector2:
-	return Vector2(prefab_size.x * LOTTERY_SCALE.x, prefab_size.y * LOTTERY_SCALE.y)
+	return prefab_size
 
 
 func _lottery_center_pos(center: Vector2, size: Vector2) -> Vector2:
-	return Vector2((835.0 + center.x - size.x * 0.5) * LOTTERY_SCALE.x, (375.0 - center.y - size.y * 0.5) * LOTTERY_SCALE.y)
+	return Vector2(835.0 + center.x - size.x * 0.5, 375.0 - center.y - size.y * 0.5)
 
 
 func _lottery_right_bottom_pos(center: Vector2, size: Vector2) -> Vector2:
-	return Vector2((1670.0 + center.x - size.x * 0.5) * LOTTERY_SCALE.x, (750.0 - center.y - size.y * 0.5) * LOTTERY_SCALE.y)
+	return Vector2(1670.0 + center.x - size.x * 0.5, 750.0 - center.y - size.y * 0.5)
 
 
 func _lottery_left_bottom_pos(center: Vector2, size: Vector2) -> Vector2:
-	return Vector2((center.x - size.x * 0.5) * LOTTERY_SCALE.x, (750.0 - center.y - size.y * 0.5) * LOTTERY_SCALE.y)
+	return Vector2(center.x - size.x * 0.5, 750.0 - center.y - size.y * 0.5)
 
 
 func _lottery_child_pos(parent_center: Vector2, child_center: Vector2, child_size: Vector2) -> Vector2:
@@ -109,12 +108,12 @@ func show_gacha() -> void:
 	var realm = app._active_gacha_realm()
 	app._set_chrome_visible(false)
 	app._clear("現世" if realm == "present" else "祈願")
-	app._draw_image(lottery_bg_for_pool(str(pool.get("id", "normal"))), Vector2(0, 0), Vector2(1280, 720), true)
+	app._draw_image(lottery_bg_for_pool(str(pool.get("id", "normal"))), Vector2(0, 0), app.CANVAS_SIZE, true)
 	if realm == "prayer":
 		draw_prayer_screen(pool)
 		return
-	app._draw_image(UI_LOTTERY_ROLE_GROUP, _lottery_center_pos(Vector2(0, 0), LOTTERY_PREFAB_SIZE), Vector2(1280, 720), false)
-	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.018, 0.014, 0.016, 0.04)))
+	app._draw_image(UI_LOTTERY_ROLE_GROUP, _lottery_center_pos(Vector2(0, 0), LOTTERY_PREFAB_SIZE), app.CANVAS_SIZE, false)
+	app._view_container().add_child(app._panel(Vector2(0, 0), app.CANVAS_SIZE, Color(0.018, 0.014, 0.016, 0.04)))
 
 	draw_header_resources()
 	draw_pool_tabs(realm)
@@ -580,8 +579,8 @@ func _show_lottery_panel(title_text: String, subtitle: String) -> Vector2:
 	var pool: Dictionary = app._pool_by_id(str(app.save.get("active_pool_id", "advanced")))
 	app._set_chrome_visible(false)
 	app._clear(title_text)
-	app._draw_image(lottery_bg_for_pool(str(pool.get("id", "advanced"))), Vector2(0, 0), Vector2(1280, 720), true, Color(1, 1, 1, 0.82))
-	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.010, 0.009, 0.016, 0.58)))
+	app._draw_image(lottery_bg_for_pool(str(pool.get("id", "advanced"))), Vector2(0, 0), app.CANVAS_SIZE, true, Color(1, 1, 1, 0.82))
+	app._view_container().add_child(app._panel(Vector2(0, 0), app.CANVAS_SIZE, Color(0.010, 0.009, 0.016, 0.58)))
 	draw_header_resources()
 	app._add_action_button("◀  返回", Vector2(44, 18), func() -> void: show_gacha(), Vector2(118, 38), LOTTERY_BTN_WHITE)
 	var title: Label = app._label(title_text, 36)

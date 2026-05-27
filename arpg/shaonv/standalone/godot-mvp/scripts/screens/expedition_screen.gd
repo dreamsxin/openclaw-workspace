@@ -26,9 +26,9 @@ const UI_EXP_DETAIL_COVER := "res://assets/ui/expedition/expedition_img_10.png"
 const CHAPTER_META_PATH := "res://data/chapter_meta_mvp.json"
 const EXPEDITION_SCREENSHOT_HERO_ID := 240101
 const EXPEDITION_SCREENSHOT_HERO_SPINE := "hero_053"
-const EXPEDITION_SCREENSHOT_HEROQ_S01_BAKED := "res://assets/spine/all_export/HeroQ__hero_053q_s01/HeroQ__hero_053q_s01.baked.json"
-const EXPEDITION_HERO_S02_BAKED := "res://assets/spine/all_export/Hero__hero_053_s02/Hero__hero_053_s02.baked.json"
-const EXPEDITION_HERO_S02H_BAKED := "res://assets/spine/all_export/Hero__hero_053_s02h/Hero__hero_053_s02h.baked.json"
+const EXPEDITION_SCREENSHOT_HEROQ_S01_BAKED := "res://assets/spine/HeroQ__hero_053q_s01/HeroQ__hero_053q_s01.baked.json"
+const EXPEDITION_HERO_S02_BAKED := "res://assets/spine/Hero__hero_053_s02/Hero__hero_053_s02.baked.json"
+const EXPEDITION_HERO_S02H_BAKED := "res://assets/spine/Hero__hero_053_s02h/Hero__hero_053_s02h.baked.json"
 const CONFIRMED_WORLDMAP_ICON_KEYS := {
 	"map_pic_1001": true
 }
@@ -169,7 +169,7 @@ func _draw_top_back() -> void:
 func _draw_main_afk_scene() -> void:
 	var scene := Control.new()
 	scene.position = Vector2.ZERO
-	scene.size = Vector2(1280, 720)
+	scene.size = app.CANVAS_SIZE
 	scene.clip_contents = true
 	app._view_container().add_child(scene)
 
@@ -180,12 +180,12 @@ func _draw_main_afk_scene() -> void:
 
 
 func _add_scene_backdrop(parent: Control) -> void:
-	parent.add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.47, 0.53, 0.63, 1.0)))
+	parent.add_child(app._panel(Vector2(0, 0), app.CANVAS_SIZE, Color(0.47, 0.53, 0.63, 1.0)))
 	_add_iso_polygon(parent, [Vector2(0, 108), Vector2(348, -42), Vector2(718, 126), Vector2(346, 292)], Color(0.58, 0.55, 0.64))
 	_add_iso_polygon(parent, [Vector2(710, 74), Vector2(1102, -26), Vector2(1354, 90), Vector2(948, 252)], Color(0.66, 0.63, 0.70))
 	for i in range(9):
 		var y := 84.0 + float(i) * 42.0
-		var mist: ColorRect = app._panel(Vector2(0, y), Vector2(1280, 14), Color(0.84, 0.88, 0.95, 0.07))
+		var mist: ColorRect = app._panel(Vector2(0, y), Vector2(app.CANVAS_WIDTH, 14), Color(0.84, 0.88, 0.95, 0.07))
 		parent.add_child(mist)
 
 
@@ -271,6 +271,18 @@ func _draw_main_afk_move_layer(parent: Control) -> void:
 	tip_label.size = Vector2(104, 20)
 	tip_label.modulate = Color(1.0, 0.95, 0.82)
 	runner.add_child(tip_label)
+	var enter_panel: ColorRect = app._panel(Vector2(70, 94), Vector2(86, 34), Color(0.04, 0.05, 0.07, 0.72))
+	runner.add_child(enter_panel)
+	var enter_title: Label = app._label("进入载具", 12, HORIZONTAL_ALIGNMENT_CENTER)
+	enter_title.position = Vector2(74, 98)
+	enter_title.size = Vector2(78, 16)
+	enter_title.modulate = Color(0.98, 0.94, 0.82)
+	runner.add_child(enter_title)
+	var enter_sub: Label = app._label("巡逻入口", 10, HORIZONTAL_ALIGNMENT_CENTER)
+	enter_sub.position = Vector2(74, 112)
+	enter_sub.size = Vector2(78, 14)
+	enter_sub.modulate = Color(0.92, 0.86, 0.76)
+	runner.add_child(enter_sub)
 	var label_bg: ColorRect = app._panel(Vector2(-26, 158), Vector2(132, 30), Color(0.05, 0.06, 0.08, 0.62))
 	runner.add_child(label_bg)
 	var label: Label = app._label("当前驻扎", 14, HORIZONTAL_ALIGNMENT_CENTER)
@@ -278,13 +290,6 @@ func _draw_main_afk_move_layer(parent: Control) -> void:
 	label.size = Vector2(116, 22)
 	label.modulate = Color(1.0, 0.95, 0.80)
 	runner.add_child(label)
-	var enter_badge: ColorRect = app._panel(Vector2(82, 112), Vector2(46, 18), Color(0.10, 0.10, 0.12, 0.72))
-	runner.add_child(enter_badge)
-	var enter_text: Label = app._label("巡逻", 10, HORIZONTAL_ALIGNMENT_CENTER)
-	enter_text.position = Vector2(84, 111)
-	enter_text.size = Vector2(42, 18)
-	enter_text.modulate = Color(0.98, 0.94, 0.82)
-	runner.add_child(enter_text)
 
 	var click_area := Button.new()
 	click_area.text = ""
@@ -460,7 +465,7 @@ func _add_iso_line(parent: Control, from: Vector2, to: Vector2, color: Color, wi
 func _draw_main_world_scene() -> void:
 	var scene_clip := Control.new()
 	scene_clip.position = Vector2.ZERO
-	scene_clip.size = Vector2(1280, 720)
+	scene_clip.size = app.CANVAS_SIZE
 	scene_clip.clip_contents = true
 	app._view_container().add_child(scene_clip)
 
@@ -544,7 +549,7 @@ func _fight_state() -> Dictionary:
 			"button_text": "已通关"
 		}
 	var required_power := int(next_stage.get("power", 0))
-	var can_fight := app._player_power() >= required_power
+	var can_fight: bool = app._player_power() >= required_power
 	return {
 		"available": true,
 		"can_fight": can_fight,
@@ -579,7 +584,7 @@ func _draw_map_zone() -> void:
 
 	var map_panel := Control.new()
 	map_panel.position = Vector2.ZERO
-	map_panel.size = Vector2(1280, 720)
+	map_panel.size = app.CANVAS_SIZE
 	app._view_container().add_child(map_panel)
 
 	_draw_image_in(map_panel, UI_EXP_MAP, MAIN_MAP_POS, MAIN_MAP_SIZE, false, Color(1, 1, 1, 0.98))
@@ -754,8 +759,8 @@ func _show_chapter_panel_for_node(item: Dictionary) -> void:
 func show_expedition_map() -> void:
 	app.current_view = "expedition_map"
 	app._clear("尘世探索地图")
-	app._draw_image(UI_EXP_BG, Vector2(0, 0), Vector2(1280, 720), true)
-	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.01, 0.02, 0.03, 0.06)))
+	app._draw_image(UI_EXP_BG, Vector2(0, 0), app.CANVAS_SIZE, true)
+	app._view_container().add_child(app._panel(Vector2(0, 0), app.CANVAS_SIZE, Color(0.01, 0.02, 0.03, 0.06)))
 	_map_detail_node = null
 	_draw_map_back()
 	_draw_map_canvas()
@@ -987,6 +992,11 @@ func _add_move_tool_marker(parent: Control) -> void:
 		tip_label.size = Vector2(108, 20)
 		tip_label.modulate = Color(1.0, 0.95, 0.82)
 		parent.add_child(tip_label)
+		var gate_label: Label = app._label("巡逻入口", 10, HORIZONTAL_ALIGNMENT_CENTER)
+		gate_label.position = current_pos + Vector2(14, -96)
+		gate_label.size = Vector2(88, 16)
+		gate_label.modulate = Color(0.96, 0.92, 0.80, 0.88)
+		parent.add_child(gate_label)
 
 
 func _add_map_move_tool_actor(parent: Control, center: Vector2, item: Dictionary) -> void:
@@ -1009,6 +1019,13 @@ func _add_map_move_tool_actor(parent: Control, center: Vector2, item: Dictionary
 		tip.size = Vector2(124, 20)
 		tip.modulate = Color(0.96, 0.93, 0.80, 0.86)
 		actor_root.add_child(tip)
+		var enter_badge: ColorRect = app._panel(Vector2(54, 130), Vector2(62, 18), Color(0.06, 0.06, 0.08, 0.72))
+		actor_root.add_child(enter_badge)
+		var enter_text: Label = app._label("进入巡逻", 10, HORIZONTAL_ALIGNMENT_CENTER)
+		enter_text.position = Vector2(56, 130)
+		enter_text.size = Vector2(58, 18)
+		enter_text.modulate = Color(0.98, 0.94, 0.82)
+		actor_root.add_child(enter_text)
 	var click_area := Button.new()
 	click_area.text = ""
 	click_area.flat = true
@@ -1147,7 +1164,7 @@ func _show_map_detail(item: Dictionary) -> void:
 		_map_detail_node = null
 	var overlay := Control.new()
 	overlay.position = Vector2.ZERO
-	overlay.size = Vector2(1280, 720)
+	overlay.size = app.CANVAS_SIZE
 	app._view_container().add_child(overlay)
 	_map_detail_node = overlay
 
@@ -1188,6 +1205,13 @@ func _show_map_detail(item: Dictionary) -> void:
 	_draw_image_in(overlay, UI_EXP_DETAIL_COVER, card_pos + Vector2(34, 183), Vector2(640, 200), false, Color(1, 1, 1, 0.98))
 	if not cover_path.is_empty():
 		_draw_image_in(overlay, cover_path, card_pos + Vector2(34, 183), Vector2(640, 200), true, Color(1, 1, 1, 0.98))
+	var cover_caption_bg: ColorRect = app._panel(card_pos + Vector2(34, 351), Vector2(640, 28), Color(0.06, 0.07, 0.09, 0.55))
+	overlay.add_child(cover_caption_bg)
+	var cover_caption: Label = app._label(str(item.get("map_move_hint", "当前驻扎")), 14, HORIZONTAL_ALIGNMENT_CENTER)
+	cover_caption.position = card_pos + Vector2(54, 355)
+	cover_caption.size = Vector2(600, 20)
+	cover_caption.modulate = Color(0.98, 0.94, 0.82)
+	overlay.add_child(cover_caption)
 
 	var state: Dictionary = item.get("state", {})
 	var chapter: Dictionary = item.get("chapter", {})
@@ -1229,6 +1253,11 @@ func _show_map_detail(item: Dictionary) -> void:
 	detail.size = Vector2(640, 160)
 	detail.modulate = Color(0.20, 0.20, 0.20)
 	overlay.add_child(detail)
+	var detail_section: Label = app._label("区域详情", 18)
+	detail_section.position = card_pos + Vector2(36, 388)
+	detail_section.size = Vector2(120, 24)
+	detail_section.modulate = Color(0.92, 0.82, 0.58)
+	overlay.add_child(detail_section)
 
 	var status_bg: ColorRect = app._panel(card_pos + Vector2(24, 508), Vector2(660, 34), Color(0.10, 0.10, 0.10, 0.10))
 	overlay.add_child(status_bg)

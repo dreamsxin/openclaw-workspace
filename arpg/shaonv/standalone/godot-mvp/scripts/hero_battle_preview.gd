@@ -50,7 +50,7 @@ func _load_index() -> void:
 func _build_ui() -> void:
 	var bg := ColorRect.new()
 	bg.color = Color(0.045, 0.052, 0.082)
-	bg.size = Vector2(1280, 720)
+	bg.size = Vector2(1670, 750)
 	add_child(bg)
 
 	var glow := ColorRect.new()
@@ -61,13 +61,13 @@ func _build_ui() -> void:
 
 	var left_panel := ColorRect.new()
 	left_panel.color = Color(0.08, 0.09, 0.14, 0.96)
-	left_panel.size = Vector2(236, 720)
+	left_panel.size = Vector2(236, 750)
 	add_child(left_panel)
 
 	var right_panel := ColorRect.new()
 	right_panel.color = Color(0.08, 0.09, 0.14, 0.90)
 	right_panel.position = Vector2(918, 0)
-	right_panel.size = Vector2(362, 720)
+	right_panel.size = Vector2(362, 750)
 	add_child(right_panel)
 
 	add_child(_label("战斗动画 / 资源预览", 20, Vector2(12, 8), Vector2(212, 32), HORIZONTAL_ALIGNMENT_CENTER))

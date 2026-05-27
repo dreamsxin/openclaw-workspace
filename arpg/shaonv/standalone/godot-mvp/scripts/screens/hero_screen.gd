@@ -1,7 +1,7 @@
 # UTF-8 source. HeroMainView/HeroDetailInfoView split from main.gd using source prefab inventories.
 extends RefCounted
 
-const DEFAULT_HERO_ID := 240037
+const DEFAULT_HERO_ID := 240030
 const UI_HERO_BG_MAIN := "res://assets/ui/background/hero_bg_01.png"
 const UI_HERO_BG_DETAIL := "res://assets/ui/background/hero_bg_10.png"
 const UI_HERO_DETAIL_INFO_BG := "res://assets/ui/background/guessing_bg_03.png"
@@ -69,7 +69,7 @@ func _show_gallery() -> void:
 
 func _draw_hero_list_background() -> void:
 	app._draw_image(UI_HERO_BG_MAIN, HERO_MAIN_BG_POS, HERO_MAIN_BG_SIZE, true, Color(1, 1, 1, 0.84))
-	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.018, 0.016, 0.025, 0.36)))
+	app._view_container().add_child(app._panel(Vector2(0, 0), app.CANVAS_SIZE, Color(0.018, 0.016, 0.025, 0.36)))
 	app._draw_image(UI_HERO_BG_DETAIL, HERO_MAIN_BG_POS, HERO_MAIN_BG_SIZE, true, Color(1, 1, 1, 0.18))
 	app._draw_image(UI_HERO_SELECTOR_BG, HERO_SELECTOR_PANEL_POS, HERO_SELECTOR_PANEL_SIZE, true, Color(1, 1, 1, 0.40))
 
@@ -325,7 +325,7 @@ func _show_hero_detail(hero_id: int) -> void:
 func _draw_hero_detail_background() -> void:
 	app._draw_image(UI_HERO_BG_MAIN, HERO_MAIN_BG_POS, HERO_MAIN_BG_SIZE, true, Color(1, 1, 1, 0.76))
 	app._draw_image(UI_HERO_BG_DETAIL, HERO_MAIN_BG_POS, HERO_MAIN_BG_SIZE, true, Color(1, 1, 1, 0.32))
-	app._view_container().add_child(app._panel(Vector2(0, 0), Vector2(1280, 720), Color(0.014, 0.012, 0.020, 0.30)))
+	app._view_container().add_child(app._panel(Vector2(0, 0), app.CANVAS_SIZE, Color(0.014, 0.012, 0.020, 0.30)))
 	app._draw_image(UI_HERO_SELECTOR_BG, HERO_SELECTOR_PANEL_POS, HERO_SELECTOR_PANEL_SIZE, true, Color(1, 1, 1, 0.88))
 	app._draw_image(UI_HERO_SELECTOR_BG, HERO_SELECTOR_PANEL_POS, HERO_SELECTOR_PANEL_SIZE, true, Color(1, 1, 1, 0.36))
 	app._draw_image(UI_HERO_SELECTOR_TOP, HERO_SELECTOR_PANEL_POS + Vector2(-1, 1), Vector2(102, 49), false, Color(1, 1, 1, 0.96))
