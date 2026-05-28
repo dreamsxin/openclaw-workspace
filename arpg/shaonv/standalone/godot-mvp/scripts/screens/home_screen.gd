@@ -42,6 +42,7 @@ const UI_WALLPAPER_ARROW = "res://assets/ui/wallpaper/wallpaper_btn_01.png"
 const UI_WALLPAPER_PLAY = "res://assets/ui/wallpaper/wallpaper_btn_02.png"
 const UI_WALLPAPER_PAUSE = "res://assets/ui/wallpaper/wallpaper_btn_16_1.png"
 const UI_WALLPAPER_PAUSE_FX = "res://assets/ui/wallpaper/wallpaper_btn_16_2.png"
+const UI_WALLPAPER_SPEAK = "res://assets/ui/hero/hero_img_219.png"
 const UI_ITEM_TICKET = "res://assets/ui/item/draw_07.png"
 const UI_ITEM_GEM = "res://assets/ui/item/draw_05.png"
 const UI_MAIN_CHARGE_ICONS = [
@@ -72,10 +73,27 @@ const MAINUI_COMMERCIAL_POS := Vector2(57, 123)
 const MAINUI_CHAPTER_POS := Vector2(1360, 500)
 const MAINUI_BOTTOM_POS := Vector2(64, 676)
 const MAINUI_CHAT_POS := Vector2(1196, 94)
+const WALLPAPER_ROLE_SIZE := Vector2(957.5, 750.0)
+const WALLPAPER_TOUCH_SIZE := Vector2(418.2, 804.2)
+const WALLPAPER_SPEAK_SIZE := Vector2(668.0, 154.0)
+const WALLPAPER_SPEAK_TEXT_SIZE := Vector2(585.0, 72.0)
+const WALLPAPER_SPEAK_DURATION := 3.0
+const WALLPAPER_CTL_AUTO_HIDE := 5.0
+const WALLPAPER_RETURN_HOTZONE := Rect2(0, 0, 96, 96)
+const WALLPAPER_TOUCH_LINES := [
+	"交流嘛，遇到好说话的，那自然好;遇到不好说话的，就用枪械捅他几个透明窟窿，消消火气。",
+	"今天的看板值守已经开始了。",
+	"要出发吗？我会跟上。",
+	"这里交给我，你可以放心。"
+]
 
 var app
 var _main_state: String = "normal"
 var _main_panels: Array = []
+var _wallpaper_focus_state := "focus_idle"
+var _wallpaper_speak_text := ""
+var _wallpaper_touch_token := 0
+var _wallpaper_ctl_token := 0
 
 func _init(app_ref) -> void:
 	app = app_ref
@@ -143,7 +161,7 @@ func _main_right_bottom_rect(prefab_pos: Vector2, prefab_size: Vector2) -> Rect2
 	return Rect2(bottom_right - size, size)
 
 
-func add_hit_button(pos: Vector2, hit_size: Vector2, callback: Callable) -> Button:
+func add_hit_button(pos: Vector2, hit_size: Vector2, callback: Callable, play_click := true) -> Button:
 	var button := Button.new()
 	button.text = ""
 	button.flat = true
@@ -152,7 +170,8 @@ func add_hit_button(pos: Vector2, hit_size: Vector2, callback: Callable) -> Butt
 	button.size = hit_size
 	button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	button.pressed.connect(func() -> void:
-		app._play_sfx(app.AUDIO_SFX_UI_MAIN, 0.72)
+		if play_click:
+			app._play_sfx(app.AUDIO_SFX_UI_MAIN, 0.72)
 		callback.call()
 	)
 	app._view_container().add_child(button)
@@ -224,6 +243,10 @@ func show_home() -> void:
 
 func enter_normal_state() -> void:
 	_main_state = "normal"
+	_wallpaper_focus_state = "focus_idle"
+	_wallpaper_speak_text = ""
+	_wallpaper_touch_token += 1
+	_wallpaper_ctl_token += 1
 	# 不再调 _clear — show_home 已经做了
 	var hero = app._hero_by_id(int(app.save.get("selected_hero_id", app.DEFAULT_HERO_ID)))
 	# Layer 0: Wallpaper (always below everything)
@@ -256,10 +279,72 @@ func enter_normal_state() -> void:
 
 func enter_wallpaper_focus() -> void:
 	_main_state = "wallpaper_focus"
+	_wallpaper_focus_state = "focus_idle"
+	_wallpaper_speak_text = ""
+	_wallpaper_touch_token += 1
+	_wallpaper_ctl_token += 1
+	_draw_wallpaper_focus()
+
+
+func _draw_wallpaper_focus() -> void:
 	app._clear("壁纸")
 	var hero = app._hero_by_id(int(app.save.get("selected_hero_id", app.DEFAULT_HERO_ID)))
-	draw_wallpaper(hero)
-	draw_wallpaper_control_bar()
+	var role_rect := _wallpaper_role_rect(true)
+	draw_wallpaper(hero, true)
+	add_hit_button(Vector2(0, 0), app.CANVAS_SIZE, _on_wallpaper_body_click)
+	draw_wallpaper_role_hit(hero, role_rect)
+	draw_wallpaper_return_hotzone()
+	if _wallpaper_focus_state == "focus_ctl":
+		draw_wallpaper_control_bar()
+
+
+func _exit_wallpaper_focus() -> void:
+	_wallpaper_speak_text = ""
+	_wallpaper_touch_token += 1
+	_wallpaper_ctl_token += 1
+	_wallpaper_focus_state = "focus_idle"
+	app._clear("主界面")
+	_main_panels.clear()
+	enter_normal_state()
+
+
+func is_wallpaper_focus() -> bool:
+	return _main_state == "wallpaper_focus"
+
+
+func handle_wallpaper_back() -> bool:
+	if _main_state != "wallpaper_focus":
+		return false
+	_exit_wallpaper_focus()
+	return true
+
+
+func _on_wallpaper_body_click() -> void:
+	if _main_state != "wallpaper_focus":
+		return
+	_show_wallpaper_control_bar()
+
+
+func _show_wallpaper_control_bar() -> void:
+	if _main_state != "wallpaper_focus":
+		return
+	_wallpaper_focus_state = "focus_ctl"
+	_wallpaper_ctl_token += 1
+	var token := _wallpaper_ctl_token
+	_draw_wallpaper_focus()
+	_hide_wallpaper_control_bar_later(token)
+
+
+func _hide_wallpaper_control_bar_later(token: int) -> void:
+	await app.get_tree().create_timer(WALLPAPER_CTL_AUTO_HIDE).timeout
+	if _main_state != "wallpaper_focus" or _wallpaper_focus_state != "focus_ctl" or token != _wallpaper_ctl_token:
+		return
+	_wallpaper_focus_state = "focus_idle"
+	_draw_wallpaper_focus()
+
+
+func draw_wallpaper_return_hotzone() -> void:
+	add_hit_button(WALLPAPER_RETURN_HOTZONE.position, WALLPAPER_RETURN_HOTZONE.size, _exit_wallpaper_focus, false)
 
 
 func draw_wallpaper_control_bar() -> void:
@@ -267,7 +352,6 @@ func draw_wallpaper_control_bar() -> void:
 	var ctl := _main_centered_rect(Vector2(0, -181), Vector2(68, 68))
 	var center := ctl.position + ctl.size * 0.5
 	var settings: Dictionary = app.save.get("settings", {})
-	add_hit_button(Vector2(0, 0), app.CANVAS_SIZE, enter_normal_state)
 	var left_rect := _main_centered_rect(Vector2(-73, -181), Vector2(92, 50))
 	var right_rect := _main_centered_rect(Vector2(73, -181), Vector2(92, 50))
 	app._draw_image(UI_WALLPAPER_ARROW, left_rect.position, left_rect.size, false, Color(1, 1, 1, 0.94))
@@ -285,8 +369,26 @@ func draw_wallpaper_control_bar() -> void:
 
 
 func _wallpaper_candidates() -> Array:
-	var candidates: Array = app._gallery_filtered_heroes()
+	var candidates := []
+	for hero in app.heroes:
+		var item: Dictionary = hero
+		if _has_local_wallpaper_asset(item):
+			candidates.append(item)
 	return candidates if not candidates.is_empty() else app.heroes
+
+
+func _has_local_wallpaper_asset(hero: Dictionary) -> bool:
+	var spine_key := _hero_spine_key(hero)
+	if not spine_key.is_empty():
+		for layer in ["base", "bg", "fg"]:
+			if not _first_existing_path(_spine_layer_baked_candidates(spine_key, layer)).is_empty():
+				return true
+			if not _first_existing_path(_spine_layer_png_candidates(spine_key, layer)).is_empty():
+				return true
+	var portrait_path := str(hero.get("portraitResource", ""))
+	if not portrait_path.is_empty() and FileAccess.file_exists(app._godot_resource_path(portrait_path)):
+		return true
+	return false
 
 
 func _selected_wallpaper_index(candidates: Array) -> int:
@@ -305,8 +407,11 @@ func _cycle_wallpaper(offset: int) -> void:
 	var next_index := posmod(_selected_wallpaper_index(candidates) + offset, candidates.size())
 	var hero: Dictionary = candidates[next_index]
 	app.save["selected_hero_id"] = int(hero.get("id", app.DEFAULT_HERO_ID))
+	_wallpaper_speak_text = ""
+	_wallpaper_touch_token += 1
+	_wallpaper_focus_state = "focus_ctl"
 	app._persist()
-	enter_wallpaper_focus()
+	_show_wallpaper_control_bar()
 
 
 func _toggle_wallpaper_auto_play() -> void:
@@ -314,7 +419,7 @@ func _toggle_wallpaper_auto_play() -> void:
 	settings["wallpaper_auto_play"] = not bool(settings.get("wallpaper_auto_play", true))
 	app.save["settings"] = settings
 	app._persist()
-	enter_wallpaper_focus()
+	_show_wallpaper_control_bar()
 
 
 func enter_gal_entry() -> void:
@@ -325,11 +430,14 @@ func enter_gal_entry() -> void:
 # Drawing functions - main_normal layers
 # ═══════════════════════════════════════════════════════════════
 
-func draw_wallpaper(hero: Dictionary) -> void:
+func draw_wallpaper(hero: Dictionary, focus_mode := false) -> void:
 	# Prefab: @WallpaperPanel anchor=(0.5,0.5) 1668x750 → fullscreen scaled
 	app._draw_image(UI_MAIN_BG, Vector2(0, 0), app.CANVAS_SIZE, true)
 	app._view_container().add_child(app._panel(Vector2(0, 0), app.CANVAS_SIZE, Color(0.012, 0.010, 0.008, 0.05)))
-	draw_interactive_role(hero, Vector2(390, 82), Vector2(560, 620))
+	var role_rect := _wallpaper_role_rect(focus_mode)
+	draw_interactive_role(hero, role_rect.position, role_rect.size)
+	if focus_mode:
+		draw_wallpaper_speech(role_rect)
 
 
 func draw_interactive_role(hero: Dictionary, pos: Vector2, draw_size: Vector2) -> void:
@@ -346,6 +454,120 @@ func draw_interactive_role(hero: Dictionary, pos: Vector2, draw_size: Vector2) -
 	var mask_size := Vector2(324, 274)
 	var mask_pos := pos + draw_size * 0.5 - mask_size * 0.5
 	app._draw_image(UI_HERO_MASK, mask_pos, mask_size, false, Color(1, 1, 1, 0.22))
+
+
+func _wallpaper_role_rect(focus_mode: bool) -> Rect2:
+	if focus_mode:
+		return _main_centered_rect(Vector2(0, 0), WALLPAPER_ROLE_SIZE)
+	return Rect2(Vector2(390, 82), Vector2(560, 620))
+
+
+func _wallpaper_child_centered_rect(parent_rect: Rect2, prefab_center: Vector2, prefab_size: Vector2) -> Rect2:
+	var center := parent_rect.position + parent_rect.size * 0.5 + Vector2(prefab_center.x, -prefab_center.y)
+	return Rect2(center - prefab_size * 0.5, prefab_size)
+
+
+func _wallpaper_role_touch_rect(role_rect: Rect2) -> Rect2:
+	return _wallpaper_child_centered_rect(role_rect, Vector2(0, 272), WALLPAPER_TOUCH_SIZE)
+
+
+func _wallpaper_role_core_rect(role_rect: Rect2) -> Rect2:
+	var outer := _wallpaper_role_touch_rect(role_rect)
+	var core_size := Vector2(outer.size.x * 0.68, outer.size.y * 0.46)
+	var core_center := Vector2(outer.position.x + outer.size.x * 0.5, role_rect.position.y + role_rect.size.y * 0.46)
+	return Rect2(core_center - core_size * 0.5, core_size)
+
+
+func draw_wallpaper_role_hit(hero: Dictionary, role_rect: Rect2) -> void:
+	var touch_rect := _wallpaper_role_touch_rect(role_rect)
+	add_hit_button(touch_rect.position, touch_rect.size, func() -> void:
+		var click_pos: Vector2 = app._view_container().get_local_mouse_position()
+		if _wallpaper_role_core_rect(role_rect).has_point(click_pos):
+			_on_wallpaper_role_touch(hero)
+		else:
+			app._play_sfx(app.AUDIO_SFX_UI_MAIN, 0.72)
+			_show_wallpaper_control_bar()
+	, false)
+
+
+func _on_wallpaper_role_touch(hero: Dictionary) -> void:
+	var count := int(app.save.get("mainui_wallpaper_touch_count", 0))
+	_wallpaper_speak_text = _wallpaper_touch_line(hero, count)
+	_wallpaper_touch_token += 1
+	_wallpaper_focus_state = "focus_speak"
+	_wallpaper_ctl_token += 1
+	app.save["mainui_wallpaper_touch_count"] = count + 1
+	app.save["mainui_last_wallpaper_touch"] = int(Time.get_unix_time_from_system())
+	app._persist()
+	_play_wallpaper_touch_voice(hero, count)
+	var token := _wallpaper_touch_token
+	_draw_wallpaper_focus()
+	_hide_wallpaper_speech_later(token)
+
+
+func _wallpaper_touch_line(hero: Dictionary, count: int) -> String:
+	var line := str(WALLPAPER_TOUCH_LINES[count % WALLPAPER_TOUCH_LINES.size()])
+	return line.replace("{hero}", str(hero.get("name", "看板娘")))
+
+
+func draw_wallpaper_speech(role_rect: Rect2) -> void:
+	if _wallpaper_speak_text.is_empty():
+		return
+	var bubble_rect := Rect2(role_rect.position + Vector2((role_rect.size.x - WALLPAPER_SPEAK_SIZE.x) * 0.5, 85), WALLPAPER_SPEAK_SIZE)
+	app._draw_image(UI_WALLPAPER_SPEAK, bubble_rect.position, bubble_rect.size, false, Color(1, 1, 1, 0.96))
+	var text_rect := Rect2(bubble_rect.position + (bubble_rect.size - WALLPAPER_SPEAK_TEXT_SIZE) * 0.5 + Vector2(0, 8), WALLPAPER_SPEAK_TEXT_SIZE)
+	var speech: Label = app._label(_wallpaper_speak_text, 18, HORIZONTAL_ALIGNMENT_CENTER)
+	speech.position = text_rect.position
+	speech.size = text_rect.size
+	speech.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	speech.modulate = Color(0.34, 0.23, 0.16, 1.0)
+	app._view_container().add_child(speech)
+
+
+func _hide_wallpaper_speech_later(token: int) -> void:
+	await app.get_tree().create_timer(WALLPAPER_SPEAK_DURATION).timeout
+	if _main_state != "wallpaper_focus" or token != _wallpaper_touch_token or _wallpaper_speak_text.is_empty():
+		return
+	_wallpaper_speak_text = ""
+	if _wallpaper_focus_state == "focus_speak":
+		_wallpaper_focus_state = "focus_idle"
+	_draw_wallpaper_focus()
+
+
+func _play_wallpaper_touch_voice(hero: Dictionary, count: int) -> void:
+	var suffixes := ["greet", "wait1", "wait2", "wait3", "arm1", "er"]
+	var prefixes := _wallpaper_voice_prefixes(hero)
+	var start_index := count % suffixes.size()
+	for offset in range(suffixes.size()):
+		var suffix := str(suffixes[(start_index + offset) % suffixes.size()])
+		for prefix in prefixes:
+			var path := "res://assets/audio/gal/%s_%s.wav" % [prefix, suffix]
+			if FileAccess.file_exists(path):
+				app._play_sfx(path, 0.82)
+				return
+
+
+func _wallpaper_voice_prefixes(hero: Dictionary) -> Array:
+	var prefixes := []
+	_append_wallpaper_voice_prefix(prefixes, _hero_spine_key(hero))
+	var spine_list := str(hero.get("spine", "")).split("|")
+	for raw_spine in spine_list:
+		_append_wallpaper_voice_prefix(prefixes, str(raw_spine))
+	_append_wallpaper_voice_prefix(prefixes, "hero_037")
+	return prefixes
+
+
+func _append_wallpaper_voice_prefix(prefixes: Array, raw_key: String) -> void:
+	var key := raw_key.strip_edges()
+	if key.is_empty():
+		return
+	if not prefixes.has(key):
+		prefixes.append(key)
+	var skin_index := key.find("_s")
+	if skin_index > 0:
+		var base_key := key.substr(0, skin_index)
+		if not prefixes.has(base_key):
+			prefixes.append(base_key)
 
 
 func _hero_spine_key(hero: Dictionary) -> String:

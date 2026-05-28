@@ -228,6 +228,17 @@ func _ready() -> void:
 	if not OS.get_environment("SHAONV_MVP_CAPTURE").is_empty():
 		call_deferred("_capture_debug_screenshot")
 
+
+func _unhandled_input(event: InputEvent) -> void:
+	if home_screen != null and event.is_action_pressed("ui_cancel"):
+		if home_screen.handle_wallpaper_back():
+			get_viewport().set_input_as_handled()
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_GO_BACK_REQUEST and home_screen != null:
+		home_screen.handle_wallpaper_back()
+
 func _capture_debug_screenshot() -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
