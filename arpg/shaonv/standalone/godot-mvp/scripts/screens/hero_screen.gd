@@ -3,6 +3,7 @@ extends RefCounted
 
 const DEFAULT_HERO_ID := 240030
 const UI_HERO_BG_MAIN := "res://assets/ui/background/hero_bg_01.png"
+const UI_HERO_BG_STAR := "res://assets/ui/background/hero_bg_01_star.png"
 const UI_HERO_BG_DETAIL := "res://assets/ui/background/hero_bg_10.png"
 const UI_HERO_DETAIL_INFO_BG := "res://assets/ui/background/guessing_bg_03.png"
 const UI_HERO_SELECTOR_BG := "res://assets/ui/hero/hero_img_36.png"
@@ -47,6 +48,15 @@ const HERO_LIST_TAB_SIZE := Vector2(206, 62)
 const HERO_LIST_ORDINATION_TAB_SIZE := Vector2(111, 44)
 const HERO_LIST_FILTER_PANEL_POS := Vector2(836, 82)
 const HERO_LIST_FILTER_PANEL_SIZE := Vector2(360, 130)
+const HERO_LIST_LEFT_TAB_POS := Vector2(24, 151)
+const HERO_LIST_LEFT_TAB_STEP := 89.0
+const HERO_LIST_SCROLL_POS := Vector2(461, 92)
+const HERO_LIST_SCROLL_SIZE := Vector2(978, 658)
+const HERO_LIST_ROW_SIZE := Vector2(978, 296)
+const HERO_LIST_CARD_SIZE := Vector2(222, 252)
+const HERO_LIST_CARD_GAP := 20.0
+const HERO_LIST_TOP_BUTTON_POS := Vector2(691, 24)
+const HERO_LIST_SORT_POS := Vector2(1011, 24)
 const HERO_DETAIL_INFO_SCALE := 0.5
 const HERO_DETAIL_INFO_SIZE := Vector2(1080, 610) * HERO_DETAIL_INFO_SCALE
 const UI_MAIN_LIMIT_ICONS := [
@@ -74,40 +84,74 @@ func _show_gallery() -> void:
 	_draw_hero_list_background()
 	_draw_hero_list_header()
 	_draw_hero_list_filters()
-	_draw_hero_sort_panel()
 	_draw_hero_list_cards()
 
 func _draw_hero_list_background() -> void:
-	app._draw_image(UI_HERO_BG_MAIN, HERO_MAIN_BG_POS, HERO_MAIN_BG_SIZE, true, Color(1, 1, 1, 0.84))
-	app._view_container().add_child(app._panel(Vector2(0, 0), app.CANVAS_SIZE, Color(0.018, 0.016, 0.025, 0.36)))
-	app._draw_image(UI_HERO_BG_DETAIL, HERO_MAIN_BG_POS, HERO_MAIN_BG_SIZE, true, Color(1, 1, 1, 0.18))
-	app._draw_image(UI_HERO_SELECTOR_BG, HERO_SELECTOR_PANEL_POS, HERO_SELECTOR_PANEL_SIZE, true, Color(1, 1, 1, 0.40))
+	app._draw_image(UI_HERO_BG_MAIN, Vector2(0, 0), app.CANVAS_SIZE, true, Color(1, 1, 1, 0.84))
+	app._draw_image(UI_HERO_BG_DETAIL, Vector2(0, 0), app.CANVAS_SIZE, true, Color(1, 1, 1, 0.18))
+	app._draw_image(UI_HERO_BG_STAR, Vector2(0, 0), app.CANVAS_SIZE, true, Color(1, 1, 1, 0.24))
+	app._view_container().add_child(app._panel(Vector2(0, 0), app.CANVAS_SIZE, Color(0.018, 0.016, 0.025, 0.34)))
+	app._view_container().add_child(app._panel(Vector2(0, 0), app.CANVAS_SIZE, Color(0.0, 0.0, 0.0, 0.16)))
+	app._view_container().add_child(app._panel(Vector2(52, 100), Vector2(8, 610), Color(0.92, 0.76, 0.42, 0.58)))
+	app._view_container().add_child(app._panel(HERO_LIST_LEFT_TAB_POS - Vector2(0, 1), Vector2(206, 599), Color(0.020, 0.018, 0.026, 0.18)))
+	app._view_container().add_child(app._panel(HERO_LIST_SCROLL_POS, HERO_LIST_SCROLL_SIZE, Color(0.020, 0.018, 0.026, 0.22)))
 
 
 func _draw_hero_list_header() -> void:
-	var header: Label = app._label("幻靈圖鑑", 34)
-	header.position = Vector2(38, 22)
-	header.size = Vector2(240, 50)
-	header.modulate = Color(1.0, 0.92, 0.76)
-	app._view_container().add_child(header)
-
 	var owned_count: int = app.save.get("owned", {}).size()
-	var progress: Label = app._label("收集進度  %d / %d" % [owned_count, app.heroes.size()], 20, HORIZONTAL_ALIGNMENT_RIGHT)
-	progress.position = Vector2(806, 30)
-	progress.size = Vector2(396, 34)
+	var progress: Label = app._label("收集 %d/%d" % [owned_count, app.heroes.size()], 18, HORIZONTAL_ALIGNMENT_RIGHT)
+	progress.position = Vector2(1370, 30)
+	progress.size = Vector2(210, 28)
 	progress.modulate = Color(0.96, 0.90, 0.82)
 	app._view_container().add_child(progress)
 
-	app._draw_image(UI_HERO_FILTER_BG, HERO_LIST_FILTER_PANEL_POS, HERO_LIST_FILTER_PANEL_SIZE, false, Color(1, 1, 1, 0.86))
-	_draw_hero_ordination_tab(_gallery_sort_label(gallery_sort_mode), Vector2(980, 90), true, func() -> void:
-		gallery_sort_open = not gallery_sort_open
-		_show_gallery()
+	_draw_hero_top_button("编队", HERO_LIST_TOP_BUTTON_POS, func() -> void:
+		_show_gallery_notice("编队", "本地 MVP 已保留编队入口，阵容编辑将在战斗队列模块接入。")
 	)
-	app._draw_image(UI_HERO_SORT_BTN, Vector2(1142, 116), Vector2(42, 42), false, Color(1, 1, 1, 0.92))
-	app._add_hit_button(Vector2(1134, 108), Vector2(58, 58), func() -> void:
-		gallery_sort_open = not gallery_sort_open
-		_show_gallery()
+	_draw_hero_top_button("阵容推荐", HERO_LIST_TOP_BUTTON_POS + Vector2(160, 0), func() -> void:
+		_show_gallery_notice("阵容推荐", "本地 MVP 已根据当前幻靈数据排序展示，推荐算法暂以战力/稀有度替代。")
 	)
+
+	var modes := [
+		{"key": "level", "text": "等级"},
+		{"key": "rarity", "text": "稀有"},
+		{"key": "power", "text": "战力"},
+		{"key": "name", "text": "名称"},
+	]
+	for index in range(modes.size()):
+		var mode: Dictionary = modes[index]
+		var mode_key := str(mode.get("key", "power"))
+		var target_mode := mode_key
+		_draw_hero_ordination_tab(str(mode.get("text", "")), HERO_LIST_SORT_POS + Vector2(index * 118.25, 0), gallery_sort_mode == mode_key, func() -> void:
+			gallery_sort_mode = target_mode
+			_show_gallery()
+		)
+
+
+func _draw_hero_top_button(text: String, pos: Vector2, on_press: Callable) -> void:
+	app._draw_image(UI_COMMON_BTN_WHITE, pos, Vector2(150, 44), true, Color(1, 1, 1, 0.88))
+	var label: Label = app._label(text, 18, HORIZONTAL_ALIGNMENT_CENTER)
+	label.position = pos + Vector2(24, 4)
+	label.size = Vector2(112, 34)
+	label.modulate = Color(0.38, 0.27, 0.18)
+	app._view_container().add_child(label)
+	app._add_hit_button(pos, Vector2(150, 44), on_press)
+
+
+func _show_gallery_notice(title: String, body: String) -> void:
+	_show_gallery()
+	app._view_container().add_child(app._panel(Vector2(0, 0), app.CANVAS_SIZE, Color(0, 0, 0, 0.42)))
+	app._view_container().add_child(app._panel(Vector2(515, 236), Vector2(460, 210), Color(0.075, 0.056, 0.048, 0.96)))
+	var heading: Label = app._label(title, 26, HORIZONTAL_ALIGNMENT_CENTER)
+	heading.position = Vector2(555, 260)
+	heading.size = Vector2(380, 38)
+	app._view_container().add_child(heading)
+	var message: Label = app._label(body, 18, HORIZONTAL_ALIGNMENT_CENTER)
+	message.position = Vector2(555, 314)
+	message.size = Vector2(380, 56)
+	message.modulate = Color(0.92, 0.86, 0.78)
+	app._view_container().add_child(message)
+	app._add_action_button("確定", Vector2(684, 388), _show_gallery, Vector2(122, 42), UI_COMMON_BTN_GOLD)
 
 
 func _draw_hero_sort_panel() -> void:
@@ -153,7 +197,7 @@ func _draw_hero_sort_panel() -> void:
 
 
 func _draw_hero_ordination_tab(text: String, pos: Vector2, selected: bool, on_press: Callable) -> void:
-	var bg_color := Color(0.70, 0.44, 0.18, 0.50) if selected else Color(0.09, 0.07, 0.10, 0.42)
+	var bg_color := Color(0.72, 0.48, 0.20, 0.62) if selected else Color(0.08, 0.065, 0.075, 0.50)
 	app._view_container().add_child(app._panel(pos, HERO_LIST_ORDINATION_TAB_SIZE, bg_color))
 	var label: Label = app._label(text, 20, HORIZONTAL_ALIGNMENT_CENTER)
 	label.position = pos
@@ -177,33 +221,33 @@ func _draw_hero_filter_icon(_key: String, active: bool, icon_path: String, pos: 
 
 func _draw_hero_list_filters() -> void:
 	var tabs := [
-		{"text": "總覽", "filter": "all"},
-		{"text": "已獲得", "filter": "owned"},
-		{"text": "未獲得", "filter": "unowned"},
-		{"text": "四星", "filter": "r4"},
-		{"text": "三星", "filter": "r3"},
-		{"text": "二星", "filter": "r2"},
+		{"text": "全部", "filter": "all", "icon": UI_HERO_CAMP_FILTER_ICONS[0]},
+		{"text": "虚光", "filter": "camp1", "icon": UI_HERO_CAMP_FILTER_ICONS[1]},
+		{"text": "绝舞", "filter": "camp2", "icon": UI_HERO_CAMP_FILTER_ICONS[2]},
+		{"text": "灼炎", "filter": "camp3", "icon": UI_HERO_CAMP_FILTER_ICONS[3]},
+		{"text": "逆卫", "filter": "camp4", "icon": UI_HERO_CAMP_FILTER_ICONS[4]},
+		{"text": "星殿", "filter": "camp5", "icon": UI_HERO_CAMP_FILTER_ICONS[5]},
 	]
-	var y := 116.0
-	for tab in tabs:
-		_draw_hero_list_tab(str(tab.get("text", "")), str(tab.get("filter", "")), Vector2(42, y))
-		y += 72.0
+	for index in range(tabs.size()):
+		var tab: Dictionary = tabs[index]
+		_draw_hero_list_tab(str(tab.get("text", "")), str(tab.get("filter", "")), str(tab.get("icon", "")), HERO_LIST_LEFT_TAB_POS + Vector2(0, index * HERO_LIST_LEFT_TAB_STEP))
 
 
-func _draw_hero_list_tab(text: String, filter: String, pos: Vector2) -> void:
+func _draw_hero_list_tab(text: String, filter: String, icon_path: String, pos: Vector2) -> void:
 	var selected := gallery_filter == filter
 	if selected:
 		app._draw_image(UI_COMMON_TAB_HIGHLIGHT, pos, Vector2(206, 64), false, Color(1, 1, 1, 0.96))
 	else:
-		app._view_container().add_child(app._panel(pos + Vector2(10, 7), Vector2(186, 48), Color(0.10, 0.075, 0.10, 0.48)))
+		app._view_container().add_child(app._panel(pos + Vector2(8, 7), Vector2(190, 50), Color(0.07, 0.055, 0.073, 0.58)))
+	app._draw_image(icon_path, pos + Vector2(80, 1), Vector2(62, 62), false, Color(1, 1, 1, 0.86 if selected else 0.62))
 
 	var label: Label = app._label(text, 22, HORIZONTAL_ALIGNMENT_CENTER)
-	label.position = pos + Vector2(78, -8)
-	label.size = Vector2(104, 76)
+	label.position = pos + Vector2(116, 16)
+	label.size = Vector2(88, 32)
 	label.modulate = Color(1.0, 0.92, 0.78) if selected else Color(0.86, 0.82, 0.78)
 	app._view_container().add_child(label)
 	var dot_color := Color(1.0, 0.64, 0.30, 0.95) if selected else Color(0.42, 0.36, 0.44, 0.75)
-	app._view_container().add_child(app._panel(pos + Vector2(28, 22), Vector2(22, 22), dot_color))
+	app._view_container().add_child(app._panel(pos + Vector2(24, 21), Vector2(22, 22), dot_color))
 
 	var button := Button.new()
 	button.text = ""
@@ -220,80 +264,144 @@ func _draw_hero_list_tab(text: String, filter: String, pos: Vector2) -> void:
 
 func _draw_hero_list_cards() -> void:
 	var filtered: Array = _gallery_filtered_heroes()
+	var scroll := ScrollContainer.new()
+	scroll.position = HERO_LIST_SCROLL_POS
+	scroll.size = HERO_LIST_SCROLL_SIZE
+	scroll.clip_contents = true
+	scroll.mouse_filter = Control.MOUSE_FILTER_PASS
+	app._view_container().add_child(scroll)
+
+	var row_count: int = maxi(1, int(ceil(float(filtered.size()) / 4.0)))
+	var content := Control.new()
+	content.custom_minimum_size = Vector2(HERO_LIST_SCROLL_SIZE.x, maxf(HERO_LIST_SCROLL_SIZE.y, float(row_count) * HERO_LIST_ROW_SIZE.y))
+	content.size = content.custom_minimum_size
+	content.mouse_filter = Control.MOUSE_FILTER_PASS
+	scroll.add_child(content)
+
 	if filtered.is_empty():
-		var empty: Label = app._label("暫無符合條件的角色", 22, HORIZONTAL_ALIGNMENT_CENTER)
-		empty.position = Vector2(382, 330)
-		empty.size = Vector2(720, 40)
-		app._view_container().add_child(empty)
+		var empty: Label = _card_label("暫無符合條件的幻靈", Vector2(0, 284), Vector2(HERO_LIST_SCROLL_SIZE.x, 40), 22, HORIZONTAL_ALIGNMENT_CENTER, Color(0.92, 0.86, 0.78))
+		content.add_child(empty)
 		return
 
-	var x := 290.0
-	var y := 132.0
-	var col := 0
-	for hero in filtered:
-		_draw_hero_list_card(hero, Vector2(x, y))
-		col += 1
-		x += 228.0
-		if col >= 4:
-			col = 0
-			x = 290.0
-			y += 178.0
+	for row_index in range(row_count):
+		var row_y := float(row_index) * HERO_LIST_ROW_SIZE.y
+		content.add_child(_local_panel(Vector2(0, row_y + 8), Vector2(HERO_LIST_ROW_SIZE.x, HERO_LIST_ROW_SIZE.y - 16), Color(0.026, 0.023, 0.032, 0.40)))
+	for index in range(filtered.size()):
+		var hero: Dictionary = filtered[index]
+		var row_index: int = int(index / 4)
+		var col_index: int = index % 4
+		var pos := Vector2(15 + col_index * (HERO_LIST_CARD_SIZE.x + HERO_LIST_CARD_GAP), row_index * HERO_LIST_ROW_SIZE.y + 22)
+		_draw_hero_list_card(hero, pos, content)
 
 
-func _draw_hero_list_card(hero: Dictionary, pos: Vector2) -> void:
+func _draw_hero_list_card(hero: Dictionary, pos: Vector2, parent: Control) -> void:
 	var hero_id := int(hero.get("id", 0))
 	var rarity := int(hero.get("rarity", 1))
 	var level := int(app.save.get("hero_levels", {}).get(str(hero_id), 1))
 	var copies := int(app.save.get("owned", {}).get(str(hero_id), 0))
 	var shards := int(app.save.get("shards", {}).get(str(hero_id), 0))
 	var owned := copies > 0
-	var frame_color: Color = app._rarity_color(rarity, 0.26 if owned else 0.12)
-	app._view_container().add_child(app._panel(pos, Vector2(196, 142), Color(0.045, 0.038, 0.058, 0.78)))
-	app._view_container().add_child(app._panel(pos + Vector2(2, 2), Vector2(192, 138), frame_color))
-	app._draw_image(UI_HERO_HIGHLIGHT, pos + Vector2(10, 8), Vector2(80, 80), false, Color(1, 1, 1, 0.55))
+	var frame_color: Color = app._rarity_color(rarity, 0.30 if owned else 0.13)
+	parent.add_child(_local_panel(pos, HERO_LIST_CARD_SIZE, Color(0.045, 0.038, 0.058, 0.86)))
+	parent.add_child(_local_panel(pos + Vector2(2, 2), HERO_LIST_CARD_SIZE - Vector2(4, 4), frame_color))
+	parent.add_child(_local_panel(pos + Vector2(8, 8), Vector2(HERO_LIST_CARD_SIZE.x - 16, 142), Color(0.018, 0.016, 0.022, 0.42)))
+	_add_image_to(parent, UI_HERO_HIGHLIGHT, pos + Vector2(15, 15), Vector2(122, 122), false, Color(1, 1, 1, 0.48))
 
 	var tint := Color(1, 1, 1, 1) if owned else Color(0.42, 0.42, 0.45, 1)
-	app._draw_hero_round_thumb(hero, pos + Vector2(16, 12), Vector2(72, 72), tint)
-	app._draw_image(UI_COMMON_HERO_HEAD_FRAME, pos + Vector2(16, 12), Vector2(72, 72), false, Color(1, 1, 1, 0.96 if owned else 0.58))
-	_draw_hero_select_star_bar(rarity, pos + Vector2(17, 82))
-	app._draw_image(UI_COMMON_LEVEL_BADGE, pos + Vector2(58, 56), Vector2(32, 32), false, Color(1, 1, 1, 0.95))
+	_add_hero_round_thumb_to(parent, hero, pos + Vector2(34, 24), Vector2(104, 104), tint)
+	_add_image_to(parent, UI_COMMON_HERO_HEAD_FRAME, pos + Vector2(34, 24), Vector2(104, 104), false, Color(1, 1, 1, 0.96 if owned else 0.58))
+	_draw_hero_card_star_bar(parent, rarity, pos + Vector2(36, 126))
+	_add_image_to(parent, UI_COMMON_LEVEL_BADGE, pos + Vector2(103, 93), Vector2(34, 34), false, Color(1, 1, 1, 0.95))
 	var level_label: Label = app._label(str(level), 13, HORIZONTAL_ALIGNMENT_CENTER)
-	level_label.position = pos + Vector2(63, 62)
+	level_label.position = pos + Vector2(108, 99)
 	level_label.size = Vector2(24, 22)
 	level_label.modulate = Color(1.0, 0.96, 0.76)
-	app._view_container().add_child(level_label)
+	parent.add_child(level_label)
 
 	var display_name := str(hero.get("name", "Unknown")) if owned else "未獲得"
-	var name_label: Label = app._label(display_name, 19)
-	name_label.position = pos + Vector2(96, 18)
-	name_label.size = Vector2(88, 28)
-	name_label.modulate = Color(1.0, 0.94, 0.82) if owned else Color(0.72, 0.70, 0.72)
-	app._view_container().add_child(name_label)
+	var name_label: Label = _card_label(display_name, pos + Vector2(18, 152), Vector2(186, 30), 21, HORIZONTAL_ALIGNMENT_CENTER, Color(1.0, 0.94, 0.82) if owned else Color(0.72, 0.70, 0.72))
+	parent.add_child(name_label)
 
 	var state_text := "持有 %d  碎片 %d" % [copies, shards] if owned else "線索未解鎖"
-	var state: Label = app._label(state_text, 14)
-	state.position = pos + Vector2(96, 52)
-	state.size = Vector2(88, 42)
-	state.modulate = Color(0.92, 0.86, 0.82)
-	app._view_container().add_child(state)
+	var state: Label = _card_label(state_text, pos + Vector2(20, 184), Vector2(182, 28), 14, HORIZONTAL_ALIGNMENT_CENTER, Color(0.92, 0.86, 0.82))
+	parent.add_child(state)
 
 	var power := _hero_power(hero)
-	var power_label: Label = app._label("戰力 %d" % power, 14)
-	power_label.position = pos + Vector2(96, 98)
-	power_label.size = Vector2(88, 26)
-	power_label.modulate = Color(1.0, 0.82, 0.52)
-	app._view_container().add_child(power_label)
+	var power_label: Label = _card_label("戰力 %d" % power, pos + Vector2(20, 214), Vector2(182, 24), 14, HORIZONTAL_ALIGNMENT_CENTER, Color(1.0, 0.82, 0.52))
+	parent.add_child(power_label)
+	if not owned:
+		parent.add_child(_local_panel(pos, HERO_LIST_CARD_SIZE, Color(0.0, 0.0, 0.0, 0.18)))
 
 	var button := Button.new()
 	button.text = ""
 	button.flat = true
 	button.position = pos
-	button.size = Vector2(196, 142)
+	button.size = HERO_LIST_CARD_SIZE
 	button.focus_mode = Control.FOCUS_NONE
 	button.pressed.connect(func() -> void:
 		_show_hero_detail(hero_id)
 	)
-	app._view_container().add_child(button)
+	parent.add_child(button)
+
+
+func _local_panel(pos: Vector2, size: Vector2, color: Color) -> ColorRect:
+	var panel := ColorRect.new()
+	panel.position = pos
+	panel.size = size
+	panel.color = color
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return panel
+
+
+func _card_label(text: String, pos: Vector2, size: Vector2, font_size: int, align: int, color: Color) -> Label:
+	var label: Label = app._label(text, font_size, align)
+	label.position = pos
+	label.size = size
+	label.modulate = color
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return label
+
+
+func _add_image_to(parent: Control, path: String, pos: Vector2, draw_size: Vector2, cover := false, tint := Color(1, 1, 1, 1)) -> TextureRect:
+	var source_texture: Texture2D = app._load_png_source_texture(path)
+	if source_texture == null:
+		return null
+	var rect := TextureRect.new()
+	rect.texture = source_texture
+	rect.position = pos
+	rect.size = draw_size
+	rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED if cover else TextureRect.STRETCH_SCALE
+	rect.modulate = tint
+	rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	parent.add_child(rect)
+	return rect
+
+
+func _add_hero_round_thumb_to(parent: Control, hero: Dictionary, pos: Vector2, draw_size: Vector2, tint := Color(1, 1, 1, 1)) -> Control:
+	var texture: Texture2D = app._hero_round_head_texture(hero)
+	if texture == null:
+		texture = app._hero_portrait_texture(hero)
+	if texture == null:
+		return null
+	var rect := TextureRect.new()
+	rect.texture = texture
+	rect.position = pos
+	rect.size = draw_size
+	rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	rect.stretch_mode = TextureRect.STRETCH_SCALE if app._hero_round_head_path(hero) != "" else TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	rect.modulate = tint
+	rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	parent.add_child(rect)
+	return rect
+
+
+func _draw_hero_card_star_bar(parent: Control, rarity: int, pos: Vector2) -> void:
+	_add_image_to(parent, UI_COMMON_HERO_STAR_BAR, pos, Vector2(104, 18), false, Color(1, 1, 1, 0.78))
+	var count: int = clamp(rarity, 1, 5)
+	var start_x := pos.x + (104.0 - float(count) * 17.0) * 0.5
+	for i in range(count):
+		_add_image_to(parent, UI_HERO_STAR_SMALL, Vector2(start_x + i * 17.0, pos.y + 1), Vector2(16, 16), false, Color(1, 1, 1, 0.95))
 
 func _show_hero_detail(hero_id: int) -> void:
 	var hero: Dictionary = app._hero_by_id(hero_id)
@@ -1139,6 +1247,8 @@ func _gallery_filtered_heroes() -> Array:
 				include = rarity <= 2
 			_:
 				include = true
+		if gallery_filter.begins_with("camp") and camp != gallery_filter:
+			include = false
 		if gallery_camp_filter != "all" and camp != gallery_camp_filter:
 			include = false
 		if gallery_occupation_filter != "all" and occupation != gallery_occupation_filter:
@@ -1184,6 +1294,11 @@ func _sort_gallery_heroes(a: Dictionary, b: Dictionary) -> bool:
 			var b_power := _hero_power(b)
 			if a_power != b_power:
 				return a_power > b_power
+		"name":
+			var a_name := str(a.get("name", ""))
+			var b_name := str(b.get("name", ""))
+			if a_name != b_name:
+				return a_name < b_name
 		_:
 			pass
 	var a_rarity := int(a.get("rarity", 1))

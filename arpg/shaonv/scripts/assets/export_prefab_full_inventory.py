@@ -15,6 +15,7 @@ import csv
 import json
 import re
 from collections import Counter, defaultdict
+from datetime import date
 from pathlib import Path
 from typing import Any
 
@@ -254,6 +255,26 @@ def bundle_short(row: dict[str, str] | None) -> str:
     if not row:
         return "bundle ?"
     return row.get("bundleName") or row.get("hashFileName") or "bundle ?"
+
+
+def fallback_prefab_row(prefab_address: str, source_override: str) -> dict[str, str]:
+    source_path = source_override.replace("\\", "/")
+    hash_name = ""
+    parts = [part for part in source_path.split("/") if part]
+    if len(parts) >= 2 and parts[-1] == "__data":
+        hash_name = parts[-2]
+    bundle_name = f"{safe_name(Path(prefab_address).stem).lower()}_source_override.bundle"
+    return {
+        "address": prefab_address,
+        "assetPath": prefab_address,
+        "bundleName": bundle_name,
+        "fileName": bundle_name,
+        "hashFileName": f"{hash_name}.bundle" if hash_name else bundle_name,
+        "physicalPath": source_path,
+        "physicalExists": "True",
+        "physicalSize": "",
+        "fileSize": "",
+    }
 
 
 def canonical_cab(value: str) -> str:
@@ -752,7 +773,7 @@ def generate_report(
     lines = [
         f"# {prefab_name} 全控件与资源清单",
         "",
-        "生成时间：2026-05-24。",
+        f"生成时间：{date.today().isoformat()}。",
         "",
         f"本文档由 `scripts/assets/export_prefab_full_inventory.py` 生成，用于验证全量清单导出路线能复用于 `{prefab_name}`。",
         "",
@@ -832,6 +853,7 @@ def main() -> int:
     parser.add_argument("target", help="Known prefab short name or full prefab address.")
     parser.add_argument("--repo-root", default=".")
     parser.add_argument("--physical-map", default="reverse-output/assets/yoo-physical-map/physical-asset-map.csv")
+    parser.add_argument("--source-override", default="", help="Use this local bundle path when the physical map row is missing or stale.")
     parser.add_argument("--out", default="", help="Output Markdown path.")
     parser.add_argument("--layout-out-dir", default="reverse-output/godot-layout-inspect")
     parser.add_argument("--mb-out-dir", default="reverse-output/monobehaviour-fields")
@@ -845,10 +867,16 @@ def main() -> int:
     prefab_name, prefab_address = resolve_prefab_address(args.target)
     prefab_row = by_address.get(prefab_address.lower())
     if not prefab_row:
-        raise SystemExit(f"Prefab not found in physical map: {prefab_address}")
-    source = repo_root / prefab_row.get("physicalPath", "")
+        if not args.source_override:
+            raise SystemExit(f"Prefab not found in physical map: {prefab_address}")
+        prefab_row = fallback_prefab_row(prefab_address, args.source_override)
+    source = repo_root / (args.source_override or prefab_row.get("physicalPath", ""))
     if not source.exists():
         raise SystemExit(f"Prefab bundle not found: {source}")
+    if args.source_override:
+        prefab_row = dict(prefab_row)
+        prefab_row["physicalPath"] = str(source.relative_to(repo_root)).replace("\\", "/")
+        prefab_row["physicalExists"] = "True"
 
     env = load_source(source, args.xor_prefix, args.xor_key)
     layout = inspect_layout(env, prefab_address, source)

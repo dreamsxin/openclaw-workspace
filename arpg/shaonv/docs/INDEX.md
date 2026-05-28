@@ -125,6 +125,8 @@ docs/
 | `shaonv-heromainselectherogrid-full-control-resource-inventory-2026-05-24.md` | 详情主屏选择格 |
 | `shaonv-herolisttabgrid-full-control-resource-inventory-2026-05-24.md` | 列表分类 Tab |
 | `shaonv-herolistordinationtabgrid-full-control-resource-inventory-2026-05-24.md` | 列表排序 Tab |
+| `shaonv-herolistview-full-control-resource-inventory-2026-05-28.md` | 英雄列表主界面真实 bundle 全控件 |
+| `shaonv-herolisthorlistgrid-runtime-template-2026-05-28.md` | 英雄列表横向行运行时模板 |
 | `shaonv-herolistview-physical-bundle-gap-2026-05-24.md` | HeroListView 物理 bundle 缺口 |
 | `shaonv-hero-manifest-reverse-lookup-2026-05-27.md` | 英雄列表 manifest 反查 / 缺失 prefab 边界 |
 | `shaonv-hero-battle-preview-2026-05-25.md` | 战斗 prefab/Skill/音效 + Godot 预览器 |
@@ -222,17 +224,25 @@ docs/
 2. 先查 `files/yoo/Default/BundleFiles`，再查 `files/yoo/Default/UnpackBundleFiles`。
 3. 只有前两处没有，再查 `resources/assets/yoo/Default/<hash>.bundle`。
 4. 三处都没有时，再去 `apk/*.apk` 复核该 hash 是否随安装包下发。
-5. 如果 manifest 有记录、但以上位置都没有物理文件，默认按“当前本地缺 bundle”处理，不要先怀疑导出脚本或烘焙脚本。
+5. 如果 manifest 有记录、但以上位置都没有物理文件，不要只按 `bundleName/hashFileName` 直接下结论。下一步先从目标 asset 的 `dependAssetIDs` 展开真实资源名/短名，再用资源名反查本地 bundle 内容。
+6. 如果目标 prefab 的 `dependAssetIDs` 为空，改用 prefab 名、GameObject 名、脚本名、字段名、相邻模板名继续扫；很多 UI 模板能靠对象名命中真实运行时 bundle。
 
 补充经验：不要只信 `physical-asset-map.csv` 或 manifest 推导出的包名。
 
-- 如果 manifest 里能看到资源名，但 `physicalPath` 仍为空，下一步应该直接“按资源名扫所有本地 bundle 内部 container path”。
+- 如果 manifest 里能看到资源名，但 `physicalPath` 仍为空，下一步应该直接“按资源名扫所有本地 bundle 内部 container path / GameObject 名”。
+- 优先查现成索引：`reverse-output/assets/bundle-name-index/bundle-resource-name-index.csv`。必要时再对 `files/yoo/Default/{BundleFiles,UnpackBundleFiles}` 做二进制字符串扫描或重建索引。
+- YooAsset 加密包要套同一套头部处理再解析：`xor-prefix=222`、`xor-key=0x16`。没处理 XOR 时，UnityPy 可能读不到对象，容易误判成“只有残留字符串/不可解析”。
 - 这一步已实证补回过漏包：
   - `hero_053_s02`
   - `hero_053_s02h`
+  - `HeroListView`
+  - `HeroListHorListGrid`
 - 当时 `manifest-parsed-assets.csv` 中这两组 Spine 资源的 `physicalExists=False`，但直接扫描本地 bundle 内容后，实际在以下位置找到了真包：
   - `files/yoo/Default/BundleFiles/d1/d133c1e76a9e76b3b5ebbb26131bb095/__data`
   - `files/yoo/Default/BundleFiles/2e/2ebf56a5c569284708925de1bc096436/__data`
+- 2026-05-28 复查 Hero 列表时也确认了同类问题：manifest 里的 `HeroListView` / `HeroListHorListGrid` hashFileName 不闭合，但资源名索引能按 GameObject 名命中真实包：
+  - `HeroListView` -> `files/yoo/Default/BundleFiles/e1/e1e72bc826b32ec48c2d8867cbba6e88/__data`
+  - `HeroListHorListGrid` -> `files/yoo/Default/BundleFiles/61/61200888b6f33b05423aa04e86cb11f7/__data`
 - 所以下次如果出现“manifest 有行、hash 也有，但 physical map 没闭合”的情况，优先按资源名全扫本地 bundle，不要过早下结论说资源缺失。
 
 和 Spine 相关的经验：
@@ -246,4 +256,4 @@ docs/
 
 ---
 
-*重组于 2026-05-26，更新于 2026-05-27：补录 May 26-27 新增文档，修正错位文件。*
+*重组于 2026-05-26，更新于 2026-05-28：补录资源名反查真实 bundle 的 HeroListView / HeroListHorListGrid 案例。*
