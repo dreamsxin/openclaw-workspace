@@ -199,16 +199,16 @@ func show_relics() -> void:
 		meta.size = Vector2(420, 28)
 		meta.modulate = Color(0.92, 0.86, 0.82)
 		app._view_container().add_child(meta)
-	app._add_action_button("幻靈列表", Vector2(270, 580), app._show_remnants_list, Vector2(132, 44), app.UI_COMMON_BTN_GOLD)
+	app._add_action_button("遺器列表", Vector2(270, 580), app._show_remnants_list, Vector2(132, 44), app.UI_COMMON_BTN_GOLD)
 
 
 func show_develop() -> void:
-	var origin = app._show_home_panel("養成", "角色養成入口：查看英雄、進入詳情、前往 Gal 看板或幻靈列表。")
+	var origin = app._show_home_panel("養成", "角色養成入口：查看幻靈、進入詳情、前往 Gal 看板或遺器列表。")
 	var actions = [
-		{"name": "英雄列表", "desc": "查看所有英雄與持有狀態。", "callback": app._show_gallery, "icon": app.UI_MAIN_LIMIT_ICONS[0]},
-		{"name": "當前英雄", "desc": "進入當前選中英雄詳情。", "callback": func() -> void: app._show_hero_detail(int(app.save.get("selected_hero_id", app.DEFAULT_HERO_ID))), "icon": app.UI_MAIN_LIMIT_ICONS[1]},
+		{"name": "幻靈列表", "desc": "查看所有幻靈與持有狀態。", "callback": app._show_gallery, "icon": app.UI_MAIN_LIMIT_ICONS[0]},
+		{"name": "當前幻靈", "desc": "進入當前選中幻靈詳情。", "callback": func() -> void: app._show_hero_detail(int(app.save.get("selected_hero_id", app.DEFAULT_HERO_ID))), "icon": app.UI_MAIN_LIMIT_ICONS[1]},
 		{"name": "Gal 看板", "desc": "進入現世互動與裝扮。", "callback": app._show_gal, "icon": "res://assets/ui/mainui/mainui_btn_25.png"},
-		{"name": "幻靈列表", "desc": "查看幻靈列表與詳情。", "callback": app._show_remnants_list, "icon": app.UI_MAIN_LIMIT_ICONS[2]},
+		{"name": "遺器列表", "desc": "查看遺器列表與詳情。", "callback": app._show_remnants_list, "icon": app.UI_MAIN_LIMIT_ICONS[2]},
 	]
 	for index in range(actions.size()):
 		var item: Dictionary = actions[index]
@@ -260,7 +260,7 @@ func show_assist() -> void:
 	var tips = [
 		"先收取右下角塵世探秘掛機獎勵。",
 		"每日補給和郵件可以補充喚靈資源。",
-		"喚靈後可到養成/英雄列表查看新角色。",
+		"喚靈後可到養成/幻靈列表查看新角色。",
 		"現世入口可進入 Gal 看板與甜蜜互動。"
 	]
 	for index in range(tips.size()):

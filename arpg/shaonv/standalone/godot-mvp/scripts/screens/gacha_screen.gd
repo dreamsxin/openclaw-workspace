@@ -659,7 +659,7 @@ func _show_gacha_shard_shop() -> void:
 		empty.position = origin + Vector2(244, 128)
 		empty.size = Vector2(560, 110)
 		app._view_container().add_child(empty)
-	app._add_action_button("英雄列表", origin + Vector2(0, 360), app._show_gallery, Vector2(132, 44), LOTTERY_BTN_WHITE)
+	app._add_action_button("幻靈列表", origin + Vector2(0, 360), app._show_gallery, Vector2(132, 44), LOTTERY_BTN_WHITE)
 	app._add_action_button("返回喚靈", origin + Vector2(152, 360), func() -> void: show_gacha(), Vector2(132, 44), LOTTERY_BTN_WHITE)
 
 
@@ -689,7 +689,7 @@ func _show_gacha_formation() -> void:
 	hint.size = Vector2(760, 32)
 	hint.modulate = Color(0.90, 0.86, 0.78)
 	app._view_container().add_child(hint)
-	app._add_action_button("英雄列表", origin + Vector2(0, 360), app._show_gallery, Vector2(132, 44), LOTTERY_BTN_WHITE)
+	app._add_action_button("幻靈列表", origin + Vector2(0, 360), app._show_gallery, Vector2(132, 44), LOTTERY_BTN_WHITE)
 	app._add_action_button("返回喚靈", origin + Vector2(152, 360), func() -> void: show_gacha(), Vector2(132, 44), LOTTERY_BTN_WHITE)
 
 

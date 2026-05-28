@@ -11,15 +11,21 @@ const UI_HERO_SORT_BTN := "res://assets/ui/hero/hero_btn_05.png"
 const UI_HERO_FILTER_BG := "res://assets/ui/hero/hero_img_108.png"
 const UI_HERO_HIGHLIGHT := "res://assets/ui/hero/hero_img_119.png"
 const UI_HERO_STAR_SMALL := "res://assets/ui/hero/hero_img_60.png"
-const UI_HERO_CAMP_ICONS := [
+const UI_HERO_CAMP_FILTER_ICONS := [
 	"res://assets/ui/hero/hero_img_109.png",
 	"res://assets/ui/hero/hero_img_110.png",
+	"res://assets/ui/hero/hero_img_113.png",
 	"res://assets/ui/hero/hero_img_111.png",
 	"res://assets/ui/hero/hero_img_112.png",
-	"res://assets/ui/hero/hero_img_113.png",
 	"res://assets/ui/hero/hero_img_114.png",
+]
+const UI_HERO_OCCUPATION_FILTER_ICONS := [
+	"res://assets/ui/hero/hero_img_109.png",
 	"res://assets/ui/hero/hero_img_115.png",
+	"res://assets/ui/hero/hero_img_118.png",
+	"res://assets/ui/hero/hero_img_117.png",
 	"res://assets/ui/hero/hero_img_116.png",
+	"res://assets/ui/hero/hero_img_199.png",
 ]
 const UI_COMMON_BTN_GOLD := "res://assets/ui/common/tongyong_btn_08.png"
 const UI_COMMON_BTN_WHITE := "res://assets/ui/common/tongyong_btn_01.png"
@@ -37,6 +43,10 @@ const HERO_MAIN_BG_POS := Vector2(-195, -15)
 const HERO_MAIN_BG_SIZE := Vector2(1670, 750)
 const HERO_SELECTOR_PANEL_POS := Vector2(36, 90)
 const HERO_SELECTOR_PANEL_SIZE := Vector2(100, 640)
+const HERO_LIST_TAB_SIZE := Vector2(206, 62)
+const HERO_LIST_ORDINATION_TAB_SIZE := Vector2(111, 44)
+const HERO_LIST_FILTER_PANEL_POS := Vector2(836, 82)
+const HERO_LIST_FILTER_PANEL_SIZE := Vector2(360, 130)
 const HERO_DETAIL_INFO_SCALE := 0.5
 const HERO_DETAIL_INFO_SIZE := Vector2(1080, 610) * HERO_DETAIL_INFO_SCALE
 const UI_MAIN_LIMIT_ICONS := [
@@ -60,7 +70,7 @@ func _init(app_ref) -> void:
 	app = app_ref
 
 func _show_gallery() -> void:
-	app._clear("英雄列表")
+	app._clear("幻靈")
 	_draw_hero_list_background()
 	_draw_hero_list_header()
 	_draw_hero_list_filters()
@@ -75,7 +85,7 @@ func _draw_hero_list_background() -> void:
 
 
 func _draw_hero_list_header() -> void:
-	var header: Label = app._label("英雄圖鑑", 34)
+	var header: Label = app._label("幻靈圖鑑", 34)
 	header.position = Vector2(38, 22)
 	header.size = Vector2(240, 50)
 	header.modulate = Color(1.0, 0.92, 0.76)
@@ -88,11 +98,11 @@ func _draw_hero_list_header() -> void:
 	progress.modulate = Color(0.96, 0.90, 0.82)
 	app._view_container().add_child(progress)
 
-	app._draw_image(UI_HERO_FILTER_BG, Vector2(836, 82), Vector2(360, 130), false, Color(1, 1, 1, 0.86))
-	var sort_hint: Label = app._label("排序  %s" % _gallery_sort_label(gallery_sort_mode), 18, HORIZONTAL_ALIGNMENT_CENTER)
-	sort_hint.position = Vector2(978, 94)
-	sort_hint.size = Vector2(130, 28)
-	app._view_container().add_child(sort_hint)
+	app._draw_image(UI_HERO_FILTER_BG, HERO_LIST_FILTER_PANEL_POS, HERO_LIST_FILTER_PANEL_SIZE, false, Color(1, 1, 1, 0.86))
+	_draw_hero_ordination_tab(_gallery_sort_label(gallery_sort_mode), Vector2(980, 90), true, func() -> void:
+		gallery_sort_open = not gallery_sort_open
+		_show_gallery()
+	)
 	app._draw_image(UI_HERO_SORT_BTN, Vector2(1142, 116), Vector2(42, 42), false, Color(1, 1, 1, 0.92))
 	app._add_hit_button(Vector2(1134, 108), Vector2(58, 58), func() -> void:
 		gallery_sort_open = not gallery_sort_open
@@ -103,7 +113,7 @@ func _draw_hero_list_header() -> void:
 func _draw_hero_sort_panel() -> void:
 	if not gallery_sort_open:
 		return
-	app._draw_image(UI_HERO_FILTER_BG, Vector2(836, 82), Vector2(360, 130), false, Color(1, 1, 1, 0.96))
+	app._draw_image(UI_HERO_FILTER_BG, HERO_LIST_FILTER_PANEL_POS, HERO_LIST_FILTER_PANEL_SIZE, false, Color(1, 1, 1, 0.96))
 	app._view_container().add_child(app._panel(Vector2(848, 92), Vector2(336, 106), Color(0.030, 0.024, 0.038, 0.72)))
 	var modes := [
 		{"key": "level", "text": "等級"},
@@ -114,52 +124,55 @@ func _draw_hero_sort_panel() -> void:
 		var mode: Dictionary = modes[index]
 		var mode_key := str(mode.get("key", "power"))
 		var selected := gallery_sort_mode == mode_key
-		var pos := Vector2(864 + index * 96.0, 104)
-		app._view_container().add_child(app._panel(pos, Vector2(82, 36), Color(0.70, 0.44, 0.18, 0.54) if selected else Color(0.09, 0.07, 0.10, 0.64)))
-		var label: Label = app._label(str(mode.get("text", "")), 16, HORIZONTAL_ALIGNMENT_CENTER)
-		label.position = pos + Vector2(0, 7)
-		label.size = Vector2(82, 22)
-		label.modulate = Color(1.0, 0.92, 0.70) if selected else Color(0.88, 0.84, 0.82)
-		app._view_container().add_child(label)
+		var pos := Vector2(852 + index * 112.0, 92)
 		var target_mode := mode_key
-		app._add_hit_button(pos, Vector2(82, 36), func() -> void:
+		_draw_hero_ordination_tab(str(mode.get("text", "")), pos, selected, func() -> void:
 			gallery_sort_mode = target_mode
 			gallery_sort_open = false
 			_show_gallery()
 		)
 	var occupation_keys := ["all", "occupation1", "occupation2", "occupation3", "occupation4", "occupation5"]
-	var occupation_icon_indices := [0, 6, 7, 8, 9, 10]
 	for index in range(occupation_keys.size()):
 		var key := str(occupation_keys[index])
-		var pos := Vector2(862 + index * 48.0, 104)
+		var pos := Vector2(862 + index * 48.0, 138)
 		var target_occupation := key
-		_draw_hero_filter_icon(key, gallery_occupation_filter == key, str(UI_HERO_CAMP_ICONS[int(occupation_icon_indices[index])]), pos, Vector2(44, 44), "全" if index == 0 else "", func() -> void:
+		_draw_hero_filter_icon(key, gallery_occupation_filter == key, str(UI_HERO_OCCUPATION_FILTER_ICONS[index]), pos, Vector2(36, 36), "全" if index == 0 else "", func() -> void:
 			gallery_occupation_filter = target_occupation
 			_show_gallery()
 		)
 
 	var camp_keys := ["all", "camp1", "camp2", "camp3", "camp4", "camp5"]
-	var camp_icon_indices := [0, 1, 4, 2, 3, 5]
 	for index in range(camp_keys.size()):
 		var key := str(camp_keys[index])
-		var pos := Vector2(862 + index * 48.0, 150)
+		var pos := Vector2(862 + index * 48.0, 174)
 		var target_camp := key
-		_draw_hero_filter_icon(key, gallery_camp_filter == key, str(UI_HERO_CAMP_ICONS[int(camp_icon_indices[index])]), pos, Vector2(44, 44), "全" if index == 0 else "", func() -> void:
+		_draw_hero_filter_icon(key, gallery_camp_filter == key, str(UI_HERO_CAMP_FILTER_ICONS[index]), pos, Vector2(36, 36), "全" if index == 0 else "", func() -> void:
 			gallery_camp_filter = target_camp
 			_show_gallery()
 		)
 
 
+func _draw_hero_ordination_tab(text: String, pos: Vector2, selected: bool, on_press: Callable) -> void:
+	var bg_color := Color(0.70, 0.44, 0.18, 0.50) if selected else Color(0.09, 0.07, 0.10, 0.42)
+	app._view_container().add_child(app._panel(pos, HERO_LIST_ORDINATION_TAB_SIZE, bg_color))
+	var label: Label = app._label(text, 20, HORIZONTAL_ALIGNMENT_CENTER)
+	label.position = pos
+	label.size = HERO_LIST_ORDINATION_TAB_SIZE
+	label.modulate = Color(1.0, 0.92, 0.70) if selected else Color(0.88, 0.84, 0.82)
+	app._view_container().add_child(label)
+	app._add_hit_button(pos, HERO_LIST_ORDINATION_TAB_SIZE, on_press)
+
+
 func _draw_hero_filter_icon(_key: String, active: bool, icon_path: String, pos: Vector2, size: Vector2, text: String, on_press: Callable) -> void:
 	app._draw_image(icon_path, pos, size, false, Color(1, 1, 1, 0.94))
 	if active:
-		app._draw_image(UI_HERO_HIGHLIGHT, pos - Vector2(8, 8), Vector2(60, 60), false, Color(1.0, 0.82, 0.32, 0.62))
+		app._draw_image(UI_HERO_HIGHLIGHT, pos - Vector2(6, 6), size + Vector2(12, 12), false, Color(1.0, 0.82, 0.32, 0.62))
 	if not text.is_empty():
 		var label: Label = app._label(text, 13, HORIZONTAL_ALIGNMENT_CENTER)
-		label.position = pos + Vector2(2, 12)
+		label.position = pos + Vector2(-2, 9)
 		label.size = Vector2(40, 18)
 		app._view_container().add_child(label)
-	app._add_hit_button(pos - Vector2(6, 6), Vector2(56, 56), on_press)
+	app._add_hit_button(pos - Vector2(6, 6), size + Vector2(12, 12), on_press)
 
 
 func _draw_hero_list_filters() -> void:
@@ -180,23 +193,23 @@ func _draw_hero_list_filters() -> void:
 func _draw_hero_list_tab(text: String, filter: String, pos: Vector2) -> void:
 	var selected := gallery_filter == filter
 	if selected:
-		app._draw_image(UI_COMMON_TAB_HIGHLIGHT, pos, Vector2(176, 56), false, Color(1, 1, 1, 0.96))
+		app._draw_image(UI_COMMON_TAB_HIGHLIGHT, pos, Vector2(206, 64), false, Color(1, 1, 1, 0.96))
 	else:
-		app._view_container().add_child(app._panel(pos + Vector2(8, 4), Vector2(160, 48), Color(0.10, 0.075, 0.10, 0.48)))
+		app._view_container().add_child(app._panel(pos + Vector2(10, 7), Vector2(186, 48), Color(0.10, 0.075, 0.10, 0.48)))
 
-	var label: Label = app._label(text, 20, HORIZONTAL_ALIGNMENT_CENTER)
-	label.position = pos + Vector2(50, 8)
-	label.size = Vector2(104, 38)
+	var label: Label = app._label(text, 22, HORIZONTAL_ALIGNMENT_CENTER)
+	label.position = pos + Vector2(78, -8)
+	label.size = Vector2(104, 76)
 	label.modulate = Color(1.0, 0.92, 0.78) if selected else Color(0.86, 0.82, 0.78)
 	app._view_container().add_child(label)
 	var dot_color := Color(1.0, 0.64, 0.30, 0.95) if selected else Color(0.42, 0.36, 0.44, 0.75)
-	app._view_container().add_child(app._panel(pos + Vector2(22, 18), Vector2(18, 18), dot_color))
+	app._view_container().add_child(app._panel(pos + Vector2(28, 22), Vector2(22, 22), dot_color))
 
 	var button := Button.new()
 	button.text = ""
 	button.flat = true
 	button.position = pos
-	button.size = Vector2(176, 56)
+	button.size = HERO_LIST_TAB_SIZE
 	button.focus_mode = Control.FOCUS_NONE
 	button.pressed.connect(func() -> void:
 		gallery_filter = filter
@@ -240,9 +253,10 @@ func _draw_hero_list_card(hero: Dictionary, pos: Vector2) -> void:
 	app._draw_image(UI_HERO_HIGHLIGHT, pos + Vector2(10, 8), Vector2(80, 80), false, Color(1, 1, 1, 0.55))
 
 	var tint := Color(1, 1, 1, 1) if owned else Color(0.42, 0.42, 0.45, 1)
-	app._draw_hero_thumb(hero, pos + Vector2(18, 16), Vector2(68, 72), tint)
-	_draw_hero_card_stars(rarity, pos + Vector2(16, 94), 13)
-	app._draw_image(UI_COMMON_LEVEL_BADGE, pos + Vector2(60, 58), Vector2(32, 32), false, Color(1, 1, 1, 0.95))
+	app._draw_hero_round_thumb(hero, pos + Vector2(16, 12), Vector2(72, 72), tint)
+	app._draw_image(UI_COMMON_HERO_HEAD_FRAME, pos + Vector2(16, 12), Vector2(72, 72), false, Color(1, 1, 1, 0.96 if owned else 0.58))
+	_draw_hero_select_star_bar(rarity, pos + Vector2(17, 82))
+	app._draw_image(UI_COMMON_LEVEL_BADGE, pos + Vector2(58, 56), Vector2(32, 32), false, Color(1, 1, 1, 0.95))
 	var level_label: Label = app._label(str(level), 13, HORIZONTAL_ALIGNMENT_CENTER)
 	level_label.position = pos + Vector2(63, 62)
 	level_label.size = Vector2(24, 22)
@@ -319,7 +333,7 @@ func _show_hero_detail(hero_id: int) -> void:
 		app._add_action_button("收藏", Vector2(1102, 636), func() -> void:
 			_toggle_favorite_hero(hero_id)
 		, Vector2(84, 44))
-	app._add_action_button("返回列表", Vector2(858, 636), _show_gallery, Vector2(132, 44))
+	app._add_action_button("返回幻靈", Vector2(858, 636), _show_gallery, Vector2(132, 44))
 
 
 func _draw_hero_detail_background() -> void:
@@ -481,7 +495,7 @@ func _draw_hero_detail_summary(hero: Dictionary, pos: Vector2) -> void:
 	var owned := copies > 0
 
 	app._draw_image(UI_COMMON_HEAD_FRAME, pos, Vector2(118, 118), false, Color(1, 1, 1, 0.92))
-	app._draw_hero_thumb(hero, pos + Vector2(10, 10), Vector2(98, 98), Color(1, 1, 1, 1) if owned else Color(0.48, 0.48, 0.50, 1))
+	app._draw_hero_round_thumb(hero, pos + Vector2(10, 10), Vector2(98, 98), Color(1, 1, 1, 1) if owned else Color(0.48, 0.48, 0.50, 1))
 
 	var title: Label = app._label(str(hero.get("name", "角色")), 34)
 	title.position = pos + Vector2(136, 4)
@@ -607,7 +621,7 @@ func _draw_hero_core_tab(hero: Dictionary, pos: Vector2) -> void:
 	var hero_id := int(hero.get("id", 0))
 	var core_levels: Dictionary = _hero_state_dict("hero_core_levels")
 	var center: Vector2 = pos + Vector2(156, 118)
-	app._draw_hero_thumb(hero, center - Vector2(34, 34), Vector2(68, 68), Color(1, 1, 1, 1))
+	app._draw_hero_round_thumb(hero, center - Vector2(34, 34), Vector2(68, 68), Color(1, 1, 1, 1))
 	app._draw_image(UI_COMMON_HERO_HEAD_FRAME, center - Vector2(34, 34), Vector2(68, 68), false, Color(1, 1, 1, 0.90))
 	var slots := [
 		Vector2(-116, -56),

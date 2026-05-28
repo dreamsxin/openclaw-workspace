@@ -13,7 +13,7 @@ func _init(app_ref) -> void:
 func show_list() -> void:
 	app.current_view = "remnants"
 	app._set_chrome_visible(false)
-	app._clear("幻靈列表")
+	app._clear("遺器列表")
 	_draw_background()
 	_draw_top_bar()
 	_draw_side_filters()
@@ -94,7 +94,7 @@ func _draw_sync_section(pos: Vector2, total_count: int, page_count: int) -> void
 	tip.size = Vector2(730, 26)
 	tip.modulate = Color(1.0, 0.94, 0.58)
 	app._view_container().add_child(tip)
-	var count = app._label("全部幻靈：%d  第 %d/%d 頁" % [total_count, remnants_page + 1, page_count], 15, HORIZONTAL_ALIGNMENT_RIGHT)
+	var count = app._label("全部遺器：%d  第 %d/%d 頁" % [total_count, remnants_page + 1, page_count], 15, HORIZONTAL_ALIGNMENT_RIGHT)
 	count.position = pos + Vector2(606, 7)
 	count.size = Vector2(224, 24)
 	count.modulate = Color(0.82, 0.94, 1.0)
@@ -169,7 +169,7 @@ func show_detail(hero_id: int) -> void:
 	app.current_view = "remnant_detail"
 	app._set_chrome_visible(false)
 	var hero = app._hero_by_id(hero_id)
-	app._clear("幻靈詳情")
+	app._clear("遺器詳情")
 	_draw_detail_background(hero)
 	_draw_detail_left_strip(hero_id)
 	_draw_detail_tabs()
