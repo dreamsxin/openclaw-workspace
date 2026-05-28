@@ -33,15 +33,28 @@ const CONFIRMED_WORLDMAP_ICON_KEYS := {
 	"map_pic_1001": true
 }
 const MAP_CONTENT_SIZE := Vector2(4096, 4096)
-const MAP_VIEWPORT_POS := Vector2(104, 74)
-const MAP_VIEWPORT_SIZE := Vector2(988, 590)
+const MAP_VIEWPORT_POS := Vector2(0, 0)
+const MAP_VIEWPORT_SIZE := Vector2(1280, 720)
 const MAP_COORD_ORIGIN := Vector2(1876, 1844)
 const MAIN_MAP_POS := Vector2(1056, 23)
 const MAIN_MAP_SIZE := Vector2(160, 160)
 const MAIN_MAP_RING_SIZE := Vector2(180, 180)
 const MAIN_CROSS_REWARD_POS := Vector2(64, 100)
 const MAIN_CROSS_REWARD_SIZE := Vector2(352, 70)
+const MAIN_REWARD_POS := Vector2(855, 525)
+const MAIN_REWARD_SIZE := Vector2(172, 172)
+const MAIN_STRONGER_POS := Vector2(64, 544)
+const MAIN_STRONGER_SIZE := Vector2(152, 152)
+const MAIN_DISPATCH_POS := Vector2(555, 603)
+const MAIN_HERO_POS := Vector2(655, 603)
+const MAIN_MARCH_POS := Vector2(755, 603)
+const MAIN_SMALL_ACTION_SIZE := Vector2(90, 90)
+const MAIN_FIGHT_POS := Vector2(1056, 537)
+const MAIN_FIGHT_SIZE := Vector2(160, 160)
 const MAP_NODE_SIZE := Vector2(168, 180)
+const MAP_NODE_NAMEPLATE_SIZE := Vector2(240, 66)
+const MAP_NODE_NAMEPLATE_CENTER := Vector2(0, 109.6)
+const DETAIL_CARD_SIZE := Vector2(708, 608)
 const WORLDMAP_ID_BASE := 1000
 const MAIN_WORLD_FOCUS_OFFSET := Vector2(360, 438)
 const MAIN_AFK_PATH_POINTS := [
@@ -570,6 +583,8 @@ func _reparent_to(node: Node, parent: Node) -> Node:
 
 func _draw_image_in(parent: Control, path: String, pos: Vector2, draw_size: Vector2, cover := false, tint := Color(1, 1, 1, 1)) -> TextureRect:
 	var rect: TextureRect = app._draw_image(path, pos, draw_size, cover, tint)
+	if rect != null:
+		rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return _reparent_to(rect, parent) as TextureRect
 
 
@@ -653,10 +668,10 @@ func _add_main_map_move_marker(parent: Control, center: Vector2) -> void:
 
 
 func _draw_bottom_actions() -> void:
-	var reward_pos := Vector2(855, 525)
+	var reward_pos := MAIN_REWARD_POS
 	var afk_claimed: bool = app._afk_claimed_today()
 	var fight_state := _fight_state()
-	app._draw_image(UI_EXP_REWARD, reward_pos, Vector2(172, 172), false, Color(1, 1, 1, 0.96))
+	app._draw_image(UI_EXP_REWARD, reward_pos, MAIN_REWARD_SIZE, false, Color(1, 1, 1, 0.96))
 	app._draw_image(UI_EXP_HOOK_TIME, reward_pos + Vector2(17, 118), Vector2(138, 26), false, Color(1, 1, 1, 0.90))
 	var hook_time: Label = app._label(app._afk_time_display(), 22, HORIZONTAL_ALIGNMENT_CENTER)
 	hook_time.position = reward_pos + Vector2(17, 118)
@@ -680,19 +695,19 @@ func _draw_bottom_actions() -> void:
 	reward_hotspot.flat = true
 	reward_hotspot.focus_mode = Control.FOCUS_NONE
 	reward_hotspot.position = reward_pos
-	reward_hotspot.size = Vector2(172, 172)
+	reward_hotspot.size = MAIN_REWARD_SIZE
 	reward_hotspot.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	reward_hotspot.modulate = Color(1, 1, 1, 0.01)
 	reward_hotspot.pressed.connect(app._claim_afk_reward)
 	app._view_container().add_child(reward_hotspot)
-	app._add_hit_button(reward_pos, Vector2(172, 172), app._claim_afk_reward)
+	app._add_hit_button(reward_pos, MAIN_REWARD_SIZE, app._claim_afk_reward)
 
 	var action_specs := [
-		{"path": UI_EXP_BTN_STRONGER, "label": "我要变强", "pos": Vector2(64, 544), "callback": app._show_develop, "size": Vector2(152, 152)},
-		{"path": UI_EXP_BTN_DISPATCH, "label": "派遣", "pos": Vector2(555, 603), "callback": app._show_tasks, "size": Vector2(90, 90)},
-		{"path": UI_EXP_BTN_HERO, "label": "星灵", "pos": Vector2(655, 603), "callback": app._show_develop, "size": Vector2(90, 90)},
-		{"path": UI_EXP_BTN_MARCH, "label": "阵容", "pos": Vector2(755, 603), "callback": app._show_battle, "size": Vector2(90, 90)},
-		{"path": UI_EXP_BTN_FIGHT, "label": "挑战", "pos": Vector2(1056, 537), "callback": show_chapter_panel, "size": Vector2(160, 160), "enabled": bool(fight_state.get("available", false))}
+		{"path": UI_EXP_BTN_STRONGER, "label": "我要变强", "pos": MAIN_STRONGER_POS, "callback": app._show_develop, "size": MAIN_STRONGER_SIZE},
+		{"path": UI_EXP_BTN_DISPATCH, "label": "派遣", "pos": MAIN_DISPATCH_POS, "callback": app._show_tasks, "size": MAIN_SMALL_ACTION_SIZE},
+		{"path": UI_EXP_BTN_HERO, "label": "星灵", "pos": MAIN_HERO_POS, "callback": app._show_develop, "size": MAIN_SMALL_ACTION_SIZE},
+		{"path": UI_EXP_BTN_MARCH, "label": "阵容", "pos": MAIN_MARCH_POS, "callback": app._show_battle, "size": MAIN_SMALL_ACTION_SIZE},
+		{"path": UI_EXP_BTN_FIGHT, "label": "挑战", "pos": MAIN_FIGHT_POS, "callback": show_chapter_panel, "size": MAIN_FIGHT_SIZE, "enabled": bool(fight_state.get("available", false))}
 	]
 	for item in action_specs:
 		var size: Vector2 = item.get("size", Vector2(84, 84))
@@ -762,8 +777,8 @@ func show_expedition_map() -> void:
 	app._draw_image(UI_EXP_BG, Vector2(0, 0), app.CANVAS_SIZE, true)
 	app._view_container().add_child(app._panel(Vector2(0, 0), app.CANVAS_SIZE, Color(0.01, 0.02, 0.03, 0.06)))
 	_map_detail_node = null
-	_draw_map_back()
 	_draw_map_canvas()
+	_draw_map_back()
 	_draw_map_side_buttons()
 
 
@@ -793,10 +808,12 @@ func _draw_map_canvas() -> void:
 	viewport.position = MAP_VIEWPORT_POS
 	viewport.size = MAP_VIEWPORT_SIZE
 	viewport.clip_contents = true
+	viewport.mouse_filter = Control.MOUSE_FILTER_STOP
 	app._view_container().add_child(viewport)
 
 	var content := Control.new()
 	content.size = MAP_CONTENT_SIZE
+	content.mouse_filter = Control.MOUSE_FILTER_PASS
 	viewport.add_child(content)
 	content.position = _initial_map_content_position()
 	_attach_map_drag(viewport, content)
@@ -1043,43 +1060,52 @@ func _add_map_move_tool_actor(parent: Control, center: Vector2, item: Dictionary
 
 func _add_map_node(parent: Control, item: Dictionary) -> void:
 	var pos: Vector2 = item.get("pos", Vector2.ZERO)
+	var root_pos := pos - MAP_NODE_SIZE * 0.5
 	var is_current: bool = bool(item.get("current", false))
 	var is_unlocked: bool = bool(item.get("unlocked", false))
 	var is_available: bool = bool(item.get("available", false))
-	var ring_size := Vector2(116, 116) if is_current else Vector2(96, 96)
-	var ring_pos := pos - ring_size * 0.5
-	_draw_image_in(parent, UI_EXP_MAP_RING, ring_pos, ring_size, false, Color(1, 1, 1, 0.92 if is_current else (0.78 if is_unlocked else 0.36)))
-
-	var core_size := Vector2(80, 80) if is_current else Vector2(64, 64)
-	var core_pos := pos - core_size * 0.5
-	_draw_image_in(parent, UI_EXP_MAP, core_pos, core_size, false, Color(1, 1, 1, 0.98 if is_unlocked else 0.42))
+	var node_root := Control.new()
+	node_root.position = root_pos
+	node_root.size = MAP_NODE_SIZE
+	parent.add_child(node_root)
 
 	var icon_path: String = _world_icon_path_from_key(str(item.get("map_pic", "")))
+	var icon_tint := Color(1, 1, 1, 0.98 if is_unlocked else 0.40)
 	if not icon_path.is_empty() and (is_current or is_unlocked):
-		_draw_image_in(parent, icon_path, pos - Vector2(46, 92), Vector2(92, 92), false, Color(1, 1, 1, 0.98 if not bool(item.get("placeholder_icon", false)) else 0.88))
+		_draw_image_in(node_root, icon_path, Vector2.ZERO, MAP_NODE_SIZE, true, icon_tint)
+	else:
+		var ring_size := Vector2(118, 118) if is_current else Vector2(104, 104)
+		_draw_image_in(node_root, UI_EXP_MAP_RING, MAP_NODE_SIZE * 0.5 - ring_size * 0.5, ring_size, false, Color(1, 1, 1, 0.92 if is_current else (0.62 if is_unlocked else 0.28)))
+		var core_size := Vector2(82, 82) if is_current else Vector2(70, 70)
+		_draw_image_in(node_root, UI_EXP_MAP, MAP_NODE_SIZE * 0.5 - core_size * 0.5, core_size, false, Color(1, 1, 1, 0.96 if is_unlocked else 0.34))
+		if bool(item.get("placeholder_icon", false)) and is_available:
+			var placeholder: Label = app._label("MAP", 14, HORIZONTAL_ALIGNMENT_CENTER)
+			placeholder.position = MAP_NODE_SIZE * 0.5 + Vector2(-34, -8)
+			placeholder.size = Vector2(68, 20)
+			placeholder.modulate = Color(0.95, 0.88, 0.64, 0.58)
+			node_root.add_child(placeholder)
 
-	var tag_pos := pos + Vector2(-84, 64)
-	_draw_image_in(parent, UI_EXP_CHAPTER_TAG, tag_pos, Vector2(168, 46), false, Color(1, 1, 1, 0.98 if is_available else 0.56))
-
+	var tag_pos := MAP_NODE_SIZE * 0.5 - MAP_NODE_NAMEPLATE_SIZE * 0.5 + MAP_NODE_NAMEPLATE_CENTER
+	_draw_image_in(node_root, UI_EXP_CHAPTER_TAG, tag_pos, MAP_NODE_NAMEPLATE_SIZE, false, Color(1, 1, 1, 0.98 if is_available else 0.56))
 	var label: Label = app._label(str(item.get("name", "")), 14, HORIZONTAL_ALIGNMENT_CENTER)
-	label.position = tag_pos + Vector2(8, 9)
-	label.size = Vector2(152, 24)
+	label.position = tag_pos + Vector2(24, 21)
+	label.size = Vector2(192, 24)
 	label.modulate = Color(0.96, 0.95, 0.88) if is_available else Color(0.72, 0.72, 0.72)
-	parent.add_child(label)
+	node_root.add_child(label)
 
 	if not is_unlocked:
 		var lock_text: String = "未解锁" if is_available else "待实装"
 		var lock_label: Label = app._label(lock_text, 12, HORIZONTAL_ALIGNMENT_CENTER)
-		lock_label.position = pos + Vector2(-48, -14)
+		lock_label.position = MAP_NODE_SIZE * 0.5 + Vector2(-48, -14)
 		lock_label.size = Vector2(96, 20)
 		lock_label.modulate = Color(0.90, 0.76, 0.42, 0.94) if is_available else Color(0.66, 0.66, 0.70, 0.88)
-		parent.add_child(lock_label)
+		node_root.add_child(lock_label)
 
 	var btn := Button.new()
 	btn.text = ""
 	btn.flat = true
 	btn.focus_mode = Control.FOCUS_NONE
-	btn.position = pos - Vector2(MAP_NODE_SIZE.x * 0.5, MAP_NODE_SIZE.y * 0.5)
+	btn.position = Vector2.ZERO
 	btn.size = MAP_NODE_SIZE
 	btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	btn.disabled = not is_available
@@ -1087,7 +1113,7 @@ func _add_map_node(parent: Control, item: Dictionary) -> void:
 	btn.pressed.connect(func() -> void:
 		_show_map_detail(item)
 	)
-	parent.add_child(btn)
+	node_root.add_child(btn)
 
 
 func _add_shadow_marker(parent: Control, pos: Vector2) -> void:
@@ -1158,6 +1184,10 @@ func _world_icon_path_from_key(icon_key: String) -> String:
 	return path if FileAccess.file_exists(path) else ""
 
 
+func _detail_prefab_pos(card_pos: Vector2, local_center: Vector2, size: Vector2) -> Vector2:
+	return card_pos + DETAIL_CARD_SIZE * 0.5 + Vector2(local_center.x, -local_center.y) - size * 0.5
+
+
 func _show_map_detail(item: Dictionary) -> void:
 	if _map_detail_node != null:
 		_map_detail_node.queue_free()
@@ -1179,14 +1209,12 @@ func _show_map_detail(item: Dictionary) -> void:
 	overlay.add_child(app._panel(Vector2(0, 0), overlay.size, Color(0.01, 0.01, 0.02, 0.72)))
 	overlay.add_child(dismiss)
 
-	# Match ExpeditionChapterMapDetailView prefab size/placement more closely.
-	var card_pos := Vector2(286, 56)
-	var card_size := Vector2(708, 608)
-	_draw_image_in(overlay, UI_COMMON_BG_08, card_pos, card_size, false, Color(1, 1, 1, 0.98))
+	var card_pos: Vector2 = (app.CANVAS_SIZE - DETAIL_CARD_SIZE) * 0.5
+	_draw_image_in(overlay, UI_COMMON_BG_08, card_pos, DETAIL_CARD_SIZE, false, Color(1, 1, 1, 0.98))
 
 	var title: Label = app._label(str(item.get("name", "未知区域")), 24)
-	title.position = card_pos + Vector2(56, 26)
-	title.size = Vector2(354, 42)
+	title.position = card_pos + Vector2(82, 17)
+	title.size = Vector2(360, 42)
 	title.modulate = Color(1.0, 1.0, 1.0)
 	overlay.add_child(title)
 
@@ -1194,21 +1222,22 @@ func _show_map_detail(item: Dictionary) -> void:
 	close_btn.text = ""
 	close_btn.flat = true
 	close_btn.focus_mode = Control.FOCUS_NONE
-	close_btn.position = card_pos + Vector2(614, 28)
+	close_btn.position = _detail_prefab_pos(card_pos, Vector2(317, 269), Vector2(60, 60))
 	close_btn.size = Vector2(60, 60)
 	close_btn.modulate = Color(1, 1, 1, 0.01)
 	close_btn.pressed.connect(_close_map_detail)
-	_draw_image_in(overlay, UI_COMMON_BTN_16, card_pos + Vector2(614, 28), Vector2(60, 60), false, Color(1, 1, 1, 0.98))
+	_draw_image_in(overlay, UI_COMMON_BTN_16, close_btn.position, Vector2(60, 60), false, Color(1, 1, 1, 0.98))
 	overlay.add_child(close_btn)
 
 	var cover_path: String = _world_icon_path_from_key(str(item.get("map_pic", "")))
-	_draw_image_in(overlay, UI_EXP_DETAIL_COVER, card_pos + Vector2(34, 183), Vector2(640, 200), false, Color(1, 1, 1, 0.98))
+	var cover_pos := _detail_prefab_pos(card_pos, Vector2(0, 117), Vector2(640, 200))
+	_draw_image_in(overlay, UI_EXP_DETAIL_COVER, cover_pos, Vector2(640, 200), false, Color(1, 1, 1, 0.98))
 	if not cover_path.is_empty():
-		_draw_image_in(overlay, cover_path, card_pos + Vector2(34, 183), Vector2(640, 200), true, Color(1, 1, 1, 0.98))
-	var cover_caption_bg: ColorRect = app._panel(card_pos + Vector2(34, 351), Vector2(640, 28), Color(0.06, 0.07, 0.09, 0.55))
+		_draw_image_in(overlay, cover_path, cover_pos, Vector2(640, 200), true, Color(1, 1, 1, 0.98))
+	var cover_caption_bg: ColorRect = app._panel(cover_pos + Vector2(0, 168), Vector2(640, 28), Color(0.06, 0.07, 0.09, 0.55))
 	overlay.add_child(cover_caption_bg)
 	var cover_caption: Label = app._label(str(item.get("map_move_hint", "当前驻扎")), 14, HORIZONTAL_ALIGNMENT_CENTER)
-	cover_caption.position = card_pos + Vector2(54, 355)
+	cover_caption.position = cover_pos + Vector2(20, 172)
 	cover_caption.size = Vector2(600, 20)
 	cover_caption.modulate = Color(0.98, 0.94, 0.82)
 	overlay.add_child(cover_caption)
@@ -1219,24 +1248,6 @@ func _show_map_detail(item: Dictionary) -> void:
 	var chapter_meta: Dictionary = _chapter_meta_for_index(chapter_index)
 	var unlocked: bool = bool(item.get("unlocked", false))
 	var available: bool = bool(item.get("available", false))
-	var completed: int = int(state.get("completed", 0))
-	var stage_count: int = int(state.get("stage_count", 0))
-	var desc_lines: Array[String] = []
-	desc_lines.append("WorldMap chapterId: %d" % int(item.get("id", 0)))
-	if chapter_index > 0:
-		desc_lines.append("映射章节: 第%d章" % chapter_index)
-		desc_lines.append("进度: %d/%d" % [completed, max(stage_count, 1)])
-	else:
-		desc_lines.append("映射章节: 暂无 adventure 数据")
-	desc_lines.append("状态: %s" % ("已解锁" if unlocked else ("未解锁" if available else "待实装")))
-	desc_lines.append("驻扎提示: %s" % str(item.get("map_move_hint", "当前驻扎")))
-	if bool(item.get("placeholder_icon", false)):
-		desc_lines.append("图标: 当前 key 未在本地真实资源集中闭合，按无 icon 处理")
-	else:
-		desc_lines.append("图标: 已命中当前本地真实导出 icon")
-	var next_stage: Dictionary = state.get("next_stage", {})
-	if not next_stage.is_empty():
-		desc_lines.append("推荐挑战: %s" % str(next_stage.get("name", "")))
 	var map_desc := str(chapter_meta.get("descriptionResolved", "")).strip_edges()
 	if map_desc.is_empty():
 		map_desc = str(item.get("map_dec", "")).strip_edges()
@@ -1248,24 +1259,11 @@ func _show_map_detail(item: Dictionary) -> void:
 		detail_text = "%s\n\n%s" % [detail_text, reward_desc]
 	elif not chapter.is_empty():
 		detail_text = "%s\n\n章节奖励预览：%s" % [detail_text, _reward_summary_text(state.get("chapter_rewards", []))]
-	var detail: Label = app._label(detail_text, 20)
-	detail.position = card_pos + Vector2(34, 418)
+	var detail: Label = app._label(detail_text, 21)
+	detail.position = _detail_prefab_pos(card_pos, Vector2(0, -85), Vector2(640, 160))
 	detail.size = Vector2(640, 160)
 	detail.modulate = Color(0.20, 0.20, 0.20)
 	overlay.add_child(detail)
-	var detail_section: Label = app._label("区域详情", 18)
-	detail_section.position = card_pos + Vector2(36, 388)
-	detail_section.size = Vector2(120, 24)
-	detail_section.modulate = Color(0.92, 0.82, 0.58)
-	overlay.add_child(detail_section)
-
-	var status_bg: ColorRect = app._panel(card_pos + Vector2(24, 508), Vector2(660, 34), Color(0.10, 0.10, 0.10, 0.10))
-	overlay.add_child(status_bg)
-	var tip: Label = app._label("\n".join(desc_lines), 13)
-	tip.position = card_pos + Vector2(32, 512)
-	tip.size = Vector2(644, 56)
-	tip.modulate = Color(0.36, 0.36, 0.36)
-	overlay.add_child(tip)
 	for reward_index in range(min(int(state.get("chapter_rewards", []).size()), 3)):
 		var reward: Dictionary = state.get("chapter_rewards", [])[reward_index]
 		app._draw_home_reward_icon(
@@ -1279,7 +1277,7 @@ func _show_map_detail(item: Dictionary) -> void:
 	task_button.text = ""
 	task_button.flat = true
 	task_button.focus_mode = Control.FOCUS_NONE
-	task_button.position = card_pos + Vector2(194, 518)
+	task_button.position = _detail_prefab_pos(card_pos, Vector2(0, -248), Vector2(320, 64))
 	task_button.size = Vector2(320, 64)
 	task_button.disabled = not available
 	task_button.modulate = Color(1, 1, 1, 0.01)
@@ -1287,15 +1285,17 @@ func _show_map_detail(item: Dictionary) -> void:
 		_close_map_detail()
 		_show_chapter_panel_for_node(item)
 	)
-	_draw_image_in(overlay, UI_COMMON_BTN_17, card_pos + Vector2(194, 518), Vector2(320, 64), false, Color(1, 1, 1, 0.98 if available else 0.52))
+	_draw_image_in(overlay, UI_COMMON_BTN_17, task_button.position, Vector2(320, 64), false, Color(1, 1, 1, 0.98 if available else 0.52))
 	overlay.add_child(task_button)
 	var confirm_text := str(item.get("confirm_text", "前往挑战"))
-	if available:
+	if available and bool(item.get("unlocked", false)):
 		confirm_text = "前往章节"
-	elif not unlocked:
+	elif available:
 		confirm_text = "未解锁"
+	elif not unlocked:
+		confirm_text = "待实装"
 	var confirm_label: Label = app._label(confirm_text, 26, HORIZONTAL_ALIGNMENT_CENTER)
-	confirm_label.position = card_pos + Vector2(194, 534)
+	confirm_label.position = task_button.position + Vector2(0, 16)
 	confirm_label.size = Vector2(320, 24)
 	confirm_label.modulate = Color(1.0, 1.0, 1.0, 0.98 if available else 0.72)
 	overlay.add_child(confirm_label)
@@ -1309,11 +1309,7 @@ func _close_map_detail() -> void:
 
 
 func _attach_map_drag(viewport: Control, content: Control) -> void:
-	var drag := Control.new()
-	drag.position = Vector2.ZERO
-	drag.size = MAP_VIEWPORT_SIZE
-	drag.mouse_filter = Control.MOUSE_FILTER_STOP
-	drag.gui_input.connect(func(event: InputEvent) -> void:
+	viewport.gui_input.connect(func(event: InputEvent) -> void:
 		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 			if event.pressed:
 				_map_drag_origin = event.position
@@ -1324,7 +1320,6 @@ func _attach_map_drag(viewport: Control, content: Control) -> void:
 			var next_pos: Vector2 = _map_content_origin + (event.position - _map_drag_origin)
 			content.position = _clamp_map_content(next_pos)
 	)
-	viewport.add_child(drag)
 
 
 func _clamp_map_content(next_pos: Vector2) -> Vector2:
