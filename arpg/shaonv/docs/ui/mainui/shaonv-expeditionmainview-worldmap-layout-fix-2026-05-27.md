@@ -24,6 +24,16 @@
   - 底部按钮和挂机奖励区按原始锚点重排
   - 驻扎角色从圆头像占位改为 baked Spine 本体
 
+### 2026-05-28 补记：宽屏与 5 人队伍
+
+项目画布已统一为 `1670x750`，后续复刻不能继续沿用旧 `1280x720` 常量。本轮已把 `expedition_screen.gd` 内部视口和右上/右下/左上/左下 prefab 锚点换算改为 `app.CANVAS_WIDTH/HEIGHT` 动态计算。
+
+移动角色也从单个 baked Spine 改为 5 人 Q 版队伍：首屏使用 `run` clip 沿 AFKMap 路径移动，地图页 `pnlMoveTool` 使用同一队伍的 `standby` 驻扎表现。指定角色 `240101 / hero_053` 会进入队伍并优先使用 `HeroQ__hero_053q_s01`。
+
+详细踩坑和重烘记录见：
+
+- [shaonv-expedition-wide-convoy-reconstruction-experience-2026-05-28.md](D:/work/openclaw-workspace/arpg/shaonv/docs/meta/shaonv-expedition-wide-convoy-reconstruction-experience-2026-05-28.md)
+
 ## 1. 证据链
 
 ### 1.1 真实截图

@@ -34,22 +34,21 @@ const CONFIRMED_WORLDMAP_ICON_KEYS := {
 }
 const MAP_CONTENT_SIZE := Vector2(4096, 4096)
 const MAP_VIEWPORT_POS := Vector2(0, 0)
-const MAP_VIEWPORT_SIZE := Vector2(1280, 720)
 const MAP_COORD_ORIGIN := Vector2(1876, 1844)
-const MAIN_MAP_POS := Vector2(1056, 23)
+const MAIN_MAP_ANCHOR := Vector2(-64, -23)
 const MAIN_MAP_SIZE := Vector2(160, 160)
 const MAIN_MAP_RING_SIZE := Vector2(180, 180)
-const MAIN_CROSS_REWARD_POS := Vector2(64, 100)
+const MAIN_CROSS_REWARD_ANCHOR := Vector2(64, -100)
 const MAIN_CROSS_REWARD_SIZE := Vector2(352, 70)
-const MAIN_REWARD_POS := Vector2(855, 525)
+const MAIN_REWARD_ANCHOR := Vector2(-253, 23)
 const MAIN_REWARD_SIZE := Vector2(172, 172)
-const MAIN_STRONGER_POS := Vector2(64, 544)
+const MAIN_STRONGER_ANCHOR := Vector2(64, 24)
 const MAIN_STRONGER_SIZE := Vector2(152, 152)
-const MAIN_DISPATCH_POS := Vector2(555, 603)
-const MAIN_HERO_POS := Vector2(655, 603)
-const MAIN_MARCH_POS := Vector2(755, 603)
+const MAIN_DISPATCH_ANCHOR := Vector2(-635, 27)
+const MAIN_HERO_ANCHOR := Vector2(-535, 27)
+const MAIN_MARCH_ANCHOR := Vector2(-435, 27)
 const MAIN_SMALL_ACTION_SIZE := Vector2(90, 90)
-const MAIN_FIGHT_POS := Vector2(1056, 537)
+const MAIN_FIGHT_ANCHOR := Vector2(-64, 23)
 const MAIN_FIGHT_SIZE := Vector2(160, 160)
 const MAP_NODE_SIZE := Vector2(168, 180)
 const MAP_NODE_NAMEPLATE_SIZE := Vector2(240, 66)
@@ -57,6 +56,16 @@ const MAP_NODE_NAMEPLATE_CENTER := Vector2(0, 109.6)
 const DETAIL_CARD_SIZE := Vector2(708, 608)
 const WORLDMAP_ID_BASE := 1000
 const MAIN_WORLD_FOCUS_OFFSET := Vector2(360, 438)
+const EXPEDITION_DEFAULT_TEAM_IDS := [240101, 240055, 240061, 240092, 240037]
+const EXPEDITION_TEAM_ROOT_SIZE := Vector2(390, 278)
+const EXPEDITION_TEAM_DRAW_SIZE := Vector2(118, 148)
+const EXPEDITION_TEAM_OFFSETS := [
+	Vector2(190, 34),
+	Vector2(122, 68),
+	Vector2(256, 78),
+	Vector2(62, 116),
+	Vector2(186, 134)
+]
 const MAIN_AFK_PATH_POINTS := [
 	Vector2(612, 366),
 	Vector2(668, 332),
@@ -152,6 +161,7 @@ var _map_drag_origin := Vector2.ZERO
 var _map_content_origin := Vector2.ZERO
 var _map_detail_node: Control
 var _chapter_meta := {}
+var _baked_clip_cache := {}
 
 
 func _init(app_ref) -> void:
@@ -267,39 +277,32 @@ func _add_scene_tree(parent: Control, pos: Vector2, foliage: Color) -> void:
 
 
 func _draw_main_afk_move_layer(parent: Control) -> void:
-	var hero: Dictionary = _expedition_scene_hero()
-	var runner := Control.new()
-	runner.position = MAIN_AFK_PATH_POINTS[0]
-	runner.size = Vector2(216, 214)
-	parent.add_child(runner)
-
-	_add_scene_vehicle_base(runner, Vector2(8, 132))
-	_add_scene_shadow_oval(runner, Vector2(32, 146), 52.0, 16.0, Color(0.02, 0.02, 0.03, 0.22))
-	_add_scene_hero_actor(runner, hero, Vector2(-32, -34), Vector2(138, 170), "run")
+	var path_points := _main_afk_path_points()
+	var runner := _draw_expedition_team_convoy(parent, path_points[0], "run")
 	var vehicle_tip := _worldmap_default_meta(_current_expedition_chapter().get("chapter_id", 1001))
-	var tip_bg: ColorRect = app._panel(Vector2(94, 18), Vector2(112, 26), Color(0.08, 0.09, 0.12, 0.72))
+	var tip_bg: ColorRect = app._panel(Vector2(230, 16), Vector2(126, 26), Color(0.08, 0.09, 0.12, 0.72))
 	runner.add_child(tip_bg)
 	var tip_label: Label = app._label(str(vehicle_tip.get("vehicle_tip", "点击进入载具巡逻")), 11, HORIZONTAL_ALIGNMENT_CENTER)
-	tip_label.position = Vector2(98, 21)
-	tip_label.size = Vector2(104, 20)
+	tip_label.position = Vector2(235, 21)
+	tip_label.size = Vector2(116, 18)
 	tip_label.modulate = Color(1.0, 0.95, 0.82)
 	runner.add_child(tip_label)
-	var enter_panel: ColorRect = app._panel(Vector2(70, 94), Vector2(86, 34), Color(0.04, 0.05, 0.07, 0.72))
+	var enter_panel: ColorRect = app._panel(Vector2(242, 108), Vector2(86, 34), Color(0.04, 0.05, 0.07, 0.72))
 	runner.add_child(enter_panel)
-	var enter_title: Label = app._label("进入载具", 12, HORIZONTAL_ALIGNMENT_CENTER)
-	enter_title.position = Vector2(74, 98)
+	var enter_title: Label = app._label("进入巡逻", 12, HORIZONTAL_ALIGNMENT_CENTER)
+	enter_title.position = Vector2(246, 112)
 	enter_title.size = Vector2(78, 16)
 	enter_title.modulate = Color(0.98, 0.94, 0.82)
 	runner.add_child(enter_title)
 	var enter_sub: Label = app._label("巡逻入口", 10, HORIZONTAL_ALIGNMENT_CENTER)
-	enter_sub.position = Vector2(74, 112)
+	enter_sub.position = Vector2(246, 126)
 	enter_sub.size = Vector2(78, 14)
 	enter_sub.modulate = Color(0.92, 0.86, 0.76)
 	runner.add_child(enter_sub)
-	var label_bg: ColorRect = app._panel(Vector2(-26, 158), Vector2(132, 30), Color(0.05, 0.06, 0.08, 0.62))
+	var label_bg: ColorRect = app._panel(Vector2(118, 210), Vector2(132, 30), Color(0.05, 0.06, 0.08, 0.62))
 	runner.add_child(label_bg)
 	var label: Label = app._label("当前驻扎", 14, HORIZONTAL_ALIGNMENT_CENTER)
-	label.position = Vector2(-18, 161)
+	label.position = Vector2(126, 213)
 	label.size = Vector2(116, 22)
 	label.modulate = Color(1.0, 0.95, 0.80)
 	runner.add_child(label)
@@ -308,8 +311,8 @@ func _draw_main_afk_move_layer(parent: Control) -> void:
 	click_area.text = ""
 	click_area.flat = true
 	click_area.focus_mode = Control.FOCUS_NONE
-	click_area.position = Vector2(-24, 8)
-	click_area.size = Vector2(230, 184)
+	click_area.position = Vector2(18, 6)
+	click_area.size = Vector2(350, 242)
 	click_area.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	click_area.modulate = Color(1, 1, 1, 0.01)
 	click_area.pressed.connect(_open_current_map_detail_from_main)
@@ -317,12 +320,93 @@ func _draw_main_afk_move_layer(parent: Control) -> void:
 
 	var tween := runner.create_tween()
 	tween.set_loops()
-	for i in range(1, MAIN_AFK_PATH_POINTS.size()):
-		tween.tween_property(runner, "position", MAIN_AFK_PATH_POINTS[i], 0.82).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	for i in range(1, path_points.size()):
+		tween.tween_property(runner, "position", path_points[i], 0.82).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	tween.tween_interval(0.25)
-	for i in range(MAIN_AFK_PATH_POINTS.size() - 2, -1, -1):
-		tween.tween_property(runner, "position", MAIN_AFK_PATH_POINTS[i], 0.82).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	for i in range(path_points.size() - 2, -1, -1):
+		tween.tween_property(runner, "position", path_points[i], 0.82).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	tween.tween_interval(0.35)
+
+
+func _main_afk_path_points() -> Array:
+	var wide_offset := maxf(float(app.CANVAS_WIDTH) - 1280.0, 0.0) * 0.35
+	var points: Array = []
+	for point in MAIN_AFK_PATH_POINTS:
+		points.append(point + Vector2(wide_offset, 0))
+	return points
+
+
+func _draw_expedition_team_convoy(parent: Control, pos: Vector2, preferred_clip := "run") -> Control:
+	var root := Control.new()
+	root.position = pos
+	root.size = EXPEDITION_TEAM_ROOT_SIZE
+	root.mouse_filter = Control.MOUSE_FILTER_PASS
+	parent.add_child(root)
+	var heroes := _expedition_team_heroes()
+	for i in range(EXPEDITION_TEAM_OFFSETS.size() - 1, -1, -1):
+		if i >= heroes.size():
+			continue
+		var offset: Vector2 = EXPEDITION_TEAM_OFFSETS[i]
+		var actor_root := Control.new()
+		actor_root.position = offset
+		actor_root.size = EXPEDITION_TEAM_DRAW_SIZE + Vector2(24, 24)
+		actor_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		root.add_child(actor_root)
+		_add_scene_shadow_oval(actor_root, Vector2(EXPEDITION_TEAM_DRAW_SIZE.x * 0.5 + 12, EXPEDITION_TEAM_DRAW_SIZE.y - 2), 42.0, 11.0, Color(0.02, 0.02, 0.03, 0.22))
+		_add_scene_hero_actor(actor_root, heroes[i], Vector2.ZERO, EXPEDITION_TEAM_DRAW_SIZE, preferred_clip, true)
+	return root
+
+
+func _expedition_team_heroes() -> Array:
+	var hero_ids: Array = []
+	var saved_team_raw = app.save.get("expedition_team_ids", [])
+	var saved_team: Array = saved_team_raw if typeof(saved_team_raw) == TYPE_ARRAY else []
+	var has_explicit_team: bool = not saved_team.is_empty()
+	if has_explicit_team:
+		for raw_id in saved_team:
+			_append_unique_hero_id(hero_ids, int(raw_id))
+	else:
+		_append_unique_hero_id(hero_ids, EXPEDITION_SCREENSHOT_HERO_ID)
+	_append_unique_hero_id(hero_ids, int(app.save.get("selected_hero_id", app.DEFAULT_HERO_ID)))
+	var owned: Dictionary = app.save.get("owned", {})
+	for raw_id in owned.keys():
+		if int(owned.get(raw_id, 0)) > 0:
+			_append_unique_hero_id(hero_ids, int(raw_id))
+	for default_id in EXPEDITION_DEFAULT_TEAM_IDS:
+		_append_unique_hero_id(hero_ids, int(default_id))
+	var result: Array = []
+	for hero_id in hero_ids:
+		var hero: Dictionary = app._hero_by_id(int(hero_id))
+		if hero.is_empty() or int(hero.get("id", 0)) != int(hero_id):
+			continue
+		result.append(hero)
+		if result.size() >= 5:
+			break
+	for hero in app.heroes:
+		if not _team_has_hero(result, int(hero.get("id", 0))):
+			result.append(hero)
+		if result.size() >= 5:
+			break
+	var screenshot_hero: Dictionary = app._hero_by_id(EXPEDITION_SCREENSHOT_HERO_ID)
+	if not screenshot_hero.is_empty() and not _team_has_hero(result, EXPEDITION_SCREENSHOT_HERO_ID):
+		if result.size() >= 5:
+			result[result.size() - 1] = screenshot_hero
+		else:
+			result.append(screenshot_hero)
+	return result
+
+
+func _append_unique_hero_id(hero_ids: Array, hero_id: int) -> void:
+	if hero_id <= 0 or hero_ids.has(hero_id):
+		return
+	hero_ids.append(hero_id)
+
+
+func _team_has_hero(team: Array, hero_id: int) -> bool:
+	for hero in team:
+		if int(hero.get("id", 0)) == hero_id:
+			return true
+	return false
 
 
 func _add_scene_vehicle_base(parent: Control, pos: Vector2) -> void:
@@ -353,17 +437,24 @@ func _add_scene_shadow_oval(parent: Control, center: Vector2, radius_x: float, r
 	parent.add_child(shadow)
 
 
-func _add_scene_hero_actor(parent: Control, hero: Dictionary, pos: Vector2, draw_size: Vector2, preferred_clip := "") -> void:
-	for candidate in _afk_hero_baked_candidates(hero, preferred_clip):
+func _add_scene_hero_actor(parent: Control, hero: Dictionary, pos: Vector2, draw_size: Vector2, preferred_clip := "", prefer_q := false) -> void:
+	for candidate in _afk_hero_baked_candidates(hero, preferred_clip, prefer_q):
 		var baked_path := str(candidate.get("baked", ""))
 		if baked_path.is_empty() or not FileAccess.file_exists(baked_path):
+			continue
+		var clip_name := str(candidate.get("clip", preferred_clip if not preferred_clip.is_empty() else "wait"))
+		if not clip_name.is_empty() and not _baked_has_clip(baked_path, clip_name):
 			continue
 		var canvas: Control = BAKED_SPINE_CANVAS.new()
 		canvas.position = pos
 		canvas.size = draw_size
 		canvas.modulate = Color(1, 1, 1, 0.98)
 		parent.add_child(canvas)
-		canvas.set_baked_path(baked_path, str(candidate.get("clip", preferred_clip if not preferred_clip.is_empty() else "wait")))
+		canvas.set_baked_path(baked_path, clip_name)
+		if canvas.has_method("set_playing"):
+			canvas.set_playing(true)
+		if canvas.has_method("set_playback_speed"):
+			canvas.set_playback_speed(1.0)
 		return
 	var resource_path := str(hero.get("artResource", ""))
 	if not resource_path.is_empty():
@@ -377,34 +468,86 @@ func _add_scene_hero_actor(parent: Control, hero: Dictionary, pos: Vector2, draw
 		_reparent_to(portrait, parent)
 
 
-func _afk_hero_baked_candidates(hero: Dictionary, preferred_clip := "") -> Array:
+func _afk_hero_baked_candidates(hero: Dictionary, preferred_clip := "", prefer_q := false) -> Array:
 	var candidates: Array = []
 	var spine_key := str(hero.get("spine", "")).strip_edges()
 	if spine_key.is_empty():
 		return candidates
+	if prefer_q or spine_key == EXPEDITION_SCREENSHOT_HERO_SPINE:
+		_append_baked_candidates_for_clips(candidates, _heroq_s01_baked_path(spine_key), _clip_preferences(preferred_clip, "standby"))
+		_append_baked_candidates_for_clips(candidates, _heroq_base_baked_path(spine_key), _clip_preferences(preferred_clip, "standby"))
 	if spine_key == EXPEDITION_SCREENSHOT_HERO_SPINE:
 		var variant := _preferred_expedition_baked_variant()
 		var main_clip := str(variant.get("main_clip", "standby"))
 		var map_clip := str(variant.get("map_clip", "standby"))
 		var selected_clip := preferred_clip if not preferred_clip.is_empty() else map_clip
-		candidates.append({
-			"baked": str(variant.get("baked", EXPEDITION_SCREENSHOT_HEROQ_S01_BAKED)),
-			"clip": selected_clip
-		})
+		_append_baked_candidates_for_clips(candidates, str(variant.get("baked", EXPEDITION_SCREENSHOT_HEROQ_S01_BAKED)), _clip_preferences(selected_clip, "standby"))
 		for fallback in _expedition_baked_variant_fallbacks():
 			if str(fallback.get("baked", "")) == str(variant.get("baked", "")):
 				continue
 			var fallback_main_clip := str(fallback.get("main_clip", "wait"))
 			var fallback_map_clip := str(fallback.get("map_clip", fallback_main_clip))
-			candidates.append({
-				"baked": str(fallback.get("baked", "")),
-				"clip": preferred_clip if not preferred_clip.is_empty() else fallback_map_clip
-			})
+			_append_baked_candidates_for_clips(candidates, str(fallback.get("baked", "")), _clip_preferences(preferred_clip if not preferred_clip.is_empty() else fallback_map_clip, fallback_main_clip))
 	var home_baked := "res://assets/spine/%sh/%sh.baked.json" % [spine_key, spine_key]
 	var base_baked := "res://assets/spine/%s/%s.baked.json" % [spine_key, spine_key]
-	candidates.append({"baked": home_baked, "clip": "wait"})
-	candidates.append({"baked": base_baked, "clip": "wait"})
+	_append_baked_candidates_for_clips(candidates, home_baked, _clip_preferences(preferred_clip, "wait"))
+	_append_baked_candidates_for_clips(candidates, base_baked, _clip_preferences(preferred_clip, "wait"))
 	return candidates
+
+
+func _append_baked_candidate(candidates: Array, baked_path: String, clip_name: String) -> void:
+	if baked_path.is_empty() or clip_name.is_empty():
+		return
+	for item in candidates:
+		if str(item.get("baked", "")) == baked_path and str(item.get("clip", "")) == clip_name:
+			return
+	candidates.append({
+		"baked": baked_path,
+		"clip": clip_name
+	})
+
+
+func _append_baked_candidates_for_clips(candidates: Array, baked_path: String, clips: Array) -> void:
+	if baked_path.is_empty():
+		return
+	for clip_name in clips:
+		_append_baked_candidate(candidates, baked_path, str(clip_name))
+
+
+func _clip_preferences(preferred_clip: String, fallback_clip := "standby") -> Array:
+	var clips: Array = []
+	for clip_name in [preferred_clip, fallback_clip, "standby", "wait", "run", ""]:
+		var normalized := str(clip_name)
+		if normalized.is_empty() or clips.has(normalized):
+			continue
+		clips.append(normalized)
+	return clips
+
+
+func _heroq_s01_baked_path(spine_key: String) -> String:
+	if spine_key == EXPEDITION_SCREENSHOT_HERO_SPINE:
+		return EXPEDITION_SCREENSHOT_HEROQ_S01_BAKED
+	var dir_name := "HeroQ__%sq_s01" % spine_key
+	return "res://assets/spine/%s/%s.baked.json" % [dir_name, dir_name]
+
+
+func _heroq_base_baked_path(spine_key: String) -> String:
+	var dir_name := "HeroQ__%sq" % spine_key
+	return "res://assets/spine/%s/%s.baked.json" % [dir_name, dir_name]
+
+
+func _baked_has_clip(baked_path: String, clip_name: String) -> bool:
+	if baked_path.is_empty() or clip_name.is_empty() or not FileAccess.file_exists(baked_path):
+		return false
+	if not _baked_clip_cache.has(baked_path):
+		var parsed = JSON.parse_string(FileAccess.get_file_as_string(baked_path))
+		var clip_map := {}
+		if typeof(parsed) == TYPE_DICTIONARY:
+			var clips: Dictionary = parsed.get("clips", {})
+			for key in clips.keys():
+				clip_map[str(key)] = true
+		_baked_clip_cache[baked_path] = clip_map
+	return bool(_baked_clip_cache.get(baked_path, {}).get(clip_name, false))
 
 
 func _expedition_baked_variant_fallbacks() -> Array:
@@ -435,10 +578,7 @@ func _preferred_expedition_baked_variant() -> Dictionary:
 	for item in _expedition_baked_variant_fallbacks():
 		if requested == str(item.get("id", "")):
 			return item
-	# Default to the restored hero_s02h variant first: it now comes from the
-	# original Hero spine bundles we recovered from local YooAsset caches and is
-	# a closer match for the static expedition hub presentation than HeroQ run.
-	return _expedition_baked_variant_fallbacks()[1]
+	return _expedition_baked_variant_fallbacks()[0]
 
 
 func _expedition_scene_hero() -> Dictionary:
@@ -588,6 +728,26 @@ func _draw_image_in(parent: Control, path: String, pos: Vector2, draw_size: Vect
 	return _reparent_to(rect, parent) as TextureRect
 
 
+func _anchor_left_top(anchor: Vector2, _size: Vector2) -> Vector2:
+	return Vector2(anchor.x, -anchor.y)
+
+
+func _anchor_right_top(anchor: Vector2, size: Vector2) -> Vector2:
+	return Vector2(float(app.CANVAS_WIDTH) + anchor.x - size.x, -anchor.y)
+
+
+func _anchor_left_bottom(anchor: Vector2, size: Vector2) -> Vector2:
+	return Vector2(anchor.x, float(app.CANVAS_HEIGHT) - anchor.y - size.y)
+
+
+func _anchor_right_bottom(anchor: Vector2, size: Vector2) -> Vector2:
+	return Vector2(float(app.CANVAS_WIDTH) + anchor.x - size.x, float(app.CANVAS_HEIGHT) - anchor.y - size.y)
+
+
+func _map_viewport_size() -> Vector2:
+	return Vector2(float(app.CANVAS_WIDTH), float(app.CANVAS_HEIGHT))
+
+
 func _draw_map_zone() -> void:
 	var expedition_meta := _current_expedition_chapter()
 	var state: Dictionary = expedition_meta.get("state", {})
@@ -602,13 +762,15 @@ func _draw_map_zone() -> void:
 	map_panel.size = app.CANVAS_SIZE
 	app._view_container().add_child(map_panel)
 
-	_draw_image_in(map_panel, UI_EXP_MAP, MAIN_MAP_POS, MAIN_MAP_SIZE, false, Color(1, 1, 1, 0.98))
-	_draw_image_in(map_panel, UI_EXP_MAP_RING, MAIN_MAP_POS + Vector2(-10, -10), MAIN_MAP_RING_SIZE, false, Color(1, 1, 1, 0.96))
-	_add_main_map_move_marker(map_panel, MAIN_MAP_POS + Vector2(80, 80))
+	var map_pos := _anchor_right_top(MAIN_MAP_ANCHOR, MAIN_MAP_SIZE)
+	var cross_reward_pos := _anchor_left_top(MAIN_CROSS_REWARD_ANCHOR, MAIN_CROSS_REWARD_SIZE)
+	_draw_image_in(map_panel, UI_EXP_MAP, map_pos, MAIN_MAP_SIZE, false, Color(1, 1, 1, 0.98))
+	_draw_image_in(map_panel, UI_EXP_MAP_RING, map_pos + Vector2(-10, -10), MAIN_MAP_RING_SIZE, false, Color(1, 1, 1, 0.96))
+	_add_main_map_move_marker(map_panel, map_pos + Vector2(80, 80))
 
 	var stage_text := fallback_stage_name if not fallback_stage_name.is_empty() else ("第%d章·%s" % [chapter_index, chapter_name])
 	var stage_label: Label = app._label(stage_text, 18, HORIZONTAL_ALIGNMENT_CENTER)
-	stage_label.position = MAIN_MAP_POS + Vector2(37, 154)
+	stage_label.position = map_pos + Vector2(37, 154)
 	stage_label.size = Vector2(86, 26)
 	stage_label.modulate = Color(0.96, 0.95, 0.88)
 	map_panel.add_child(stage_label)
@@ -617,25 +779,25 @@ func _draw_map_zone() -> void:
 	map_button.text = ""
 	map_button.flat = true
 	map_button.focus_mode = Control.FOCUS_NONE
-	map_button.position = MAIN_MAP_POS
+	map_button.position = map_pos
 	map_button.size = MAIN_MAP_SIZE
 	map_button.modulate = Color(1, 1, 1, 0.01)
 	map_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	map_button.pressed.connect(_open_current_map_detail_from_main)
 	map_panel.add_child(map_button)
 
-	_draw_image_in(map_panel, UI_EXP_CROSS_REWARD, MAIN_CROSS_REWARD_POS, MAIN_CROSS_REWARD_SIZE, false, Color(1, 1, 1, 0.96))
-	_draw_image_in(map_panel, UI_EXP_REWARD_ICON, MAIN_CROSS_REWARD_POS + Vector2(4, -8), Vector2(80, 80), false, Color(1, 1, 1, 0.96))
+	_draw_image_in(map_panel, UI_EXP_CROSS_REWARD, cross_reward_pos, MAIN_CROSS_REWARD_SIZE, false, Color(1, 1, 1, 0.96))
+	_draw_image_in(map_panel, UI_EXP_REWARD_ICON, cross_reward_pos + Vector2(4, -8), Vector2(80, 80), false, Color(1, 1, 1, 0.96))
 
 	var remain: int = max(int(app.save.get("next_stage_id", 101)) - int(app.save.get("max_stage_id", 0)) - 1, 1)
 	var cross_title: Label = app._label("再过 %d 关可得" % remain, 20)
-	cross_title.position = MAIN_CROSS_REWARD_POS + Vector2(25, 8)
+	cross_title.position = cross_reward_pos + Vector2(25, 8)
 	cross_title.size = Vector2(132, 29)
 	cross_title.modulate = Color(0.96, 0.92, 0.78)
 	map_panel.add_child(cross_title)
 
 	var cross_count: Label = app._label(_reward_summary_text(state.get("chapter_rewards", [])), 20)
-	cross_count.position = MAIN_CROSS_REWARD_POS + Vector2(31, 43)
+	cross_count.position = cross_reward_pos + Vector2(31, 43)
 	cross_count.size = Vector2(144, 29)
 	cross_count.modulate = Color(1.0, 0.83, 0.48)
 	map_panel.add_child(cross_count)
@@ -644,7 +806,7 @@ func _draw_map_zone() -> void:
 	cross_button.text = ""
 	cross_button.flat = true
 	cross_button.focus_mode = Control.FOCUS_NONE
-	cross_button.position = MAIN_CROSS_REWARD_POS
+	cross_button.position = cross_reward_pos
 	cross_button.size = MAIN_CROSS_REWARD_SIZE
 	cross_button.modulate = Color(1, 1, 1, 0.01)
 	cross_button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
@@ -668,7 +830,7 @@ func _add_main_map_move_marker(parent: Control, center: Vector2) -> void:
 
 
 func _draw_bottom_actions() -> void:
-	var reward_pos := MAIN_REWARD_POS
+	var reward_pos := _anchor_right_bottom(MAIN_REWARD_ANCHOR, MAIN_REWARD_SIZE)
 	var afk_claimed: bool = app._afk_claimed_today()
 	var fight_state := _fight_state()
 	app._draw_image(UI_EXP_REWARD, reward_pos, MAIN_REWARD_SIZE, false, Color(1, 1, 1, 0.96))
@@ -703,11 +865,11 @@ func _draw_bottom_actions() -> void:
 	app._add_hit_button(reward_pos, MAIN_REWARD_SIZE, app._claim_afk_reward)
 
 	var action_specs := [
-		{"path": UI_EXP_BTN_STRONGER, "label": "我要变强", "pos": MAIN_STRONGER_POS, "callback": app._show_develop, "size": MAIN_STRONGER_SIZE},
-		{"path": UI_EXP_BTN_DISPATCH, "label": "派遣", "pos": MAIN_DISPATCH_POS, "callback": app._show_tasks, "size": MAIN_SMALL_ACTION_SIZE},
-		{"path": UI_EXP_BTN_HERO, "label": "星灵", "pos": MAIN_HERO_POS, "callback": app._show_develop, "size": MAIN_SMALL_ACTION_SIZE},
-		{"path": UI_EXP_BTN_MARCH, "label": "阵容", "pos": MAIN_MARCH_POS, "callback": app._show_battle, "size": MAIN_SMALL_ACTION_SIZE},
-		{"path": UI_EXP_BTN_FIGHT, "label": "挑战", "pos": MAIN_FIGHT_POS, "callback": show_chapter_panel, "size": MAIN_FIGHT_SIZE, "enabled": bool(fight_state.get("available", false))}
+		{"path": UI_EXP_BTN_STRONGER, "label": "我要变强", "pos": _anchor_left_bottom(MAIN_STRONGER_ANCHOR, MAIN_STRONGER_SIZE), "callback": app._show_develop, "size": MAIN_STRONGER_SIZE},
+		{"path": UI_EXP_BTN_DISPATCH, "label": "派遣", "pos": _anchor_right_bottom(MAIN_DISPATCH_ANCHOR, MAIN_SMALL_ACTION_SIZE), "callback": app._show_tasks, "size": MAIN_SMALL_ACTION_SIZE},
+		{"path": UI_EXP_BTN_HERO, "label": "星灵", "pos": _anchor_right_bottom(MAIN_HERO_ANCHOR, MAIN_SMALL_ACTION_SIZE), "callback": app._show_develop, "size": MAIN_SMALL_ACTION_SIZE},
+		{"path": UI_EXP_BTN_MARCH, "label": "阵容", "pos": _anchor_right_bottom(MAIN_MARCH_ANCHOR, MAIN_SMALL_ACTION_SIZE), "callback": app._show_battle, "size": MAIN_SMALL_ACTION_SIZE},
+		{"path": UI_EXP_BTN_FIGHT, "label": "挑战", "pos": _anchor_right_bottom(MAIN_FIGHT_ANCHOR, MAIN_FIGHT_SIZE), "callback": show_chapter_panel, "size": MAIN_FIGHT_SIZE, "enabled": bool(fight_state.get("available", false))}
 	]
 	for item in action_specs:
 		var size: Vector2 = item.get("size", Vector2(84, 84))
@@ -806,7 +968,7 @@ func _draw_map_back() -> void:
 func _draw_map_canvas() -> void:
 	var viewport := Control.new()
 	viewport.position = MAP_VIEWPORT_POS
-	viewport.size = MAP_VIEWPORT_SIZE
+	viewport.size = _map_viewport_size()
 	viewport.clip_contents = true
 	viewport.mouse_filter = Control.MOUSE_FILTER_STOP
 	app._view_container().add_child(viewport)
@@ -972,7 +1134,8 @@ func _current_map_node_position() -> Vector2:
 
 func _initial_map_content_position() -> Vector2:
 	var current_pos := _current_map_node_position()
-	var focus_offset := Vector2(MAP_VIEWPORT_SIZE.x * 0.5, MAP_VIEWPORT_SIZE.y * 0.58)
+	var viewport_size := _map_viewport_size()
+	var focus_offset := Vector2(viewport_size.x * 0.5, viewport_size.y * 0.58)
 	return _clamp_map_content(focus_offset - current_pos)
 
 
@@ -1017,14 +1180,7 @@ func _add_move_tool_marker(parent: Control) -> void:
 
 
 func _add_map_move_tool_actor(parent: Control, center: Vector2, item: Dictionary) -> void:
-	var hero: Dictionary = _expedition_scene_hero()
-	var actor_root := Control.new()
-	actor_root.position = center + Vector2(-84, -198)
-	actor_root.size = Vector2(176, 206)
-	parent.add_child(actor_root)
-	_add_scene_vehicle_base(actor_root, Vector2(8, 134))
-	_add_scene_shadow_oval(actor_root, Vector2(86, 176), 46.0, 14.0, Color(0.02, 0.02, 0.03, 0.24))
-	_add_scene_hero_actor(actor_root, hero, Vector2(24, 14), Vector2(128, 162), "standby")
+	var actor_root := _draw_expedition_team_convoy(parent, center + Vector2(-190, -238), "standby")
 	var tween := actor_root.create_tween()
 	tween.set_loops()
 	var start_pos := actor_root.position
@@ -1032,15 +1188,15 @@ func _add_map_move_tool_actor(parent: Control, center: Vector2, item: Dictionary
 	tween.tween_property(actor_root, "position", start_pos, 0.9).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	if not item.is_empty():
 		var tip: Label = app._label(str(item.get("vehicle_tip", "AFKMap 待命")), 11, HORIZONTAL_ALIGNMENT_CENTER)
-		tip.position = Vector2(22, 150)
-		tip.size = Vector2(124, 20)
+		tip.position = Vector2(226, 36)
+		tip.size = Vector2(132, 20)
 		tip.modulate = Color(0.96, 0.93, 0.80, 0.86)
 		actor_root.add_child(tip)
-		var enter_badge: ColorRect = app._panel(Vector2(54, 130), Vector2(62, 18), Color(0.06, 0.06, 0.08, 0.72))
+		var enter_badge: ColorRect = app._panel(Vector2(250, 116), Vector2(72, 20), Color(0.06, 0.06, 0.08, 0.72))
 		actor_root.add_child(enter_badge)
 		var enter_text: Label = app._label("进入巡逻", 10, HORIZONTAL_ALIGNMENT_CENTER)
-		enter_text.position = Vector2(56, 130)
-		enter_text.size = Vector2(58, 18)
+		enter_text.position = Vector2(254, 117)
+		enter_text.size = Vector2(64, 18)
 		enter_text.modulate = Color(0.98, 0.94, 0.82)
 		actor_root.add_child(enter_text)
 	var click_area := Button.new()
@@ -1048,7 +1204,7 @@ func _add_map_move_tool_actor(parent: Control, center: Vector2, item: Dictionary
 	click_area.flat = true
 	click_area.focus_mode = Control.FOCUS_NONE
 	click_area.position = Vector2(20, 10)
-	click_area.size = Vector2(136, 170)
+	click_area.size = Vector2(348, 238)
 	click_area.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	click_area.modulate = Color(1, 1, 1, 0.01)
 	click_area.pressed.connect(func() -> void:
@@ -1323,17 +1479,20 @@ func _attach_map_drag(viewport: Control, content: Control) -> void:
 
 
 func _clamp_map_content(next_pos: Vector2) -> Vector2:
-	var min_x: float = MAP_VIEWPORT_SIZE.x - MAP_CONTENT_SIZE.x
-	var min_y: float = MAP_VIEWPORT_SIZE.y - MAP_CONTENT_SIZE.y
+	var viewport_size := _map_viewport_size()
+	var min_x: float = viewport_size.x - MAP_CONTENT_SIZE.x
+	var min_y: float = viewport_size.y - MAP_CONTENT_SIZE.y
 	return Vector2(clampf(next_pos.x, min_x, 0.0), clampf(next_pos.y, min_y, 0.0))
 
 
 func _draw_map_side_buttons() -> void:
 	var fight_state := _fight_state()
+	var small_size := Vector2(84, 84)
+	var fight_size := Vector2(126, 126)
 	var buttons := [
-		{"path": UI_EXP_BTN_DISPATCH, "label": "派遣", "pos": Vector2(1122, 188), "callback": app._show_tasks},
-		{"path": UI_EXP_BTN_MARCH, "label": "阵容", "pos": Vector2(1122, 298), "callback": app._show_battle},
-		{"path": UI_EXP_BTN_FIGHT, "label": "挑战", "pos": Vector2(1104, 438), "callback": show_chapter_panel, "size": Vector2(126, 126), "enabled": bool(fight_state.get("available", false))}
+		{"path": UI_EXP_BTN_DISPATCH, "label": "派遣", "pos": Vector2(float(app.CANVAS_WIDTH) - 74.0 - small_size.x, 188), "callback": app._show_tasks, "size": small_size},
+		{"path": UI_EXP_BTN_MARCH, "label": "阵容", "pos": Vector2(float(app.CANVAS_WIDTH) - 74.0 - small_size.x, 298), "callback": app._show_battle, "size": small_size},
+		{"path": UI_EXP_BTN_FIGHT, "label": "挑战", "pos": Vector2(float(app.CANVAS_WIDTH) - 50.0 - fight_size.x, 438), "callback": show_chapter_panel, "size": fight_size, "enabled": bool(fight_state.get("available", false))}
 	]
 	for item in buttons:
 		var size: Vector2 = item.get("size", Vector2(84, 84))
