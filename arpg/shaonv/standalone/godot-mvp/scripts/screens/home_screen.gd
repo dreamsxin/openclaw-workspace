@@ -12,6 +12,7 @@ const UI_MAIN_BG = "res://assets/ui/background/mainui_bg_01.png"   # 1670x750 fu
 const UI_MAIN_PLAYER_FRAME = "res://assets/ui/mainui/mainui_img_02.png"
 const UI_MAIN_AVATAR_RING = "res://assets/ui/mainui/mainui_img_03.png"
 const UI_MAIN_EXP_RING = "res://assets/ui/mainui/mainui_img_04.png"
+const UI_MAIN_PLAYER_AVATAR = "res://assets/ui/hero/round/yhero_001.png"
 const UI_MAIN_BANNER = "res://assets/ui/mainui/mainui_img_05.png"
 const UI_MAIN_DOT_ON = "res://assets/ui/mainui/mainui_img_06.png"
 const UI_MAIN_DOT_OFF = "res://assets/ui/mainui/mainui_img_07.png"
@@ -701,13 +702,14 @@ func draw_player_info(hero: Dictionary) -> void:
 	_main_panels.append(panel)
 	# imgHeadBg and imgExp are left-middle inside the player panel.
 	app._draw_image(UI_MAIN_AVATAR_RING, Vector2(64, 14), Vector2(80, 79), false, Color(1, 1, 1, 0.94))
+	app._draw_image(UI_MAIN_PLAYER_AVATAR, Vector2(68, 18), Vector2(72, 72), false, Color(1, 1, 1, 0.98))
 	app._draw_image(UI_MAIN_EXP_RING, Vector2(59, 8), Vector2(90, 90), false, Color(1, 0.84, 0.28, 0.88))
 	# Level label
-	var lv = app._label("%d" % int(profile.get("level", 1)), 24, HORIZONTAL_ALIGNMENT_CENTER)
-	lv.position = Vector2(67, 42); lv.size = Vector2(74, 28); lv.modulate = Color(0.96, 0.88, 0.52)
+	var lv = app._label("%d" % int(profile.get("level", 1)), 13, HORIZONTAL_ALIGNMENT_CENTER)
+	lv.position = Vector2(83, 70); lv.size = Vector2(42, 18); lv.modulate = Color(0.96, 0.88, 0.52)
 	app._view_container().add_child(lv)
 	var level_caption = app._label("LEVEL", 8, HORIZONTAL_ALIGNMENT_CENTER)
-	level_caption.position = Vector2(80, 69)
+	level_caption.position = Vector2(80, 84)
 	level_caption.size = Vector2(48, 12)
 	level_caption.modulate = Color(0.96, 0.88, 0.52)
 	app._view_container().add_child(level_caption)

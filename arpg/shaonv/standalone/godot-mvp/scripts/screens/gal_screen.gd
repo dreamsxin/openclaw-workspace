@@ -3,6 +3,7 @@ extends RefCounted
 
 const VIEW_MAIN := "main"
 const VIEW_DATE_SELECT := "date_select"
+const VIEW_DATE_MAP := "date_map"
 const VIEW_CHARACTER := "character"
 const VIEW_DRESS_UP := "dress_up"
 const VIEW_FILES := "files"
@@ -56,6 +57,9 @@ const GAL_DATE_GRID_SELECT := "res://assets/ui/gal/gal_img_77.png"
 const GAL_DATE_GRID_LOCK := "res://assets/ui/gal/gal_img_78.png"
 const GAL_DATE_GRID_BUTTON := "res://assets/ui/gal/gal_img_79.png"
 const GAL_DATE_GRID_PIC := "res://assets/ui/gal/gal_img_80.png"
+const GAL_MAP_LOCATION_BUTTON := "res://assets/ui/gal/gal_img_53.png"
+const GAL_MAP_EVENT_FRAME := "res://assets/ui/gal/gal_img_54.png"
+const GAL_MAP_EVENT_HEAD_FALLBACK := "res://assets/ui/hero/round/yhero_000.png"
 const GAL_BG_SPECIAL_TOUCH_SELECT := "res://assets/ui/background/gal_bg_05.png"
 const GAL_SPECIAL_CARD_BG := "res://assets/ui/gal/gal_img_70.png"
 const GAL_SPECIAL_CARD_ICON_FRAME := "res://assets/ui/gal/gal_img_71.png"
@@ -171,6 +175,8 @@ func show_view(view_name: String) -> void:
 	match view_name:
 		VIEW_DATE_SELECT:
 			_draw_date_select_view()
+		VIEW_DATE_MAP:
+			_draw_date_map_view()
 		VIEW_CHARACTER:
 			_draw_character_view()
 		VIEW_DRESS_UP:
@@ -1900,93 +1906,255 @@ func _persist_gal_state() -> void:
 		app._persist()
 
 
+func _date_sections() -> Array[Dictionary]:
+	var level := int(app.save.get("gal_level", 2))
+	return [
+		{
+			"title": "甜點店",
+			"desc": "增加親密感，觸發輕鬆對話",
+			"tag": "推薦",
+			"unlock": "",
+			"unlocked": true,
+			"location": "千星小區",
+		},
+		{
+			"title": "商業街",
+			"desc": "送禮與外出事件更容易銜接",
+			"tag": "普通",
+			"unlock": "",
+			"unlocked": true,
+			"location": "中央商街",
+		},
+		{
+			"title": "河岸夜景",
+			"desc": "回憶值成長較高，節奏偏慢",
+			"tag": "Lv.3",
+			"unlock": "Lv.3",
+			"unlocked": level >= 3,
+			"location": "星河岸",
+		},
+	]
+
+
+func _date_locations(selected_date: Dictionary) -> Array[Dictionary]:
+	return [
+		{
+			"name": str(selected_date.get("location", "千星小區")),
+			"event": "約會事件",
+			"offset": Vector2(-438, -52),
+		},
+		{
+			"name": "商店街",
+			"event": "禮物事件",
+			"offset": Vector2(-78, 38),
+		},
+		{
+			"name": "河岸公園",
+			"event": "回憶事件",
+			"offset": Vector2(282, -28),
+		},
+	]
+
+
+func _date_attempts_left() -> int:
+	return maxi(2 + int(app.save.get("gal_level", 2)) - int(app.save.get("gal_dates_used_today", 0)), 0)
+
+
+func _date_panel_rect() -> Rect2:
+	return Rect2(Vector2((app.CANVAS_WIDTH - 1346.0) * 0.5, (app.CANVAS_HEIGHT - 652.0) * 0.5), Vector2(1346, 652))
+
+
+func _date_child_rect(panel_rect: Rect2, center: Vector2, size: Vector2, anchor := Vector2(0.5, 0.5)) -> Rect2:
+	var parent_size := panel_rect.size
+	var pivot := Vector2(0.5, 0.5)
+	var anchor_from_top := Vector2(anchor.x, 1.0 - anchor.y)
+	var child_center := panel_rect.position + parent_size * anchor_from_top + Vector2(center.x, -center.y)
+	return Rect2(child_center - size * pivot, size)
+
 
 func _draw_date_select_view() -> void:
 	var hero := _selected_hero()
-	app._draw_image(GAL_BG_DATE_SELECT, Vector2(0, 0), app.CANVAS_SIZE, true)
-	app._view_container().add_child(app._panel(Vector2(0, 0), app.CANVAS_SIZE, Color(0.03, 0.02, 0.04, 0.16)))
+	app._view_container().add_child(app._panel(Vector2(0, 0), app.CANVAS_SIZE, Color(0.03, 0.02, 0.04, 0.52)))
+	var panel_rect := _date_panel_rect()
+	if app._draw_image(GAL_BG_DATE_SELECT, panel_rect.position, panel_rect.size, false, Color(1, 1, 1, 1.0)) == null:
+		app._view_container().add_child(app._panel(panel_rect.position, panel_rect.size, Color(1.0, 0.84, 0.94, 0.84)))
 
-	var card_pos := Vector2(86, 32)
-	var card_size := Vector2(1108, 630)
-	app._view_container().add_child(app._panel(card_pos, card_size, Color(0.11, 0.05, 0.07, 0.42)))
-	_add_gal_text("Date Plan", card_pos + Vector2(58, 26), Vector2(280, 42), 30)
-	var used_dates := int(app.save.get("gal_dates_used_today", 0))
-	var dates_left := maxi(2 + int(app.save.get("gal_level", 2)) - used_dates, 0)
-	_add_gal_text("Today left: %d" % dates_left, card_pos + Vector2(62, 76), Vector2(240, 28), 18)
-
-	app._draw_image(GAL_BTN_CLOSE_SMALL, card_pos + Vector2(card_size.x - 78, 22), Vector2(46, 46), false, Color(1, 1, 1, 0.94))
-	_add_hit_button(card_pos + Vector2(card_size.x - 78, 22), Vector2(46, 46), func() -> void:
+	var close_rect := _date_child_rect(panel_rect, Vector2(-95, -81), Vector2(60, 60), Vector2(1, 1))
+	app._draw_image(GAL_BTN_CLOSE_SMALL, close_rect.position, close_rect.size, false, Color(1, 1, 1, 0.96))
+	_add_hit_button(close_rect.position, close_rect.size, func() -> void:
 		show_view(VIEW_MAIN)
 	)
-	app._draw_image(GAL_BTN_DATE_RECORD, card_pos + Vector2(42, 126), Vector2(76, 76), false, Color(1, 1, 1, 0.92))
-	_add_gal_text("Record", card_pos + Vector2(34, 196), Vector2(92, 24), 14)
-	_add_hit_button(card_pos + Vector2(42, 126), Vector2(76, 76), func() -> void:
+
+	var title_rect := _date_child_rect(panel_rect, Vector2(-43.7, 256), Vector2(1088.5, 30), Vector2(0.5, 0.5))
+	var title := _add_gal_text("约会安排", title_rect.position, title_rect.size, 36)
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	title.modulate = Color(0.16, 0.10, 0.12, 0.94)
+
+	var date_num_rect := _date_child_rect(panel_rect, Vector2(-253.5, 187), Vector2(667, 30), Vector2(0.5, 0.5))
+	var remain := _add_gal_text("今日可约会 %d 次" % _date_attempts_left(), date_num_rect.position, date_num_rect.size, 20)
+	remain.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	remain.modulate = Color(0.28, 0.16, 0.20, 0.90)
+
+	var record_rect := _date_child_rect(panel_rect, Vector2(144, 119), Vector2(88, 88), Vector2(0, 0))
+	app._draw_image(GAL_BTN_DATE_RECORD, record_rect.position, record_rect.size, false, Color(1, 1, 1, 0.94))
+	_add_gal_text("回忆", record_rect.position + Vector2(0, 55), Vector2(88, 30), 18)
+	_add_hit_button(record_rect.position, record_rect.size, func() -> void:
 		show_view(VIEW_MEMORY)
 	)
 
-	var info_pos := card_pos + Vector2(156, 118)
-	app._view_container().add_child(app._panel(info_pos, Vector2(844, 118), Color(0.16, 0.08, 0.11, 0.62)))
-	_add_gal_text("Today", info_pos + Vector2(24, 18), Vector2(180, 30), 21)
-	var info = app._label("Go out with %s. Pick one place to gain memory and favor." % str(hero.get("name", "Gal")), 16)
-	info.position = info_pos + Vector2(24, 54)
-	info.size = Vector2(780, 48)
-	info.modulate = Color(0.96, 0.88, 0.84)
+	var info = app._label("和 %s 一起選擇今日行程。確認後會進入地點地圖，點擊事件才完成約會。" % str(hero.get("name", "角色")), 17)
+	info.position = panel_rect.position + Vector2(362, 126)
+	info.size = Vector2(720, 54)
+	info.modulate = Color(0.36, 0.24, 0.28, 0.78)
 	app._view_container().add_child(info)
 
-	var sections := [
-		{"title": "Cafe", "desc": "Favor and voice", "tag": "Hot", "unlocked": true},
-		{"title": "Mall", "desc": "Gift event", "tag": "Normal", "unlocked": true},
-		{"title": "Riverside", "desc": "Night memory", "tag": "Lv.3", "unlocked": int(app.save.get("gal_level", 2)) >= 3}
-	]
+	var sections := _date_sections()
 	var selected_option := clampi(int(app.save.get("gal_selected_date_option", 0)), 0, sections.size() - 1)
+	var tab_rect := _date_child_rect(panel_rect, Vector2(1.5, -1), Vector2(1157, 304), Vector2(0.5, 0.5))
+	var gap := (tab_rect.size.x - 242.0 * float(sections.size())) / float(sections.size() + 1)
 	for index in range(sections.size()):
 		var item: Dictionary = sections[index]
-		var pos := card_pos + Vector2(202 + index * 280, 278)
-		var size := Vector2(242, 304)
-		var unlocked := bool(item.get("unlocked", false))
-		app._draw_image(GAL_DATE_GRID_BUTTON, pos, size, false, Color(1, 1, 1, 0.96 if unlocked else 0.48))
-		app._draw_image(GAL_DATE_GRID_PIC, pos + Vector2(10, 28), Vector2(222, 178), false, Color(1, 1, 1, 0.82 if unlocked else 0.38))
-		_draw_special_touch_card_picture(GAL_BG_ALBUM_DETAIL if index == 0 else (GAL_INTERACTION_PIC_1 if index == 1 else GAL_INTERACTION_PIC_2), pos + Vector2(16, 34), Vector2(210, 166), Vector2(0.5, 0.55))
-		_add_gal_text(str(item.get("title", "")), pos + Vector2(8, 6), Vector2(226, 30), 20)
-		_add_gal_text(str(item.get("desc", "")), pos + Vector2(24, 212), Vector2(194, 48), 13)
-		_add_gal_text("[%s]" % str(item.get("tag", "")), pos + Vector2(118, 264), Vector2(96, 22), 13)
-		if selected_option == index and unlocked:
-			app._draw_image(GAL_DATE_GRID_SELECT, pos + Vector2(6, 8), Vector2(230, 290), false, Color(1, 1, 1, 0.82))
-		if not unlocked:
-			app._draw_image(GAL_DATE_GRID_LOCK, pos + Vector2(6, 8), Vector2(230, 290), false, Color(1, 1, 1, 0.78))
-			_add_gal_text("Lv.3", pos + Vector2(58, 132), Vector2(124, 30), 17)
+		var pos := tab_rect.position + Vector2(gap + index * (242.0 + gap), 0)
+		_draw_date_select_grid(item, pos, selected_option == index)
 		var selected_index := index
-		_add_hit_button(pos, size, func() -> void:
+		_add_hit_button(pos, Vector2(242, 304), func() -> void:
 			var choice: Dictionary = sections[selected_index]
 			if not bool(choice.get("unlocked", false)):
-				_show_touch_hint("Locked until Lv.3")
+				_show_touch_hint("%s 解鎖" % str(choice.get("unlock", "未達條件")))
 				return
 			app.save["gal_selected_date_option"] = selected_index
 			_persist_gal_state()
 			show_view(VIEW_DATE_SELECT)
-			_show_touch_hint("Selected: %s" % str(choice.get("title", "")))
+			_show_touch_hint("已選擇：%s" % str(choice.get("title", "")))
 		)
 
-	app._draw_image(GAL_BTN_DATE_CONFIRM, card_pos + Vector2(418, 586), Vector2(270, 58), false, Color(1, 1, 1, 0.96))
-	_add_gal_text("Confirm", card_pos + Vector2(476, 598), Vector2(160, 28), 20)
-	_add_hit_button(card_pos + Vector2(418, 586), Vector2(270, 58), func() -> void:
-		if int(app.save.get("gal_dates_used_today", 0)) >= 2 + int(app.save.get("gal_level", 2)):
-			_show_touch_hint("No date attempts left today")
+	var confirm_rect := _date_child_rect(panel_rect, Vector2(0, -209), Vector2(338, 74), Vector2(0.5, 0.5))
+	app._draw_image(GAL_BTN_DATE_CONFIRM, confirm_rect.position, confirm_rect.size, false, Color(1, 1, 1, 0.98))
+	_add_gal_text("确认出行", confirm_rect.position, confirm_rect.size, 26)
+	_add_hit_button(confirm_rect.position, confirm_rect.size, func() -> void:
+		if _date_attempts_left() <= 0:
+			_show_touch_hint("今日出行次數已用完")
 			return
 		var selected_index := clampi(int(app.save.get("gal_selected_date_option", 0)), 0, sections.size() - 1)
 		var selected: Dictionary = sections[selected_index]
 		if not bool(selected.get("unlocked", false)):
-			_show_touch_hint("This date is locked")
+			_show_touch_hint("%s 解鎖" % str(selected.get("unlock", "未達條件")))
 			return
-		app.save["gal_dates_used_today"] = int(app.save.get("gal_dates_used_today", 0)) + 1
-		app.save["gal_last_date"] = str(selected.get("title", "Date"))
-		app.save["gal_memory_date"] = true
-		_add_gal_exp(15)
+		app.save["gal_selected_date_option"] = selected_index
+		app.save["gal_selected_date_location"] = str(selected.get("location", "千星小區"))
 		_persist_gal_state()
-		_play_touch_voice("greet")
-		show_view(VIEW_MAIN)
-		_show_touch_hint("Date complete: %s, EXP +15" % str(selected.get("title", "Date")))
+		show_view(VIEW_DATE_MAP)
 	)
+
+
+func _draw_date_select_grid(item: Dictionary, pos: Vector2, selected: bool) -> void:
+	var size := Vector2(242, 304)
+	var unlocked := bool(item.get("unlocked", false))
+	app._draw_image(GAL_DATE_GRID_BUTTON, pos, size, false, Color(1, 1, 1, 0.98 if unlocked else 0.46))
+	app._draw_image(GAL_DATE_GRID_PIC, pos + Vector2(10, 18), Vector2(222, 238), false, Color(1, 1, 1, 0.92 if unlocked else 0.34))
+	var name := _add_gal_text(str(item.get("title", "")), pos + Vector2(10, 12), Vector2(222, 30), 26)
+	name.modulate = Color(0.32, 0.18, 0.26, 0.94 if unlocked else 0.55)
+	var desc := _add_gal_text(str(item.get("desc", "")), pos + Vector2(22, 212), Vector2(198, 44), 14)
+	desc.modulate = Color(0.36, 0.24, 0.28, 0.88 if unlocked else 0.42)
+	var tag := _add_gal_text("[%s]" % str(item.get("tag", "")), pos + Vector2(118, 264), Vector2(96, 22), 13)
+	tag.modulate = Color(0.92, 0.34, 0.60, 0.90 if unlocked else 0.42)
+	if selected and unlocked:
+		app._draw_image(GAL_DATE_GRID_SELECT, pos + Vector2(6, 7), Vector2(230, 290), false, Color(1, 1, 1, 0.94))
+	if not unlocked:
+		app._draw_image(GAL_DATE_GRID_LOCK, pos + Vector2(6, 7), Vector2(230, 290), false, Color(1, 1, 1, 0.86))
+		_add_gal_text(str(item.get("unlock", "未解鎖")), pos + Vector2(17, 116), Vector2(208, 60), 22)
+
+
+func _draw_date_map_view() -> void:
+	var hero := _selected_hero()
+	var sections := _date_sections()
+	var selected_index := clampi(int(app.save.get("gal_selected_date_option", 0)), 0, sections.size() - 1)
+	var selected: Dictionary = sections[selected_index]
+	if not bool(selected.get("unlocked", false)):
+		app.save["gal_selected_date_option"] = 0
+		selected = sections[0]
+
+	app._view_container().add_child(app._panel(Vector2(0, 0), app.CANVAS_SIZE, Color(0.03, 0.02, 0.04, 0.52)))
+	var panel_rect := _date_panel_rect()
+	if app._draw_image(GAL_BG_DATE_SELECT, panel_rect.position, panel_rect.size, false, Color(1, 1, 1, 1.0)) == null:
+		app._view_container().add_child(app._panel(panel_rect.position, panel_rect.size, Color(1.0, 0.84, 0.94, 0.84)))
+
+	var close_rect := _date_child_rect(panel_rect, Vector2(-95, -81), Vector2(60, 60), Vector2(1, 1))
+	app._draw_image(GAL_BTN_CLOSE_SMALL, close_rect.position, close_rect.size, false, Color(1, 1, 1, 0.96))
+	_add_hit_button(close_rect.position, close_rect.size, func() -> void:
+		show_view(VIEW_DATE_SELECT)
+	)
+
+	var title_rect := _date_child_rect(panel_rect, Vector2(-43.7, 256), Vector2(1088.5, 30), Vector2(0.5, 0.5))
+	var title := _add_gal_text("约会地图", title_rect.position, title_rect.size, 36)
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	title.modulate = Color(0.16, 0.10, 0.12, 0.94)
+	var remain := _add_gal_text("%s / 今日可约会 %d 次" % [str(selected.get("title", "約會")), _date_attempts_left()], title_rect.position + Vector2(0, 56), Vector2(520, 30), 20)
+	remain.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	remain.modulate = Color(0.28, 0.16, 0.20, 0.90)
+
+	var locations := _date_locations(selected)
+	for index in range(locations.size()):
+		var item: Dictionary = locations[index]
+		_draw_date_map_location(hero, selected, item, panel_rect)
+
+
+func _draw_date_map_location(hero: Dictionary, selected_date: Dictionary, location: Dictionary, panel_rect: Rect2) -> void:
+	var offset: Vector2 = location.get("offset", Vector2.ZERO)
+	var button_rect := _date_child_rect(panel_rect, offset, Vector2(230, 82), Vector2(0.5, 0.5))
+	if app._draw_image(GAL_MAP_LOCATION_BUTTON, button_rect.position, button_rect.size, false, Color(1, 1, 1, 0.96)) == null:
+		app._view_container().add_child(app._panel(button_rect.position, button_rect.size, Color(1.0, 0.54, 0.78, 0.62)))
+	var name_label := _add_gal_text(str(location.get("name", "")), button_rect.position + Vector2(37, 26), Vector2(132.85, 30), 22)
+	name_label.modulate = Color(0.22, 0.12, 0.18, 0.94)
+	var event_rect := Rect2(button_rect.position + Vector2(67, 70), Vector2(96, 104))
+	_draw_date_map_event(hero, event_rect)
+	var date_title := str(selected_date.get("title", "約會"))
+	var location_name := str(location.get("name", "地點"))
+	_add_hit_button(button_rect.position, button_rect.size, func() -> void:
+		app.save["gal_selected_date_location"] = location_name
+		_persist_gal_state()
+		_show_touch_hint("已標記地點：%s" % location_name)
+	)
+	_add_hit_button(event_rect.position, event_rect.size, func() -> void:
+		_complete_date_event(date_title, location_name)
+	)
+
+
+func _draw_date_map_event(hero: Dictionary, event_rect: Rect2) -> void:
+	if app._draw_image(GAL_MAP_EVENT_FRAME, event_rect.position, event_rect.size, false, Color(1, 1, 1, 0.98)) == null:
+		app._view_container().add_child(app._panel(event_rect.position, event_rect.size, Color(1.0, 0.52, 0.80, 0.62)))
+	var head_path: String = app._hero_round_head_path(hero)
+	if head_path.is_empty() or not FileAccess.file_exists(head_path):
+		head_path = GAL_MAP_EVENT_HEAD_FALLBACK
+	var texture: Texture2D = app._load_png_source_texture(head_path)
+	if texture == null:
+		return
+	var head := TextureRect.new()
+	head.texture = texture
+	head.position = event_rect.position + Vector2(12, 12)
+	head.size = event_rect.size - Vector2(24, 32)
+	head.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	head.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	head.modulate = Color(1, 1, 1, 0.96)
+	head.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	app._view_container().add_child(head)
+
+
+func _complete_date_event(date_title: String, location_name: String) -> void:
+	if _date_attempts_left() <= 0:
+		_show_touch_hint("今日出行次數已用完")
+		return
+	app.save["gal_dates_used_today"] = int(app.save.get("gal_dates_used_today", 0)) + 1
+	app.save["gal_last_date"] = date_title
+	app.save["gal_last_date_location"] = location_name
+	app.save["gal_selected_date_location"] = location_name
+	app.save["gal_memory_date"] = true
+	_add_gal_exp(15)
+	_persist_gal_state()
+	_play_touch_voice("greet")
+	show_view(VIEW_MAIN)
+	_show_touch_hint("已完成外出：%s / %s，親密 +15" % [date_title, location_name])
+
 
 func _draw_date_select_view_legacy() -> void:
 	var hero := _selected_hero()
