@@ -25,6 +25,7 @@ const UI_LOADING_HANDLE = "res://assets/ui/loading/update_img_03.png"
 const UI_LAUNCH_VIDEO = "res://assets/video/game_start.ogv"
 const LAUNCH_VIDEO_SECONDS := 15.8
 const LAUNCH_RAW_IMAGE_SIZE := Vector2(1680, 1680)
+const LAUNCH_VIDEO_SIZE := Vector2(1680, 752)
 
 var app
 
@@ -83,12 +84,12 @@ func show_launch() -> void:
 	raw_host.clip_contents = true
 	raw_host.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	app._view_container().add_child(raw_host)
-	var played_video := _draw_launch_video()
+	var played_video := _draw_launch_video(raw_host)
 	if not played_video:
 		raw_host.add_child(app._panel(Vector2.ZERO, LAUNCH_RAW_IMAGE_SIZE, Color(0.0, 0.0, 0.0, 1.0)))
 	_draw_launch_skip_controls()
 
-func _draw_launch_video() -> bool:
+func _draw_launch_video(raw_host: Control) -> bool:
 	if not ResourceLoader.exists(UI_LAUNCH_VIDEO):
 		return false
 	var stream := load(UI_LAUNCH_VIDEO)
@@ -96,16 +97,16 @@ func _draw_launch_video() -> bool:
 		return false
 	var video := VideoStreamPlayer.new()
 	video.stream = stream
-	video.position = Vector2.ZERO
-	video.size = app.CANVAS_SIZE
+	video.position = Vector2(0, (LAUNCH_RAW_IMAGE_SIZE.y - LAUNCH_VIDEO_SIZE.y) * 0.5)
+	video.size = LAUNCH_VIDEO_SIZE
 	video.expand = true
 	video.autoplay = true
 	video.modulate.a = 0.0
 	video.finished.connect(func() -> void:
 		if app.current_view == "launch":
-			app._show_login()
+			app._skip_launch_video()
 	)
-	app._view_container().add_child(video)
+	raw_host.add_child(video)
 	var tween: Tween = app.create_tween()
 	tween.tween_property(video, "modulate:a", 1.0, 0.1).set_delay(0.1)
 	video.play()
@@ -273,7 +274,7 @@ func show_loading() -> void:
 	if app._draw_image(UI_LOADING_TRACK, slider_pos, slider_size, false) == null:
 		app._view_container().add_child(app._panel(slider_pos, slider_size, Color(0.06, 0.05, 0.04, 0.70)))
 	# Fill (animated)
-	var fill: Control = app._draw_clipped_image(UI_LOADING_FILL, slider_pos, Vector2(0, slider_size.y), false)
+	var fill: Control = _draw_loading_fill(slider_pos, slider_size)
 	if fill == null:
 		fill = app._panel(slider_pos, Vector2(0, slider_size.y), Color(0.86, 0.65, 0.28, 0.88))
 		app._view_container().add_child(fill)
@@ -296,6 +297,26 @@ func show_loading() -> void:
 	
 	# Auto-transition: animate 0→100, then auto-load main scene
 	_animate_loading_progress(fill, handle, pct, slider_pos, slider_size, handle_y, handle_size.x)
+
+func _draw_loading_fill(pos: Vector2, max_size: Vector2) -> Control:
+	var texture: Texture2D = app._load_png_source_texture(UI_LOADING_FILL)
+	if texture == null:
+		return null
+	var clip := Control.new()
+	clip.position = pos
+	clip.size = Vector2(0, max_size.y)
+	clip.clip_contents = true
+	app._view_container().add_child(clip)
+
+	var fill := TextureRect.new()
+	fill.texture = texture
+	fill.position = Vector2.ZERO
+	fill.size = max_size
+	fill.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	fill.stretch_mode = TextureRect.STRETCH_SCALE
+	fill.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	clip.add_child(fill)
+	return clip
 
 func _animate_loading_progress(fill: Control, handle: Control, pct: Label, pos: Vector2, size: Vector2, handle_y: float, handle_width: float) -> void:
 	var steps := 100

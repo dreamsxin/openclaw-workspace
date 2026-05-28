@@ -34,7 +34,6 @@ const UI_MAIN_AUTO_FIGHT = "res://assets/ui/mainui/mainui_img_36.png"
 const UI_MAIN_HOOK_TIME_BG = "res://assets/ui/mainui/mainui_img_08.png"    # imgHookTime plate
 const UI_MAIN_FULLSCREEN_OVERLAY = "res://assets/ui/mainui/mainui_img_44.png"
 const UI_MAIN_REWARD_FRAME = "res://assets/ui/mainui/mainui_img_45.png"
-const UI_MAIN_LIMIT_DEFAULT = "res://assets/ui/mainui/mainui_btn_14.png"
 const UI_MAIN_BTN_EYE = "res://assets/ui/mainui/mainui_btn_12.png"       # btnEye
 const UI_MAIN_BTN_CHANGE = "res://assets/ui/mainui/mainui_btn_13.png"    # btnChange
 const UI_MAIN_BTN_HARVEST = "res://assets/ui/mainui/mainui_img_18.png"   # btnHarvest
@@ -60,6 +59,19 @@ const UI_MAIN_LIMIT_ICONS = [
 	"res://assets/ui/mainui/mainui_btn_18.png",
 	"res://assets/ui/mainui/mainui_btn_19.png"
 ]
+const UI_MAIN_LIMIT_QUESTION = "res://assets/ui/mainui/mainui_btn_21.png"
+const UI_MAIN_LIMIT_PRESENT = "res://assets/ui/mainui/mainui_btn_22.png"
+const UI_MAIN_LIMIT_BURY_GIFT = "res://assets/ui/mainui/mainui_btn_23.png"
+const UI_MAIN_LIMIT_DISCOUNT = "res://assets/ui/mainui/mainui_btn_24.png"
+
+const MAINUI_PLAYER_INFO_POS := Vector2(0, 5)
+const MAINUI_FUNNY_CONTENT_POS := Vector2(972, 629)
+const MAINUI_STORY_POS := Vector2(1332, 633)
+const MAINUI_CHARGE_POS := Vector2(1457, 148)
+const MAINUI_COMMERCIAL_POS := Vector2(57, 123)
+const MAINUI_CHAPTER_POS := Vector2(1360, 500)
+const MAINUI_BOTTOM_POS := Vector2(64, 676)
+const MAINUI_CHAT_POS := Vector2(1196, 94)
 
 var app
 var _main_state: String = "normal"
@@ -399,60 +411,60 @@ func draw_fullscreen_overlay() -> void:
 
 
 func draw_top_bar() -> void:
-	# @TopBar/svRes sits in the top-right resource strip.
-	var x = 842.0
-	var cell_size := Vector2(153, 38)
+	# @TopBar/svRes creates TopResGrid-like cells: 200x40 with icon + number.
+	var x = 1030.0
+	var cell_size := Vector2(200, 40)
 	var resources = [
-		[UI_ITEM_TICKET, "%d/50" % clamp(int(app.save.get("tickets", 0)), 0, 50)],
-		[UI_ITEM_GEM, app.save.get("gems", 0)]
+		[UI_MAIN_CHAT_BG, app._unclaimed_mail_count(), app._show_mail],
+		[UI_ITEM_TICKET, "%d/50" % clamp(int(app.save.get("tickets", 0)), 0, 50), app._show_shop],
+		[UI_ITEM_GEM, app.save.get("gems", 0), app._show_shop]
 	]
 	for item in resources:
-		var bg = app._draw_image(UI_MAIN_TOP_RES_BG, Vector2(x, 20), cell_size, false, Color(1, 1, 1, 0.76))
+		var bg = app._draw_image(UI_MAIN_TOP_RES_BG, Vector2(x, 14), cell_size, false, Color(1, 1, 1, 0.76))
 		_main_panels.append(bg)
-		add_scaled_image(str(item[0]), Vector2(x - 4, 14), Vector2(38, 38), Color(1, 1, 1, 0.94))
-		add_ui_text(str(item[1]), Vector2(x + 34, 24), Vector2(88, 24), 17, HORIZONTAL_ALIGNMENT_LEFT, Color(0.96, 0.92, 0.78))
-		add_ui_text("+", Vector2(x + 124, 20), Vector2(24, 30), 26, HORIZONTAL_ALIGNMENT_CENTER, Color(1.0, 0.86, 0.34))
-		add_hit_button(Vector2(x - 4, 18), Vector2(cell_size.x + 4, 42), app._show_shop)
-		x += 158
+		add_scaled_image(str(item[0]), Vector2(x - 5, 9), Vector2(50, 50), Color(1, 1, 1, 0.94))
+		add_ui_text(str(item[1]), Vector2(x + 27, 14), Vector2(130, 40), 18, HORIZONTAL_ALIGNMENT_LEFT, Color(0.96, 0.92, 0.78))
+		add_hit_button(Vector2(x, 14), cell_size, item[2])
+		x += 205
 
 
 func draw_player_info(hero: Dictionary) -> void:
-	# pnlPlayerInfo: (0,5) 271x108
+	# pnlPlayerInfo: top-left, pos(0,-5), size 354x113.
 	var profile = app.save.get("profile", {})
-	var player_rect := _main_left_top_rect(Vector2(0, -5), Vector2(354, 113))
+	var player_rect := Rect2(MAINUI_PLAYER_INFO_POS, Vector2(354, 113))
 	var panel = app._draw_image(UI_MAIN_PLAYER_FRAME, player_rect.position, player_rect.size, false, Color(1, 1, 1, 0.94))
 	_main_panels.append(panel)
 	# imgHeadBg and imgExp are left-middle inside the player panel.
-	app._draw_image(UI_MAIN_AVATAR_RING, Vector2(49, 12), Vector2(61, 76), false, Color(1, 1, 1, 0.94))
-	app._draw_image(UI_MAIN_EXP_RING, Vector2(43, 6), Vector2(69, 86), false, Color(1, 0.84, 0.28, 0.88))
+	app._draw_image(UI_MAIN_AVATAR_RING, Vector2(64, 14), Vector2(80, 79), false, Color(1, 1, 1, 0.94))
+	app._draw_image(UI_MAIN_EXP_RING, Vector2(59, 8), Vector2(90, 90), false, Color(1, 0.84, 0.28, 0.88))
 	# Level label
-	var lv = app._label("Lv.%d" % int(profile.get("level", 1)), 12, HORIZONTAL_ALIGNMENT_CENTER)
-	lv.position = Vector2(54, 82); lv.size = Vector2(52, 14); lv.modulate = Color(0.96, 0.88, 0.52)
+	var lv = app._label("%d" % int(profile.get("level", 1)), 24, HORIZONTAL_ALIGNMENT_CENTER)
+	lv.position = Vector2(67, 42); lv.size = Vector2(74, 28); lv.modulate = Color(0.96, 0.88, 0.52)
 	app._view_container().add_child(lv)
 	var level_caption = app._label("LEVEL", 8, HORIZONTAL_ALIGNMENT_CENTER)
-	level_caption.position = Vector2(55, 70)
-	level_caption.size = Vector2(50, 12)
+	level_caption.position = Vector2(80, 69)
+	level_caption.size = Vector2(48, 12)
 	level_caption.modulate = Color(0.96, 0.88, 0.52)
 	app._view_container().add_child(level_caption)
 	# txtName (118,26) 66x28
 	var pname = app._label(str(profile.get("name", "Player")), 18)
-	pname.position = Vector2(118, 26); pname.size = Vector2(66, 28)
+	pname.position = Vector2(134, 43); pname.size = Vector2(100, 29)
 	app._view_container().add_child(pname)
 	# txtPower (139,50) 133x32
-	app._draw_image(UI_MAIN_POWER_ICON, Vector2(127, 50), Vector2(17, 20), false, Color(1, 1, 1, 0.9))
+	app._draw_image(UI_MAIN_POWER_ICON, Vector2(126, 78), Vector2(22, 21), false, Color(1, 1, 1, 0.9))
 	var power = app._label("战力 %d" % app._player_power(), 14)
-	power.position = Vector2(139, 50); power.size = Vector2(133, 32)
+	power.position = Vector2(152, 72); power.size = Vector2(173, 37)
 	power.modulate = Color(0.84, 0.74, 0.24)
 	app._view_container().add_child(power)
 	# btnPlayerInfo (0,13) 271x76
-	add_hit_button(Vector2(0, 13), Vector2(271, 76), app._show_player_info)
+	add_hit_button(Vector2(0, 22), Vector2(354, 79), app._show_player_info)
 	# btnChange/btnEye: compact actions beside the player card.
-	app._draw_image(UI_MAIN_BTN_CHANGE, Vector2(280, 15), Vector2(57, 57), false, Color(1, 1, 1, 0.92))
-	add_ui_text("壁紙", Vector2(281, 69), Vector2(56, 20), 13, HORIZONTAL_ALIGNMENT_CENTER, Color(1, 1, 1, 0.94))
-	add_hit_button(Vector2(280, 15), Vector2(57, 74), app._show_wallpaper_select)
-	app._draw_image(UI_MAIN_BTN_EYE, Vector2(338, 15), Vector2(57, 57), false, Color(1, 1, 1, 0.92))
-	add_ui_text("互動", Vector2(339, 69), Vector2(56, 20), 13, HORIZONTAL_ALIGNMENT_CENTER, Color(1, 1, 1, 0.94))
-	add_hit_button(Vector2(338, 15), Vector2(57, 74), enter_wallpaper_focus)
+	app._draw_image(UI_MAIN_BTN_CHANGE, Vector2(365, 10), Vector2(74, 74), false, Color(1, 1, 1, 0.92))
+	add_ui_text("壁紙", Vector2(367, 72), Vector2(70, 22), 15, HORIZONTAL_ALIGNMENT_CENTER, Color(1, 1, 1, 0.94))
+	add_hit_button(Vector2(365, 10), Vector2(74, 86), app._show_wallpaper_select)
+	app._draw_image(UI_MAIN_BTN_EYE, Vector2(441, 10), Vector2(74, 74), false, Color(1, 1, 1, 0.92))
+	add_ui_text("互動", Vector2(443, 72), Vector2(70, 22), 15, HORIZONTAL_ALIGNMENT_CENTER, Color(1, 1, 1, 0.94))
+	add_hit_button(Vector2(441, 10), Vector2(74, 86), enter_wallpaper_focus)
 
 
 func draw_funny_content() -> void:
@@ -464,61 +476,61 @@ func draw_funny_content() -> void:
 		[UI_MAIN_FUNNY_DRAW, "喚靈", app._open_present_pool]
 	]
 	var bw = 88.0; var bh = 102.0; var gap = 5.0
-	var start_x = 578.0
-	var by = 600.0
+	var start_x = MAINUI_FUNNY_CONTENT_POS.x
+	var by = MAINUI_FUNNY_CONTENT_POS.y
 	for item in actions:
 		var bg = app._draw_image(str(item[0]), Vector2(start_x, by), Vector2(bw, bh), false, Color(1, 1, 1, 0.84))
 		_main_panels.append(bg)
-		add_ui_text(str(item[1]), Vector2(start_x, by + 68), Vector2(bw, 24), 14, HORIZONTAL_ALIGNMENT_CENTER, Color(1, 1, 1, 0.94))
+		add_ui_text(str(item[1]), Vector2(start_x, by + 66), Vector2(bw, 28), 18, HORIZONTAL_ALIGNMENT_CENTER, Color(1, 1, 1, 0.94))
 		add_hit_button(Vector2(start_x, by), Vector2(bw, bh), item[2])
 		app._draw_red_dot(Vector2(start_x + bw - 16, by + 4))
 		start_x += bw + gap
 	# btnJumpAutoFight above btnAdventure (prefab pos(0,33) size(180,90))
-	# 3rd button (冒險): x=889, y=604; banner centered, 86px above
-	var adv_x = 578.0 + 2 * (bw + gap)
+	# 3rd button (冒險): banner is wider than its parent and protrudes upward.
+	var adv_x = MAINUI_FUNNY_CONTENT_POS.x + 2 * (bw + gap)
 	var auto_x = adv_x - 46
 	var auto_y = by - 88
 	app._draw_image(UI_MAIN_AUTO_FIGHT, Vector2(auto_x, auto_y), Vector2(180, 90), false, Color(1, 1, 1, 0.88))
-	add_ui_text("自動挑戰中", Vector2(auto_x + 9, auto_y + 18), Vector2(162, 22), 14, HORIZONTAL_ALIGNMENT_CENTER, Color(0.96, 0.88, 0.52))
-	add_ui_text("歷戰尖塔-單隊", Vector2(auto_x + 9, auto_y + 44), Vector2(162, 20), 13, HORIZONTAL_ALIGNMENT_CENTER, Color(0.96, 0.88, 0.52))
+	add_ui_text("自動挑戰中...", Vector2(auto_x + 9, auto_y + 18), Vector2(162, 26), 18, HORIZONTAL_ALIGNMENT_CENTER, Color(0.96, 0.88, 0.52))
+	add_ui_text("歷戰尖塔-單隊", Vector2(auto_x + 5, auto_y + 46), Vector2(170, 24), 16, HORIZONTAL_ALIGNMENT_CENTER, Color(0.96, 0.88, 0.52))
 	add_hit_button(Vector2(auto_x, auto_y), Vector2(180, 90), app._show_auto_fight)
 
 
 func draw_story_harvest() -> void:
 	# pnlStory: bottom-right big story/hook button.
 	var sw = 278.0; var sh = 98.0
-	var sx = 956.0; var sy = 604.0
+	var sx = MAINUI_STORY_POS.x; var sy = MAINUI_STORY_POS.y
 	var bg = app._draw_image(UI_MAIN_STORY_BG, Vector2(sx, sy), Vector2(sw, sh), false, Color(1, 1, 1, 0.88))
 	_main_panels.append(bg)
-	app._draw_image(UI_MAIN_STORY_PROGRESS, Vector2(sx + 116, sy - 2), Vector2(156, 34), false, Color(1, 1, 1, 0.9))
-	add_ui_text("进度：%s" % app._next_task_text(), Vector2(sx + 119, sy + 2), Vector2(150, 24), 13, HORIZONTAL_ALIGNMENT_CENTER, Color(1.0, 0.88, 0.52))
-	add_ui_text("塵世探秘", Vector2(sx + 124, sy + 35), Vector2(128, 40), 25, HORIZONTAL_ALIGNMENT_CENTER, Color(0.55, 0.48, 0.40))
+	app._draw_image(UI_MAIN_STORY_PROGRESS, Vector2(sx + 42, sy - 32), Vector2(156, 34), false, Color(1, 1, 1, 0.9))
+	add_ui_text("進度：%s" % app._next_task_text(), Vector2(sx + 45, sy - 29), Vector2(150, 24), 13, HORIZONTAL_ALIGNMENT_CENTER, Color(1.0, 0.88, 0.52))
+	add_ui_text("塵世探秘", Vector2(sx + 114, sy + 26), Vector2(128, 46), 28, HORIZONTAL_ALIGNMENT_CENTER, Color(0.55, 0.48, 0.40))
 	# btnHarvest: chest/hook reward button inside pnlStory.
-	app._draw_image(UI_MAIN_BTN_HARVEST, Vector2(sx + 13, sy - 1), Vector2(89, 100), false, Color(1, 1, 1, 0.90))
-	add_hit_button(Vector2(sx + 13, sy - 1), Vector2(89, 100), app._claim_afk_reward)
+	app._draw_image(UI_MAIN_BTN_HARVEST, Vector2(sx + 14, sy - 5), Vector2(106, 106), false, Color(1, 1, 1, 0.90))
+	add_hit_button(Vector2(sx + 14, sy - 5), Vector2(106, 106), app._claim_afk_reward)
 	# btnHarvest sub-elements: imgHookTime + txtHookTime
-	app._draw_image(UI_MAIN_HOOK_TIME_BG, Vector2(sx + 12, sy + 70), Vector2(92, 20), false, Color(1, 1, 1, 0.74))
-	add_ui_text(app._afk_time_display(), Vector2(sx + 18, sy + 71), Vector2(80, 18), 11, HORIZONTAL_ALIGNMENT_CENTER, Color(0.92, 0.84, 0.52))
+	app._draw_image(UI_MAIN_HOOK_TIME_BG, Vector2(sx + 21, sy + 69), Vector2(92, 20), false, Color(1, 1, 1, 0.82))
+	add_ui_text(app._afk_time_display(), Vector2(sx + 21, sy + 69), Vector2(92, 20), 12, HORIZONTAL_ALIGNMENT_CENTER, Color(0.92, 0.84, 0.52))
 	# btnStory: prefab has transparent overlay button (132×99) covering story area
-	add_hit_button(Vector2(sx + 86, sy), Vector2(sw - 86, sh), app._show_dust_transition)
-	app._draw_red_dot(Vector2(sx + sw - 20, sy + 2))
+	add_hit_button(Vector2(sx + 146, sy), Vector2(132, sh), app._show_dust_transition)
+	app._draw_red_dot(Vector2(sx + 13, sy - 2))
 
 
 func draw_charge_column() -> void:
-	# pnlCharge: right-side commerce grid, screenshot x≈1117..1238 y≈142..390.
+	# pnlCharge: right-side commerce cluster, prefab rect x=1457 y=148 size=158x258.
 	var entries = [
-		[UI_MAIN_CHARGE_ICONS[3], "儲值", app._show_charge, Vector2(1118, 142)],
-		[UI_MAIN_CHARGE_ICONS[0], "活動", app._show_activity_center, Vector2(1178, 142)],
-		[UI_MAIN_CHARGE_ICONS[4], "商店", app._show_shop, Vector2(1118, 230)],
-		[UI_MAIN_CHARGE_ICONS[1], "福利", app._show_welfare, Vector2(1178, 230)],
-		[UI_MAIN_CHARGE_ICONS[2], "月卡", app._show_month_card, Vector2(1178, 318)]
+		[UI_MAIN_CHARGE_ICONS[3], "儲值", app._show_charge, MAINUI_CHARGE_POS + Vector2(0, 0)],
+		[UI_MAIN_CHARGE_ICONS[0], "活動", app._show_activity_center, MAINUI_CHARGE_POS + Vector2(80, 0)],
+		[UI_MAIN_CHARGE_ICONS[4], "商店", app._show_shop, MAINUI_CHARGE_POS + Vector2(0, 88)],
+		[UI_MAIN_CHARGE_ICONS[1], "福利", app._show_welfare, MAINUI_CHARGE_POS + Vector2(80, 88)],
+		[UI_MAIN_CHARGE_ICONS[2], "月卡", app._show_month_card, MAINUI_CHARGE_POS + Vector2(80, 176)]
 	]
 	for entry in entries:
-		var icon = app._draw_image(str(entry[0]), entry[3], Vector2(52, 52), false, Color(1, 1, 1, 0.88))
+		var icon = app._draw_image(str(entry[0]), entry[3], Vector2(78, 78), false, Color(1, 1, 1, 0.90))
 		_main_panels.append(icon)
-		add_ui_text(str(entry[1]), entry[3] + Vector2(-4, 48), Vector2(60, 20), 14, HORIZONTAL_ALIGNMENT_CENTER, Color(1, 1, 1, 0.94))
-		add_hit_button(entry[3], Vector2(56, 72), entry[2])
-		app._draw_red_dot(entry[3] + Vector2(40, 0))
+		add_ui_text(str(entry[1]), entry[3] + Vector2(0, 58), Vector2(78, 29), 20, HORIZONTAL_ALIGNMENT_CENTER, Color(1, 1, 1, 0.94))
+		add_hit_button(entry[3], Vector2(78, 88), entry[2])
+		app._draw_red_dot(entry[3] + Vector2(58, 2))
 
 
 func draw_menu_button() -> void:
@@ -543,51 +555,51 @@ func draw_assist_button() -> void:
 
 func draw_commercialization() -> void:
 	# pnlCommercialization: banner + 4-column LimitIconView grid from MainUIView.
-	var px = 50.0; var py = 120.0
-	# @pnlAlternate: 301x108 (→231x104) banner
-	app._draw_image(UI_MAIN_BANNER, Vector2(px, py), Vector2(231, 104), false, Color(1, 1, 1, 0.92))
+	var px = MAINUI_COMMERCIAL_POS.x; var py = MAINUI_COMMERCIAL_POS.y
+	# @pnlAlternate: 301x108 banner.
+	app._draw_image(UI_MAIN_BANNER, Vector2(px, py), Vector2(301, 108), false, Color(1, 1, 1, 0.92))
 	for dot_index in range(3):
 		var dot_path = UI_MAIN_DOT_ON if dot_index == 0 else UI_MAIN_DOT_OFF
-		app._draw_image(dot_path, Vector2(px + 165 + dot_index * 15, py + 86), Vector2(12, 12), false, Color(1, 1, 1, 0.90))
-	# pnlGift: 409x300 (→313x288), below banner
-	var gx = px + 5; var gy = py + 113
+		app._draw_image(dot_path, Vector2(px + 212 + dot_index * 16, py + 88), Vector2(12, 12), false, Color(1, 1, 1, 0.90))
+	# pnlGift: 409x300 grid below banner.
+	var gx = px + 7; var gy = py + 120
 	var gifts = [
-		["喚靈福利", "4d01h", app._show_welfare],
-		["幻海邀约", "6d01h", enter_gal_entry],
-		["簽到福利", "", app._show_welfare],
-		["新服庆典", "11d01h", app._show_activity_center],
-		["交流大厅", "", app._show_chat],
-		["开服冲榜", "7d01h", app._show_activity_center],
-		["限时皮肤", "11d01h", app._show_shop],
-		["露箔闪光", "11d01h", app._show_shop],
-		["首储", "", app._show_charge],
-		["萬象喚靈", "4d01h", app._open_present_pool],
-		["周末企划", "1d01h", app._show_tasks],
-		["神域馈赠", "11d01h", app._show_welfare],
-		["問卷", "可領取", app._show_welfare],
-		["埋點禮包", "", app._show_welfare],
-		["折扣禮包", "", app._show_shop]
+		[UI_MAIN_LIMIT_ICONS[0], "喚靈福利", "4d01h", app._show_welfare],
+		[UI_MAIN_LIMIT_ICONS[2], "幻海邀約", "6d01h", enter_gal_entry],
+		[UI_MAIN_LIMIT_ICONS[1], "簽到福利", "", app._show_welfare],
+		[UI_MAIN_LIMIT_ICONS[4], "新服慶典", "11d01h", app._show_activity_center],
+		[UI_MAIN_LIMIT_ICONS[5], "交流大廳", "", app._show_chat],
+		[UI_MAIN_LIMIT_ICONS[3], "開服沖榜", "7d01h", app._show_activity_center],
+		[UI_MAIN_LIMIT_ICONS[4], "限時皮膚", "11d01h", app._show_shop],
+		[UI_MAIN_LIMIT_ICONS[5], "露箔閃光", "11d01h", app._show_shop],
+		[UI_MAIN_LIMIT_ICONS[5], "首儲", "", app._show_charge],
+		[UI_MAIN_LIMIT_PRESENT, "萬象喚靈", "4d01h", app._open_present_pool],
+		[UI_MAIN_LIMIT_BURY_GIFT, "周末企劃", "1d01h", app._show_tasks],
+		[UI_MAIN_LIMIT_ICONS[1], "神域饋贈", "11d01h", app._show_welfare],
+		[UI_MAIN_LIMIT_QUESTION, "問卷", "可領取", app._show_welfare],
+		[UI_MAIN_LIMIT_BURY_GIFT, "埋點禮包", "", app._show_welfare],
+		[UI_MAIN_LIMIT_DISCOUNT, "折扣禮包", "", app._show_shop]
 	]
-	var gsx = gx + 2.0; var gsy = gy + 5.0; var gi = 0
+	var gsx = gx; var gsy = gy; var gi = 0
 	for gift in gifts:
-		add_scaled_image(UI_MAIN_LIMIT_DEFAULT, Vector2(gsx, gsy), Vector2(66, 66), Color(1, 1, 1, 0.9))
-		add_ui_text(str(gift[0]), Vector2(gsx - 7, gsy + 48), Vector2(80, 20), 13, HORIZONTAL_ALIGNMENT_CENTER, Color(1, 1, 1, 0.94))
-		if not str(gift[1]).is_empty():
-			add_ui_text(str(gift[1]), Vector2(gsx - 4, gsy + 64), Vector2(74, 18), 12, HORIZONTAL_ALIGNMENT_CENTER, Color(1.0, 0.80, 0.28))
-		add_hit_button(Vector2(gsx, gsy), Vector2(68, 82), gift[2])
+		add_scaled_image(str(gift[0]), Vector2(gsx, gsy), Vector2(86, 86), Color(1, 1, 1, 0.94))
+		add_ui_text(str(gift[1]), Vector2(gsx, gsy + 55), Vector2(86, 24), 15, HORIZONTAL_ALIGNMENT_CENTER, Color(1, 1, 1, 0.96))
+		if not str(gift[2]).is_empty():
+			add_ui_text(str(gift[2]), Vector2(gsx, gsy + 73), Vector2(86, 22), 13, HORIZONTAL_ALIGNMENT_CENTER, Color(1.0, 0.80, 0.28))
+		add_hit_button(Vector2(gsx, gsy), Vector2(86, 86), gift[3])
 		if gi in [2, 4, 8, 10]:
-			app._draw_red_dot(Vector2(gsx + 52, gsy + 2))
-		gi += 1; gsx += 74
+			app._draw_red_dot(Vector2(gsx + 66, gsy + 2))
+		gi += 1; gsx += 102
 		if gi % 4 == 0:
-			gsx = gx + 2; gsy += 96
+			gsx = gx; gsy += 96
 		if gi >= 12:
-			gsx = gx + 2 + float(gi - 12) * 74.0
-			gsy = gy + 5 + 3.0 * 96.0
+			gsx = gx + float(gi - 12) * 102.0
+			gsy = gy + 3.0 * 96.0
 
 
 func draw_chapter_info() -> void:
-	# btnChapterInfo: anchor(1,0) pivot(1,0) pos(-34,150) size(276,100)
-	var chapter_rect := _main_right_bottom_rect(Vector2(-34, 150), Vector2(276, 100))
+	# btnChapterInfo: screenshot/prefab box x=1360 y=500 size=276x100.
+	var chapter_rect := Rect2(MAINUI_CHAPTER_POS, Vector2(276, 100))
 	var px = chapter_rect.position.x; var py = chapter_rect.position.y
 	var state: Dictionary = app._current_chapter_state()
 	var chapter: Dictionary = state.get("chapter", {})
@@ -614,11 +626,12 @@ func draw_chapter_info() -> void:
 
 
 func draw_bottom_bar() -> void:
-	# MainUIView screenshot calibration: keep this row slightly above the bottom edge.
-	var bar_y = 657.0; var bar_h = 48.0
-	var bar = app._draw_image(UI_MAIN_BOTTOM_BG, Vector2(49, bar_y), Vector2(430, bar_h), false, Color(1, 1, 1, 0.72))
+	# pnlBottom: bottom-left, pos(64,49), height 50.
+	var bar_y = MAINUI_BOTTOM_POS.y; var bar_h = 50.0
+	var bar_width = 115.0 + 6.0 * 86.0
+	var bar = app._draw_image(UI_MAIN_BOTTOM_BG, MAINUI_BOTTOM_POS, Vector2(bar_width, bar_h), false, Color(1, 1, 1, 0.72))
 	_main_panels.append(bar)
-	# 6 buttons: compact row starts immediately after the enlarged Gal portal.
+	# 6 buttons: after the enlarged Gal portal.
 	# 繁體中文: via lang_extra.bytes UI1000001-UI1000013
 	var buttons = [
 		["幻靈", app._show_remnants_list, true],
@@ -628,34 +641,36 @@ func draw_bottom_bar() -> void:
 		["任務", app._show_tasks, true],
 		["公會", app._show_guild, false]
 	]
-	var bw = 62.0; var bx = 135.0
+	var bw = 86.0; var bx = MAINUI_BOTTOM_POS.x + 115.0
 	for item in buttons:
-		add_ui_text(str(item[0]), Vector2(bx, bar_y + 8), Vector2(bw, 30), 19, HORIZONTAL_ALIGNMENT_CENTER, Color(1, 1, 1, 0.92))
+		add_ui_text(str(item[0]), Vector2(bx + 8, bar_y + 10), Vector2(70, 30), 22, HORIZONTAL_ALIGNMENT_CENTER, Color(1, 1, 1, 0.92))
 		add_hit_button(Vector2(bx, bar_y), Vector2(bw, bar_h), item[1])
-		app._draw_image(UI_MAIN_SEPARATOR, Vector2(bx + bw + 2, bar_y + 16), Vector2(2, 16), false, Color(1, 1, 1, 0.55))
-		if item[2]: app._draw_red_dot(Vector2(bx + bw - 18, bar_y))
-		bx += 67
+		app._draw_image(UI_MAIN_SEPARATOR, Vector2(bx, bar_y + 16), Vector2(2, 18), false, Color(1, 1, 1, 0.55))
+		if item[2]:
+			app._draw_red_dot(Vector2(bx + 64, bar_y + 2))
+		bx += bw
 
 
 func draw_gal_button() -> void:
-	# mainui_btn_25 source is 150x170; force-scale it so it cannot cover btnHero.
-	var gx = 38.0; var gy = 562.0
-	draw_mainui_fx("gal", Vector2(gx - 4, gy + 58), Vector2(118, 76), 0.90)
-	add_scaled_image(UI_MAIN_GAL, Vector2(gx, gy), Vector2(108, 132), Color(1, 1, 1, 0.94))
-	add_ui_text("現世", Vector2(gx + 19, gy + 88), Vector2(70, 30), 20, HORIZONTAL_ALIGNMENT_CENTER, Color(1, 1, 1, 0.96))
-	add_hit_button(Vector2(gx, gy), Vector2(108, 132), enter_gal_entry)
-	add_hit_button(Vector2(gx + 16, gy + 82), Vector2(76, 96), enter_gal_entry)
-	app._draw_red_dot(Vector2(gx + 82, gy + 8))
+	# btnGal: 115x129 protrudes 79px upward from pnlBottom.
+	var gx = MAINUI_BOTTOM_POS.x
+	var gy = MAINUI_BOTTOM_POS.y + 50.0 - 129.0
+	draw_mainui_fx("gal", Vector2(gx + 7, gy + 62), Vector2(100, 76), 0.90)
+	add_scaled_image(UI_MAIN_GAL, Vector2(gx - 17, gy - 41), Vector2(150, 170), Color(1, 1, 1, 0.94))
+	add_ui_text("現世", Vector2(gx + 22, gy + 82), Vector2(70, 30), 24, HORIZONTAL_ALIGNMENT_CENTER, Color(1, 1, 1, 0.96))
+	add_hit_button(Vector2(gx, gy), Vector2(115, 129), enter_gal_entry)
+	add_hit_button(Vector2(gx + 8, gy + 74), Vector2(100, 100), enter_gal_entry)
+	app._draw_red_dot(Vector2(gx + 90, gy + 4))
 
 
 func draw_chat_bar() -> void:
-	# pnlChat: right-anchored pos(-64,-94), 410x40 (→314x38)
-	var chat_rect := _main_right_top_rect(Vector2(-64, -94), Vector2(410, 40))
+	# pnlChat: right-anchored prefab box x=1196 y=94 size=410x40.
+	var chat_rect := Rect2(MAINUI_CHAT_POS, Vector2(410, 40))
 	var cx = chat_rect.position.x; var cy = chat_rect.position.y
 	var bg = app._draw_image(UI_MAIN_CHAT_BG, Vector2(cx, cy), chat_rect.size, false, Color(1, 1, 1, 0.72))
 	_main_panels.append(bg)
 	var chat = app._label("[世界] 塵世：?", 14)
-	chat.position = Vector2(cx + 49, cy + 8); chat.size = Vector2(255, 22)
+	chat.position = Vector2(cx + 64, cy); chat.size = Vector2(341, 40)
 	chat.modulate = Color(0.54, 0.92, 0.54)
 	app._view_container().add_child(chat)
 	add_hit_button(Vector2(cx, cy), chat_rect.size, app._show_chat)
