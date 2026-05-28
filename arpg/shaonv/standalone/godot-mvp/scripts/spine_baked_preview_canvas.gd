@@ -8,6 +8,7 @@ var playing := true
 var playback_speed := 1.0
 var load_error := ""
 var _last_frame: int = -1  # avoid redundant redraws
+var _texture_load_warned := {}
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -203,10 +204,17 @@ func _triangle_area(a: Vector2, b: Vector2, c: Vector2) -> float:
 	return abs((b.x - a.x) * (c.y - a.y) - (c.x - a.x) * (b.y - a.y)) * 0.5
 
 func _load_png_source_texture(path: String) -> Texture2D:
-	if not FileAccess.file_exists(path):
+	if path.is_empty() or not FileAccess.file_exists(path):
 		return null
+	if ResourceLoader.exists(path, "Texture2D"):
+		var imported_texture = ResourceLoader.load(path, "Texture2D", ResourceLoader.CACHE_MODE_REUSE)
+		if imported_texture is Texture2D:
+			return imported_texture
 	var image := Image.new()
 	var error := image.load(path)
 	if error != OK:
+		if not _texture_load_warned.has(path):
+			_texture_load_warned[path] = true
+			push_warning("Failed to load baked Spine PNG texture: %s error=%d" % [path, error])
 		return null
 	return ImageTexture.create_from_image(image)

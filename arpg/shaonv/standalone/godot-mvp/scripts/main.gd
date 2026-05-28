@@ -176,6 +176,7 @@ var _bgm_player: AudioStreamPlayer
 var _sfx_players: Array[AudioStreamPlayer] = []
 var _audio_cache := {}
 var _audio_missing_warned := {}
+var _texture_load_warned := {}
 var _current_bgm_path := ""
 
 func _view_container() -> Control:
@@ -1584,12 +1585,18 @@ func _draw_hero_stage(hero: Dictionary, pos := Vector2(470, 0), size := Vector2(
 	_view_container().add_child(texture)
 
 func _load_png_source_texture(path: String) -> Texture2D:
-	if not FileAccess.file_exists(path):
+	if path.is_empty() or not FileAccess.file_exists(path):
 		return null
+	if ResourceLoader.exists(path, "Texture2D"):
+		var imported_texture = ResourceLoader.load(path, "Texture2D", ResourceLoader.CACHE_MODE_REUSE)
+		if imported_texture is Texture2D:
+			return imported_texture
 	var image := Image.new()
 	var error := image.load(path)
 	if error != OK:
-		push_warning("Failed to load PNG source: %s error=%d" % [path, error])
+		if not _texture_load_warned.has(path):
+			_texture_load_warned[path] = true
+			push_warning("Failed to load PNG texture: %s error=%d" % [path, error])
 		return null
 	return ImageTexture.create_from_image(image)
 
