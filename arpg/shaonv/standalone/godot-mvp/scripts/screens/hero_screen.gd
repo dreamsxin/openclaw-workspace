@@ -61,6 +61,8 @@ const UI_COMMON_RARE_BADGE := "res://assets/ui/common/common_img_163.png"
 const UI_COMMON_STAR := "res://assets/ui/common/common_img_73.png"
 const UI_COMMON_STAR_OFF := "res://assets/ui/common/common_img_74.png"
 const UI_COMMON_WAIT_BG := "res://assets/ui/common/common_img_59.png"
+const UI_COMMON_RED_DOT := "res://assets/ui/common/common_img_17.png"
+const UI_COMMON_ITEM_FRAME := "res://assets/ui/common/common_img_07.png"
 const UI_COMMON_SECTION := "res://assets/ui/common/common_img_199.png"
 const UI_COMMON_SKILL_FRAME := "res://assets/ui/common/common_img_208.png"
 const UI_HERO_CARD_DI_FRAME := "res://assets/ui/hero/hero_img_287.png"
@@ -79,6 +81,55 @@ const UI_HERO_ATTR_SPEED := "res://assets/ui/hero/hero_img_72.png"
 const UI_HERO_ATTR_DETAIL_BTN := "res://assets/ui/hero/hero_img_73.png"
 const UI_HERO_SKILL_BG := "res://assets/ui/hero/hero_img_74.png"
 const UI_HERO_SKILL_BTN := "res://assets/ui/hero/hero_img_75.png"
+const UI_HERO_BIG_BTN_GOLD := "res://assets/ui/hero/hero_btn_06.png"
+const UI_HERO_BIG_BTN_A := "res://assets/ui/hero/hero_btn_16.png"
+const UI_HERO_BIG_BTN_B := "res://assets/ui/hero/hero_btn_17.png"
+const UI_HERO_BIG_BTN_C := "res://assets/ui/hero/hero_btn_23.png"
+const UI_HERO_SLUG_SMALL_BTN := "res://assets/ui/hero/hero_btn_32.png"
+const UI_HERO_EQUIP_BG := "res://assets/ui/hero/hero_img_143.png"
+const UI_HERO_EQUIP_SLOT_FX_A := "res://assets/ui/hero/hero_img_144.png"
+const UI_HERO_EQUIP_SELECT := "res://assets/ui/hero/hero_img_145.png"
+const UI_HERO_EQUIP_STRENGTH := "res://assets/ui/hero/hero_img_146.png"
+const UI_HERO_EQUIP_STRENGTH_ICON := "res://assets/ui/hero/hero_img_299.png"
+const UI_HERO_EQUIP_STRENGTH_TITLE := "res://assets/ui/hero/hero_img_296.png"
+const UI_HERO_EQUIP_LEVEL_RING := "res://assets/ui/hero/hero_img_156.png"
+const UI_HERO_WEAPON_EMPTY_ICON := "res://assets/ui/hero/hero_img_164.png"
+const UI_HERO_SLUG_BG := "res://assets/ui/hero/hero_img_173.png"
+const UI_HERO_SLUG_FX_A := "res://assets/ui/hero/hero_img_173a.png"
+const UI_HERO_SLUG_FX_B := "res://assets/ui/hero/hero_img_173b.png"
+const UI_HERO_SLUG_FX_C := "res://assets/ui/hero/hero_img_173c.png"
+const UI_HERO_SLUG_FX_D := "res://assets/ui/hero/hero_img_173d.png"
+const UI_HERO_SLUG_FX_E := "res://assets/ui/hero/hero_img_173e.png"
+const UI_HERO_SLUG_FX_F := "res://assets/ui/hero/hero_img_173f.png"
+const UI_HERO_SLUG_FX_H := "res://assets/ui/hero/hero_img_173h.png"
+const UI_HERO_SLUG_FX_I := "res://assets/ui/hero/hero_img_173i.png"
+const UI_HERO_SLUG_FX_J := "res://assets/ui/hero/hero_img_173j.png"
+const UI_HERO_SLUG_FX_K := "res://assets/ui/hero/hero_img_173k.png"
+const UI_HERO_SLUG_SPARK := "res://assets/ui/hero/hero_img_173s.png"
+const UI_HERO_SLUG_MID := "res://assets/ui/hero/hero_img_174.png"
+const UI_HERO_SLUG_MID_A := "res://assets/ui/hero/hero_img_174a.png"
+const UI_HERO_SLUG_MID_B := "res://assets/ui/hero/hero_img_174b.png"
+const UI_HERO_SLUG_MID_C := "res://assets/ui/hero/hero_img_174c.png"
+const UI_HERO_SLUG_ICON := "res://assets/ui/hero/hero_img_175.png"
+const UI_HERO_SLUG_SLOT := "res://assets/ui/hero/hero_img_176.png"
+const UI_HERO_SLUG_SLOT_MAIN := "res://assets/ui/hero/hero_img_177.png"
+const UI_HERO_SLUG_LIMIT_TYPE := "res://assets/ui/hero/hero_img_178.png"
+const UI_HERO_SLUG_NAME_BG := "res://assets/ui/hero/hero_img_179.png"
+const UI_HERO_SLUG_LIMIT_BG := "res://assets/ui/hero/hero_img_182.png"
+const UI_HERO_SLUG_MANUAL := "res://assets/ui/hero/hero_img_183.png"
+const UI_HERO_SLUG_DRAW := "res://assets/ui/hero/hero_img_184.png"
+const UI_HERO_SLUG_TAB_SELECT := "res://assets/ui/hero/hero_img_185.png"
+const UI_HERO_SLUG_TAB_BASE := "res://assets/ui/hero/hero_img_186.png"
+const UI_HERO_SLUG_TAB_LINE := "res://assets/ui/hero/hero_img_187.png"
+const UI_HERO_SLUG_PASS := "res://assets/ui/hero/hero_img_298.png"
+const UI_HERO_SLUG_INFO_MAIN := "res://assets/ui/hero/hero_img_322.png"
+const UI_HERO_SLUG_INFO_SUB := "res://assets/ui/hero/hero_img_323.png"
+const UI_HERO_STAGE_BG := "res://assets/ui/hero/hero_img_203.png"
+const UI_HERO_STAGE_STEP_ON := "res://assets/ui/hero/hero_img_96.png"
+const UI_HERO_STAGE_STEP_OFF := "res://assets/ui/hero/hero_img_93.png"
+const UI_HERO_STAGE_STEP_AURA := "res://assets/ui/hero/hero_img_93a.png"
+const UI_HERO_STAGE_LINE := "res://assets/ui/hero/hero_img_98.png"
+const UI_ITEM_DRAW_02 := "res://assets/ui/item/draw_02.png"
 const UI_HERO_CORE_DI_01 := "res://assets/ui/hero/hero_core_di_01.png"
 const UI_HERO_CORE_DI_02 := "res://assets/ui/hero/hero_core_di_02.png"
 const UI_HERO_CORE_DI_03 := "res://assets/ui/hero/hero_core_di_03.png"
@@ -108,7 +159,7 @@ const HERO_DETAIL_STAGE_POS := Vector2(205, 0)
 const HERO_DETAIL_STAGE_SIZE := Vector2(1060, 750)
 const HERO_LEFT_FUNC_TAB_POS := Vector2(167, 120)
 const HERO_LEFT_FUNC_TAB_SIZE := Vector2(161, 500)
-const HERO_LEFT_FUNC_TAB_ITEM_H := 64.0
+const HERO_LEFT_FUNC_TAB_ITEM_H := 60.0
 const HERO_CORE_PANEL_POS := Vector2(1134, 0)
 const HERO_CORE_PANEL_SIZE := Vector2(536, 750)
 const HERO_DETAIL_FILTER_POS := Vector2(355, 106)
@@ -612,9 +663,10 @@ func _draw_hero_main_function_tabs(hero: Dictionary) -> void:
 	var tabs := [
 		{"key": "core", "text": "核心"},
 		{"key": "attrs", "text": "屬性"},
-		{"key": "skills", "text": "技能"},
 		{"key": "equip", "text": "靈裝"},
-		{"key": "bond", "text": "羈絆"},
+		{"key": "slug", "text": "源神"},
+		{"key": "weapon", "text": "神具"},
+		{"key": "upstage", "text": "升階"},
 		{"key": "detail", "text": "詳情"},
 		{"key": "back", "text": "返回"},
 	]
@@ -656,6 +708,12 @@ func _draw_hero_main_core_panel(hero: Dictionary, pos: Vector2) -> void:
 			_draw_hero_main_skills_content(hero, pos)
 		"equip":
 			_draw_hero_main_equip_content(hero, pos)
+		"slug":
+			_draw_hero_main_slug_content(hero, pos)
+		"weapon":
+			_draw_hero_main_weapon_content(hero, pos)
+		"upstage":
+			_draw_hero_main_upstage_content(hero, pos)
 		"bond":
 			_draw_hero_main_bond_content(hero, pos)
 		_:
@@ -788,6 +846,75 @@ func _draw_hero_main_attr_item(icon_path: String, label_text: String, value_text
 	app._view_container().add_child(value)
 
 
+func _draw_hero_panel_title(text: String, pos: Vector2) -> void:
+	var label: Label = app._label(text, 20)
+	label.position = pos
+	label.size = Vector2(210, 29)
+	label.modulate = Color(0.96, 0.88, 0.72)
+	app._view_container().add_child(label)
+	app._draw_image(UI_HERO_ATTR_LINE, pos + Vector2(0, 35), Vector2(390, 10), false, Color(1, 1, 1, 0.78))
+
+
+func _draw_hero_panel_attr_row(label_text: String, value_text: String, pos: Vector2, icon_path := "") -> void:
+	app._draw_image(UI_HERO_ATTR_ROW_BG, pos, Vector2(390, 30), true, Color(1, 1, 1, 0.76))
+	if not icon_path.is_empty():
+		app._draw_image(icon_path, pos + Vector2(3, 0), Vector2(30, 30), false, Color(1, 1, 1, 0.88))
+	var label_x := 38.0 if not icon_path.is_empty() else 20.0
+	var label: Label = app._label(label_text, 18)
+	label.position = pos + Vector2(label_x, 0)
+	label.size = Vector2(190, 30)
+	label.modulate = Color(0.92, 0.86, 0.78)
+	app._view_container().add_child(label)
+	var value: Label = app._label(value_text, 22, HORIZONTAL_ALIGNMENT_RIGHT)
+	value.position = pos + Vector2(205, 0)
+	value.size = Vector2(172, 30)
+	value.modulate = Color(1.0, 0.88, 0.58)
+	app._view_container().add_child(value)
+
+
+func _draw_hero_equip_stage(hero_id: int, center: Vector2) -> void:
+	app._draw_image(UI_HERO_EQUIP_BG, center - Vector2(340, 310), Vector2(680, 620), true, Color(1, 1, 1, 0.80))
+	app._draw_image(UI_HERO_EQUIP_SLOT_FX_A, center - Vector2(105, 105), Vector2(210, 210), false, Color(1, 1, 1, 0.36))
+	app._draw_image(UI_HERO_EQUIP_SLOT_FX_A, center - Vector2(82, 82), Vector2(164, 164), false, Color(1, 1, 1, 0.28))
+	app._draw_image(UI_HERO_EQUIP_SELECT, center - Vector2(110, 110), Vector2(220, 220), false, Color(1, 1, 1, 0.82))
+	var main_level := _hero_equipment_level(hero_id, "equip", 1)
+	_draw_hero_equip_slot(hero_id, 1, center + Vector2(-204, -102), Vector2(120, 120), main_level)
+	_draw_hero_equip_slot(hero_id, 2, center + Vector2(-113, 102), Vector2(120, 120), _hero_equipment_level(hero_id, "equip", 2))
+	_draw_hero_equip_slot(hero_id, 3, center + Vector2(117, 102), Vector2(120, 120), _hero_equipment_level(hero_id, "equip", 3))
+	_draw_hero_equip_slot(hero_id, 4, center + Vector2(208, -102), Vector2(90, 90), _hero_equipment_level(hero_id, "equip", 4))
+	var title: Label = app._label("主灵装", 24, HORIZONTAL_ALIGNMENT_CENTER)
+	title.position = center + Vector2(-90, 120)
+	title.size = Vector2(180, 34)
+	title.modulate = Color(1.0, 0.91, 0.66)
+	app._view_container().add_child(title)
+
+
+func _draw_hero_equip_slot(hero_id: int, slot: int, center: Vector2, size: Vector2, level: int) -> void:
+	var pos := center - size * 0.5
+	app._draw_image(UI_COMMON_SKILL_FRAME, pos, size, false, Color(1.0, 0.86, 0.35, 0.82 if level > 0 else 0.40))
+	app._draw_image(UI_HERO_EQUIP_SELECT, center - Vector2(110, 110), Vector2(220, 220), false, Color(1, 1, 1, 0.28 if level > 0 else 0.10))
+	var symbol: Label = app._label("装%d" % slot, 22, HORIZONTAL_ALIGNMENT_CENTER)
+	symbol.position = pos + Vector2(10, size.y * 0.28)
+	symbol.size = Vector2(size.x - 20, 32)
+	symbol.modulate = Color(1.0, 0.94, 0.70)
+	app._view_container().add_child(symbol)
+	var lv: Label = app._label("LV.%d" % level, 18, HORIZONTAL_ALIGNMENT_CENTER)
+	lv.position = center + Vector2(-110, -160)
+	lv.size = Vector2(220, 32)
+	lv.modulate = Color(0.98, 0.88, 0.70)
+	app._view_container().add_child(lv)
+	app._draw_image(UI_HERO_EQUIP_STRENGTH, center + Vector2(-73, -192), Vector2(146, 32), false, Color(1, 1, 1, 0.84 if level > 0 else 0.42))
+	app._draw_image(UI_HERO_EQUIP_STRENGTH_ICON, center + Vector2(-40, -194), Vector2(36, 36), false, Color(1, 1, 1, 0.84 if level > 0 else 0.42))
+	var strength: Label = app._label("+%d" % level, 20)
+	strength.position = center + Vector2(-4, -192)
+	strength.size = Vector2(80, 30)
+	strength.modulate = Color(1.0, 0.86, 0.52)
+	app._view_container().add_child(strength)
+	app._add_hit_button(pos, size, func() -> void:
+		_upgrade_hero_equipment(hero_id, "equip", slot)
+	)
+
+
 func _draw_hero_main_skills_content(hero: Dictionary, pos: Vector2) -> void:
 	var hero_id := int(hero.get("id", 0))
 	var skill_paths: Array = hero.get("skillResources", [])
@@ -822,39 +949,321 @@ func _draw_hero_main_skills_content(hero: Dictionary, pos: Vector2) -> void:
 
 func _draw_hero_main_equip_content(hero: Dictionary, pos: Vector2) -> void:
 	var hero_id := int(hero.get("id", 0))
-	_draw_hero_main_panel_header("靈裝", pos)
-	var sections: Array = [
-		{"key": "equip", "title": "靈裝"},
-		{"key": "slug", "title": "源神"},
-		{"key": "weapon", "title": "神具"},
-	]
-	for index in range(sections.size()):
-		var section: Dictionary = sections[index]
-		var section_pos := pos + Vector2(38, 92 + index * 122.0)
-		_draw_hero_section_header(str(section.get("title", "")), section_pos, Vector2(378, 30))
-		for slot_index in range(2):
-			var slot := slot_index + 1
-			var item_pos := section_pos + Vector2(48 + slot_index * 96.0, 44)
-			var kind := str(section.get("key", "equip"))
-			var level := _hero_equipment_level(hero_id, kind, slot)
-			app._draw_image(UI_COMMON_SKILL_FRAME, item_pos, Vector2(66, 66), false, Color(1.0, 0.86, 0.28, 0.42 if level <= 0 else 0.88))
-			var symbol: Label = app._label(_hero_equipment_symbol(kind), 23, HORIZONTAL_ALIGNMENT_CENTER)
-			symbol.position = item_pos + Vector2(7, 13)
-			symbol.size = Vector2(52, 30)
-			symbol.modulate = Color(1.0, 0.94, 0.70)
-			app._view_container().add_child(symbol)
-			var level_label: Label = app._label("Lv.%d" % level, 11, HORIZONTAL_ALIGNMENT_CENTER)
-			level_label.position = item_pos + Vector2(3, 48)
-			level_label.size = Vector2(60, 16)
-			app._view_container().add_child(level_label)
-			var target_kind := kind
-			var target_slot := slot
-			app._add_hit_button(item_pos, Vector2(66, 66), func() -> void:
-				_upgrade_hero_equipment(hero_id, target_kind, target_slot)
-			)
-	app._add_action_button("一鍵強化", pos + Vector2(256, 572), func() -> void:
+	var stage_center := HERO_DETAIL_STAGE_POS + Vector2(530, 375)
+	_draw_hero_equip_stage(hero_id, stage_center)
+	_draw_hero_panel_title("装备属性", pos + Vector2(82, 41))
+	var equip_total := 0
+	for slot in range(1, 5):
+		equip_total += _hero_equipment_level(hero_id, "equip", slot)
+	_draw_hero_panel_attr_row("攻击", "+%d" % (420 + equip_total * 26), pos + Vector2(82, 95))
+	_draw_hero_panel_attr_row("生命", "+%d" % (2600 + equip_total * 180), pos + Vector2(82, 135))
+	_draw_hero_panel_title("灵装强化属性", pos + Vector2(82, 181))
+	_draw_hero_panel_attr_row("攻击", "+%d" % (equip_total * 18), pos + Vector2(82, 235))
+	_draw_hero_panel_attr_row("防御", "+%d" % (equip_total * 11), pos + Vector2(82, 275))
+	_draw_hero_panel_title("附加属性", pos + Vector2(82, 315))
+	_draw_hero_panel_attr_row("暴击", "+%d%%" % (3 + equip_total), pos + Vector2(82, 369))
+	_draw_hero_panel_attr_row("命中", "+%d%%" % (5 + equip_total), pos + Vector2(82, 409))
+	_draw_hero_panel_attr_row("套装", "4件共鸣 Lv.%d" % equip_total, pos + Vector2(82, 449))
+	app._add_action_button("一键装备", pos + Vector2(260, 646), func() -> void:
 		_upgrade_all_hero_equipment(hero_id)
-	, Vector2(132, 42), UI_COMMON_BTN_GOLD)
+	, Vector2(132, 42), UI_HERO_BIG_BTN_C)
+	app._add_action_button("快速强化", pos + Vector2(402, 646), func() -> void:
+		_upgrade_all_hero_equipment(hero_id)
+	, Vector2(132, 42), UI_HERO_BIG_BTN_A)
+
+
+func _draw_hero_main_slug_content(hero: Dictionary, pos: Vector2) -> void:
+	var hero_id := int(hero.get("id", 0))
+	var stage_origin := HERO_DETAIL_STAGE_POS + Vector2(0, 0)
+	_draw_hero_slug_stage(hero_id, stage_origin)
+	_draw_hero_panel_title("源神升级加成", pos + Vector2(82, 41))
+	var total := _hero_slug_total(hero_id)
+	var attrs := _hero_slug_attrs(hero_id)
+	for index in range(attrs.size()):
+		var entry: Array = attrs[index]
+		_draw_hero_panel_attr_row(str(entry[0]), str(entry[1]), pos + Vector2(82, 76 + index * 40.0))
+	var note: Label = app._label("（升级源神即可获得全局阵容加成）", 18, HORIZONTAL_ALIGNMENT_CENTER)
+	note.position = pos + Vector2(66, 245)
+	note.size = Vector2(430, 29)
+	note.modulate = Color(0.90, 0.82, 0.70)
+	app._view_container().add_child(note)
+	_draw_hero_slug_tabs(hero_id, pos + Vector2(146, 286))
+	app._draw_image(UI_HERO_SLUG_TAB_LINE, pos + Vector2(82, 386), Vector2(390, 6), false, Color(1, 1, 1, 0.78))
+	var skill_text := "%s\n%s\n%s" % [
+		_hero_slug_name(hero_id, 1),
+		"源神总等级 Lv.%d，提升攻击、生命、防御与速度。" % total,
+		"当前选择的源神会同步到主战位，后续可接真实源神技能表。"
+	]
+	var skill: Label = app._label(skill_text, 18)
+	skill.position = pos + Vector2(82, 408)
+	skill.size = Vector2(390, 132)
+	skill.modulate = Color(0.92, 0.86, 0.78)
+	app._view_container().add_child(skill)
+	_draw_hero_slug_top_buttons(pos)
+	app._add_action_button("一键装配", pos + Vector2(260, 646), func() -> void:
+		_upgrade_all_hero_slugs(hero_id)
+	, Vector2(132, 42), UI_HERO_BIG_BTN_C)
+	app._add_action_button("替换", pos + Vector2(402, 646), func() -> void:
+		_upgrade_hero_slug(hero_id, 1)
+	, Vector2(132, 42), UI_HERO_BIG_BTN_A)
+
+
+func _draw_hero_main_weapon_content(hero: Dictionary, pos: Vector2) -> void:
+	var hero_id := int(hero.get("id", 0))
+	var level := _hero_weapon_level(hero_id)
+	if level <= 0:
+		_draw_hero_weapon_empty(hero, pos)
+		return
+	_draw_hero_weapon_content(hero, pos, level)
+
+
+func _draw_hero_weapon_empty(hero: Dictionary, pos: Vector2) -> void:
+	var hero_id := int(hero.get("id", 0))
+	var title: Label = app._label("未装备", 30)
+	title.position = pos + Vector2(82, 37)
+	title.size = Vector2(160, 43)
+	title.modulate = Color(0.96, 0.88, 0.72)
+	app._view_container().add_child(title)
+	app._draw_image(UI_COMMON_WAIT_BG, pos + Vector2(151, 250), Vector2(250, 250), false, Color(1, 1, 1, 0.78))
+	app._draw_image(UI_HERO_WEAPON_EMPTY_ICON, pos + Vector2(196, 295), Vector2(160, 160), false, Color(1, 1, 1, 0.86))
+	var empty: Label = app._label("未装备神具", 22, HORIZONTAL_ALIGNMENT_CENTER)
+	empty.position = pos + Vector2(206, 360)
+	empty.size = Vector2(140, 32)
+	empty.modulate = Color(0.70, 0.64, 0.58)
+	app._view_container().add_child(empty)
+	app._add_action_button("装备神具", pos + Vector2(260, 646), func() -> void:
+		_upgrade_hero_weapon(hero_id)
+	, Vector2(132, 42), UI_HERO_BIG_BTN_GOLD)
+
+
+func _draw_hero_weapon_content(hero: Dictionary, pos: Vector2, level: int) -> void:
+	var hero_id := int(hero.get("id", 0))
+	var name := "%s专属神具" % str(hero.get("name", "幻靈"))
+	var title: Label = app._label(name, 30)
+	title.position = pos + Vector2(82, 37)
+	title.size = Vector2(300, 43)
+	title.modulate = Color(1.0, 0.92, 0.74)
+	app._view_container().add_child(title)
+	var lv: Label = app._label("Lv%d" % level, 28, HORIZONTAL_ALIGNMENT_RIGHT)
+	lv.position = pos + Vector2(360, 48)
+	lv.size = Vector2(112, 41)
+	lv.modulate = Color(1.0, 0.84, 0.50)
+	app._view_container().add_child(lv)
+	app._draw_image(UI_COMMON_SKILL_FRAME, pos + Vector2(176, 108), Vector2(200, 200), false, Color(1.0, 0.86, 0.36, 0.90))
+	app._draw_image(UI_HERO_WEAPON_EMPTY_ICON, pos + Vector2(196, 128), Vector2(160, 160), false, Color(1, 1, 1, 0.94))
+	_draw_hero_panel_title("归属", pos + Vector2(82, 318))
+	_draw_hero_panel_attr_row("适用幻灵", str(hero.get("name", "角色")), pos + Vector2(82, 372))
+	_draw_hero_panel_attr_row("攻击", "+%d" % (580 + level * 42), pos + Vector2(82, 412), UI_HERO_ATTR_ATTACK)
+	_draw_hero_panel_attr_row("生命", "+%d" % (3600 + level * 260), pos + Vector2(82, 452), UI_HERO_ATTR_HP)
+	var add_info := "神具锻造 Lv.%d\n释放技能后提升自身伤害与命中，等级越高加成越强。" % level
+	var info: Label = app._label(add_info, 18)
+	info.position = pos + Vector2(82, 508)
+	info.size = Vector2(390, 76)
+	info.modulate = Color(0.92, 0.86, 0.78)
+	app._view_container().add_child(info)
+	app._add_action_button("替换", pos + Vector2(260, 646), func() -> void:
+		_set_hero_notice("神具替换入口已保留")
+		app._persist()
+		_show_hero_detail(hero_id)
+	, Vector2(132, 42), UI_HERO_BIG_BTN_B)
+	app._add_action_button("锻造", pos + Vector2(402, 646), func() -> void:
+		_upgrade_hero_weapon(hero_id)
+	, Vector2(132, 42), UI_HERO_BIG_BTN_A)
+
+
+func _draw_hero_main_upstage_content(hero: Dictionary, pos: Vector2) -> void:
+	var hero_id := int(hero.get("id", 0))
+	var step := _hero_upstage_step(hero_id)
+	_draw_hero_upstage_map(hero_id, HERO_DETAIL_STAGE_POS + Vector2(530, 375), step)
+	var stage_name := _hero_stage_sign_name(hero_id)
+	var title: Label = app._label(stage_name, 30)
+	title.position = pos + Vector2(82, 109)
+	title.size = Vector2(210, 50)
+	title.modulate = Color(1.0, 0.92, 0.74)
+	app._view_container().add_child(title)
+	var stage_label: Label = app._label("%d星%d阶" % [int(step / 2) + 1, step + 1], 24, HORIZONTAL_ALIGNMENT_RIGHT)
+	stage_label.position = pos + Vector2(354, 120)
+	stage_label.size = Vector2(118, 50)
+	stage_label.modulate = Color(1.0, 0.84, 0.50)
+	app._view_container().add_child(stage_label)
+	app._draw_image(UI_HERO_ATTR_LINE, pos + Vector2(82, 174), Vector2(390, 10), false, Color(1, 1, 1, 0.78))
+	var attrs := _hero_attrs(hero)
+	_draw_hero_stage_compare_row(UI_HERO_ATTR_ATTACK, "攻击", int(attrs.get("攻擊", 0)), 120 + step * 20, pos + Vector2(82, 194))
+	_draw_hero_stage_compare_row(UI_HERO_ATTR_HP, "生命", int(attrs.get("生命", 0)), 620 + step * 110, pos + Vector2(82, 234))
+	if step >= 6:
+		app._draw_image(UI_HERO_ATTR_ROW_BG, pos + Vector2(82, 563), Vector2(390, 30), true, Color(1, 1, 1, 0.76))
+		var max_tip: Label = app._label("已达到最大等级", 22, HORIZONTAL_ALIGNMENT_CENTER)
+		max_tip.position = pos + Vector2(82, 563)
+		max_tip.size = Vector2(390, 30)
+		max_tip.modulate = Color(1.0, 0.88, 0.64)
+		app._view_container().add_child(max_tip)
+	else:
+		app._draw_image(UI_HERO_ATTR_LINE, pos + Vector2(82, 474), Vector2(390, 10), false, Color(1, 1, 1, 0.78))
+		var cost_title: Label = app._label("消耗材料", 20, HORIZONTAL_ALIGNMENT_CENTER)
+		cost_title.position = pos + Vector2(197, 474)
+		cost_title.size = Vector2(160, 30)
+		cost_title.modulate = Color(0.96, 0.88, 0.72)
+		app._view_container().add_child(cost_title)
+		app._draw_image(UI_COMMON_ITEM_FRAME, pos + Vector2(227, 500), Vector2(100, 100), false, Color(1, 1, 1, 0.86))
+		app._draw_image(UI_ITEM_DRAW_02, pos + Vector2(238, 511), Vector2(78, 78), false, Color(1, 1, 1, 0.94))
+		var cost: Label = app._label("%d/%d" % [int(app.save.get("gems", 0)), 600 + step * 300], 18, HORIZONTAL_ALIGNMENT_CENTER)
+		cost.position = pos + Vector2(148, 594)
+		cost.size = Vector2(260, 29)
+		cost.modulate = Color(0.94, 0.86, 0.74)
+		app._view_container().add_child(cost)
+		app._add_action_button("点亮星格", pos + Vector2(346, 646), func() -> void:
+			_upgrade_hero_upstage(hero_id)
+		, Vector2(160, 42), UI_HERO_BIG_BTN_GOLD)
+
+
+func _draw_hero_upstage_map(hero_id: int, center: Vector2, step: int) -> void:
+	app._draw_image(UI_HERO_STAGE_BG, center - Vector2(375, 375), Vector2(750, 750), true, Color(1, 1, 1, 0.72))
+	var offsets := [
+		Vector2(-248, 33),
+		Vector2(-63, -51),
+		Vector2(-39, -216),
+		Vector2(138, -86),
+		Vector2(234, 44),
+		Vector2(199, 205),
+	]
+	for i in range(offsets.size() - 1):
+		var a: Vector2 = center + offsets[i]
+		var b: Vector2 = center + offsets[i + 1]
+		var line := _line_rect_between(a, b)
+		app._draw_image(UI_HERO_STAGE_LINE, Vector2(line.get("position", Vector2.ZERO)), Vector2(line.get("size", Vector2.ZERO)), true, Color(1, 1, 1, 0.70 if i < step else 0.28))
+	for i in range(offsets.size()):
+		var node_center: Vector2 = center + offsets[i]
+		app._draw_image(UI_HERO_STAGE_STEP_AURA, node_center - Vector2(62, 62), Vector2(125, 125), false, Color(1, 1, 1, 0.44 if i < step else 0.16))
+		app._draw_image(UI_HERO_STAGE_STEP_ON if i < step else UI_HERO_STAGE_STEP_OFF, node_center - Vector2(62, 62), Vector2(125, 125), false, Color(1, 1, 1, 0.94 if i < step else 0.58))
+		var label: Label = app._label(str(i + 1), 24, HORIZONTAL_ALIGNMENT_CENTER)
+		label.position = node_center - Vector2(24, 18)
+		label.size = Vector2(48, 36)
+		label.modulate = Color(1.0, 0.94, 0.72) if i < step else Color(0.70, 0.68, 0.70)
+		app._view_container().add_child(label)
+
+
+func _draw_hero_stage_compare_row(icon_path: String, name: String, old_value: int, delta: int, pos: Vector2) -> void:
+	app._draw_image(UI_HERO_ATTR_ROW_BG, pos, Vector2(390, 30), true, Color(1, 1, 1, 0.78))
+	app._draw_image(icon_path, pos + Vector2(3, 0), Vector2(30, 30), false, Color(1, 1, 1, 0.90))
+	var label: Label = app._label(name, 18)
+	label.position = pos + Vector2(32, 0)
+	label.size = Vector2(100, 26)
+	label.modulate = Color(0.92, 0.86, 0.78)
+	app._view_container().add_child(label)
+	var old_label: Label = app._label(str(old_value), 20, HORIZONTAL_ALIGNMENT_RIGHT)
+	old_label.position = pos + Vector2(145, 0)
+	old_label.size = Vector2(90, 30)
+	old_label.modulate = Color(0.90, 0.86, 0.80)
+	app._view_container().add_child(old_label)
+	var next_label: Label = app._label(str(old_value + delta), 20, HORIZONTAL_ALIGNMENT_RIGHT)
+	next_label.position = pos + Vector2(284, 0)
+	next_label.size = Vector2(93, 30)
+	next_label.modulate = Color(1.0, 0.88, 0.58)
+	app._view_container().add_child(next_label)
+	var arrow: Label = app._label(">", 18, HORIZONTAL_ALIGNMENT_CENTER)
+	arrow.position = pos + Vector2(247, 0)
+	arrow.size = Vector2(45, 30)
+	arrow.modulate = Color(1.0, 0.80, 0.48)
+	app._view_container().add_child(arrow)
+
+
+func _line_rect_between(a: Vector2, b: Vector2) -> Dictionary:
+	var mid := (a + b) * 0.5
+	var length := maxf(32.0, a.distance_to(b))
+	return {
+		"position": mid - Vector2(length * 0.5, 10),
+		"size": Vector2(length, 20),
+	}
+
+
+func _draw_hero_slug_stage(hero_id: int, origin: Vector2) -> void:
+	var center := origin + Vector2(530, 375)
+	app._draw_image(UI_HERO_SLUG_BG, center + Vector2(-705 - 77, -375), Vector2(1410, 750), true, Color(1, 1, 1, 0.88))
+	app._draw_image(UI_HERO_SLUG_FX_H, center + Vector2(-835, -375), Vector2(1670, 750), true, Color(1, 1, 1, 0.26))
+	app._draw_image(UI_HERO_SLUG_FX_C, center + Vector2(-545, -318), Vector2(1091, 550), true, Color(1, 1, 1, 0.42))
+	app._draw_image(UI_HERO_SLUG_FX_D, center + Vector2(-484, -278), Vector2(967, 486), true, Color(1, 1, 1, 0.34))
+	app._draw_image(UI_HERO_SLUG_FX_E, center + Vector2(-394, -209), Vector2(788, 362), true, Color(1, 1, 1, 0.38))
+	app._draw_image(UI_HERO_SLUG_FX_I, center + Vector2(-450, -450), Vector2(900, 900), false, Color(1, 1, 1, 0.20))
+	app._draw_image(UI_HERO_SLUG_FX_K, center + Vector2(-367, -395), Vector2(733, 733), false, Color(1, 1, 1, 0.22))
+	for spark in [Vector2(-127, -241), Vector2(339, -206), Vector2(135, 171), Vector2(-301, 138)]:
+		app._draw_image(UI_HERO_SLUG_SPARK, center + spark - Vector2(65, 82), Vector2(131, 164), false, Color(1, 1, 1, 0.38))
+	_draw_hero_slug_slot(hero_id, 1, center + Vector2(2, 70), true)
+	_draw_hero_slug_slot(hero_id, 2, center + Vector2(-267, -94), false)
+	_draw_hero_slug_slot(hero_id, 3, center + Vector2(2, -214), false)
+	_draw_hero_slug_slot(hero_id, 4, center + Vector2(266, -94), false)
+	app._draw_image(UI_HERO_SLUG_MID, center + Vector2(-140, -41), Vector2(280, 250), false, Color(1, 1, 1, 0.92))
+	app._draw_image(UI_HERO_SLUG_MID_A, center + Vector2(-141, -120), Vector2(283, 241), false, Color(1, 1, 1, 0.72))
+	app._draw_image(UI_HERO_SLUG_MID_B, center + Vector2(-126, -109), Vector2(254, 215), false, Color(1, 1, 1, 0.70))
+	app._draw_image(UI_HERO_SLUG_MID_C, center + Vector2(-126, -109), Vector2(254, 215), false, Color(1, 1, 1, 0.54))
+	app._draw_image(UI_HERO_EQUIP_SELECT, center + Vector2(-110, -110), Vector2(220, 220), false, Color(1, 1, 1, 0.68))
+	app._draw_image(UI_HERO_SLUG_LIMIT_BG, center + Vector2(-120, -80), Vector2(280, 34), false, Color(1, 1, 1, 0.82))
+	var limit: Label = app._label("同属性限制:", 18)
+	limit.position = center + Vector2(-95, -80)
+	limit.size = Vector2(120, 30)
+	limit.modulate = Color(0.96, 0.88, 0.72)
+	app._view_container().add_child(limit)
+	for i in range(3):
+		app._draw_image(UI_HERO_SLUG_LIMIT_TYPE, center + Vector2(19 + i * 40.0, -81), Vector2(36, 36), false, Color(1, 1, 1, 0.86))
+
+
+func _draw_hero_slug_slot(hero_id: int, slot: int, center: Vector2, is_main: bool) -> void:
+	var level := _hero_slug_level(hero_id, slot)
+	var slot_size := Vector2(270, 110) if is_main else Vector2(216, 88)
+	var base_path := UI_HERO_SLUG_SLOT_MAIN if is_main else UI_HERO_SLUG_SLOT
+	app._draw_image(base_path, center - slot_size * 0.5, slot_size, false, Color(1, 1, 1, 0.92 if level > 0 else 0.54))
+	if level > 0:
+		var icon_size := Vector2(320, 320) if is_main else Vector2(220, 220)
+		app._draw_image(UI_HERO_SLUG_ICON, center + Vector2(1, -19 if is_main else -11), icon_size, true, Color(1, 1, 1, 0.86))
+		app._draw_image(UI_HERO_SLUG_NAME_BG, center + Vector2(-101 if is_main else -81, 146 if is_main else 99), Vector2(202 if is_main else 162, 34 if is_main else 27), false, Color(1, 1, 1, 0.90))
+		var name: Label = app._label(_hero_slug_name(hero_id, slot), 20 if is_main else 16, HORIZONTAL_ALIGNMENT_CENTER)
+		name.position = center + Vector2(-80, 148 if is_main else 100)
+		name.size = Vector2(160, 30)
+		name.modulate = Color(1.0, 0.92, 0.70)
+		app._view_container().add_child(name)
+	else:
+		var lock: Label = app._label("未装备", 18, HORIZONTAL_ALIGNMENT_CENTER)
+		lock.position = center + Vector2(-80, -15)
+		lock.size = Vector2(160, 30)
+		lock.modulate = Color(0.72, 0.70, 0.72)
+		app._view_container().add_child(lock)
+	app._draw_image(UI_HERO_SLUG_INFO_MAIN if is_main else UI_HERO_SLUG_INFO_SUB, center + Vector2(-99, -146), Vector2(198, 96), false, Color(1, 1, 1, 0.86))
+	var info: Label = app._label("主战" if is_main else "辅助", 18, HORIZONTAL_ALIGNMENT_CENTER)
+	info.position = center + Vector2(-26, -73)
+	info.size = Vector2(52, 25)
+	info.modulate = Color(1.0, 0.92, 0.74)
+	app._view_container().add_child(info)
+	app._add_hit_button(center - slot_size * 0.5, slot_size + Vector2(0, 80), func() -> void:
+		_upgrade_hero_slug(hero_id, slot)
+	)
+
+
+func _draw_hero_slug_tabs(hero_id: int, pos: Vector2) -> void:
+	for i in range(4):
+		var tab_pos := pos + Vector2(i * 94.0, 0)
+		app._draw_image(UI_HERO_SLUG_TAB_BASE, tab_pos, Vector2(84, 84), false, Color(1, 1, 1, 0.86))
+		if i == 0:
+			app._draw_image(UI_HERO_SLUG_TAB_SELECT, tab_pos - Vector2(8, 8), Vector2(100, 100), false, Color(1, 1, 1, 0.82))
+		app._draw_image(UI_HERO_SLUG_ICON, tab_pos + Vector2(9, 9), Vector2(66, 66), true, Color(1, 1, 1, 0.90 if _hero_slug_level(hero_id, i + 1) > 0 else 0.42))
+		var slot := i + 1
+		app._add_hit_button(tab_pos, Vector2(84, 84), func() -> void:
+			_upgrade_hero_slug(hero_id, slot)
+		)
+
+
+func _draw_hero_slug_top_buttons(pos: Vector2) -> void:
+	var buttons := [
+		{"path": UI_HERO_SLUG_MANUAL, "text": "源神录", "offset": Vector2(-936, 67)},
+		{"path": UI_HERO_SLUG_DRAW, "text": "召唤", "offset": Vector2(-846, 67)},
+		{"path": UI_HERO_SLUG_PASS, "text": "分解", "offset": Vector2(-756, 67)},
+	]
+	for item in buttons:
+		var button_pos: Vector2 = pos + Vector2(item.get("offset", Vector2.ZERO))
+		app._draw_image(str(item.get("path", "")), button_pos, Vector2(72, 72), false, Color(1, 1, 1, 0.84))
+		var label: Label = app._label(str(item.get("text", "")), 14, HORIZONTAL_ALIGNMENT_CENTER)
+		label.position = button_pos + Vector2(0, 66)
+		label.size = Vector2(72, 24)
+		label.modulate = Color(0.95, 0.88, 0.72)
+		app._view_container().add_child(label)
 
 
 func _draw_hero_main_bond_content(hero: Dictionary, pos: Vector2) -> void:
@@ -1222,6 +1631,12 @@ func _draw_hero_detail_tab_content(hero: Dictionary, pos: Vector2) -> void:
 			_draw_hero_skills_tab(hero, pos)
 		"equip":
 			_draw_hero_equip_tab(hero, pos)
+		"slug":
+			_draw_hero_slug_tab(hero, pos)
+		"weapon":
+			_draw_hero_weapon_tab(hero, pos)
+		"upstage":
+			_draw_hero_upstage_tab(hero, pos)
 		"bond":
 			_draw_hero_bond_tab(hero, pos)
 		_:
@@ -1384,6 +1799,61 @@ func _draw_hero_equip_tab(hero: Dictionary, pos: Vector2) -> void:
 	app._view_container().add_child(desc)
 
 
+func _draw_hero_slug_tab(hero: Dictionary, pos: Vector2) -> void:
+	var hero_id := int(hero.get("id", 0))
+	_draw_hero_detail_section_header("源神", pos, Vector2(510, 30) * HERO_DETAIL_INFO_SCALE)
+	var total := _hero_slug_total(hero_id)
+	for i in range(4):
+		var slot_pos := pos + Vector2(34 + i * 58.0, 74)
+		app._draw_image(UI_HERO_SLUG_TAB_BASE, slot_pos, Vector2(48, 48), false, Color(1, 1, 1, 0.78))
+		app._draw_image(UI_HERO_SLUG_ICON, slot_pos + Vector2(4, 4), Vector2(40, 40), true, Color(1, 1, 1, 0.80 if _hero_slug_level(hero_id, i + 1) > 0 else 0.36))
+		var slot := i + 1
+		app._add_hit_button(slot_pos, Vector2(48, 48), func() -> void:
+			_upgrade_hero_slug(hero_id, slot)
+		)
+	var desc: Label = app._label("源神总等级 %d。点击任意源神位可提升本地等级。" % total, 15)
+	desc.position = pos + Vector2(302, 74)
+	desc.size = Vector2(198, 56)
+	desc.modulate = Color(0.92, 0.86, 0.82)
+	app._view_container().add_child(desc)
+	app._add_action_button("一键装配", pos + Vector2(302, 154), func() -> void:
+		_upgrade_all_hero_slugs(hero_id)
+	, Vector2(132, 42), UI_COMMON_BTN_GOLD)
+
+
+func _draw_hero_weapon_tab(hero: Dictionary, pos: Vector2) -> void:
+	var hero_id := int(hero.get("id", 0))
+	var level := _hero_weapon_level(hero_id)
+	_draw_hero_detail_section_header("神具", pos, Vector2(510, 30) * HERO_DETAIL_INFO_SCALE)
+	app._draw_image(UI_COMMON_SKILL_FRAME, pos + Vector2(44, 74), Vector2(72, 72), false, Color(1.0, 0.86, 0.34, 0.80 if level > 0 else 0.40))
+	app._draw_image(UI_HERO_WEAPON_EMPTY_ICON, pos + Vector2(52, 82), Vector2(56, 56), false, Color(1, 1, 1, 0.88 if level > 0 else 0.44))
+	var desc: Label = app._label("神具等级 Lv.%d。装备后提升专属属性。" % level, 15)
+	desc.position = pos + Vector2(302, 74)
+	desc.size = Vector2(198, 56)
+	desc.modulate = Color(0.92, 0.86, 0.82)
+	app._view_container().add_child(desc)
+	app._add_action_button("锻造", pos + Vector2(302, 154), func() -> void:
+		_upgrade_hero_weapon(hero_id)
+	, Vector2(132, 42), UI_COMMON_BTN_GOLD)
+
+
+func _draw_hero_upstage_tab(hero: Dictionary, pos: Vector2) -> void:
+	var hero_id := int(hero.get("id", 0))
+	var step := _hero_upstage_step(hero_id)
+	_draw_hero_detail_section_header("升阶", pos, Vector2(510, 30) * HERO_DETAIL_INFO_SCALE)
+	for i in range(6):
+		var step_pos := pos + Vector2(28 + i * 44.0, 80)
+		app._draw_image(UI_HERO_STAGE_STEP_ON if i < step else UI_HERO_STAGE_STEP_OFF, step_pos, Vector2(38, 38), false, Color(1, 1, 1, 0.86 if i < step else 0.42))
+	var desc: Label = app._label("星格进度 %d/6。点亮后提升当前幻灵属性。" % step, 15)
+	desc.position = pos + Vector2(302, 74)
+	desc.size = Vector2(198, 56)
+	desc.modulate = Color(0.92, 0.86, 0.82)
+	app._view_container().add_child(desc)
+	app._add_action_button("点亮星格", pos + Vector2(302, 154), func() -> void:
+		_upgrade_hero_upstage(hero_id)
+	, Vector2(132, 42), UI_COMMON_BTN_GOLD)
+
+
 func _draw_hero_bond_tab(hero: Dictionary, pos: Vector2) -> void:
 	_draw_hero_detail_section_header("羈絆", pos, Vector2(510, 30) * HERO_DETAIL_INFO_SCALE)
 	_draw_hero_detail_section_header("互動入口", pos + Vector2(520, 0) * HERO_DETAIL_INFO_SCALE, Vector2(500, 30) * HERO_DETAIL_INFO_SCALE)
@@ -1520,10 +1990,13 @@ func _hero_power(hero: Dictionary) -> int:
 	var bond := int(app.save.get("hero_bonds", {}).get(str(hero_id), 0))
 	var core_total := _hero_core_total(hero_id)
 	var equipment_total := _hero_equipment_total(hero_id)
+	var slug_total := _hero_slug_total(hero_id)
+	var weapon_level := _hero_weapon_level(hero_id)
+	var upstage_step := _hero_upstage_step(hero_id)
 	var skill_total := 0
 	for skill_index in range(4):
 		skill_total += _hero_skill_level(hero_id, skill_index)
-	return 2600 + rarity * 920 + max(owned, 1) * 360 + (hero_id % 100) * 13 + level * 45 + promotion * 320 + bond * 60 + skill_total * 28 + core_total * 54 + equipment_total * 42
+	return 2600 + rarity * 920 + max(owned, 1) * 360 + (hero_id % 100) * 13 + level * 45 + promotion * 320 + bond * 60 + skill_total * 28 + core_total * 54 + equipment_total * 42 + slug_total * 36 + weapon_level * 64 + upstage_step * 180
 
 
 func _owned_hero_count() -> int:
@@ -1562,13 +2035,16 @@ func _hero_attrs(hero: Dictionary) -> Dictionary:
 	var bond := int(app.save.get("hero_bonds", {}).get(str(hero_id), 0))
 	var core_total := _hero_core_total(hero_id)
 	var equipment_total := _hero_equipment_total(hero_id)
+	var slug_total := _hero_slug_total(hero_id)
+	var weapon_level := _hero_weapon_level(hero_id)
+	var upstage_step := _hero_upstage_step(hero_id)
 	var power := _hero_power(hero)
 	return {
-		"攻擊": 900 + rarity * 220 + level * 18 + promotion * 70 + equipment_total * 12,
-		"防禦": 520 + rarity * 150 + level * 10 + promotion * 46 + core_total * 8,
-		"生命": 5200 + rarity * 1280 + level * 160 + promotion * 520 + core_total * 96,
-		"速度": 92 + rarity * 7,
-		"傷害+": "%d%%" % (10 + rarity * 3 + promotion),
+		"攻擊": 900 + rarity * 220 + level * 18 + promotion * 70 + equipment_total * 12 + slug_total * 8 + weapon_level * 18 + upstage_step * 30,
+		"防禦": 520 + rarity * 150 + level * 10 + promotion * 46 + core_total * 8 + slug_total * 5 + upstage_step * 16,
+		"生命": 5200 + rarity * 1280 + level * 160 + promotion * 520 + core_total * 96 + slug_total * 42 + weapon_level * 120 + upstage_step * 160,
+		"速度": 92 + rarity * 7 + max(0, int(slug_total / 6)),
+		"傷害+": "%d%%" % (10 + rarity * 3 + promotion + int(weapon_level / 5)),
 		"命中": "%d%%" % (82 + rarity * 3 + min(bond, 10)),
 		"暴擊": "%d%%" % (12 + rarity * 4 + promotion * 2),
 		"減免": "%d%%" % (8 + rarity * 2 + int(core_total / 4)),
@@ -1597,6 +2073,10 @@ func _hero_slot_key(hero_id: int, slot: int) -> String:
 
 func _hero_equipment_key(hero_id: int, kind: String, slot: int) -> String:
 	return "%d:%s:%d" % [hero_id, kind, slot]
+
+
+func _hero_single_key(hero_id: int) -> String:
+	return str(hero_id)
 
 
 func _favorite_heroes() -> Array:
@@ -1727,12 +2207,11 @@ func _upgrade_hero_equipment(hero_id: int, kind: String, slot: int) -> void:
 
 func _upgrade_all_hero_equipment(hero_id: int) -> void:
 	var levels := _hero_state_dict("hero_equipment_levels")
-	for kind in ["equip", "slug", "weapon"]:
-		for slot in range(1, 3):
-			var key := _hero_equipment_key(hero_id, str(kind), slot)
-			levels[key] = min(20, int(levels.get(key, 0)) + 1)
+	for slot in range(1, 5):
+		var key := _hero_equipment_key(hero_id, "equip", slot)
+		levels[key] = min(20, int(levels.get(key, 0)) + 1)
 	app.save["hero_equipment_levels"] = levels
-	_set_hero_notice("靈裝/源神/神具已一鍵強化")
+	_set_hero_notice("灵装已一键强化")
 	app._persist()
 	_show_hero_detail(hero_id)
 
@@ -1740,10 +2219,95 @@ func _upgrade_all_hero_equipment(hero_id: int) -> void:
 func _hero_equipment_total(hero_id: int) -> int:
 	var levels := _hero_state_dict("hero_equipment_levels")
 	var total := 0
-	for kind in ["equip", "slug", "weapon"]:
-		for slot in range(1, 3):
-			total += int(levels.get(_hero_equipment_key(hero_id, str(kind), slot), 0))
+	for slot in range(1, 5):
+		total += int(levels.get(_hero_equipment_key(hero_id, "equip", slot), 0))
 	return total
+
+
+func _hero_slug_level(hero_id: int, slot: int) -> int:
+	var levels := _hero_state_dict("hero_slug_levels")
+	return int(levels.get(_hero_slot_key(hero_id, slot), 0))
+
+
+func _upgrade_hero_slug(hero_id: int, slot: int) -> void:
+	var levels := _hero_state_dict("hero_slug_levels")
+	var key := _hero_slot_key(hero_id, slot)
+	var next_level: int = min(20, int(levels.get(key, 0)) + 1)
+	levels[key] = next_level
+	app.save["hero_slug_levels"] = levels
+	_set_hero_notice("源神位 %d 升至 Lv.%d" % [slot, next_level])
+	app._persist()
+	_show_hero_detail(hero_id)
+
+
+func _upgrade_all_hero_slugs(hero_id: int) -> void:
+	var levels := _hero_state_dict("hero_slug_levels")
+	for slot in range(1, 5):
+		var key := _hero_slot_key(hero_id, slot)
+		levels[key] = min(20, int(levels.get(key, 0)) + 1)
+	app.save["hero_slug_levels"] = levels
+	_set_hero_notice("源神已一键装配")
+	app._persist()
+	_show_hero_detail(hero_id)
+
+
+func _hero_slug_total(hero_id: int) -> int:
+	var total := 0
+	for slot in range(1, 5):
+		total += _hero_slug_level(hero_id, slot)
+	return total
+
+
+func _hero_slug_name(hero_id: int, slot: int) -> String:
+	var names := ["帕露梦", "星尘灵", "辉羽", "月渊"]
+	return str(names[posmod(hero_id + slot, names.size())])
+
+
+func _hero_slug_attrs(hero_id: int) -> Array:
+	var total := _hero_slug_total(hero_id)
+	return [
+		["攻击", "+%d" % (160 + total * 18)],
+		["生命", "+%d" % (900 + total * 95)],
+		["防御", "+%d" % (90 + total * 11)],
+		["速度", "+%d" % max(1, int(total / 3) + 1)],
+	]
+
+
+func _hero_weapon_level(hero_id: int) -> int:
+	var levels := _hero_state_dict("hero_exclusive_weapon_levels")
+	return int(levels.get(_hero_single_key(hero_id), 0))
+
+
+func _upgrade_hero_weapon(hero_id: int) -> void:
+	var levels := _hero_state_dict("hero_exclusive_weapon_levels")
+	var key := _hero_single_key(hero_id)
+	var next_level: int = min(30, int(levels.get(key, 0)) + 1)
+	levels[key] = next_level
+	app.save["hero_exclusive_weapon_levels"] = levels
+	_set_hero_notice("神具锻造至 Lv.%d" % next_level)
+	app._persist()
+	_show_hero_detail(hero_id)
+
+
+func _hero_upstage_step(hero_id: int) -> int:
+	var steps := _hero_state_dict("hero_upstage_steps")
+	return clampi(int(steps.get(_hero_single_key(hero_id), 0)), 0, 6)
+
+
+func _upgrade_hero_upstage(hero_id: int) -> void:
+	var steps := _hero_state_dict("hero_upstage_steps")
+	var key := _hero_single_key(hero_id)
+	var next_step: int = min(6, int(steps.get(key, 0)) + 1)
+	steps[key] = next_step
+	app.save["hero_upstage_steps"] = steps
+	_set_hero_notice("星格进度 %d/6" % next_step)
+	app._persist()
+	_show_hero_detail(hero_id)
+
+
+func _hero_stage_sign_name(hero_id: int) -> String:
+	var names := ["天蝎座", "白羊座", "双子座", "狮子座", "天秤座", "星环"]
+	return str(names[posmod(hero_id, names.size())])
 
 
 func _promote_hero(hero_id: int) -> void:
