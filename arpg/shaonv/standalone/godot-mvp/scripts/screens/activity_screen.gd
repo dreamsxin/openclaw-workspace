@@ -9,42 +9,39 @@ func _init(app_ref) -> void:
 
 func show_activity_center() -> void:
 	var origin: Vector2 = app._show_home_panel("活動", "限時活動與主屏左側入口統一收束到這裡。")
-	var activities: Array = [
-		{"name": "新手狂歡", "time": "常駐", "callback": app._show_daily, "icon": app.UI_MAIN_LIMIT_ICONS[0]},
-		{"name": "開服沖榜", "time": "7d01h", "callback": app._show_tasks, "icon": app.UI_MAIN_LIMIT_ICONS[3]},
-		{"name": "限時皮膚", "time": "11d01h", "callback": app._show_shop, "icon": app.UI_MAIN_LIMIT_ICONS[4]},
-		{"name": "萬象喚靈", "time": "4d01h", "callback": app._open_present_pool, "icon": app.UI_MAIN_LIMIT_ICONS[5]},
-	]
+	var activities: Array = app._mainui_group("activity_list")
 	for index in range(activities.size()):
 		var item: Dictionary = activities[index]
+		if not app._mainui_entry_visible(item):
+			continue
 		var pos: Vector2 = origin + Vector2(0, index * 82)
 		app._draw_home_resource_card(pos, Vector2(760, 68), Color(1.0, 0.74, 0.38, 0.30), index % 2 == 1)
 		app._draw_image(str(item.get("icon", app.UI_MAIN_LIMIT_ICON_FRAME)), pos + Vector2(8, -10), Vector2(76, 76), false, Color(1, 1, 1, 0.92))
-		var title: Label = app._label(str(item.get("name", "")), 20)
+		var title: Label = app._label(str(item.get("label", "")), 20)
 		title.position = pos + Vector2(96, 10)
 		title.size = Vector2(180, 30)
 		title.modulate = Color(1.0, 0.93, 0.70)
 		app._view_container().add_child(title)
-		var time_label: Label = app._label(str(item.get("time", "")), 16, HORIZONTAL_ALIGNMENT_CENTER)
+		var time_label: Label = app._label(app._mainui_entry_timer(item), 16, HORIZONTAL_ALIGNMENT_CENTER)
 		time_label.position = pos + Vector2(488, 12)
 		time_label.size = Vector2(96, 26)
 		time_label.modulate = Color(1.0, 0.80, 0.28)
 		app._view_container().add_child(time_label)
-		app._add_action_button("前往", pos + Vector2(628, 12), item.get("callback", app._show_home), Vector2(82, 38), app.UI_COMMON_BTN_GOLD)
+		if app._mainui_red_dot_active(str(item.get("red_dot_key", "")), str(item.get("id", ""))):
+			app._draw_red_dot(pos + Vector2(66, -4))
+		app._add_action_button("前往", pos + Vector2(628, 12), app._mainui_entry_callable(item), Vector2(82, 38), app.UI_COMMON_BTN_GOLD)
 
 
 func show_welfare() -> void:
 	var origin: Vector2 = app._show_home_panel("福利", "每日、郵件與任務獎勵的快捷入口。")
-	var entries: Array = [
-		{"name": "每日補給", "icon": app.UI_MAIN_CHARGE_ICONS[1], "callback": app._show_daily},
-		{"name": "郵件獎勵", "icon": app.UI_MAIN_LIMIT_ICONS[2], "callback": app._show_mail},
-		{"name": "章節任務", "icon": app.UI_MAIN_LIMIT_ICONS[3], "callback": app._show_tasks},
-	]
+	var entries: Array = app._mainui_group("welfare_entries")
 	for index in range(entries.size()):
 		var item: Dictionary = entries[index]
 		var pos: Vector2 = origin + Vector2(index * 170, 0)
-		app._draw_home_feature_icon(str(item.get("icon", app.UI_MAIN_LIMIT_ICON_FRAME)), pos, str(item.get("name", "")), item.get("callback", app._show_home))
-	var tip: Label = app._label("右側福利按鈕現在不再復用商店頁，而是直接進入獎勵收束頁。", 18)
+		app._draw_home_feature_icon(str(item.get("icon", app.UI_MAIN_LIMIT_ICON_FRAME)), pos, str(item.get("label", "")), app._mainui_entry_callable(item))
+		if app._mainui_red_dot_active(str(item.get("red_dot_key", "")), str(item.get("id", ""))):
+			app._draw_red_dot(pos + Vector2(66, 0))
+	var tip: Label = app._label("福利入口按原 MainUIView 紅點語義收束每日、郵件、章節任務與問卷禮包。", 18)
 	tip.position = origin + Vector2(0, 132)
 	tip.size = Vector2(520, 90)
 	tip.modulate = Color(0.92, 0.86, 0.82)

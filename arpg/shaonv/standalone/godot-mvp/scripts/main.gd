@@ -10,6 +10,7 @@ const HERO_RARITY_GRADE_PATH := "res://data/hero_rarity_grades.json"
 const POOL_DATA_PATH := "res://data/gacha_pools_mvp.json"
 const VIDEO_MANIFEST_PATH := "res://data/video_manifest.json"
 const LIVE_OPS_DATA_PATH := "res://data/live_ops_mvp.json"
+const MAINUI_ENTRIES_PATH := "res://data/mainui_entries_mvp.json"
 const ADVENTURE_DATA_PATH := "res://data/adventure_mvp.json"
 const BAKED_SPINE_CANVAS := preload("res://scripts/spine_baked_preview_canvas.gd")
 const STARTUP_SCREEN := preload("res://scripts/screens/startup_screen.gd")
@@ -112,6 +113,7 @@ var hero_resource_map: Array = []
 var hero_rarity_grades := {}
 var video_manifest := {}
 var pools: Array = []
+var mainui_entries := {}
 var tasks: Array = []
 var mails: Array = []
 var daily := {}
@@ -196,6 +198,7 @@ func _ready() -> void:
 	hero_rarity_grades = _read_json(HERO_RARITY_GRADE_PATH)
 	video_manifest = _read_json(VIDEO_MANIFEST_PATH)
 	pools = _read_json(POOL_DATA_PATH).get("pools", [])
+	mainui_entries = _read_json(MAINUI_ENTRIES_PATH)
 	var live_ops := _read_json(LIVE_OPS_DATA_PATH)
 	tasks = live_ops.get("tasks", [])
 	mails = live_ops.get("mails", [])
@@ -268,6 +271,22 @@ func _read_json_array(path: String) -> Array:
 		push_warning("Invalid JSON array: %s" % path)
 		return []
 	return parsed
+
+
+func _mainui_group(group_name: String) -> Array:
+	var raw = mainui_entries.get(group_name, [])
+	return raw if typeof(raw) == TYPE_ARRAY else []
+
+
+func _mainui_entry_by_id(entry_id: String) -> Dictionary:
+	for group_name in mainui_entries.keys():
+		var group = mainui_entries.get(group_name, [])
+		if typeof(group) != TYPE_ARRAY:
+			continue
+		for raw_entry in group:
+			if typeof(raw_entry) == TYPE_DICTIONARY and str(raw_entry.get("id", "")) == entry_id:
+				return raw_entry
+	return {}
 
 
 func _load_save() -> void:
@@ -591,6 +610,12 @@ func _show_start_view_from_env() -> void:
 		_show_loading()
 	elif start_view == "main":
 		_enter_main_scene()
+	elif start_view == "player_info":
+		_enter_main_scene()
+		_show_player_info()
+	elif start_view == "settings":
+		_enter_main_scene()
+		_show_settings()
 	elif start_view == "bag":
 		_enter_main_scene()
 		_show_bag()
@@ -621,6 +646,9 @@ func _show_start_view_from_env() -> void:
 	elif start_view == "chat":
 		_enter_main_scene()
 		_show_chat()
+	elif start_view == "wallpaper":
+		_enter_main_scene()
+		_show_home_wallpaper_focus()
 	elif start_view == "wallpaper_select":
 		_enter_main_scene()
 		_show_wallpaper_select()
@@ -1022,6 +1050,216 @@ func _draw_home_feature_icon(icon_path: String, pos: Vector2, label_text: String
 		callback.call()
 	)
 	_view_container().add_child(button)
+
+
+func _call_mainui_target(target: String, entry_id := "") -> void:
+	match target:
+		"player_info":
+			_show_player_info()
+		"settings":
+			_show_settings()
+		"home_menu":
+			_show_home_menu()
+		"home_notice":
+			_show_home_notice()
+		"repair_notice":
+			_show_repair_notice()
+		"bag":
+			_show_bag()
+		"remnants_list":
+			_show_remnants_list()
+		"relics":
+			_show_relics()
+		"develop":
+			_show_develop()
+		"guild":
+			_show_guild()
+		"activity":
+			_show_activity_center()
+		"welfare":
+			_show_welfare()
+		"month_card":
+			_show_month_card()
+		"competition":
+			_show_competition()
+		"assist":
+			_show_assist()
+		"chat":
+			_show_chat()
+		"wallpaper_select":
+			_show_wallpaper_select()
+		"wallpaper_focus":
+			_show_home_wallpaper_focus()
+		"charge":
+			_show_charge()
+		"shop":
+			_show_shop()
+		"daily":
+			_show_daily()
+		"mail":
+			_show_mail()
+		"tasks":
+			_show_tasks()
+		"auto_fight":
+			_show_auto_fight()
+		"chapter_task":
+			_show_chapter_panel()
+		"expedition":
+			_show_expedition_main()
+		"dust_transition":
+			_show_dust_transition()
+		"claim_afk":
+			_claim_afk_reward()
+		"battle":
+			_show_battle()
+		"gallery":
+			_show_gallery()
+		"hero_detail":
+			_show_hero_detail(int(save.get("selected_hero_id", DEFAULT_HERO_ID)))
+		"gal":
+			_show_gal()
+		"prayer_pool":
+			_open_prayer_pool()
+		"present_pool":
+			_open_present_pool()
+		"mainui_event":
+			_show_mainui_event(entry_id)
+		_:
+			_show_home()
+
+
+func _mainui_target_callable(target: String, entry_id := "") -> Callable:
+	return func() -> void:
+		_call_mainui_target(target, entry_id)
+
+
+func _mainui_entry_callable(entry: Dictionary) -> Callable:
+	return _mainui_target_callable(str(entry.get("target", "")), str(entry.get("id", "")))
+
+
+func _mainui_entry_visible(entry: Dictionary) -> bool:
+	var condition := str(entry.get("visible_condition", "always"))
+	match condition:
+		"always":
+			return true
+		"claimable":
+			return not bool(save.get("claimed_mainui_events", {}).get(str(entry.get("id", "")), false))
+		"first_charge_unclaimed":
+			return not bool(save.get("first_charge_claimed", false))
+		_:
+			return true
+
+
+func _mainui_entry_timer(entry: Dictionary) -> String:
+	var timer := str(entry.get("timer", ""))
+	if timer == "afk":
+		return _afk_time_display()
+	if entry.has("timer_hours"):
+		var start_key := "mainui_timer_start_%s" % str(entry.get("id", ""))
+		if not save.has(start_key):
+			save[start_key] = int(Time.get_unix_time_from_system())
+		var total_seconds := int(entry.get("timer_hours", 0)) * 3600
+		var elapsed := int(Time.get_unix_time_from_system()) - int(save.get(start_key, Time.get_unix_time_from_system()))
+		var remaining: int = max(total_seconds - elapsed, 0)
+		var days: int = remaining / 86400
+		var hours: int = (remaining % 86400) / 3600
+		if days > 0:
+			return "%dd%02dh" % [days, hours]
+		return "%02dh%02dm" % [hours, (remaining % 3600) / 60]
+	return timer
+
+
+func _mainui_red_dot_active(red_dot_key: String, entry_id := "") -> bool:
+	if red_dot_key.is_empty():
+		return false
+	match red_dot_key:
+		"Mail.MailEnter.11001":
+			return _unclaimed_mail_count() > 0
+		"Activities.Welfare.83923":
+			return str(save.get("daily_claimed_date", "")) != Time.get_date_string_from_system() or _unclaimed_mail_count() > 0 or _has_claimable_tasks()
+		"Quest.QuestEnter.42775", "ChapterTask.ChapterTaskEnter.32541":
+			return _has_claimable_tasks()
+		"Expedition.Hook.84317":
+			return not _afk_claimed_today()
+		"Activities.Card.5353":
+			return bool(save.get("month_card_active", false)) and str(save.get("month_card_claimed_date", "")) != Time.get_date_string_from_system()
+		"Activities.ReCharge.99752":
+			return not bool(save.get("first_charge_claimed", false))
+		"LotteryDraw.LotteryDrawHero.7805", "LotteryDraw.Prayer.4036":
+			return int(save.get("tickets", 0)) >= 1
+		"Arena.ArenaRedDot.89949":
+			return int(save.get("arena_count", 0)) < 5
+		"Adventure.AdventureMainView.43704", "Adventure.AutoFight.84317":
+			return not _next_stage().is_empty()
+		"Hero.HeroEnter.30218", "Develop.DevelopEnter.78015":
+			return _has_upgradeable_hero()
+		"Remnants.RemnantsEnter.1728":
+			return _has_owned_hero()
+		"Bag.BagRedDot.73517":
+			return int(save.get("event_tokens", 0)) > 0
+		"Alliance.AllianceEnter.6965":
+			return str(save.get("guild_checkin_date", "")) != Time.get_date_string_from_system()
+		"Gal.GalEntry.5799":
+			return int(save.get("gal_dates_used_today", 0)) < 2
+		"MainUIView.Questionnaire.6201", "MainUIView.BuryGift.6202":
+			return not bool(save.get("claimed_mainui_events", {}).get(entry_id, false))
+		_:
+			return false
+
+
+func _has_claimable_tasks() -> bool:
+	var claimed: Dictionary = save.get("claimed_tasks", {})
+	for task in tasks:
+		var task_id := str(task.get("id", ""))
+		if bool(claimed.get(task_id, false)):
+			continue
+		if _task_progress(task_id) >= int(task.get("target", 1)):
+			return true
+	return false
+
+
+func _has_upgradeable_hero() -> bool:
+	var shards: Dictionary = save.get("shards", {})
+	for raw_id in shards.keys():
+		var hero := _hero_by_id(int(raw_id))
+		if not hero.is_empty() and int(shards.get(raw_id, 0)) >= _hero_unlock_shard_cost(hero):
+			return true
+	return false
+
+
+func _has_owned_hero() -> bool:
+	return save.get("owned", {}).size() > 0
+
+
+func _show_mainui_event(entry_id: String) -> void:
+	var entry := _mainui_entry_by_id(entry_id)
+	var origin: Vector2 = _show_home_panel(str(entry.get("label", "活動禮包")), str(entry.get("desc", "MainUIView 本地活動入口。")))
+	_draw_home_resource_card(origin, Vector2(620, 174), Color(1.0, 0.78, 0.34, 0.30), false)
+	_draw_image(str(entry.get("icon", UI_MAIN_LIMIT_ICON_FRAME)), origin + Vector2(22, 28), Vector2(86, 86), false, Color(1, 1, 1, 0.94))
+	var claimed: Dictionary = save.get("claimed_mainui_events", {})
+	var is_claimed := bool(claimed.get(entry_id, false))
+	var reward: Dictionary = entry.get("reward", {})
+	var body := _label("%s\n獎勵：喚靈券 x%d / 源石 x%d / 活動道具 x%d\n狀態：%s" % [
+		str(entry.get("label", "")),
+		int(reward.get("tickets", 0)),
+		int(reward.get("gems", 0)),
+		int(reward.get("event_tokens", 0)),
+		"已領取" if is_claimed else "可領取"
+	], 22)
+	body.position = origin + Vector2(128, 26)
+	body.size = Vector2(460, 126)
+	_view_container().add_child(body)
+	if not is_claimed:
+		_add_action_button("領取", origin + Vector2(0, 198), func() -> void:
+			var current_claimed: Dictionary = save.get("claimed_mainui_events", {})
+			current_claimed[entry_id] = true
+			save["claimed_mainui_events"] = current_claimed
+			save["event_tokens"] = int(save.get("event_tokens", 0)) + int(reward.get("event_tokens", 0))
+			_grant_reward(int(reward.get("tickets", 0)), int(reward.get("gems", 0)))
+			_persist()
+			_show_mainui_event(entry_id)
+		, Vector2(132, 44), UI_COMMON_BTN_GOLD)
+	_add_action_button("返回福利", origin + Vector2(154, 198), _show_welfare, Vector2(132, 44), UI_COMMON_BTN_WHITE)
 
 
 func _show_bag() -> void:

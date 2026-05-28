@@ -8,12 +8,16 @@ func _init(app_ref) -> void:
 
 
 func show_player_info() -> void:
-	app._clear("玩家信息")
+	var origin: Vector2 = app._show_home_panel("玩家資料", "MainUIView btnPlayerInfo 一級資料面板。")
 	var profile: Dictionary = app.save.get("profile", {})
 	var settings: Dictionary = app.save.get("settings", {})
-	var panel = app._panel(Vector2(44, 44), Vector2(620, 360), Color(0.095, 0.078, 0.065, 0.94))
-	app._view_container().add_child(panel)
-	var info = app._label("玩家資料\n名稱：%s\n等級：%d\n戰力：%d\n\n收集武將：%d\n累計喚靈：%d\n看板自動播放：%s" % [
+	var hero: Dictionary = app._hero_by_id(int(app.save.get("selected_hero_id", app.DEFAULT_HERO_ID)))
+	app._draw_home_resource_card(origin, Vector2(640, 214), Color(1.0, 0.82, 0.42, 0.30), false)
+	app._draw_image("res://assets/ui/mainui/mainui_img_02.png", origin + Vector2(14, 18), Vector2(240, 76), false, Color(1, 1, 1, 0.88))
+	app._draw_image("res://assets/ui/mainui/mainui_img_03.png", origin + Vector2(42, 34), Vector2(76, 76), false, Color(1, 1, 1, 0.88))
+	app._draw_image("res://assets/ui/mainui/mainui_img_04.png", origin + Vector2(38, 30), Vector2(84, 84), false, Color(1, 0.84, 0.28, 0.82))
+	app._draw_hero_round_thumb(hero, origin + Vector2(45, 37), Vector2(70, 70), Color(1, 1, 1, 0.95))
+	var info = app._label("名稱：%s\n等級：%d\n戰力：%d\n收集幻靈：%d\n累計喚靈：%d\n看板自動播放：%s" % [
 		profile.get("name", "Player"),
 		int(profile.get("level", 1)),
 		app._player_power(),
@@ -21,39 +25,40 @@ func show_player_info() -> void:
 		int(app.save.get("draw_count", 0)),
 		"開" if bool(settings.get("wallpaper_auto_play", true)) else "關"
 	], 21)
-	info.position = Vector2(70, 70)
-	info.size = Vector2(520, 230)
+	info.position = origin + Vector2(150, 24)
+	info.size = Vector2(450, 166)
 	app._view_container().add_child(info)
-	app._add_action_button("設定", Vector2(70, 330), app._show_settings)
-	app._add_action_button("返回主界面", Vector2(216, 330), app._show_home, Vector2(146, 44))
+	app._add_action_button("設定", origin + Vector2(0, 246), app._show_settings)
+	app._add_action_button("壁紙", origin + Vector2(146, 246), app._show_wallpaper_select, Vector2(132, 44), app.UI_COMMON_BTN_GOLD)
+	app._add_action_button("幻靈", origin + Vector2(292, 246), app._show_gallery, Vector2(132, 44), app.UI_COMMON_BTN_GOLD)
 
 
 func show_settings() -> void:
-	app._clear("設定")
+	var origin: Vector2 = app._show_home_panel("系統設定", "MainUIView 快捷選單中的本地設定入口。")
 	var settings: Dictionary = app.save.get("settings", {})
-	var panel = app._panel(Vector2(44, 44), Vector2(700, 370), Color(0.095, 0.078, 0.065, 0.94))
-	app._view_container().add_child(panel)
-	var title = app._label("SystemSettingView MVP", 30)
-	title.position = Vector2(70, 70)
-	title.size = Vector2(440, 44)
-	app._view_container().add_child(title)
-	app._add_toggle_button("看板自動播放", "wallpaper_auto_play", Vector2(70, 140), bool(settings.get("wallpaper_auto_play", true)))
-	app._add_toggle_button("音樂", "music", Vector2(70, 202), bool(settings.get("music", true)))
-	app._add_toggle_button("音效", "effects", Vector2(70, 264), bool(settings.get("effects", true)))
-	app._add_action_button("玩家信息", Vector2(70, 340), app._show_player_info)
-	app._add_action_button("返回主界面", Vector2(216, 340), app._show_home, Vector2(146, 44))
+	var rows := [
+		{"label": "看板自動播放", "key": "wallpaper_auto_play", "value": bool(settings.get("wallpaper_auto_play", true)), "icon": "res://assets/ui/mainui/mainui_btn_12.png"},
+		{"label": "音樂", "key": "music", "value": bool(settings.get("music", true)), "icon": "res://assets/ui/mainui/mainui_btn_10.png"},
+		{"label": "音效", "key": "effects", "value": bool(settings.get("effects", true)), "icon": "res://assets/ui/mainui/mainui_btn_11.png"}
+	]
+	for index in range(rows.size()):
+		var item: Dictionary = rows[index]
+		var pos := origin + Vector2(0, index * 92)
+		app._draw_home_resource_card(pos, Vector2(620, 72), Color(0.76, 0.88, 1.0, 0.28), index % 2 == 1)
+		app._draw_image(str(item.get("icon", app.UI_MAIN_LIMIT_ICON_FRAME)), pos + Vector2(12, -7), Vector2(76, 76), false, Color(1, 1, 1, 0.90))
+		var label: Label = app._label("%s：%s" % [str(item.get("label", "")), "開" if bool(item.get("value", true)) else "關"], 22)
+		label.position = pos + Vector2(106, 14)
+		label.size = Vector2(260, 40)
+		label.modulate = Color(1.0, 0.93, 0.70)
+		app._view_container().add_child(label)
+		app._add_toggle_button(str(item.get("label", "")), str(item.get("key", "")), pos + Vector2(440, 14), bool(item.get("value", true)))
+	app._add_action_button("玩家資料", origin + Vector2(0, 310), app._show_player_info)
+	app._add_action_button("返回選單", origin + Vector2(146, 310), app._show_home_menu, Vector2(132, 44), app.UI_COMMON_BTN_WHITE)
 
 
 func show_home_menu() -> void:
 	var origin = app._show_home_panel("快捷選單", "主屏右上角羅盤入口，收束公告、郵件、設定與資源修復。")
-	var entries = [
-		{"name": "玩家資料", "desc": "查看等級、戰力、收集與看板狀態。", "callback": app._show_player_info, "icon": app.UI_MAIN_LIMIT_ICONS[0]},
-		{"name": "系統設定", "desc": "音樂、音效與看板自動播放。", "callback": app._show_settings, "icon": app.UI_MAIN_CHARGE_ICONS[2]},
-		{"name": "郵件", "desc": "領取補償與系統獎勵。", "callback": app._show_mail, "icon": app.UI_MAIN_LIMIT_ICONS[2]},
-		{"name": "資源修復", "desc": "檢查本地 MVP 資源導出狀態。", "callback": app._show_repair_notice, "icon": app.UI_MAIN_CHARGE_ICONS[1]},
-		{"name": "公告", "desc": "查看本地公告與活動提示。", "callback": app._show_home_notice, "icon": app.UI_MAIN_LIMIT_ICONS[3]},
-		{"name": "客服助手", "desc": "回到主屏小助手建議。", "callback": app._show_assist, "icon": app.UI_MAIN_LIMIT_ICONS[4]},
-	]
+	var entries: Array = app._mainui_group("menu")
 	for index in range(entries.size()):
 		var item: Dictionary = entries[index]
 		var col = index % 3
@@ -61,17 +66,37 @@ func show_home_menu() -> void:
 		var pos = origin + Vector2(col * 304, row * 148)
 		app._draw_home_resource_card(pos, Vector2(264, 112), Color(0.76, 0.88, 1.0, 0.30), index % 2 == 1)
 		app._draw_image(str(item.get("icon", app.UI_MAIN_LIMIT_ICON_FRAME)), pos + Vector2(12, 14), Vector2(76, 76), false, Color(1, 1, 1, 0.92))
-		var title = app._label(str(item.get("name", "")), 21)
+		var title = app._label(str(item.get("label", "")), 21)
 		title.position = pos + Vector2(98, 14)
 		title.size = Vector2(144, 28)
 		title.modulate = Color(1.0, 0.94, 0.74)
 		app._view_container().add_child(title)
-		var desc = app._label(str(item.get("desc", "")), 14)
+		var desc = app._label(_menu_desc_for_target(str(item.get("target", ""))), 14)
 		desc.position = pos + Vector2(98, 46)
 		desc.size = Vector2(142, 46)
 		desc.modulate = Color(0.90, 0.86, 0.82)
 		app._view_container().add_child(desc)
-		app._add_hit_button(pos, Vector2(264, 112), item.get("callback", app._show_home))
+		if app._mainui_red_dot_active(str(item.get("red_dot_key", "")), str(item.get("id", ""))):
+			app._draw_red_dot(pos + Vector2(238, 8))
+		app._add_hit_button(pos, Vector2(264, 112), app._mainui_entry_callable(item))
+
+
+func _menu_desc_for_target(target: String) -> String:
+	match target:
+		"player_info":
+			return "查看等級、戰力、收集與看板狀態。"
+		"settings":
+			return "音樂、音效與看板自動播放。"
+		"mail":
+			return "領取補償與系統獎勵。"
+		"repair_notice":
+			return "檢查本地 MVP 資源導出狀態。"
+		"home_notice":
+			return "查看本地公告與活動提示。"
+		"assist":
+			return "回到主屏小助手建議。"
+		_:
+			return "MainUIView 快捷功能入口。"
 
 
 func show_home_notice() -> void:
@@ -103,6 +128,9 @@ func show_repair_notice() -> void:
 	var checks = [
 		{"name": "MainUI 圖集", "path": "assets/ui/mainui", "ok": FileAccess.file_exists("res://assets/ui/mainui/mainui_btn_25.png")},
 		{"name": "通用按鈕", "path": "assets/ui/common", "ok": FileAccess.file_exists("res://assets/ui/common/tongyong_btn_08.png")},
+		{"name": "Mail 圖集", "path": "assets/ui/mail", "ok": FileAccess.file_exists("res://assets/ui/mail/mail_img_01.png")},
+		{"name": "Task 圖集", "path": "assets/ui/task", "ok": FileAccess.file_exists("res://assets/ui/task/task_img_18.png")},
+		{"name": "Welfare 圖集", "path": "assets/ui/welfare", "ok": FileAccess.file_exists("res://assets/ui/welfare/welfare_w1_img_01.png")},
 		{"name": "英雄圓頭像", "path": "assets/ui/hero/round", "ok": FileAccess.file_exists("res://assets/ui/hero/round/yhero_037.png")},
 		{"name": "Gal Spine", "path": "assets/spine/hero_037r_s01", "ok": FileAccess.file_exists("res://assets/spine/hero_037r_s01/hero_037r_s01.baked.json")},
 	]
@@ -312,7 +340,8 @@ func show_mail() -> void:
 		var is_claimed = bool(claimed.get(mail_id, false))
 		var row_pos = Vector2(origin.x, y)
 		app._draw_home_resource_card(row_pos, Vector2(820, 94), Color(0.72, 0.86, 1.0, 0.28), int(y) % 2 == 0)
-		app._draw_image(app.UI_MAIN_LIMIT_ICONS[2], row_pos + Vector2(12, 12), Vector2(66, 66), false, Color(1, 1, 1, 0.88))
+		app._draw_image("res://assets/ui/mail/mail_img_02.png", row_pos + Vector2(8, 8), Vector2(78, 78), false, Color(1, 1, 1, 0.68))
+		app._draw_image("res://assets/ui/mail/mail_img_01.png", row_pos + Vector2(18, 18), Vector2(58, 58), false, Color(1, 1, 1, 0.92))
 		var row = app._label("%s\n%s\n獎勵：喚靈券 x%d  源石 x%d   %s" % [mail.get("title", ""), mail.get("body", ""), int(mail.get("tickets", 0)), int(mail.get("gems", 0)), "已領取" if is_claimed else "可領取"], 17)
 		row.position = row_pos + Vector2(92, 8)
 		row.size = Vector2(600, 78)
@@ -351,7 +380,8 @@ func show_tasks() -> void:
 		var is_claimed = bool(claimed.get(task_id, false))
 		var row_pos = Vector2(origin.x, y)
 		app._draw_home_resource_card(row_pos, Vector2(860, 90), Color(1.0, 0.80, 0.42, 0.24), int(y) % 2 == 0)
-		app._draw_image(app.UI_MAIN_LIMIT_ICONS[3], row_pos + Vector2(14, 10), Vector2(66, 66), false, Color(1, 1, 1, 0.88))
+		app._draw_image("res://assets/ui/task/task_img_18.png", row_pos + Vector2(12, 8), Vector2(70, 70), false, Color(1, 1, 1, 0.88))
+		app._draw_image("res://assets/ui/task/task_img_03.png", row_pos + Vector2(20, 16), Vector2(54, 54), false, Color(1, 1, 1, 0.82))
 		var row = app._label("%s\n%s  %d/%d\n獎勵：喚靈券 x%d  源石 x%d" % [task.get("name", ""), task.get("desc", ""), progress, target, int(task.get("tickets", 0)), int(task.get("gems", 0))], 17)
 		row.position = row_pos + Vector2(92, 8)
 		row.size = Vector2(630, 72)

@@ -1,0 +1,555 @@
+{
+  "top_resources": [
+    {
+      "id": "top_mail",
+      "label": "郵件",
+      "icon": "res://assets/ui/mail/mail_img_01.png",
+      "target": "mail",
+      "red_dot_key": "Mail.MailEnter.11001",
+      "visible_condition": "always",
+      "timer": ""
+    },
+    {
+      "id": "top_ticket",
+      "label": "喚靈券",
+      "icon": "res://assets/ui/item/draw_07.png",
+      "target": "shop",
+      "red_dot_key": "",
+      "visible_condition": "always",
+      "timer": ""
+    },
+    {
+      "id": "top_gem",
+      "label": "源石",
+      "icon": "res://assets/ui/item/draw_05.png",
+      "target": "shop",
+      "red_dot_key": "",
+      "visible_condition": "always",
+      "timer": ""
+    }
+  ],
+  "player_actions": [
+    {
+      "id": "btnPlayerInfo",
+      "label": "玩家資料",
+      "icon": "res://assets/ui/mainui/mainui_img_02.png",
+      "target": "player_info",
+      "red_dot_key": "",
+      "visible_condition": "always",
+      "timer": ""
+    },
+    {
+      "id": "btnChange",
+      "label": "壁紙",
+      "icon": "res://assets/ui/mainui/mainui_btn_13.png",
+      "target": "wallpaper_select",
+      "red_dot_key": "",
+      "visible_condition": "always",
+      "timer": ""
+    },
+    {
+      "id": "btnEye",
+      "label": "互動",
+      "icon": "res://assets/ui/mainui/mainui_btn_12.png",
+      "target": "wallpaper_focus",
+      "red_dot_key": "",
+      "visible_condition": "always",
+      "timer": ""
+    }
+  ],
+  "funny": [
+    {
+      "id": "btnArena",
+      "label": "競技",
+      "icon": "res://assets/ui/mainui/mainui_txt_03.png",
+      "target": "competition",
+      "red_dot_key": "Arena.ArenaRedDot.89949",
+      "visible_condition": "always",
+      "timer": ""
+    },
+    {
+      "id": "btnPrayer",
+      "label": "祈願",
+      "icon": "res://assets/ui/mainui/mainui_txt_06.png",
+      "target": "prayer_pool",
+      "red_dot_key": "LotteryDraw.Prayer.4036",
+      "visible_condition": "always",
+      "timer": ""
+    },
+    {
+      "id": "btnAdventure",
+      "label": "冒險",
+      "icon": "res://assets/ui/mainui/mainui_txt_02.png",
+      "target": "battle",
+      "red_dot_key": "Adventure.AdventureMainView.43704",
+      "visible_condition": "always",
+      "timer": ""
+    },
+    {
+      "id": "btnDraw",
+      "label": "喚靈",
+      "icon": "res://assets/ui/mainui/mainui_txt_05.png",
+      "target": "present_pool",
+      "red_dot_key": "LotteryDraw.LotteryDrawHero.7805",
+      "visible_condition": "always",
+      "timer": ""
+    }
+  ],
+  "story": [
+    {
+      "id": "btnHarvest",
+      "label": "掛機收益",
+      "icon": "res://assets/ui/mainui/mainui_img_18.png",
+      "target": "claim_afk",
+      "red_dot_key": "Expedition.Hook.84317",
+      "visible_condition": "always",
+      "timer": "afk"
+    },
+    {
+      "id": "btnStory",
+      "label": "塵世探秘",
+      "icon": "res://assets/ui/mainui/mainui_txt_01.png",
+      "target": "expedition",
+      "red_dot_key": "Adventure.AdventureMainView.43704",
+      "visible_condition": "always",
+      "timer": ""
+    },
+    {
+      "id": "btnJumpAutoFight",
+      "label": "自動挑戰",
+      "icon": "res://assets/ui/mainui/mainui_img_36.png",
+      "target": "auto_fight",
+      "red_dot_key": "Adventure.AutoFight.84317",
+      "visible_condition": "always",
+      "timer": ""
+    },
+    {
+      "id": "btnChapterInfo",
+      "label": "章節任務",
+      "icon": "res://assets/ui/mainui/mainui_img_35.png",
+      "target": "chapter_task",
+      "red_dot_key": "ChapterTask.ChapterTaskEnter.32541",
+      "visible_condition": "always",
+      "timer": ""
+    }
+  ],
+  "charge": [
+    {
+      "id": "btnCharge",
+      "label": "充值",
+      "icon": "res://assets/ui/mainui/mainui_btn_08.png",
+      "target": "charge",
+      "red_dot_key": "Activities.ReCharge.99752",
+      "visible_condition": "always",
+      "timer": ""
+    },
+    {
+      "id": "btnActivity",
+      "label": "活動",
+      "icon": "res://assets/ui/mainui/mainui_btn_06.png",
+      "target": "activity",
+      "red_dot_key": "Activities.Activity.34064",
+      "visible_condition": "always",
+      "timer": ""
+    },
+    {
+      "id": "btnShop",
+      "label": "商店",
+      "icon": "res://assets/ui/mainui/mainui_btn_09.png",
+      "target": "shop",
+      "red_dot_key": "GameShopCollection.Page.1748",
+      "visible_condition": "always",
+      "timer": ""
+    },
+    {
+      "id": "btnWelfare",
+      "label": "福利",
+      "icon": "res://assets/ui/mainui/mainui_btn_07.png",
+      "target": "welfare",
+      "red_dot_key": "Activities.Welfare.83923",
+      "visible_condition": "always",
+      "timer": ""
+    },
+    {
+      "id": "btnCard",
+      "label": "月卡",
+      "icon": "res://assets/ui/mainui/mainui_btn_10.png",
+      "target": "month_card",
+      "red_dot_key": "Activities.Card.5353",
+      "visible_condition": "always",
+      "timer": ""
+    }
+  ],
+  "commercialization": [
+    {
+      "id": "summon_welfare",
+      "label": "喚靈福利",
+      "icon": "res://assets/ui/mainui/mainui_btn_15.png",
+      "target": "welfare",
+      "red_dot_key": "Activities.Welfare.83923",
+      "visible_condition": "always",
+      "timer": "4d01h",
+      "timer_hours": 97
+    },
+    {
+      "id": "gal_invite",
+      "label": "幻海邀約",
+      "icon": "res://assets/ui/mainui/mainui_btn_17.png",
+      "target": "gal",
+      "red_dot_key": "Gal.GalEntry.5799",
+      "visible_condition": "always",
+      "timer": "6d01h",
+      "timer_hours": 145
+    },
+    {
+      "id": "sign_welfare",
+      "label": "簽到福利",
+      "icon": "res://assets/ui/mainui/mainui_btn_16.png",
+      "target": "daily",
+      "red_dot_key": "Activities.Welfare.83923",
+      "visible_condition": "always",
+      "timer": "可領取"
+    },
+    {
+      "id": "new_server",
+      "label": "新服慶典",
+      "icon": "res://assets/ui/mainui/mainui_btn_18.png",
+      "target": "activity",
+      "red_dot_key": "Activities.Activity.34064",
+      "visible_condition": "always",
+      "timer": "11d01h",
+      "timer_hours": 265
+    },
+    {
+      "id": "chat_lobby",
+      "label": "交流大廳",
+      "icon": "res://assets/ui/mainui/mainui_btn_19.png",
+      "target": "chat",
+      "red_dot_key": "",
+      "visible_condition": "always",
+      "timer": ""
+    },
+    {
+      "id": "open_ranking",
+      "label": "開服沖榜",
+      "icon": "res://assets/ui/mainui/mainui_btn_20.png",
+      "target": "activity",
+      "red_dot_key": "Activities.Activity.34064",
+      "visible_condition": "always",
+      "timer": "7d01h",
+      "timer_hours": 169
+    },
+    {
+      "id": "limited_skin",
+      "label": "限時皮膚",
+      "icon": "res://assets/ui/mainui/mainui_btn_18.png",
+      "target": "shop",
+      "red_dot_key": "GameShopCollection.Page.1748",
+      "visible_condition": "always",
+      "timer": "11d01h",
+      "timer_hours": 265
+    },
+    {
+      "id": "dew_flash",
+      "label": "露箔閃光",
+      "icon": "res://assets/ui/mainui/mainui_btn_19.png",
+      "target": "shop",
+      "red_dot_key": "GameShopCollection.Page.1748",
+      "visible_condition": "always",
+      "timer": "11d01h",
+      "timer_hours": 265
+    },
+    {
+      "id": "first_charge",
+      "label": "首儲",
+      "icon": "res://assets/ui/mainui/mainui_btn_19.png",
+      "target": "charge",
+      "red_dot_key": "Activities.ReCharge.99752",
+      "visible_condition": "first_charge_unclaimed",
+      "timer": ""
+    },
+    {
+      "id": "present_pool",
+      "label": "萬象喚靈",
+      "icon": "res://assets/ui/mainui/mainui_btn_22.png",
+      "target": "present_pool",
+      "red_dot_key": "LotteryDraw.LotteryDrawHero.7805",
+      "visible_condition": "always",
+      "timer": "4d01h",
+      "timer_hours": 97
+    },
+    {
+      "id": "weekend_plan",
+      "label": "周末企劃",
+      "icon": "res://assets/ui/mainui/mainui_btn_23.png",
+      "target": "tasks",
+      "red_dot_key": "Quest.QuestEnter.42775",
+      "visible_condition": "always",
+      "timer": "1d01h",
+      "timer_hours": 25
+    },
+    {
+      "id": "god_domain_gift",
+      "label": "神域饋贈",
+      "icon": "res://assets/ui/mainui/mainui_btn_16.png",
+      "target": "welfare",
+      "red_dot_key": "Activities.Welfare.83923",
+      "visible_condition": "always",
+      "timer": "11d01h",
+      "timer_hours": 265
+    },
+    {
+      "id": "questionnaire",
+      "label": "問卷",
+      "icon": "res://assets/ui/mainui/mainui_btn_21.png",
+      "target": "mainui_event",
+      "red_dot_key": "MainUIView.Questionnaire.6201",
+      "visible_condition": "claimable",
+      "timer": "可領取",
+      "desc": "本地問卷獎勵，用於替代原運營問卷返回禮。",
+      "reward": {
+        "tickets": 2,
+        "gems": 300,
+        "event_tokens": 1
+      }
+    },
+    {
+      "id": "bury_gift",
+      "label": "埋點禮包",
+      "icon": "res://assets/ui/mainui/mainui_btn_23.png",
+      "target": "mainui_event",
+      "red_dot_key": "MainUIView.BuryGift.6202",
+      "visible_condition": "claimable",
+      "timer": "",
+      "desc": "完成一次主界面交互後可領取的本地模擬禮包。",
+      "reward": {
+        "tickets": 1,
+        "gems": 160,
+        "event_tokens": 1
+      }
+    },
+    {
+      "id": "discount_gift",
+      "label": "折扣禮包",
+      "icon": "res://assets/ui/mainui/mainui_btn_24.png",
+      "target": "shop",
+      "red_dot_key": "GameShopCollection.Page.1748",
+      "visible_condition": "always",
+      "timer": ""
+    }
+  ],
+  "bottom_nav": [
+    {
+      "id": "btnHero",
+      "label": "幻靈",
+      "icon": "",
+      "target": "gallery",
+      "red_dot_key": "Hero.HeroEnter.30218",
+      "visible_condition": "always",
+      "timer": ""
+    },
+    {
+      "id": "btnBagpack",
+      "label": "背包",
+      "icon": "",
+      "target": "bag",
+      "red_dot_key": "Bag.BagRedDot.73517",
+      "visible_condition": "always",
+      "timer": ""
+    },
+    {
+      "id": "btnPet",
+      "label": "遺器",
+      "icon": "",
+      "target": "remnants_list",
+      "red_dot_key": "Remnants.RemnantsEnter.1728",
+      "visible_condition": "always",
+      "timer": ""
+    },
+    {
+      "id": "btnDevelop",
+      "label": "養成",
+      "icon": "",
+      "target": "develop",
+      "red_dot_key": "Develop.DevelopEnter.78015",
+      "visible_condition": "always",
+      "timer": ""
+    },
+    {
+      "id": "btnTask",
+      "label": "任務",
+      "icon": "",
+      "target": "tasks",
+      "red_dot_key": "Quest.QuestEnter.42775",
+      "visible_condition": "always",
+      "timer": ""
+    },
+    {
+      "id": "btnLegion",
+      "label": "公會",
+      "icon": "",
+      "target": "guild",
+      "red_dot_key": "Alliance.AllianceEnter.6965",
+      "visible_condition": "always",
+      "timer": ""
+    }
+  ],
+  "gal": [
+    {
+      "id": "btnGal",
+      "label": "現世",
+      "icon": "res://assets/ui/mainui/mainui_btn_25.png",
+      "target": "gal",
+      "red_dot_key": "Gal.GalEntry.5799",
+      "visible_condition": "always",
+      "timer": ""
+    }
+  ],
+  "chat": [
+    {
+      "id": "pnlChat",
+      "label": "世界",
+      "icon": "res://assets/ui/mainui/mainui_btn_04.png",
+      "target": "chat",
+      "red_dot_key": "",
+      "visible_condition": "always",
+      "timer": ""
+    }
+  ],
+  "menu": [
+    {
+      "id": "menu_player_info",
+      "label": "玩家資料",
+      "icon": "res://assets/ui/mainui/mainui_btn_15.png",
+      "target": "player_info",
+      "red_dot_key": "",
+      "visible_condition": "always",
+      "timer": ""
+    },
+    {
+      "id": "menu_settings",
+      "label": "系統設定",
+      "icon": "res://assets/ui/mainui/mainui_btn_10.png",
+      "target": "settings",
+      "red_dot_key": "",
+      "visible_condition": "always",
+      "timer": ""
+    },
+    {
+      "id": "menu_mail",
+      "label": "郵件",
+      "icon": "res://assets/ui/mail/mail_img_01.png",
+      "target": "mail",
+      "red_dot_key": "Mail.MailEnter.11001",
+      "visible_condition": "always",
+      "timer": ""
+    },
+    {
+      "id": "menu_repair",
+      "label": "資源修復",
+      "icon": "res://assets/ui/mainui/mainui_btn_07.png",
+      "target": "repair_notice",
+      "red_dot_key": "",
+      "visible_condition": "always",
+      "timer": ""
+    },
+    {
+      "id": "menu_notice",
+      "label": "公告",
+      "icon": "res://assets/ui/mainui/mainui_btn_20.png",
+      "target": "home_notice",
+      "red_dot_key": "Activities.Activity.34064",
+      "visible_condition": "always",
+      "timer": ""
+    },
+    {
+      "id": "menu_assist",
+      "label": "客服助手",
+      "icon": "res://assets/ui/mainui/mainui_btn_18.png",
+      "target": "assist",
+      "red_dot_key": "",
+      "visible_condition": "always",
+      "timer": ""
+    }
+  ],
+  "activity_list": [
+    {
+      "id": "activity_new_server",
+      "label": "新服慶典",
+      "icon": "res://assets/ui/mainui/mainui_btn_18.png",
+      "target": "tasks",
+      "red_dot_key": "Activities.Activity.34064",
+      "visible_condition": "always",
+      "timer": "11d01h",
+      "timer_hours": 265
+    },
+    {
+      "id": "activity_ranking",
+      "label": "開服沖榜",
+      "icon": "res://assets/ui/mainui/mainui_btn_20.png",
+      "target": "competition",
+      "red_dot_key": "Arena.ArenaRedDot.89949",
+      "visible_condition": "always",
+      "timer": "7d01h",
+      "timer_hours": 169
+    },
+    {
+      "id": "activity_skin",
+      "label": "限時皮膚",
+      "icon": "res://assets/ui/mainui/mainui_btn_18.png",
+      "target": "shop",
+      "red_dot_key": "GameShopCollection.Page.1748",
+      "visible_condition": "always",
+      "timer": "11d01h",
+      "timer_hours": 265
+    },
+    {
+      "id": "activity_present_pool",
+      "label": "萬象喚靈",
+      "icon": "res://assets/ui/mainui/mainui_btn_22.png",
+      "target": "present_pool",
+      "red_dot_key": "LotteryDraw.LotteryDrawHero.7805",
+      "visible_condition": "always",
+      "timer": "4d01h",
+      "timer_hours": 97
+    }
+  ],
+  "welfare_entries": [
+    {
+      "id": "welfare_daily",
+      "label": "每日補給",
+      "icon": "res://assets/ui/mainui/mainui_btn_07.png",
+      "target": "daily",
+      "red_dot_key": "Activities.Welfare.83923",
+      "visible_condition": "always",
+      "timer": "可領取"
+    },
+    {
+      "id": "welfare_mail",
+      "label": "郵件獎勵",
+      "icon": "res://assets/ui/mail/mail_img_01.png",
+      "target": "mail",
+      "red_dot_key": "Mail.MailEnter.11001",
+      "visible_condition": "always",
+      "timer": ""
+    },
+    {
+      "id": "welfare_task",
+      "label": "章節任務",
+      "icon": "res://assets/ui/task/task_img_18.png",
+      "target": "tasks",
+      "red_dot_key": "Quest.QuestEnter.42775",
+      "visible_condition": "always",
+      "timer": ""
+    },
+    {
+      "id": "welfare_questionnaire",
+      "label": "問卷禮包",
+      "icon": "res://assets/ui/mainui/mainui_btn_21.png",
+      "target": "mainui_event",
+      "red_dot_key": "MainUIView.Questionnaire.6201",
+      "visible_condition": "claimable",
+      "timer": "可領取"
+    }
+  ]
+}

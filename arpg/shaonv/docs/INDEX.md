@@ -1,7 +1,9 @@
 # shaonv 文档索引
 
-> AI 阅读策略：先读本文件 → 用 `list_dir` 进入目标子目录 → 只 `read_file` 需要的那一份。
+> 先读本文件 → 用 `list_dir` 进入目标子目录 → 只 `read_file` 需要的那一份。
 > 全控件清单 (`*-full-control-resource-inventory-*`) 体量大，按需打开。
+> 读取文件显示设置utf-8编码
+> 项目 Godot 4 实现
 
 ---
 

@@ -18,5 +18,5 @@ if not exist "%PROJECT%\project.godot" (
   exit /b 1
 )
 
-"%GODOT%" --path "%PROJECT%" --scene res://scenes/spine_browser.tscn --rendering-method mobile --windowed --resolution 1280x720
+"%GODOT%" --path "%PROJECT%" --scene res://scenes/spine_browser.tscn --rendering-method mobile --windowed --resolution 1670x750
 pause
